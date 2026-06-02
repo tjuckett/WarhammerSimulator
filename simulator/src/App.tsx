@@ -397,6 +397,7 @@ export default function App() {
   const [manualModelSelection, setManualModelSelection] = useState<ManualModelSelection | null>(null);
   const [inspectedSelection, setInspectedSelection] = useState<InspectedSelection | null>(null);
   const [manualUndoStack, setManualUndoStack] = useState<ManualUndoEntry[]>([]);
+  const manualUndoStackRef = useRef<ManualUndoEntry[]>([]);
   const pendingManualModelMoveUndoRef = useRef<ManualUndoEntry | null>(null);
   const pendingManualModelMoveActionRef = useRef<PendingManualTimelineAction | null>(null);
   const pendingManualRotationUndoRef = useRef<ManualUndoEntry | null>(null);
@@ -541,6 +542,7 @@ export default function App() {
   }
 
   function clearManualUndo() {
+    manualUndoStackRef.current = [];
     setManualUndoStack([]);
     pendingManualModelMoveUndoRef.current = null;
     pendingManualModelMoveActionRef.current = null;
@@ -711,7 +713,9 @@ export default function App() {
   }
 
   function pushManualUndoEntry(entry: ManualUndoEntry) {
-    setManualUndoStack(prev => [...prev, entry].slice(-100));
+    const nextStack = [...manualUndoStackRef.current, entry].slice(-100);
+    manualUndoStackRef.current = nextStack;
+    setManualUndoStack(nextStack);
   }
 
   function commitManualTimelineAction(pending: PendingManualTimelineAction) {
@@ -1327,7 +1331,7 @@ export default function App() {
       pendingManualModelMoveActionRef.current = null;
       return;
     }
-    const entry = manualUndoStack[manualUndoStack.length - 1];
+    const entry = manualUndoStackRef.current[manualUndoStackRef.current.length - 1];
     if (!entry) return;
     undoPracticeTimelineCursor();
     commitBattleState(clone(entry.battleState));
@@ -1335,8 +1339,15 @@ export default function App() {
     setManualModelSelection(clone(entry.manualModelSelection));
     pendingManualModelMoveUndoRef.current = null;
     pendingManualModelMoveActionRef.current = null;
-    setManualUndoStack(prev => prev.slice(0, -1));
-  }, [isManualMode, manualUndoStack]);
+    const nextStack = manualUndoStackRef.current.slice(0, -1);
+    manualUndoStackRef.current = nextStack;
+    setManualUndoStack(nextStack);
+  }, [isManualMode]);
+
+  const redoManualAction = useCallback(() => {
+    if (!isManualMode) return;
+    redoPracticeTimelineAction();
+  }, [isManualMode]);
 
   useEffect(() => {
     if (!isManualMode) return;
@@ -1346,6 +1357,14 @@ export default function App() {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
         e.preventDefault();
         undoManualAction();
+        return;
+      }
+      if (
+        (e.ctrlKey || e.metaKey)
+        && ((e.key.toLowerCase() === 'z' && e.shiftKey) || e.key.toLowerCase() === 'y')
+      ) {
+        e.preventDefault();
+        redoManualAction();
         return;
       }
       if (!battleState || !MANUAL_MODEL_EDIT_PHASES.includes(battleState.phase)) return;
@@ -1367,7 +1386,7 @@ export default function App() {
     }
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isManualMode, battleState?.phase, undoManualAction, reorganizeSelectedManualUnit, rotateSelectedManualModels]);
+  }, [isManualMode, battleState?.phase, undoManualAction, redoManualAction, reorganizeSelectedManualUnit, rotateSelectedManualModels]);
 
   const stepDrop = useCallback(() => {
     const prev = battleStateRef.current;
