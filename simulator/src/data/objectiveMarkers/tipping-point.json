@@ -1,0 +1,12 @@
+{
+  "id": "tipping-point",
+  "deployment": "Tipping Point",
+  "description": "Tipping Point objective markers",
+  "objectives": [
+    { "x": 14, "y": 34 },
+    { "x": 46, "y": 10 },
+    { "x": 22, "y": 8 },
+    { "x": 30, "y": 22 },
+    { "x": 38, "y": 36 }
+  ]
+}

@@ -1,0 +1,447 @@
+{
+  "faction": "Aeldari",
+  "source": {
+    "title": "Chapter Approved Tournament Companion - Base Size Guide",
+    "lastUpdated": "June 2025",
+    "pages": [
+      18,
+      19
+    ]
+  },
+  "units": {
+    "asurmen": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "autarch": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "autarch wayleaper": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "avatar of khaine": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 80
+      }
+    },
+    "baharroth": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "corsair voidreavers": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "corsair voidscarred": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "crimson hunter": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "d-cannon platform": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "dark reapers": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "death jester": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "dire avengers": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "eldrad ulthran": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "falcon": {
+      "base": {
+        "shape": "other",
+        "label": "Large Flying Base"
+      }
+    },
+    "farseer": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "farseer skyrunner": {
+      "base": {
+        "shape": "other",
+        "label": "Small Flying Base"
+      }
+    },
+    "fire dragons": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "fire prism": {
+      "base": {
+        "shape": "other",
+        "label": "Large Flying Base"
+      }
+    },
+    "fuegan": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "guardian defenders": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "guardian defenders: heavy weapon platform": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "hemlock wraithfighter": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "howling banshees": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "jain zar": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "lhykhis": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "maugan ra": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "night spinner": {
+      "base": {
+        "shape": "other",
+        "label": "Large Flying Base"
+      }
+    },
+    "rangers": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "shadow weaver platform": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "shadowseer": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "shining spears": {
+      "base": {
+        "shape": "other",
+        "label": "Large Flying Base"
+      }
+    },
+    "shroud runners": {
+      "base": {
+        "shape": "other",
+        "label": "Large Flying Base"
+      }
+    },
+    "skyweavers": {
+      "base": {
+        "shape": "other",
+        "label": "Large Flying Base"
+      }
+    },
+    "solitaire": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "spiritseer": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "starweaver": {
+      "base": {
+        "shape": "other",
+        "label": "Large Flying Base"
+      }
+    },
+    "storm guardians": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "storm guardians: serpent's scale platform": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "striking scorpions": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "swooping hawks": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "the visarch": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "the yncarne": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 80
+      }
+    },
+    "troupe": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "troupe master": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "vibro cannon platform": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "voidweaver": {
+      "base": {
+        "shape": "other",
+        "label": "Large Flying Base"
+      }
+    },
+    "vyper": {
+      "base": {
+        "shape": "other",
+        "label": "Large Flying Base"
+      }
+    },
+    "war walker": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "warlock": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "warlock conclave": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "warlock skyrunners": {
+      "base": {
+        "shape": "other",
+        "label": "Small Flying Base"
+      }
+    },
+    "warp spiders": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "wave serpent": {
+      "base": {
+        "shape": "other",
+        "label": "Large Flying Base"
+      }
+    },
+    "windriders": {
+      "base": {
+        "shape": "other",
+        "label": "Small Flying Base"
+      }
+    },
+    "wraithblades": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "wraithguard": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "wraithknight": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "wraithknight with ghostglaive": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "wraithlord": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "ynnari archon": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "ynnari incubi": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "ynnari kabalite warriors": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "ynnari raider": {
+      "base": {
+        "shape": "other",
+        "label": "Large Flying Base"
+      }
+    },
+    "ynnari reavers": {
+      "base": {
+        "shape": "other",
+        "label": "Small Flying Base"
+      }
+    },
+    "ynnari succubus": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "ynnari venom": {
+      "base": {
+        "shape": "other",
+        "label": "Large Flying Base"
+      }
+    },
+    "ynnari wyches": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "yvraine": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 75,
+        "lengthMm": 42,
+        "label": "Oval Base"
+      }
+    },
+    "phantom titan": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "revenant titan": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    }
+  }
+}

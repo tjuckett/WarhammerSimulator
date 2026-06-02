@@ -1,0 +1,222 @@
+{
+  "faction": "Adeptus Mechanicus",
+  "source": {
+    "title": "Chapter Approved Tournament Companion - Base Size Guide",
+    "lastUpdated": "June 2025",
+    "pages": [
+      16
+    ]
+  },
+  "units": {
+    "archaeopter fusilave": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 170,
+        "lengthMm": 109,
+        "label": "Oval Base"
+      }
+    },
+    "archaeopter stratoraptor": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 170,
+        "lengthMm": 109,
+        "label": "Oval Base"
+      }
+    },
+    "archaeopter transvector": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 170,
+        "lengthMm": 109,
+        "label": "Oval Base"
+      }
+    },
+    "belisarius cawl": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 105,
+        "lengthMm": 70,
+        "label": "Oval Base"
+      }
+    },
+    "corpuscarii electro-priests": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "cybernetica datasmith": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "fulgurite electro-priests": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "ironstrider ballistarii": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 105,
+        "lengthMm": 70,
+        "label": "Oval Base"
+      }
+    },
+    "kastelan robots": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "kataphron breachers": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "kataphron destroyers": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "onager dunecrawler": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 130
+      }
+    },
+    "pteraxii skystalkers": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "pteraxii sterylizors": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "serberys raiders": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 60,
+        "lengthMm": 35.5,
+        "label": "Oval Base"
+      }
+    },
+    "serberys sulphurhounds": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 60,
+        "lengthMm": 35.5,
+        "label": "Oval Base"
+      }
+    },
+    "sicarian infiltrators": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "sicarian ruststalkers": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "skitarii marshal": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "skitarii rangers": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "skitarii rangers/skitarii vanguard: transuranic arquebus": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 60,
+        "lengthMm": 35.5,
+        "label": "Oval Base"
+      }
+    },
+    "skitarii vanguard": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "skorpius disintegrator": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "skorpius dunerider": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "sydonian dragoons with radium jezzails": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 105,
+        "lengthMm": 70,
+        "label": "Oval Base"
+      }
+    },
+    "sydonian dragoons with taser lances": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 105,
+        "lengthMm": 70,
+        "label": "Oval Base"
+      }
+    },
+    "sydonian skatros": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "tech-priest dominus": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "tech-priest enginseer": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "tech-priest manipulus": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "technoarcheologist": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    }
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "faction": "Black Templars",
+  "source": {
+    "title": "Chapter Approved Tournament Companion - Base Size Guide",
+    "lastUpdated": "June 2025",
+    "pages": [
+      22
+    ]
+  },
+  "units": {
+    "black templars gladiator lancer": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "black templars gladiator reaper": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "black templars gladiator valiant": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "black templars impulsor": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "black templars repulsor": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "black templars repulsor executioner": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "castellan": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "chaplain grimaldus": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "chaplain grimaldus: cenobyte servitors": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "crusader squad: neophytes": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "crusader squad: sword brother/initiates": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "high marshal helbrecht": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "marshal": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "primaris crusader squad: initiates": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "primaris crusader squad: neophytes": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "primaris crusader squad: sword brother": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "primaris sword brethren": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "the emperor's champion": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    }
+  }
+}

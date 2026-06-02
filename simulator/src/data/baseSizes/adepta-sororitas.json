@@ -1,0 +1,232 @@
+{
+  "faction": "Adepta Sororitas",
+  "source": {
+    "title": "Chapter Approved Tournament Companion - Base Size Guide",
+    "lastUpdated": "June 2025",
+    "pages": [
+      14
+    ]
+  },
+  "units": {
+    "aestred thurga and agathae dolan: aestred thurga": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "aestred thurga and agathae dolan: agathae dolan": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "arco-flagellants": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "battle sisters squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "canoness": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "canoness with jump pack": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "castigator": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "celestian sacresants": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "daemonifuge": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "dialogus": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "dogmata": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "dominion squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "exorcist": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "hospitaller": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "imagifier": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "immolator": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "junith eruita": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "ministorum priest": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "mortifiers": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "morvenn vahl": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "palatine": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "paragon warsuits": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "penitent engines": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "repentia squad: repentia superior": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "repentia squad: sister repentia": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "retributor squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "saint celestine": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "saint celestine: geminae superia": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "sanctifiers": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "seraphim squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "sisters novitiate squad: novitiate superior": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "sisters novitiate squad: sister novitiate": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "sororitas rhino": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "triumph of saint katherine": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "zephyrim squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    }
+  }
+}

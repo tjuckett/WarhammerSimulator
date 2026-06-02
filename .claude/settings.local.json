@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:wahapedia.ru)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "PowerShell(Get-Process | Where-Object { $_.Name -match \"node|vite\" } | Select-Object Id, Name, CPU)",
+      "Bash(npx vite *)",
+      "WebSearch"
+    ]
+  }
+}

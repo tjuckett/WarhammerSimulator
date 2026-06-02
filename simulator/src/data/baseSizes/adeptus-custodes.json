@@ -1,0 +1,214 @@
+{
+  "faction": "Adeptus Custodes",
+  "source": {
+    "title": "Chapter Approved Tournament Companion - Base Size Guide",
+    "lastUpdated": "June 2025",
+    "pages": [
+      15
+    ]
+  },
+  "units": {
+    "aleya": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "allarus custodians": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "anathema psykana rhino": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "blade champion": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "custodian guard": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "custodian wardens": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "knight-centura": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "prosecutors": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "shield-captain": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "shield-captain in allarus terminator armour": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "shield-captain on dawneagle jetbike": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 75,
+        "lengthMm": 42,
+        "label": "Oval Base"
+      }
+    },
+    "trajann valoris": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "valerian": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "venerable contemptor dreadnought": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "venerable land raider": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "vertus praetors": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 75,
+        "lengthMm": 42,
+        "label": "Oval Base"
+      }
+    },
+    "vigilators": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "witchseekers": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "agamatus custodians": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 75,
+        "lengthMm": 42,
+        "label": "Oval Base"
+      }
+    },
+    "aquilon custodians": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "ares gunship": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 160
+      }
+    },
+    "caladius grav-tank": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 170,
+        "lengthMm": 109,
+        "label": "Oval Base"
+      }
+    },
+    "contemptor-achillus dreadnought": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "contemptor-galatus dreadnought": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "coronus grav-carrier": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 170,
+        "lengthMm": 109,
+        "label": "Oval Base"
+      }
+    },
+    "custodian guard with adrasite and pyrithite spears": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "orion assault dropship": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 160
+      }
+    },
+    "pallas grav-attack": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 105,
+        "lengthMm": 70,
+        "label": "Oval Base"
+      }
+    },
+    "sagittarum custodians": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "telemon heavy dreadnought": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "venatari custodians": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    }
+  }
+}

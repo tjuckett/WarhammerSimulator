@@ -1,0 +1,632 @@
+{
+  "faction": "Space Marines",
+  "source": {
+    "title": "Chapter Approved Tournament Companion - Base Size Guide",
+    "lastUpdated": "June 2025",
+    "pages": [
+      43,
+      44,
+      45
+    ]
+  },
+  "units": {
+    "adrax agatone": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "aggressor squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "ancient": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "ancient in terminator armour": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "apothecary": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "apothecary biologis": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "assault intercessor squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "assault intercessors with jump packs": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "ballistus dreadnought": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 90
+      }
+    },
+    "bladeguard ancient": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "bladeguard veteran squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "brutalis dreadnought": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 90
+      }
+    },
+    "captain": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "captain in gravis armour": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "captain in phobos armour": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "captain in terminator armour": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "captain sicarius": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "captain with jump pack": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "centurion assault squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "centurion devastator squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "chaplain": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "chaplain in terminator armour": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "chaplain on bike": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 90,
+        "lengthMm": 52.5,
+        "label": "Oval Base"
+      }
+    },
+    "chaplain with jump pack": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "chief librarian tigurius": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "company heroes": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "darnath lysander": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "desolation squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "devastator squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "dreadnought": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "drop pod": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "eliminator squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "eradicator squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "firestrike servo-turrets": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 80
+      }
+    },
+    "gladiator lancer": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "gladiator reaper": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "gladiator valiant": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "hammerfall bunker": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "heavy intercessor squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "hellblaster squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "impulsor": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "inceptor squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "incursor squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "infernus squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "infiltrator squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "intercessor squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "invader atv": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "invictor tactical warsuit": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 90
+      }
+    },
+    "iron father feirros": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "judiciar": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "kayvaan shrike": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "kor'sarro khan": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "land raider": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "land raider crusader": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "land raider redeemer": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "librarian": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "librarian in phobos armour": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "librarian in terminator armour": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "lieutenant": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "lieutenant in phobos armour": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "lieutenant in reiver armour": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "lieutenant titus": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "lieutenant with combi-weapon": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "marneus calgar": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "marneus calgar: victrix honour guard": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "outrider squad": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 90,
+        "lengthMm": 52.5,
+        "label": "Oval Base"
+      }
+    },
+    "pedro kantor": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "predator annihilator": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "predator destructor": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "razorback": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "redemptor dreadnought": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 90
+      }
+    },
+    "reiver squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "repulsor": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "repulsor executioner": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "rhino": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "roboute guilliman": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "scout squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "sternguard veteran squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "storm speeder hailstrike": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 90
+      }
+    },
+    "storm speeder hammerstrike": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 90
+      }
+    },
+    "storm speeder thunderstrike": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 90
+      }
+    },
+    "stormhawk interceptor": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "stormraven gunship": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "stormtalon gunship": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "suppressor squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "tactical squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "techmarine": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "terminator assault squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "terminator squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "tor garadon": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "uriel ventris": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "vanguard veteran squad with jump packs": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "vindicator": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "vulkan he'stan": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "whirlwind": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "astraeus": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "thunderhawk gunship": {
+      "base": {
+        "shape": "other",
+        "label": "Unique"
+      }
+    }
+  }
+}
