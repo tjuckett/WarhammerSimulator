@@ -210,6 +210,204 @@ html, body, #root {
   text-align: center;
 }
 
+.practice-panel {
+  flex-shrink: 0;
+  border-bottom: 1px solid #1e1e2e;
+  background: #10101c;
+}
+
+.practice-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 8px 4px;
+}
+
+.practice-title {
+  color: #ccccff;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.practice-subtitle {
+  max-width: 270px;
+  overflow: hidden;
+  color: #666;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.practice-count {
+  min-width: 46px;
+  color: #9999cc;
+  font-size: 11px;
+  text-align: right;
+}
+
+.practice-seek {
+  padding: 0 8px 4px;
+}
+
+.practice-seek input {
+  width: 100%;
+  accent-color: #7777cc;
+}
+
+.practice-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 0 8px 6px;
+}
+
+.practice-actions button,
+.practice-entry {
+  min-width: 0;
+  border: 1px solid #33335a;
+  border-radius: 3px;
+  background: #1a1a2d;
+  color: #aaaacc;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+}
+
+.practice-actions button {
+  min-height: 24px;
+  padding: 3px 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.practice-actions button:disabled {
+  opacity: 0.42;
+  cursor: default;
+}
+
+.practice-actions button:not(:disabled):hover,
+.practice-entry:hover {
+  background: #24243e;
+  border-color: #55558a;
+  color: #ddddff;
+}
+
+.practice-import-input {
+  display: none;
+}
+
+.practice-status {
+  padding: 0 8px 6px;
+  color: #777799;
+  font-size: 10px;
+}
+
+.practice-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 96px;
+  overflow-y: auto;
+  padding: 0 8px 7px;
+}
+
+.practice-saves {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 128px;
+  overflow-y: auto;
+  padding: 0 8px 7px;
+}
+
+.practice-save-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 26px;
+  gap: 4px;
+}
+
+.practice-save-load,
+.practice-save-delete {
+  min-width: 0;
+  border: 1px solid #2d2d4d;
+  border-radius: 3px;
+  background: #151525;
+  color: #aaaacc;
+  cursor: pointer;
+  font: inherit;
+}
+
+.practice-save-load {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-height: 32px;
+  padding: 4px 6px;
+  text-align: left;
+}
+
+.practice-save-load strong,
+.practice-save-load span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.practice-save-load strong {
+  color: #ccccff;
+  font-size: 10px;
+  font-weight: normal;
+}
+
+.practice-save-load span {
+  color: #666;
+  font-size: 9px;
+}
+
+.practice-save-delete {
+  min-height: 32px;
+  color: #aa7777;
+  font-size: 10px;
+}
+
+.practice-save-load:hover,
+.practice-save-delete:hover {
+  background: #24243e;
+  border-color: #55558a;
+}
+
+.practice-entry {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+  min-height: 24px;
+  padding: 3px 6px;
+  text-align: left;
+}
+
+.practice-entry span {
+  color: #666699;
+  font-size: 10px;
+}
+
+.practice-entry strong {
+  overflow: hidden;
+  font-size: 10px;
+  font-weight: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.practice-empty {
+  padding: 8px 4px;
+  color: #555;
+  font-size: 10px;
+  text-align: center;
+}
+
 /* ── Controls bar ─────────────────────────────────────────────────────────── */
 
 .controls {

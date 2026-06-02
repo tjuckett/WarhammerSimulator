@@ -1,5 +1,10 @@
 import type { BattleUnit } from '../types/battle';
 import type { WeaponProfile } from '../types/army';
+import {
+  ELEVENTH_EDITION_TERRAIN_OBJECTIVE_PLACEHOLDER,
+  TENTH_EDITION_MARKER_OBJECTIVE_CONTROL,
+  type ObjectiveControlProfile,
+} from './objectiveGeometry';
 
 // ─── Shared interfaces ────────────────────────────────────────────────────────
 
@@ -23,11 +28,22 @@ export interface PhaseDefinition {
   icon: string;
 }
 
+export interface RulesetMetadata {
+  id: string;
+  gameSystem: 'warhammer-40k';
+  edition: '10e' | '11e';
+  rulesVersion: string;
+  status: 'implemented' | 'placeholder' | 'unreleased';
+  compatibilitySourceId?: string;
+}
+
 export interface RulesEdition {
   id: string;
   name: string;
   description: string;
+  metadata: RulesetMetadata;
   phases: PhaseDefinition[];
+  objectiveControl: ObjectiveControlProfile;
 
   // Core combat resolution
   woundTarget(strength: number, toughness: number): number;
@@ -71,6 +87,14 @@ export const rules40K10th: RulesEdition = {
   id: 'w40k-10th',
   name: '40K 10th Edition',
   description: 'Warhammer 40,000 10th Edition (2023)',
+  metadata: {
+    id: 'w40k-10e-2023-core',
+    gameSystem: 'warhammer-40k',
+    edition: '10e',
+    rulesVersion: '2023-core',
+    status: 'implemented',
+  },
+  objectiveControl: TENTH_EDITION_MARKER_OBJECTIVE_CONTROL,
 
   phases: [
     { id: 'command',      label: 'Command',      icon: '⚡' },
@@ -194,10 +218,40 @@ export const rules40K11th: RulesEdition = {
   ...rules40K10th,
   id: 'w40k-11th',
   name: '40K 11th Edition',
-  description:
-    '11th Edition rules not yet published — simulating with 10th Edition rules as a placeholder. Update this file when the core book releases.',
+  metadata: {
+    id: 'w40k-11e-unreleased-placeholder',
+    gameSystem: 'warhammer-40k',
+    edition: '11e',
+    rulesVersion: 'unreleased',
+    status: 'unreleased',
+    compatibilitySourceId: rules40K10th.id,
+  },
+  objectiveControl: ELEVENTH_EDITION_TERRAIN_OBJECTIVE_PLACEHOLDER,
+  description: '11th Edition rules not yet published. Combat still mirrors 10th as a placeholder; objective control is isolated for terrain-objective rules.',
 };
 
 // ─── Registry ─────────────────────────────────────────────────────────────────
 
 export const EDITIONS: RulesEdition[] = [rules40K10th, rules40K11th];
+
+export function rulesetMetadataForState(rules: RulesEdition): RulesetMetadata {
+  return { ...rules.metadata };
+}
+
+export function rulesEditionForId(id: string): RulesEdition | undefined {
+  return EDITIONS.find(edition => edition.id === id);
+}
+
+export function rulesEditionForRuleset(ruleset?: RulesetMetadata | null): RulesEdition {
+  if (!ruleset) return rules40K10th;
+  return (
+    EDITIONS.find(edition => edition.metadata.id === ruleset.id)
+    ?? EDITIONS.find(edition =>
+      edition.metadata.edition === ruleset.edition
+      && edition.metadata.rulesVersion === ruleset.rulesVersion
+    )
+    ?? EDITIONS.find(edition => edition.id === ruleset.compatibilitySourceId)
+    ?? EDITIONS.find(edition => edition.metadata.edition === ruleset.edition)
+    ?? rules40K10th
+  );
+}

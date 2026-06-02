@@ -4,7 +4,10 @@ import { pointInTerrain, terrainCenter, terrainCorners } from '../engine/terrain
 import { featureColor } from '../engine/terrain';
 import { zoneFor } from '../engine/deployment';
 import { battleModelIdsWithCoherencyIssues } from '../engine/simulator';
-import { OBJECTIVE_CONTROL_RADIUS, OBJECTIVE_MARKER_RADIUS } from '../engine/objectiveGeometry';
+import {
+  TENTH_EDITION_MARKER_OBJECTIVE_CONTROL,
+  objectiveControlRadius,
+} from '../engine/objectiveGeometry';
 import type { DeploymentZoneShape } from '../data/deploymentZoneTypes';
 import { unitRosterId } from '../engine/armyUnits';
 import {
@@ -38,6 +41,7 @@ interface Props {
     onSelectModel?: (selection: ManualModelSelection | null, additive?: boolean) => void;
     onBeginModelMove?: (selection: ManualModelSelection) => void;
     onMoveModel?: (selection: ManualModelSelection, dx: number, dy: number, collide: boolean) => void;
+    onEndModelMove?: () => void;
     onRotateModel?: (selection: ManualModelSelection, degrees: number, batched?: boolean) => void;
   };
   editor?: {
@@ -367,6 +371,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       setBoxSelect(null);
     }
     dragRef.current = null;
+    if (modelDragRef.current) deployer?.onEndModelMove?.();
     modelDragRef.current = null;
     if (e.currentTarget.hasPointerCapture(e.pointerId)) {
       e.currentTarget.releasePointerCapture(e.pointerId);
@@ -565,13 +570,19 @@ function draw(
   }
 
   // ── Objectives ────────────────────────────────────────────────────────────
+  const objectiveControl = state.objectiveControl ?? TENTH_EDITION_MARKER_OBJECTIVE_CONTROL;
+  const objectiveMarkerRadius = objectiveControl.kind === 'marker'
+    ? objectiveControl.markerRadius ?? TENTH_EDITION_MARKER_OBJECTIVE_CONTROL.markerRadius ?? 0
+    : 0;
+  const objectiveRange = objectiveControlRadius(objectiveControl);
   for (let i = 0; i < state.objectives.length; i++) {
+    if (objectiveControl.kind !== 'marker' || objectiveRange === null) continue;
     const obj = state.objectives[i];
     const owner = state.objectiveOwners[i];
     const cx = obj.x * scale;
     const cy = obj.y * scale;
-    const markerRadius = OBJECTIVE_MARKER_RADIUS * scale;
-    const controlRadius = OBJECTIVE_CONTROL_RADIUS * scale;
+    const markerRadius = objectiveMarkerRadius * scale;
+    const controlRadius = objectiveRange * scale;
 
     const fillColor = owner === 0 ? `${state.armies[0].color}44`
                     : owner === 1 ? `${state.armies[1].color}44`

@@ -1,11 +1,11 @@
-import type { BattleState, BattleUnit, LogEntry, Position, Side, Terrain, TerrainFeature } from '../types/battle';
+import type { BattleState, BattleUnit, LogEntry, Phase, Position, Side, Terrain, TerrainFeature } from '../types/battle';
 import type { ImportedArmy, UnitProfile, WeaponProfile } from '../types/army';
-import type { RulesEdition } from './rulesEngine';
+import { rules40K10th, rulesetMetadataForState, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
 import { deployArmy, distanceToDeploymentZone, fp, pointInDeploymentZone, zoneFor, unitRole, type DeploymentStrategy } from './deployment';
 import { selectUnitToDrop, reactivePosition, deployModelFormation } from './deploymentBrain';
 import { DEFAULT_OBJECTIVES } from './missions';
-import { OBJECTIVE_CONTROL_RADIUS } from './objectiveGeometry';
+import { objectiveControlRadius } from './objectiveGeometry';
 import { circleFullyInTerrain, lineIntersectsTerrain, terrainCorners } from './terrainGeometry';
 import { distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, type CoherencyModel } from './coherency';
 import {
@@ -787,9 +787,18 @@ function runBattleshock(state: BattleState): LogEntry[] {
 
 // ─── Objective scoring ────────────────────────────────────────────────────────
 
-function scoreObjectives(s: BattleState, side: Side): LogEntry[] {
+function scoreObjectives(s: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
   const armyName = s.armies[side].name;
   const parts: string[] = [];
+  const objectiveControl = s.objectiveControl ?? rules.objectiveControl;
+  const controlRadius = objectiveControlRadius(objectiveControl);
+
+  if (controlRadius === null) {
+    return [log(s, side, armyName,
+      `Objective scoring unavailable for ${objectiveControl.label}; implement this ruleset case-by-case.`,
+      'info',
+    )];
+  }
 
   for (let i = 0; i < s.objectives.length; i++) {
     const obj = s.objectives[i];
@@ -798,7 +807,7 @@ function scoreObjectives(s: BattleState, side: Side): LogEntry[] {
     for (const unit of s.units) {
       if (unit.destroyed || unit.battleshocked) continue;
       const inRange = unit.modelPositions.some((model, modelIndex) => (
-        dist(model, obj) <= OBJECTIVE_CONTROL_RADIUS + modelBaseRadius(unit, modelIndex)
+        dist(model, obj) <= controlRadius + modelBaseRadius(unit, modelIndex)
       ));
       if (inRange) {
         if (unit.side === 0) oc0 += unit.profile.oc;
@@ -839,6 +848,48 @@ function checkWinner(state: BattleState): void {
 }
 
 // ─── Deep copy ────────────────────────────────────────────────────────────────
+
+const TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight', 'battle-shock'];
+const MANUAL_MODEL_EDIT_PHASES: Phase[] = ['deployment', 'movement'];
+
+function activeUnits(state: BattleState, side: Side): BattleUnit[] {
+  return state.units.filter(u => u.side === side && !u.destroyed);
+}
+
+function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
+  const side = s.activeArmy;
+  const armyName = s.armies[side].name;
+  activeUnits(s, side).forEach(u => {
+    u.activated = false;
+    u.charged = false;
+    u.inCombat = false;
+  });
+  s.phase = 'command';
+  return [
+    phaseLog(s, side, armyName, `\n=== TURN ${s.turn} - ${armyName.toUpperCase()} - ${rules.name.toUpperCase()} ===`),
+    phaseLog(s, side, armyName, `\n--- Command Phase ---`),
+  ];
+}
+
+function advanceTurnInPlace(s: BattleState): void {
+  if (s.winner !== null) return;
+
+  if (s.activeArmy === 0) {
+    s.activeArmy = 1;
+  } else {
+    s.turn++;
+    s.activeArmy = 0;
+    if (s.turn > s.maxTurns) {
+      if (s.scores[0] > s.scores[1]) s.winner = 0;
+      else if (s.scores[1] > s.scores[0]) s.winner = 1;
+      else s.winner = 'draw';
+      s.phase = 'end';
+      return;
+    }
+  }
+
+  s.phase = 'setup';
+}
 
 function clone<T>(v: T): T { return JSON.parse(JSON.stringify(v)); }
 
@@ -901,6 +952,7 @@ export function createBattleState(
   strategy2: DeploymentStrategy = 'balanced',
   setup?: BattleState['setup'],
   objectivesOverride?: Position[],
+  rules: RulesEdition = rules40K10th,
 ): BattleState {
   _logId = 0;
   _unitId = 0;
@@ -958,6 +1010,7 @@ export function createBattleState(
   place(army2, 1, positions2, terrain);
 
   return {
+    ruleset: rulesetMetadataForState(rules),
     turn: 1,
     maxTurns: 5,
     activeArmy: 0,
@@ -971,7 +1024,8 @@ export function createBattleState(
       { name: army2.name, faction: army2.faction, color: color2, army: army2 },
     ],
     objectives,
-    objectiveOwners: [null, null, null, null, null],
+    objectiveControl: rules.objectiveControl,
+    objectiveOwners: objectives.map(() => null),
     scores: [0, 0],
     unplacedUnits: [[], []],
     deployStrategies: [strategy1, strategy2],
@@ -989,6 +1043,7 @@ export function createDeploymentState(
   strategy2: DeploymentStrategy = 'balanced',
   setup?: BattleState['setup'],
   objectivesOverride?: Position[],
+  rules: RulesEdition = rules40K10th,
 ): BattleState {
   _logId = 0;
   _unitId = 0;
@@ -996,6 +1051,7 @@ export function createDeploymentState(
   const objectives: Position[] = clone(objectivesOverride ?? DEFAULT_OBJECTIVES);
 
   const state: BattleState = {
+    ruleset: rulesetMetadataForState(rules),
     turn: 1,
     maxTurns: 5,
     activeArmy: 0,
@@ -1009,7 +1065,8 @@ export function createDeploymentState(
       { name: army2.name, faction: army2.faction, color: color2, army: army2 },
     ],
     objectives,
-    objectiveOwners: [null, null, null, null, null],
+    objectiveControl: rules.objectiveControl,
+    objectiveOwners: objectives.map(() => null),
     scores: [0, 0],
     unplacedUnits: [deployableDrops(army1), deployableDrops(army2)],
     deployStrategies: [strategy1, strategy2],
@@ -1218,15 +1275,17 @@ function modelMoveHasNoBaseOverlap(s: BattleState, unit: BattleUnit, modelIndex:
 
 export function moveManualModel(state: BattleState, unitId: string, modelIndex: number, position: Position): BattleState {
   const s = clone(state);
-  if (s.phase !== 'deployment') return s;
+  if (!MANUAL_MODEL_EDIT_PHASES.includes(s.phase)) return s;
 
   const unit = s.units.find(u => u.id === unitId && !u.destroyed);
   if (!unit || !unit.modelPositions[modelIndex]) return s;
 
-  const radius = modelBaseRadius(unit, modelIndex);
-  const zone = zoneFor(unit.side, s.setup?.deployment);
-  if (!canDeployOutsideDeploymentZone(unit.profile) && !pointInDeploymentZone(position, zone, radius)) return s;
-  if (!modelIsOutsideEnemyDeploymentZoneBuffer(unit.profile, unit.side, position, modelIndex, s.setup?.deployment)) return s;
+  if (s.phase === 'deployment') {
+    const radius = modelBaseRadius(unit, modelIndex);
+    const zone = zoneFor(unit.side, s.setup?.deployment);
+    if (!canDeployOutsideDeploymentZone(unit.profile) && !pointInDeploymentZone(position, zone, radius)) return s;
+    if (!modelIsOutsideEnemyDeploymentZoneBuffer(unit.profile, unit.side, position, modelIndex, s.setup?.deployment)) return s;
+  }
 
   unit.modelPositions[modelIndex] = position;
   unit.position = centroid(unit.modelPositions);
@@ -1343,7 +1402,7 @@ export function moveManualModels(
   collide = false,
 ): BattleState {
   const s = clone(state);
-  if (s.phase !== 'deployment') return s;
+  if (!MANUAL_MODEL_EDIT_PHASES.includes(s.phase)) return s;
 
   const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
   if (!unit) return s;
@@ -1387,7 +1446,7 @@ export function undeployManualUnit(state: BattleState, unitId: string, side: Sid
 
 export function reorganizeManualUnitGrid(state: BattleState, unitId: string, side: Side, rows: number): BattleState {
   const s = clone(state);
-  if (s.phase !== 'deployment') return s;
+  if (!MANUAL_MODEL_EDIT_PHASES.includes(s.phase)) return s;
 
   const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
   if (!unit) return s;
@@ -1406,7 +1465,7 @@ export function reorganizeManualModelsGrid(
   rows: number,
 ): BattleState {
   const s = clone(state);
-  if (s.phase !== 'deployment') return s;
+  if (!MANUAL_MODEL_EDIT_PHASES.includes(s.phase)) return s;
 
   const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
   if (!unit) return s;
@@ -1431,7 +1490,7 @@ export function rotateManualModels(
   degrees: number,
 ): BattleState {
   const s = clone(state);
-  if (s.phase !== 'deployment') return s;
+  if (!MANUAL_MODEL_EDIT_PHASES.includes(s.phase)) return s;
 
   const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
   if (!unit) return s;
@@ -1515,6 +1574,63 @@ export function beginManualBattle(state: BattleState): BattleState {
   return s;
 }
 
+export function simulateNextPhase(state: BattleState, rules: RulesEdition): BattleState {
+  const s = clone(state);
+  const side = s.activeArmy;
+  const armyName = s.armies[side].name;
+  const newLogs: LogEntry[] = [];
+
+  if (s.winner !== null || s.phase === 'deployment' || s.phase === 'end') return s;
+
+  if (s.phase === 'setup') {
+    newLogs.push(...startCommandPhase(s, rules));
+    s.log = [...s.log, ...newLogs];
+    return s;
+  }
+
+  if (!TURN_PHASES.includes(s.phase)) {
+    s.phase = 'setup';
+    s.log = [...s.log, ...newLogs];
+    return s;
+  }
+
+  if (s.phase === 'battle-shock') {
+    advanceTurnInPlace(s);
+    s.log = [...s.log, ...newLogs];
+    return s;
+  }
+
+  if (s.phase === 'command') {
+    s.phase = 'movement';
+    newLogs.push(phaseLog(s, side, armyName, `\n--- Movement Phase ---`));
+    activeUnits(s, side).forEach(u => newLogs.push(...runMovement(u, s, rules)));
+  } else if (s.phase === 'movement') {
+    s.phase = 'shooting';
+    newLogs.push(phaseLog(s, side, armyName, `\n--- Shooting Phase ---`));
+    activeUnits(s, side).forEach(u => newLogs.push(...runShooting(u, s, rules)));
+  } else if (s.phase === 'shooting') {
+    s.phase = 'charge';
+    newLogs.push(phaseLog(s, side, armyName, `\n--- Charge Phase ---`));
+    activeUnits(s, side).filter(u => !u.inCombat).forEach(u => newLogs.push(...runCharge(u, s, rules)));
+  } else if (s.phase === 'charge') {
+    s.phase = 'fight';
+    newLogs.push(phaseLog(s, side, armyName, `\n--- Fight Phase ---`));
+    activeUnits(s, side).filter(u => u.charged).forEach(u => newLogs.push(...runFight(u, s, rules)));
+    activeUnits(s, side).filter(u => !u.charged && u.inCombat).forEach(u => newLogs.push(...runFight(u, s, rules)));
+    s.units.filter(u => u.side !== side && !u.destroyed && u.inCombat)
+      .forEach(u => newLogs.push(...runFight(u, s, rules)));
+  } else if (s.phase === 'fight') {
+    s.phase = 'battle-shock';
+    newLogs.push(phaseLog(s, side, armyName, `\n--- Battle-shock Phase ---`));
+    newLogs.push(...runBattleshock(s));
+    newLogs.push(...scoreObjectives(s, side, rules));
+  }
+
+  checkWinner(s);
+  s.log = [...s.log, ...newLogs];
+  return s;
+}
+
 export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): BattleState {
   const s = clone(state);
   const side = s.activeArmy;
@@ -1571,7 +1687,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   }
 
   // Objective scoring (after battle-shock so shocked units have OC 0)
-  newLogs.push(...scoreObjectives(s, side));
+  newLogs.push(...scoreObjectives(s, side, rules));
 
   s.log = [...s.log, ...newLogs];
   return s;

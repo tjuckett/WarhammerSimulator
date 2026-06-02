@@ -1,4 +1,6 @@
 import type { UnitProfile, ImportedArmy } from './army';
+import type { ObjectiveControlProfile } from '../engine/objectiveGeometry';
+import type { RulesetMetadata } from '../engine/rulesEngine';
 
 export type Phase =
   | 'deployment'
@@ -103,6 +105,7 @@ export interface BattleSetup {
 }
 
 export interface BattleState {
+  ruleset: RulesetMetadata;
   turn: number;
   maxTurns: number;
   activeArmy: Side;
@@ -116,6 +119,7 @@ export interface BattleState {
     { name: string; faction: string; color: string; army: ImportedArmy },
   ];
   objectives: Position[];
+  objectiveControl: ObjectiveControlProfile;
   objectiveOwners: (Side | null)[];
   scores: [number, number];
   // Deployment phase: units not yet placed on the board
