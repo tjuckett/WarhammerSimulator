@@ -1,0 +1,12 @@
+{
+  "id": "search-and-destroy",
+  "deployment": "Search and Destroy",
+  "description": "Search and Destroy objective markers",
+  "objectives": [
+    { "x": 14, "y": 34 },
+    { "x": 46, "y": 10 },
+    { "x": 14, "y": 10 },
+    { "x": 30, "y": 22 },
+    { "x": 46, "y": 34 }
+  ]
+}

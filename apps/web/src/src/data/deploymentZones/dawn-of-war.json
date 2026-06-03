@@ -1,0 +1,18 @@
+{
+  "id": "dawn-of-war",
+  "deployment": "Dawn of War",
+  "description": "Dawn of War deployment zones",
+  "axis": "y",
+  "sides": [
+    {
+      "name": "Top Deployment Zone",
+      "role": "attacker",
+      "shapes": [{ "type": "rect", "x1": 0, "y1": 0, "x2": 60, "y2": 12 }]
+    },
+    {
+      "name": "Bottom Deployment Zone",
+      "role": "defender",
+      "shapes": [{ "type": "rect", "x1": 0, "y1": 32, "x2": 60, "y2": 44 }]
+    }
+  ]
+}

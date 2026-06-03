@@ -1,0 +1,120 @@
+{
+  "faction": "Leagues of Votann",
+  "source": {
+    "title": "Chapter Approved Tournament Companion - Base Size Guide",
+    "lastUpdated": "June 2025",
+    "pages": [
+      38
+    ]
+  },
+  "units": {
+    "brôkhyr iron-master": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "brôkhyr iron-master: e-cog": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "brôkhyr iron-master: ironkin assistant": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "brôkhyr thunderkyn": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "cthonian beserks": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "cthonian beserks: mole grenade launcher": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "einhyr champion": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "einhyr hearthguard": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "grimnyr": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "grimnyr: corv": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "hearthkyn warriors": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "hekaton land fortress": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "hernkyn pioneers": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 90,
+        "lengthMm": 52.5,
+        "label": "Oval Base"
+      }
+    },
+    "hernkyn yaegirs": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "kâhl": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "sagitaur": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "ûthar the destined": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    }
+  }
+}

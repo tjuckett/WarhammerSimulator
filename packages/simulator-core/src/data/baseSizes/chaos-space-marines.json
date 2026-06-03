@@ -1,0 +1,363 @@
+{
+  "faction": "Chaos Space Marines",
+  "source": {
+    "title": "Chapter Approved Tournament Companion - Base Size Guide",
+    "lastUpdated": "June 2025",
+    "pages": [
+      27,
+      28
+    ]
+  },
+  "units": {
+    "abaddon the despoiler": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "accursed cultists: mutant": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "accursed cultists: torment": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "chaos bikers": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 75,
+        "lengthMm": 42,
+        "label": "Oval Base"
+      }
+    },
+    "chaos land raider": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "chaos lord": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "chaos lord in terminator armour": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "chaos lord with jump pack": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "chaos predator annihilator": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "chaos predator destructor": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "chaos rhino": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "chaos spawn": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "chaos terminator squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "chaos vindicator": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "chosen": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "cultist firebrand": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "cultist mob": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "cypher": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "dark apostle": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "dark apostle: dark disciple": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "dark commune: blessed blade": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "dark commune: cult demagogue, mindwitch, iconarch": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "defiler": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 160
+      }
+    },
+    "fabius bile": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "fabius bile: surgeon acolyte": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "fellgor beastmen": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "forgefiend": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "haarken worldclaimer": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "havocs": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "helbrute": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "heldrake": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "heretic astartes daemon prince": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "heretic astartes daemon prince with wings": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "huron blackheart": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "khorne lord of skulls": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "legionaries": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "lord discordant on helstalker": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "master of executions": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "master of possession": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "maulerfiend": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "nemesis claw": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "noctilith crown": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "obliterators": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "possessed": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "raptors": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "sorcerer": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "sorcerer in terminator armour": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "traitor enforcer": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "traitor enforcer: traitor ogryn": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "traitor guardsmen squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "vashtorr the arkifane": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 80
+      }
+    },
+    "venomcrawler": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "warp talons": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "warpsmith": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 60,
+        "lengthMm": 35.5,
+        "label": "Oval Base"
+      }
+    }
+  }
+}

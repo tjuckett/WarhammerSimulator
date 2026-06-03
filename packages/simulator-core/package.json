@@ -1,0 +1,19 @@
+{
+  "name": "@warhammer-simulator/core",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./data/*": "./src/data/*.ts",
+    "./engine/*": "./src/engine/*.ts",
+    "./parsers/*": "./src/parsers/*.ts",
+    "./practice/*": "./src/practice/*.ts",
+    "./types/*": "./src/types/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.2"
+  }
+}

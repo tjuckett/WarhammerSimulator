@@ -1,0 +1,22 @@
+# Dependencies
+node_modules
+*/node_modules
+apps/*/node_modules
+
+# Build output
+dist
+dist-ssr
+apps/*/dist
+apps/*/.next
+apps/*/.next-build
+apps/*/.next-build-*
+
+# Logs
+*.log
+
+# Local/editor files
+*.local
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json

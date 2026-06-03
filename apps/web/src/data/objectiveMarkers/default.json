@@ -1,0 +1,12 @@
+{
+  "id": "default",
+  "deployment": "Default",
+  "description": "Fallback objective markers",
+  "objectives": [
+    { "x": 30, "y": 22 },
+    { "x": 15, "y": 11 },
+    { "x": 45, "y": 11 },
+    { "x": 15, "y": 33 },
+    { "x": 45, "y": 33 }
+  ]
+}

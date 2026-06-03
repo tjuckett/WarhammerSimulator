@@ -1,0 +1,36 @@
+{
+  "id": "crucible-of-battle",
+  "deployment": "Crucible of Battle",
+  "description": "Crucible of Battle deployment zones",
+  "axis": "diagonal",
+  "sides": [
+    {
+      "name": "Left Deployment Zone",
+      "role": "defender",
+      "shapes": [
+        {
+          "type": "triangle",
+          "points": [
+            { "x": 0, "y": 0 },
+            { "x": 30, "y": 44 },
+            { "x": 0, "y": 44 }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Right Deployment Zone",
+      "role": "attacker",
+      "shapes": [
+        {
+          "type": "triangle",
+          "points": [
+            { "x": 30, "y": 0 },
+            { "x": 60, "y": 0 },
+            { "x": 60, "y": 44 }
+          ]
+        }
+      ]
+    }
+  ]
+}

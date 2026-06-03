@@ -1,0 +1,44 @@
+{
+  "faction": "Adeptus Titanicus",
+  "source": {
+    "title": "Chapter Approved Tournament Companion - Base Size Guide",
+    "lastUpdated": "June 2025",
+    "pages": [
+      17
+    ]
+  },
+  "units": {
+    "reaver titan": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "warbringer nemesis titan": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "warhound titan": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "warlord titan": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    }
+  }
+}

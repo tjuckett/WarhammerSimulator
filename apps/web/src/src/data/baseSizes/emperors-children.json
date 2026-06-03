@@ -1,0 +1,156 @@
+{
+  "faction": "Emperor's Children",
+  "source": {
+    "title": "Chapter Approved Tournament Companion - Base Size Guide",
+    "lastUpdated": "June 2025",
+    "pages": [
+      33
+    ]
+  },
+  "units": {
+    "chaos land raider": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "chaos rhino": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "chaos spawn": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "chaos terminators": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "daemon prince of slaanesh": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "daemon prince of slaanesh with wings": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "flawless blades": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "fulgrim": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 130
+      }
+    },
+    "heldrake": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "infractors": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "lord exultant": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "lord kakophonist": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "lucius the eternal": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "maulerfiend": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "noise marines": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "sorcerer": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "tormentors": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "daemonettes": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "fiends": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 75,
+        "lengthMm": 42,
+        "label": "Oval Base"
+      }
+    },
+    "keeper of secrets": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "seekers": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 60,
+        "lengthMm": 35.5,
+        "label": "Oval Base"
+      }
+    },
+    "shalaxi helbane": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    }
+  }
+}

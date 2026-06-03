@@ -1,0 +1,104 @@
+{
+  "faction": "Blood Angels",
+  "source": {
+    "title": "Chapter Approved Tournament Companion - Base Size Guide",
+    "lastUpdated": "June 2025",
+    "pages": [
+      23
+    ]
+  },
+  "units": {
+    "astorath": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "baal predator": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "blood angels captain": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "chief librarian mephiston": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "commander dante": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "death company captain": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "death company captain with jump pack": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "death company dreadnought": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 90
+      }
+    },
+    "death company marines": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "death company marines with bolt rifles": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "death company marines with jump packs": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "lemartes": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "sanguinary guard": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "sanguinary priest": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "the sanguinor": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    }
+  }
+}

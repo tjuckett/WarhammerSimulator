@@ -1,0 +1,214 @@
+{
+  "faction": "Grey Knights",
+  "source": {
+    "title": "Chapter Approved Tournament Companion - Base Size Guide",
+    "lastUpdated": "June 2025",
+    "pages": [
+      35
+    ]
+  },
+  "units": {
+    "brother-captain": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "brother-captain stern": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "brotherhood champion": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "brotherhood chaplain": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "brotherhood librarian": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "brotherhood techmarine": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "brotherhood terminator squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "castellan crowe": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "grand master": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "grand master in nemesis dreadknight": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "grand master voldus": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "grey knights land raider": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "grey knights land raider crusader": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "grey knights land raider redeemer": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "grey knights razorback": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "grey knights rhino": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "grey knights stormhawk interceptor": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "grey knights stormraven gunship": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "grey knights stormtalon gunship": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "grey knights venerable dreadnought": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "interceptor squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "kaldor draigo": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "nemesis dreadknight": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "paladin squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "purgation squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "purifier squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "servitors": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "strike squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "grey knights thunderhawk gunship": {
+      "base": {
+        "shape": "other",
+        "label": "Unique"
+      }
+    },
+    "land raider banisher": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    }
+  }
+}

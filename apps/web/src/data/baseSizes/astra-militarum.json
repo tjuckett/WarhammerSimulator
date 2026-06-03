@@ -1,0 +1,489 @@
+{
+  "faction": "Astra Militarum",
+  "source": {
+    "title": "Chapter Approved Tournament Companion - Base Size Guide",
+    "lastUpdated": "June 2025",
+    "pages": [
+      20,
+      21
+    ]
+  },
+  "units": {
+    "aegis defence line": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "armoured sentinels": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 80
+      }
+    },
+    "artillery team": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 130
+      }
+    },
+    "attilan rough riders": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 60,
+        "lengthMm": 35.5,
+        "label": "Oval Base"
+      }
+    },
+    "baneblade": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "banehammer": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "banesword": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "basilisk": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "bullgryn squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "cadian castellan": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "cadian command squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "cadian heavy weapons squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "cadian shock troops": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "catachan command squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "catachan heavy weapons squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 60
+      }
+    },
+    "catachan jungle fighters": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "chimera": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "commissar": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "death korps of krieg": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "death riders": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 60,
+        "lengthMm": 35.5,
+        "label": "Oval Base"
+      }
+    },
+    "deathstrike": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "doomhammer": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "field ordnance battery": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 100
+      }
+    },
+    "gaunt's ghosts": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "hellhammer": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "hellhound": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "hydra": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "kasrkin": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "krieg combat engineers": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "krieg command squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "krieg command squad: lord commissar": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "krieg heavy weapons squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 50
+      }
+    },
+    "krieg heavy weapons squad: fire coordinator": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "leman russ battle tank": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "leman russ commander": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "leman russ demolisher": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "leman russ eradicator": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "leman russ executioner": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "leman russ exterminator": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "leman russ punisher": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "leman russ vanquisher": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "lord marshal dreir": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 75,
+        "lengthMm": 42,
+        "label": "Oval Base"
+      }
+    },
+    "lord solar leontus": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 80
+      }
+    },
+    "manticore": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "militarum tempestus command squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "ministorum priest": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "nork deddog": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "ogryn bodyguard": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "ogryn squad": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 40
+      }
+    },
+    "primaris psyker": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "ratlings": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "rogal dorn battle tank": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "rogal dorn commander": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "scout sentinels": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 80
+      }
+    },
+    "shadowsword": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "sly marbo": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "stormlord": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "stormsword": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "taurox": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "taurox prime": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "tech-priest enginseer": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "tempestus aquilons": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 28.5
+      }
+    },
+    "tempestus scions": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 25
+      }
+    },
+    "ursula creed": {
+      "base": {
+        "shape": "round",
+        "diameterMm": 32
+      }
+    },
+    "valkyrie": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "wyvern": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    },
+    "avenger strike fighter": {
+      "base": {
+        "shape": "oval",
+        "widthMm": 120,
+        "lengthMm": 92,
+        "label": "Oval Base"
+      }
+    },
+    "cyclops demolition vehicle": {
+      "base": {
+        "shape": "hull",
+        "widthMm": 0,
+        "lengthMm": 0,
+        "label": "Hull"
+      }
+    }
+  }
+}
