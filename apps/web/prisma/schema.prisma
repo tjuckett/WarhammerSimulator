@@ -1,0 +1,96 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PracticeCheckpointKind {
+  MANUAL
+  AUTO_PHASE
+}
+
+model User {
+  id          String   @id @default(cuid())
+  email       String?  @unique
+  displayName String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  games PracticeGame[]
+}
+
+model PracticeGame {
+  id        String   @id @default(cuid())
+  ownerId   String?
+  name      String
+  ruleset   Json
+  setup     Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner       User?                @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  branches    PracticeBranch[]
+  checkpoints PracticeCheckpoint[]
+
+  @@index([ownerId])
+  @@index([updatedAt])
+}
+
+model PracticeBranch {
+  id                 String   @id @default(cuid())
+  gameId             String
+  parentCheckpointId String?
+  name               String?
+  initialState       Json
+  timelineMetadata   Json
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  game             PracticeGame        @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  checkpoints      PracticeCheckpoint[]
+  timelineEntries  PracticeTimelineEntry[]
+
+  @@index([gameId])
+  @@index([parentCheckpointId])
+}
+
+model PracticeCheckpoint {
+  id                 String                 @id @default(cuid())
+  gameId             String
+  branchId           String
+  parentCheckpointId String?
+  kind               PracticeCheckpointKind
+  name               String
+  sequence           Int
+  timelineCursor     Int
+  state              Json
+  metadata           Json?
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+
+  game   PracticeGame   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  branch PracticeBranch @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@index([gameId, sequence])
+  @@index([branchId, sequence])
+  @@index([parentCheckpointId])
+}
+
+model PracticeTimelineEntry {
+  id          String   @id @default(cuid())
+  branchId    String
+  index       Int
+  action      Json
+  stateBefore Json
+  stateAfter  Json
+  note        String?
+  createdAt   DateTime @default(now())
+
+  branch PracticeBranch @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@unique([branchId, index])
+  @@index([branchId])
+}

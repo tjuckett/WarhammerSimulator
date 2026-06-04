@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import type { PracticeTimeline, PracticeTimelineEntry } from '@warhammer-simulator/core/practice/timeline';
 import type { GameAction } from '@warhammer-simulator/core/practice/actions';
 import type { PracticeScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
+import type { PracticeStorageHealth } from '../practice/apiPracticeScenarioRepository';
 
 interface Props {
   timeline: PracticeTimeline | null;
@@ -10,6 +11,7 @@ interface Props {
   activeGameId: string | null;
   selectedGameId: string | null;
   status: string;
+  storageStatus: PracticeStorageHealth | null;
   onUndo: () => void;
   onRedo: () => void;
   onSeek: (cursor: number) => void;
@@ -64,6 +66,7 @@ export function PracticeTimelinePanel({
   activeGameId,
   selectedGameId,
   status,
+  storageStatus,
   onUndo,
   onRedo,
   onSeek,
@@ -77,9 +80,14 @@ export function PracticeTimelinePanel({
   const hasTimelineEntries = !!timeline && total > 0;
   const activeEntries = timeline ? visibleEntries(timeline) : [];
   const effectiveGameId = selectedGameId;
-  const visibleScenarios = effectiveGameId
+  const visibleScenarios = [...(effectiveGameId
     ? savedScenarios.filter(scenario => scenario.gameId === effectiveGameId)
-    : savedScenarios;
+    : savedScenarios)]
+    .sort((a, b) => {
+      const sequenceCompare = (a.sequence ?? 0) - (b.sequence ?? 0);
+      if (sequenceCompare !== 0) return sequenceCompare;
+      return a.createdAt.localeCompare(b.createdAt);
+    });
   const gameOptions = useMemo(() => {
     const games = new Map<string, { id: string; label: string; count: number; createdAt: string }>();
     for (const scenario of savedScenarios) {
@@ -97,8 +105,13 @@ export function PracticeTimelinePanel({
         createdAt: scenario.createdAt,
       });
     }
-    return Array.from(games.values());
-  }, [savedScenarios]);
+    return Array.from(games.values())
+      .sort((a, b) => {
+        if (a.id === activeGameId) return -1;
+        if (b.id === activeGameId) return 1;
+        return b.createdAt.localeCompare(a.createdAt);
+      });
+  }, [savedScenarios, activeGameId]);
   const savedById = useMemo(
     () => new Map(visibleScenarios.map(scenario => [scenario.id, scenario])),
     [visibleScenarios],
@@ -172,6 +185,10 @@ export function PracticeTimelinePanel({
         <button type="button" onClick={onRedo} disabled={!hasTimelineEntries || cursor >= total}>Redo</button>
         <button type="button" onClick={onSave} disabled={!timeline}>Save Checkpoint</button>
       </div>
+      <div className={`practice-storage practice-storage-${storageStatus?.storage ?? 'unknown'}`}>
+        <strong>{storageStatus?.storage === 'database' ? 'Database saves' : 'Local saves'}</strong>
+        <span>{storageStatus?.message ?? 'Checking practice save storage...'}</span>
+      </div>
       {status && <div className="practice-status">{status}</div>}
 
       <div className="practice-game-filter">
@@ -192,13 +209,11 @@ export function PracticeTimelinePanel({
 
       <div className="practice-saves">
         {visibleScenarios.length ? saveGroups.map(group => (
-          <div className="practice-save-group" key={group.id}>
-            {!effectiveGameId && (
-              <div className="practice-save-group-title">
-                <span>{group.id === activeGameId ? 'Current: ' : ''}{group.label}</span>
-                <span>{group.createdAt.slice(0, 10)} - {group.scenarios.length}</span>
-              </div>
-            )}
+          <div className={`practice-save-group${group.id === activeGameId ? ' is-current-game' : ''}`} key={group.id}>
+            <div className="practice-save-group-title">
+              <span>{group.id === activeGameId ? 'Current: ' : ''}{group.label}</span>
+              <span>{group.createdAt.slice(0, 10)} - {group.scenarios.length}</span>
+            </div>
             {group.scenarios.map(scenario => (
               <div
                 className={`practice-save-row${scenario.id === activeCheckpointId ? ' is-active' : ''}`}
@@ -211,7 +226,7 @@ export function PracticeTimelinePanel({
                   onClick={() => onLoad(scenario.id)}
                   title={`${scenario.steps} steps - ${scenario.updatedAt}`}
                 >
-                  <strong>{scenario.sequence ? `#${scenario.sequence} ${scenario.name}` : scenario.name}</strong>
+                  <strong>{scenario.sequence ? `#${scenario.sequence} ${scenario.name}` : scenario.name}{scenario.id === activeCheckpointId ? ' (current)' : ''}</strong>
                   <span>
                     {scenario.setup?.missionCode ?? scenario.ruleset.edition} - {checkpointKindLabel(scenario)} - {checkpointRelation(scenario)} - {scenario.steps} step{scenario.steps === 1 ? '' : 's'}
                   </span>

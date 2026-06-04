@@ -69,7 +69,7 @@ export function ArmyPanel({
           onImport(applyBaseSizesToArmy(normalizeArmyForEditing(json)));
           return;
         }
-        import('../parsers/battlescribe').then(({ parseBattleScribeJSON }) => {
+        import('@warhammer-simulator/core/parsers/battlescribe').then(({ parseBattleScribeJSON }) => {
           try {
             onImport(normalizeArmyForEditing(parseBattleScribeJSON(json)));
           } catch (err) {

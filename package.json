@@ -9,6 +9,12 @@
   ],
   "scripts": {
     "build": "npm --workspace @warhammer-simulator/web run build",
+    "db:generate": "npm --workspace @warhammer-simulator/web run db:generate",
+    "db:migrate": "npm --workspace @warhammer-simulator/web run db:migrate",
+    "db:push": "npm --workspace @warhammer-simulator/web run db:push",
+    "db:studio": "npm --workspace @warhammer-simulator/web run db:studio",
+    "docker:db": "docker compose up -d db",
+    "setup:local": "npm run docker:db && npm run db:migrate",
     "lint": "npm --workspace @warhammer-simulator/web run lint"
   },
   "devDependencies": {

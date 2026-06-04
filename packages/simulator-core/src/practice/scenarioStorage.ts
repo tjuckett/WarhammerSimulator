@@ -2,6 +2,7 @@ import type { BattleSetup } from '../types/battle';
 import type { RulesetMetadata } from '../engine/rulesEngine';
 import { type PracticeCheckpointKind, type PracticeScenario } from './scenarios';
 import { currentTimelineState, type PracticeTimeline } from './timeline';
+import type { PracticeScenarioRepository } from './scenarioRepository';
 
 export const PRACTICE_SCENARIO_STORAGE_KEY = 'warhammer-practice-scenarios-v1';
 export const PRACTICE_BRANCH_TIMELINE_STORAGE_KEY = 'warhammer-practice-branch-timelines-v1';
@@ -240,3 +241,10 @@ export function deletePracticeScenarios(ids: string[]): PracticeScenarioSummary[
   writeTimelineLibrary({ version: 1, timelines });
   return loadPracticeScenarioSummaries();
 }
+
+export const localPracticeScenarioRepository: PracticeScenarioRepository = {
+  listSummaries: async () => loadPracticeScenarioSummaries(),
+  loadScenario: async id => loadPracticeScenario(id),
+  saveScenario: async scenario => savePracticeScenario(scenario),
+  deleteScenarios: async ids => deletePracticeScenarios(ids),
+};

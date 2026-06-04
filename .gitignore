@@ -10,11 +10,15 @@ apps/*/dist
 apps/*/.next
 apps/*/.next-build
 apps/*/.next-build-*
+apps/*/generated/prisma
+apps/*/src/generated/prisma
 
 # Logs
 *.log
 
 # Local/editor files
+.env
+.env*.local
 *.local
 .DS_Store
 .idea

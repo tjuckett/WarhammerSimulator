@@ -8,6 +8,7 @@ the app moves to Next.js or a backend.
 - `actions.ts` defines serializable player/simulator actions.
 - `timeline.ts` records an initial `BattleState`, action entries, snapshots, and a cursor.
 - `scenarios.ts` wraps a timeline with saved-practice metadata.
+- `scenarioRepository.ts` defines the save/load/delete boundary.
 - `scenarioStorage.ts` is the temporary browser-local persistence adapter.
 
 The practice layer should stay free of React imports. UI code can create, save, load,
@@ -26,14 +27,16 @@ Timeline entries store both the action and exact `stateBefore` / `stateAfter`
 snapshots. Snapshots make rewind exact today, including random dice results. Actions
 remain available for later server sync, replay comparison, or authoritative validation.
 
-## Before Stage 2
+## Stage 2
 
-The app is ready to move toward a Next.js shell once these remain true:
+The app is ready to move toward backend persistence once these remain true:
 
 - `BattleState` carries ruleset and objective-control metadata.
 - Practice actions, timelines, scenarios, and storage are serializable.
 - Local checkpoint save, load, branch, seek, undo, and redo work without React-owned
   format assumptions.
+- UI code reaches save/load/delete behavior through the repository boundary rather
+  than directly assuming a browser-local adapter.
 - Edition-specific behavior is resolved from the scenario state, not global UI state.
 
 ## Checkpoint Model
