@@ -12,6 +12,7 @@ apps/*/.next-build
 apps/*/.next-build-*
 apps/*/generated/prisma
 apps/*/src/generated/prisma
+packages/*/.test-dist
 
 # Logs
 *.log

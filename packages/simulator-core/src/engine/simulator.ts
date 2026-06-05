@@ -1333,7 +1333,7 @@ function manualMoveHasNoWallOverlap(state: BattleState, movingUnit: BattleUnit, 
     const footprint = modelFootprint(movingUnit, modelIndex);
     for (const terrain of state.terrain) {
       for (const feature of terrain.features) {
-        if (feature.blocksMovement && baseFootprintIntersectsRect(model, footprint, feature)) return false;
+        if (baseFootprintIntersectsRect(model, footprint, feature)) return false;
       }
     }
   }

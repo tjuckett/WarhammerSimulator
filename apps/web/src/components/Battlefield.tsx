@@ -3,7 +3,7 @@ import type { BattleState, BattleUnit, Position } from '@warhammer-simulator/cor
 import { pointInTerrain, terrainCenter, terrainCorners } from '@warhammer-simulator/core/engine/terrainGeometry';
 import { featureColor } from '@warhammer-simulator/core/engine/terrain';
 import { zoneFor } from '@warhammer-simulator/core/engine/deployment';
-import { battleModelIdsWithCoherencyIssues } from '@warhammer-simulator/core/engine/simulator';
+import { battleModelIdsWithCoherencyIssues, moveManualModels } from '@warhammer-simulator/core/engine/simulator';
 import {
   TENTH_EDITION_MARKER_OBJECTIVE_CONTROL,
   objectiveControlRadius,
@@ -70,6 +70,8 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     selection: ManualModelSelection;
     start: Position;
     current: Position;
+    originState: BattleState;
+    previewState: BattleState;
     collide: boolean;
     frameId: number | null;
     moved: boolean;
@@ -85,7 +87,8 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
   const [spacePanning, setSpacePanning] = useState(false);
 
   function renderCanvas(
-    dragPreview: { selection: ManualModelSelection; dx: number; dy: number } | null = currentModelDragPreview(),
+    drawState: BattleState = state,
+    dragPreview: { selection: ManualModelSelection; dx: number; dy: number } | null = null,
   ) {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -110,7 +113,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     const ctx = canvas.getContext('2d')!;
     draw(
       ctx,
-      state,
+      drawState,
       scale,
       bitmapW,
       bitmapH,
@@ -172,14 +175,34 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     };
   }
 
-  function currentModelDragPreview() {
-    const drag = modelDragRef.current;
-    if (!drag || !drag.moved) return null;
-    return {
-      selection: drag.selection,
-      dx: drag.current.x - drag.start.x,
-      dy: drag.current.y - drag.start.y,
-    };
+  function movedStateForSelection(
+    sourceState: BattleState,
+    selection: ManualModelSelection,
+    dx: number,
+    dy: number,
+    collide: boolean,
+  ): BattleState {
+    return selection.parts.reduce(
+      (next, part) => moveManualModels(next, part.unitId, part.side, part.modelIndices, dx, dy, collide),
+      sourceState,
+    );
+  }
+
+  function firstSelectedModelPosition(sourceState: BattleState, selection: ManualModelSelection): Position | null {
+    const firstPart = selection.parts[0];
+    const firstIndex = firstPart?.modelIndices[0];
+    if (!firstPart || firstIndex === undefined) return null;
+    const unit = sourceState.units.find(candidate =>
+      candidate.id === firstPart.unitId && candidate.side === firstPart.side && !candidate.destroyed,
+    );
+    return unit?.modelPositions[firstIndex] ?? null;
+  }
+
+  function appliedDragDelta(drag: NonNullable<typeof modelDragRef.current>): Position {
+    const before = firstSelectedModelPosition(drag.originState, drag.selection);
+    const after = firstSelectedModelPosition(drag.previewState, drag.selection);
+    if (!before || !after) return { x: 0, y: 0 };
+    return { x: after.x - before.x, y: after.y - before.y };
   }
 
   function scheduleModelDragRender() {
@@ -187,8 +210,9 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     if (!drag || drag.frameId !== null) return;
     drag.frameId = requestAnimationFrame(() => {
       const current = modelDragRef.current;
-      if (current) current.frameId = null;
-      renderCanvas();
+      if (!current) return;
+      current.frameId = null;
+      renderCanvas(current.previewState);
     });
   }
 
@@ -338,6 +362,8 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
             selection: modelSelection,
             start: point,
             current: point,
+            originState: state,
+            previewState: state,
             collide: e.shiftKey,
             frameId: null,
             moved: false,
@@ -387,8 +413,23 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       const movedDistance = Math.hypot(point.x - drag.start.x, point.y - drag.start.y);
       if (!drag.moved && movedDistance <= 0.25) return;
       drag.moved = true;
+      const dx = point.x - drag.current.x;
+      const dy = point.y - drag.current.y;
       drag.current = point;
-      drag.collide = drag.collide || e.shiftKey;
+      drag.collide = e.shiftKey;
+      if (drag.collide) {
+        if (Math.abs(dx) >= 0.001 || Math.abs(dy) >= 0.001) {
+          drag.previewState = movedStateForSelection(drag.previewState, drag.selection, dx, dy, true);
+        }
+      } else {
+        drag.previewState = movedStateForSelection(
+          drag.originState,
+          drag.selection,
+          point.x - drag.start.x,
+          point.y - drag.start.y,
+          false,
+        );
+      }
       scheduleModelDragRender();
       return;
     }
@@ -435,11 +476,24 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       cancelModelDragFrame();
       if (drag.moved && deployer?.onMoveModel) {
         const point = boardPoint(e);
-        drag.current = point;
-        const dx = point.x - drag.start.x;
-        const dy = point.y - drag.start.y;
-        if (Math.abs(dx) >= 0.001 || Math.abs(dy) >= 0.001) {
-          deployer.onMoveModel(drag.selection, dx, dy, drag.collide || e.shiftKey);
+        const finalDx = point.x - drag.current.x;
+        const finalDy = point.y - drag.current.y;
+        if (Math.abs(finalDx) >= 0.001 || Math.abs(finalDy) >= 0.001) {
+          if (e.shiftKey) {
+            drag.previewState = movedStateForSelection(drag.previewState, drag.selection, finalDx, finalDy, true);
+          } else {
+            drag.previewState = movedStateForSelection(
+              drag.originState,
+              drag.selection,
+              point.x - drag.start.x,
+              point.y - drag.start.y,
+              false,
+            );
+          }
+        }
+        const applied = appliedDragDelta(drag);
+        if (Math.abs(applied.x) >= 0.001 || Math.abs(applied.y) >= 0.001) {
+          deployer.onMoveModel(drag.selection, applied.x, applied.y, false);
         }
       }
       deployer?.onEndModelMove?.();

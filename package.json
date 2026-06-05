@@ -15,7 +15,8 @@
     "db:studio": "npm --workspace @warhammer-simulator/web run db:studio",
     "docker:db": "docker compose up -d db",
     "setup:local": "npm run docker:db && npm run db:migrate",
-    "lint": "npm --workspace @warhammer-simulator/web run lint"
+    "lint": "npm --workspace @warhammer-simulator/web run lint",
+    "test": "npm --workspace @warhammer-simulator/core run test"
   },
   "devDependencies": {
     "@emotion/react": "^11.14.0",

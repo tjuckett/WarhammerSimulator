@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "ignoreDeprecations": "6.0",
+    "outDir": ".test-dist",
+    "rootDir": ".",
+    "noEmit": false,
+    "verbatimModuleSyntax": false,
+    "erasableSyntaxOnly": false,
+    "types": ["node"],
+    "lib": ["ES2023", "DOM"]
+  },
+  "include": ["src", "test"]
+}
