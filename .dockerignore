@@ -1,0 +1,29 @@
+# Dependencies
+node_modules
+*/node_modules
+apps/*/node_modules
+
+# Build output
+dist
+dist-ssr
+apps/*/dist
+apps/*/.next
+apps/*/.next-build
+apps/*/.next-build-*
+apps/*/generated/prisma
+apps/*/src/generated/prisma
+packages/*/.test-dist
+
+# Logs
+*.log
+
+# Local/editor files
+.env
+.env*.local
+.env.production
+*.local
+.git
+.gitignore
+.DS_Store
+.idea
+.vscode

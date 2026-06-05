@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Container version="2">
+  <Name>warhammer-simulator</Name>
+  <Repository>timjuckett/warhammer-simulator:latest</Repository>
+  <Registry>https://hub.docker.com/r/timjuckett/warhammer-simulator</Registry>
+  <Network>warhammer-net</Network>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support/>
+  <Project/>
+  <Overview>Warhammer Practice Table web app. Requires an existing PostgreSQL container on the same Docker network.</Overview>
+  <Category>GameServers: Other:</Category>
+  <WebUI>http://[IP]:[PORT:3000]/</WebUI>
+  <TemplateURL/>
+  <Icon/>
+  <ExtraParams/>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled/>
+  <DonateText/>
+  <DonateLink/>
+  <Requires>Requires an existing PostgreSQL container on the same Docker network.</Requires>
+  <Config Name="Database URL" Target="DATABASE_URL" Default="postgresql://warhammer:change-me@postgres-container-name:5432/warhammer_simulator?schema=public" Mode="" Description="PostgreSQL connection string. Use the PostgreSQL container name as the host when both containers are on warhammer-net." Type="Variable" Display="always" Required="true" Mask="true">postgresql://warhammer:change-me@postgres-container-name:5432/warhammer_simulator?schema=public</Config>
+  <Config Name="Public API Base URL" Target="NEXT_PUBLIC_API_BASE_URL" Default="" Mode="" Description="Leave blank unless the app is hosted behind a path or separate API origin." Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  <Config Name="Node Environment" Target="NODE_ENV" Default="production" Mode="" Description="Production runtime mode." Type="Variable" Display="advanced" Required="true" Mask="false">production</Config>
+  <Config Name="Disable Next Telemetry" Target="NEXT_TELEMETRY_DISABLED" Default="1" Mode="" Description="Disable Next.js telemetry in production." Type="Variable" Display="advanced" Required="true" Mask="false">1</Config>
+  <Config Name="Port" Target="3000" Default="3000" Mode="tcp" Description="Optional host port for LAN testing. Reverse proxies on warhammer-net can use warhammer-simulator:3000 without this mapping." Type="Port" Display="always" Required="false" Mask="false">3000</Config>
+</Container>
