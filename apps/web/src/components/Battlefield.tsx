@@ -1180,8 +1180,8 @@ function drawUnit(
   const maxModelR = Math.max(...modelRadii, scale * 0.48);
 
   const fillColor = unit.battleshocked ? '#888' : color;
-  const ringColor = unit.charged ? '#ffe000' : unit.inCombat ? '#ff8800' : 'rgba(255,255,255,0.72)';
-  const ringWidth = unit.charged || unit.inCombat ? 2.5 : 1.2;
+  const ringColor = unit.charged ? '#ffe000' : unit.inCombat ? '#ff8800' : unit.fellBack ? '#66d9ff' : unit.movementAction === 'advanced' ? '#7cff9b' : 'rgba(255,255,255,0.72)';
+  const ringWidth = unit.charged || unit.inCombat || unit.fellBack || unit.movementAction === 'advanced' ? 2.5 : 1.2;
 
   // Draw each model footprint
   for (let i = 0; i < unit.modelPositions.length; i++) {

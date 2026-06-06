@@ -15,6 +15,8 @@ export type Phase =
 
 export type Side = 0 | 1;
 
+export type MovementAction = 'remainedStationary' | 'normalMove' | 'advanced' | 'fellBack';
+
 export interface Position {
   x: number;
   y: number;
@@ -33,6 +35,8 @@ export interface BattleUnit {
   modelRotations?: number[];   // facing for each model footprint in degrees
   facingDeg: number;
   charged: boolean;
+  movementAction?: MovementAction;
+  fellBack?: boolean;
   inCombat: boolean;
   battleshocked: boolean;
   activated: boolean;

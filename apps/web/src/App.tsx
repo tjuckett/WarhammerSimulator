@@ -15,9 +15,11 @@ import {
 import type { SelectChangeEvent } from '@mui/material/Select';
 import CasinoOutlinedIcon from '@mui/icons-material/CasinoOutlined';
 import CloseIcon from '@mui/icons-material/Close';
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import SpeedIcon from '@mui/icons-material/Speed';
 import StopIcon from '@mui/icons-material/Stop';
 import type { BattleState, Phase, Position, Terrain, TerrainFeature, TerrainLayout } from '@warhammer-simulator/core/types/battle';
 import type { TerrainFeatureSpec, TerrainLayoutData, TerrainSpec } from '@warhammer-simulator/core/data/terrainLayoutTypes';
@@ -35,7 +37,7 @@ import {
   type TournamentMission,
 } from '@warhammer-simulator/core/engine/missions';
 import {
-  beginManualBattle, createDeploymentState, manualDeploymentIssues, moveManualModels, placeManualUnit, placeNextUnit,
+  advanceManualUnit, beginManualBattle, createDeploymentState, fallBackManualUnit, manualDeploymentIssues, manualUnitCanAdvance, manualUnitCanFallBack, moveManualModels, placeManualUnit, placeNextUnit,
   reorganizeManualModelsGrid, rotateManualModels, simulateNextPhase, undeployManualUnit, type DeploymentStrategy,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
@@ -537,6 +539,29 @@ export default function App() {
     [battleState, inspectedBattleUnitId],
   );
   const primaryManualSelection = primaryManualSelectionPart(manualModelSelection);
+  const activeRulesForBattle = battleState ? rulesEditionForRuleset(battleState.ruleset) : edition;
+  const selectedManualCanAdvance = !!(
+    isManualMode
+    && battleState
+    && primaryManualSelection
+    && manualUnitCanAdvance(
+      battleState,
+      primaryManualSelection.unitId,
+      primaryManualSelection.side,
+      activeRulesForBattle,
+    )
+  );
+  const selectedManualCanFallBack = !!(
+    isManualMode
+    && battleState
+    && primaryManualSelection
+    && manualUnitCanFallBack(
+      battleState,
+      primaryManualSelection.unitId,
+      primaryManualSelection.side,
+      activeRulesForBattle,
+    )
+  );
   const inspectedProfileSide = inspectedSelection?.kind === 'profile' ? inspectedSelection.side : null;
   const inspectedProfileIndex = inspectedSelection?.kind === 'profile' ? inspectedSelection.unitIndex : null;
 
@@ -1393,6 +1418,44 @@ export default function App() {
     commitPendingManualModelMove();
   }
 
+  function advanceSelectedManualUnit() {
+    const selection = primaryManualSelectionPart(manualModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || !selection) return;
+    const rules = rulesEditionForRuleset(prev.ruleset);
+    if (!manualUnitCanAdvance(prev, selection.unitId, selection.side, rules)) return;
+
+    const next = advanceManualUnit(prev, selection.unitId, selection.side, rules);
+    if (next === prev) return;
+
+    pushManualUndo(manualUndoEntry(prev), next, {
+      type: 'manual.advanceUnit',
+      unitId: selection.unitId,
+      side: selection.side,
+    });
+    setManualModelSelection(normalizeManualSelectionForState(next, manualModelSelection));
+    commitBattleState(next);
+  }
+
+  function fallBackSelectedManualUnit() {
+    const selection = primaryManualSelectionPart(manualModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || !selection) return;
+    const rules = rulesEditionForRuleset(prev.ruleset);
+    if (!manualUnitCanFallBack(prev, selection.unitId, selection.side, rules)) return;
+
+    const next = fallBackManualUnit(prev, selection.unitId, selection.side, rules);
+    if (next === prev) return;
+
+    pushManualUndo(manualUndoEntry(prev), next, {
+      type: 'manual.fallBackUnit',
+      unitId: selection.unitId,
+      side: selection.side,
+    });
+    setManualModelSelection(normalizeManualSelectionForState(next, manualModelSelection));
+    commitBattleState(next);
+  }
+
   function startManualBattle() {
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'deployment') return;
@@ -1542,21 +1605,31 @@ export default function App() {
     if (!prev || prev.winner !== null || prev.phase === 'deployment' || prev.phase === 'end') return;
     const next = clone(prev);
     const currentIndex = MANUAL_TURN_PHASES.indexOf(next.phase);
+    const startCommand = () => {
+      next.phase = 'command';
+      for (const unit of next.units) {
+        if (unit.side !== next.activeArmy || unit.destroyed) continue;
+        unit.activated = false;
+        unit.charged = false;
+        unit.movementAction = undefined;
+        unit.fellBack = false;
+        unit.inCombat = false;
+      }
+      gainCommandPhaseCommandPoints(next);
+    };
 
     if (currentIndex < 0) {
-      next.phase = 'command';
-      gainCommandPhaseCommandPoints(next);
+      startCommand();
     } else if (currentIndex < MANUAL_TURN_PHASES.length - 1) {
       next.phase = MANUAL_TURN_PHASES[currentIndex + 1];
     } else if (next.activeArmy === 0) {
       next.activeArmy = 1;
-      next.phase = 'command';
-      gainCommandPhaseCommandPoints(next);
+      startCommand();
     } else {
       next.activeArmy = 0;
       setBattleRound(next, battleRound(next) + 1);
-      next.phase = battleRound(next) > maxBattleRounds(next) ? 'end' : 'command';
-      if (next.phase === 'command') gainCommandPhaseCommandPoints(next);
+      if (battleRound(next) > maxBattleRounds(next)) next.phase = 'end';
+      else startCommand();
     }
 
     if (next.phase === 'end') {
@@ -2014,6 +2087,16 @@ export default function App() {
 
         {isManualMode && battleState && !isOver && battleState.phase !== 'deployment' && (
           <>
+            {selectedManualCanAdvance && (
+              <Button color="secondary" startIcon={<SpeedIcon />} onClick={advanceSelectedManualUnit}>
+                Advance
+              </Button>
+            )}
+            {selectedManualCanFallBack && (
+              <Button color="secondary" startIcon={<DirectionsRunIcon />} onClick={fallBackSelectedManualUnit}>
+                Fall Back
+              </Button>
+            )}
             <Button color="secondary" startIcon={<PlayArrowIcon />} onClick={stepManualPhase}>
               Next Phase
             </Button>

@@ -943,6 +943,8 @@ function UnitList({
             <div style={{ display: 'flex', gap: 3, marginTop: 2 }}>
               {u.inCombat && <Badge label="melee" color="#ff8800" />}
               {u.charged && <Badge label="charged" color="#ffe000" />}
+              {u.movementAction === 'advanced' && <Badge label="advanced" color="#7cff9b" />}
+              {u.fellBack && <Badge label="fell back" color="#66d9ff" />}
               {u.battleshocked && <Badge label="shocked" color="#8888ff" />}
             </div>
           </div>

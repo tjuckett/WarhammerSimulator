@@ -29,6 +29,10 @@ function actionLabel(action: GameAction): string {
       return 'Undeploy unit';
     case 'manual.moveModels':
       return `Move ${action.parts.reduce((sum, part) => sum + part.modelIndices.length, 0)} model${action.parts.length === 1 ? '' : 's'}`;
+    case 'manual.fallBackUnit':
+      return 'Fall Back';
+    case 'manual.advanceUnit':
+      return 'Advance';
     case 'manual.rotateModels':
       return `Rotate ${action.degrees}deg`;
     case 'manual.reorganizeModels':

@@ -3,7 +3,9 @@ import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
 import {
+  advanceManualUnit,
   beginManualBattle,
+  fallBackManualUnit,
   moveManualModels,
   placeManualUnit,
   placeNextUnit,
@@ -45,6 +47,16 @@ export type GameAction =
       collide: boolean;
     })
   | (GameActionBase & {
+      type: 'manual.fallBackUnit';
+      side: Side;
+      unitId: string;
+    })
+  | (GameActionBase & {
+      type: 'manual.advanceUnit';
+      side: Side;
+      unitId: string;
+    })
+  | (GameActionBase & {
       type: 'manual.rotateModels';
       parts: ModelSelectionPart[];
       degrees: number;
@@ -81,21 +93,32 @@ function stepManualPhase(state: BattleState): BattleState {
   const next = clone(state);
   if (next.winner !== null || next.phase === 'deployment' || next.phase === 'end') return next;
 
+  const startCommand = (): void => {
+    next.phase = 'command';
+    for (const unit of next.units) {
+      if (unit.side !== next.activeArmy || unit.destroyed) continue;
+      unit.activated = false;
+      unit.charged = false;
+      unit.movementAction = undefined;
+      unit.fellBack = false;
+      unit.inCombat = false;
+    }
+    gainCommandPhaseCommandPoints(next);
+  };
+
   const currentIndex = MANUAL_TURN_PHASES.indexOf(next.phase);
   if (currentIndex < 0) {
-    next.phase = 'command';
-    gainCommandPhaseCommandPoints(next);
+    startCommand();
   } else if (currentIndex < MANUAL_TURN_PHASES.length - 1) {
     next.phase = MANUAL_TURN_PHASES[currentIndex + 1];
   } else if (next.activeArmy === 0) {
     next.activeArmy = 1;
-    next.phase = 'command';
-    gainCommandPhaseCommandPoints(next);
+    startCommand();
   } else {
     next.activeArmy = 0;
     setBattleRound(next, battleRound(next) + 1);
-    next.phase = battleRound(next) > maxBattleRounds(next) ? 'end' : 'command';
-    if (next.phase === 'command') gainCommandPhaseCommandPoints(next);
+    if (battleRound(next) > maxBattleRounds(next)) next.phase = 'end';
+    else startCommand();
   }
 
   if (next.phase === 'end') {
@@ -124,6 +147,12 @@ export function applyGameAction(
         (next, part) => moveManualModels(next, part.unitId, part.side, part.modelIndices, action.dx, action.dy, action.collide),
         state,
       );
+
+    case 'manual.fallBackUnit':
+      return fallBackManualUnit(state, action.unitId, action.side, context.rules);
+
+    case 'manual.advanceUnit':
+      return advanceManualUnit(state, action.unitId, action.side, context.rules);
 
     case 'manual.rotateModels':
       return action.parts.reduce(
@@ -154,6 +183,8 @@ export function applyGameAction(
 export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
   switch (action.type) {
     case 'manual.undeployUnit':
+    case 'manual.fallBackUnit':
+    case 'manual.advanceUnit':
       return action.unitId === unitId;
     case 'manual.moveModels':
     case 'manual.rotateModels':

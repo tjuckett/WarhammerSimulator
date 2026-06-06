@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import type { BattleState, Phase } from '../src/types/battle';
+import type { BattleState, BattleUnit, Phase } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rulesetMetadataForState } from '../src/engine/rulesEngine';
+import { advanceManualUnit, fallBackManualUnit, manualUnitCanAdvance, manualUnitCanFallBack, simulateNextPhase } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -11,6 +12,7 @@ import {
   currentTimelineState,
   type PracticeTimeline,
 } from '../src/practice/timeline';
+import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -153,4 +155,212 @@ test('local practice scenario repository keeps checkpoint timelines and branches
 
   const afterDelete = await localPracticeScenarioRepository.deleteScenarios(['checkpoint-1', 'checkpoint-2', 'checkpoint-3']);
   assert.deepEqual(afterDelete, []);
+});
+
+test('battle-shocked units cannot receive stratagems and have zero objective control', () => {
+  const battle = state('command');
+  const unit = {
+    id: 'unit-1',
+    side: 0 as const,
+    profile: {
+      name: 'Test Unit',
+      move: 6,
+      toughness: 4,
+      save: 3,
+      wounds: 1,
+      leadership: 7,
+      oc: 2,
+      baseModelCount: 1,
+      keywords: [],
+      factionKeywords: [],
+      weapons: [],
+      abilities: [],
+    },
+    remainingModels: 1,
+    woundsOnLeadModel: 1,
+    position: { x: 0, y: 0 },
+    modelPositions: [{ x: 0, y: 0 }],
+    facingDeg: 0,
+    charged: false,
+    inCombat: false,
+    battleshocked: true,
+    activated: false,
+    destroyed: false,
+  };
+
+  battle.units = [unit];
+
+  assert.equal(unitCanBeAffectedByStratagem(unit), false);
+  assert.equal(objectiveControlValue(unit), 0);
+});
+
+test('manual Fall Back moves an engaged active unit out of Engagement Range', () => {
+  const battle = state('movement');
+  const profile = {
+    name: 'Test Unit',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: [],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+  };
+  const unit: BattleUnit = {
+    id: 'unit-1',
+    side: 0,
+    profile,
+    remainingModels: 1,
+    woundsOnLeadModel: 1,
+    position: { x: 10, y: 10 },
+    modelPositions: [{ x: 10, y: 10 }],
+    facingDeg: 0,
+    charged: false,
+    inCombat: true,
+    battleshocked: false,
+    activated: false,
+    destroyed: false,
+  };
+  const enemy: BattleUnit = {
+    ...unit,
+    id: 'enemy-1',
+    side: 1,
+    profile: { ...profile, name: 'Enemy Unit' },
+    position: { x: 10.5, y: 10 },
+    modelPositions: [{ x: 10.5, y: 10 }],
+  };
+  battle.units = [unit, enemy];
+
+  assert.equal(manualUnitCanFallBack(battle, 'unit-1', 0), true);
+
+  const next = fallBackManualUnit(battle, 'unit-1', 0);
+  const moved = next.units.find(candidate => candidate.id === 'unit-1')!;
+  const foe = next.units.find(candidate => candidate.id === 'enemy-1')!;
+
+  assert.equal(moved.inCombat, false);
+  assert.equal(moved.fellBack, true);
+  assert.equal(moved.movementAction, 'fellBack');
+  assert.ok(moved.position.x < unit.position.x);
+  assert.ok(Math.hypot(moved.position.x - foe.position.x, moved.position.y - foe.position.y) > rules40K10th.engagementRange());
+  assert.match(next.log.at(-1)?.message ?? '', /Falls Back/);
+});
+
+test('units that Fell Back do not shoot or charge until reset', () => {
+  const battle = state('movement');
+  const profile = {
+    name: 'Shooter',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: [],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+      { name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true },
+    ],
+    abilities: [],
+  };
+  const unit: BattleUnit = {
+    id: 'unit-1',
+    side: 0,
+    profile,
+    remainingModels: 1,
+    woundsOnLeadModel: 1,
+    position: { x: 10, y: 10 },
+    modelPositions: [{ x: 10, y: 10 }],
+    facingDeg: 0,
+    charged: false,
+    fellBack: true,
+    inCombat: false,
+    battleshocked: false,
+    activated: false,
+    destroyed: false,
+  };
+  const enemy: BattleUnit = {
+    ...unit,
+    id: 'enemy-1',
+    side: 1,
+    profile: { ...profile, name: 'Target' },
+    position: { x: 14, y: 10 },
+    modelPositions: [{ x: 14, y: 10 }],
+    fellBack: false,
+  };
+  battle.units = [unit, enemy];
+
+  const shooting = simulateNextPhase(battle, rules40K10th);
+  assert.equal(shooting.phase, 'shooting');
+  assert.equal(shooting.log.some(entry => entry.message.includes('Shooter shoots')), false);
+
+  const charge = simulateNextPhase(shooting, rules40K10th);
+  assert.equal(charge.phase, 'charge');
+  assert.equal(charge.units.find(candidate => candidate.id === 'unit-1')?.charged, false);
+  assert.equal(charge.log.some(entry => entry.message.includes('Shooter charges')), false);
+});
+
+test('manual Advance marks a unit and prevents shooting or charging', () => {
+  const battle = state('movement');
+  const profile = {
+    name: 'Advancing Unit',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: [],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+      { name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true },
+    ],
+    abilities: [],
+  };
+  const unit: BattleUnit = {
+    id: 'unit-1',
+    side: 0,
+    profile,
+    remainingModels: 1,
+    woundsOnLeadModel: 1,
+    position: { x: 10, y: 10 },
+    modelPositions: [{ x: 10, y: 10 }],
+    facingDeg: 0,
+    charged: false,
+    inCombat: false,
+    battleshocked: false,
+    activated: false,
+    destroyed: false,
+  };
+  const enemy: BattleUnit = {
+    ...unit,
+    id: 'enemy-1',
+    side: 1,
+    profile: { ...profile, name: 'Target' },
+    position: { x: 14, y: 10 },
+    modelPositions: [{ x: 14, y: 10 }],
+  };
+  battle.units = [unit, enemy];
+
+  assert.equal(manualUnitCanAdvance(battle, 'unit-1', 0), true);
+
+  const advanced = advanceManualUnit(battle, 'unit-1', 0);
+  assert.equal(advanced.units.find(candidate => candidate.id === 'unit-1')?.movementAction, 'advanced');
+  assert.match(advanced.log.at(-1)?.message ?? '', /Advances: rolled [1-6]/);
+
+  const shooting = simulateNextPhase(advanced, rules40K10th);
+  assert.equal(shooting.phase, 'shooting');
+  assert.equal(shooting.log.some(entry => entry.message.includes('Advancing Unit shoots')), false);
+
+  const charge = simulateNextPhase(shooting, rules40K10th);
+  assert.equal(charge.phase, 'charge');
+  assert.equal(charge.units.find(candidate => candidate.id === 'unit-1')?.charged, false);
+  assert.equal(charge.log.some(entry => entry.message.includes('Advancing Unit charges')), false);
 });

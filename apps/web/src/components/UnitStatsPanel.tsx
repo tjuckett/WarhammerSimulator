@@ -54,7 +54,12 @@ export function UnitStatsPanel({ inspected, onClear }: Props) {
   const visibleAbilities = uniqueRuleTexts(profileViews.flatMap(view => sourceRuleTexts(view.profile.abilities, showSources ? view.profile.name : undefined)));
   const visibleRules = uniqueRuleTexts(profileViews.flatMap(view => sourceRuleTexts(view.profile.rules ?? [], showSources ? view.profile.name : undefined)));
   const status = inspected.kind === 'battle'
-    ? `${inspected.unit.remainingModels}/${profile.baseModelCount} models`
+    ? [
+        `${inspected.unit.remainingModels}/${profile.baseModelCount} models`,
+        inspected.unit.movementAction === 'advanced' ? 'Advanced' : null,
+        inspected.unit.fellBack ? 'Fell Back' : null,
+        inspected.unit.battleshocked ? 'Battle-shocked' : null,
+      ].filter(Boolean).join(' - ')
     : inspected.status ?? `${profile.baseModelCount} model${profile.baseModelCount !== 1 ? 's' : ''}`;
   const headerName = profileViews.length > 1
     ? `${profile.name} + ${profileViews.slice(1).map(view => view.profile.name).join(', ')}`

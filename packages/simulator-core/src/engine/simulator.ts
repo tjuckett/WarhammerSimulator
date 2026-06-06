@@ -8,6 +8,7 @@ import { DEFAULT_OBJECTIVES } from './missions';
 import { objectiveControlRadius } from './objectiveGeometry';
 import { battleRound, logWithBattleRound, maxBattleRounds, setBattleRound } from './battleRound';
 import { gainCommandPhaseCommandPoints } from './commandPoints';
+import { objectiveControlValue, resolveDesperateEscapeTests } from './battleshock';
 import { circleFullyInTerrain, lineIntersectsTerrain, terrainCorners } from './terrainGeometry';
 import { distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, type CoherencyModel } from './coherency';
 import {
@@ -450,6 +451,11 @@ function inEngagement(unit: BattleUnit, others: BattleUnit[], range: number): bo
   );
 }
 
+function engagedEnemies(state: BattleState, unit: BattleUnit, rules: RulesEdition): BattleUnit[] {
+  const eng = rules.engagementRange();
+  return enemies(state, unit.side).filter(enemy => inEngagement(unit, [enemy], eng));
+}
+
 // ─── Combat resolution ────────────────────────────────────────────────────────
 
 function resolveAttacks(
@@ -653,6 +659,7 @@ function runMovement(unit: BattleUnit, state: BattleState, rules: RulesEdition):
 
 function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
   if (unit.destroyed) return [];
+  if (unit.fellBack || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return [];
   const eng = rules.engagementRange();
   const foes = enemies(state, unit.side);
   if (inEngagement(unit, foes, eng)) return [];
@@ -687,7 +694,7 @@ function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition):
 }
 
 function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
-  if (unit.destroyed || unit.inCombat) return [];
+  if (unit.destroyed || unit.inCombat || unit.fellBack || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return [];
   const foes = enemies(state, unit.side).filter(
     e => dist(unit.position, e.position) <= rules.chargeRange(),
   );
@@ -823,13 +830,13 @@ function scoreObjectives(s: BattleState, side: Side, rules: RulesEdition): LogEn
     let oc0 = 0, oc1 = 0;
 
     for (const unit of s.units) {
-      if (unit.destroyed || unit.battleshocked) continue;
+      if (unit.destroyed) continue;
       const inRange = unit.modelPositions.some((model, modelIndex) => (
         dist(model, obj) <= controlRadius + modelBaseRadius(unit, modelIndex)
       ));
       if (inRange) {
-        if (unit.side === 0) oc0 += unit.profile.oc;
-        else oc1 += unit.profile.oc;
+        if (unit.side === 0) oc0 += objectiveControlValue(unit);
+        else oc1 += objectiveControlValue(unit);
       }
     }
 
@@ -880,6 +887,8 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
   activeUnits(s, side).forEach(u => {
     u.activated = false;
     u.charged = false;
+    u.movementAction = undefined;
+    u.fellBack = false;
     u.inCombat = false;
   });
   s.phase = 'command';
@@ -936,6 +945,8 @@ function makeBattleUnit(
     modelRotations: modelPositions.map(() => side === 0 ? 0 : 180),
     facingDeg: side === 0 ? 0 : 180,
     charged: false,
+    movementAction: undefined,
+    fellBack: false,
     inCombat: false,
     battleshocked: false,
     activated: false,
@@ -1443,6 +1454,107 @@ export function moveManualModels(
   return s;
 }
 
+export function manualUnitCanFallBack(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rules40K10th,
+): boolean {
+  if (state.phase !== 'movement' || state.activeArmy !== side) return false;
+  const unit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+  return !!unit && engagedEnemies(state, unit, rules).length > 0;
+}
+
+export function manualUnitCanAdvance(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rules40K10th,
+): boolean {
+  if (state.phase !== 'movement' || state.activeArmy !== side) return false;
+  const unit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+  if (!unit || unit.fellBack || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return false;
+  return engagedEnemies(state, unit, rules).length === 0;
+}
+
+export function advanceManualUnit(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rules40K10th,
+): BattleState {
+  if (!manualUnitCanAdvance(state, unitId, side, rules)) return state;
+
+  const s = clone(state);
+  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+  if (!unit) return state;
+
+  const roll = d6();
+  unit.movementAction = 'advanced';
+  unit.fellBack = false;
+  s.log = [...s.log, log(
+    s,
+    side,
+    unit.profile.name,
+    `${unit.profile.name} Advances: rolled ${roll}; movement allowance is ${(unit.profile.move + roll).toFixed(0)}".`,
+    'move',
+  )];
+  return s;
+}
+
+export function fallBackManualUnit(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rules40K10th,
+): BattleState {
+  if (!manualUnitCanFallBack(state, unitId, side, rules)) return state;
+
+  const s = clone(state);
+  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+  if (!unit) return state;
+
+  const engaged = engagedEnemies(s, unit, rules);
+  const closest = nearest(unit, engaged);
+  if (!closest) return state;
+
+  const distanceToClosest = dist(unit.position, closest.position);
+  const direction = distanceToClosest > 0.001
+    ? {
+        x: (unit.position.x - closest.position.x) / distanceToClosest,
+        y: (unit.position.y - closest.position.y) / distanceToClosest,
+      }
+    : { x: side === 0 ? -1 : 1, y: 0 };
+  const modelIndices = unit.modelPositions.map((_, modelIndex) => modelIndex);
+  const requestedDx = direction.x * unit.profile.move;
+  const requestedDy = direction.y * unit.profile.move;
+  const move = collisionAdjustedManualMove(s, unitId, side, modelIndices, requestedDx, requestedDy);
+  if (Math.hypot(move.dx, move.dy) < 0.01) return state;
+
+  applyManualModelTranslation(unit, modelIndices, move.dx, move.dy);
+  if (inEngagement(unit, enemies(s, side), rules.engagementRange())) return state;
+
+  unit.inCombat = false;
+  unit.movementAction = 'fellBack';
+  unit.fellBack = true;
+  for (const enemy of engaged) {
+    enemy.inCombat = inEngagement(enemy, enemies(s, enemy.side), rules.engagementRange());
+  }
+
+  const moved = Math.hypot(move.dx, move.dy);
+  const newLogs: LogEntry[] = [
+    log(s, side, unit.profile.name, `${unit.profile.name} Falls Back ${moved.toFixed(1)}".`, 'move'),
+    ...resolveDesperateEscapeTests(
+      s,
+      unit,
+      (testedUnit, message) => log(s, testedUnit.side, testedUnit.profile.name, message, 'roll'),
+    ),
+  ];
+  if (!unit.destroyed) unit.position = centroid(unit.modelPositions);
+  s.log = [...s.log, ...newLogs];
+  return s;
+}
+
 export function undeployManualUnit(state: BattleState, unitId: string, side: Side): BattleState {
   const s = clone(state);
   if (s.phase !== 'deployment') return s;
@@ -1659,7 +1771,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   const newLogs: LogEntry[] = [];
 
   // Reset per-turn flags
-  myUnits().forEach(u => { u.activated = false; u.charged = false; u.inCombat = false; });
+  myUnits().forEach(u => { u.activated = false; u.charged = false; u.movementAction = undefined; u.fellBack = false; u.inCombat = false; });
 
   // Command
   s.phase = 'command';
