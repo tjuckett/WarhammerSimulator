@@ -52,6 +52,7 @@ ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
 COPY --from=builder /app/package.json /app/package-lock.json ./
+COPY --from=builder /app/scripts/docker-start.mjs ./scripts/docker-start.mjs
 COPY --from=builder /app/apps/web/package.json ./apps/web/package.json
 COPY --from=builder /app/apps/web/prisma ./apps/web/prisma
 COPY --from=builder /app/apps/web/prisma.config.ts ./apps/web/prisma.config.ts
@@ -62,4 +63,4 @@ COPY --from=builder /app/apps/web/public ./apps/web/public
 
 EXPOSE 3000
 
-CMD ["node", "apps/web/server.js"]
+CMD ["node", "scripts/docker-start.mjs"]

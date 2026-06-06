@@ -38,6 +38,8 @@ import {
   beginManualBattle, createDeploymentState, manualDeploymentIssues, moveManualModels, placeManualUnit, placeNextUnit,
   reorganizeManualModelsGrid, rotateManualModels, simulateNextPhase, undeployManualUnit, type DeploymentStrategy,
 } from '@warhammer-simulator/core/engine/simulator';
+import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
+import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import {
   loadBrain, saveBrain, recordGame, suggestStrategy, brainStats,
   type BrainMemory, type GameRecord,
@@ -445,6 +447,8 @@ export default function App() {
   );
   const previewState: BattleState = useMemo(() => ({
     ruleset: rulesetMetadataForState(edition),
+    battleRound: 1,
+    maxBattleRounds: 5,
     turn: 1,
     maxTurns: 5,
     activeArmy: 0,
@@ -461,6 +465,7 @@ export default function App() {
     objectiveControl: edition.objectiveControl,
     objectiveOwners: selectedObjectives.map(() => null),
     scores: [0, 0],
+    commandPoints: [0, 0],
     unplacedUnits: [[], []],
     deployStrategies: [strategy1, strategy2],
     setup: setupLabel(selectedMission, editorLayout.name),
@@ -693,7 +698,7 @@ export default function App() {
     if (state.phase === 'end') return `Game end ${suffix}`;
     const phaseLabel = PHASE_LABELS[state.phase] ?? state.phase;
     const armyName = state.armies[state.activeArmy]?.name ?? `Player ${state.activeArmy + 1}`;
-    return `Turn ${state.turn} - ${armyName} ${phaseLabel} ${suffix}`;
+    return `Battle Round ${battleRound(state)} - ${armyName} ${phaseLabel} ${suffix}`;
   }
 
   async function nextCheckpointSequence(gameId: string): Promise<number> {
@@ -1415,14 +1420,18 @@ export default function App() {
     const next: BattleState = {
       ...prev,
       phase: 'deployment',
+      battleRound: 1,
+      maxBattleRounds: maxBattleRounds(prev),
       turn: 1,
       activeArmy: 0,
       winner: null,
       scores: [0, 0],
+      commandPoints: [0, 0],
       objectiveOwners: prev.objectiveOwners.map(() => null),
       log: [...prev.log, {
         id: `manual-back-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-        turn: prev.turn,
+        battleRound: battleRound(prev),
+        turn: battleRound(prev),
         phase: prev.phase,
         side: prev.activeArmy,
         unitName: '',
@@ -1536,15 +1545,18 @@ export default function App() {
 
     if (currentIndex < 0) {
       next.phase = 'command';
+      gainCommandPhaseCommandPoints(next);
     } else if (currentIndex < MANUAL_TURN_PHASES.length - 1) {
       next.phase = MANUAL_TURN_PHASES[currentIndex + 1];
     } else if (next.activeArmy === 0) {
       next.activeArmy = 1;
       next.phase = 'command';
+      gainCommandPhaseCommandPoints(next);
     } else {
       next.activeArmy = 0;
-      next.turn++;
-      next.phase = next.turn > next.maxTurns ? 'end' : 'command';
+      setBattleRound(next, battleRound(next) + 1);
+      next.phase = battleRound(next) > maxBattleRounds(next) ? 'end' : 'command';
+      if (next.phase === 'command') gainCommandPhaseCommandPoints(next);
     }
 
     if (next.phase === 'end') {
@@ -1581,7 +1593,7 @@ export default function App() {
   // Record game outcome in brain when battle ends
   useEffect(() => {
     if (!battleState || battleState.winner === null) return;
-    const key = `${battleState.scores[0]}_${battleState.scores[1]}_${battleState.turn}`;
+    const key = `${battleState.scores[0]}_${battleState.scores[1]}_${battleRound(battleState)}`;
     if (winnerRecordedRef.current === key) return;
     winnerRecordedRef.current = key;
     const record: GameRecord = {
@@ -2058,8 +2070,10 @@ export default function App() {
 
         {battleState && battleState.phase !== 'deployment' && (
           <span className="turn-info">
-            Turn {battleState.turn}/5
+            Battle Round {battleRound(battleState)}/{maxBattleRounds(battleState)}
             {' · '}
+            CP {commandPoints(battleState)[0]}-{commandPoints(battleState)[1]}
+            {' Â· '}
             {PHASE_LABELS[battleState.phase] ?? battleState.phase}
             {' - '}
             <span style={{ color: ARMY_COLORS[0] }}>{army1.name}</span>

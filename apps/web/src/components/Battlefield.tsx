@@ -3,6 +3,8 @@ import type { BattleState, BattleUnit, Position } from '@warhammer-simulator/cor
 import { pointInTerrain, terrainCenter, terrainCorners } from '@warhammer-simulator/core/engine/terrainGeometry';
 import { featureColor } from '@warhammer-simulator/core/engine/terrain';
 import { zoneFor } from '@warhammer-simulator/core/engine/deployment';
+import { battleRound, maxBattleRounds } from '@warhammer-simulator/core/engine/battleRound';
+import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import { battleModelIdsWithCoherencyIssues, moveManualModels } from '@warhammer-simulator/core/engine/simulator';
 import {
   TENTH_EDITION_MARKER_OBJECTIVE_CONTROL,
@@ -587,6 +589,7 @@ function clampZoom(value: number): number {
 
 function battlefieldStatusLabel(state: BattleState): string {
   const vpStr = `${state.scores[0]}-${state.scores[1]} VP`;
+  const cpStr = `${commandPoints(state)[0]}-${commandPoints(state)[1]} CP`;
   let statusLabel: string;
   if (state.winner !== null) {
     statusLabel = state.winner === 'draw'
@@ -597,7 +600,7 @@ function battlefieldStatusLabel(state: BattleState): string {
     const u1 = state.unplacedUnits[1].length;
     statusLabel = `DEPLOYMENT | ${state.armies[state.activeArmy].name} placing | Remaining: ${u0} / ${u1} | ${vpStr}`;
   } else {
-    statusLabel = `Turn ${state.turn}/5 | ${state.phase.toUpperCase()} | ${state.armies[state.activeArmy].name} | ${vpStr}`;
+    statusLabel = `Battle Round ${battleRound(state)}/${maxBattleRounds(state)} | ${state.phase.toUpperCase()} | ${state.armies[state.activeArmy].name} | ${vpStr} | ${cpStr}`;
   }
   if (state.setup) {
     statusLabel += ` | ${state.setup.missionCode}: ${state.setup.primaryMission} / ${state.setup.deployment} / ${state.setup.terrainLayout}`;
@@ -811,7 +814,7 @@ function unitWithModelDragPreview(
                  state.phase === 'shooting' ? '🔫' :
                  state.phase === 'charge'   ? '⚔️' :
                  state.phase === 'fight'    ? '🗡️' : '⚡';
-    statusLabel = `Turn ${state.turn}/5  |  ${icon} ${state.phase.toUpperCase()}  |  ${state.armies[state.activeArmy].name}  |  ${vpStr}`;
+    statusLabel = `Battle Round ${battleRound(state)}/${maxBattleRounds(state)}  |  ${icon} ${state.phase.toUpperCase()}  |  ${state.armies[state.activeArmy].name}  |  ${vpStr}  |  ${cpStr}`;
   }
   if (state.setup) {
     statusLabel += `  |  ${state.setup.missionCode}: ${state.setup.primaryMission} / ${state.setup.deployment} / ${state.setup.terrainLayout}`;

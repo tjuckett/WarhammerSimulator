@@ -272,9 +272,45 @@ export const prismaPracticeScenarioRepository: PracticeScenarioRepository = {
   },
 
   async deleteScenarios(ids: string[]) {
-    await prisma.practiceCheckpoint.deleteMany({
-      where: { id: { in: ids } },
+    await prisma.$transaction(async tx => {
+      const checkpoints = await tx.practiceCheckpoint.findMany({
+        where: { id: { in: ids } },
+        select: { branchId: true, gameId: true },
+      });
+      const branchIds = [...new Set(checkpoints.map(checkpoint => checkpoint.branchId))];
+      const gameIds = [...new Set(checkpoints.map(checkpoint => checkpoint.gameId))];
+
+      await tx.practiceCheckpoint.deleteMany({
+        where: { id: { in: ids } },
+      });
+
+      if (branchIds.length) {
+        await tx.practiceBranch.deleteMany({
+          where: {
+            id: { in: branchIds },
+            checkpoints: { none: {} },
+          },
+        });
+      }
+
+      if (gameIds.length) {
+        await tx.practiceBranch.deleteMany({
+          where: {
+            gameId: { in: gameIds },
+            checkpoints: { none: {} },
+          },
+        });
+
+        await tx.practiceGame.deleteMany({
+          where: {
+            id: { in: gameIds },
+            branches: { none: {} },
+            checkpoints: { none: {} },
+          },
+        });
+      }
     });
+
     return this.listSummaries();
   },
 };

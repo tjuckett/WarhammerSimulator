@@ -6,6 +6,8 @@ import { deployArmy, distanceToDeploymentZone, fp, pointInDeploymentZone, zoneFo
 import { selectUnitToDrop, reactivePosition, deployModelFormation } from './deploymentBrain';
 import { DEFAULT_OBJECTIVES } from './missions';
 import { objectiveControlRadius } from './objectiveGeometry';
+import { battleRound, logWithBattleRound, maxBattleRounds, setBattleRound } from './battleRound';
+import { gainCommandPhaseCommandPoints } from './commandPoints';
 import { circleFullyInTerrain, lineIntersectsTerrain, terrainCorners } from './terrainGeometry';
 import { distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, type CoherencyModel } from './coherency';
 import {
@@ -42,7 +44,7 @@ function log(
   message: string,
   type: LogEntry['type'],
 ): LogEntry {
-  return { id: nextLog(), turn: state.turn, phase: state.phase, side, unitName, message, type };
+  return logWithBattleRound({ id: nextLog(), turn: battleRound(state), phase: state.phase, side, unitName, message, type });
 }
 
 function phaseLog(state: BattleState, side: Side, armyName: string, label: string): LogEntry {
@@ -765,17 +767,33 @@ function runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): Lo
   return logs;
 }
 
-function runBattleshock(state: BattleState): LogEntry[] {
+function bestLeadership(unit: BattleUnit): number {
+  return Math.min(
+    unit.profile.leadership,
+    ...(unit.profile.modelProfiles?.map(profile => profile.leadership) ?? []),
+  );
+}
+
+function isBelowHalfStrength(unit: BattleUnit): boolean {
+  if (unit.profile.baseModelCount === 1) {
+    return unit.woundsOnLeadModel < unit.profile.wounds / 2;
+  }
+
+  return unit.remainingModels < unit.profile.baseModelCount / 2;
+}
+
+function runBattleshock(state: BattleState, side: Side): LogEntry[] {
   const logs: LogEntry[] = [];
   for (const unit of state.units) {
-    if (unit.destroyed) continue;
-    if (unit.remainingModels < Math.ceil(unit.profile.baseModelCount / 2)) {
-      const roll = d6();
-      const needed = unit.profile.leadership;
+    if (unit.destroyed || unit.side !== side) continue;
+    if (isBelowHalfStrength(unit)) {
+      const rolls = [d6(), d6()];
+      const roll = rolls[0] + rolls[1];
+      const needed = bestLeadership(unit);
       const passed = roll >= needed;
       unit.battleshocked = !passed;
       logs.push(log(state, unit.side, unit.profile.name,
-        `😰 ${unit.profile.name} below half strength — Battle-shock (${needed}+): rolled ${roll} → ${passed ? 'PASSED' : 'FAILED (Battleshocked!)'}`,
+        `😰 ${unit.profile.name} below half strength — Battle-shock (${needed}+): rolled ${rolls[0]}+${rolls[1]}=${roll} → ${passed ? 'PASSED' : 'FAILED (Battleshocked!)'}`,
         'info',
       ));
     } else {
@@ -849,7 +867,7 @@ function checkWinner(state: BattleState): void {
 
 // ─── Deep copy ────────────────────────────────────────────────────────────────
 
-const TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight', 'battle-shock'];
+const TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight'];
 const MANUAL_MODEL_EDIT_PHASES: Phase[] = ['deployment', 'movement'];
 
 function activeUnits(state: BattleState, side: Side): BattleUnit[] {
@@ -865,10 +883,14 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
     u.inCombat = false;
   });
   s.phase = 'command';
-  return [
-    phaseLog(s, side, armyName, `\n=== TURN ${s.turn} - ${armyName.toUpperCase()} - ${rules.name.toUpperCase()} ===`),
+  const nextCommandPoints = gainCommandPhaseCommandPoints(s);
+  const logs = [
+    phaseLog(s, side, armyName, `\n=== BATTLE ROUND ${battleRound(s)} - ${armyName.toUpperCase()} - ${rules.name.toUpperCase()} ===`),
     phaseLog(s, side, armyName, `\n--- Command Phase ---`),
+    log(s, side, armyName, `Both players gain 1CP (${nextCommandPoints[0]}CP / ${nextCommandPoints[1]}CP).`, 'info'),
   ];
+  logs.push(...runBattleshock(s, side));
+  return logs;
 }
 
 function advanceTurnInPlace(s: BattleState): void {
@@ -877,9 +899,9 @@ function advanceTurnInPlace(s: BattleState): void {
   if (s.activeArmy === 0) {
     s.activeArmy = 1;
   } else {
-    s.turn++;
+    setBattleRound(s, battleRound(s) + 1);
     s.activeArmy = 0;
-    if (s.turn > s.maxTurns) {
+    if (battleRound(s) > maxBattleRounds(s)) {
       if (s.scores[0] > s.scores[1]) s.winner = 0;
       else if (s.scores[1] > s.scores[0]) s.winner = 1;
       else s.winner = 'draw';
@@ -1011,6 +1033,8 @@ export function createBattleState(
 
   return {
     ruleset: rulesetMetadataForState(rules),
+    battleRound: 1,
+    maxBattleRounds: 5,
     turn: 1,
     maxTurns: 5,
     activeArmy: 0,
@@ -1027,6 +1051,7 @@ export function createBattleState(
     objectiveControl: rules.objectiveControl,
     objectiveOwners: objectives.map(() => null),
     scores: [0, 0],
+    commandPoints: [0, 0],
     unplacedUnits: [[], []],
     deployStrategies: [strategy1, strategy2],
     setup,
@@ -1052,6 +1077,8 @@ export function createDeploymentState(
 
   const state: BattleState = {
     ruleset: rulesetMetadataForState(rules),
+    battleRound: 1,
+    maxBattleRounds: 5,
     turn: 1,
     maxTurns: 5,
     activeArmy: 0,
@@ -1068,6 +1095,7 @@ export function createDeploymentState(
     objectiveControl: rules.objectiveControl,
     objectiveOwners: objectives.map(() => null),
     scores: [0, 0],
+    commandPoints: [0, 0],
     unplacedUnits: [deployableDrops(army1), deployableDrops(army2)],
     deployStrategies: [strategy1, strategy2],
     setup,
@@ -1594,12 +1622,6 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
     return s;
   }
 
-  if (s.phase === 'battle-shock') {
-    advanceTurnInPlace(s);
-    s.log = [...s.log, ...newLogs];
-    return s;
-  }
-
   if (s.phase === 'command') {
     s.phase = 'movement';
     newLogs.push(phaseLog(s, side, armyName, `\n--- Movement Phase ---`));
@@ -1620,10 +1642,8 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
     s.units.filter(u => u.side !== side && !u.destroyed && u.inCombat)
       .forEach(u => newLogs.push(...runFight(u, s, rules)));
   } else if (s.phase === 'fight') {
-    s.phase = 'battle-shock';
-    newLogs.push(phaseLog(s, side, armyName, `\n--- Battle-shock Phase ---`));
-    newLogs.push(...runBattleshock(s));
     newLogs.push(...scoreObjectives(s, side, rules));
+    advanceTurnInPlace(s);
   }
 
   checkWinner(s);
@@ -1643,8 +1663,11 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
 
   // Command
   s.phase = 'command';
+  const nextCommandPoints = gainCommandPhaseCommandPoints(s);
   newLogs.push(phaseLog(s, side, armyName,
-    `\n═══ TURN ${s.turn} — ${armyName.toUpperCase()} — ${rules.name.toUpperCase()} ═══`));
+    `\n═══ BATTLE ROUND ${battleRound(s)} — ${armyName.toUpperCase()} — ${rules.name.toUpperCase()} ═══`));
+  newLogs.push(log(s, side, armyName, `Both players gain 1CP (${nextCommandPoints[0]}CP / ${nextCommandPoints[1]}CP).`, 'info'));
+  newLogs.push(...runBattleshock(s, side));
 
   // Movement
   s.phase = 'movement';
@@ -1678,15 +1701,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   checkWinner(s);
   if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }
 
-  // Battle-shock
-  s.phase = 'battle-shock';
-  const bsLogs = runBattleshock(s);
-  if (bsLogs.length) {
-    newLogs.push(phaseLog(s, side, armyName, `\n─── Battle-shock Phase ───`));
-    newLogs.push(...bsLogs);
-  }
-
-  // Objective scoring (after battle-shock so shocked units have OC 0)
+  // Objective scoring after the turn's actions; shocked units have OC 0.
   newLogs.push(...scoreObjectives(s, side, rules));
 
   s.log = [...s.log, ...newLogs];
@@ -1700,9 +1715,9 @@ export function advanceTurn(state: BattleState): BattleState {
   if (s.activeArmy === 0) {
     s.activeArmy = 1;
   } else {
-    s.turn++;
+    setBattleRound(s, battleRound(s) + 1);
     s.activeArmy = 0;
-    if (s.turn > s.maxTurns) {
+    if (battleRound(s) > maxBattleRounds(s)) {
       if (s.scores[0] > s.scores[1]) s.winner = 0;
       else if (s.scores[1] > s.scores[0]) s.winner = 1;
       else s.winner = 'draw';

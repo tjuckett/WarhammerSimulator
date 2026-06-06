@@ -27,8 +27,8 @@ docker compose down
 
 ## Production deployment on Unraid
 
-The production deployment runs only the web app container. It expects your
-existing PostgreSQL container to be reachable on the same Docker network.
+The production deployment runs the web app container and connects to your
+existing Unraid PostgreSQL app/container.
 
 Images are published to Docker Hub as `timjuckett/warhammer-simulator`.
 Pushes to the `main` branch publish both `latest` and the commit SHA tag after
@@ -46,34 +46,32 @@ docker network create warhammer-net
 docker network connect warhammer-net <postgres-container-name>
 ```
 
-3. Create `.env.production` from `.env.production.example` and set
-   `DATABASE_URL` to your real PostgreSQL credentials. Use the PostgreSQL
+3. Create a database and user in PostgreSQL for the app, then create
+   `.env.production` from `.env.production.example`. Use the PostgreSQL
    container name as the host:
 
 ```bash
 DATABASE_URL="postgresql://warhammer:change-me@<postgres-container-name>:5432/warhammer_simulator?schema=public"
 NEXT_PUBLIC_API_BASE_URL=""
 DOCKER_NETWORK="warhammer-net"
+SKIP_DB_MIGRATIONS="0"
 ```
 
-4. Build and publish the app image:
+4. Pull the published app image:
 
 ```bash
-docker login
-docker buildx build --platform linux/amd64 -t timjuckett/warhammer-simulator:latest --push .
+docker compose -f docker-compose.prod.yml --env-file .env.production pull
 ```
 
-5. Apply production database migrations:
-
-```bash
-docker compose -f docker-compose.prod.yml --env-file .env.production run --rm web npm run db:migrate:deploy
-```
-
-6. Start the app:
+5. Start the app:
 
 ```bash
 docker compose -f docker-compose.prod.yml --env-file .env.production up -d
 ```
+
+The container applies pending Prisma migrations automatically at startup when
+`DATABASE_URL` is set. Set `SKIP_DB_MIGRATIONS=1` only if you need to bypass
+that behavior during troubleshooting.
 
 The app listens on port `3000` inside the `warhammer-net` Docker network.
 Point your reverse proxy to `warhammer-simulator-web:3000`, then verify the
@@ -116,19 +114,36 @@ docker run --rm --network warhammer-net \
   npm --workspace @warhammer-simulator/web run db:migrate:deploy
 ```
 
+The normal app container also runs pending migrations automatically on startup.
+The manual command above is useful for checking migration errors directly.
+
 For a reverse proxy on the same Docker network, use
 `warhammer-simulator:3000` as the upstream. If you keep the optional host port
 mapping, LAN testing is available at `http://<unraid-ip>:3000`.
 
 ## GitHub Actions publishing
 
-The workflow in `.github/workflows/build-test-publish.yml` runs on pull
-requests and pushes to `main`.
+The workflow in `.github/workflows/build-test-publish.yml` runs separate
+GitHub Actions jobs for tests, the app build, Docker image validation, and
+publishing. Test and build run on every branch push and pull request.
 
-Pull requests run dependency install, Prisma client generation, tests, the
-Next production build, and a Docker image build without publishing.
+Pull requests run:
 
-Pushes to `main` run the same checks, then publish:
+```text
+Test
+Build
+Docker Build
+```
+
+Pushes to `main` run:
+
+```text
+Test
+Build
+Publish
+```
+
+The publish job pushes:
 
 ```text
 timjuckett/warhammer-simulator:latest

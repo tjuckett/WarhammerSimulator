@@ -1,14 +1,11 @@
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: timjuckett/warhammer-simulator:latest
     container_name: warhammer-simulator-web
     restart: unless-stopped
-    env_file:
-      - .env.production
     environment:
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL in .env.production}
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-}
       NODE_ENV: production
       NEXT_TELEMETRY_DISABLED: "1"
       PORT: "3000"

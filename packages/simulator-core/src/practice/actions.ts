@@ -1,5 +1,7 @@
 import type { Phase, Position, Side, BattleState } from '../types/battle';
 import type { RulesEdition } from '../engine/rulesEngine';
+import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
+import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
 import {
   beginManualBattle,
   moveManualModels,
@@ -82,15 +84,18 @@ function stepManualPhase(state: BattleState): BattleState {
   const currentIndex = MANUAL_TURN_PHASES.indexOf(next.phase);
   if (currentIndex < 0) {
     next.phase = 'command';
+    gainCommandPhaseCommandPoints(next);
   } else if (currentIndex < MANUAL_TURN_PHASES.length - 1) {
     next.phase = MANUAL_TURN_PHASES[currentIndex + 1];
   } else if (next.activeArmy === 0) {
     next.activeArmy = 1;
     next.phase = 'command';
+    gainCommandPhaseCommandPoints(next);
   } else {
     next.activeArmy = 0;
-    next.turn++;
-    next.phase = next.turn > next.maxTurns ? 'end' : 'command';
+    setBattleRound(next, battleRound(next) + 1);
+    next.phase = battleRound(next) > maxBattleRounds(next) ? 'end' : 'command';
+    if (next.phase === 'command') gainCommandPhaseCommandPoints(next);
   }
 
   if (next.phase === 'end') {

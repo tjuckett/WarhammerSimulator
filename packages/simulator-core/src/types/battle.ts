@@ -52,6 +52,7 @@ export type LogType =
 
 export interface LogEntry {
   id: string;
+  battleRound?: number;
   turn: number;
   phase: Phase;
   side: Side;
@@ -106,6 +107,8 @@ export interface BattleSetup {
 
 export interface BattleState {
   ruleset: RulesetMetadata;
+  battleRound?: number;
+  maxBattleRounds?: number;
   turn: number;
   maxTurns: number;
   activeArmy: Side;
@@ -122,6 +125,7 @@ export interface BattleState {
   objectiveControl: ObjectiveControlProfile;
   objectiveOwners: (Side | null)[];
   scores: [number, number];
+  commandPoints?: [number, number];
   // Deployment phase: units not yet placed on the board
   unplacedUnits: [UnitProfile[], UnitProfile[]];
   deployStrategies: [string, string]; // DeploymentStrategy labels for record-keeping

@@ -102,7 +102,6 @@ export const rules40K10th: RulesEdition = {
     { id: 'shooting',     label: 'Shooting',     icon: '🔫' },
     { id: 'charge',       label: 'Charge',       icon: '⚔️' },
     { id: 'fight',        label: 'Fight',        icon: '🗡️' },
-    { id: 'battle-shock', label: 'Battle-shock', icon: '😰' },
   ],
 
   woundTarget(s: number, t: number): number {

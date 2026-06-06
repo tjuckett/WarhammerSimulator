@@ -56,6 +56,8 @@ function installStorage() {
 function state(phase: Phase, turn = 1): BattleState {
   return {
     ruleset: rulesetMetadataForState(rules40K10th),
+    battleRound: turn,
+    maxBattleRounds: 5,
     turn,
     maxTurns: 5,
     activeArmy: 0,
@@ -72,6 +74,7 @@ function state(phase: Phase, turn = 1): BattleState {
     objectiveControl: rules40K10th.objectiveControl,
     objectiveOwners: [],
     scores: [0, 0],
+    commandPoints: [0, 0],
     unplacedUnits: [[], []],
     deployStrategies: ['Balanced', 'Balanced'],
     setup: {
