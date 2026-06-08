@@ -26,6 +26,12 @@ export interface RuleText {
   description: string;
 }
 
+export interface MovementRuleOverride {
+  moveModifier?: number;
+  advanceRoll?: 'auto6' | string;
+  advanceModifier?: number;
+}
+
 export type ModelBase =
   | { shape: 'round'; diameterMm: number; label?: string }
   | { shape: 'oval'; widthMm: number; lengthMm: number; label?: string }
@@ -47,6 +53,7 @@ export interface UnitProfile {
   transportCapacity?: number;
   modelBases?: ModelBase[]; // one entry per model; repeated automatically when loaded from army data
   modelWeaponLoadouts?: number[][]; // weapon indices carried by each model; defaults to every model carrying every weapon
+  movementOverrides?: MovementRuleOverride;
   keywords: string[];
   factionKeywords: string[];
   weapons: WeaponProfile[];

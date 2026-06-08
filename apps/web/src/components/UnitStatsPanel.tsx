@@ -56,7 +56,10 @@ export function UnitStatsPanel({ inspected, onClear }: Props) {
   const status = inspected.kind === 'battle'
     ? [
         `${inspected.unit.remainingModels}/${profile.baseModelCount} models`,
+        inspected.unit.movementAction === 'remainedStationary' ? 'Remained Stationary' : null,
         inspected.unit.movementAction === 'advanced' ? 'Advanced' : null,
+        inspected.unit.movementComplete && inspected.unit.movementAction !== 'remainedStationary' ? 'Movement Done' : null,
+        typeof inspected.unit.movementAllowanceRemaining === 'number' ? `${inspected.unit.movementAllowanceRemaining.toFixed(1)}" move left` : null,
         inspected.unit.fellBack ? 'Fell Back' : null,
         inspected.unit.battleshocked ? 'Battle-shocked' : null,
       ].filter(Boolean).join(' - ')

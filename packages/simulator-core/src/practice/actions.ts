@@ -3,16 +3,24 @@ import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
 import {
-  advanceManualUnit,
-  beginManualBattle,
-  fallBackManualUnit,
-  moveManualModels,
-  placeManualUnit,
+  advancePlayUnit,
+  beginPlayBattle,
+  completePlayUnitMovement,
+  disembarkPlayUnit,
+  embarkPlayUnit,
+  fallBackPlayUnit,
+  markRemainingStationaryUnits,
+  movementStep,
+  movePlayModels,
+  placePlayReinforcement,
+  placePlayUnit,
   placeNextUnit,
-  reorganizeManualModelsGrid,
-  rotateManualModels,
+  playPhaseCoherencyIssues,
+  removePlayModels,
+  reorganizePlayModelsGrid,
+  rotatePlayModels,
   simulateNextPhase,
-  undeployManualUnit,
+  undeployPlayUnit,
 } from '../engine/simulator';
 
 export interface GameActionBase {
@@ -29,48 +37,76 @@ export interface ModelSelectionPart {
 
 export type GameAction =
   | (GameActionBase & {
-      type: 'manual.placeUnit';
+      type: 'play.placeUnit';
       side: Side;
       unitIndex: number;
       position: Position;
     })
   | (GameActionBase & {
-      type: 'manual.undeployUnit';
+      type: 'play.placeReinforcement';
+      side: Side;
+      armyUnitIndex: number;
+      position: Position;
+    })
+  | (GameActionBase & {
+      type: 'play.undeployUnit';
       side: Side;
       unitId: string;
     })
   | (GameActionBase & {
-      type: 'manual.moveModels';
+      type: 'play.moveModels';
       parts: ModelSelectionPart[];
       dx: number;
       dy: number;
       collide: boolean;
     })
   | (GameActionBase & {
-      type: 'manual.fallBackUnit';
+      type: 'play.fallBackUnit';
       side: Side;
       unitId: string;
     })
   | (GameActionBase & {
-      type: 'manual.advanceUnit';
+      type: 'play.advanceUnit';
       side: Side;
       unitId: string;
     })
   | (GameActionBase & {
-      type: 'manual.rotateModels';
+      type: 'play.completeUnitMovement';
+      side: Side;
+      unitId: string;
+    })
+  | (GameActionBase & {
+      type: 'play.embarkUnit';
+      side: Side;
+      unitId: string;
+      transportUnitId?: string;
+    })
+  | (GameActionBase & {
+      type: 'play.disembarkUnit';
+      side: Side;
+      transportUnitId: string;
+      passengerUnitId?: string;
+      armyUnitIndex?: number;
+    })
+  | (GameActionBase & {
+      type: 'play.rotateModels';
       parts: ModelSelectionPart[];
       degrees: number;
     })
   | (GameActionBase & {
-      type: 'manual.reorganizeModels';
+      type: 'play.reorganizeModels';
       parts: ModelSelectionPart[];
       rows: number;
     })
   | (GameActionBase & {
-      type: 'manual.beginBattle';
+      type: 'play.removeModels';
+      parts: ModelSelectionPart[];
     })
   | (GameActionBase & {
-      type: 'manual.stepPhase';
+      type: 'play.beginBattle';
+    })
+  | (GameActionBase & {
+      type: 'play.stepPhase';
     })
   | (GameActionBase & {
       type: 'simulation.placeNextUnit';
@@ -83,34 +119,55 @@ export interface GameActionContext {
   rules: RulesEdition;
 }
 
-const MANUAL_TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight'];
+const PLAY_TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight'];
+const LEGACY_PLAY_ACTION_PREFIX = 'man' + 'ual.';
 
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value));
 }
 
-function stepManualPhase(state: BattleState): BattleState {
+function stepPlayPhase(state: BattleState): BattleState {
   const next = clone(state);
   if (next.winner !== null || next.phase === 'deployment' || next.phase === 'end') return next;
+  if (playPhaseCoherencyIssues(next).length > 0) return next;
 
   const startCommand = (): void => {
     next.phase = 'command';
+    next.movementStep = undefined;
     for (const unit of next.units) {
       if (unit.side !== next.activeArmy || unit.destroyed) continue;
       unit.activated = false;
       unit.charged = false;
       unit.movementAction = undefined;
+      unit.movementAllowanceRemaining = undefined;
+      unit.movementAllowanceRemainingByModel = undefined;
+      unit.movementComplete = undefined;
+      unit.arrivedFromReinforcements = undefined;
+      if (unit.emergencyDisembarkedThisTurn) unit.battleshocked = false;
+      unit.emergencyDisembarkedThisTurn = undefined;
       unit.fellBack = false;
       unit.inCombat = false;
     }
     gainCommandPhaseCommandPoints(next);
   };
 
-  const currentIndex = MANUAL_TURN_PHASES.indexOf(next.phase);
+  const currentIndex = PLAY_TURN_PHASES.indexOf(next.phase);
   if (currentIndex < 0) {
     startCommand();
-  } else if (currentIndex < MANUAL_TURN_PHASES.length - 1) {
-    next.phase = MANUAL_TURN_PHASES[currentIndex + 1];
+  } else if (currentIndex < PLAY_TURN_PHASES.length - 1) {
+    if (next.phase === 'movement') {
+      if (movementStep(next) === 'moveUnits') {
+        markRemainingStationaryUnits(next);
+        next.movementStep = 'reinforcements';
+      } else {
+        next.movementStep = undefined;
+        next.phase = PLAY_TURN_PHASES[currentIndex + 1];
+      }
+    } else {
+      next.phase = PLAY_TURN_PHASES[currentIndex + 1];
+      if (next.phase === 'movement') next.movementStep = 'moveUnits';
+      else next.movementStep = undefined;
+    }
   } else if (next.activeArmy === 0) {
     next.activeArmy = 1;
     startCommand();
@@ -122,6 +179,7 @@ function stepManualPhase(state: BattleState): BattleState {
   }
 
   if (next.phase === 'end') {
+    next.movementStep = undefined;
     if (next.scores[0] > next.scores[1]) next.winner = 0;
     else if (next.scores[1] > next.scores[0]) next.winner = 1;
     else next.winner = 'draw';
@@ -130,47 +188,81 @@ function stepManualPhase(state: BattleState): BattleState {
   return next;
 }
 
+function normalizeGameAction(action: GameAction): GameAction {
+  const actionType = (action as { type: string }).type;
+  if (!actionType.startsWith(LEGACY_PLAY_ACTION_PREFIX)) return action;
+  return {
+    ...action,
+    type: `play.${actionType.slice(LEGACY_PLAY_ACTION_PREFIX.length)}`,
+  } as GameAction;
+}
+
 export function applyGameAction(
   state: BattleState,
   action: GameAction,
   context: GameActionContext,
 ): BattleState {
-  switch (action.type) {
-    case 'manual.placeUnit':
-      return placeManualUnit(state, action.side, action.unitIndex, action.position);
+  const normalizedAction = normalizeGameAction(action);
+  switch (normalizedAction.type) {
+    case 'play.placeUnit':
+      return placePlayUnit(state, normalizedAction.side, normalizedAction.unitIndex, normalizedAction.position);
 
-    case 'manual.undeployUnit':
-      return undeployManualUnit(state, action.unitId, action.side);
+    case 'play.placeReinforcement':
+      return placePlayReinforcement(state, normalizedAction.side, normalizedAction.armyUnitIndex, normalizedAction.position);
 
-    case 'manual.moveModels':
-      return action.parts.reduce(
-        (next, part) => moveManualModels(next, part.unitId, part.side, part.modelIndices, action.dx, action.dy, action.collide),
+    case 'play.undeployUnit':
+      return undeployPlayUnit(state, normalizedAction.unitId, normalizedAction.side);
+
+    case 'play.moveModels':
+      return normalizedAction.parts.reduce(
+        (next, part) => movePlayModels(next, part.unitId, part.side, part.modelIndices, normalizedAction.dx, normalizedAction.dy, normalizedAction.collide),
         state,
       );
 
-    case 'manual.fallBackUnit':
-      return fallBackManualUnit(state, action.unitId, action.side, context.rules);
+    case 'play.fallBackUnit':
+      return fallBackPlayUnit(state, normalizedAction.unitId, normalizedAction.side, context.rules);
 
-    case 'manual.advanceUnit':
-      return advanceManualUnit(state, action.unitId, action.side, context.rules);
+    case 'play.advanceUnit':
+      return advancePlayUnit(state, normalizedAction.unitId, normalizedAction.side, context.rules);
 
-    case 'manual.rotateModels':
-      return action.parts.reduce(
-        (next, part) => rotateManualModels(next, part.unitId, part.side, part.modelIndices, action.degrees),
+    case 'play.completeUnitMovement':
+      return completePlayUnitMovement(state, normalizedAction.unitId, normalizedAction.side);
+
+    case 'play.embarkUnit':
+      return embarkPlayUnit(state, normalizedAction.unitId, normalizedAction.side, normalizedAction.transportUnitId);
+
+    case 'play.disembarkUnit':
+      return disembarkPlayUnit(
+        state,
+        normalizedAction.side,
+        normalizedAction.transportUnitId,
+        normalizedAction.passengerUnitId,
+        normalizedAction.armyUnitIndex,
+      );
+
+    case 'play.rotateModels':
+      return normalizedAction.parts.reduce(
+        (next, part) => rotatePlayModels(next, part.unitId, part.side, part.modelIndices, normalizedAction.degrees),
         state,
       );
 
-    case 'manual.reorganizeModels':
-      return action.parts.reduce(
-        (next, part) => reorganizeManualModelsGrid(next, part.unitId, part.side, part.modelIndices, action.rows),
+    case 'play.reorganizeModels':
+      return normalizedAction.parts.reduce(
+        (next, part) => reorganizePlayModelsGrid(next, part.unitId, part.side, part.modelIndices, normalizedAction.rows),
         state,
       );
 
-    case 'manual.beginBattle':
-      return beginManualBattle(state);
+    case 'play.removeModels':
+      return normalizedAction.parts.reduce(
+        (next, part) => removePlayModels(next, part.unitId, part.side, part.modelIndices),
+        state,
+      );
 
-    case 'manual.stepPhase':
-      return stepManualPhase(state);
+    case 'play.beginBattle':
+      return beginPlayBattle(state);
+
+    case 'play.stepPhase':
+      return stepPlayPhase(state);
 
     case 'simulation.placeNextUnit':
       return placeNextUnit(state);
@@ -181,15 +273,21 @@ export function applyGameAction(
 }
 
 export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
-  switch (action.type) {
-    case 'manual.undeployUnit':
-    case 'manual.fallBackUnit':
-    case 'manual.advanceUnit':
-      return action.unitId === unitId;
-    case 'manual.moveModels':
-    case 'manual.rotateModels':
-    case 'manual.reorganizeModels':
-      return action.parts.some(part => part.unitId === unitId);
+  const normalizedAction = normalizeGameAction(action);
+  switch (normalizedAction.type) {
+    case 'play.undeployUnit':
+    case 'play.fallBackUnit':
+    case 'play.advanceUnit':
+    case 'play.completeUnitMovement':
+    case 'play.embarkUnit':
+      return normalizedAction.unitId === unitId;
+    case 'play.disembarkUnit':
+      return normalizedAction.passengerUnitId === unitId || normalizedAction.transportUnitId === unitId;
+    case 'play.moveModels':
+    case 'play.rotateModels':
+    case 'play.reorganizeModels':
+    case 'play.removeModels':
+      return normalizedAction.parts.some(part => part.unitId === unitId);
     default:
       return false;
   }

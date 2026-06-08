@@ -1,5 +1,49 @@
 # Warhammer Simulator — TODOs
 
+## Current Rules Handoff - 2026-06-06
+
+Use this section as the next-session pickup point for the rules implementation work.
+
+### Recently Completed
+- [x] Manual battle flow uses battle rounds 1-5 with named turn phases: Command, Movement, Shooting, Charge, Fight.
+- [x] Battle-shock is modeled as a check inside the Command phase, not as its own standalone phase.
+- [x] Command phase has ordered internal work started: command point gain first, then Battle-shock checks/effects.
+- [x] Battle-shock effects started: failed units have OC affected and are treated as Battle-shocked until reset.
+- [x] Movement action state added for normal move, Advance, Fall Back, and remaining movement allowance.
+- [x] Advance restrictions added: a unit cannot Advance after it has already moved.
+- [x] Fall Back restrictions started: units that Fall Back are restricted from normal shooting/charging.
+- [x] Per-model movement tracking started: each model can spend part of its movement and continue moving until its allowance is used.
+- [x] Movement override support started on unit profiles, including move modifiers and auto-6 Advance style behavior.
+- [x] Canvas movement HUD added for selected models to show remaining movement on the board.
+
+### Next Rules Feature
+- [ ] Continue extracting 10th edition Core Rules from `rules/Warhammer_10th_Core_Rules.pdf`.
+- [ ] Review one rule at a time with the user before implementing it.
+- [ ] Next likely rule area: finish Movement phase constraints around model movement.
+- [ ] Add model coherency enforcement after every move:
+  - Units of 2-5 models: each model must be within 2" horizontally and 5" vertically of at least one other model in the unit.
+  - Units of 6+ models: each model must be within range of at least two other models in the unit.
+  - Single-model units are always coherent.
+- [ ] Add engagement range restrictions for movement:
+  - Models generally cannot move within Engagement Range of enemy models unless charging, piling in, consolidating, or otherwise allowed.
+  - Engagement Range is 1" horizontally and 5" vertically.
+- [ ] Add Remaining Stationary as an explicit manual movement action.
+- [ ] Add UI affordance for ending a unit's movement once the player is done, while still allowing a partially moved model to keep moving before switching units.
+- [ ] Decide whether switching to another unit locks the previous unit's remaining movement for the phase.
+
+### Rule Architecture Notes
+- [ ] Keep phase logic structured as ordered phase steps, not one large phase function.
+- [ ] Prefer core rule functions in `packages/simulator-core`; React should call/import those through `@warhammer-simulator/core`.
+- [ ] Keep edition-specific behavior behind the rules engine so 10th and 11th can share common concepts but diverge cleanly.
+- [ ] Treat 11th edition as a separate ruleset placeholder until rules are actually available; do not guess 11th rules from 10th.
+- [ ] Shared concepts likely worth keeping edition-neutral: battle rounds, active army, phase/step cursor, unit/model positions, dice helpers, objective ownership scaffolding.
+
+### Known Rules/UI Followups
+- [ ] Review whether "practice game" naming should be changed to a more future-proof term before multiplayer features are added.
+- [ ] Improve movement action placement/UI if Advance/Fall Back still feel disconnected from selected unit actions.
+- [ ] Add tests when each rule is implemented in `packages/simulator-core/test/`.
+- [ ] Re-run `npx tsc -p apps/web/tsconfig.json --noEmit`, `npm run lint`, and root `npm run build` after frontend/rules changes.
+
 ## Done
 - [x] 10th edition combat engine (hit/wound/save/damage)
 - [x] Weapon keywords: Torrent, Rapid Fire, Blast, Sustained Hits, Devastating Wounds, Lethal Hits, Deadly Demise

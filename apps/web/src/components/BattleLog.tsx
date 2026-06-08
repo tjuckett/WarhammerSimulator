@@ -97,13 +97,13 @@ export function BattleLog({ entries, army0Color, army1Color }: Props) {
         {visible.length === 0 && (
           <div style={{ color: '#555', textAlign: 'center', marginTop: 20 }}>No entries yet</div>
         )}
-        {visible.map(entry => {
+        {visible.map((entry, index) => {
           const isPhase = entry.type === 'phase';
           const sideColor = entry.side === 0 ? army0Color : army1Color;
           const typeColor = TYPE_COLORS[entry.type] ?? '#ccc';
           return (
             <div
-              key={entry.id}
+              key={`${entry.id}-${entry.turn}-${entry.phase}-${index}`}
               style={{
                 color: isPhase ? typeColor : typeColor,
                 fontWeight: isPhase ? 'bold' : 'normal',

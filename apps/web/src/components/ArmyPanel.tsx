@@ -11,9 +11,9 @@ interface Props {
   battleState: BattleState | null;
   color: string;
   strategy: DeploymentStrategy;
-  manualDeployment?: boolean;
-  selectedManualUnitIndex?: number | null;
-  selectedManualModelUnitId?: string | null;
+  playDeployment?: boolean;
+  selectedPlayUnitIndex?: number | null;
+  selectedPlayModelUnitId?: string | null;
   selectedInspectedUnitId?: string | null;
   selectedInspectedProfileIndex?: number | null;
   onImport: (army: ImportedArmy) => void;
@@ -21,7 +21,8 @@ interface Props {
   onSaveLocal: () => void;
   onExport: () => void;
   onStrategyChange: (s: DeploymentStrategy) => void;
-  onSelectManualUnit?: (side: 0 | 1, unitIndex: number) => void;
+  onSelectPlayUnit?: (side: 0 | 1, unitIndex: number) => void;
+  onSelectStagedUnit?: (side: 0 | 1, unitIndex: number) => void;
   onSelectPlacedUnit?: (unitId: string, side: 0 | 1) => void;
   onInspectUnit?: (unitId: string, side: 0 | 1) => void;
   onInspectProfile?: (side: 0 | 1, unitIndex: number) => void;
@@ -34,9 +35,9 @@ export function ArmyPanel({
   battleState,
   color,
   strategy,
-  manualDeployment = false,
-  selectedManualUnitIndex = null,
-  selectedManualModelUnitId = null,
+  playDeployment = false,
+  selectedPlayUnitIndex = null,
+  selectedPlayModelUnitId = null,
   selectedInspectedUnitId = null,
   selectedInspectedProfileIndex = null,
   onImport,
@@ -44,7 +45,8 @@ export function ArmyPanel({
   onSaveLocal,
   onExport,
   onStrategyChange,
-  onSelectManualUnit,
+  onSelectPlayUnit,
+  onSelectStagedUnit,
   onSelectPlacedUnit,
   onInspectUnit,
   onInspectProfile,
@@ -174,7 +176,7 @@ export function ArmyPanel({
         </div>
       </div>
 
-      {!manualDeployment && (
+      {!playDeployment && (
         <div style={{ padding: '5px 8px', flexShrink: 0, borderBottom: '1px solid #222', display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ color: '#888', fontSize: 11, whiteSpace: 'nowrap' }}>Deploy:</span>
           <select
@@ -217,19 +219,20 @@ export function ArmyPanel({
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
-        {manualDeployment && battleState?.phase === 'deployment' ? (
-          <ManualDeploymentList
+        {playDeployment && battleState && (battleState.phase === 'deployment' || battleState.phase === 'movement') ? (
+          <PlayDeploymentList
             side={side}
             army={army!}
             placedUnits={units ?? []}
             unplacedUnits={battleState.unplacedUnits[side]}
             color={color}
-            selectedIndex={selectedManualUnitIndex}
-            selectedPlacedUnitId={selectedManualModelUnitId ?? selectedInspectedUnitId}
-            onSelect={onSelectManualUnit}
+            selectedIndex={selectedPlayUnitIndex}
+            selectedPlacedUnitId={selectedPlayModelUnitId ?? selectedInspectedUnitId}
+            onSelect={onSelectPlayUnit}
             onSelectPlacedUnit={onSelectPlacedUnit}
+            onSelectStagedUnit={onSelectStagedUnit}
             onInspectStagedUnit={onInspectProfile ? unitIndex => onInspectProfile(side, unitIndex) : undefined}
-            onUndeployPlacedUnit={onUndeployPlacedUnit}
+            onUndeployPlacedUnit={battleState.phase === 'deployment' ? onUndeployPlacedUnit : undefined}
           />
         ) : units ? (
           <UnitList units={units} selectedUnitId={selectedInspectedUnitId} onSelectUnit={onInspectUnit} />
@@ -613,7 +616,7 @@ function PanelSectionHeader({ label, count, color }: { label: string; count: num
   );
 }
 
-function ManualDeploymentList({
+function PlayDeploymentList({
   side,
   army,
   placedUnits,
@@ -623,6 +626,7 @@ function ManualDeploymentList({
   selectedPlacedUnitId,
   onSelect,
   onSelectPlacedUnit,
+  onSelectStagedUnit,
   onInspectStagedUnit,
   onUndeployPlacedUnit,
 }: {
@@ -635,11 +639,12 @@ function ManualDeploymentList({
   selectedPlacedUnitId: string | null;
   onSelect?: (side: 0 | 1, unitIndex: number) => void;
   onSelectPlacedUnit?: (unitId: string, side: 0 | 1) => void;
+  onSelectStagedUnit?: (side: 0 | 1, unitIndex: number) => void;
   onInspectStagedUnit?: (unitIndex: number) => void;
   onUndeployPlacedUnit?: (unitId: string, side: 0 | 1) => void;
 }) {
-  const unplacedDisplayItems = groupedManualDropDisplayItems(army, unplacedUnits);
-  const stagedItems = groupedStagedDisplayItems(army);
+  const unplacedDisplayItems = groupedPlayDropDisplayItems(army, unplacedUnits);
+  const stagedItems = groupedStagedDisplayItems(army, placedUnits);
   return (
     <>
       <PanelSectionHeader label="To Deploy" count={unplacedDisplayItems.length} color={color} />
@@ -687,7 +692,7 @@ function ManualDeploymentList({
         <button
           key={`${kind}-${unitRosterId(u)}-${index}-${groupRole}-${groupIndex}-staged`}
           type="button"
-          onClick={() => onInspectStagedUnit?.(index)}
+          onClick={() => onSelectStagedUnit ? onSelectStagedUnit(side, index) : onInspectStagedUnit?.(index)}
           style={{
             display: 'block',
             width: `calc(100% - ${indent ? 34 : 12}px)`,
@@ -704,7 +709,7 @@ function ManualDeploymentList({
             borderRadius: 5,
             color: '#bbb',
             font: 'inherit',
-            cursor: onInspectStagedUnit ? 'pointer' : 'default',
+            cursor: onSelectStagedUnit || onInspectStagedUnit ? 'pointer' : 'default',
           }}
         >
           {kind === 'transport' && (
@@ -750,7 +755,7 @@ function ManualDeploymentList({
   );
 }
 
-type ManualDropDisplayItem = {
+type PlayDropDisplayItem = {
   unit: UnitProfile;
   deployIndex: number;
   indent: number;
@@ -768,9 +773,9 @@ type StagedDisplayItem = {
   transportEntry?: TransportManifestEntry;
 };
 
-function groupedManualDropDisplayItems(army: ImportedArmy, unplacedUnits: UnitProfile[]): ManualDropDisplayItem[] {
+function groupedPlayDropDisplayItems(army: ImportedArmy, unplacedUnits: UnitProfile[]): PlayDropDisplayItem[] {
   const unplacedById = new Map(unplacedUnits.map((unit, index) => [unitRosterId(unit), { unit, index }]));
-  return groupedUnitDisplayItems(army).flatMap((item): ManualDropDisplayItem[] => {
+  return groupedUnitDisplayItems(army).flatMap((item): PlayDropDisplayItem[] => {
     if (item.groupRole === 'leader') {
       const target = army.units.find(unit =>
         item.unit.leaderAttachment?.attachedToUnitId === unitRosterId(unit)
@@ -797,9 +802,11 @@ function groupedManualDropDisplayItems(army: ImportedArmy, unplacedUnits: UnitPr
   });
 }
 
-function groupedStagedDisplayItems(army: ImportedArmy): StagedDisplayItem[] {
+function groupedStagedDisplayItems(army: ImportedArmy, placedUnits: BattleUnit[] = []): StagedDisplayItem[] {
+  const placedProfileIds = new Set(placedUnits.filter(unit => !unit.destroyed).map(unit => unitRosterId(unit.profile)));
   const groupedItems = groupedUnitDisplayItems(army);
   const nonTransportStaged = groupedItems.flatMap((item): StagedDisplayItem[] => {
+    if (placedProfileIds.has(unitRosterId(item.unit))) return [];
     if (item.groupRole === 'leader') {
       const target = army.units.find(unit =>
         item.unit.leaderAttachment?.attachedToUnitId === unitRosterId(unit)
@@ -830,6 +837,7 @@ function groupedStagedDisplayItems(army: ImportedArmy): StagedDisplayItem[] {
 
   const transportStaged = buildTransportManifest(army)
     .filter(entry => entry.passengers.length > 0)
+    .filter(entry => !placedProfileIds.has(unitRosterId(entry.unit)))
     .flatMap((entry): StagedDisplayItem[] => [
       {
         kind: 'transport',
@@ -842,6 +850,7 @@ function groupedStagedDisplayItems(army: ImportedArmy): StagedDisplayItem[] {
       },
       ...groupedItems
         .filter(item => isEmbarkedInTransport(item.unit, entry))
+        .filter(item => !placedProfileIds.has(unitRosterId(item.unit)))
         .map((item): StagedDisplayItem => ({
           kind: 'unit',
           unit: item.unit,
@@ -943,7 +952,10 @@ function UnitList({
             <div style={{ display: 'flex', gap: 3, marginTop: 2 }}>
               {u.inCombat && <Badge label="melee" color="#ff8800" />}
               {u.charged && <Badge label="charged" color="#ffe000" />}
+              {u.movementAction === 'remainedStationary' && <Badge label="stationary" color="#b9d7ff" />}
               {u.movementAction === 'advanced' && <Badge label="advanced" color="#7cff9b" />}
+              {u.movementComplete && u.movementAction !== 'remainedStationary' && <Badge label="done" color="#c9c4ff" />}
+              {typeof u.movementAllowanceRemaining === 'number' && <Badge label={`${u.movementAllowanceRemaining.toFixed(1)}" left`} color="#7cff9b" />}
               {u.fellBack && <Badge label="fell back" color="#66d9ff" />}
               {u.battleshocked && <Badge label="shocked" color="#8888ff" />}
             </div>

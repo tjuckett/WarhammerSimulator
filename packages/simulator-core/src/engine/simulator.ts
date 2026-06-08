@@ -1,10 +1,11 @@
-import type { BattleState, BattleUnit, LogEntry, Phase, Position, Side, Terrain, TerrainFeature } from '../types/battle';
+import type { BattleState, BattleUnit, LogEntry, MovementStep, Phase, Position, Side, Terrain, TerrainFeature } from '../types/battle';
 import type { ImportedArmy, UnitProfile, WeaponProfile } from '../types/army';
 import { rules40K10th, rulesetMetadataForState, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
 import { deployArmy, distanceToDeploymentZone, fp, pointInDeploymentZone, zoneFor, unitRole, type DeploymentStrategy } from './deployment';
 import { selectUnitToDrop, reactivePosition, deployModelFormation } from './deploymentBrain';
 import { DEFAULT_OBJECTIVES } from './missions';
+import { advanceAllowance, normalMoveAllowance } from './movement';
 import { objectiveControlRadius } from './objectiveGeometry';
 import { battleRound, logWithBattleRound, maxBattleRounds, setBattleRound } from './battleRound';
 import { gainCommandPhaseCommandPoints } from './commandPoints';
@@ -34,7 +35,12 @@ import {
 let _logId = 0;
 let _unitId = 0;
 
-function nextLog(): string { return String(++_logId); }
+function nextLog(state?: BattleState): string {
+  const usedIds = new Set(state?.log.map(entry => entry.id) ?? []);
+  let id = String(++_logId);
+  while (usedIds.has(id)) id = String(++_logId);
+  return id;
+}
 
 // ─── Log factory ─────────────────────────────────────────────────────────────
 
@@ -45,7 +51,7 @@ function log(
   message: string,
   type: LogEntry['type'],
 ): LogEntry {
-  return logWithBattleRound({ id: nextLog(), turn: battleRound(state), phase: state.phase, side, unitName, message, type });
+  return logWithBattleRound({ id: nextLog(state), turn: battleRound(state), phase: state.phase, side, unitName, message, type });
 }
 
 function phaseLog(state: BattleState, side: Side, armyName: string, label: string): LogEntry {
@@ -100,7 +106,7 @@ function modelRadiiForProfile(profile: UnitProfile): number[] {
   return Array.from({ length: profile.baseModelCount }, (_, modelIndex) => modelBaseRadiusInches(profile, modelIndex));
 }
 
-function manualGridFormation(profile: UnitProfile, anchor: Position, side: Side): Position[] {
+function playGridFormation(profile: UnitProfile, anchor: Position, side: Side): Position[] {
   const count = profile.baseModelCount;
   if (count <= 1) return [anchor];
 
@@ -123,7 +129,7 @@ function manualGridFormation(profile: UnitProfile, anchor: Position, side: Side)
   });
 }
 
-function manualGridFormationByRows(profile: UnitProfile, center: Position, side: Side, rows: number, modelIndices?: number[]): Position[] {
+function playGridFormationByRows(profile: UnitProfile, center: Position, side: Side, rows: number, modelIndices?: number[]): Position[] {
   const indices = modelIndices?.length ? modelIndices : Array.from({ length: profile.baseModelCount }, (_, modelIndex) => modelIndex);
   const count = indices.length;
   if (count <= 1) return [center];
@@ -430,10 +436,58 @@ function unitFullyInCover(unit: BattleUnit, terrain: Terrain[]): boolean {
   );
 }
 
+function unitIsTransportProfile(profile: UnitProfile): boolean {
+  return Math.max(0, Math.floor(profile.transportCapacity ?? 0)) > 0
+    || profile.keywords.some(keyword => keyword.toLowerCase() === 'transport')
+    || profile.factionKeywords.some(keyword => keyword.toLowerCase() === 'transport');
+}
+
+function transportCapacity(unit: BattleUnit): number {
+  return Math.max(0, Math.floor(unit.profile.transportCapacity ?? 0));
+}
+
+function embarkedUnitsForTransport(state: BattleState, transportUnitId: string): BattleUnit[] {
+  return state.units.filter(unit => !unit.destroyed && unit.embarkedInUnitId === transportUnitId);
+}
+
+function transportUsedCapacity(state: BattleState, transportUnitId: string): number {
+  return embarkedUnitsForTransport(state, transportUnitId)
+    .reduce((total, unit) => total + unit.remainingModels, 0);
+}
+
+export function transportCapacityRemaining(state: BattleState, transportUnitId: string): number {
+  const transport = state.units.find(unit => unit.id === transportUnitId && !unit.destroyed);
+  if (!transport) return 0;
+  return Math.max(0, transportCapacity(transport) - transportUsedCapacity(state, transportUnitId));
+}
+
+export function playTransportPassengers(state: BattleState, transportUnitId: string): BattleUnit[] {
+  return embarkedUnitsForTransport(state, transportUnitId);
+}
+
+function everyModelWithinRange(unit: BattleUnit, target: BattleUnit, range: number): boolean {
+  return unit.modelPositions.every(model =>
+    target.modelPositions.some(targetModel => dist(model, targetModel) <= range),
+  );
+}
+
+function nearestFriendlyTransportInRange(state: BattleState, unit: BattleUnit, range: number): BattleUnit | null {
+  const candidates = state.units.filter(candidate =>
+    candidate.side === unit.side
+    && candidate.id !== unit.id
+    && !candidate.destroyed
+    && !candidate.embarkedInUnitId
+    && unitIsTransportProfile(candidate.profile)
+    && transportCapacityRemaining(state, candidate.id) >= unit.remainingModels
+    && everyModelWithinRange(unit, candidate, range)
+  );
+  return nearest(unit, candidates);
+}
+
 // ─── Unit queries ─────────────────────────────────────────────────────────────
 
 function enemies(state: BattleState, side: Side): BattleUnit[] {
-  return state.units.filter(u => u.side !== side && !u.destroyed);
+  return state.units.filter(u => u.side !== side && !u.destroyed && !u.embarkedInUnitId);
 }
 
 function nearest(unit: BattleUnit, targets: BattleUnit[]): BattleUnit | null {
@@ -588,6 +642,7 @@ function applyDamage(
       `  💀 ${unit.profile.name} DESTROYED`,
       'death',
     ));
+    logs.push(...emergencyDisembarkDestroyedTransport(state, unit, attackerSide));
   } else if (killed > 0) {
     logs.push(log(state, attackerSide, unit.profile.name,
       `  ⚠️  ${unit.profile.name}: ${killed} model(s) slain (${unit.remainingModels}/${unit.profile.baseModelCount} remain)`,
@@ -605,8 +660,90 @@ function applyDamage(
 
 // ─── Phase simulators ─────────────────────────────────────────────────────────
 
+function destroyPassengerModels(unit: BattleUnit, destroyedModels: number): void {
+  if (destroyedModels <= 0) return;
+  unit.remainingModels = Math.max(0, unit.remainingModels - destroyedModels);
+  unit.modelPositions = unit.modelPositions.slice(0, unit.remainingModels);
+  unit.modelRotations = unit.modelRotations?.slice(0, unit.remainingModels);
+  unit.movementAllowanceRemainingByModel = unit.movementAllowanceRemainingByModel?.slice(0, unit.remainingModels);
+  if (unit.remainingModels <= 0 || unit.modelPositions.length <= 0) {
+    unit.destroyed = true;
+    unit.remainingModels = 0;
+    unit.modelPositions = [];
+    unit.modelRotations = [];
+    unit.movementAllowanceRemaining = 0;
+    unit.movementAllowanceRemainingByModel = [];
+  } else {
+    unit.position = centroid(unit.modelPositions);
+    unit.woundsOnLeadModel = Math.min(unit.woundsOnLeadModel, unit.profile.wounds);
+  }
+}
+
+function emergencyDisembarkDestroyedTransport(
+  state: BattleState,
+  transport: BattleUnit,
+  attackerSide: Side,
+): LogEntry[] {
+  if (!unitIsTransportProfile(transport.profile)) return [];
+  const logs: LogEntry[] = [];
+  const side = transport.side;
+  const existingPassengers = embarkedUnitsForTransport(state, transport.id);
+  const existingPassengerProfileIds = new Set(existingPassengers.map(unit => unitRosterId(unit.profile)));
+  const stagedPassengerProfiles = state.armies[side].army.units.filter(profile =>
+    unitAssignedToTransport(profile, transport)
+    && !existingPassengerProfileIds.has(unitRosterId(profile))
+    && !state.units.some(unit => unit.side === side && !unit.destroyed && unitRosterId(unit.profile) === unitRosterId(profile))
+  );
+  const passengers: BattleUnit[] = [
+    ...existingPassengers,
+    ...stagedPassengerProfiles.map(profile => makeBattleUnit(profile, side, [{ ...transport.position }])),
+  ];
+
+  for (const passenger of passengers) {
+    const existingPassenger = state.units.find(unit => unit.id === passenger.id);
+    const unit = existingPassenger ?? passenger;
+    const positions = disembarkPositions(state, transport, unit.profile);
+    if (!positions) {
+      unit.embarkedInUnitId = undefined;
+      unit.destroyed = true;
+      unit.remainingModels = 0;
+      unit.modelPositions = [];
+      if (!existingPassenger) state.units.push(unit);
+      logs.push(log(state, attackerSide, unit.profile.name,
+        `${unit.profile.name} cannot disembark from the destroyed ${transport.profile.name} and is destroyed.`,
+        'death',
+      ));
+      continue;
+    }
+
+    unit.embarkedInUnitId = undefined;
+    unit.modelPositions = positions;
+    unit.modelRotations = positions.map(() => side === 0 ? 0 : 180);
+    unit.remainingModels = Math.min(unit.remainingModels || unit.profile.baseModelCount, positions.length);
+    unit.position = centroid(unit.modelPositions);
+    unit.movementAction = 'normalMove';
+    unit.movementAllowanceRemaining = 0;
+    unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
+    unit.movementComplete = true;
+    unit.battleshocked = true;
+    unit.emergencyDisembarkedThisTurn = true;
+    unit.inCombat = false;
+    if (!existingPassenger) state.units.push(unit);
+
+    const rolls = unit.modelPositions.map(() => d6());
+    const destroyedModels = rolls.filter(roll => roll === 1).length;
+    destroyPassengerModels(unit, destroyedModels);
+    logs.push(log(state, attackerSide, unit.profile.name,
+      `${unit.profile.name} emergency disembarks from ${transport.profile.name}; rolls ${rolls.join(', ')}${destroyedModels ? `; ${destroyedModels} model${destroyedModels === 1 ? '' : 's'} destroyed` : '; no models destroyed'}.`,
+      destroyedModels && unit.destroyed ? 'death' : 'roll',
+    ));
+  }
+
+  return logs;
+}
+
 function runMovement(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
-  if (unit.destroyed) return [];
+  if (unit.destroyed || unit.embarkedInUnitId) return [];
   const eng = rules.engagementRange();
   const foes = enemies(state, unit.side);
   if (inEngagement(unit, foes, eng)) {
@@ -658,7 +795,7 @@ function runMovement(unit: BattleUnit, state: BattleState, rules: RulesEdition):
 }
 
 function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
-  if (unit.destroyed) return [];
+  if (unit.destroyed || unit.embarkedInUnitId) return [];
   if (unit.fellBack || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return [];
   const eng = rules.engagementRange();
   const foes = enemies(state, unit.side);
@@ -694,7 +831,7 @@ function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition):
 }
 
 function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
-  if (unit.destroyed || unit.inCombat || unit.fellBack || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return [];
+  if (unit.destroyed || unit.embarkedInUnitId || unit.inCombat || unit.fellBack || unit.arrivedFromReinforcements || unit.emergencyDisembarkedThisTurn || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return [];
   const foes = enemies(state, unit.side).filter(
     e => dist(unit.position, e.position) <= rules.chargeRange(),
   );
@@ -752,7 +889,7 @@ function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): L
 }
 
 function runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
-  if (unit.destroyed) return [];
+  if (unit.destroyed || unit.embarkedInUnitId) return [];
   const eng = rules.engagementRange();
   const foes = enemies(state, unit.side).filter(e => dist(unit.position, e.position) <= eng);
   if (!foes.length) return [];
@@ -830,7 +967,7 @@ function scoreObjectives(s: BattleState, side: Side, rules: RulesEdition): LogEn
     let oc0 = 0, oc1 = 0;
 
     for (const unit of s.units) {
-      if (unit.destroyed) continue;
+      if (unit.destroyed || unit.embarkedInUnitId) continue;
       const inRange = unit.modelPositions.some((model, modelIndex) => (
         dist(model, obj) <= controlRadius + modelBaseRadius(unit, modelIndex)
       ));
@@ -875,10 +1012,25 @@ function checkWinner(state: BattleState): void {
 // ─── Deep copy ────────────────────────────────────────────────────────────────
 
 const TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight'];
-const MANUAL_MODEL_EDIT_PHASES: Phase[] = ['deployment', 'movement'];
+const PLAY_MODEL_EDIT_PHASES: Phase[] = ['deployment', 'movement'];
+
+export function movementStep(state: BattleState): MovementStep {
+  return state.phase === 'movement' ? state.movementStep ?? 'moveUnits' : 'moveUnits';
+}
 
 function activeUnits(state: BattleState, side: Side): BattleUnit[] {
-  return state.units.filter(u => u.side === side && !u.destroyed);
+  return state.units.filter(u => u.side === side && !u.destroyed && !u.embarkedInUnitId);
+}
+
+export function markRemainingStationaryUnits(state: BattleState, side: Side = state.activeArmy): void {
+  for (const unit of activeUnits(state, side)) {
+    if (!unit.movementAction && !unit.fellBack) {
+      unit.movementAction = 'remainedStationary';
+      unit.movementAllowanceRemaining = 0;
+      unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
+      unit.movementComplete = true;
+    }
+  }
 }
 
 function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
@@ -888,10 +1040,16 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
     u.activated = false;
     u.charged = false;
     u.movementAction = undefined;
+    u.movementAllowanceRemaining = undefined;
+    u.movementAllowanceRemainingByModel = undefined;
+    u.movementComplete = undefined;
+    u.arrivedFromReinforcements = undefined;
+    u.emergencyDisembarkedThisTurn = undefined;
     u.fellBack = false;
     u.inCombat = false;
   });
   s.phase = 'command';
+  s.movementStep = undefined;
   const nextCommandPoints = gainCommandPhaseCommandPoints(s);
   const logs = [
     phaseLog(s, side, armyName, `\n=== BATTLE ROUND ${battleRound(s)} - ${armyName.toUpperCase()} - ${rules.name.toUpperCase()} ===`),
@@ -915,11 +1073,13 @@ function advanceTurnInPlace(s: BattleState): void {
       else if (s.scores[1] > s.scores[0]) s.winner = 1;
       else s.winner = 'draw';
       s.phase = 'end';
+      s.movementStep = undefined;
       return;
     }
   }
 
   s.phase = 'setup';
+  s.movementStep = undefined;
 }
 
 function clone<T>(v: T): T { return JSON.parse(JSON.stringify(v)); }
@@ -946,6 +1106,8 @@ function makeBattleUnit(
     facingDeg: side === 0 ? 0 : 180,
     charged: false,
     movementAction: undefined,
+    movementAllowanceRemaining: undefined,
+    movementAllowanceRemainingByModel: undefined,
     fellBack: false,
     inCombat: false,
     battleshocked: false,
@@ -969,6 +1131,55 @@ function leaderAnchor(bodyguard: BattleUnit, leader: UnitProfile, leaderIndex: n
 function removeUnitFromUnplaced(s: BattleState, side: Side, profile: UnitProfile): void {
   const key = unitRosterId(profile);
   s.unplacedUnits[side] = s.unplacedUnits[side].filter(unit => unitRosterId(unit) !== key);
+}
+
+function unitIsStagedReinforcement(unit: UnitProfile): boolean {
+  return unit.deployment?.mode === 'deepStrike' || unit.deployment?.mode === 'strategicReserve';
+}
+
+function reinforcementPlacementIsOutsideEnemyRange(state: BattleState, side: Side, modelPositions: Position[], minRange = 9): boolean {
+  const foes = enemies(state, side);
+  return modelPositions.every(model =>
+    foes.every(enemy =>
+      enemy.modelPositions.every(enemyModel => dist(model, enemyModel) > minRange),
+    ),
+  );
+}
+
+const TRANSPORT_ACCESS_RANGE = 3;
+
+function unitAssignedToTransport(profile: UnitProfile, transport: BattleUnit): boolean {
+  return profile.deployment?.mode === 'transport'
+    && (
+      profile.deployment.transportUnitId === unitRosterId(transport.profile)
+      || (!profile.deployment.transportUnitId && profile.deployment.transportName === transport.profile.name)
+    );
+}
+
+function disembarkPositions(state: BattleState, transport: BattleUnit, profile: UnitProfile): Position[] | null {
+  const side = transport.side;
+  const forward = side === 0 ? 1 : -1;
+  const offsets: Position[] = [
+    { x: forward * (TRANSPORT_ACCESS_RANGE + 0.5), y: 0 },
+    { x: -forward * (TRANSPORT_ACCESS_RANGE + 0.5), y: 0 },
+    { x: 0, y: TRANSPORT_ACCESS_RANGE + 0.5 },
+    { x: 0, y: -(TRANSPORT_ACCESS_RANGE + 0.5) },
+  ];
+  const enemiesInState = enemies(state, side);
+
+  for (const offset of offsets) {
+    const positions = playGridFormation(profile, {
+      x: transport.position.x + offset.x,
+      y: transport.position.y + offset.y,
+    }, side);
+    const candidateUnit = makeBattleUnit(profile, side, positions);
+    if (inEngagement(candidateUnit, enemiesInState, rules40K10th.engagementRange())) continue;
+    if (!playMoveHasNoBaseOverlap(state, candidateUnit, new Set(candidateUnit.modelPositions.map((_, index) => index)))) continue;
+    if (!playMoveHasNoWallOverlap(state, candidateUnit, new Set(candidateUnit.modelPositions.map((_, index) => index)))) continue;
+    return positions;
+  }
+
+  return null;
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
@@ -1194,7 +1405,7 @@ export function placeNextUnit(state: BattleState): BattleState {
   return s;
 }
 
-export function placeManualUnit(state: BattleState, side: Side, unitIndex: number, position: Position): BattleState {
+export function placePlayUnit(state: BattleState, side: Side, unitIndex: number, position: Position): BattleState {
   const s = clone(state);
   if (s.phase !== 'deployment') return s;
 
@@ -1218,7 +1429,7 @@ export function placeManualUnit(state: BattleState, side: Side, unitIndex: numbe
     return s;
   }
 
-  const modelPositions = manualGridFormation(profile, position, side);
+  const modelPositions = playGridFormation(profile, position, side);
   const unit = makeBattleUnit(profile, side, modelPositions);
 
   s.units.push(unit);
@@ -1226,7 +1437,7 @@ export function placeManualUnit(state: BattleState, side: Side, unitIndex: numbe
   const attachedLeaders = attachedFollowersFor(s.armies[side].army, profile);
   attachedLeaders.forEach((leader, leaderIndex) => {
     const anchor = leaderAnchor(unit, leader, leaderIndex, side, s.setup?.deployment);
-    const leaderPositions = manualGridFormation(leader, anchor, side);
+    const leaderPositions = playGridFormation(leader, anchor, side);
     const leaderUnit = makeBattleUnit(leader, side, leaderPositions, unit.id, unit.tabletopUnitId);
     resolveInternalModelOverlaps(leaderUnit, zoneFor(side, s.setup?.deployment));
     avoidDeploymentOverlap(leaderUnit, s, zoneFor(side, s.setup?.deployment));
@@ -1243,12 +1454,164 @@ export function placeManualUnit(state: BattleState, side: Side, unitIndex: numbe
   return s;
 }
 
+export function placePlayReinforcement(state: BattleState, side: Side, armyUnitIndex: number, position: Position): BattleState {
+  if (state.phase !== 'movement' || movementStep(state) !== 'reinforcements' || state.activeArmy !== side) return state;
+  const profile = state.armies[side].army.units[armyUnitIndex];
+  if (!profile || !unitIsStagedReinforcement(profile)) return state;
+
+  const profileKey = unitRosterId(profile);
+  if (state.units.some(unit => unit.side === side && !unit.destroyed && unitRosterId(unit.profile) === profileKey)) return state;
+
+  const modelPositions = playGridFormation(profile, position, side);
+  if (!reinforcementPlacementIsOutsideEnemyRange(state, side, modelPositions)) return state;
+
+  const s = clone(state);
+  const unit = makeBattleUnit(profile, side, modelPositions);
+  unit.movementAction = 'normalMove';
+  unit.movementAllowanceRemaining = 0;
+  unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
+  unit.movementComplete = true;
+  unit.arrivedFromReinforcements = true;
+  resolveInternalModelOverlaps(unit);
+  s.units.push(unit);
+
+  const movingIndices = new Set(unit.modelPositions.map((_, modelIndex) => modelIndex));
+  if (!playMoveHasNoBaseOverlap(s, unit, movingIndices) || !playMoveHasNoWallOverlap(s, unit, movingIndices)) return state;
+
+  s.log = [...s.log, log(
+    s,
+    side,
+    profile.name,
+    `${s.armies[side].name} sets up ${profile.name} as Reinforcements more than 9" from enemy models.`,
+    'move',
+  )];
+  return s;
+}
+
+export function playUnitCanEmbark(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  transportUnitId?: string,
+): boolean {
+  if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
+  if (
+    !unit
+    || unit.embarkedInUnitId
+    || unitIsTransportProfile(unit.profile)
+    || unit.movementComplete
+    || unit.movementAction === 'fellBack'
+    || unit.fellBack
+  ) return false;
+  const transport = transportUnitId
+    ? state.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)
+    : nearestFriendlyTransportInRange(state, unit, TRANSPORT_ACCESS_RANGE);
+  if (!transport || !unitIsTransportProfile(transport.profile)) return false;
+  if (transportCapacityRemaining(state, transport.id) < unit.remainingModels) return false;
+  return everyModelWithinRange(unit, transport, TRANSPORT_ACCESS_RANGE);
+}
+
+export function embarkPlayUnit(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  transportUnitId?: string,
+): BattleState {
+  if (!playUnitCanEmbark(state, unitId, side, transportUnitId)) return state;
+  const existingUnit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
+  const existingTransport = transportUnitId
+    ? state.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)
+    : nearestFriendlyTransportInRange(state, existingUnit, TRANSPORT_ACCESS_RANGE);
+  if (!existingTransport) return state;
+
+  const s = clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
+  const transport = s.units.find(candidate => candidate.id === existingTransport.id && candidate.side === side && !candidate.destroyed)!;
+  unit.embarkedInUnitId = transport.id;
+  unit.position = { ...transport.position };
+  unit.modelPositions = transport.modelPositions.map(position => ({ ...position })).slice(0, Math.max(1, unit.remainingModels));
+  while (unit.modelPositions.length < unit.remainingModels) unit.modelPositions.push({ ...transport.position });
+  unit.movementAction = 'normalMove';
+  unit.movementAllowanceRemaining = 0;
+  unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
+  unit.movementComplete = true;
+  unit.inCombat = false;
+  s.log = [...s.log, log(
+    s,
+    side,
+    unit.profile.name,
+    `${unit.profile.name} embarks within ${transport.profile.name}.`,
+    'move',
+  )];
+  return s;
+}
+
+export function playUnitCanDisembark(
+  state: BattleState,
+  side: Side,
+  transportUnitId: string,
+  passengerUnitId?: string,
+  armyUnitIndex?: number,
+): boolean {
+  if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
+  const transport = state.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!transport || !unitIsTransportProfile(transport.profile) || transport.movementAction || transport.movementComplete) return false;
+  const passenger = passengerUnitId
+    ? state.units.find(candidate => candidate.id === passengerUnitId && candidate.side === side && !candidate.destroyed && candidate.embarkedInUnitId === transportUnitId)
+    : null;
+  const profile = passenger?.profile ?? (typeof armyUnitIndex === 'number' ? state.armies[side].army.units[armyUnitIndex] : undefined);
+  if (!profile || (armyUnitIndex !== undefined && !unitAssignedToTransport(profile, transport))) return false;
+  if (state.units.some(unit => unit.side === side && !unit.destroyed && !unit.embarkedInUnitId && unitRosterId(unit.profile) === unitRosterId(profile))) return false;
+  return !!disembarkPositions(state, transport, profile);
+}
+
+export function disembarkPlayUnit(
+  state: BattleState,
+  side: Side,
+  transportUnitId: string,
+  passengerUnitId?: string,
+  armyUnitIndex?: number,
+): BattleState {
+  if (!playUnitCanDisembark(state, side, transportUnitId, passengerUnitId, armyUnitIndex)) return state;
+  const s = clone(state);
+  const transport = s.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
+  const existingPassenger = passengerUnitId
+    ? s.units.find(candidate => candidate.id === passengerUnitId && candidate.side === side && !candidate.destroyed && candidate.embarkedInUnitId === transportUnitId)
+    : null;
+  const profile = existingPassenger?.profile ?? (typeof armyUnitIndex === 'number' ? s.armies[side].army.units[armyUnitIndex] : undefined);
+  if (!profile) return state;
+  const positions = disembarkPositions(s, transport, profile);
+  if (!positions) return state;
+
+  const unit = existingPassenger ?? makeBattleUnit(profile, side, positions);
+  unit.embarkedInUnitId = undefined;
+  unit.modelPositions = positions;
+  unit.modelRotations = positions.map(() => side === 0 ? 0 : 180);
+  unit.position = centroid(positions);
+  unit.remainingModels = Math.min(unit.remainingModels || profile.baseModelCount, positions.length);
+  unit.movementAction = undefined;
+  unit.movementAllowanceRemaining = normalMoveAllowance(unit);
+  unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => normalMoveAllowance(unit));
+  unit.movementComplete = false;
+  unit.inCombat = false;
+  if (!existingPassenger) s.units.push(unit);
+  s.log = [...s.log, log(
+    s,
+    side,
+    unit.profile.name,
+    `${unit.profile.name} disembarks from ${transport.profile.name}.`,
+    'move',
+  )];
+  return s;
+}
+
 function coherencyListLabel(units: BattleUnit[]): string {
   return Array.from(new Set(units.map(unit => unit.profile.name))).join(' + ');
 }
 
 function coherencyModelLists(state: BattleState): Array<{ label: string; models: CoherencyModel[] }> {
-  const deployedUnits = state.units.filter(unit => !unit.destroyed);
+  const deployedUnits = state.units.filter(unit => !unit.destroyed && !unit.embarkedInUnitId);
   const handled = new Set<string>();
   const lists: Array<{ label: string; models: CoherencyModel[] }> = [];
 
@@ -1276,8 +1639,12 @@ function coherencyModelLists(state: BattleState): Array<{ label: string; models:
   return lists;
 }
 
+function shouldShowCoherencyIssues(state: BattleState): boolean {
+  return state.phase === 'deployment' || state.phase === 'movement';
+}
+
 export function battleUnitIdsWithCoherencyIssues(state: BattleState): Set<string> {
-  if (state.phase !== 'deployment') return new Set();
+  if (!shouldShowCoherencyIssues(state)) return new Set();
   const unitIds = new Set<string>();
   for (const list of coherencyModelLists(state)) {
     if (modelListIsCoherent(list.models)) continue;
@@ -1287,7 +1654,7 @@ export function battleUnitIdsWithCoherencyIssues(state: BattleState): Set<string
 }
 
 export function battleModelIdsWithCoherencyIssues(state: BattleState): Set<string> {
-  if (state.phase !== 'deployment') return new Set();
+  if (!shouldShowCoherencyIssues(state)) return new Set();
   const modelIds = new Set<string>();
   for (const list of coherencyModelLists(state)) {
     const issueIndices = modelIndicesWithCoherencyIssues(list.models);
@@ -1299,11 +1666,26 @@ export function battleModelIdsWithCoherencyIssues(state: BattleState): Set<strin
   return modelIds;
 }
 
+export function battleCoherencyIssues(state: BattleState, side?: Side): string[] {
+  const issues: string[] = [];
+  for (const list of coherencyModelLists(state)) {
+    if (side !== undefined && !list.models.some(model => model.unit.side === side)) continue;
+    if (modelListIsCoherent(list.models)) continue;
+    issues.push(`${list.label} (${list.models.length} models) is out of coherency.`);
+  }
+  return issues;
+}
+
+export function playPhaseCoherencyIssues(state: BattleState): string[] {
+  if (state.phase !== 'movement') return [];
+  return battleCoherencyIssues(state, state.activeArmy);
+}
+
 function modelMoveHasNoBaseOverlap(s: BattleState, unit: BattleUnit, modelIndex: number): boolean {
   const model = unit.modelPositions[modelIndex];
   const footprint = modelFootprint(unit, modelIndex);
   return s.units.every(otherUnit => {
-    if (otherUnit.destroyed) return true;
+    if (otherUnit.destroyed || otherUnit.embarkedInUnitId) return true;
     return otherUnit.modelPositions.every((otherModel, otherModelIndex) => {
       if (otherUnit.id === unit.id && otherModelIndex === modelIndex) return true;
       const otherFootprint = modelFootprint(otherUnit, otherModelIndex);
@@ -1312,11 +1694,12 @@ function modelMoveHasNoBaseOverlap(s: BattleState, unit: BattleUnit, modelIndex:
   });
 }
 
-export function moveManualModel(state: BattleState, unitId: string, modelIndex: number, position: Position): BattleState {
+export function movePlayModel(state: BattleState, unitId: string, modelIndex: number, position: Position): BattleState {
   const s = clone(state);
-  if (!MANUAL_MODEL_EDIT_PHASES.includes(s.phase)) return s;
+  if (!PLAY_MODEL_EDIT_PHASES.includes(s.phase)) return s;
+  if (s.phase === 'movement' && movementStep(s) !== 'moveUnits') return s;
 
-  const unit = s.units.find(u => u.id === unitId && !u.destroyed);
+  const unit = s.units.find(u => u.id === unitId && !u.destroyed && !u.embarkedInUnitId);
   if (!unit || !unit.modelPositions[modelIndex]) return s;
 
   if (s.phase === 'deployment') {
@@ -1334,7 +1717,7 @@ export function moveManualModel(state: BattleState, unitId: string, modelIndex: 
   return s;
 }
 
-function applyManualModelTranslation(
+function applyPlayModelTranslation(
   unit: BattleUnit,
   modelIndices: number[],
   dx: number,
@@ -1350,12 +1733,12 @@ function applyManualModelTranslation(
   unit.position = centroid(unit.modelPositions);
 }
 
-function manualMoveHasNoBaseOverlap(state: BattleState, movingUnit: BattleUnit, movingIndices: Set<number>): boolean {
+function playMoveHasNoBaseOverlap(state: BattleState, movingUnit: BattleUnit, movingIndices: Set<number>): boolean {
   for (const modelIndex of movingIndices) {
     const model = movingUnit.modelPositions[modelIndex];
     const footprint = modelFootprint(movingUnit, modelIndex);
     for (const otherUnit of state.units) {
-      if (otherUnit.destroyed) continue;
+      if (otherUnit.destroyed || otherUnit.embarkedInUnitId) continue;
       for (let otherModelIndex = 0; otherModelIndex < otherUnit.modelPositions.length; otherModelIndex++) {
         if (otherUnit.id === movingUnit.id && movingIndices.has(otherModelIndex)) continue;
         const otherFootprint = modelFootprint(otherUnit, otherModelIndex);
@@ -1366,7 +1749,7 @@ function manualMoveHasNoBaseOverlap(state: BattleState, movingUnit: BattleUnit, 
   return true;
 }
 
-function manualMoveHasNoWallOverlap(state: BattleState, movingUnit: BattleUnit, movingIndices: Set<number>): boolean {
+function playMoveHasNoWallOverlap(state: BattleState, movingUnit: BattleUnit, movingIndices: Set<number>): boolean {
   for (const modelIndex of movingIndices) {
     const model = movingUnit.modelPositions[modelIndex];
     const footprint = modelFootprint(movingUnit, modelIndex);
@@ -1379,9 +1762,113 @@ function manualMoveHasNoWallOverlap(state: BattleState, movingUnit: BattleUnit, 
   return true;
 }
 
-function manualMoveHasNoCollision(state: BattleState, movingUnit: BattleUnit, movingIndices: Set<number>): boolean {
-  return manualMoveHasNoBaseOverlap(state, movingUnit, movingIndices)
-    && manualMoveHasNoWallOverlap(state, movingUnit, movingIndices);
+function playMoveHasNoEndCollision(state: BattleState, movingUnit: BattleUnit, movingIndices: Set<number>): boolean {
+  return playMoveHasNoBaseOverlap(state, movingUnit, movingIndices)
+    && playMoveHasNoWallOverlap(state, movingUnit, movingIndices)
+    && !inEngagement(movingUnit, enemies(state, movingUnit.side), rules40K10th.engagementRange());
+}
+
+function distancePointToSegment(point: Position, from: Position, to: Position): number {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const lengthSq = dx * dx + dy * dy;
+  if (lengthSq <= 0.000001) return dist(point, from);
+  const t = Math.max(0, Math.min(1, ((point.x - from.x) * dx + (point.y - from.y) * dy) / lengthSq));
+  return dist(point, { x: from.x + dx * t, y: from.y + dy * t });
+}
+
+function playMovePathCrossesEnemyModels(
+  state: BattleState,
+  movingUnit: BattleUnit,
+  movingIndices: Set<number>,
+  dx: number,
+  dy: number,
+): boolean {
+  if (hasKeyword(movingUnit, 'fly')) return false;
+
+  for (const modelIndex of movingIndices) {
+    const from = movingUnit.modelPositions[modelIndex];
+    const to = { x: from.x + dx, y: from.y + dy };
+    const movingRadius = modelBaseRadius(movingUnit, modelIndex);
+    for (const otherUnit of state.units) {
+      if (otherUnit.destroyed || otherUnit.side === movingUnit.side) continue;
+      for (let otherModelIndex = 0; otherModelIndex < otherUnit.modelPositions.length; otherModelIndex++) {
+        const clearance = movingRadius + modelBaseRadius(otherUnit, otherModelIndex);
+        if (distancePointToSegment(otherUnit.modelPositions[otherModelIndex], from, to) < clearance) return true;
+      }
+    }
+  }
+  return false;
+}
+
+function playMoveEnemyCrossingModelIndices(
+  state: BattleState,
+  movingUnit: BattleUnit,
+  movingIndices: Set<number>,
+  dx: number,
+  dy: number,
+): number[] {
+  const crossingModelIndices: number[] = [];
+
+  for (const modelIndex of movingIndices) {
+    const from = movingUnit.modelPositions[modelIndex];
+    const to = { x: from.x + dx, y: from.y + dy };
+    const movingRadius = modelBaseRadius(movingUnit, modelIndex);
+    const crossesEnemy = state.units.some(otherUnit => {
+      if (otherUnit.destroyed || otherUnit.side === movingUnit.side) return false;
+      return otherUnit.modelPositions.some((otherModel, otherModelIndex) => {
+        const clearance = movingRadius + modelBaseRadius(otherUnit, otherModelIndex);
+        if (dist(otherModel, from) < clearance) return false;
+        return distancePointToSegment(otherModel, from, to) < clearance;
+      });
+    });
+    if (crossesEnemy) crossingModelIndices.push(modelIndex);
+  }
+
+  return crossingModelIndices;
+}
+
+function playMovePathCrossesBlockingTerrain(
+  state: BattleState,
+  movingUnit: BattleUnit,
+  movingIndices: Set<number>,
+  dx: number,
+  dy: number,
+): boolean {
+  if (hasKeyword(movingUnit, 'fly')) return false;
+
+  for (const modelIndex of movingIndices) {
+    const from = movingUnit.modelPositions[modelIndex];
+    const to = { x: from.x + dx, y: from.y + dy };
+    if (lineBlockedByMovement(from, to, state.terrain, movingUnit)) return true;
+  }
+  return false;
+}
+
+function playMoveHasNoPathCollision(
+  state: BattleState,
+  movingUnit: BattleUnit,
+  movingIndices: Set<number>,
+  dx: number,
+  dy: number,
+  ignoreEnemyModelPath = false,
+): boolean {
+  return (ignoreEnemyModelPath || !playMovePathCrossesEnemyModels(state, movingUnit, movingIndices, dx, dy))
+    && !playMovePathCrossesBlockingTerrain(state, movingUnit, movingIndices, dx, dy);
+}
+
+function translatedPlayMoveEndsInEngagement(
+  state: BattleState,
+  movingUnit: BattleUnit,
+  modelIndices: number[],
+  dx: number,
+  dy: number,
+): boolean {
+  const test = clone(state);
+  const testUnit = test.units.find(u => u.id === movingUnit.id && u.side === movingUnit.side && !u.destroyed);
+  if (!testUnit) return false;
+  applyPlayModelTranslation(testUnit, modelIndices, dx, dy);
+  return inEngagement(testUnit, enemies(test, testUnit.side), rules40K10th.engagementRange());
 }
 
 function unitHasBaseOverlap(state: BattleState, unit: BattleUnit): boolean {
@@ -1400,38 +1887,117 @@ function unitHasBaseOverlap(state: BattleState, unit: BattleUnit): boolean {
   return false;
 }
 
-function collisionAdjustedManualMove(
+function collisionAdjustedPlayMove(
   state: BattleState,
   unitId: string,
   side: Side,
   modelIndices: number[],
   dx: number,
   dy: number,
+  options: { ignoreEnemyModelPath?: boolean } = {},
 ): { dx: number; dy: number } {
   const movingIndices = new Set(modelIndices);
   const candidate = clone(state);
   const candidateUnit = candidate.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
   if (!candidateUnit) return { dx, dy };
 
-  applyManualModelTranslation(candidateUnit, modelIndices, dx, dy);
-  if (manualMoveHasNoCollision(candidate, candidateUnit, movingIndices)) return { dx, dy };
+  applyPlayModelTranslation(candidateUnit, modelIndices, dx, dy);
+  if (
+    playMoveHasNoEndCollision(candidate, candidateUnit, movingIndices)
+    && playMoveHasNoPathCollision(state, state.units.find(u => u.id === unitId && u.side === side && !u.destroyed)!, movingIndices, dx, dy, !!options.ignoreEnemyModelPath)
+  ) return { dx, dy };
 
   let lo = 0;
   let hi = 1;
+  const movingUnit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+  if (!movingUnit) return { dx: 0, dy: 0 };
   for (let i = 0; i < 12; i++) {
     const mid = (lo + hi) / 2;
     const test = clone(state);
     const testUnit = test.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
     if (!testUnit) break;
-    applyManualModelTranslation(testUnit, modelIndices, dx * mid, dy * mid);
-    if (manualMoveHasNoCollision(test, testUnit, movingIndices)) lo = mid;
+    applyPlayModelTranslation(testUnit, modelIndices, dx * mid, dy * mid);
+    if (
+      playMoveHasNoEndCollision(test, testUnit, movingIndices)
+      && playMoveHasNoPathCollision(state, movingUnit, movingIndices, dx * mid, dy * mid, !!options.ignoreEnemyModelPath)
+    ) lo = mid;
     else hi = mid;
   }
 
   return { dx: dx * lo, dy: dy * lo };
 }
 
-export function moveManualModels(
+function movementAllowanceForPlayMove(unit: BattleUnit): number {
+  if (unit.movementAction === 'advanced') {
+    return unit.movementAllowanceRemaining ?? normalMoveAllowance(unit);
+  }
+  return normalMoveAllowance(unit);
+}
+
+function ensureModelMovementAllowances(unit: BattleUnit): number[] {
+  const allowance = movementAllowanceForPlayMove(unit);
+  if (!unit.movementAllowanceRemainingByModel || unit.movementAllowanceRemainingByModel.length !== unit.modelPositions.length) {
+    unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => allowance);
+  }
+  return unit.movementAllowanceRemainingByModel;
+}
+
+function selectedMovementAllowance(unit: BattleUnit, modelIndices: number[]): number {
+  const allowances = ensureModelMovementAllowances(unit);
+  return Math.min(...modelIndices.map(modelIndex => allowances[modelIndex] ?? 0));
+}
+
+function consumeModelMovementAllowance(unit: BattleUnit, modelIndices: number[], moved: number): void {
+  const allowances = ensureModelMovementAllowances(unit);
+  for (const modelIndex of modelIndices) {
+    allowances[modelIndex] = Math.max(0, (allowances[modelIndex] ?? 0) - moved);
+  }
+  unit.movementAllowanceRemaining = Math.max(...allowances);
+  if (unit.movementAllowanceRemaining <= 0.001) unit.movementComplete = true;
+}
+
+function playMovementGroupId(unit: BattleUnit): string {
+  return unit.tabletopUnitId ?? unit.id;
+}
+
+function lockOtherMovedPlayUnits(state: BattleState, currentUnit: BattleUnit): void {
+  if (state.phase !== 'movement') return;
+  const currentGroupId = playMovementGroupId(currentUnit);
+  for (const unit of state.units) {
+    if (
+      unit.side !== currentUnit.side
+      || unit.destroyed
+      || playMovementGroupId(unit) === currentGroupId
+      || unit.movementComplete
+    ) continue;
+    if (unit.movementAction === 'normalMove' || unit.movementAction === 'advanced') {
+      unit.movementComplete = true;
+    }
+  }
+}
+
+function markPlayMovementGroupComplete(state: BattleState, currentUnit: BattleUnit): void {
+  const currentGroupId = playMovementGroupId(currentUnit);
+  for (const unit of state.units) {
+    if (unit.side === currentUnit.side && !unit.destroyed && playMovementGroupId(unit) === currentGroupId) {
+      unit.movementComplete = true;
+    }
+  }
+}
+
+function budgetAdjustedPlayMove(unit: BattleUnit, modelIndices: number[], dx: number, dy: number): { dx: number; dy: number } {
+  const distance = Math.hypot(dx, dy);
+  if (distance < 0.001) return { dx, dy };
+
+  const remaining = selectedMovementAllowance(unit, modelIndices);
+  if (remaining <= 0) return { dx: 0, dy: 0 };
+  if (distance <= remaining) return { dx, dy };
+
+  const scale = remaining / distance;
+  return { dx: dx * scale, dy: dy * scale };
+}
+
+export function movePlayModels(
   state: BattleState,
   unitId: string,
   side: Side,
@@ -1440,79 +2006,168 @@ export function moveManualModels(
   dy: number,
   collide = false,
 ): BattleState {
+  if (!PLAY_MODEL_EDIT_PHASES.includes(state.phase)) return state;
+  if (state.phase === 'movement' && movementStep(state) !== 'moveUnits') return state;
+
+  const existingUnit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
+  if (!existingUnit) return state;
+  if (state.phase === 'movement') {
+    if (state.activeArmy !== side) return state;
+    if (
+      existingUnit.movementComplete
+      || existingUnit.fellBack
+      || existingUnit.movementAction === 'fellBack'
+      || existingUnit.movementAction === 'remainedStationary'
+    ) return state;
+    if (engagedEnemies(state, existingUnit, rules40K10th).length > 0) return state;
+  }
+
   const s = clone(state);
-  if (!MANUAL_MODEL_EDIT_PHASES.includes(s.phase)) return s;
-
-  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
-  if (!unit) return s;
-
+  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId)!;
   const uniqueIndices = Array.from(new Set(modelIndices)).filter(modelIndex => unit.modelPositions[modelIndex]);
-  if (!uniqueIndices.length) return s;
+  if (!uniqueIndices.length) return state;
 
-  const move = collide ? collisionAdjustedManualMove(state, unitId, side, uniqueIndices, dx, dy) : { dx, dy };
-  applyManualModelTranslation(unit, uniqueIndices, move.dx, move.dy);
+  const budgetMove = s.phase === 'movement' ? budgetAdjustedPlayMove(unit, uniqueIndices, dx, dy) : { dx, dy };
+  if (Math.hypot(budgetMove.dx, budgetMove.dy) < 0.001) return state;
+  if (
+    s.phase === 'movement'
+    && translatedPlayMoveEndsInEngagement(s, unit, uniqueIndices, budgetMove.dx, budgetMove.dy)
+  ) return state;
+
+  const move = collide || s.phase === 'movement'
+    ? collisionAdjustedPlayMove(s, unitId, side, uniqueIndices, budgetMove.dx, budgetMove.dy)
+    : budgetMove;
+  if (Math.hypot(move.dx, move.dy) < 0.001) return state;
+
+  applyPlayModelTranslation(unit, uniqueIndices, move.dx, move.dy);
+  if (s.phase === 'movement' && inEngagement(unit, enemies(s, side), rules40K10th.engagementRange())) return state;
+
+  if (s.phase === 'movement') {
+    lockOtherMovedPlayUnits(s, unit);
+    const moved = Math.hypot(move.dx, move.dy);
+    unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
+    consumeModelMovementAllowance(unit, uniqueIndices, moved);
+  }
   return s;
 }
 
-export function manualUnitCanFallBack(
+export function removePlayModels(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
-): boolean {
-  if (state.phase !== 'movement' || state.activeArmy !== side) return false;
-  const unit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
-  return !!unit && engagedEnemies(state, unit, rules).length > 0;
+  modelIndices: number[],
+): BattleState {
+  const s = clone(state);
+  if (s.phase !== 'movement' || movementStep(s) !== 'moveUnits' || s.activeArmy !== side) return s;
+
+  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
+  if (!unit) return s;
+
+  const uniqueIndices = Array.from(new Set(modelIndices))
+    .filter(modelIndex => unit.modelPositions[modelIndex])
+    .sort((a, b) => b - a);
+  if (!uniqueIndices.length) return s;
+
+  for (const modelIndex of uniqueIndices) {
+    unit.modelPositions.splice(modelIndex, 1);
+    unit.modelRotations?.splice(modelIndex, 1);
+    unit.movementAllowanceRemainingByModel?.splice(modelIndex, 1);
+  }
+
+  unit.remainingModels = Math.max(0, unit.remainingModels - uniqueIndices.length);
+  unit.destroyed = unit.remainingModels <= 0 || unit.modelPositions.length === 0;
+  unit.remainingModels = unit.destroyed ? 0 : Math.min(unit.remainingModels, unit.modelPositions.length);
+  if (!unit.destroyed) {
+    unit.position = centroid(unit.modelPositions);
+    if (unit.movementAllowanceRemainingByModel?.length) {
+      unit.movementAllowanceRemaining = Math.max(...unit.movementAllowanceRemainingByModel);
+    }
+  } else {
+    unit.movementAllowanceRemaining = 0;
+    unit.movementAllowanceRemainingByModel = [];
+  }
+
+  s.log = [...s.log, log(
+    s,
+    side,
+    unit.profile.name,
+    `${s.armies[side].name} removes ${uniqueIndices.length} ${unit.profile.name} model${uniqueIndices.length === 1 ? '' : 's'} to restore coherency.`,
+    'info',
+  )];
+  return s;
 }
 
-export function manualUnitCanAdvance(
+export function playUnitCanFallBack(
   state: BattleState,
   unitId: string,
   side: Side,
   rules: RulesEdition = rules40K10th,
 ): boolean {
-  if (state.phase !== 'movement' || state.activeArmy !== side) return false;
-  const unit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
-  if (!unit || unit.fellBack || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return false;
+  if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
+  const unit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
+  return !!unit && !unit.movementComplete && !unit.movementAction && engagedEnemies(state, unit, rules).length > 0;
+}
+
+export function playUnitCanAdvance(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rules40K10th,
+): boolean {
+  if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
+  const unit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
+  if (
+    !unit
+    || unit.movementComplete
+    || unit.fellBack
+    || !!unit.movementAction
+    || typeof unit.movementAllowanceRemaining === 'number'
+    || !!unit.movementAllowanceRemainingByModel
+  ) return false;
   return engagedEnemies(state, unit, rules).length === 0;
 }
 
-export function advanceManualUnit(
+export function advancePlayUnit(
   state: BattleState,
   unitId: string,
   side: Side,
   rules: RulesEdition = rules40K10th,
 ): BattleState {
-  if (!manualUnitCanAdvance(state, unitId, side, rules)) return state;
+  if (!playUnitCanAdvance(state, unitId, side, rules)) return state;
 
   const s = clone(state);
-  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
   if (!unit) return state;
+  lockOtherMovedPlayUnits(s, unit);
 
-  const roll = d6();
+  const advance = advanceAllowance(unit, rules);
   unit.movementAction = 'advanced';
+  unit.movementAllowanceRemaining = advance.total;
+  unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => advance.total);
+  unit.movementComplete = advance.total <= 0.001;
   unit.fellBack = false;
   s.log = [...s.log, log(
     s,
     side,
     unit.profile.name,
-    `${unit.profile.name} Advances: rolled ${roll}; movement allowance is ${(unit.profile.move + roll).toFixed(0)}".`,
+    `${unit.profile.name} Advances: ${advance.advanceRoll === 6 && unit.profile.movementOverrides?.advanceRoll === 'auto6' ? 'auto 6' : `rolled ${advance.advanceRoll}`}; movement allowance is ${advance.total.toFixed(0)}".`,
     'move',
   )];
   return s;
 }
 
-export function fallBackManualUnit(
+export function fallBackPlayUnit(
   state: BattleState,
   unitId: string,
   side: Side,
   rules: RulesEdition = rules40K10th,
 ): BattleState {
-  if (!manualUnitCanFallBack(state, unitId, side, rules)) return state;
+  if (!playUnitCanFallBack(state, unitId, side, rules)) return state;
 
   const s = clone(state);
-  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
   if (!unit) return state;
+  lockOtherMovedPlayUnits(s, unit);
 
   const engaged = engagedEnemies(s, unit, rules);
   const closest = nearest(unit, engaged);
@@ -1528,14 +2183,20 @@ export function fallBackManualUnit(
   const modelIndices = unit.modelPositions.map((_, modelIndex) => modelIndex);
   const requestedDx = direction.x * unit.profile.move;
   const requestedDy = direction.y * unit.profile.move;
-  const move = collisionAdjustedManualMove(s, unitId, side, modelIndices, requestedDx, requestedDy);
+  const move = collisionAdjustedPlayMove(s, unitId, side, modelIndices, requestedDx, requestedDy, { ignoreEnemyModelPath: true });
   if (Math.hypot(move.dx, move.dy) < 0.01) return state;
+  const desperateEscapeModelIndices = unit.battleshocked
+    ? undefined
+    : playMoveEnemyCrossingModelIndices(s, unit, new Set(modelIndices), move.dx, move.dy);
 
-  applyManualModelTranslation(unit, modelIndices, move.dx, move.dy);
+  applyPlayModelTranslation(unit, modelIndices, move.dx, move.dy);
   if (inEngagement(unit, enemies(s, side), rules.engagementRange())) return state;
 
   unit.inCombat = false;
   unit.movementAction = 'fellBack';
+  unit.movementAllowanceRemaining = 0;
+  unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
+  unit.movementComplete = true;
   unit.fellBack = true;
   for (const enemy of engaged) {
     enemy.inCombat = inEngagement(enemy, enemies(s, enemy.side), rules.engagementRange());
@@ -1548,6 +2209,7 @@ export function fallBackManualUnit(
       s,
       unit,
       (testedUnit, message) => log(s, testedUnit.side, testedUnit.profile.name, message, 'roll'),
+      desperateEscapeModelIndices,
     ),
   ];
   if (!unit.destroyed) unit.position = centroid(unit.modelPositions);
@@ -1555,7 +2217,27 @@ export function fallBackManualUnit(
   return s;
 }
 
-export function undeployManualUnit(state: BattleState, unitId: string, side: Side): BattleState {
+export function completePlayUnitMovement(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+): BattleState {
+  if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return state;
+
+  const existingUnit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
+  if (
+    !existingUnit
+    || existingUnit.movementComplete
+    || (existingUnit.movementAction !== 'normalMove' && existingUnit.movementAction !== 'advanced')
+  ) return state;
+
+  const s = clone(state);
+  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId)!;
+  markPlayMovementGroupComplete(s, unit);
+  return s;
+}
+
+export function undeployPlayUnit(state: BattleState, unitId: string, side: Side): BattleState {
   const s = clone(state);
   if (s.phase !== 'deployment') return s;
 
@@ -1584,20 +2266,21 @@ export function undeployManualUnit(state: BattleState, unitId: string, side: Sid
   return s;
 }
 
-export function reorganizeManualUnitGrid(state: BattleState, unitId: string, side: Side, rows: number): BattleState {
+export function reorganizePlayUnitGrid(state: BattleState, unitId: string, side: Side, rows: number): BattleState {
   const s = clone(state);
-  if (!MANUAL_MODEL_EDIT_PHASES.includes(s.phase)) return s;
+  if (!PLAY_MODEL_EDIT_PHASES.includes(s.phase)) return s;
+  if (s.phase === 'movement' && movementStep(s) !== 'moveUnits') return s;
 
-  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
   if (!unit) return s;
 
   const center = centroid(unit.modelPositions);
-  unit.modelPositions = manualGridFormationByRows(unit.profile, center, side, rows);
+  unit.modelPositions = playGridFormationByRows(unit.profile, center, side, rows);
   unit.position = centroid(unit.modelPositions);
   return s;
 }
 
-export function reorganizeManualModelsGrid(
+export function reorganizePlayModelsGrid(
   state: BattleState,
   unitId: string,
   side: Side,
@@ -1605,16 +2288,17 @@ export function reorganizeManualModelsGrid(
   rows: number,
 ): BattleState {
   const s = clone(state);
-  if (!MANUAL_MODEL_EDIT_PHASES.includes(s.phase)) return s;
+  if (!PLAY_MODEL_EDIT_PHASES.includes(s.phase)) return s;
+  if (s.phase === 'movement' && movementStep(s) !== 'moveUnits') return s;
 
-  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
   if (!unit) return s;
 
   const uniqueIndices = Array.from(new Set(modelIndices)).filter(modelIndex => unit.modelPositions[modelIndex]);
   if (!uniqueIndices.length) return s;
 
   const center = centroid(uniqueIndices.map(modelIndex => unit.modelPositions[modelIndex]));
-  const gridPositions = manualGridFormationByRows(unit.profile, center, side, rows, uniqueIndices);
+  const gridPositions = playGridFormationByRows(unit.profile, center, side, rows, uniqueIndices);
   uniqueIndices.forEach((modelIndex, index) => {
     unit.modelPositions[modelIndex] = gridPositions[index];
   });
@@ -1622,7 +2306,7 @@ export function reorganizeManualModelsGrid(
   return s;
 }
 
-export function rotateManualModels(
+export function rotatePlayModels(
   state: BattleState,
   unitId: string,
   side: Side,
@@ -1630,7 +2314,8 @@ export function rotateManualModels(
   degrees: number,
 ): BattleState {
   const s = clone(state);
-  if (!MANUAL_MODEL_EDIT_PHASES.includes(s.phase)) return s;
+  if (!PLAY_MODEL_EDIT_PHASES.includes(s.phase)) return s;
+  if (s.phase === 'movement' && movementStep(s) !== 'moveUnits') return s;
 
   const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
   if (!unit) return s;
@@ -1659,7 +2344,7 @@ export function rotateManualModels(
   return s;
 }
 
-export function manualDeploymentIssues(state: BattleState): string[] {
+export function playDeploymentIssues(state: BattleState): string[] {
   if (state.phase !== 'deployment') return [];
 
   const issues: string[] = [];
@@ -1701,10 +2386,10 @@ export function manualDeploymentIssues(state: BattleState): string[] {
   return Array.from(new Set(issues));
 }
 
-export function beginManualBattle(state: BattleState): BattleState {
+export function beginPlayBattle(state: BattleState): BattleState {
   const s = clone(state);
   if (s.phase !== 'deployment') return s;
-  const issues = manualDeploymentIssues(s);
+  const issues = playDeploymentIssues(s);
   if (issues.length) {
     s.log = [...s.log, log(s, 0, '', `Deployment is not legal: ${issues.join(' ')}`, 'info')];
     return s;
@@ -1736,13 +2421,22 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
 
   if (s.phase === 'command') {
     s.phase = 'movement';
+    s.movementStep = 'moveUnits';
     newLogs.push(phaseLog(s, side, armyName, `\n--- Movement Phase ---`));
     activeUnits(s, side).forEach(u => newLogs.push(...runMovement(u, s, rules)));
   } else if (s.phase === 'movement') {
-    s.phase = 'shooting';
-    newLogs.push(phaseLog(s, side, armyName, `\n--- Shooting Phase ---`));
-    activeUnits(s, side).forEach(u => newLogs.push(...runShooting(u, s, rules)));
+    if (movementStep(s) === 'moveUnits') {
+      markRemainingStationaryUnits(s, side);
+      s.movementStep = 'reinforcements';
+      newLogs.push(phaseLog(s, side, armyName, `\n--- Reinforcements Step ---`));
+    } else {
+      s.movementStep = undefined;
+      s.phase = 'shooting';
+      newLogs.push(phaseLog(s, side, armyName, `\n--- Shooting Phase ---`));
+      activeUnits(s, side).forEach(u => newLogs.push(...runShooting(u, s, rules)));
+    }
   } else if (s.phase === 'shooting') {
+    s.movementStep = undefined;
     s.phase = 'charge';
     newLogs.push(phaseLog(s, side, armyName, `\n--- Charge Phase ---`));
     activeUnits(s, side).filter(u => !u.inCombat).forEach(u => newLogs.push(...runCharge(u, s, rules)));
@@ -1771,10 +2465,11 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   const newLogs: LogEntry[] = [];
 
   // Reset per-turn flags
-  myUnits().forEach(u => { u.activated = false; u.charged = false; u.movementAction = undefined; u.fellBack = false; u.inCombat = false; });
+  myUnits().forEach(u => { u.activated = false; u.charged = false; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementComplete = undefined; u.arrivedFromReinforcements = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
 
   // Command
   s.phase = 'command';
+  s.movementStep = undefined;
   const nextCommandPoints = gainCommandPhaseCommandPoints(s);
   newLogs.push(phaseLog(s, side, armyName,
     `\n═══ BATTLE ROUND ${battleRound(s)} — ${armyName.toUpperCase()} — ${rules.name.toUpperCase()} ═══`));
@@ -1783,14 +2478,18 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
 
   // Movement
   s.phase = 'movement';
+  s.movementStep = 'moveUnits';
   newLogs.push(phaseLog(s, side, armyName, `\n─── Movement Phase ───`));
   myUnits().forEach(u => newLogs.push(...runMovement(u, s, rules)));
+  markRemainingStationaryUnits(s, side);
+  s.movementStep = 'reinforcements';
 
   checkWinner(s);
   if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }
 
   // Shooting
   s.phase = 'shooting';
+  s.movementStep = undefined;
   newLogs.push(phaseLog(s, side, armyName, `\n─── Shooting Phase ───`));
   myUnits().forEach(u => newLogs.push(...runShooting(u, s, rules)));
 

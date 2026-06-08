@@ -42,6 +42,94 @@ html, body, #root {
   flex-wrap: wrap;
 }
 
+.header-battle-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding-left: 4px;
+}
+
+.mode-modal-backdrop {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgb(0 0 0 / 0.68);
+}
+
+.mode-modal {
+  width: min(560px, 100%);
+  border: 1px solid #33335a;
+  border-radius: 6px;
+  background: #10101c;
+  box-shadow: 0 18px 48px rgb(0 0 0 / 0.5);
+  color: #ccccff;
+  padding: 14px;
+}
+
+.mode-modal-title {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.mode-modal-options {
+  display: grid;
+  gap: 8px;
+}
+
+.mode-modal-options button {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-height: 64px;
+  border: 1px solid #33335a;
+  border-radius: 5px;
+  background: #151525;
+  color: #aaaacc;
+  cursor: pointer;
+  font: inherit;
+  padding: 10px;
+  text-align: left;
+}
+
+.mode-modal-options button:hover,
+.mode-modal-options button.is-active {
+  background: #20203a;
+  border-color: #7777cc;
+  color: #eeeeff;
+}
+
+.mode-modal-options strong {
+  font-size: 13px;
+}
+
+.mode-modal-options span {
+  color: #777799;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.mode-modal-close {
+  margin-top: 12px;
+  border: 1px solid #33335a;
+  border-radius: 4px;
+  background: #1a1a2d;
+  color: #ccccff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  padding: 6px 10px;
+}
+
+.mode-modal-close:hover {
+  background: #24243e;
+  border-color: #55558a;
+}
+
 .mode-switch {
   display: inline-flex;
   border: 1px solid #2f2f55;
@@ -165,6 +253,21 @@ html, body, #root {
   pointer-events: none;
 }
 
+.selected-unit-actions {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid rgb(110 110 170 / 0.86);
+  border-radius: 6px;
+  background: rgb(12 12 24 / 0.92);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.34);
+  transform: translateY(-50%);
+}
+
 .board-placeholder {
   flex: 1;
   display: flex;
@@ -210,13 +313,13 @@ html, body, #root {
   text-align: center;
 }
 
-.practice-panel {
+.practice-controls-panel {
   flex-shrink: 0;
   border-bottom: 1px solid #1e1e2e;
   background: #10101c;
 }
 
-.practice-panel-header {
+.practice-controls-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -272,6 +375,16 @@ html, body, #root {
   padding: 0 8px 6px;
 }
 
+.practice-controls-panel .practice-actions {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.practice-inline-seek {
+  width: calc(100% - 16px);
+  margin: 0 8px 6px;
+  accent-color: #7777cc;
+}
+
 .practice-actions button,
 .practice-entry {
   min-width: 0;
@@ -295,6 +408,12 @@ html, body, #root {
 .practice-actions button:disabled {
   opacity: 0.42;
   cursor: default;
+}
+
+.practice-actions button.primary {
+  border-color: #7777cc;
+  background: #2d2d5a;
+  color: #eeeeff;
 }
 
 .practice-actions button:not(:disabled):hover,
@@ -513,6 +632,190 @@ html, body, #root {
   text-align: center;
 }
 
+.practice-modal-backdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgb(0 0 0 / 0.68);
+}
+
+.practice-modal {
+  width: min(760px, 100%);
+  max-height: min(86vh, 820px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid #33335a;
+  border-radius: 6px;
+  background: #10101c;
+  box-shadow: 0 18px 48px rgb(0 0 0 / 0.5);
+  color: #ccccff;
+}
+
+.practice-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid #1e1e2e;
+}
+
+.practice-modal-title {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.practice-modal-subtitle {
+  margin-top: 2px;
+  color: #777799;
+  font-size: 11px;
+}
+
+.practice-modal-close {
+  border: 1px solid #33335a;
+  border-radius: 4px;
+  background: #1a1a2d;
+  color: #ccccff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  padding: 5px 9px;
+}
+
+.practice-modal-close:hover {
+  background: #24243e;
+  border-color: #55558a;
+}
+
+.practice-save-modal {
+  width: min(560px, 100%);
+}
+
+.practice-load-tree-modal {
+  width: fit-content;
+  min-width: min(420px, calc(100vw - 36px));
+  max-width: min(92vw, 1200px);
+}
+
+.practice-tree-scroll {
+  position: relative;
+  flex: 1;
+  min-width: min(320px, calc(100vw - 72px));
+  min-height: 160px;
+  max-width: calc(92vw - 24px);
+  max-height: 68vh;
+  overflow: auto;
+  padding: 12px;
+  background:
+    linear-gradient(90deg, rgb(255 255 255 / 0.025) 1px, transparent 1px),
+    linear-gradient(0deg, rgb(255 255 255 / 0.02) 1px, transparent 1px),
+    #0c0c16;
+  background-size: 64px 64px;
+}
+
+.practice-tree {
+  position: relative;
+}
+
+.practice-tree-lines {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.practice-tree-lines path {
+  fill: none;
+  stroke: #55558a;
+  stroke-width: 1.5;
+}
+
+.practice-tree-node {
+  position: absolute;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 24px;
+  gap: 4px;
+}
+
+.practice-tree-node.is-current-game {
+  filter: drop-shadow(0 0 8px rgb(119 119 204 / 0.14));
+}
+
+.practice-tree-load,
+.practice-tree-delete {
+  min-width: 0;
+  border: 1px solid #2d2d4d;
+  border-radius: 4px;
+  background: #151525;
+  color: #aaaacc;
+  cursor: pointer;
+  font: inherit;
+}
+
+.practice-tree-load {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: 104px;
+  padding: 7px 8px;
+  text-align: left;
+}
+
+.practice-tree-load strong,
+.practice-tree-load span,
+.practice-tree-load em {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.practice-tree-load strong {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  color: #ccccff;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 1.18;
+}
+
+.practice-tree-load span {
+  color: #777799;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.practice-tree-load span:nth-of-type(1) {
+  color: #d8d8ff;
+}
+
+.practice-tree-load em {
+  color: #9fb6ff;
+  font-size: 10px;
+  font-style: normal;
+}
+
+.practice-tree-delete {
+  height: 104px;
+  color: #aa7777;
+  font-size: 10px;
+}
+
+.practice-tree-node.is-active .practice-tree-load {
+  border-color: #7777cc;
+  background: #20203a;
+}
+
+.practice-tree-load:hover,
+.practice-tree-delete:hover {
+  background: #24243e;
+  border-color: #55558a;
+}
+
 .practice-load-modal-backdrop {
   position: fixed;
   z-index: 20;
@@ -583,14 +886,40 @@ html, body, #root {
 /* ── Controls bar ─────────────────────────────────────────────────────────── */
 
 .controls {
-  display: flex;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(0, auto) minmax(150px, 1fr);
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  column-gap: 28px;
+  min-height: 44px;
   padding: 6px 12px;
   background: #13132a;
   border-top: 1px solid #2a2a4e;
   flex-shrink: 0;
+}
+
+.controls-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
   flex-wrap: wrap;
+}
+
+.controls-edge {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+}
+
+.controls-edge-left {
+  justify-content: flex-end;
+}
+
+.controls-edge-right {
+  justify-content: flex-start;
 }
 
 .btn {
@@ -623,6 +952,17 @@ html, body, #root {
   font-size: 11px;
 }
 
+.phase-primary-button {
+  min-width: 180px;
+  min-height: 40px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.phase-primary-button .MuiButton-startIcon {
+  margin-right: 8px;
+}
+
 .speed-label {
   display: flex;
   align-items: center;
@@ -631,6 +971,11 @@ html, body, #root {
   color: #777;
 }
 .speed-label input[type=range] { width: 80px; accent-color: #6666cc; cursor: pointer; }
+
+.coherency-warning {
+  color: #ffcf66;
+  font-weight: 700;
+}
 
 .winner-banner {
   padding: 4px 12px;
@@ -649,9 +994,17 @@ html, body, #root {
 }
 
 .turn-info {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 11px;
   color: #666;
-  margin-left: auto;
+  margin-left: 0;
 }
 
 /* ── Scrollbar ───────────────────────────────────────────────────────────── */

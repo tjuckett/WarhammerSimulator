@@ -13,29 +13,44 @@ export function resolveDesperateEscapeTests(
   state: BattleState,
   unit: BattleUnit,
   log: (unit: BattleUnit, message: string) => LogEntry,
+  modelIndices?: number[],
 ): LogEntry[] {
-  if (!unit.battleshocked || unit.destroyed) return [];
+  if (unit.destroyed) return [];
+
+  const testModelIndices = Array.from(new Set(
+    unit.battleshocked
+      ? unit.modelPositions.map((_, modelIndex) => modelIndex)
+      : modelIndices ?? [],
+  )).filter(modelIndex => unit.modelPositions[modelIndex]);
+  if (!testModelIndices.length) return [];
 
   const logs: LogEntry[] = [];
-  let failed = 0;
+  const failedModelIndices: number[] = [];
   const rolls: number[] = [];
 
-  for (let i = 0; i < unit.remainingModels; i++) {
+  for (const modelIndex of testModelIndices) {
     const roll = d6();
     rolls.push(roll);
-    if (roll <= 1) failed++;
+    if (roll <= 1) failedModelIndices.push(modelIndex);
   }
 
-  if (failed > 0) {
-    unit.remainingModels = Math.max(0, unit.remainingModels - failed);
-    unit.modelPositions = unit.modelPositions.slice(0, unit.remainingModels);
-    unit.modelRotations = unit.modelRotations?.slice(0, unit.remainingModels);
+  if (failedModelIndices.length > 0) {
+    for (const modelIndex of failedModelIndices.sort((a, b) => b - a)) {
+      unit.modelPositions.splice(modelIndex, 1);
+      unit.modelRotations?.splice(modelIndex, 1);
+      unit.movementAllowanceRemainingByModel?.splice(modelIndex, 1);
+    }
+    unit.remainingModels = Math.min(unit.remainingModels, unit.modelPositions.length);
     unit.destroyed = unit.remainingModels <= 0;
   }
 
+  const reason = unit.battleshocked
+    ? 'is Battle-shocked and Falls Back'
+    : 'moves over enemy models while Falling Back';
+  const failed = failedModelIndices.length;
   logs.push(log(
     unit,
-    `${unit.profile.name} is Battle-shocked and Falls Back: Desperate Escape rolls ${rolls.join(', ')}${failed ? `; ${failed} model${failed === 1 ? '' : 's'} destroyed` : '; no models destroyed'}.`,
+    `${unit.profile.name} ${reason}: Desperate Escape rolls ${rolls.join(', ')}${failed ? `; ${failed} model${failed === 1 ? '' : 's'} destroyed` : '; no models destroyed'}.`,
   ));
 
   return logs;

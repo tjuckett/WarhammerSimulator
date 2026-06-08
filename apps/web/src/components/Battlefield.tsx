@@ -1,11 +1,11 @@
-import { useRef, useEffect, useState, type PointerEvent } from 'react';
+import { useRef, useEffect, useState, type PointerEvent, type ReactNode } from 'react';
 import type { BattleState, BattleUnit, Position } from '@warhammer-simulator/core/types/battle';
 import { pointInTerrain, terrainCenter, terrainCorners } from '@warhammer-simulator/core/engine/terrainGeometry';
 import { featureColor } from '@warhammer-simulator/core/engine/terrain';
 import { zoneFor } from '@warhammer-simulator/core/engine/deployment';
 import { battleRound, maxBattleRounds } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
-import { battleModelIdsWithCoherencyIssues, moveManualModels } from '@warhammer-simulator/core/engine/simulator';
+import { battleModelIdsWithCoherencyIssues, movePlayModels } from '@warhammer-simulator/core/engine/simulator';
 import {
   TENTH_EDITION_MARKER_OBJECTIVE_CONTROL,
   objectiveControlRadius,
@@ -25,7 +25,7 @@ export type TerrainEditSelection =
   | { kind: 'terrain'; terrainIndex: number }
   | { kind: 'feature'; terrainIndex: number; featureIndex: number };
 
-export type ManualModelSelection = {
+export type PlayModelSelection = {
   side: 0 | 1;
   parts: Array<{ unitId: string; side: 0 | 1; modelIndices: number[] }>;
 };
@@ -38,13 +38,14 @@ interface Props {
   deployer?: {
     enabled: boolean;
     onPlace: (boardX: number, boardY: number) => void;
-    selectedModel?: ManualModelSelection | null;
+    selectedModel?: PlayModelSelection | null;
     canPlaceUnit?: boolean;
-    onSelectModel?: (selection: ManualModelSelection | null, additive?: boolean) => void;
-    onBeginModelMove?: (selection: ManualModelSelection) => void;
-    onMoveModel?: (selection: ManualModelSelection, dx: number, dy: number, collide: boolean) => void;
+    onSelectModel?: (selection: PlayModelSelection | null, additive?: boolean) => void;
+    onBeginModelMove?: (selection: PlayModelSelection) => void;
+    onMoveModel?: (selection: PlayModelSelection, dx: number, dy: number, collide: boolean) => void;
     onEndModelMove?: () => void;
-    onRotateModel?: (selection: ManualModelSelection, degrees: number, batched?: boolean) => void;
+    onRotateModel?: (selection: PlayModelSelection, degrees: number, batched?: boolean) => void;
+    selectedModelActions?: ReactNode;
   };
   editor?: {
     enabled: boolean;
@@ -69,7 +70,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
   const containerRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<null | { selection: TerrainEditSelection; offsetX: number; offsetY: number }>(null);
   const modelDragRef = useRef<null | {
-    selection: ManualModelSelection;
+    selection: PlayModelSelection;
     start: Position;
     current: Position;
     originState: BattleState;
@@ -87,10 +88,12 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
   const [hoveredTransport, setHoveredTransport] = useState<null | { x: number; y: number; label: string }>(null);
   const [boxSelect, setBoxSelect] = useState<null | { start: Position; current: Position }>(null);
   const [spacePanning, setSpacePanning] = useState(false);
+  const [selectedActionsPosition, setSelectedActionsPosition] = useState<null | { left: number; top: number }>(null);
+  const [hideSelectedActions, setHideSelectedActions] = useState(false);
 
   function renderCanvas(
     drawState: BattleState = state,
-    dragPreview: { selection: ManualModelSelection; dx: number; dy: number } | null = null,
+    dragPreview: { selection: PlayModelSelection; dx: number; dy: number } | null = null,
   ) {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -134,7 +137,12 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
 
   useEffect(() => {
     renderCanvas();
-  }, [state, editor?.selected, hoverGridPoint, zoom, deployer?.selectedModel, selectedUnitId, selectedUnitIds, boxSelect, hoveredTransport, hoveredUnitId]);
+    updateSelectedActionsPosition();
+  }, [state, editor?.selected, hoverGridPoint, zoom, deployer?.selectedModel, deployer?.selectedModelActions, hideSelectedActions, selectedUnitId, selectedUnitIds, boxSelect, hoveredTransport, hoveredUnitId]);
+
+  useEffect(() => {
+    setHideSelectedActions(false);
+  }, [deployer?.selectedModel]);
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -179,18 +187,18 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
 
   function movedStateForSelection(
     sourceState: BattleState,
-    selection: ManualModelSelection,
+    selection: PlayModelSelection,
     dx: number,
     dy: number,
     collide: boolean,
   ): BattleState {
     return selection.parts.reduce(
-      (next, part) => moveManualModels(next, part.unitId, part.side, part.modelIndices, dx, dy, collide),
+      (next, part) => movePlayModels(next, part.unitId, part.side, part.modelIndices, dx, dy, collide),
       sourceState,
     );
   }
 
-  function firstSelectedModelPosition(sourceState: BattleState, selection: ManualModelSelection): Position | null {
+  function firstSelectedModelPosition(sourceState: BattleState, selection: PlayModelSelection): Position | null {
     const firstPart = selection.parts[0];
     const firstIndex = firstPart?.modelIndices[0];
     if (!firstPart || firstIndex === undefined) return null;
@@ -198,6 +206,50 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       candidate.id === firstPart.unitId && candidate.side === firstPart.side && !candidate.destroyed,
     );
     return unit?.modelPositions[firstIndex] ?? null;
+  }
+
+  function selectedModelActionAnchor(sourceState: BattleState, selection: PlayModelSelection): Position | null {
+    const selectedModels = selection.parts.flatMap(part => {
+      const unit = sourceState.units.find(candidate =>
+        candidate.id === part.unitId && candidate.side === part.side && !candidate.destroyed,
+      );
+      if (!unit) return [];
+      return part.modelIndices.flatMap(modelIndex => unit.modelPositions[modelIndex] ?? []);
+    });
+    if (!selectedModels.length) return null;
+    return {
+      x: Math.max(...selectedModels.map(model => model.x)),
+      y: selectedModels.reduce((sum, model) => sum + model.y, 0) / selectedModels.length,
+    };
+  }
+
+  function updateSelectedActionsPosition() {
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    const selection = deployer?.selectedModel;
+    if (!canvas || !container || !selection || !deployer?.selectedModelActions || hideSelectedActions) {
+      setSelectedActionsPosition(null);
+      return;
+    }
+    const anchor = selectedModelActionAnchor(state, selection);
+    if (!anchor) {
+      setSelectedActionsPosition(null);
+      return;
+    }
+    const canvasRect = canvas.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    const scale = sizeRef.current.scale;
+    const nextPosition = {
+      left: canvasRect.left - containerRect.left + anchor.x * scale + 18,
+      top: canvasRect.top - containerRect.top + anchor.y * scale,
+    };
+    setSelectedActionsPosition(current =>
+      current
+        && Math.abs(current.left - nextPosition.left) < 0.5
+        && Math.abs(current.top - nextPosition.top) < 0.5
+        ? current
+        : nextPosition,
+    );
   }
 
   function appliedDragDelta(drag: NonNullable<typeof modelDragRef.current>): Position {
@@ -241,7 +293,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
   function hitTestModel(point: Position): { unitId: string; side: 0 | 1; modelIndex: number } | null {
     for (let ui = state.units.length - 1; ui >= 0; ui--) {
       const unit = state.units[ui];
-      if (unit.destroyed) continue;
+      if (unit.destroyed || unit.embarkedInUnitId) continue;
       for (let mi = unit.modelPositions.length - 1; mi >= 0; mi--) {
         const model = unit.modelPositions[mi];
         const footprint = modelBaseFootprintInches(unit.profile, mi, modelRotation(unit, mi));
@@ -268,7 +320,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     };
   }
 
-  function selectedIndicesForHit(hit: { unitId: string; side: 0 | 1; modelIndex: number }): ManualModelSelection {
+  function selectedIndicesForHit(hit: { unitId: string; side: 0 | 1; modelIndex: number }): PlayModelSelection {
     const current = deployer?.selectedModel;
     if (current && selectionContainsHit(current, hit)) {
       return current;
@@ -280,7 +332,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
   }
 
   function selectionContainsHit(
-    selection: ManualModelSelection,
+    selection: PlayModelSelection,
     hit: { unitId: string; side: 0 | 1; modelIndex: number },
   ): boolean {
     return selection.parts.some(part =>
@@ -288,14 +340,14 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     );
   }
 
-  function modelsInBox(start: Position, current: Position): ManualModelSelection | null {
+  function modelsInBox(start: Position, current: Position): PlayModelSelection | null {
     const x0 = Math.min(start.x, current.x);
     const x1 = Math.max(start.x, current.x);
     const y0 = Math.min(start.y, current.y);
     const y1 = Math.max(start.y, current.y);
 
     const selectedParts = state.units.flatMap(unit => {
-      if (unit.destroyed) return [];
+      if (unit.destroyed || unit.embarkedInUnitId) return [];
       const modelIndices = unit.modelPositions
         .map((model, modelIndex) => ({ model, modelIndex }))
         .filter(({ model }) => model.x >= x0 && model.x <= x1 && model.y >= y0 && model.y <= y1)
@@ -414,6 +466,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       const drag = modelDragRef.current;
       const movedDistance = Math.hypot(point.x - drag.start.x, point.y - drag.start.y);
       if (!drag.moved && movedDistance <= 0.25) return;
+      if (!drag.moved) setHideSelectedActions(true);
       drag.moved = true;
       const dx = point.x - drag.current.x;
       const dy = point.y - drag.current.y;
@@ -531,6 +584,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div
         style={{
+          position: 'relative',
           padding: '6px 10px',
           background: 'rgba(0,0,0,0.72)',
           borderBottom: '1px solid #333',
@@ -538,23 +592,36 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
           font: '700 12px monospace',
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
+          justifyContent: 'center',
         }}
       >
         <span
-          style={{ minWidth: 0, flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+          style={{
+            minWidth: 0,
+            maxWidth: 'calc(100% - 220px)',
+            textAlign: 'center',
+            fontSize: 15,
+            lineHeight: '20px',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
           title={battlefieldStatusLabel(state)}
         >
           {battlefieldStatusLabel(state)}
         </span>
-        <button type="button" onClick={() => setZoom(current => clampZoom(current - ZOOM_STEP))} title="Zoom out">-</button>
-        <span style={{ minWidth: 44, textAlign: 'center' }}>{Math.round(zoom * 100)}%</span>
-        <button type="button" onClick={() => setZoom(current => clampZoom(current + ZOOM_STEP))} title="Zoom in">+</button>
-        <button type="button" onClick={() => setZoom(1)} title="Reset zoom">Reset</button>
+        <div style={{ position: 'absolute', right: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button type="button" onClick={() => setZoom(current => clampZoom(current - ZOOM_STEP))} title="Zoom out">-</button>
+          <span style={{ minWidth: 44, textAlign: 'center' }}>{Math.round(zoom * 100)}%</span>
+          <button type="button" onClick={() => setZoom(current => clampZoom(current + ZOOM_STEP))} title="Zoom in">+</button>
+          <button type="button" onClick={() => setZoom(1)} title="Reset zoom">Reset</button>
+        </div>
       </div>
       <div
         ref={containerRef}
+        onScroll={updateSelectedActionsPosition}
         style={{
+          position: 'relative',
           flex: 1,
           minHeight: 0,
           display: 'flex',
@@ -578,6 +645,17 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
             cursor: panRef.current || spacePanning ? 'grab' : editor?.enabled ? 'grab' : deployer?.canPlaceUnit ? 'crosshair' : 'default',
           }}
         />
+        {selectedActionsPosition && deployer?.selectedModelActions && (
+          <div
+            className="selected-unit-actions"
+            style={{
+              left: selectedActionsPosition.left,
+              top: selectedActionsPosition.top,
+            }}
+          >
+            {deployer.selectedModelActions}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -616,13 +694,13 @@ function draw(
   H: number,
   selected: TerrainEditSelection | null,
   hoverGridPoint: { x: number; y: number } | null,
-  selectedModel: ManualModelSelection | null,
+  selectedModel: PlayModelSelection | null,
   selectedUnitId: string | null,
   selectedUnitIds: string[],
   boxSelect: { start: Position; current: Position } | null,
   hoveredTransport: { x: number; y: number; label: string } | null,
   hoveredUnitId: string | null,
-  modelDragPreview: { selection: ManualModelSelection; dx: number; dy: number } | null = null,
+  modelDragPreview: { selection: PlayModelSelection; dx: number; dy: number } | null = null,
 ) {
   // ── Background ───────────────────────────────────────────────────────────
   ctx.fillStyle = '#2a4a1e';
@@ -735,7 +813,7 @@ function draw(
   const coherencyIssueModelIds = modelDragPreview ? new Set<string>() : battleModelIdsWithCoherencyIssues(state);
   const activeSelectedModel = modelDragPreview?.selection ?? selectedModel;
   for (const unit of state.units) {
-    if (unit.destroyed) continue;
+    if (unit.destroyed || unit.embarkedInUnitId) continue;
     const selectedPart = selectedModelPartForUnit(activeSelectedModel, unit.id, unit.side);
     const previewUnit = modelDragPreview ? unitWithModelDragPreview(unit, modelDragPreview) : unit;
     const selectedModelIndices = selectedPart
@@ -752,7 +830,7 @@ function draw(
 }
 
 function selectedModelPartForUnit(
-  selection: ManualModelSelection | null,
+  selection: PlayModelSelection | null,
   unitId: string,
   side: 0 | 1,
 ): { modelIndices: number[] } | null {
@@ -770,7 +848,7 @@ function displayCentroid(positions: Position[]): Position {
 
 function unitWithModelDragPreview(
   unit: BattleUnit,
-  preview: { selection: ManualModelSelection; dx: number; dy: number },
+  preview: { selection: PlayModelSelection; dx: number; dy: number },
 ): BattleUnit {
   const part = selectedModelPartForUnit(preview.selection, unit.id, unit.side);
   if (!part) return unit;
@@ -1180,8 +1258,8 @@ function drawUnit(
   const maxModelR = Math.max(...modelRadii, scale * 0.48);
 
   const fillColor = unit.battleshocked ? '#888' : color;
-  const ringColor = unit.charged ? '#ffe000' : unit.inCombat ? '#ff8800' : unit.fellBack ? '#66d9ff' : unit.movementAction === 'advanced' ? '#7cff9b' : 'rgba(255,255,255,0.72)';
-  const ringWidth = unit.charged || unit.inCombat || unit.fellBack || unit.movementAction === 'advanced' ? 2.5 : 1.2;
+  const ringColor = unit.charged ? '#ffe000' : unit.inCombat ? '#ff8800' : unit.fellBack ? '#66d9ff' : unit.movementAction === 'advanced' ? '#7cff9b' : unit.movementAction === 'remainedStationary' ? '#b9d7ff' : 'rgba(255,255,255,0.72)';
+  const ringWidth = unit.charged || unit.inCombat || unit.fellBack || unit.movementAction === 'advanced' || unit.movementAction === 'remainedStationary' ? 2.5 : 1.2;
 
   // Draw each model footprint
   for (let i = 0; i < unit.modelPositions.length; i++) {
@@ -1220,6 +1298,8 @@ function drawUnit(
       ctx.stroke();
     }
   }
+
+  drawSelectedModelMovementHud(ctx, unit, state, scale, selectedModelIndices, modelRadii);
 
   const passengers = transportPassengersForUnit(state, unit);
   if (passengers.length) {
@@ -1285,6 +1365,62 @@ function drawUnit(
   ctx.fillText(`${unit.remainingModels}/${unit.profile.baseModelCount}`, cx, by + barH + 1);
 }
 
+function drawSelectedModelMovementHud(
+  ctx: CanvasRenderingContext2D,
+  unit: BattleUnit,
+  state: BattleState,
+  scale: number,
+  selectedModelIndices: number[],
+  modelRadii: number[],
+) {
+  if (!selectedModelIndices.length || unit.movementAction === 'fellBack' || unit.fellBack) return;
+  const activeMovementUnit = state.phase === 'movement' && state.activeArmy === unit.side;
+  const shouldShow = unit.movementAction === 'normalMove'
+    || unit.movementAction === 'advanced'
+    || typeof unit.movementAllowanceRemaining === 'number'
+    || !!unit.movementAllowanceRemainingByModel
+    || activeMovementUnit;
+  if (!shouldShow) return;
+
+  const defaultAllowance = unit.movementAllowanceRemaining ?? unit.profile.move;
+  for (const modelIndex of selectedModelIndices) {
+    const position = unit.modelPositions[modelIndex];
+    if (!position) continue;
+    const remaining = unit.movementAllowanceRemainingByModel?.[modelIndex] ?? defaultAllowance;
+    const remainingLabel = `${Math.max(0, remaining).toFixed(1)}" left`;
+    const mx = position.x * scale;
+    const my = position.y * scale;
+    const radius = Math.max(0, remaining) * scale;
+    const baseRadius = modelRadii[modelIndex] ?? scale * 0.48;
+
+    if (radius > 0.5) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(mx, my, radius + baseRadius, 0, Math.PI * 2);
+      ctx.strokeStyle = unit.movementAction === 'advanced' ? 'rgba(124,255,155,0.46)' : 'rgba(255,224,102,0.46)';
+      ctx.lineWidth = Math.max(1, scale * 0.05);
+      ctx.setLineDash([Math.max(3, scale * 0.18), Math.max(2, scale * 0.12)]);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    const fontSize = Math.max(7, scale * 0.52);
+    ctx.font = `bold ${fontSize}px monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const textW = ctx.measureText(remainingLabel).width;
+    const labelX = Math.max(textW / 2 + 4, Math.min(BOARD_W * scale - textW / 2 - 4, mx));
+    const labelY = Math.max(fontSize + 5, my - baseRadius - fontSize - 7);
+    ctx.fillStyle = 'rgba(8, 12, 18, 0.86)';
+    ctx.fillRect(labelX - textW / 2 - 4, labelY - fontSize / 2 - 3, textW + 8, fontSize + 6);
+    ctx.strokeStyle = unit.movementAction === 'advanced' ? 'rgba(124,255,155,0.82)' : 'rgba(255,224,102,0.82)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(labelX - textW / 2 - 4, labelY - fontSize / 2 - 3, textW + 8, fontSize + 6);
+    ctx.fillStyle = '#f7f4df';
+    ctx.fillText(remainingLabel, labelX, labelY);
+  }
+}
+
 function drawTransportTooltip(
   ctx: CanvasRenderingContext2D,
   hoveredTransport: { x: number; y: number; label: string },
@@ -1324,7 +1460,10 @@ function drawTransportTooltip(
 
 function transportPassengersForUnit(state: BattleState, unit: BattleUnit): string[] {
   const transportId = unitRosterId(unit.profile);
-  const passengers = state.armies[unit.side].army.units
+  const runtimePassengers = state.units
+    .filter(candidate => candidate.embarkedInUnitId === unit.id && !candidate.destroyed)
+    .map(candidate => `${candidate.profile.name} (${candidate.remainingModels})`);
+  const stagedPassengers = state.armies[unit.side].army.units
     .filter(candidate =>
       candidate.deployment?.mode === 'transport'
       && (
@@ -1332,8 +1471,15 @@ function transportPassengersForUnit(state: BattleState, unit: BattleUnit): strin
         || (!candidate.deployment.transportUnitId && candidate.deployment.transportName === unit.profile.name)
       ),
     )
+    .filter(candidate =>
+      !state.units.some(unitOnBoard =>
+        unitOnBoard.side === unit.side
+        && !unitOnBoard.destroyed
+        && unitRosterId(unitOnBoard.profile) === unitRosterId(candidate),
+      ),
+    )
     .map(candidate => `${candidate.name} (${candidate.baseModelCount})`);
-  return uniqueText(passengers);
+  return uniqueText([...runtimePassengers, ...stagedPassengers]);
 }
 
 function uniqueText(values: string[]): string[] {

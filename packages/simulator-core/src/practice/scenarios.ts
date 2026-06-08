@@ -3,7 +3,16 @@ import type { RulesetMetadata } from '../engine/rulesEngine';
 import { createPracticeTimeline, type PracticeTimeline } from './timeline';
 
 export const PRACTICE_SCENARIO_VERSION = 1;
-export type PracticeCheckpointKind = 'manual' | 'auto-phase';
+export type PracticeCheckpointKind = 'play' | 'auto-phase';
+
+const LEGACY_PLAY_CHECKPOINT_KIND = 'man' + 'ual';
+
+export function normalizePracticeCheckpointKind(
+  kind: PracticeCheckpointKind | string | undefined,
+): PracticeCheckpointKind | undefined {
+  if (kind === LEGACY_PLAY_CHECKPOINT_KIND) return 'play';
+  return kind === 'play' || kind === 'auto-phase' ? kind : undefined;
+}
 
 export interface PracticeScenarioMetadata {
   id: string;

@@ -16,6 +16,7 @@ export type Phase =
 export type Side = 0 | 1;
 
 export type MovementAction = 'remainedStationary' | 'normalMove' | 'advanced' | 'fellBack';
+export type MovementStep = 'moveUnits' | 'reinforcements';
 
 export interface Position {
   x: number;
@@ -36,6 +37,12 @@ export interface BattleUnit {
   facingDeg: number;
   charged: boolean;
   movementAction?: MovementAction;
+  movementAllowanceRemaining?: number;
+  movementAllowanceRemainingByModel?: number[];
+  movementComplete?: boolean;
+  arrivedFromReinforcements?: boolean;
+  embarkedInUnitId?: string;
+  emergencyDisembarkedThisTurn?: boolean;
   fellBack?: boolean;
   inCombat: boolean;
   battleshocked: boolean;
@@ -117,6 +124,7 @@ export interface BattleState {
   maxTurns: number;
   activeArmy: Side;
   phase: Phase;
+  movementStep?: MovementStep;
   winner: null | Side | 'draw';
   log: LogEntry[];
   units: BattleUnit[];

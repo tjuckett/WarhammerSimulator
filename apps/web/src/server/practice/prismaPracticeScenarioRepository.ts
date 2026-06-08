@@ -1,6 +1,8 @@
 import type { PracticeScenario } from '@warhammer-simulator/core/practice/scenarios';
 import type { PracticeScenarioRepository } from '@warhammer-simulator/core/practice/scenarioRepository';
 import type { PracticeScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
+import type { BattleState } from '@warhammer-simulator/core/types/battle';
+import { battleRound } from '@warhammer-simulator/core/engine/battleRound';
 import {
   currentTimelineState,
   PRACTICE_TIMELINE_VERSION,
@@ -45,7 +47,7 @@ function checkpointKindToDb(kind: PracticeScenario['metadata']['checkpointKind']
 }
 
 function checkpointKindFromDb(kind: StoredCheckpointKind): PracticeScenario['metadata']['checkpointKind'] {
-  return kind === 'AUTO_PHASE' ? 'auto-phase' : 'manual';
+  return kind === 'AUTO_PHASE' ? 'auto-phase' : 'play';
 }
 
 function clone<T>(value: T): T {
@@ -65,6 +67,7 @@ function metadataValue(scenario: PracticeScenario) {
 function summaryFromCheckpoint(checkpoint: StoredCheckpoint): PracticeScenarioSummary {
   const kind = checkpointKindFromDb(checkpoint.kind);
   const metadata = checkpoint.metadata as Partial<PracticeScenario['metadata']> | null;
+  const savedState = checkpoint.state as BattleState;
   return {
     id: checkpoint.id,
     name: checkpoint.name,
@@ -80,6 +83,12 @@ function summaryFromCheckpoint(checkpoint: StoredCheckpoint): PracticeScenarioSu
     checkpointKind: kind,
     checkpointLabel: metadata?.checkpointLabel ?? checkpoint.name,
     sequence: checkpoint.sequence,
+    savedBattleRound: battleRound(savedState),
+    savedPhase: savedState.phase,
+    savedActiveArmy: savedState.activeArmy,
+    savedActiveArmyName: savedState.armies[savedState.activeArmy]?.name,
+    savedScores: clone(savedState.scores),
+    savedCommandPoints: savedState.commandPoints ? clone(savedState.commandPoints) : undefined,
   };
 }
 

@@ -1,6 +1,7 @@
-import type { BattleSetup } from '../types/battle';
+import type { BattleSetup, BattleState, Phase, Side } from '../types/battle';
+import { battleRound } from '../engine/battleRound';
 import type { RulesetMetadata } from '../engine/rulesEngine';
-import { type PracticeCheckpointKind, type PracticeScenario } from './scenarios';
+import { normalizePracticeCheckpointKind, type PracticeCheckpointKind, type PracticeScenario } from './scenarios';
 import { currentTimelineState, type PracticeTimeline } from './timeline';
 import type { PracticeScenarioRepository } from './scenarioRepository';
 
@@ -22,6 +23,12 @@ export interface PracticeScenarioSummary {
   checkpointKind?: PracticeCheckpointKind;
   checkpointLabel?: string;
   sequence?: number;
+  savedBattleRound?: number;
+  savedPhase?: Phase;
+  savedActiveArmy?: Side;
+  savedActiveArmyName?: string;
+  savedScores?: [number, number];
+  savedCommandPoints?: [number, number];
 }
 
 interface PracticeScenarioLibrary {
@@ -171,9 +178,11 @@ function compactScenarioForStorage(scenario: PracticeScenario): PracticeScenario
 export function scenarioSummary(scenario: PracticeScenario): PracticeScenarioSummary {
   const parentCheckpointId = scenario.metadata.parentCheckpointId ?? scenario.metadata.parentScenarioId;
   const timelineCursor = scenario.metadata.timelineCursor ?? scenario.timeline.cursor;
-  const timelineSteps = scenario.metadata.checkpointKind
+  const checkpointKind = normalizePracticeCheckpointKind(scenario.metadata.checkpointKind);
+  const timelineSteps = checkpointKind
     ? timelineCursor
     : scenario.timeline.entries.length;
+  const savedState: BattleState = scenario.initialState;
   return {
     id: scenario.metadata.id,
     name: scenario.metadata.name,
@@ -186,9 +195,15 @@ export function scenarioSummary(scenario: PracticeScenario): PracticeScenarioSum
     gameId: scenario.metadata.gameId ?? scenario.timeline.metadata.id,
     branchId: scenario.metadata.branchId,
     parentCheckpointId,
-    checkpointKind: scenario.metadata.checkpointKind,
+    checkpointKind,
     checkpointLabel: scenario.metadata.checkpointLabel,
     sequence: scenario.metadata.sequence,
+    savedBattleRound: battleRound(savedState),
+    savedPhase: savedState.phase,
+    savedActiveArmy: savedState.activeArmy,
+    savedActiveArmyName: savedState.armies[savedState.activeArmy]?.name,
+    savedScores: clone(savedState.scores),
+    savedCommandPoints: savedState.commandPoints ? clone(savedState.commandPoints) : undefined,
   };
 }
 

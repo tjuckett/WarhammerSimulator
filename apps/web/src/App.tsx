@@ -8,14 +8,13 @@ import {
   MenuItem,
   Select,
   Slider,
-  ToggleButton,
-  ToggleButtonGroup,
   Typography,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import CasinoOutlinedIcon from '@mui/icons-material/CasinoOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import DoneIcon from '@mui/icons-material/Done';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -37,8 +36,8 @@ import {
   type TournamentMission,
 } from '@warhammer-simulator/core/engine/missions';
 import {
-  advanceManualUnit, beginManualBattle, createDeploymentState, fallBackManualUnit, manualDeploymentIssues, manualUnitCanAdvance, manualUnitCanFallBack, moveManualModels, placeManualUnit, placeNextUnit,
-  reorganizeManualModelsGrid, rotateManualModels, simulateNextPhase, undeployManualUnit, type DeploymentStrategy,
+  advancePlayUnit, battleModelIdsWithCoherencyIssues, beginPlayBattle, completePlayUnitMovement, createDeploymentState, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, placePlayReinforcement, placePlayUnit, placeNextUnit, removePlayModels,
+  reorganizePlayModelsGrid, rotatePlayModels, simulateNextPhase, undeployPlayUnit, type DeploymentStrategy,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -47,12 +46,12 @@ import {
   type BrainMemory, type GameRecord,
 } from '@warhammer-simulator/core/engine/deploymentBrain';
 import { SAMPLE_ARMIES } from '@warhammer-simulator/core/data/sampleArmies';
-import { Battlefield, type ManualModelSelection, type TerrainEditSelection } from './components/Battlefield';
+import { Battlefield, type PlayModelSelection, type TerrainEditSelection } from './components/Battlefield';
 import { BattleLog } from './components/BattleLog';
 import { ArmyPanel } from './components/ArmyPanel';
 import { UnitStatsPanel } from './components/UnitStatsPanel';
 import { TerrainLayoutEditor } from './components/TerrainLayoutEditor';
-import { PracticeTimelinePanel } from './components/PracticeTimelinePanel';
+import { PracticeControlsPanel, PracticeLoadModal, PracticeSaveModal } from './components/PracticeSaveLoadPanel';
 import { moveFeature, rotateFeatureAround, terrainCenter, terrainCorners } from '@warhammer-simulator/core/engine/terrainGeometry';
 import { attachedUnitProfilesFor, isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
 import type { GameAction } from '@warhammer-simulator/core/practice/actions';
@@ -87,16 +86,18 @@ type AlignVertexLock = {
   target: Position;
 };
 
-type AppMode = 'manual' | 'simulation' | 'editor';
+type AppMode = 'play' | 'simulation' | 'editor';
 
-type ManualUndoEntry = {
+type PlayDeploySelection = { kind: 'deployment'; side: 0 | 1; unitIndex: number } | { kind: 'reinforcement'; side: 0 | 1; armyUnitIndex: number };
+
+type PlayUndoEntry = {
   battleState: BattleState;
-  manualDeploySelection: { side: 0 | 1; unitIndex: number } | null;
-  manualModelSelection: ManualModelSelection | null;
+  playDeploySelection: PlayDeploySelection | null;
+  playModelSelection: PlayModelSelection | null;
 };
 
-type PendingManualTimelineAction = {
-  undoEntry: ManualUndoEntry;
+type PendingPlayTimelineAction = {
+  undoEntry: PlayUndoEntry;
   action: GameAction;
   stateAfter: BattleState;
 };
@@ -116,8 +117,8 @@ type InspectedSelection =
   | { kind: 'battle'; side: 0 | 1; unitId: string }
   | { kind: 'profile'; side: 0 | 1; unitIndex: number };
 
-const MANUAL_TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight'];
-const MANUAL_MODEL_EDIT_PHASES: Phase[] = ['deployment', 'movement'];
+const PLAY_TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight'];
+const PLAY_MODEL_EDIT_PHASES: Phase[] = ['deployment', 'movement'];
 const PHASE_LABELS: Partial<Record<Phase, string>> = {
   setup: 'Ready',
   command: 'Command',
@@ -165,7 +166,7 @@ function saveArmy(side: 0 | 1, army: ImportedArmy) {
   localStorage.setItem(SAVED_ARMY_KEYS[side], JSON.stringify(army));
 }
 
-function normalizeManualSelectionParts(selection: ManualModelSelection): ManualModelSelection['parts'] {
+function normalizePlaySelectionParts(selection: PlayModelSelection): PlayModelSelection['parts'] {
   return selection.parts
     .map(part => ({
       unitId: part.unitId,
@@ -175,12 +176,12 @@ function normalizeManualSelectionParts(selection: ManualModelSelection): ManualM
     .filter(part => part.modelIndices.length > 0);
 }
 
-function normalizeManualSelectionForState(
+function normalizePlaySelectionForState(
   state: BattleState | null,
-  selection: ManualModelSelection | null,
-): ManualModelSelection | null {
+  selection: PlayModelSelection | null,
+): PlayModelSelection | null {
   if (!state || !selection) return null;
-  const rawParts = normalizeManualSelectionParts(selection);
+  const rawParts = normalizePlaySelectionParts(selection);
   const primary = rawParts[0];
   if (!primary) return null;
 
@@ -205,7 +206,7 @@ function normalizeManualSelectionForState(
   return parts.length ? { side: primary.side, parts } : null;
 }
 
-function primaryManualSelectionPart(selection: ManualModelSelection | null): ManualModelSelection['parts'][number] | null {
+function primaryPlaySelectionPart(selection: PlayModelSelection | null): PlayModelSelection['parts'][number] | null {
   return selection?.parts[0] ?? null;
 }
 
@@ -390,6 +391,7 @@ export default function App() {
   const [army1, setArmy1] = useState<ImportedArmy>(() => loadSavedArmy(0, SAMPLE_ARMIES[0]));
   const [army2, setArmy2] = useState<ImportedArmy>(() => loadSavedArmy(1, SAMPLE_ARMIES[1]));
   const [battleState, setBattleState] = useState<BattleState | null>(null);
+  const [modeChooserOpen, setModeChooserOpen] = useState(true);
   const [practiceTimeline, setPracticeTimeline] = useState<PracticeTimeline | null>(null);
   const [savedScenarios, setSavedScenarios] = useState<PracticeScenarioSummary[]>([]);
   const [activeCheckpointId, setActiveCheckpointId] = useState<string | null>(null);
@@ -397,8 +399,11 @@ export default function App() {
   const [selectedSaveGameId, setSelectedSaveGameId] = useState<string | null>(null);
   const [pendingCheckpointLoad, setPendingCheckpointLoad] = useState<PendingCheckpointLoad | null>(null);
   const [pendingCheckpointDelete, setPendingCheckpointDelete] = useState<PendingCheckpointDelete | null>(null);
+  const [practiceSaveModalOpen, setPracticeSaveModalOpen] = useState(false);
+  const [practiceLoadModalOpen, setPracticeLoadModalOpen] = useState(false);
   const [practiceSaveStatus, setPracticeSaveStatus] = useState('');
   const [practiceStorageStatus, setPracticeStorageStatus] = useState<PracticeStorageHealth | null>(null);
+  const [playPhaseWarning, setPlayPhaseWarning] = useState('');
   const [editionId, setEditionId] = useState<string>(EDITIONS[0].id);
   const [primaryMission, setPrimaryMission] = useState<string>(TOURNAMENT_MISSIONS[0].primaryMission);
   const [deployment, setDeployment] = useState<string>(TOURNAMENT_MISSIONS[0].deployment);
@@ -416,16 +421,16 @@ export default function App() {
   const [autoRunning, setAutoRunning] = useState(false);
   const [autoDeploying, setAutoDeploying] = useState(false);
   const [simSpeedMs, setSimSpeedMs] = useState(600);
-  const [manualDeploySelection, setManualDeploySelection] = useState<{ side: 0 | 1; unitIndex: number } | null>(null);
-  const [manualModelSelection, setManualModelSelection] = useState<ManualModelSelection | null>(null);
+  const [playDeploySelection, setPlayDeploySelection] = useState<PlayDeploySelection | null>(null);
+  const [playModelSelection, setPlayModelSelection] = useState<PlayModelSelection | null>(null);
   const [inspectedSelection, setInspectedSelection] = useState<InspectedSelection | null>(null);
-  const [manualUndoStack, setManualUndoStack] = useState<ManualUndoEntry[]>([]);
-  const manualUndoStackRef = useRef<ManualUndoEntry[]>([]);
-  const pendingManualModelMoveUndoRef = useRef<ManualUndoEntry | null>(null);
-  const pendingManualModelMoveActionRef = useRef<PendingManualTimelineAction | null>(null);
-  const pendingManualRotationUndoRef = useRef<ManualUndoEntry | null>(null);
-  const pendingManualRotationActionRef = useRef<PendingManualTimelineAction | null>(null);
-  const manualRotationUndoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [playUndoStack, setPlayUndoStack] = useState<PlayUndoEntry[]>([]);
+  const playUndoStackRef = useRef<PlayUndoEntry[]>([]);
+  const pendingPlayModelMoveUndoRef = useRef<PlayUndoEntry | null>(null);
+  const pendingPlayModelMoveActionRef = useRef<PendingPlayTimelineAction | null>(null);
+  const pendingPlayRotationUndoRef = useRef<PlayUndoEntry | null>(null);
+  const pendingPlayRotationActionRef = useRef<PendingPlayTimelineAction | null>(null);
+  const playRotationUndoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const battleStateRef = useRef<BattleState | null>(null);
   const practiceTimelineRef = useRef<PracticeTimeline | null>(null);
   const activeCheckpointIdRef = useRef<string | null>(null);
@@ -476,16 +481,26 @@ export default function App() {
     ? `vertex ${alignVertexLock.vertexIndex + 1} at ${alignVertexLock.target.x.toFixed(1)}, ${alignVertexLock.target.y.toFixed(1)}`
     : null;
   const isEditorMode = appMode === 'editor';
-  const isManualMode = appMode === 'manual';
+  const isPlayMode = appMode === 'play';
   const isSimulationMode = appMode === 'simulation';
   const canEditTerrain = isEditorMode && !battleState;
-  const selectedManualUnit = manualDeploySelection && battleState?.phase === 'deployment'
-    ? battleState.unplacedUnits[manualDeploySelection.side][manualDeploySelection.unitIndex] ?? null
+  const playMovementStep = battleState?.phase === 'movement' ? movementStep(battleState) : null;
+  const isPlayReinforcementsStep = playMovementStep === 'reinforcements';
+  const canEditPlayModelsNow = !!(
+    battleState
+    && (battleState.phase === 'deployment' || (battleState.phase === 'movement' && !isPlayReinforcementsStep))
+  );
+  const selectedPlayUnit = playDeploySelection
+    ? playDeploySelection.kind === 'deployment' && battleState?.phase === 'deployment'
+      ? battleState.unplacedUnits[playDeploySelection.side][playDeploySelection.unitIndex] ?? null
+      : playDeploySelection.kind === 'reinforcement' && isPlayReinforcementsStep
+        ? battleState.armies[playDeploySelection.side].army.units[playDeploySelection.armyUnitIndex] ?? null
+        : null
     : null;
-  const manualIssues = isManualMode && battleState?.phase === 'deployment'
-    ? manualDeploymentIssues(battleState)
+  const playIssues = isPlayMode && battleState?.phase === 'deployment'
+    ? playDeploymentIssues(battleState)
     : [];
-  const allManualUnitsPlaced = isManualMode
+  const allPlayUnitsPlaced = isPlayMode
     && battleState?.phase === 'deployment'
     && battleState.unplacedUnits[0].length === 0
     && battleState.unplacedUnits[1].length === 0;
@@ -538,30 +553,95 @@ export default function App() {
     () => attachedBattleUnitIdsForSelection(battleState, inspectedBattleUnitId),
     [battleState, inspectedBattleUnitId],
   );
-  const primaryManualSelection = primaryManualSelectionPart(manualModelSelection);
+  const primaryPlaySelection = primaryPlaySelectionPart(playModelSelection);
+  const selectedPlayBattleUnit = battleState && primaryPlaySelection
+    ? battleState.units.find(unit => unit.id === primaryPlaySelection.unitId && unit.side === primaryPlaySelection.side && !unit.destroyed) ?? null
+    : null;
   const activeRulesForBattle = battleState ? rulesEditionForRuleset(battleState.ruleset) : edition;
-  const selectedManualCanAdvance = !!(
-    isManualMode
+  const selectedPlayCanAdvance = !!(
+    isPlayMode
     && battleState
-    && primaryManualSelection
-    && manualUnitCanAdvance(
+    && primaryPlaySelection
+    && playUnitCanAdvance(
       battleState,
-      primaryManualSelection.unitId,
-      primaryManualSelection.side,
+      primaryPlaySelection.unitId,
+      primaryPlaySelection.side,
       activeRulesForBattle,
     )
   );
-  const selectedManualCanFallBack = !!(
-    isManualMode
+  const selectedPlayCanFallBack = !!(
+    isPlayMode
     && battleState
-    && primaryManualSelection
-    && manualUnitCanFallBack(
+    && primaryPlaySelection
+    && playUnitCanFallBack(
       battleState,
-      primaryManualSelection.unitId,
-      primaryManualSelection.side,
+      primaryPlaySelection.unitId,
+      primaryPlaySelection.side,
       activeRulesForBattle,
     )
   );
+  const playCoherencyIssues = isPlayMode && battleState ? playPhaseCoherencyIssues(battleState) : [];
+  const selectedPlayCoherencyIssueModelIds = useMemo(
+    () => battleState ? battleModelIdsWithCoherencyIssues(battleState) : new Set<string>(),
+    [battleState],
+  );
+  const selectedPlayHasCoherencyIssue = !!(
+    playModelSelection
+    && playModelSelection.parts.some(part =>
+      part.modelIndices.some(modelIndex => selectedPlayCoherencyIssueModelIds.has(`${part.unitId}:${modelIndex}`)),
+    )
+  );
+  const selectedPlayCanCompleteMovement = !!(
+    isPlayMode
+    && battleState?.phase === 'movement'
+    && !isPlayReinforcementsStep
+    && selectedPlayBattleUnit
+    && !selectedPlayBattleUnit.movementComplete
+    && (selectedPlayBattleUnit.movementAction === 'normalMove' || selectedPlayBattleUnit.movementAction === 'advanced')
+  );
+  const selectedPlayCanEmbark = !!(
+    isPlayMode
+    && battleState
+    && primaryPlaySelection
+    && playUnitCanEmbark(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side)
+  );
+  const selectedPlayDisembarkOptions = useMemo(() => {
+    if (!isPlayMode || !battleState || !primaryPlaySelection || !selectedPlayBattleUnit) return [];
+    const side = primaryPlaySelection.side;
+    const runtimePassengers = playTransportPassengers(battleState, selectedPlayBattleUnit.id)
+      .filter(passenger => playUnitCanDisembark(battleState, side, selectedPlayBattleUnit.id, passenger.id))
+      .map(passenger => ({
+        key: `passenger-${passenger.id}`,
+        label: passenger.profile.name,
+        passengerUnitId: passenger.id,
+        armyUnitIndex: undefined as number | undefined,
+      }));
+    const transportRosterId = unitRosterId(selectedPlayBattleUnit.profile);
+    const stagedPassengers = battleState.armies[side].army.units
+      .map((unit, armyUnitIndex) => ({ unit, armyUnitIndex }))
+      .filter(({ unit }) =>
+        unit.deployment?.mode === 'transport'
+        && (
+          unit.deployment.transportUnitId === transportRosterId
+          || (!unit.deployment.transportUnitId && unit.deployment.transportName === selectedPlayBattleUnit.profile.name)
+        )
+      )
+      .filter(({ unit }) =>
+        !battleState.units.some(candidate =>
+          candidate.side === side
+          && !candidate.destroyed
+          && unitRosterId(candidate.profile) === unitRosterId(unit),
+        )
+      )
+      .filter(({ armyUnitIndex }) => playUnitCanDisembark(battleState, side, selectedPlayBattleUnit.id, undefined, armyUnitIndex))
+      .map(({ unit, armyUnitIndex }) => ({
+        key: `army-${armyUnitIndex}`,
+        label: unit.name,
+        passengerUnitId: undefined as string | undefined,
+        armyUnitIndex,
+      }));
+    return [...runtimePassengers, ...stagedPassengers];
+  }, [isPlayMode, battleState, primaryPlaySelection, selectedPlayBattleUnit]);
   const inspectedProfileSide = inspectedSelection?.kind === 'profile' ? inspectedSelection.side : null;
   const inspectedProfileIndex = inspectedSelection?.kind === 'profile' ? inspectedSelection.unitIndex : null;
 
@@ -581,11 +661,15 @@ export default function App() {
   }, [battleState]);
 
   useEffect(() => {
+    if (playCoherencyIssues.length === 0) setPlayPhaseWarning('');
+  }, [playCoherencyIssues.length]);
+
+  useEffect(() => {
     void initializePracticeStorage();
   }, []);
 
   useEffect(() => () => {
-    if (manualRotationUndoTimerRef.current) clearTimeout(manualRotationUndoTimerRef.current);
+    if (playRotationUndoTimerRef.current) clearTimeout(playRotationUndoTimerRef.current);
   }, []);
 
   function commitBattleState(next: BattleState | null) {
@@ -608,24 +692,24 @@ export default function App() {
     return editorLayout ?? TERRAIN_LAYOUTS[0];
   }
 
-  function clearManualUndo() {
-    manualUndoStackRef.current = [];
-    setManualUndoStack([]);
-    pendingManualModelMoveUndoRef.current = null;
-    pendingManualModelMoveActionRef.current = null;
-    pendingManualRotationUndoRef.current = null;
-    pendingManualRotationActionRef.current = null;
-    if (manualRotationUndoTimerRef.current) {
-      clearTimeout(manualRotationUndoTimerRef.current);
-      manualRotationUndoTimerRef.current = null;
+  function clearPlayUndo() {
+    playUndoStackRef.current = [];
+    setPlayUndoStack([]);
+    pendingPlayModelMoveUndoRef.current = null;
+    pendingPlayModelMoveActionRef.current = null;
+    pendingPlayRotationUndoRef.current = null;
+    pendingPlayRotationActionRef.current = null;
+    if (playRotationUndoTimerRef.current) {
+      clearTimeout(playRotationUndoTimerRef.current);
+      playRotationUndoTimerRef.current = null;
     }
   }
 
-  function manualUndoEntry(state: BattleState): ManualUndoEntry {
+  function playUndoEntry(state: BattleState): PlayUndoEntry {
     return {
       battleState: clone(state),
-      manualDeploySelection: clone(manualDeploySelection),
-      manualModelSelection: clone(manualModelSelection),
+      playDeploySelection: clone(playDeploySelection),
+      playModelSelection: clone(playModelSelection),
     };
   }
 
@@ -682,9 +766,9 @@ export default function App() {
       const matchingLayout = terrainLayouts.find(layout => layout.name === setup.terrainLayout);
       if (matchingLayout) setLayoutId(matchingLayout.id);
     }
-    clearManualUndo();
-    setManualDeploySelection(null);
-    setManualModelSelection(null);
+    clearPlayUndo();
+    setPlayDeploySelection(null);
+    setPlayModelSelection(null);
     setInspectedSelection(null);
     commitBattleState(result.state);
   }
@@ -718,7 +802,7 @@ export default function App() {
   }
 
   function checkpointLabelForState(state: BattleState, kind: PracticeCheckpointKind): string {
-    const suffix = kind === 'auto-phase' ? 'checkpoint' : 'manual save';
+    const suffix = kind === 'auto-phase' ? 'checkpoint' : 'play save';
     if (state.phase === 'deployment') return `Deployment ${suffix}`;
     if (state.phase === 'end') return `Game end ${suffix}`;
     const phaseLabel = PHASE_LABELS[state.phase] ?? state.phase;
@@ -763,8 +847,9 @@ export default function App() {
     return scenario;
   }
 
-  function saveActivePracticeScenario() {
-    void savePracticeCheckpoint('manual');
+  async function saveActivePracticeScenarioAndClose() {
+    const saved = await savePracticeCheckpoint('play');
+    if (saved) setPracticeSaveModalOpen(false);
   }
 
   async function loadSavedPracticeScenario(
@@ -794,17 +879,19 @@ export default function App() {
 
   function requestLoadSavedPracticeScenario(scenarioId: string) {
     if (!practiceTimelineRef.current) {
+      setPracticeLoadModalOpen(false);
       void loadSavedPracticeScenario(scenarioId, { branchOnNextSave: true });
       return;
     }
     const scenarioName = savedScenarios.find(scenario => scenario.id === scenarioId)?.name ?? 'saved checkpoint';
+    setPracticeLoadModalOpen(false);
     setPendingCheckpointLoad({ scenarioId, scenarioName });
   }
 
   async function saveCurrentAndLoadPendingCheckpoint() {
     if (!pendingCheckpointLoad) return;
     const nextLoad = pendingCheckpointLoad;
-    const saved = await savePracticeCheckpoint('manual');
+    const saved = await savePracticeCheckpoint('play');
     if (!saved) return;
     await loadSavedPracticeScenario(nextLoad.scenarioId, {
       branchOnNextSave: true,
@@ -843,6 +930,7 @@ export default function App() {
       void refreshSavedScenarios();
       return;
     }
+    setPracticeLoadModalOpen(false);
     setPendingCheckpointDelete({
       scenarioId,
       scenarioName: scenario.name,
@@ -861,71 +949,76 @@ export default function App() {
     setPracticeSaveStatus(`Deleted ${deleteIds.length} checkpoint${deleteIds.length === 1 ? '' : 's'}.`);
   }
 
-  function pushManualUndoEntry(entry: ManualUndoEntry) {
-    const nextStack = [...manualUndoStackRef.current, entry].slice(-100);
-    manualUndoStackRef.current = nextStack;
-    setManualUndoStack(nextStack);
+  function pushPlayUndoEntry(entry: PlayUndoEntry) {
+    const nextStack = [...playUndoStackRef.current, entry].slice(-100);
+    playUndoStackRef.current = nextStack;
+    setPlayUndoStack(nextStack);
   }
 
-  function commitManualTimelineAction(pending: PendingManualTimelineAction) {
+  function commitPlayTimelineAction(pending: PendingPlayTimelineAction) {
     recordPracticeAction(pending.undoEntry.battleState, pending.stateAfter, pending.action);
-    pushManualUndoEntry(pending.undoEntry);
+    pushPlayUndoEntry(pending.undoEntry);
   }
 
-  function pushManualUndo(entry: ManualUndoEntry, stateAfter?: BattleState, action?: GameAction) {
-    commitPendingManualRotationUndo();
+  function pushPlayUndo(entry: PlayUndoEntry, stateAfter?: BattleState, action?: GameAction) {
+    commitPendingPlayRotationUndo();
     if (stateAfter && action) {
-      commitManualTimelineAction({ undoEntry: entry, stateAfter, action });
+      commitPlayTimelineAction({ undoEntry: entry, stateAfter, action });
       return;
     }
-    pushManualUndoEntry(entry);
+    pushPlayUndoEntry(entry);
   }
 
-  function commitPendingManualRotationUndo() {
-    if (manualRotationUndoTimerRef.current) {
-      clearTimeout(manualRotationUndoTimerRef.current);
-      manualRotationUndoTimerRef.current = null;
+  function commitPendingPlayRotationUndo() {
+    if (playRotationUndoTimerRef.current) {
+      clearTimeout(playRotationUndoTimerRef.current);
+      playRotationUndoTimerRef.current = null;
     }
-    const entry = pendingManualRotationUndoRef.current;
+    const entry = pendingPlayRotationUndoRef.current;
     if (!entry) return;
-    pendingManualRotationUndoRef.current = null;
-    const pendingAction = pendingManualRotationActionRef.current;
-    pendingManualRotationActionRef.current = null;
+    pendingPlayRotationUndoRef.current = null;
+    const pendingAction = pendingPlayRotationActionRef.current;
+    pendingPlayRotationActionRef.current = null;
     if (pendingAction) {
-      if (pendingAction.action.type === 'manual.rotateModels' && pendingAction.action.degrees === 0) return;
-      commitManualTimelineAction(pendingAction);
+      if (pendingAction.action.type === 'play.rotateModels' && pendingAction.action.degrees === 0) return;
+      commitPlayTimelineAction(pendingAction);
       return;
     }
-    pushManualUndoEntry(entry);
+    pushPlayUndoEntry(entry);
   }
 
-  function commitPendingManualModelMove() {
-    const entry = pendingManualModelMoveUndoRef.current;
-    const pendingAction = pendingManualModelMoveActionRef.current;
-    pendingManualModelMoveUndoRef.current = null;
-    pendingManualModelMoveActionRef.current = null;
+  function commitPendingPlayModelMove() {
+    const entry = pendingPlayModelMoveUndoRef.current;
+    const pendingAction = pendingPlayModelMoveActionRef.current;
+    pendingPlayModelMoveUndoRef.current = null;
+    pendingPlayModelMoveActionRef.current = null;
     if (!entry) return;
     if (pendingAction) {
       if (
-        pendingAction.action.type === 'manual.moveModels'
+        pendingAction.action.type === 'play.moveModels'
         && pendingAction.action.dx === 0
         && pendingAction.action.dy === 0
       ) return;
-      commitManualTimelineAction(pendingAction);
+      commitPlayTimelineAction(pendingAction);
       return;
     }
-    pushManualUndoEntry(entry);
+    pushPlayUndoEntry(entry);
   }
 
   function changeMode(mode: AppMode) {
     setAppMode(mode);
     setAutoRunning(false);
     setAutoDeploying(false);
-    setManualDeploySelection(null);
-    setManualModelSelection(null);
-    clearManualUndo();
+    setPlayDeploySelection(null);
+    setPlayModelSelection(null);
+    clearPlayUndo();
     commitBattleState(null);
     resetPracticeTimeline();
+  }
+
+  function chooseMode(mode: AppMode) {
+    changeMode(mode);
+    setModeChooserOpen(false);
   }
 
   function selectEdit(selection: TerrainEditSelection | null) {
@@ -941,10 +1034,10 @@ export default function App() {
     setDeployment(mission.deployment);
     setLayoutId(layout);
     commitBattleState(null);
-    setManualDeploySelection(null);
-    setManualModelSelection(null);
+    setPlayDeploySelection(null);
+    setPlayModelSelection(null);
     setInspectedSelection(null);
-    clearManualUndo();
+    clearPlayUndo();
     resetPracticeTimeline();
   }
 
@@ -1007,7 +1100,7 @@ export default function App() {
         setEditorLayout(clone(importedLayouts[0]));
         setSelectedEdit(null);
         setAlignVertexIndex(null);
-        clearManualUndo();
+        clearPlayUndo();
         setTerrainSaveStatus(`Imported ${importedLayouts.length} terrain layout${importedLayouts.length === 1 ? '' : 's'}.`);
       } catch {
         setTerrainSaveStatus('Import failed: invalid JSON file.');
@@ -1175,10 +1268,10 @@ export default function App() {
   function startBattle() {
     setAutoRunning(false);
     setAutoDeploying(false);
-    setManualDeploySelection(null);
-    setManualModelSelection(null);
+    setPlayDeploySelection(null);
+    setPlayModelSelection(null);
     setInspectedSelection(null);
-    clearManualUndo();
+    clearPlayUndo();
     winnerRecordedRef.current = null;
     const layout = getLayout();
     const initialState = createDeploymentState(
@@ -1200,40 +1293,57 @@ export default function App() {
   function resetBattle() {
     setAutoRunning(false);
     setAutoDeploying(false);
-    setManualDeploySelection(null);
-    setManualModelSelection(null);
+    setPlayDeploySelection(null);
+    setPlayModelSelection(null);
     setInspectedSelection(null);
-    clearManualUndo();
+    clearPlayUndo();
     resetPracticeTimeline();
     commitBattleState(null);
   }
 
-  function selectManualDeployUnit(side: 0 | 1, unitIndex: number) {
-    setManualDeploySelection({ side, unitIndex });
-    setManualModelSelection(null);
+  function selectPlayDeployUnit(side: 0 | 1, unitIndex: number) {
+    setPlayDeploySelection({ kind: 'deployment', side, unitIndex });
+    setPlayModelSelection(null);
     setInspectedSelection({ kind: 'profile', side, unitIndex });
     const current = battleStateRef.current;
     if (current?.phase === 'deployment') commitBattleState({ ...current, activeArmy: side });
+  }
+
+  function selectPlayReinforcementUnit(side: 0 | 1, armyUnitIndex: number) {
+    const current = battleStateRef.current;
+    if (!current || current.phase !== 'movement' || movementStep(current) !== 'reinforcements' || current.activeArmy !== side) {
+      inspectProfileUnit(side, armyUnitIndex);
+      return;
+    }
+    const unit = current.armies[side].army.units[armyUnitIndex];
+    const mode = unit?.deployment?.mode;
+    if (mode !== 'deepStrike' && mode !== 'strategicReserve') {
+      inspectProfileUnit(side, armyUnitIndex);
+      return;
+    }
+    setPlayDeploySelection({ kind: 'reinforcement', side, armyUnitIndex });
+    setPlayModelSelection(null);
+    setInspectedSelection({ kind: 'profile', side, unitIndex: armyUnitIndex });
   }
 
   function inspectProfileUnit(side: 0 | 1, unitIndex: number) {
     setInspectedSelection({ kind: 'profile', side, unitIndex });
   }
 
-  function selectManualModels(selection: ManualModelSelection | null) {
-    const normalized = normalizeManualSelectionForState(battleState, selection);
+  function selectPlayModels(selection: PlayModelSelection | null) {
+    const normalized = normalizePlaySelectionForState(battleState, selection);
     if (!normalized) {
-      setManualModelSelection(null);
+      setPlayModelSelection(null);
       setInspectedSelection(null);
       return;
     }
     const primary = normalized.parts[0];
-    setManualDeploySelection(null);
+    setPlayDeploySelection(null);
     setInspectedSelection({ kind: 'battle', side: primary.side, unitId: primary.unitId });
-    setManualModelSelection(normalized);
+    setPlayModelSelection(normalized);
   }
 
-  function selectionForPlacedGroup(unitId: string, side: 0 | 1): ManualModelSelection | null {
+  function selectionForPlacedGroup(unitId: string, side: 0 | 1): PlayModelSelection | null {
     if (!battleState) return null;
     const primary = battleState.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
     if (!primary) return null;
@@ -1260,88 +1370,90 @@ export default function App() {
     };
   }
 
-  function selectPlacedManualUnit(unitId: string, side: 0 | 1) {
+  function selectPlacedPlayUnit(unitId: string, side: 0 | 1) {
     const selection = selectionForPlacedGroup(unitId, side);
     if (!selection) return;
-    setManualDeploySelection(null);
+    setPlayDeploySelection(null);
     setInspectedSelection({ kind: 'battle', side, unitId });
-    setManualModelSelection(selection);
+    setPlayModelSelection(selection);
   }
 
   function inspectBattleUnit(unitId: string, side: 0 | 1) {
     setInspectedSelection({ kind: 'battle', side, unitId });
-    if (isManualMode && battleState && battleState.phase !== 'end') {
-      selectPlacedManualUnit(unitId, side);
+    if (isPlayMode && battleState && battleState.phase !== 'end') {
+      selectPlacedPlayUnit(unitId, side);
     }
   }
 
-  function undeployPlacedManualUnit(unitId: string, side: 0 | 1) {
+  function undeployPlacedPlayUnit(unitId: string, side: 0 | 1) {
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'deployment') return;
-    const next = undeployManualUnit(prev, unitId, side);
+    const next = undeployPlayUnit(prev, unitId, side);
     if (next !== prev && next.units.length !== prev.units.length) {
-      pushManualUndo(manualUndoEntry(prev), next, { type: 'manual.undeployUnit', unitId, side });
-      setManualDeploySelection({ side, unitIndex: 0 });
-      setManualModelSelection(null);
+      pushPlayUndo(playUndoEntry(prev), next, { type: 'play.undeployUnit', unitId, side });
+      setPlayDeploySelection({ kind: 'deployment', side, unitIndex: 0 });
+      setPlayModelSelection(null);
       commitBattleState(next);
     }
   }
 
-  function reorganizeSelectedManualUnit(rows: number) {
-    const selection = manualModelSelection;
+  function reorganizeSelectedPlayUnit(rows: number) {
+    const selection = playModelSelection;
     if (!selection) return;
     const prev = battleStateRef.current;
-    if (!prev || !MANUAL_MODEL_EDIT_PHASES.includes(prev.phase)) return;
+    if (!prev || !PLAY_MODEL_EDIT_PHASES.includes(prev.phase)) return;
+    if (prev.phase === 'movement' && movementStep(prev) !== 'moveUnits') return;
     let next = prev;
     for (const part of selection.parts) {
-      next = reorganizeManualModelsGrid(next, part.unitId, part.side, part.modelIndices, rows);
+      next = reorganizePlayModelsGrid(next, part.unitId, part.side, part.modelIndices, rows);
     }
     if (next !== prev) {
-      pushManualUndo(manualUndoEntry(prev), next, {
-        type: 'manual.reorganizeModels',
+      pushPlayUndo(playUndoEntry(prev), next, {
+        type: 'play.reorganizeModels',
         parts: clone(selection.parts),
         rows,
       });
-      setManualModelSelection(selection);
+      setPlayModelSelection(selection);
       commitBattleState(next);
     }
   }
 
-  function rotateSelectedManualModels(degrees: number, batched = false) {
-    const selection = manualModelSelection;
+  function rotateSelectedPlayModels(degrees: number, batched = false) {
+    const selection = playModelSelection;
     if (!selection) return;
     const prev = battleStateRef.current;
-    if (!prev || !MANUAL_MODEL_EDIT_PHASES.includes(prev.phase)) return;
+    if (!prev || !PLAY_MODEL_EDIT_PHASES.includes(prev.phase)) return;
+    if (prev.phase === 'movement' && movementStep(prev) !== 'moveUnits') return;
     let next = prev;
     for (const part of selection.parts) {
-      next = rotateManualModels(next, part.unitId, part.side, part.modelIndices, degrees);
+      next = rotatePlayModels(next, part.unitId, part.side, part.modelIndices, degrees);
     }
     if (next === prev) return;
 
     if (batched) {
-      if (!pendingManualRotationUndoRef.current) {
-        const undoEntry = manualUndoEntry(prev);
-        pendingManualRotationUndoRef.current = undoEntry;
-        pendingManualRotationActionRef.current = {
+      if (!pendingPlayRotationUndoRef.current) {
+        const undoEntry = playUndoEntry(prev);
+        pendingPlayRotationUndoRef.current = undoEntry;
+        pendingPlayRotationActionRef.current = {
           undoEntry,
           action: {
-            type: 'manual.rotateModels',
+            type: 'play.rotateModels',
             parts: clone(selection.parts),
             degrees: 0,
           },
           stateAfter: next,
         };
       }
-      const pendingAction = pendingManualRotationActionRef.current;
-      if (pendingAction?.action.type === 'manual.rotateModels') {
+      const pendingAction = pendingPlayRotationActionRef.current;
+      if (pendingAction?.action.type === 'play.rotateModels') {
         pendingAction.action.degrees += degrees;
         pendingAction.stateAfter = next;
       }
-      if (manualRotationUndoTimerRef.current) clearTimeout(manualRotationUndoTimerRef.current);
-      manualRotationUndoTimerRef.current = setTimeout(commitPendingManualRotationUndo, 350);
+      if (playRotationUndoTimerRef.current) clearTimeout(playRotationUndoTimerRef.current);
+      playRotationUndoTimerRef.current = setTimeout(commitPendingPlayRotationUndo, 350);
     } else {
-      pushManualUndo(manualUndoEntry(prev), next, {
-        type: 'manual.rotateModels',
+      pushPlayUndo(playUndoEntry(prev), next, {
+        type: 'play.rotateModels',
         parts: clone(selection.parts),
         degrees,
       });
@@ -1349,41 +1461,82 @@ export default function App() {
     commitBattleState(next);
   }
 
-  function placeSelectedManualUnit(x: number, y: number) {
-    if (!manualDeploySelection) return;
-    setManualModelSelection(null);
+  function removeSelectedPlayModelsForCoherency() {
+    const selection = playModelSelection;
     const prev = battleStateRef.current;
-    if (!prev || prev.phase !== 'deployment') return;
-    const next = placeManualUnit(prev, manualDeploySelection.side, manualDeploySelection.unitIndex, { x, y });
-    const placed = next.unplacedUnits[manualDeploySelection.side].length < prev.unplacedUnits[manualDeploySelection.side].length;
+    if (!selection || !prev || prev.phase !== 'movement' || movementStep(prev) !== 'moveUnits' || !selectedPlayHasCoherencyIssue) return;
+    let next = prev;
+    for (const part of selection.parts) {
+      const issueModelIndices = part.modelIndices.filter(modelIndex =>
+        selectedPlayCoherencyIssueModelIds.has(`${part.unitId}:${modelIndex}`),
+      );
+      if (!issueModelIndices.length) continue;
+      next = removePlayModels(next, part.unitId, part.side, issueModelIndices);
+    }
+    if (next === prev) return;
+    const nextSelection = normalizePlaySelectionForState(next, selection);
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.removeModels',
+      parts: selection.parts
+        .map(part => ({
+          ...part,
+          modelIndices: part.modelIndices.filter(modelIndex =>
+            selectedPlayCoherencyIssueModelIds.has(`${part.unitId}:${modelIndex}`),
+          ),
+        }))
+        .filter(part => part.modelIndices.length > 0),
+    });
+    setPlayModelSelection(nextSelection);
+    commitBattleState(next);
+  }
+
+  function placeSelectedPlayUnit(x: number, y: number) {
+    if (!playDeploySelection) return;
+    setPlayModelSelection(null);
+    const prev = battleStateRef.current;
+    if (!prev) return;
+    const next = playDeploySelection.kind === 'deployment'
+      ? placePlayUnit(prev, playDeploySelection.side, playDeploySelection.unitIndex, { x, y })
+      : placePlayReinforcement(prev, playDeploySelection.side, playDeploySelection.armyUnitIndex, { x, y });
+    const placed = playDeploySelection.kind === 'deployment'
+      ? next.unplacedUnits[playDeploySelection.side].length < prev.unplacedUnits[playDeploySelection.side].length
+      : next.units.length > prev.units.length;
     if (placed) {
-      pushManualUndo(manualUndoEntry(prev), next, {
-        type: 'manual.placeUnit',
-        side: manualDeploySelection.side,
-        unitIndex: manualDeploySelection.unitIndex,
-        position: { x, y },
-      });
-      setManualDeploySelection(null);
+      pushPlayUndo(playUndoEntry(prev), next, playDeploySelection.kind === 'deployment'
+        ? {
+          type: 'play.placeUnit',
+          side: playDeploySelection.side,
+          unitIndex: playDeploySelection.unitIndex,
+          position: { x, y },
+        }
+        : {
+          type: 'play.placeReinforcement',
+          side: playDeploySelection.side,
+          armyUnitIndex: playDeploySelection.armyUnitIndex,
+          position: { x, y },
+        });
+      setPlayDeploySelection(null);
       commitBattleState(next);
     }
   }
 
-  function beginManualModelMove(selection: ManualModelSelection) {
+  function beginPlayModelMove(selection: PlayModelSelection) {
     const current = battleStateRef.current;
-    if (!current || !MANUAL_MODEL_EDIT_PHASES.includes(current.phase)) return;
-    const normalized = normalizeManualSelectionForState(current, selection);
+    if (!current || !PLAY_MODEL_EDIT_PHASES.includes(current.phase)) return;
+    if (current.phase === 'movement' && movementStep(current) !== 'moveUnits') return;
+    const normalized = normalizePlaySelectionForState(current, selection);
     if (!normalized) return;
-    pendingManualModelMoveUndoRef.current = {
-      ...manualUndoEntry(current),
-      manualModelSelection: normalized,
+    pendingPlayModelMoveUndoRef.current = {
+      ...playUndoEntry(current),
+      playModelSelection: normalized,
     };
-    pendingManualModelMoveActionRef.current = {
+    pendingPlayModelMoveActionRef.current = {
       undoEntry: {
-        ...manualUndoEntry(current),
-        manualModelSelection: normalized,
+        ...playUndoEntry(current),
+        playModelSelection: normalized,
       },
       action: {
-        type: 'manual.moveModels',
+        type: 'play.moveModels',
         parts: clone(normalized.parts),
         dx: 0,
         dy: 0,
@@ -1393,19 +1546,20 @@ export default function App() {
     };
   }
 
-  function moveSelectedManualModel(selection: ManualModelSelection, dx: number, dy: number, collide: boolean) {
+  function moveSelectedPlayModel(selection: PlayModelSelection, dx: number, dy: number, collide: boolean) {
     const prev = battleStateRef.current;
-    if (!prev || !MANUAL_MODEL_EDIT_PHASES.includes(prev.phase)) return;
-    const normalized = normalizeManualSelectionForState(prev, selection);
+    if (!prev || !PLAY_MODEL_EDIT_PHASES.includes(prev.phase)) return;
+    if (prev.phase === 'movement' && movementStep(prev) !== 'moveUnits') return;
+    const normalized = normalizePlaySelectionForState(prev, selection);
     if (!normalized) return;
     let next = prev;
     for (const part of normalized.parts) {
-      next = moveManualModels(next, part.unitId, part.side, part.modelIndices, dx, dy, collide);
+      next = movePlayModels(next, part.unitId, part.side, part.modelIndices, dx, dy, collide);
     }
     if (next === prev) return;
 
-    const pendingAction = pendingManualModelMoveActionRef.current;
-    if (pendingAction?.action.type === 'manual.moveModels') {
+    const pendingAction = pendingPlayModelMoveActionRef.current;
+    if (pendingAction?.action.type === 'play.moveModels') {
       pendingAction.action.dx += dx;
       pendingAction.action.dy += dy;
       pendingAction.action.collide = pendingAction.action.collide || collide;
@@ -1414,141 +1568,184 @@ export default function App() {
     commitBattleState(next);
   }
 
-  function endManualModelMove() {
-    commitPendingManualModelMove();
+  function endPlayModelMove() {
+    commitPendingPlayModelMove();
   }
 
-  function advanceSelectedManualUnit() {
-    const selection = primaryManualSelectionPart(manualModelSelection);
+  function advanceSelectedPlayUnit() {
+    const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
     if (!prev || !selection) return;
     const rules = rulesEditionForRuleset(prev.ruleset);
-    if (!manualUnitCanAdvance(prev, selection.unitId, selection.side, rules)) return;
+    if (!playUnitCanAdvance(prev, selection.unitId, selection.side, rules)) return;
 
-    const next = advanceManualUnit(prev, selection.unitId, selection.side, rules);
+    const next = advancePlayUnit(prev, selection.unitId, selection.side, rules);
     if (next === prev) return;
 
-    pushManualUndo(manualUndoEntry(prev), next, {
-      type: 'manual.advanceUnit',
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.advanceUnit',
       unitId: selection.unitId,
       side: selection.side,
     });
-    setManualModelSelection(normalizeManualSelectionForState(next, manualModelSelection));
+    setPlayModelSelection(normalizePlaySelectionForState(next, playModelSelection));
     commitBattleState(next);
   }
 
-  function fallBackSelectedManualUnit() {
-    const selection = primaryManualSelectionPart(manualModelSelection);
+  function fallBackSelectedPlayUnit() {
+    const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
     if (!prev || !selection) return;
     const rules = rulesEditionForRuleset(prev.ruleset);
-    if (!manualUnitCanFallBack(prev, selection.unitId, selection.side, rules)) return;
+    if (!playUnitCanFallBack(prev, selection.unitId, selection.side, rules)) return;
 
-    const next = fallBackManualUnit(prev, selection.unitId, selection.side, rules);
+    const next = fallBackPlayUnit(prev, selection.unitId, selection.side, rules);
     if (next === prev) return;
 
-    pushManualUndo(manualUndoEntry(prev), next, {
-      type: 'manual.fallBackUnit',
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.fallBackUnit',
       unitId: selection.unitId,
       side: selection.side,
     });
-    setManualModelSelection(normalizeManualSelectionForState(next, manualModelSelection));
+    setPlayModelSelection(normalizePlaySelectionForState(next, playModelSelection));
     commitBattleState(next);
   }
 
-  function startManualBattle() {
+  function completeSelectedPlayUnitMovement() {
+    commitPendingPlayModelMove();
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || !selection) return;
+
+    const next = completePlayUnitMovement(prev, selection.unitId, selection.side);
+    if (next === prev) return;
+
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.completeUnitMovement',
+      unitId: selection.unitId,
+      side: selection.side,
+    });
+    setPlayModelSelection(normalizePlaySelectionForState(next, playModelSelection));
+    commitBattleState(next);
+  }
+
+  function embarkSelectedPlayUnit() {
+    commitPendingPlayModelMove();
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || !selection || !playUnitCanEmbark(prev, selection.unitId, selection.side)) return;
+
+    const next = embarkPlayUnit(prev, selection.unitId, selection.side);
+    if (next === prev) return;
+
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.embarkUnit',
+      unitId: selection.unitId,
+      side: selection.side,
+    });
+    setPlayModelSelection(null);
+    setInspectedSelection(null);
+    commitBattleState(next);
+  }
+
+  function disembarkSelectedTransportPassenger(option: { passengerUnitId?: string; armyUnitIndex?: number }) {
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || !selection) return;
+    const next = disembarkPlayUnit(prev, selection.side, selection.unitId, option.passengerUnitId, option.armyUnitIndex);
+    if (next === prev) return;
+
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.disembarkUnit',
+      side: selection.side,
+      transportUnitId: selection.unitId,
+      passengerUnitId: option.passengerUnitId,
+      armyUnitIndex: option.armyUnitIndex,
+    });
+    const disembarked = option.passengerUnitId
+      ? next.units.find(unit => unit.id === option.passengerUnitId && !unit.destroyed && !unit.embarkedInUnitId)
+      : next.units.find(unit =>
+        unit.side === selection.side
+        && !unit.destroyed
+        && !unit.embarkedInUnitId
+        && typeof option.armyUnitIndex === 'number'
+        && unitRosterId(unit.profile) === unitRosterId(next.armies[selection.side].army.units[option.armyUnitIndex]),
+      );
+    if (disembarked) {
+      setPlayModelSelection({
+        side: disembarked.side,
+        parts: [{
+          unitId: disembarked.id,
+          side: disembarked.side,
+          modelIndices: disembarked.modelPositions.map((_, modelIndex) => modelIndex),
+        }],
+      });
+      setInspectedSelection({ kind: 'battle', side: disembarked.side, unitId: disembarked.id });
+    } else {
+      setPlayModelSelection(normalizePlaySelectionForState(next, playModelSelection));
+    }
+    commitBattleState(next);
+  }
+
+  function startPlayBattle() {
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'deployment') return;
-    const next = beginManualBattle(prev);
+    const next = beginPlayBattle(prev);
     if (next.phase !== 'deployment') {
-      recordPracticeAction(prev, next, { type: 'manual.beginBattle' });
+      recordPracticeAction(prev, next, { type: 'play.beginBattle' });
       void savePracticeCheckpoint('auto-phase');
-      setManualDeploySelection(null);
-      setManualModelSelection(null);
-      clearManualUndo();
+      setPlayDeploySelection(null);
+      setPlayModelSelection(null);
+      clearPlayUndo();
     }
     commitBattleState(next);
   }
 
-  function returnToManualDeployment() {
-    setAutoRunning(false);
-    setAutoDeploying(false);
-    setManualDeploySelection(null);
-    setManualModelSelection(null);
-    setInspectedSelection(null);
-    clearManualUndo();
-    winnerRecordedRef.current = null;
-    const prev = battleStateRef.current;
-    if (!prev || prev.phase === 'deployment') return;
-    const next: BattleState = {
-      ...prev,
-      phase: 'deployment',
-      battleRound: 1,
-      maxBattleRounds: maxBattleRounds(prev),
-      turn: 1,
-      activeArmy: 0,
-      winner: null,
-      scores: [0, 0],
-      commandPoints: [0, 0],
-      objectiveOwners: prev.objectiveOwners.map(() => null),
-      log: [...prev.log, {
-        id: `manual-back-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-        battleRound: battleRound(prev),
-        turn: battleRound(prev),
-        phase: prev.phase,
-        side: prev.activeArmy,
-        unitName: '',
-        message: 'Returned to manual deployment',
-        type: 'info',
-      }],
-    };
-    startPracticeTimeline(next);
-    commitBattleState(next);
-  }
-
-  const undoManualAction = useCallback(() => {
-    if (!isManualMode) return;
-    if (pendingManualRotationUndoRef.current) {
-      const entry = pendingManualRotationUndoRef.current;
-      if (manualRotationUndoTimerRef.current) {
-        clearTimeout(manualRotationUndoTimerRef.current);
-        manualRotationUndoTimerRef.current = null;
+  const undoPlayAction = useCallback(() => {
+    if (!isPlayMode) return;
+    if (pendingPlayRotationUndoRef.current) {
+      const entry = pendingPlayRotationUndoRef.current;
+      if (playRotationUndoTimerRef.current) {
+        clearTimeout(playRotationUndoTimerRef.current);
+        playRotationUndoTimerRef.current = null;
       }
-      pendingManualRotationUndoRef.current = null;
-      pendingManualRotationActionRef.current = null;
+      pendingPlayRotationUndoRef.current = null;
+      pendingPlayRotationActionRef.current = null;
       commitBattleState(clone(entry.battleState));
-      setManualDeploySelection(clone(entry.manualDeploySelection));
-      setManualModelSelection(clone(entry.manualModelSelection));
-      pendingManualModelMoveUndoRef.current = null;
-      pendingManualModelMoveActionRef.current = null;
+      setPlayDeploySelection(clone(entry.playDeploySelection));
+      setPlayModelSelection(clone(entry.playModelSelection));
+      pendingPlayModelMoveUndoRef.current = null;
+      pendingPlayModelMoveActionRef.current = null;
       return;
     }
-    const entry = manualUndoStackRef.current[manualUndoStackRef.current.length - 1];
-    if (!entry) return;
+    const entry = playUndoStackRef.current[playUndoStackRef.current.length - 1];
+    if (!entry) {
+      undoPracticeTimelineAction();
+      return;
+    }
     undoPracticeTimelineCursor();
     commitBattleState(clone(entry.battleState));
-    setManualDeploySelection(clone(entry.manualDeploySelection));
-    setManualModelSelection(clone(entry.manualModelSelection));
-    pendingManualModelMoveUndoRef.current = null;
-    pendingManualModelMoveActionRef.current = null;
-    const nextStack = manualUndoStackRef.current.slice(0, -1);
-    manualUndoStackRef.current = nextStack;
-    setManualUndoStack(nextStack);
-  }, [isManualMode]);
+    setPlayDeploySelection(clone(entry.playDeploySelection));
+    setPlayModelSelection(clone(entry.playModelSelection));
+    pendingPlayModelMoveUndoRef.current = null;
+    pendingPlayModelMoveActionRef.current = null;
+    const nextStack = playUndoStackRef.current.slice(0, -1);
+    playUndoStackRef.current = nextStack;
+    setPlayUndoStack(nextStack);
+  }, [isPlayMode]);
 
-  const redoManualAction = useCallback(() => {
-    if (!isManualMode) return;
+  const redoPlayAction = useCallback(() => {
+    if (!isPlayMode) return;
     redoPracticeTimelineAction();
-  }, [isManualMode]);
+  }, [isPlayMode]);
 
   useEffect(() => {
-    if (!isManualMode) return;
+    if (!isPlayMode) return;
     function onKeyDown(e: KeyboardEvent) {
       const target = e.target as HTMLElement | null;
       if (target && ['INPUT', 'SELECT', 'TEXTAREA'].includes(target.tagName)) return;
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
         e.preventDefault();
-        undoManualAction();
+        undoPlayAction();
         return;
       }
       if (
@@ -1556,29 +1753,30 @@ export default function App() {
         && ((e.key.toLowerCase() === 'z' && e.shiftKey) || e.key.toLowerCase() === 'y')
       ) {
         e.preventDefault();
-        redoManualAction();
+        redoPlayAction();
         return;
       }
-      if (!battleState || !MANUAL_MODEL_EDIT_PHASES.includes(battleState.phase)) return;
+      if (!battleState || !PLAY_MODEL_EDIT_PHASES.includes(battleState.phase)) return;
+      if (battleState.phase === 'movement' && movementStep(battleState) !== 'moveUnits') return;
       if (!e.ctrlKey && !e.metaKey && !e.altKey && /^[1-9]$/.test(e.key)) {
         e.preventDefault();
-        reorganizeSelectedManualUnit(Number(e.key));
+        reorganizeSelectedPlayUnit(Number(e.key));
         return;
       }
       if (!e.ctrlKey && !e.metaKey && !e.altKey && (e.key === 'q' || e.key === 'Q' || e.key === 'e' || e.key === 'E')) {
         e.preventDefault();
         const step = e.shiftKey ? 5 : 15;
-        rotateSelectedManualModels((e.key === 'q' || e.key === 'Q') ? -step : step);
+        rotateSelectedPlayModels((e.key === 'q' || e.key === 'Q') ? -step : step);
         return;
       }
       if (!e.ctrlKey && !e.metaKey && !e.altKey && (e.key === 'r' || e.key === 'R')) {
         e.preventDefault();
-        rotateSelectedManualModels(90);
+        rotateSelectedPlayModels(90);
       }
     }
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isManualMode, battleState?.phase, undoManualAction, redoManualAction, reorganizeSelectedManualUnit, rotateSelectedManualModels]);
+  }, [isPlayMode, battleState?.phase, undoPlayAction, redoPlayAction, reorganizeSelectedPlayUnit, rotateSelectedPlayModels]);
 
   const stepDrop = useCallback(() => {
     const prev = battleStateRef.current;
@@ -1600,18 +1798,31 @@ export default function App() {
     commitBattleState(next);
   }, []);
 
-  const stepManualPhase = useCallback(() => {
+  const stepPlayPhase = useCallback(() => {
     const prev = battleStateRef.current;
     if (!prev || prev.winner !== null || prev.phase === 'deployment' || prev.phase === 'end') return;
+    const coherencyIssues = playPhaseCoherencyIssues(prev);
+    if (coherencyIssues.length > 0) {
+      setPlayPhaseWarning(`${coherencyIssues[0]} Restore coherency before advancing the phase.`);
+      return;
+    }
+    setPlayPhaseWarning('');
     const next = clone(prev);
-    const currentIndex = MANUAL_TURN_PHASES.indexOf(next.phase);
+    const currentIndex = PLAY_TURN_PHASES.indexOf(next.phase);
     const startCommand = () => {
       next.phase = 'command';
+      next.movementStep = undefined;
       for (const unit of next.units) {
         if (unit.side !== next.activeArmy || unit.destroyed) continue;
         unit.activated = false;
         unit.charged = false;
         unit.movementAction = undefined;
+        unit.movementAllowanceRemaining = undefined;
+        unit.movementAllowanceRemainingByModel = undefined;
+        unit.movementComplete = undefined;
+        unit.arrivedFromReinforcements = undefined;
+        if (unit.emergencyDisembarkedThisTurn) unit.battleshocked = false;
+        unit.emergencyDisembarkedThisTurn = undefined;
         unit.fellBack = false;
         unit.inCombat = false;
       }
@@ -1620,8 +1831,20 @@ export default function App() {
 
     if (currentIndex < 0) {
       startCommand();
-    } else if (currentIndex < MANUAL_TURN_PHASES.length - 1) {
-      next.phase = MANUAL_TURN_PHASES[currentIndex + 1];
+    } else if (currentIndex < PLAY_TURN_PHASES.length - 1) {
+      if (next.phase === 'movement') {
+        if (movementStep(next) === 'moveUnits') {
+          markRemainingStationaryUnits(next);
+          next.movementStep = 'reinforcements';
+        } else {
+          next.movementStep = undefined;
+          next.phase = PLAY_TURN_PHASES[currentIndex + 1];
+        }
+      } else {
+        next.phase = PLAY_TURN_PHASES[currentIndex + 1];
+        if (next.phase === 'movement') next.movementStep = 'moveUnits';
+        else next.movementStep = undefined;
+      }
     } else if (next.activeArmy === 0) {
       next.activeArmy = 1;
       startCommand();
@@ -1633,12 +1856,13 @@ export default function App() {
     }
 
     if (next.phase === 'end') {
+      next.movementStep = undefined;
       if (next.scores[0] > next.scores[1]) next.winner = 0;
       else if (next.scores[1] > next.scores[0]) next.winner = 1;
       else next.winner = 'draw';
     }
 
-    recordPracticeAction(prev, next, { type: 'manual.stepPhase' });
+    recordPracticeAction(prev, next, { type: 'play.stepPhase' });
     void savePracticeCheckpoint('auto-phase');
     commitBattleState(next);
   }, []);
@@ -1709,20 +1933,11 @@ export default function App() {
           Warhammer Battle Simulator
         </Typography>
 
-        <ToggleButtonGroup
-          value={appMode}
-          exclusive
-          size="small"
-          aria-label="App mode"
-          onChange={(_event, mode: AppMode | null) => {
-            if (mode) changeMode(mode);
-          }}
-        >
-          <ToggleButton value="manual">Manual Play</ToggleButton>
-          <ToggleButton value="simulation">Simulation</ToggleButton>
-          <ToggleButton value="editor">Editor</ToggleButton>
-        </ToggleButtonGroup>
+        <Button size="small" color="secondary" variant="outlined" onClick={() => setModeChooserOpen(true)}>
+          Change Mode
+        </Button>
 
+        {!battleState && (
         <Box className="header-controls">
           <FormControl sx={{ minWidth: 132 }}>
             <InputLabel id="edition-label">Edition</InputLabel>
@@ -1731,7 +1946,7 @@ export default function App() {
               value={editionId}
               label="Edition"
               disabled={!!battleState}
-              onChange={(e: SelectChangeEvent) => { setEditionId(e.target.value); commitBattleState(null); clearManualUndo(); resetPracticeTimeline(); }}
+              onChange={(e: SelectChangeEvent) => { setEditionId(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
             >
               {EDITIONS.map(ed => (
                 <MenuItem key={ed.id} value={ed.id} title={ed.description}>{ed.name}</MenuItem>
@@ -1746,7 +1961,7 @@ export default function App() {
               value={primaryMission}
               label="Mission"
               disabled={!!battleState}
-              onChange={(e: SelectChangeEvent) => { setPrimaryMission(e.target.value); commitBattleState(null); clearManualUndo(); resetPracticeTimeline(); }}
+              onChange={(e: SelectChangeEvent) => { setPrimaryMission(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
             >
               {PRIMARY_MISSIONS.map(name => (
                 <MenuItem key={name} value={name}>{name}</MenuItem>
@@ -1761,7 +1976,7 @@ export default function App() {
               value={selectedMission.deployment}
               label="Deployment"
               disabled={!!battleState}
-              onChange={(e: SelectChangeEvent) => { setDeployment(e.target.value); commitBattleState(null); clearManualUndo(); resetPracticeTimeline(); }}
+              onChange={(e: SelectChangeEvent) => { setDeployment(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
             >
               {availableDeployments.map(name => (
                 <MenuItem key={name} value={name}>{name}</MenuItem>
@@ -1776,7 +1991,7 @@ export default function App() {
               value={layoutId}
               label="Terrain"
               disabled={!!battleState}
-              onChange={(e: SelectChangeEvent) => { setLayoutId(e.target.value); clearManualUndo(); resetPracticeTimeline(); }}
+              onChange={(e: SelectChangeEvent) => { setLayoutId(e.target.value); clearPlayUndo(); resetPracticeTimeline(); }}
             >
               {compatibleLayouts.map(l => (
                 <MenuItem key={l.id} value={l.id} title={l.description}>{l.name}</MenuItem>
@@ -1792,7 +2007,33 @@ export default function App() {
             Random Set
           </Button>
         </Box>
+        )}
       </header>
+
+      {modeChooserOpen && (
+        <div className="mode-modal-backdrop">
+          <div className="mode-modal" role="dialog" aria-modal="true" aria-labelledby="mode-modal-title">
+            <div className="mode-modal-title" id="mode-modal-title">Choose Mode</div>
+            <div className="mode-modal-options">
+              <button type="button" className={appMode === 'play' ? 'is-active' : ''} onClick={() => chooseMode('play')}>
+                <strong>Play</strong>
+                <span>Move models and step through phases yourself.</span>
+              </button>
+              <button type="button" className={appMode === 'simulation' ? 'is-active' : ''} onClick={() => chooseMode('simulation')}>
+                <strong>Simulation</strong>
+                <span>Run automated deployment and phase resolution.</span>
+              </button>
+              <button type="button" className={appMode === 'editor' ? 'is-active' : ''} onClick={() => chooseMode('editor')}>
+                <strong>Editor</strong>
+                <span>Edit terrain layouts before starting a game.</span>
+              </button>
+            </div>
+            <button type="button" className="mode-modal-close" onClick={() => setModeChooserOpen(false)}>
+              Keep Current
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Edition stub notice */}
       {editionId === 'w40k-11th' && (
@@ -1811,21 +2052,22 @@ export default function App() {
             battleState={battleState}
             color={ARMY_COLORS[0]}
             strategy={strategy1}
-            manualDeployment={isManualMode}
-            selectedManualUnitIndex={manualDeploySelection?.side === 0 ? manualDeploySelection.unitIndex : null}
-            selectedManualModelUnitId={primaryManualSelection?.side === 0 ? primaryManualSelection.unitId : null}
+            playDeployment={isPlayMode}
+            selectedPlayUnitIndex={playDeploySelection?.kind === 'deployment' && playDeploySelection.side === 0 ? playDeploySelection.unitIndex : null}
+            selectedPlayModelUnitId={primaryPlaySelection?.side === 0 ? primaryPlaySelection.unitId : null}
             selectedInspectedUnitId={inspectedBattleUnitId}
             selectedInspectedProfileIndex={inspectedProfileSide === 0 ? inspectedProfileIndex : null}
-            onImport={a => { setArmy1(a); commitBattleState(null); setManualDeploySelection(null); setManualModelSelection(null); setInspectedSelection(null); clearManualUndo(); resetPracticeTimeline(); }}
-            onChange={a => { setArmy1(a); commitBattleState(null); setManualDeploySelection(null); setManualModelSelection(null); setInspectedSelection(null); clearManualUndo(); resetPracticeTimeline(); }}
+            onImport={a => { setArmy1(a); commitBattleState(null); setPlayDeploySelection(null); setPlayModelSelection(null); setInspectedSelection(null); clearPlayUndo(); resetPracticeTimeline(); }}
+            onChange={a => { setArmy1(a); commitBattleState(null); setPlayDeploySelection(null); setPlayModelSelection(null); setInspectedSelection(null); clearPlayUndo(); resetPracticeTimeline(); }}
             onSaveLocal={() => saveArmy(0, army1)}
             onExport={() => downloadJson(`${army1.name.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'army-1'}.json`, army1)}
             onStrategyChange={setStrategy1}
-            onSelectManualUnit={selectManualDeployUnit}
-            onSelectPlacedUnit={selectPlacedManualUnit}
+            onSelectPlayUnit={selectPlayDeployUnit}
+            onSelectStagedUnit={selectPlayReinforcementUnit}
+            onSelectPlacedUnit={selectPlacedPlayUnit}
             onInspectUnit={inspectBattleUnit}
             onInspectProfile={inspectProfileUnit}
-            onUndeployPlacedUnit={undeployPlacedManualUnit}
+            onUndeployPlacedUnit={undeployPlacedPlayUnit}
           />
           <div className="panel-divider" />
           <ArmyPanel
@@ -1834,21 +2076,22 @@ export default function App() {
             battleState={battleState}
             color={ARMY_COLORS[1]}
             strategy={strategy2}
-            manualDeployment={isManualMode}
-            selectedManualUnitIndex={manualDeploySelection?.side === 1 ? manualDeploySelection.unitIndex : null}
-            selectedManualModelUnitId={primaryManualSelection?.side === 1 ? primaryManualSelection.unitId : null}
+            playDeployment={isPlayMode}
+            selectedPlayUnitIndex={playDeploySelection?.kind === 'deployment' && playDeploySelection.side === 1 ? playDeploySelection.unitIndex : null}
+            selectedPlayModelUnitId={primaryPlaySelection?.side === 1 ? primaryPlaySelection.unitId : null}
             selectedInspectedUnitId={inspectedBattleUnitId}
             selectedInspectedProfileIndex={inspectedProfileSide === 1 ? inspectedProfileIndex : null}
-            onImport={a => { setArmy2(a); commitBattleState(null); setManualDeploySelection(null); setManualModelSelection(null); setInspectedSelection(null); clearManualUndo(); resetPracticeTimeline(); }}
-            onChange={a => { setArmy2(a); commitBattleState(null); setManualDeploySelection(null); setManualModelSelection(null); setInspectedSelection(null); clearManualUndo(); resetPracticeTimeline(); }}
+            onImport={a => { setArmy2(a); commitBattleState(null); setPlayDeploySelection(null); setPlayModelSelection(null); setInspectedSelection(null); clearPlayUndo(); resetPracticeTimeline(); }}
+            onChange={a => { setArmy2(a); commitBattleState(null); setPlayDeploySelection(null); setPlayModelSelection(null); setInspectedSelection(null); clearPlayUndo(); resetPracticeTimeline(); }}
             onSaveLocal={() => saveArmy(1, army2)}
             onExport={() => downloadJson(`${army2.name.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'army-2'}.json`, army2)}
             onStrategyChange={setStrategy2}
-            onSelectManualUnit={selectManualDeployUnit}
-            onSelectPlacedUnit={selectPlacedManualUnit}
+            onSelectPlayUnit={selectPlayDeployUnit}
+            onSelectStagedUnit={selectPlayReinforcementUnit}
+            onSelectPlacedUnit={selectPlacedPlayUnit}
             onInspectUnit={inspectBattleUnit}
             onInspectProfile={inspectProfileUnit}
-            onUndeployPlacedUnit={undeployPlacedManualUnit}
+            onUndeployPlacedUnit={undeployPlacedPlayUnit}
           />
         </div>
 
@@ -1857,20 +2100,63 @@ export default function App() {
           <Battlefield
             state={battleState ?? previewState}
             selectedUnitId={inspectedBattleUnitId}
-            selectedUnitIds={isManualMode ? [] : inspectedBattleUnitIds}
+            selectedUnitIds={isPlayMode ? [] : inspectedBattleUnitIds}
             onSelectUnit={inspectBattleUnit}
-            deployer={isManualMode && battleState && battleState.phase !== 'end' ? {
+            deployer={isPlayMode && battleState && battleState.phase !== 'end' ? {
               enabled: true,
-              onPlace: placeSelectedManualUnit,
-              canPlaceUnit: battleState.phase === 'deployment' && !!selectedManualUnit,
-              selectedModel: manualModelSelection,
-              onSelectModel: selectManualModels,
-              onBeginModelMove: battleState.phase === 'movement' || battleState.phase === 'deployment' ? beginManualModelMove : undefined,
-              onMoveModel: battleState.phase === 'movement' || battleState.phase === 'deployment' ? moveSelectedManualModel : undefined,
-              onEndModelMove: battleState.phase === 'movement' || battleState.phase === 'deployment' ? endManualModelMove : undefined,
-              onRotateModel: battleState.phase === 'movement' || battleState.phase === 'deployment'
-                ? (_selection, degrees, batched) => rotateSelectedManualModels(degrees, batched)
+              onPlace: placeSelectedPlayUnit,
+              canPlaceUnit: !!selectedPlayUnit && (
+                (battleState.phase === 'deployment' && playDeploySelection?.kind === 'deployment')
+                || (isPlayReinforcementsStep && playDeploySelection?.kind === 'reinforcement')
+              ),
+              selectedModel: playModelSelection,
+              onSelectModel: selectPlayModels,
+              onBeginModelMove: canEditPlayModelsNow ? beginPlayModelMove : undefined,
+              onMoveModel: canEditPlayModelsNow ? moveSelectedPlayModel : undefined,
+              onEndModelMove: canEditPlayModelsNow ? endPlayModelMove : undefined,
+              onRotateModel: canEditPlayModelsNow
+                ? (_selection, degrees, batched) => rotateSelectedPlayModels(degrees, batched)
                 : undefined,
+              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (selectedPlayCanAdvance || selectedPlayCanFallBack || selectedPlayCanCompleteMovement || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
+                <>
+                  {selectedPlayCanAdvance && (
+                    <Button size="small" color="success" variant="contained" startIcon={<SpeedIcon />} onClick={advanceSelectedPlayUnit}>
+                      Advance
+                    </Button>
+                  )}
+                  {selectedPlayCanFallBack && (
+                    <Button size="small" color="secondary" variant="contained" startIcon={<DirectionsRunIcon />} onClick={fallBackSelectedPlayUnit}>
+                      Fall Back
+                    </Button>
+                  )}
+                  {selectedPlayCanCompleteMovement && (
+                    <Button size="small" color="primary" variant="contained" startIcon={<DoneIcon />} onClick={completeSelectedPlayUnitMovement}>
+                      Done
+                    </Button>
+                  )}
+                  {battleState.phase === 'movement' && selectedPlayHasCoherencyIssue && (
+                    <Button size="small" color="warning" variant="contained" onClick={removeSelectedPlayModelsForCoherency}>
+                      Remove Model
+                    </Button>
+                  )}
+                  {selectedPlayCanEmbark && (
+                    <Button size="small" color="info" variant="contained" onClick={embarkSelectedPlayUnit}>
+                      Embark
+                    </Button>
+                  )}
+                  {selectedPlayDisembarkOptions.map(option => (
+                    <Button
+                      key={option.key}
+                      size="small"
+                      color="info"
+                      variant="contained"
+                      onClick={() => disembarkSelectedTransportPassenger(option)}
+                    >
+                      Disembark {option.label}
+                    </Button>
+                  ))}
+                </>
+              ) : undefined,
             } : undefined}
             editor={canEditTerrain ? {
               enabled: true,
@@ -1886,44 +2172,42 @@ export default function App() {
             <div className="preview-caption">
               {isEditorMode
                 ? `${selectedLayout.name} terrain editor`
-                : `${army1.units.length} units vs ${army2.units.length} units - press ${isManualMode ? 'Start Manual Play' : 'Start Simulation'}`}
+                : `${army1.units.length} units vs ${army2.units.length} units - press ${isPlayMode ? 'Start Play' : 'Start Simulation'}`}
             </div>
           )}
-          {isManualMode && battleState?.phase === 'deployment' && (
+          {isPlayMode && battleState?.phase === 'deployment' && (
             <div className="preview-caption">
-              {selectedManualUnit
-                ? `Click to deploy ${selectedManualUnit.name} for ${battleState.armies[manualDeploySelection!.side].name}${manualUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
-                : `Drag or shift-click deployed models to edit${manualUndoStack.length ? ' - Ctrl+Z to undo' : ''}`}
+              {selectedPlayUnit
+                ? playDeploySelection?.kind === 'reinforcement'
+                  ? `Click to set up ${selectedPlayUnit.name} as Reinforcements more than 9" from enemies${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
+                  : `Click to deploy ${selectedPlayUnit.name} for ${battleState.armies[playDeploySelection!.side].name}${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
+                : `Drag or shift-click deployed models to edit${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`}
             </div>
           )}
-          {isManualMode && battleState && battleState.phase !== 'deployment' && battleState.phase !== 'end' && (
+          {isPlayMode && battleState && battleState.phase !== 'deployment' && battleState.phase !== 'end' && (
             <div className="preview-caption">
               {battleState.phase === 'movement'
-                ? `Manual Movement phase - drag selected models to move${manualUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
-                : `Manual ${PHASE_LABELS[battleState.phase] ?? battleState.phase} phase - select units on the board`}
+                ? isPlayReinforcementsStep
+                  ? `Play Reinforcements step - select staged Deep Strike or Reserve units${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
+                  : `Play Movement phase - drag selected models to move${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
+                : `Play ${PHASE_LABELS[battleState.phase] ?? battleState.phase} phase - select units on the board`}
             </div>
           )}
         </div>
 
         {/* Right: Battle log */}
         <div className="log-panel">
-          <div className="log-header">{isEditorMode ? 'Terrain Editor' : isManualMode ? 'Manual Play' : 'Battle Log'}</div>
+          <div className="log-header">{isEditorMode ? 'Terrain Editor' : isPlayMode ? 'Play' : 'Battle Log'}</div>
           {!isEditorMode && (
-            <PracticeTimelinePanel
+            <PracticeControlsPanel
               timeline={practiceTimeline}
-              savedScenarios={savedScenarios}
-              activeCheckpointId={activeCheckpointId}
-              activeGameId={activeGameId}
-              selectedGameId={selectedSaveGameId}
               status={practiceSaveStatus}
               storageStatus={practiceStorageStatus}
               onUndo={undoPracticeTimelineAction}
               onRedo={redoPracticeTimelineAction}
               onSeek={seekPracticeTimelineAction}
-              onSave={saveActivePracticeScenario}
-              onSelectGame={setSelectedSaveGameId}
-              onLoad={requestLoadSavedPracticeScenario}
-              onDelete={requestDeleteSavedPracticeScenario}
+              onOpenSave={() => setPracticeSaveModalOpen(true)}
+              onOpenLoad={() => setPracticeLoadModalOpen(true)}
             />
           )}
           {isEditorMode ? (
@@ -1949,7 +2233,7 @@ export default function App() {
               onAlignVertexIndexChange={setAlignVertexIndex}
               onClearAlignLock={() => setAlignVertexLock(null)}
             />
-          ) : battleState || isManualMode ? (
+          ) : battleState || isPlayMode ? (
             <>
               <UnitStatsPanel inspected={inspectedUnit} onClear={() => setInspectedSelection(null)} />
               {battleState ? (
@@ -1958,19 +2242,43 @@ export default function App() {
                 </div>
               ) : (
                 <div className="log-empty">
-                  Select a unit on the left to inspect it, then start manual play.
+                  Select a unit on the left to inspect it, then start play.
                 </div>
               )}
             </>
           ) : (
             <div className="log-empty">
-              Choose mission details, then start {isManualMode ? 'manual play' : 'the simulation'}.
+              Choose mission details, then start {isPlayMode ? 'play' : 'the simulation'}.
             </div>
           )}
         </div>
       </div>
 
       {/* ── Controls bar ─────────────────────────────────────────────────── */}
+      <PracticeSaveModal
+        open={practiceSaveModalOpen}
+        timeline={practiceTimeline}
+        status={practiceSaveStatus}
+        storageStatus={practiceStorageStatus}
+        onUndo={undoPracticeTimelineAction}
+        onRedo={redoPracticeTimelineAction}
+        onSeek={seekPracticeTimelineAction}
+        onSave={saveActivePracticeScenarioAndClose}
+        onClose={() => setPracticeSaveModalOpen(false)}
+      />
+
+      <PracticeLoadModal
+        open={practiceLoadModalOpen}
+        savedScenarios={savedScenarios}
+        activeCheckpointId={activeCheckpointId}
+        activeGameId={activeGameId}
+        selectedGameId={selectedSaveGameId}
+        onSelectGame={setSelectedSaveGameId}
+        onLoad={requestLoadSavedPracticeScenario}
+        onDelete={requestDeleteSavedPracticeScenario}
+        onClose={() => setPracticeLoadModalOpen(false)}
+      />
+
       {pendingCheckpointLoad && (
         <div className="practice-load-modal-backdrop">
           <div
@@ -2026,16 +2334,30 @@ export default function App() {
       )}
 
       <Box className="controls">
-        {!isEditorMode && (
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={battleState ? <RestartAltIcon /> : <PlayArrowIcon />}
-            onClick={startBattle}
-          >
-            {battleState ? 'Restart' : isManualMode ? 'Start Manual Play' : 'Start Simulation'}
-          </Button>
-        )}
+        <div className="controls-edge controls-edge-left">
+          {!isEditorMode && battleState && (
+            <Button
+              variant="outlined"
+              color="inherit"
+              startIcon={<RestartAltIcon />}
+              onClick={startBattle}
+            >
+              {isOver ? 'Run Again' : 'Restart'}
+            </Button>
+          )}
+        </div>
+
+        <div className="controls-main">
+          {!isEditorMode && !battleState && (
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<PlayArrowIcon />}
+              onClick={startBattle}
+            >
+              {isPlayMode ? 'Start Play' : 'Start Simulation'}
+            </Button>
+          )}
 
         {/* Deployment phase controls */}
         {isSimulationMode && battleState?.phase === 'deployment' && (
@@ -2054,54 +2376,62 @@ export default function App() {
           </>
         )}
 
-        {isManualMode && battleState?.phase === 'deployment' && (
+        {isPlayMode && battleState?.phase === 'deployment' && (
           <>
             <span className="turn-info">
-              {selectedManualUnit
-                ? `Click the board to deploy ${selectedManualUnit.name}`
-                : allManualUnitsPlaced
-                  ? manualIssues.length
-                    ? manualIssues[0]
+              {selectedPlayUnit
+                ? `Click the board to deploy ${selectedPlayUnit.name}`
+                : allPlayUnitsPlaced
+                  ? playIssues.length
+                    ? playIssues[0]
                     : 'Deployment ready'
                   : 'Select an undeployed unit from the left panel'}
             </span>
-            {allManualUnitsPlaced && (
+            {allPlayUnitsPlaced && (
               <Button
                 color="secondary"
                 variant="contained"
                 startIcon={<PlayArrowIcon />}
-                onClick={startManualBattle}
-                disabled={manualIssues.length > 0}
-                title={manualIssues.join(' ')}
+                onClick={startPlayBattle}
+                disabled={playIssues.length > 0}
+                title={playIssues.join(' ')}
               >
                 Start Game
               </Button>
             )}
-            {manualIssues.length > 0 && (
-              <span className="turn-info" title={manualIssues.join('\n')}>
-                Issues: {manualIssues.join(' | ')}
+            {playIssues.length > 0 && (
+              <span className="turn-info" title={playIssues.join('\n')}>
+                Issues: {playIssues.join(' | ')}
               </span>
             )}
           </>
         )}
 
-        {isManualMode && battleState && !isOver && battleState.phase !== 'deployment' && (
+        {isPlayMode && battleState && !isOver && battleState.phase !== 'deployment' && (
           <>
-            {selectedManualCanAdvance && (
-              <Button color="secondary" startIcon={<SpeedIcon />} onClick={advanceSelectedManualUnit}>
-                Advance
-              </Button>
+            {playCoherencyIssues.length > 0 && (
+              <span className="turn-info coherency-warning" title={playCoherencyIssues.join('\n')}>
+                Coherency issue: fix highlighted models before Next Phase.
+              </span>
             )}
-            {selectedManualCanFallBack && (
-              <Button color="secondary" startIcon={<DirectionsRunIcon />} onClick={fallBackSelectedManualUnit}>
-                Fall Back
-              </Button>
+            {playPhaseWarning && (
+              <span className="turn-info coherency-warning" title={playPhaseWarning}>
+                {playPhaseWarning}
+              </span>
             )}
-            <Button color="secondary" startIcon={<PlayArrowIcon />} onClick={stepManualPhase}>
-              Next Phase
-            </Button>
-            <Button color="secondary" startIcon={<RestartAltIcon />} onClick={returnToManualDeployment}>
-              Back to Deployment
+            <Button
+              className="phase-primary-button"
+              color="primary"
+              variant="contained"
+              size="large"
+              startIcon={<PlayArrowIcon />}
+              onClick={stepPlayPhase}
+              disabled={playCoherencyIssues.length > 0}
+              title={playCoherencyIssues.join('\n')}
+            >
+              {battleState.phase === 'movement'
+                ? isPlayReinforcementsStep ? 'Start Shooting' : 'Start Reinforcements'
+                : 'Next Phase'}
             </Button>
           </>
         )}
@@ -2121,16 +2451,6 @@ export default function App() {
               {autoRunning ? 'Stop' : 'Auto Phase'}
             </Button>
           </>
-        )}
-
-        {isSimulationMode && isOver && (
-          <Button color="secondary" variant="contained" startIcon={<RestartAltIcon />} onClick={() => { startBattle(); }}>
-            Run Again
-          </Button>
-        )}
-
-        {battleState && (
-          <Button color="inherit" startIcon={<CloseIcon />} onClick={resetBattle}>Reset</Button>
         )}
 
         {isSimulationMode && battleState && !isOver && battleState.phase !== 'deployment' && (
@@ -2157,7 +2477,9 @@ export default function App() {
             {' · '}
             CP {commandPoints(battleState)[0]}-{commandPoints(battleState)[1]}
             {' Â· '}
-            {PHASE_LABELS[battleState.phase] ?? battleState.phase}
+            {battleState.phase === 'movement' && isPlayReinforcementsStep
+              ? 'Movement: Reinforcements'
+              : PHASE_LABELS[battleState.phase] ?? battleState.phase}
             {' - '}
             <span style={{ color: ARMY_COLORS[0] }}>{army1.name}</span>
             {' vs '}
@@ -2170,6 +2492,16 @@ export default function App() {
             🧠 {brain.records.length} game{brain.records.length !== 1 ? 's' : ''} learned
           </span>
         )}
+
+        </div>
+
+        <div className="controls-edge controls-edge-right">
+          {battleState && (
+            <Button color="inherit" startIcon={<CloseIcon />} onClick={resetBattle}>
+              Reset
+            </Button>
+          )}
+        </div>
       </Box>
     </div>
   );
