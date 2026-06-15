@@ -79,6 +79,82 @@ export function lineIntersectsTerrain(from: Position, to: Position, t: RectShape
   );
 }
 
+// Returns true if the line passes THROUGH the terrain boundary (crosses an edge), but does NOT
+// count it as blocked when either endpoint is inside the terrain — models already inside can see out/in.
+export function linePassesThroughTerrain(from: Position, to: Position, t: RectShape): boolean {
+  if (pointInTerrain(from, t) || pointInTerrain(to, t)) return false;
+  const corners = terrainCorners(t);
+  return corners.some((corner, i) =>
+    segmentsIntersect(from, to, corner, corners[(i + 1) % corners.length]),
+  );
+}
+
+// ── Line-of-sight ─────────────────────────────────────────────────────────────
+// Single source-of-truth for all LOS checks across simulator and deployment.
+
+// Returns true if the line from→to has clear LOS through all terrain.
+//
+// Rules:
+//   • Obstacle/impassable terrain is a solid object — any ray that touches or crosses
+//     the mat (including when an endpoint is on the boundary) is blocked.
+//   • Ruin/area terrain mats do NOT block by themselves; models inside can see out
+//     through gaps in features.
+//   • Any feature with blocksLOS:true blocks regardless of terrain type.
+export function hasLOS(from: Position, to: Position, terrain: Terrain[]): boolean {
+  for (const t of terrain) {
+    if (t.type === 'impassable' && lineIntersectsTerrain(from, to, t)) return false;
+    if (t.type === 'ruin' && linePassesThroughTerrain(from, to, t)) return false;
+    if (t.features.some(f => f.blocksLOS && lineIntersectsTerrain(from, to, f))) return false;
+  }
+  return true;
+}
+
+// Returns the first unblocked edge-to-edge ray between two bounding-circle models, or null if all blocked.
+// Samples perpendicular tangents + near edge on the shooter against center/tangents/near/far on the target.
+// Works for circular, square, and oval bases — callers pass the bounding radius.
+export function findUnblockedLOSRay(
+  fromCenter: Position, fromRadius: number,
+  toCenter: Position, toRadius: number,
+  terrain: Terrain[],
+): { from: Position; to: Position } | null {
+  const dx = toCenter.x - fromCenter.x;
+  const dy = toCenter.y - fromCenter.y;
+  const d = Math.hypot(dx, dy);
+  if (d < 0.001) return { from: fromCenter, to: toCenter };
+
+  const dir  = { x: dx / d, y: dy / d };
+  const perp = { x: -dir.y, y: dir.x };
+
+  const fromPoints: Position[] = [
+    { x: fromCenter.x + perp.x * fromRadius, y: fromCenter.y + perp.y * fromRadius },
+    { x: fromCenter.x - perp.x * fromRadius, y: fromCenter.y - perp.y * fromRadius },
+    { x: fromCenter.x + dir.x  * fromRadius, y: fromCenter.y + dir.y  * fromRadius },
+  ];
+  const toPoints: Position[] = [
+    toCenter,
+    { x: toCenter.x + perp.x * toRadius, y: toCenter.y + perp.y * toRadius },
+    { x: toCenter.x - perp.x * toRadius, y: toCenter.y - perp.y * toRadius },
+    { x: toCenter.x - dir.x  * toRadius, y: toCenter.y - dir.y  * toRadius },
+    { x: toCenter.x + dir.x  * toRadius, y: toCenter.y + dir.y  * toRadius },
+  ];
+
+  for (const fp of fromPoints) {
+    for (const tp of toPoints) {
+      if (hasLOS(fp, tp, terrain)) return { from: fp, to: tp };
+    }
+  }
+  return null;
+}
+
+// True if any edge-to-edge ray between the two bounding circles is unblocked.
+export function hasLOSEdgeToEdge(
+  fromCenter: Position, fromRadius: number,
+  toCenter: Position, toRadius: number,
+  terrain: Terrain[],
+): boolean {
+  return findUnblockedLOSRay(fromCenter, fromRadius, toCenter, toRadius, terrain) !== null;
+}
+
 export function axisAlignedBoxIntersectsTerrain(
   x: number,
   y: number,

@@ -5,7 +5,7 @@ import { featureColor } from '@warhammer-simulator/core/engine/terrain';
 import { zoneFor } from '@warhammer-simulator/core/engine/deployment';
 import { battleRound, maxBattleRounds } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
-import { battleModelIdsWithCoherencyIssues, movePlayModels } from '@warhammer-simulator/core/engine/simulator';
+import { battleModelIdsWithCoherencyIssues, movePlayModels, type LOSRay } from '@warhammer-simulator/core/engine/simulator';
 import {
   TENTH_EDITION_MARKER_OBJECTIVE_CONTROL,
   objectiveControlRadius,
@@ -30,10 +30,18 @@ export type PlayModelSelection = {
   parts: Array<{ unitId: string; side: 0 | 1; modelIndices: number[] }>;
 };
 
+type ModelVisualState = 'los-visible' | 'los-visible-out-of-range' | 'los-blocked';
+
 interface Props {
   state: BattleState;
   selectedUnitId?: string | null;
   selectedUnitIds?: string[];
+  shooterUnitId?: string | null;
+  targetUnitId?: string | null;
+  shootingReadyUnitIds?: Set<string>;
+  coverUnitIds?: Set<string>;
+  losRays?: LOSRay[];
+  visibleOutOfRangeUnitIds?: Set<string>;
   onSelectUnit?: (unitId: string, side: 0 | 1) => void;
   deployer?: {
     enabled: boolean;
@@ -65,7 +73,7 @@ const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.25;
 const NO_MANS_LAND_FILL = 'rgb(240, 240, 232)';
 
-export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], onSelectUnit, deployer, editor }: Props) {
+export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], shooterUnitId = null, targetUnitId = null, shootingReadyUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, onSelectUnit, deployer, editor }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<null | { selection: TerrainEditSelection; offsetX: number; offsetY: number }>(null);
@@ -127,10 +135,16 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       deployer?.selectedModel ?? null,
       selectedUnitId,
       selectedUnitIds,
+      shooterUnitId,
+      targetUnitId,
+      shootingReadyUnitIds,
       boxSelect,
       hoveredTransport,
       hoveredUnitId,
       dragPreview,
+      coverUnitIds,
+      losRays,
+      visibleOutOfRangeUnitIds,
     );
     return true;
   }
@@ -138,7 +152,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
   useEffect(() => {
     renderCanvas();
     updateSelectedActionsPosition();
-  }, [state, editor?.selected, hoverGridPoint, zoom, deployer?.selectedModel, deployer?.selectedModelActions, hideSelectedActions, selectedUnitId, selectedUnitIds, boxSelect, hoveredTransport, hoveredUnitId]);
+  }, [state, editor?.selected, hoverGridPoint, zoom, deployer?.selectedModel, deployer?.selectedModelActions, hideSelectedActions, selectedUnitId, selectedUnitIds, shooterUnitId, targetUnitId, shootingReadyUnitIds, boxSelect, hoveredTransport, hoveredUnitId, coverUnitIds, losRays, visibleOutOfRangeUnitIds]);
 
   useEffect(() => {
     setHideSelectedActions(false);
@@ -322,7 +336,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
 
   function selectedIndicesForHit(hit: { unitId: string; side: 0 | 1; modelIndex: number }): PlayModelSelection {
     const current = deployer?.selectedModel;
-    if (current && selectionContainsHit(current, hit)) {
+    if (deployer?.onMoveModel && current && selectionContainsHit(current, hit)) {
       return current;
     }
     return {
@@ -697,10 +711,16 @@ function draw(
   selectedModel: PlayModelSelection | null,
   selectedUnitId: string | null,
   selectedUnitIds: string[],
+  shooterUnitId: string | null,
+  targetUnitId: string | null,
+  shootingReadyUnitIds: Set<string> = new Set(),
   boxSelect: { start: Position; current: Position } | null,
   hoveredTransport: { x: number; y: number; label: string } | null,
   hoveredUnitId: string | null,
   modelDragPreview: { selection: PlayModelSelection; dx: number; dy: number } | null = null,
+  coverUnitIds: Set<string> = new Set(),
+  losRays?: LOSRay[],
+  visibleOutOfRangeUnitIds: Set<string> = new Set(),
 ) {
   // ── Background ───────────────────────────────────────────────────────────
   ctx.fillStyle = '#2a4a1e';
@@ -811,17 +831,20 @@ function draw(
   // ── Units ─────────────────────────────────────────────────────────────────
   const highlightedUnitIds = new Set([selectedUnitId, ...selectedUnitIds].filter(Boolean));
   const coherencyIssueModelIds = modelDragPreview ? new Set<string>() : battleModelIdsWithCoherencyIssues(state);
+  const losModelStates = losVisualStates(losRays ?? [], visibleOutOfRangeUnitIds);
   const activeSelectedModel = modelDragPreview?.selection ?? selectedModel;
   for (const unit of state.units) {
     if (unit.destroyed || unit.embarkedInUnitId) continue;
     const selectedPart = selectedModelPartForUnit(activeSelectedModel, unit.id, unit.side);
     const previewUnit = modelDragPreview ? unitWithModelDragPreview(unit, modelDragPreview) : unit;
+    const unitHasLosTint = unit.modelPositions.some((_, index) => losModelStates.has(`${unit.id}:${index}`));
     const selectedModelIndices = selectedPart
       ? selectedPart.modelIndices
-      : highlightedUnitIds.has(unit.id)
+      : highlightedUnitIds.has(unit.id) && !unitHasLosTint
         ? unit.modelPositions.map((_, index) => index)
         : [];
-    drawUnit(ctx, previewUnit, state, scale, selectedModelIndices, hoveredUnitId === unit.id, coherencyIssueModelIds, !!modelDragPreview);
+    const shootingRole = unit.id === shooterUnitId ? 'shooter' : unit.id === targetUnitId ? 'target' : null;
+    drawUnit(ctx, previewUnit, state, scale, selectedModelIndices, hoveredUnitId === unit.id, coherencyIssueModelIds, !!modelDragPreview, coverUnitIds?.has(unit.id) ?? false, losModelStates, shootingRole, shootingReadyUnitIds.has(unit.id));
   }
 
   if (hoveredTransport) drawTransportTooltip(ctx, hoveredTransport, scale, W, H);
@@ -836,6 +859,19 @@ function selectedModelPartForUnit(
 ): { modelIndices: number[] } | null {
   if (!selection) return null;
   return selection.parts.find(part => part.unitId === unitId && part.side === side) ?? null;
+}
+
+function losVisualStates(rays: LOSRay[], visibleOutOfRangeUnitIds: Set<string>): Map<string, ModelVisualState> {
+  const states = new Map<string, ModelVisualState>();
+  for (const ray of rays) {
+    const key = `${ray.toUnitId}:${ray.toModelIndex}`;
+    if (!ray.blocked) {
+      states.set(key, visibleOutOfRangeUnitIds.has(ray.toUnitId) ? 'los-visible-out-of-range' : 'los-visible');
+    } else if (!states.has(key)) {
+      states.set(key, 'los-blocked');
+    }
+  }
+  return states;
 }
 
 function displayCentroid(positions: Position[]): Position {
@@ -1205,6 +1241,7 @@ function modelOverlapsAnotherBase(unit: BattleUnit, modelIndex: number, state: B
     if (otherUnit.destroyed) return false;
     return otherUnit.modelPositions.some((otherModel, otherModelIndex) => {
       if (otherUnit.id === unit.id && otherModelIndex === modelIndex) return false;
+      if (Math.abs((model.z ?? 0) - (otherModel.z ?? 0)) > 0.5) return false;
       const otherFootprint = modelBaseFootprintInches(otherUnit.profile, otherModelIndex, modelRotation(otherUnit, otherModelIndex));
       return baseFootprintsOverlap(model, footprint, otherModel, otherFootprint, 0.001);
     });
@@ -1239,6 +1276,14 @@ function addFootprintPath(
     ctx.restore();
     return;
   }
+  if (footprint.shape === 'oval') {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(((footprint.rotationDeg ?? 0) * Math.PI) / 180);
+    ctx.ellipse(0, 0, footprint.halfLength * scale + inflate, footprint.halfWidth * scale + inflate, 0, 0, Math.PI * 2);
+    ctx.restore();
+    return;
+  }
   ctx.arc(x, y, footprint.radius * scale + inflate, 0, Math.PI * 2);
 }
 
@@ -1251,6 +1296,10 @@ function drawUnit(
   showName = false,
   coherencyIssueModelIds: Set<string> = new Set(),
   skipWarnings = false,
+  hasCover = false,
+  losModelStates: Map<string, ModelVisualState> = new Map(),
+  shootingRole: 'shooter' | 'target' | null = null,
+  shootingReady = false,
 ) {
   const color = state.armies[unit.side].color;
   const modelRadii = unit.modelPositions.map((_, index) => modelBaseRadiusInches(unit.profile, index) * scale);
@@ -1258,8 +1307,8 @@ function drawUnit(
   const maxModelR = Math.max(...modelRadii, scale * 0.48);
 
   const fillColor = unit.battleshocked ? '#888' : color;
-  const ringColor = unit.charged ? '#ffe000' : unit.inCombat ? '#ff8800' : unit.fellBack ? '#66d9ff' : unit.movementAction === 'advanced' ? '#7cff9b' : unit.movementAction === 'remainedStationary' ? '#b9d7ff' : 'rgba(255,255,255,0.72)';
-  const ringWidth = unit.charged || unit.inCombat || unit.fellBack || unit.movementAction === 'advanced' || unit.movementAction === 'remainedStationary' ? 2.5 : 1.2;
+  const outlineColor = unit.charged ? '#ffe000' : unit.inCombat ? '#ff8800' : unit.fellBack ? '#66d9ff' : unit.movementAction === 'advanced' ? '#7cff9b' : unit.movementAction === 'remainedStationary' ? '#b9d7ff' : 'rgba(255,255,255,0.5)';
+  const outlineWidth = unit.charged || unit.inCombat || unit.fellBack || unit.movementAction === 'advanced' || unit.movementAction === 'remainedStationary' ? 1.7 : 0.9;
 
   // Draw each model footprint
   for (let i = 0; i < unit.modelPositions.length; i++) {
@@ -1274,9 +1323,16 @@ function drawUnit(
     ctx.fill();
     ctx.shadowBlur = 0;
 
-    ctx.strokeStyle = ringColor;
-    ctx.lineWidth = ringWidth;
+    ctx.strokeStyle = outlineColor;
+    ctx.lineWidth = outlineWidth;
     ctx.stroke();
+
+    const visualState = losModelStates.get(`${unit.id}:${i}`);
+    const overlayColors: string[] = [];
+    if (hasCover) overlayColors.push('rgba(0, 220, 195, 0.24)');
+    if (visualState === 'los-blocked') overlayColors.push('rgba(255, 45, 45, 0.58)');
+    if (visualState === 'los-visible-out-of-range') overlayColors.push('rgba(255, 200, 40, 0.66)');
+    if (visualState === 'los-visible') overlayColors.push('rgba(40, 235, 95, 0.62)');
 
     let warningColor: string | null = null;
     if (!skipWarnings) {
@@ -1284,18 +1340,34 @@ function drawUnit(
       else if (modelOverlapsAnotherBase(unit, i, state)) warningColor = '#ff2bd6';
       else if (coherencyIssueModelIds.has(`${unit.id}:${i}`)) warningColor = '#ffb000';
     }
+    if (warningColor) overlayColors.push(warningColor === '#ffb000' ? 'rgba(255, 176, 0, 0.45)' : 'rgba(255, 45, 75, 0.45)');
+    if (selectedModelIndices.includes(i)) overlayColors.push('rgba(255, 224, 102, 0.42)');
+
+    for (const overlayColor of overlayColors) {
+      addFootprintPath(ctx, mx, my, modelFootprints[i], scale);
+      ctx.fillStyle = overlayColor;
+      ctx.fill();
+    }
+
     if (warningColor) {
-      addFootprintPath(ctx, mx, my, modelFootprints[i], scale, Math.max(2, scale * 0.12));
+      addFootprintPath(ctx, mx, my, modelFootprints[i], scale);
       ctx.strokeStyle = warningColor;
-      ctx.lineWidth = 2.4;
+      ctx.lineWidth = 1.8;
       ctx.stroke();
     }
 
     if (selectedModelIndices.includes(i)) {
-      addFootprintPath(ctx, mx, my, modelFootprints[i], scale, Math.max(3, scale * 0.16));
+      addFootprintPath(ctx, mx, my, modelFootprints[i], scale);
       ctx.strokeStyle = '#ffe066';
-      ctx.lineWidth = 2.5;
+      ctx.lineWidth = 1.8;
       ctx.stroke();
+    }
+
+    if (i === unit.woundedModelIndex && unit.profile.wounds > 1 && unit.woundsOnLeadModel > 0 && unit.woundsOnLeadModel < unit.profile.wounds) {
+      drawLeadModelWoundBadge(ctx, mx, my, modelRadii[i] ?? maxModelR, unit.woundsOnLeadModel, unit.profile.wounds, scale);
+    }
+    if ((unit.modelPositions[i].z ?? 0) > 0.05) {
+      drawModelHeightBadge(ctx, mx, my, modelRadii[i] ?? maxModelR, unit.modelPositions[i].z ?? 0, scale);
     }
   }
 
@@ -1328,6 +1400,12 @@ function drawUnit(
   const rightX  = unit.modelPositions.reduce((m, p, i) => Math.max(m, p.x * scale + (modelRadii[i] ?? maxModelR)), -Infinity);
   const formW   = rightX - leftX;
 
+  if (shootingRole) {
+    drawShootingRoleOutline(ctx, shootingRole, leftX, topY, rightX, bottomY, scale);
+  } else if (shootingReady) {
+    drawShootingReadyOutline(ctx, leftX, topY, rightX, bottomY, scale);
+  }
+
   // Unit name — centred above formation, small dark pill background
   if (showName) {
     const fontSize = Math.max(6, scale * 0.65);
@@ -1347,6 +1425,29 @@ function drawUnit(
   }
 
   // Health bar — below formation
+  if (shootingRole) {
+    const label = shootingRole === 'shooter' ? 'SHOOTER' : 'TARGET';
+    const fill = shootingRole === 'shooter' ? 'rgba(80, 150, 255, 0.94)' : 'rgba(255, 186, 73, 0.96)';
+    const stroke = shootingRole === 'shooter' ? 'rgba(190, 220, 255, 0.95)' : 'rgba(255, 236, 170, 0.95)';
+    const fontSize = Math.max(6, scale * 0.58);
+    ctx.font = `bold ${fontSize}px monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const textW = ctx.measureText(label).width;
+    const padX = Math.max(4, scale * 0.22);
+    const badgeW = textW + padX * 2;
+    const badgeH = fontSize + Math.max(4, scale * 0.22);
+    const badgeX = Math.max(badgeW / 2 + 2, Math.min(60 * scale - badgeW / 2 - 2, cx));
+    const badgeY = Math.max(badgeH / 2 + 2, topY - badgeH - 5);
+    ctx.fillStyle = fill;
+    ctx.fillRect(badgeX - badgeW / 2, badgeY - badgeH / 2, badgeW, badgeH);
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(badgeX - badgeW / 2, badgeY - badgeH / 2, badgeW, badgeH);
+    ctx.fillStyle = '#06101f';
+    ctx.fillText(label, badgeX, badgeY + 0.5);
+  }
+
   const pct = unit.remainingModels / unit.profile.baseModelCount;
   const barW = Math.max(scale * 1.8, formW * 0.85);
   const barH = 4;
@@ -1363,6 +1464,176 @@ function drawUnit(
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
   ctx.fillText(`${unit.remainingModels}/${unit.profile.baseModelCount}`, cx, by + barH + 1);
+
+  // Cover indicator — teal dashed ring around formation + shield badge
+  if (hasCover) {
+    const unitCy = unit.position.y * scale;
+    const formationRadius = unit.modelPositions.length > 0
+      ? Math.max(...unit.modelPositions.map((p, i) =>
+          Math.hypot(p.x * scale - cx, p.y * scale - unitCy) + (modelRadii[i] ?? maxModelR)
+        ))
+      : maxModelR;
+    const badgeR = Math.max(5, scale * 0.38);
+    const badgeOffset = formationRadius + Math.max(4, scale * 0.3);
+    const badgeX = cx + badgeOffset * 0.72;
+    const badgeY = unitCy - badgeOffset * 0.72;
+    ctx.fillStyle = 'rgba(0, 175, 155, 0.92)';
+    ctx.beginPath();
+    ctx.arc(badgeX, badgeY, badgeR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0, 240, 215, 0.8)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = `bold ${Math.max(5, scale * 0.42)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('⛨', badgeX, badgeY);
+  }
+}
+
+function drawModelHeightBadge(
+  ctx: CanvasRenderingContext2D,
+  mx: number,
+  my: number,
+  modelRadius: number,
+  z: number,
+  scale: number,
+) {
+  const label = `z${z.toFixed(z % 1 === 0 ? 0 : 1)}`;
+  const fontSize = Math.max(6, scale * 0.45);
+  ctx.save();
+  ctx.font = `bold ${fontSize}px monospace`;
+  const padX = Math.max(3, scale * 0.14);
+  const badgeW = Math.max(ctx.measureText(label).width + padX * 2, scale * 0.7);
+  const badgeH = fontSize + Math.max(4, scale * 0.14);
+  const badgeX = mx - modelRadius * 0.68;
+  const badgeY = my - modelRadius * 0.68;
+  const x = badgeX - badgeW / 2;
+  const y = badgeY - badgeH / 2;
+  roundedRectPath(ctx, x, y, badgeW, badgeH, Math.max(3, scale * 0.14));
+  ctx.fillStyle = 'rgba(10, 20, 34, 0.9)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(102, 215, 255, 0.92)';
+  ctx.lineWidth = Math.max(1, scale * 0.07);
+  ctx.stroke();
+  ctx.fillStyle = '#b9efff';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(label, badgeX, badgeY + 0.5);
+  ctx.restore();
+}
+
+function drawLeadModelWoundBadge(
+  ctx: CanvasRenderingContext2D,
+  mx: number,
+  my: number,
+  modelRadius: number,
+  currentWounds: number,
+  maxWounds: number,
+  scale: number,
+) {
+  const label = `${currentWounds}W`;
+  const pct = Math.max(0, Math.min(1, currentWounds / maxWounds));
+  const fontSize = Math.max(6, scale * 0.5);
+  ctx.save();
+  ctx.font = `bold ${fontSize}px monospace`;
+  const padX = Math.max(3, scale * 0.16);
+  const badgeW = Math.max(ctx.measureText(label).width + padX * 2, scale * 0.78);
+  const badgeH = fontSize + Math.max(4, scale * 0.16);
+  const badgeX = mx + modelRadius * 0.68;
+  const badgeY = my - modelRadius * 0.68;
+  const x = badgeX - badgeW / 2;
+  const y = badgeY - badgeH / 2;
+  const fill = pct > 0.55 ? 'rgba(225, 170, 42, 0.96)' : 'rgba(225, 70, 48, 0.96)';
+
+  roundedRectPath(ctx, x, y, badgeW, badgeH, Math.max(3, scale * 0.16));
+  ctx.fillStyle = 'rgba(7, 10, 14, 0.88)';
+  ctx.fill();
+  ctx.strokeStyle = fill;
+  ctx.lineWidth = Math.max(1, scale * 0.08);
+  ctx.stroke();
+  ctx.fillStyle = fill;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(label, badgeX, badgeY + 0.5);
+  ctx.restore();
+}
+
+function drawShootingRoleOutline(
+  ctx: CanvasRenderingContext2D,
+  role: 'shooter' | 'target',
+  leftX: number,
+  topY: number,
+  rightX: number,
+  bottomY: number,
+  scale: number,
+) {
+  const pad = Math.max(7, scale * 0.55);
+  const x = leftX - pad;
+  const y = topY - pad;
+  const w = Math.max(rightX - leftX + pad * 2, scale * 1.8);
+  const h = Math.max(bottomY - topY + pad * 2, scale * 1.8);
+  const radius = Math.min(Math.max(4, scale * 0.3), Math.min(w, h) / 4);
+  const stroke = role === 'shooter' ? 'rgba(80, 160, 255, 0.96)' : 'rgba(255, 190, 75, 0.98)';
+  const glow = role === 'shooter' ? 'rgba(60, 135, 255, 0.55)' : 'rgba(255, 175, 45, 0.58)';
+  const fill = role === 'shooter' ? 'rgba(50, 130, 255, 0.07)' : 'rgba(255, 178, 40, 0.08)';
+
+  ctx.save();
+  roundedRectPath(ctx, x, y, w, h, radius);
+  ctx.fillStyle = fill;
+  ctx.fill();
+  ctx.shadowColor = glow;
+  ctx.shadowBlur = Math.max(5, scale * 0.45);
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = Math.max(2, scale * 0.18);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.setLineDash([Math.max(5, scale * 0.42), Math.max(3, scale * 0.24)]);
+  roundedRectPath(ctx, x + 3, y + 3, Math.max(0, w - 6), Math.max(0, h - 6), Math.max(0, radius - 2));
+  ctx.strokeStyle = role === 'shooter' ? 'rgba(205, 230, 255, 0.72)' : 'rgba(255, 241, 185, 0.78)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawShootingReadyOutline(
+  ctx: CanvasRenderingContext2D,
+  leftX: number,
+  topY: number,
+  rightX: number,
+  bottomY: number,
+  scale: number,
+) {
+  const pad = Math.max(5, scale * 0.42);
+  const x = leftX - pad;
+  const y = topY - pad;
+  const w = Math.max(rightX - leftX + pad * 2, scale * 1.5);
+  const h = Math.max(bottomY - topY + pad * 2, scale * 1.5);
+  const radius = Math.min(Math.max(3, scale * 0.22), Math.min(w, h) / 4);
+
+  ctx.save();
+  roundedRectPath(ctx, x, y, w, h, radius);
+  ctx.setLineDash([Math.max(4, scale * 0.32), Math.max(3, scale * 0.22)]);
+  ctx.strokeStyle = 'rgba(105, 235, 255, 0.82)';
+  ctx.lineWidth = Math.max(1.4, scale * 0.12);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function roundedRectPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  const radius = Math.max(0, Math.min(r, w / 2, h / 2));
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + w - radius, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+  ctx.lineTo(x + w, y + h - radius);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+  ctx.lineTo(x + radius, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
 }
 
 function drawSelectedModelMovementHud(
@@ -1374,7 +1645,8 @@ function drawSelectedModelMovementHud(
   modelRadii: number[],
 ) {
   if (!selectedModelIndices.length || unit.movementAction === 'fellBack' || unit.fellBack) return;
-  const activeMovementUnit = state.phase === 'movement' && state.activeArmy === unit.side;
+  if (state.phase !== 'movement') return;
+  const activeMovementUnit = state.activeArmy === unit.side;
   const shouldShow = unit.movementAction === 'normalMove'
     || unit.movementAction === 'advanced'
     || typeof unit.movementAllowanceRemaining === 'number'

@@ -2,6 +2,7 @@ import type { BattleUnit, Position } from '../types/battle';
 import { modelBaseRadiusInches } from './baseSizes';
 
 export const COHERENCY_RANGE = 2;
+export const COHERENCY_VERTICAL_RANGE = 5;
 
 export type CoherencyModel = {
   unit: BattleUnit;
@@ -11,6 +12,10 @@ export type CoherencyModel = {
 
 export function distance(a: Position, b: Position): number {
   return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+export function verticalDistance(a: Position, b: Position): number {
+  return Math.abs((a.z ?? 0) - (b.z ?? 0));
 }
 
 export function coherencyDistanceForRadii(aRadius: number, bRadius: number): number {
@@ -23,7 +28,8 @@ export function positionsAreWithinCoherency(
   b: Position,
   bRadius: number,
 ): boolean {
-  return distance(a, b) <= coherencyDistanceForRadii(aRadius, bRadius);
+  return distance(a, b) <= coherencyDistanceForRadii(aRadius, bRadius)
+    && verticalDistance(a, b) <= COHERENCY_VERTICAL_RANGE;
 }
 
 export function requiredCoherencyNeighbors(totalModels: number): number {
@@ -39,7 +45,8 @@ export function coherentDistance(a: CoherencyModel, b: CoherencyModel): number {
 }
 
 export function modelsAreCoherent(a: CoherencyModel, b: CoherencyModel): boolean {
-  return distance(a.model, b.model) <= coherentDistance(a, b);
+  return distance(a.model, b.model) <= coherentDistance(a, b)
+    && verticalDistance(a.model, b.model) <= COHERENCY_VERTICAL_RANGE;
 }
 
 export function coherencyNeighborCount(models: CoherencyModel[], modelIndex: number): number {

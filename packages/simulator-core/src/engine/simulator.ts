@@ -1,8 +1,8 @@
 import type { BattleState, BattleUnit, LogEntry, MovementStep, Phase, Position, Side, Terrain, TerrainFeature } from '../types/battle';
 import type { ImportedArmy, UnitProfile, WeaponProfile } from '../types/army';
-import { rules40K10th, rulesetMetadataForState, type RulesEdition } from './rulesEngine';
+import { rules40K10th, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
-import { deployArmy, distanceToDeploymentZone, fp, pointInDeploymentZone, zoneFor, unitRole, type DeploymentStrategy } from './deployment';
+import { BOARD_H, BOARD_W, deployArmy, distanceToDeploymentZone, fp, pointInDeploymentZone, zoneFor, unitRole, type DeploymentStrategy } from './deployment';
 import { selectUnitToDrop, reactivePosition, deployModelFormation } from './deploymentBrain';
 import { DEFAULT_OBJECTIVES } from './missions';
 import { advanceAllowance, normalMoveAllowance } from './movement';
@@ -10,8 +10,8 @@ import { objectiveControlRadius } from './objectiveGeometry';
 import { battleRound, logWithBattleRound, maxBattleRounds, setBattleRound } from './battleRound';
 import { gainCommandPhaseCommandPoints } from './commandPoints';
 import { objectiveControlValue, resolveDesperateEscapeTests } from './battleshock';
-import { circleFullyInTerrain, lineIntersectsTerrain, terrainCorners } from './terrainGeometry';
-import { distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, type CoherencyModel } from './coherency';
+import { circleFullyInTerrain, findUnblockedLOSRay, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, pointInTerrain, terrainCorners } from './terrainGeometry';
+import { COHERENCY_VERTICAL_RANGE, distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, verticalDistance, type CoherencyModel } from './coherency';
 import {
   attachedFollowersFor,
   attachedLeadersFor,
@@ -23,7 +23,10 @@ import {
   unitRosterId,
 } from './armyUnits';
 import {
+  baseFootprintDistance,
+  baseFootprintMaxPointDistance,
   baseFootprintIntersectsRect,
+  baseFootprintWithinRect,
   baseFootprintsOverlap,
   battleUnitMaxBaseRadiusInches,
   modelBaseFootprintInches,
@@ -78,6 +81,10 @@ function hasAnyKeyword(unit: BattleUnit, keywords: string[]): boolean {
   return unit.profile.keywords.some(k => set.includes(k.toLowerCase()));
 }
 
+function isAircraft(unit: BattleUnit): boolean {
+  return hasKeyword(unit, 'aircraft');
+}
+
 const INFILTRATORS_ENEMY_DEPLOYMENT_ZONE_BUFFER = 9;
 
 function modelIsOutsideEnemyDeploymentZoneBuffer(unit: UnitProfile, side: Side, position: Position, modelIndex = 0, deployment?: string): boolean {
@@ -94,8 +101,8 @@ function modelRotation(unit: BattleUnit, modelIndex = 0): number {
   return unit.modelRotations?.[modelIndex] ?? unit.facingDeg ?? 0;
 }
 
-function modelFootprint(unit: BattleUnit, modelIndex = 0) {
-  return modelBaseFootprintInches(unit.profile, modelIndex, modelRotation(unit, modelIndex));
+function modelFootprint(unit: BattleUnit, modelIndex = 0, rotationDeg = modelRotation(unit, modelIndex)) {
+  return modelBaseFootprintInches(unit.profile, modelIndex, rotationDeg);
 }
 
 function maxModelBaseRadius(unit: BattleUnit): number {
@@ -106,52 +113,43 @@ function modelRadiiForProfile(profile: UnitProfile): number[] {
   return Array.from({ length: profile.baseModelCount }, (_, modelIndex) => modelBaseRadiusInches(profile, modelIndex));
 }
 
+// Returns the per-model spacing (diameter + gap) used for grid formations.
+function gridModelSpacing(radii: number[]): number {
+  return Math.max(...radii.map(r => r * 2), 1) + 0.08;
+}
+
 function playGridFormation(profile: UnitProfile, anchor: Position, side: Side): Position[] {
   const count = profile.baseModelCount;
   if (count <= 1) return [anchor];
 
-  const radii = modelRadiiForProfile(profile);
-  const maxDiameter = Math.max(...radii.map(radius => radius * 2), 1);
-  const gap = 0.08;
-  const spacing = maxDiameter + gap;
+  const spacing = gridModelSpacing(modelRadiiForProfile(profile));
   const columns = Math.ceil(Math.sqrt(count));
   const rows = Math.ceil(count / columns);
   const forward = side === 0 ? 1 : -1;
   const startY = anchor.y - ((rows - 1) * spacing) / 2;
 
-  return Array.from({ length: count }, (_, modelIndex) => {
-    const row = Math.floor(modelIndex / columns);
-    const col = modelIndex % columns;
-    return {
-      x: anchor.x + forward * col * spacing,
-      y: startY + row * spacing,
-    };
-  });
+  return Array.from({ length: count }, (_, modelIndex) => ({
+    x: anchor.x + forward * (modelIndex % columns) * spacing,
+    y: startY + Math.floor(modelIndex / columns) * spacing,
+  }));
 }
 
 function playGridFormationByRows(profile: UnitProfile, center: Position, side: Side, rows: number, modelIndices?: number[]): Position[] {
-  const indices = modelIndices?.length ? modelIndices : Array.from({ length: profile.baseModelCount }, (_, modelIndex) => modelIndex);
+  const indices = modelIndices?.length ? modelIndices : Array.from({ length: profile.baseModelCount }, (_, i) => i);
   const count = indices.length;
   if (count <= 1) return [center];
 
   const rowCount = Math.max(1, Math.min(rows, count));
   const columns = Math.ceil(count / rowCount);
-  const radii = indices.map(modelIndex => modelBaseRadiusInches(profile, modelIndex));
-  const maxDiameter = Math.max(...radii.map(radius => radius * 2), 1);
-  const gap = 0.08;
-  const spacing = maxDiameter + gap;
+  const spacing = gridModelSpacing(indices.map(i => modelBaseRadiusInches(profile, i)));
   const forward = side === 0 ? 1 : -1;
   const startX = center.x - forward * ((columns - 1) * spacing) / 2;
   const startY = center.y - ((rowCount - 1) * spacing) / 2;
 
-  return Array.from({ length: count }, (_, modelIndex) => {
-    const row = modelIndex % rowCount;
-    const col = Math.floor(modelIndex / rowCount);
-    return {
-      x: startX + forward * col * spacing,
-      y: startY + row * spacing,
-    };
-  });
+  return Array.from({ length: count }, (_, modelIndex) => ({
+    x: startX + forward * Math.floor(modelIndex / rowCount) * spacing,
+    y: startY + (modelIndex % rowCount) * spacing,
+  }));
 }
 
 function clampModelToBoard(point: Position, radius: number, zone?: ReturnType<typeof zoneFor>): Position {
@@ -374,6 +372,7 @@ function centroid(positions: Position[]): Position {
   return {
     x: positions.reduce((s, p) => s + p.x, 0) / positions.length,
     y: positions.reduce((s, p) => s + p.y, 0) / positions.length,
+    z: positions.reduce((s, p) => s + (p.z ?? 0), 0) / positions.length,
   };
 }
 
@@ -387,8 +386,8 @@ function formationExtent(positions: Position[], ctr: Position, dir: { x: number;
 
 // Translate all model positions by (dx, dy) and return the new centroid
 function translateFormation(unit: { position: Position; modelPositions: Position[] }, dx: number, dy: number): void {
-  unit.modelPositions = unit.modelPositions.map(mp => ({ x: mp.x + dx, y: mp.y + dy }));
-  unit.position = { x: unit.position.x + dx, y: unit.position.y + dy };
+  unit.modelPositions = unit.modelPositions.map(mp => ({ ...mp, x: mp.x + dx, y: mp.y + dy }));
+  unit.position = { ...unit.position, x: unit.position.x + dx, y: unit.position.y + dy };
 }
 
 // After model loss, trim positions array and refresh centroid
@@ -402,6 +401,38 @@ function trimFormation(unit: { position: Position; modelPositions: Position[]; m
   }
 }
 
+function trimUnitModelState(unit: BattleUnit): void {
+  trimFormation(unit);
+  unit.movementAllowanceRemainingByModel = unit.movementAllowanceRemainingByModel?.slice(0, unit.remainingModels);
+  unit.movementAllowanceTotalByModel = unit.movementAllowanceTotalByModel?.slice(0, unit.remainingModels);
+  unit.movementStartPositionsByModel = unit.movementStartPositionsByModel?.slice(0, unit.remainingModels);
+  unit.movementStartRotationsByModel = unit.movementStartRotationsByModel?.slice(0, unit.remainingModels);
+  if (unit.woundedModelIndex !== undefined && unit.woundedModelIndex >= unit.remainingModels) {
+    unit.woundedModelIndex = undefined;
+    unit.woundsOnLeadModel = unit.remainingModels > 0 ? unit.profile.wounds : 0;
+  }
+}
+
+// Removes specific model indices (sorted descending) from all per-model arrays on a unit.
+function spliceModelIndices(unit: BattleUnit, sortedDescIndices: number[]): void {
+  for (const i of sortedDescIndices) {
+    if (unit.woundedModelIndex !== undefined) {
+      if (unit.woundedModelIndex === i) {
+        unit.woundedModelIndex = undefined;
+        unit.woundsOnLeadModel = unit.profile.wounds;
+      } else if (unit.woundedModelIndex > i) {
+        unit.woundedModelIndex -= 1;
+      }
+    }
+    unit.modelPositions.splice(i, 1);
+    unit.modelRotations?.splice(i, 1);
+    unit.movementAllowanceRemainingByModel?.splice(i, 1);
+    unit.movementAllowanceTotalByModel?.splice(i, 1);
+    unit.movementStartPositionsByModel?.splice(i, 1);
+    unit.movementStartRotationsByModel?.splice(i, 1);
+  }
+}
+
 function modelWeaponLoadout(profile: UnitProfile, modelIndex: number): number[] {
   const configured = profile.modelWeaponLoadouts?.[modelIndex];
   if (configured?.length) {
@@ -410,29 +441,85 @@ function modelWeaponLoadout(profile: UnitProfile, modelIndex: number): number[] 
   return profile.weapons.map((_, weaponIndex) => weaponIndex);
 }
 
-function aliveWeaponModelCount(unit: BattleUnit, weaponIndex: number): number {
+// Counts models in the unit that carry weaponIndex and optionally have LOS to the defender.
+// Pass defender + terrain to restrict to models with edge-to-edge LOS (ranged, non-Indirect Fire weapons).
+function aliveWeaponModelCount(
+  unit: BattleUnit,
+  weaponIndex: number,
+  defender?: BattleUnit,
+  terrain?: Terrain[],
+): number {
   let count = 0;
   for (let modelIndex = 0; modelIndex < unit.remainingModels; modelIndex++) {
-    count += modelWeaponLoadout(unit.profile, modelIndex).filter(index => index === weaponIndex).length;
+    if (!modelWeaponLoadout(unit.profile, modelIndex).some(i => i === weaponIndex)) continue;
+    if (defender && terrain) {
+      const fromCenter = unit.modelPositions[modelIndex];
+      if (!fromCenter) continue;
+      const fromRadius = modelBaseRadius(unit, modelIndex);
+      const canSee = defender.modelPositions.some((toCenter, ti) =>
+        hasLOSEdgeToEdge(fromCenter, fromRadius, toCenter, modelBaseRadius(defender, ti), terrain),
+      );
+      if (!canSee) continue;
+    }
+    count++;
   }
   return count;
 }
 
-// Rough LOS check: returns false if any cover-providing terrain intersects the line
-function hasLOS(from: Position, to: Position, terrain: Terrain[]): boolean {
-  for (const t of terrain) {
-    if (!t.providesCover) continue;
-    if (t.features.some(feature => feature.blocksLOS && lineIntersectsTerrain(from, to, feature))) {
-      return false;
-    }
-  }
-  return true;
+
+// True if the shooter model (at fromCenter with fromRadius) has edge-to-edge LOS
+// to at least one model in the target unit.
+function hasAnyModelLOS(
+  fromCenter: Position, fromRadius: number,
+  target: BattleUnit,
+  terrain: Terrain[],
+): boolean {
+  return target.modelPositions.some((toCenter, i) =>
+    hasLOSEdgeToEdge(fromCenter, fromRadius, toCenter, modelBaseRadius(target, i), terrain),
+  );
 }
 
-function unitFullyInCover(unit: BattleUnit, terrain: Terrain[]): boolean {
-  const radius = maxModelBaseRadius(unit);
-  return unit.modelPositions.every(model =>
-    terrain.some(t => t.providesCover && circleFullyInTerrain(model, radius, t)),
+function terrainIsWoods(t: Terrain): boolean {
+  return t.type === 'area' && /woods?|forest/i.test(t.name);
+}
+
+function terrainIsCraterOrRubble(t: Terrain): boolean {
+  return t.type === 'area' && /crater|rubble/i.test(t.name);
+}
+
+function modelWhollyWithinTerrain(unit: BattleUnit, modelIndex: number, terrain: Terrain): boolean {
+  const model = unit.modelPositions[modelIndex];
+  if (!model) return false;
+  return circleFullyInTerrain(model, modelBaseRadius(unit, modelIndex), terrain);
+}
+
+function modelHasCoverFromTerrainFootprint(unit: BattleUnit, modelIndex: number, terrain: Terrain): boolean {
+  if (!terrain.providesCover || !modelWhollyWithinTerrain(unit, modelIndex, terrain)) return false;
+  if (terrain.type === 'ruin' || terrainIsWoods(terrain)) return true;
+  if (terrainIsCraterOrRubble(terrain)) return unitHasKeyword(unit, 'Infantry');
+  return terrain.type === 'area';
+}
+
+function terrainFootprintObscures(from: Position, to: Position, terrain: Terrain): boolean {
+  if (!terrain.providesCover) return false;
+  if (terrain.type === 'ruin' || terrainIsWoods(terrain)) return linePassesThroughTerrain(from, to, terrain);
+  if (terrain.type === 'impassable') return lineIntersectsTerrain(from, to, terrain);
+  return false;
+}
+
+function modelHasTerrainCoverFrom(from: Position, target: BattleUnit, modelIndex: number, terrain: Terrain[]): boolean {
+  const modelPos = target.modelPositions[modelIndex];
+  if (!modelPos) return false;
+  return terrain.some(t =>
+    modelHasCoverFromTerrainFootprint(target, modelIndex, t)
+    || terrainFootprintObscures(from, modelPos, t)
+    || t.features.some(f => linePassesThroughTerrain(from, modelPos, f)),
+  );
+}
+
+function targetHasTerrainCoverFrom(shooterPositions: Position[], target: BattleUnit, terrain: Terrain[]): boolean {
+  return target.modelPositions.some((_, modelIndex) =>
+    shooterPositions.some(from => modelHasTerrainCoverFrom(from, target, modelIndex, terrain)),
   );
 }
 
@@ -487,7 +574,7 @@ function nearestFriendlyTransportInRange(state: BattleState, unit: BattleUnit, r
 // ─── Unit queries ─────────────────────────────────────────────────────────────
 
 function enemies(state: BattleState, side: Side): BattleUnit[] {
-  return state.units.filter(u => u.side !== side && !u.destroyed && !u.embarkedInUnitId);
+  return state.units.filter(u => u.side !== side && !u.destroyed && !u.embarkedInUnitId && !u.inStrategicReserves);
 }
 
 function nearest(unit: BattleUnit, targets: BattleUnit[]): BattleUnit | null {
@@ -497,10 +584,34 @@ function nearest(unit: BattleUnit, targets: BattleUnit[]): BattleUnit | null {
   );
 }
 
+function modelBaseEdgeDistance3d(
+  aModel: Position,
+  aFootprint: ReturnType<typeof modelFootprint>,
+  bModel: Position,
+  bFootprint: ReturnType<typeof modelFootprint>,
+): number {
+  const horizontal = baseFootprintDistance(aModel, aFootprint, bModel, bFootprint);
+  const vertical = verticalDistance(aModel, bModel);
+  return Math.hypot(horizontal, vertical);
+}
+
+function modelsWithinEngagementRange(
+  aModel: Position,
+  aFootprint: ReturnType<typeof modelFootprint>,
+  bModel: Position,
+  bFootprint: ReturnType<typeof modelFootprint>,
+  horizontalRange: number,
+): boolean {
+  return baseFootprintDistance(aModel, aFootprint, bModel, bFootprint) <= horizontalRange
+    && verticalDistance(aModel, bModel) <= COHERENCY_VERTICAL_RANGE;
+}
+
 function inEngagement(unit: BattleUnit, others: BattleUnit[], range: number): boolean {
   return others.some(o =>
-    unit.modelPositions.some(mp =>
-      o.modelPositions.some(op => dist(mp, op) <= range),
+    unit.modelPositions.some((mp, mi) =>
+      o.modelPositions.some((op, oi) =>
+        modelsWithinEngagementRange(mp, modelFootprint(unit, mi), op, modelFootprint(o, oi), range),
+      ),
     ),
   );
 }
@@ -508,6 +619,37 @@ function inEngagement(unit: BattleUnit, others: BattleUnit[], range: number): bo
 function engagedEnemies(state: BattleState, unit: BattleUnit, rules: RulesEdition): BattleUnit[] {
   const eng = rules.engagementRange();
   return enemies(state, unit.side).filter(enemy => inEngagement(unit, [enemy], eng));
+}
+
+function nonAircraftEngagedEnemies(state: BattleState, unit: BattleUnit, rules: RulesEdition): BattleUnit[] {
+  return engagedEnemies(state, unit, rules).filter(enemy => !isAircraft(enemy));
+}
+
+function targetWithinFriendlyEngagement(state: BattleState, target: BattleUnit, side: Side, rules: RulesEdition): boolean {
+  const eng = rules.engagementRange();
+  return inEngagement(target, activeUnits(state, side), eng);
+}
+
+function unitCanChargeTarget(unit: BattleUnit, target: BattleUnit): boolean {
+  if (isAircraft(unit)) return false;
+  if (isAircraft(target) && !hasKeyword(unit, 'fly')) return false;
+  return true;
+}
+
+function unitCanFightTarget(unit: BattleUnit, target: BattleUnit): boolean {
+  if (isAircraft(unit)) return hasKeyword(target, 'fly');
+  if (isAircraft(target)) return hasKeyword(unit, 'fly');
+  return true;
+}
+
+function attachedBodyguardAlive(state: BattleState, unit: BattleUnit): boolean {
+  if (!unit.attachedToUnitId) return false;
+  return state.units.some(candidate =>
+    candidate.id === unit.attachedToUnitId
+    && candidate.side === unit.side
+    && !candidate.destroyed
+    && candidate.remainingModels > 0,
+  );
 }
 
 // ─── Combat resolution ────────────────────────────────────────────────────────
@@ -520,15 +662,25 @@ function resolveAttacks(
   rules: RulesEdition,
   state: BattleState,
   hasCover: boolean,
+  hitModifier = 0,
+  hitModifierNote = '',
+  options: { deferCasualties?: boolean } = {},
 ): LogEntry[] {
   const logs: LogEntry[] = [];
   const d = dist(attacker.position, defender.position);
 
-  // Base attacks per model × remaining models
-  const weaponModelCount = aliveWeaponModelCount(attacker, weaponIndex);
+  // Ranged non-Indirect-Fire weapons only count models with LOS to the defender.
+  const needsLOS = !weapon.isMelee && !weaponHasKeyword(weapon, 'Indirect Fire');
+  const weaponModelCount = needsLOS
+    ? aliveWeaponModelCount(attacker, weaponIndex, defender, state.terrain)
+    : aliveWeaponModelCount(attacker, weaponIndex);
   if (weaponModelCount <= 0) return logs;
-  const basePerModel = rollExpression(weapon.attacks).total;
-  let numAttacks = basePerModel * weaponModelCount;
+  const isVariableAttacks = !/^\d+$/i.test(String(weapon.attacks).trim());
+  const perModelRolls: number[] = [];
+  for (let i = 0; i < weaponModelCount; i++) {
+    perModelRolls.push(rollExpression(weapon.attacks).total);
+  }
+  let numAttacks = perModelRolls.reduce((a, b) => a + b, 0);
   numAttacks = rules.modifyAttackCount(numAttacks, attacker, weapon, d, defender.remainingModels);
 
   if (numAttacks <= 0) return logs;
@@ -537,15 +689,44 @@ function resolveAttacks(
     `  ${weapon.isMelee ? '⚔️' : '🔫'} ${weapon.name} — ${weaponModelCount} model(s) × ${weapon.attacks} = ${numAttacks} attacks vs ${defender.profile.name}`,
     weapon.isMelee ? 'fight' : 'shoot',
   ));
+  logs.push(log(state, attacker.side, attacker.profile.name,
+    `[combat-stats] skill=${weapon.skill} s=${weapon.strength} ap=${weapon.ap} d=${weapon.damage} t=${defender.profile.toughness}${hasCover ? ' cover=1' : ''}`,
+    'info',
+  ));
+  if (isVariableAttacks) {
+    logs.push(log(state, attacker.side, attacker.profile.name,
+      `     Attack rolls (${weapon.attacks}): [${perModelRolls.join(', ')}] = ${numAttacks} attacks`,
+      'roll',
+    ));
+  }
 
   // ── Hit rolls ──────────────────────────────────────────────────────────────
+  const isTorrent = weaponHasKeyword(weapon, 'Torrent');
+  if (hitModifierNote && !isTorrent) {
+    logs.push(log(state, attacker.side, attacker.profile.name, `     ${hitModifierNote}`, 'info'));
+  }
+  let hitResult = { hits: numAttacks, rolls: [] as number[], mortalsFromCrits: 0, logNote: 'Torrent - auto-hits' };
+  let lethalAutoWounds = 0;
+  if (isTorrent) {
+    logs.push(log(state, attacker.side, attacker.profile.name,
+      `     Torrent: ${numAttacks} auto-hit(s)`,
+      'roll',
+    ));
+  } else {
   const hitRolls = rollMultiple(numAttacks);
-  const hitResult = rules.processHits(hitRolls, weapon.skill, weapon);
+  const hitTarget = Math.min(6, Math.max(2, weapon.skill + hitModifier));
+  hitResult = rules.processHits(hitRolls, hitTarget, weapon);
+  lethalAutoWounds = weaponHasKeyword(weapon, 'Lethal Hits')
+    ? hitRolls.filter(roll => roll === 6).length
+    : 0;
+  weapon = { ...weapon, skill: hitTarget };
   const noteHit = hitResult.logNote ? ` [${hitResult.logNote}]` : '';
   logs.push(log(state, attacker.side, attacker.profile.name,
     `     Hit rolls (${weapon.skill}+): [${hitRolls.join(', ')}] → ${hitResult.hits} hits${noteHit}`,
     'roll',
   ));
+
+  }
 
   // Mortal wounds from critical hits (e.g. Deadly Demise)
   let totalMortals = hitResult.mortalsFromCrits;
@@ -555,26 +736,48 @@ function resolveAttacks(
   // ── Wound rolls ───────────────────────────────────────────────────────────
   const wt = rules.woundTarget(weapon.strength, defender.profile.toughness);
   let woundCount = 0;
+  if (lethalAutoWounds > 0) {
+    woundCount += lethalAutoWounds;
+    logs.push(log(state, attacker.side, attacker.profile.name,
+      `     Lethal Hits: ${lethalAutoWounds} critical hit(s) auto-wound`,
+      'roll',
+    ));
+  }
+  const woundRollCount = Math.max(0, hitResult.hits - lethalAutoWounds);
 
-  if (hitResult.hits > 0) {
-    const woundRolls = rollMultiple(hitResult.hits);
+  if (woundRollCount > 0) {
+    const woundRolls = rollMultiple(woundRollCount);
     const woundResult = rules.processWounds(woundRolls, wt, weapon);
     const noteWound = woundResult.logNote ? ` [${woundResult.logNote}]` : '';
     logs.push(log(state, attacker.side, attacker.profile.name,
       `     Wound rolls (S${weapon.strength} vs T${defender.profile.toughness}, ${wt}+): [${woundRolls.join(', ')}] → ${woundResult.wounds} wounds${noteWound}`,
       'roll',
     ));
-    woundCount = woundResult.wounds;
+    woundCount += woundResult.wounds;
     totalMortals += woundResult.mortalsFromCrits;
+    const failedWounds = woundRollCount - woundResult.wounds - woundResult.mortalsFromCrits;
+    if (failedWounds > 0 && weaponHasKeyword(weapon, 'Twin-linked')) {
+      const rerollWounds = rollMultiple(failedWounds);
+      const rerollResult = rules.processWounds(rerollWounds, wt, weapon);
+      const noteReroll = rerollResult.logNote ? ` [${rerollResult.logNote}]` : '';
+      logs.push(log(state, attacker.side, attacker.profile.name,
+        `     Twin-linked wound rerolls (${wt}+): [${rerollWounds.join(', ')}] -> ${rerollResult.wounds} wounds${noteReroll}`,
+        'roll',
+      ));
+      woundCount += rerollResult.wounds;
+      totalMortals += rerollResult.mortalsFromCrits;
+    }
   }
 
   // ── Save rolls ────────────────────────────────────────────────────────────
   let unsaved = 0;
   if (woundCount > 0) {
-    const coverBonus = hasCover ? rules.coverSaveBonus(defender, weapon) : 0;
+    const coverBonus = hasCover && !weaponHasKeyword(weapon, 'Ignores Cover')
+      ? rules.coverSaveBonus(defender)
+      : 0;
     const rawSave = rules.saveTarget(defender.profile.save, weapon.ap, defender.profile.invulnSave);
     const effectiveSave = rawSave - coverBonus;
-    const coverNote = coverBonus > 0 ? ` (cover +${coverBonus})` : '';
+    const coverNote = coverBonus > 0 ? `, cover +${coverBonus}` : '';
 
     if (effectiveSave > 6) {
       logs.push(log(state, defender.side, defender.profile.name,
@@ -595,9 +798,28 @@ function resolveAttacks(
 
   // ── Damage application ────────────────────────────────────────────────────
   if (unsaved > 0) {
-    let totalDmg = 0;
-    for (let i = 0; i < unsaved; i++) totalDmg += rollExpression(weapon.damage).total;
-    logs.push(...applyDamage(defender, totalDmg, state, attacker.side));
+    const meltaBonus = weaponHasKeyword(weapon, 'Melta') && d <= weapon.range / 2
+      ? weaponKeywordValue(weapon, 'Melta')
+      : 0;
+    if (meltaBonus > 0) {
+      logs.push(log(state, attacker.side, attacker.profile.name,
+        `     Melta: +${meltaBonus} damage within half range`,
+        'damage',
+      ));
+    }
+    const isVariableDamage = !/^\d+$/i.test(String(weapon.damage).trim());
+    for (let i = 0; i < unsaved; i++) {
+      const effectiveRemaining = defender.remainingModels - (defender.pendingCasualties ?? 0);
+      if (effectiveRemaining <= 0 || defender.destroyed) break;
+      const dmgResult = rollExpression(weapon.damage);
+      if (isVariableDamage) {
+        logs.push(log(state, attacker.side, attacker.profile.name,
+          `     Damage roll (${weapon.damage}): [${dmgResult.rolls.join(', ')}] = ${dmgResult.total}`,
+          'roll',
+        ));
+      }
+      logs.push(...applyDamage(defender, dmgResult.total + meltaBonus, state, attacker.side, { ...options, noCarryOver: true, source: weapon.name }));
+    }
   }
 
   // ── Mortal wounds ─────────────────────────────────────────────────────────
@@ -606,7 +828,7 @@ function resolveAttacks(
       `     +${totalMortals} mortal wound(s)`,
       'damage',
     ));
-    logs.push(...applyDamage(defender, totalMortals, state, attacker.side));
+    logs.push(...applyDamage(defender, totalMortals, state, attacker.side, { ...options, source: 'mortal wounds' }));
   }
 
   return logs;
@@ -617,26 +839,85 @@ function applyDamage(
   totalDamage: number,
   state: BattleState,
   attackerSide: Side,
+  options: { deferCasualties?: boolean; noCarryOver?: boolean; source?: string } = {},
 ): LogEntry[] {
   const logs: LogEntry[] = [];
+  if (options.deferCasualties) {
+    unit.pendingDamageAllocations = [
+      ...(unit.pendingDamageAllocations ?? []),
+      { damage: totalDamage, noCarryOver: options.noCarryOver, source: options.source },
+    ];
+    logs.push(log(state, attackerSide, unit.profile.name,
+      `  ${unit.profile.name}: allocate ${totalDamage} damage${options.source ? ` from ${options.source}` : ''}`,
+      'damage',
+    ));
+    return logs;
+  }
+
   let remaining = totalDamage;
   let killed = 0;
+  let simulatedModels = unit.remainingModels - (unit.pendingCasualties ?? 0);
+  let simulatedLeadWounds = unit.woundedModelIndex !== undefined
+    ? unit.woundsOnLeadModel
+    : unit.pendingWoundAssignment?.woundsOnModel ?? unit.profile.wounds;
 
-  while (remaining > 0 && unit.remainingModels > 0) {
-    if (remaining >= unit.woundsOnLeadModel) {
-      remaining -= unit.woundsOnLeadModel;
-      unit.remainingModels--;
-      killed++;
-      unit.woundsOnLeadModel = unit.profile.wounds;
-    } else {
-      unit.woundsOnLeadModel -= remaining;
-      remaining = 0;
+  if (options.noCarryOver) {
+    // Each unsaved wound's damage is capped at the current lead model's remaining wounds;
+    // excess is discarded rather than spilling to the next model.
+    if (simulatedModels > 0) {
+      if (remaining >= simulatedLeadWounds) {
+        killed++;
+        simulatedModels--;
+        simulatedLeadWounds = unit.profile.wounds;
+      } else {
+        simulatedLeadWounds -= remaining;
+      }
+    }
+  } else {
+    // Mortal wounds carry over: drain the lead model, then continue onto the next.
+    while (remaining > 0 && simulatedModels > 0) {
+      if (remaining >= simulatedLeadWounds) {
+        remaining -= simulatedLeadWounds;
+        simulatedModels--;
+        killed++;
+        simulatedLeadWounds = unit.profile.wounds;
+      } else {
+        simulatedLeadWounds -= remaining;
+        remaining = 0;
+      }
     }
   }
 
-  if (killed > 0) trimFormation(unit);
+  if (options.deferCasualties) {
+    if (killed > 0) unit.pendingCasualties = (unit.pendingCasualties ?? 0) + killed;
+    if (simulatedModels <= 0) {
+      unit.woundedModelIndex = undefined;
+      unit.pendingWoundAssignment = undefined;
+      unit.woundsOnLeadModel = 0;
+    } else if (simulatedLeadWounds < unit.profile.wounds) {
+      if (unit.woundedModelIndex !== undefined) {
+        unit.woundsOnLeadModel = simulatedLeadWounds;
+        unit.pendingWoundAssignment = undefined;
+      } else {
+        unit.pendingWoundAssignment = { woundsOnModel: simulatedLeadWounds };
+        unit.woundsOnLeadModel = unit.profile.wounds;
+      }
+    } else if (unit.woundedModelIndex === undefined) {
+      unit.pendingWoundAssignment = undefined;
+      unit.woundsOnLeadModel = unit.profile.wounds;
+    }
+  } else {
+    unit.remainingModels = simulatedModels;
+    unit.woundsOnLeadModel = simulatedModels > 0 ? simulatedLeadWounds : 0;
+    unit.woundedModelIndex = unit.woundsOnLeadModel > 0 && unit.woundsOnLeadModel < unit.profile.wounds ? 0 : undefined;
+    unit.pendingWoundAssignment = undefined;
+    if (killed > 0) trimUnitModelState(unit);
+  }
 
-  if (killed > 0 && unit.remainingModels === 0) {
+  const effectiveRemaining = options.deferCasualties
+    ? unit.remainingModels - (unit.pendingCasualties ?? 0)
+    : unit.remainingModels;
+  if (killed > 0 && effectiveRemaining <= 0 && !options.deferCasualties) {
     unit.destroyed = true;
     logs.push(log(state, attackerSide, unit.profile.name,
       `  💀 ${unit.profile.name} DESTROYED`,
@@ -645,7 +926,9 @@ function applyDamage(
     logs.push(...emergencyDisembarkDestroyedTransport(state, unit, attackerSide));
   } else if (killed > 0) {
     logs.push(log(state, attackerSide, unit.profile.name,
-      `  ⚠️  ${unit.profile.name}: ${killed} model(s) slain (${unit.remainingModels}/${unit.profile.baseModelCount} remain)`,
+      options.deferCasualties
+        ? `  ⚠️  ${unit.profile.name}: ${killed} model(s) slain - select ${unit.pendingCasualties} casualty model${unit.pendingCasualties === 1 ? '' : 's'} to remove`
+        : `  ⚠️  ${unit.profile.name}: ${killed} model(s) slain (${unit.remainingModels}/${unit.profile.baseModelCount} remain)`,
       'damage',
     ));
   } else if (totalDamage > 0) {
@@ -666,6 +949,8 @@ function destroyPassengerModels(unit: BattleUnit, destroyedModels: number): void
   unit.modelPositions = unit.modelPositions.slice(0, unit.remainingModels);
   unit.modelRotations = unit.modelRotations?.slice(0, unit.remainingModels);
   unit.movementAllowanceRemainingByModel = unit.movementAllowanceRemainingByModel?.slice(0, unit.remainingModels);
+  unit.movementAllowanceTotalByModel = unit.movementAllowanceTotalByModel?.slice(0, unit.remainingModels);
+  unit.movementStartPositionsByModel = unit.movementStartPositionsByModel?.slice(0, unit.remainingModels);
   if (unit.remainingModels <= 0 || unit.modelPositions.length <= 0) {
     unit.destroyed = true;
     unit.remainingModels = 0;
@@ -673,6 +958,9 @@ function destroyPassengerModels(unit: BattleUnit, destroyedModels: number): void
     unit.modelRotations = [];
     unit.movementAllowanceRemaining = 0;
     unit.movementAllowanceRemainingByModel = [];
+    unit.movementAllowanceTotalByModel = [];
+    unit.movementStartPositionsByModel = [];
+    unit.movementStartRotationsByModel = [];
   } else {
     unit.position = centroid(unit.modelPositions);
     unit.woundsOnLeadModel = Math.min(unit.woundsOnLeadModel, unit.profile.wounds);
@@ -724,6 +1012,9 @@ function emergencyDisembarkDestroyedTransport(
     unit.movementAction = 'normalMove';
     unit.movementAllowanceRemaining = 0;
     unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
+    unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => 0);
+    unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
+    unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
     unit.movementComplete = true;
     unit.battleshocked = true;
     unit.emergencyDisembarkedThisTurn = true;
@@ -794,14 +1085,159 @@ function runMovement(unit: BattleUnit, state: BattleState, rules: RulesEdition):
   )];
 }
 
-function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
-  if (unit.destroyed || unit.embarkedInUnitId) return [];
-  if (unit.fellBack || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return [];
+
+function unitHasKeyword(unit: BattleUnit, keyword: string): boolean {
+  const needle = keyword.toLowerCase();
+  return unit.profile.keywords.some(candidate => candidate.toLowerCase() === needle);
+}
+
+function unitCanUseBigGunsNeverTire(unit: BattleUnit): boolean {
+  return unitHasKeyword(unit, 'Vehicle') || unitHasKeyword(unit, 'Monster');
+}
+
+function resolveHazardousTests(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number, state: BattleState): LogEntry[] {
+  if (!weaponHasKeyword(weapon, 'Hazardous') || unit.destroyed) return [];
+  const testCount = aliveWeaponModelCount(unit, weaponIndex);
+  if (testCount <= 0) return [];
+
+  const rolls = rollMultiple(testCount);
+  const failures = rolls.filter(roll => roll === 1).length;
+  const logs = [
+    log(state, unit.side, unit.profile.name,
+      `     Hazardous tests for ${weapon.name}: [${rolls.join(', ')}] -> ${failures} failure(s)`,
+      'roll',
+    ),
+  ];
+
+  for (let i = 0; i < failures && !unit.destroyed; i++) {
+    if (unitHasKeyword(unit, 'Character') || unitCanUseBigGunsNeverTire(unit)) {
+      logs.push(...applyDamage(unit, 3, state, unit.side));
+    } else {
+      logs.push(...applyDamage(unit, unit.woundsOnLeadModel, state, unit.side));
+    }
+  }
+
+  return logs;
+}
+
+function eligibleShootingWeapons(unit: BattleUnit, state: BattleState, rules: RulesEdition): WeaponProfile[] {
+  if (unit.destroyed || unit.embarkedInUnitId || unit.activated) return [];
+  if (unit.fellBack || unit.movementAction === 'fellBack') return [];
+  const firedSet = new Set(unit.firedWeaponIndices ?? []);
+  const foes = enemies(state, unit.side);
+  const engaged = inEngagement(unit, foes, rules.engagementRange());
+  const bigGunsNeverTire = engaged && unitCanUseBigGunsNeverTire(unit);
+  const advanced = unit.movementAction === 'advanced';
+  return unit.profile.weapons.filter((w, idx) =>
+    !w.isMelee
+    && w.range > 0
+    && !firedSet.has(idx)
+    && (!advanced || weaponHasKeyword(w, 'Assault'))
+    && (!engaged || weaponHasKeyword(w, 'Pistol') || bigGunsNeverTire),
+  );
+}
+
+function shootingWeaponCanTarget(
+  state: BattleState,
+  unit: BattleUnit,
+  target: BattleUnit,
+  weapon: WeaponProfile,
+  rules: RulesEdition,
+): boolean {
+  if (target.destroyed || target.embarkedInUnitId || target.side === unit.side) return false;
   const eng = rules.engagementRange();
   const foes = enemies(state, unit.side);
-  if (inEngagement(unit, foes, eng)) return [];
+  const engaged = inEngagement(unit, foes, eng);
+  const bigGunsNeverTire = engaged && unitCanUseBigGunsNeverTire(unit);
+  const targetPool = engaged && !bigGunsNeverTire ? engagedEnemies(state, unit, rules) : foes;
+  if (!targetPool.some(candidate => candidate.id === target.id && candidate.side === target.side)) return false;
 
-  const rangedWeapons = unit.profile.weapons.filter(w => !w.isMelee && w.range > 0);
+  const targetEngagedWithFriendly = targetWithinFriendlyEngagement(state, target, unit.side, rules);
+  const targetEngagedWithShooter = inEngagement(unit, [target], eng);
+  if (unitHasKeyword(target, 'Lone Operative') && dist(unit.position, target.position) > 12) return false;
+  if (attachedBodyguardAlive(state, target) && !weaponHasKeyword(weapon, 'Precision')) return false;
+  if (weaponHasKeyword(weapon, 'Blast') && targetEngagedWithFriendly) return false;
+  if (
+    targetEngagedWithFriendly
+    && !(weaponHasKeyword(weapon, 'Pistol') && targetEngagedWithShooter)
+    && !(bigGunsNeverTire && targetEngagedWithShooter)
+    && !unitCanUseBigGunsNeverTire(target)
+  ) return false;
+  const targetVisible = unit.modelPositions.some((from, i) => hasAnyModelLOS(from, modelBaseRadius(unit, i), target, state.terrain));
+  return battleUnitsWithinBaseEdgeRange(unit, target, weapon.range)
+    && (targetVisible || weaponHasKeyword(weapon, 'Indirect Fire'));
+}
+
+export function battleUnitsBaseEdgeDistance(a: BattleUnit, b: BattleUnit): number {
+  let closest = Infinity;
+  for (let ai = 0; ai < a.modelPositions.length; ai++) {
+    const aModel = a.modelPositions[ai];
+    const aFootprint = modelFootprint(a, ai);
+    for (let bi = 0; bi < b.modelPositions.length; bi++) {
+      const bModel = b.modelPositions[bi];
+      const bFootprint = modelFootprint(b, bi);
+      closest = Math.min(closest, modelBaseEdgeDistance3d(aModel, aFootprint, bModel, bFootprint));
+    }
+  }
+  return closest;
+}
+
+export function battleUnitsWithinBaseEdgeRange(a: BattleUnit, b: BattleUnit, range: number): boolean {
+  return battleUnitsBaseEdgeDistance(a, b) <= range;
+}
+
+function shootingWeaponModifiers(
+  state: BattleState,
+  unit: BattleUnit,
+  target: BattleUnit,
+  weapon: WeaponProfile,
+  rules: RulesEdition,
+): { cover: boolean; hitModifier: number; hitModifierNotes: string } {
+  const foes = enemies(state, unit.side);
+  const bigGunsNeverTire = inEngagement(unit, foes, rules.engagementRange()) && unitCanUseBigGunsNeverTire(unit);
+  const usesIndirectFirePenalty = weaponHasKeyword(weapon, 'Indirect Fire')
+    && !unit.modelPositions.some((from, i) => hasAnyModelLOS(from, modelBaseRadius(unit, i), target, state.terrain));
+  const cover = targetHasTerrainCoverFrom(unit.modelPositions, target, state.terrain) || usesIndirectFirePenalty;
+  const usesBigGunsPenalty = (bigGunsNeverTire || targetWithinFriendlyEngagement(state, target, unit.side, rules))
+    && !weaponHasKeyword(weapon, 'Pistol');
+  const usesHeavyBonus = weaponHasKeyword(weapon, 'Heavy') && unit.movementAction === 'remainedStationary';
+  const hitModifier = (usesBigGunsPenalty ? 1 : 0) + (usesHeavyBonus ? -1 : 0) + (usesIndirectFirePenalty ? 1 : 0);
+  const hitModifierNotes = [
+    usesBigGunsPenalty ? 'Big Guns Never Tire -1 to Hit' : '',
+    usesHeavyBonus ? 'Heavy +1 to Hit' : '',
+    usesIndirectFirePenalty ? 'Indirect Fire -1 to Hit; target has Benefit of Cover' : '',
+  ].filter(Boolean).join('; ');
+  return { cover, hitModifier, hitModifierNotes };
+}
+
+function resolveShootingWeaponIntoTarget(
+  state: BattleState,
+  unit: BattleUnit,
+  target: BattleUnit,
+  weapon: WeaponProfile,
+  weaponIndex: number,
+  rules: RulesEdition,
+  options: { deferCasualties?: boolean } = {},
+): LogEntry[] {
+  const modifiers = shootingWeaponModifiers(state, unit, target, weapon, rules);
+  const logs = resolveAttacks(
+    unit,
+    target,
+    weapon,
+    weaponIndex,
+    rules,
+    state,
+    modifiers.cover,
+    modifiers.hitModifier,
+    modifiers.hitModifierNotes,
+    options,
+  );
+  logs.push(...resolveHazardousTests(unit, weapon, weaponIndex, state));
+  return logs;
+}
+
+function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
+  const rangedWeapons = eligibleShootingWeapons(unit, state, rules);
   if (!rangedWeapons.length) return [];
 
   const logs: LogEntry[] = [
@@ -811,10 +1247,7 @@ function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition):
   for (const weapon of rangedWeapons) {
     const weaponIndex = unit.profile.weapons.indexOf(weapon);
     if (aliveWeaponModelCount(unit, weaponIndex) <= 0) continue;
-    const validTargets = foes.filter(e => {
-      return dist(unit.position, e.position) <= weapon.range &&
-        hasLOS(unit.position, e.position, state.terrain);
-    });
+    const validTargets = enemies(state, unit.side).filter(e => shootingWeaponCanTarget(state, unit, e, weapon, rules));
     if (!validTargets.length) {
       logs.push(log(state, unit.side, unit.profile.name,
         `  ${weapon.name}: no valid targets in range/LOS`,
@@ -823,17 +1256,159 @@ function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition):
       continue;
     }
     const target = nearest(unit, validTargets)!;
-    const cover = unitFullyInCover(target, state.terrain);
-    logs.push(...resolveAttacks(unit, target, weapon, weaponIndex, rules, state, cover));
+    logs.push(...resolveShootingWeaponIntoTarget(state, unit, target, weapon, weaponIndex, rules));
+    if (unit.destroyed) break;
   }
 
   return logs;
 }
 
+export type PlayShootingWeaponOption = {
+  weaponIndex: number;
+  name: string;
+  targetIds: string[];
+};
+
+export function playShootingWeaponOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rules40K10th,
+): PlayShootingWeaponOption[] {
+  if (state.phase !== 'shooting' || state.activeArmy !== side) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit) return [];
+  return eligibleShootingWeapons(unit, state, rules)
+    .map(weapon => {
+      const weaponIndex = unit.profile.weapons.indexOf(weapon);
+      return {
+        weaponIndex,
+        name: weapon.name,
+        targetIds: enemies(state, side)
+          .filter(target => shootingWeaponCanTarget(state, unit, target, weapon, rules))
+          .map(target => target.id),
+      };
+    })
+    .filter(option => option.weaponIndex >= 0);
+}
+
+export function shootPlayUnitWeapon(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  targetUnitId: string,
+  weaponIndex: number | 'all',
+  rules: RulesEdition = rules40K10th,
+): BattleState {
+  if (state.phase !== 'shooting' || state.activeArmy !== side) return state;
+  const s = clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const target = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || !target || unit.activated) return state;
+
+  const eligibleWeapons = eligibleShootingWeapons(unit, s, rules)
+    .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
+    .filter(option => option.weaponIndex >= 0 && aliveWeaponModelCount(unit, option.weaponIndex) > 0);
+  const selectedWeapons = weaponIndex === 'all'
+    ? eligibleWeapons
+    : eligibleWeapons.filter(option => option.weaponIndex === weaponIndex);
+  if (!selectedWeapons.length) return state;
+
+  const logs: LogEntry[] = [
+    log(s, side, unit.profile.name, `🔫 ${unit.profile.name} shoots ${target.profile.name}:`, 'shoot'),
+  ];
+  for (const option of selectedWeapons) {
+    if (!shootingWeaponCanTarget(s, unit, target, option.weapon, rules)) {
+      logs.push(log(s, side, unit.profile.name, `  ${option.weapon.name}: ${target.profile.name} is not a valid target`, 'info'));
+      continue;
+    }
+    logs.push(...resolveShootingWeaponIntoTarget(s, unit, target, option.weapon, option.weaponIndex, rules, { deferCasualties: true }));
+    if (unit.destroyed || target.destroyed) break;
+  }
+
+  if (logs.length <= 1) return state;
+  if (weaponIndex === 'all') {
+    unit.activated = true;
+  } else {
+    const idx = weaponIndex as number;
+    unit.firedWeaponIndices = [...new Set([...(unit.firedWeaponIndices ?? []), idx])];
+    if (eligibleShootingWeapons(unit, s, rules).length === 0) {
+      unit.activated = true;
+    }
+  }
+  s.log = [...s.log, ...logs];
+  return s;
+}
+
+export interface LOSRay {
+  from: Position;
+  to: Position;
+  fromUnitId: string;
+  toUnitId: string;
+  fromModelIndex: number;
+  toModelIndex: number;
+  blocked: boolean;
+}
+
+export function shootingLOSRays(
+  shooter: BattleUnit,
+  target: BattleUnit,
+  terrain: Terrain[],
+): LOSRay[] {
+  const fromModels = shooter.modelPositions;
+  const toModels = target.modelPositions;
+  return fromModels.flatMap((fromCenter, fromIdx) => {
+    const fromRadius = modelBaseRadius(shooter, fromIdx);
+    return toModels.map((toCenter, toIdx) => {
+      const toRadius = modelBaseRadius(target, toIdx);
+      const ray = findUnblockedLOSRay(fromCenter, fromRadius, toCenter, toRadius, terrain);
+      // Unblocked: draw the actual edge-to-edge ray that has clear sight.
+      // Blocked: fall back to center-to-center so the red dashed line shows the obstructed path.
+      return ray
+        ? {
+          from: ray.from,
+          to: ray.to,
+          fromUnitId: shooter.id,
+          toUnitId: target.id,
+          fromModelIndex: fromIdx,
+          toModelIndex: toIdx,
+          blocked: false,
+        }
+        : {
+          from: fromCenter,
+          to: toCenter,
+          fromUnitId: shooter.id,
+          toUnitId: target.id,
+          fromModelIndex: fromIdx,
+          toModelIndex: toIdx,
+          blocked: true,
+        };
+    });
+  });
+}
+
+export function targetHasCoverFrom(
+  shooterPositions: Position | Position[],
+  target: BattleUnit,
+  terrain: Terrain[],
+): boolean {
+  const positions = Array.isArray(shooterPositions) ? shooterPositions : [shooterPositions];
+  return targetHasTerrainCoverFrom(positions, target, terrain);
+}
+
+export function lockPlayUnitShooting(state: BattleState, unitId: string, side: Side): BattleState {
+  if (state.phase !== 'shooting') return state;
+  const existing = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+  if (!existing || existing.activated) return state;
+  const s = clone(state);
+  s.units.find(u => u.id === unitId && u.side === side)!.activated = true;
+  return s;
+}
+
 function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
-  if (unit.destroyed || unit.embarkedInUnitId || unit.inCombat || unit.fellBack || unit.arrivedFromReinforcements || unit.emergencyDisembarkedThisTurn || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return [];
+  if (unit.destroyed || unit.embarkedInUnitId || isAircraft(unit) || unit.inCombat || unit.fellBack || unit.arrivedFromReinforcements || unit.emergencyDisembarkedThisTurn || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return [];
   const foes = enemies(state, unit.side).filter(
-    e => dist(unit.position, e.position) <= rules.chargeRange(),
+    e => unitCanChargeTarget(unit, e) && dist(unit.position, e.position) <= rules.chargeRange(),
   );
   if (!foes.length) return [];
 
@@ -891,7 +1466,7 @@ function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): L
 function runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
   if (unit.destroyed || unit.embarkedInUnitId) return [];
   const eng = rules.engagementRange();
-  const foes = enemies(state, unit.side).filter(e => dist(unit.position, e.position) <= eng);
+  const foes = enemies(state, unit.side).filter(e => unitCanFightTarget(unit, e) && inEngagement(unit, [e], eng));
   if (!foes.length) return [];
 
   const meleeWeapons = unit.profile.weapons.filter(w => w.isMelee);
@@ -1019,15 +1594,19 @@ export function movementStep(state: BattleState): MovementStep {
 }
 
 function activeUnits(state: BattleState, side: Side): BattleUnit[] {
-  return state.units.filter(u => u.side === side && !u.destroyed && !u.embarkedInUnitId);
+  return state.units.filter(u => u.side === side && !u.destroyed && !u.embarkedInUnitId && !u.inStrategicReserves);
 }
 
 export function markRemainingStationaryUnits(state: BattleState, side: Side = state.activeArmy): void {
   for (const unit of activeUnits(state, side)) {
+    if (isAircraft(unit)) continue;
     if (!unit.movementAction && !unit.fellBack) {
       unit.movementAction = 'remainedStationary';
       unit.movementAllowanceRemaining = 0;
       unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
+      unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => 0);
+      unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
+      unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
       unit.movementComplete = true;
     }
   }
@@ -1039,9 +1618,13 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
   activeUnits(s, side).forEach(u => {
     u.activated = false;
     u.charged = false;
+    u.firedWeaponIndices = undefined;
     u.movementAction = undefined;
     u.movementAllowanceRemaining = undefined;
     u.movementAllowanceRemainingByModel = undefined;
+    u.movementAllowanceTotalByModel = undefined;
+    u.movementStartPositionsByModel = undefined;
+    u.movementStartRotationsByModel = undefined;
     u.movementComplete = undefined;
     u.arrivedFromReinforcements = undefined;
     u.emergencyDisembarkedThisTurn = undefined;
@@ -1108,6 +1691,9 @@ function makeBattleUnit(
     movementAction: undefined,
     movementAllowanceRemaining: undefined,
     movementAllowanceRemainingByModel: undefined,
+    movementAllowanceTotalByModel: undefined,
+    movementStartPositionsByModel: undefined,
+    movementStartRotationsByModel: undefined,
     fellBack: false,
     inCombat: false,
     battleshocked: false,
@@ -1144,6 +1730,35 @@ function reinforcementPlacementIsOutsideEnemyRange(state: BattleState, side: Sid
       enemy.modelPositions.every(enemyModel => dist(model, enemyModel) > minRange),
     ),
   );
+}
+
+const STRATEGIC_RESERVES_EDGE_RANGE = 6;
+
+function reinforcementPlacementIsWithinStrategicReserveEdge(unit: BattleUnit): boolean {
+  const edgeBands = [
+    { x: 0, y: 0, width: STRATEGIC_RESERVES_EDGE_RANGE, height: BOARD_H },
+    { x: BOARD_W - STRATEGIC_RESERVES_EDGE_RANGE, y: 0, width: STRATEGIC_RESERVES_EDGE_RANGE, height: BOARD_H },
+    { x: 0, y: 0, width: BOARD_W, height: STRATEGIC_RESERVES_EDGE_RANGE },
+    { x: 0, y: BOARD_H - STRATEGIC_RESERVES_EDGE_RANGE, width: BOARD_W, height: STRATEGIC_RESERVES_EDGE_RANGE },
+  ];
+  return edgeBands.some(rect =>
+    unit.modelPositions.every((model, modelIndex) =>
+      baseFootprintWithinRect(model, modelFootprint(unit, modelIndex), rect),
+    ),
+  );
+}
+
+function markUnitArrivedFromReinforcements(unit: BattleUnit): void {
+  unit.movementAction = 'normalMove';
+  unit.movementAllowanceRemaining = 0;
+  unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
+  unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => 0);
+  unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
+  unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
+  unit.movementComplete = true;
+  unit.arrivedFromReinforcements = true;
+  unit.inCombat = false;
+  unit.fellBack = false;
 }
 
 const TRANSPORT_ACCESS_RANGE = 3;
@@ -1467,11 +2082,7 @@ export function placePlayReinforcement(state: BattleState, side: Side, armyUnitI
 
   const s = clone(state);
   const unit = makeBattleUnit(profile, side, modelPositions);
-  unit.movementAction = 'normalMove';
-  unit.movementAllowanceRemaining = 0;
-  unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
-  unit.movementComplete = true;
-  unit.arrivedFromReinforcements = true;
+  markUnitArrivedFromReinforcements(unit);
   resolveInternalModelOverlaps(unit);
   s.units.push(unit);
 
@@ -1483,6 +2094,45 @@ export function placePlayReinforcement(state: BattleState, side: Side, armyUnitI
     side,
     profile.name,
     `${s.armies[side].name} sets up ${profile.name} as Reinforcements more than 9" from enemy models.`,
+    'move',
+  )];
+  return s;
+}
+
+export function placePlayStrategicReserveUnit(state: BattleState, side: Side, unitId: string, position: Position): BattleState {
+  if (state.phase !== 'movement' || movementStep(state) !== 'reinforcements' || state.activeArmy !== side) return state;
+  const existing = state.units.find(unit =>
+    unit.id === unitId
+    && unit.side === side
+    && !unit.destroyed
+    && unit.inStrategicReserves
+    && isAircraft(unit)
+  );
+  if (!existing) return state;
+
+  const s = clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
+  unit.modelPositions = playGridFormation(unit.profile, position, side).slice(0, unit.remainingModels);
+  unit.modelRotations = unit.modelPositions.map(() => side === 0 ? 0 : 180);
+  unit.facingDeg = side === 0 ? 0 : 180;
+  unit.position = centroid(unit.modelPositions);
+  unit.inStrategicReserves = false;
+  markUnitArrivedFromReinforcements(unit);
+  resolveInternalModelOverlaps(unit);
+
+  const movingIndices = new Set(unit.modelPositions.map((_, modelIndex) => modelIndex));
+  if (
+    !reinforcementPlacementIsOutsideEnemyRange(s, side, unit.modelPositions)
+    || !reinforcementPlacementIsWithinStrategicReserveEdge(unit)
+    || !playMoveHasNoBaseOverlap(s, unit, movingIndices)
+    || !playMoveHasNoWallOverlap(s, unit, movingIndices)
+  ) return state;
+
+  s.log = [...s.log, log(
+    s,
+    side,
+    unit.profile.name,
+    `${s.armies[side].name} returns ${unit.profile.name} from Strategic Reserves more than 9" from enemy models.`,
     'move',
   )];
   return s;
@@ -1535,6 +2185,9 @@ export function embarkPlayUnit(
   unit.movementAction = 'normalMove';
   unit.movementAllowanceRemaining = 0;
   unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
+  unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => 0);
+  unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
+  unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
   unit.movementComplete = true;
   unit.inCombat = false;
   s.log = [...s.log, log(
@@ -1593,6 +2246,9 @@ export function disembarkPlayUnit(
   unit.movementAction = undefined;
   unit.movementAllowanceRemaining = normalMoveAllowance(unit);
   unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => normalMoveAllowance(unit));
+  unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => normalMoveAllowance(unit));
+  unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
+  unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
   unit.movementComplete = false;
   unit.inCombat = false;
   if (!existingPassenger) s.units.push(unit);
@@ -1678,7 +2334,10 @@ export function battleCoherencyIssues(state: BattleState, side?: Side): string[]
 
 export function playPhaseCoherencyIssues(state: BattleState): string[] {
   if (state.phase !== 'movement') return [];
-  return battleCoherencyIssues(state, state.activeArmy);
+  return [
+    ...battleCoherencyIssues(state, state.activeArmy),
+    ...playMovementLegalityIssues(state, state.activeArmy),
+  ];
 }
 
 function modelMoveHasNoBaseOverlap(s: BattleState, unit: BattleUnit, modelIndex: number): boolean {
@@ -1688,6 +2347,7 @@ function modelMoveHasNoBaseOverlap(s: BattleState, unit: BattleUnit, modelIndex:
     if (otherUnit.destroyed || otherUnit.embarkedInUnitId) return true;
     return otherUnit.modelPositions.every((otherModel, otherModelIndex) => {
       if (otherUnit.id === unit.id && otherModelIndex === modelIndex) return true;
+      if (verticalDistance(model, otherModel) > 0.5) return true;
       const otherFootprint = modelFootprint(otherUnit, otherModelIndex);
       return !baseFootprintsOverlap(model, footprint, otherModel, otherFootprint);
     });
@@ -1726,8 +2386,24 @@ function applyPlayModelTranslation(
   for (const modelIndex of modelIndices) {
     const position = unit.modelPositions[modelIndex];
     unit.modelPositions[modelIndex] = {
+      ...position,
       x: Math.max(0, Math.min(60, position.x + dx)),
       y: Math.max(0, Math.min(44, position.y + dy)),
+    };
+  }
+  unit.position = centroid(unit.modelPositions);
+}
+
+function applyPlayModelVerticalTranslation(
+  unit: BattleUnit,
+  modelIndices: number[],
+  dz: number,
+): void {
+  for (const modelIndex of modelIndices) {
+    const position = unit.modelPositions[modelIndex];
+    unit.modelPositions[modelIndex] = {
+      ...position,
+      z: Math.max(0, (position.z ?? 0) + dz),
     };
   }
   unit.position = centroid(unit.modelPositions);
@@ -1741,6 +2417,7 @@ function playMoveHasNoBaseOverlap(state: BattleState, movingUnit: BattleUnit, mo
       if (otherUnit.destroyed || otherUnit.embarkedInUnitId) continue;
       for (let otherModelIndex = 0; otherModelIndex < otherUnit.modelPositions.length; otherModelIndex++) {
         if (otherUnit.id === movingUnit.id && movingIndices.has(otherModelIndex)) continue;
+        if (verticalDistance(model, otherUnit.modelPositions[otherModelIndex]) > 0.5) continue;
         const otherFootprint = modelFootprint(otherUnit, otherModelIndex);
         if (baseFootprintsOverlap(model, footprint, otherUnit.modelPositions[otherModelIndex], otherFootprint)) return false;
       }
@@ -1755,6 +2432,7 @@ function playMoveHasNoWallOverlap(state: BattleState, movingUnit: BattleUnit, mo
     const footprint = modelFootprint(movingUnit, modelIndex);
     for (const terrain of state.terrain) {
       for (const feature of terrain.features) {
+        if (!featureBlocksMovementForUnit(feature, terrain, movingUnit)) continue;
         if (baseFootprintIntersectsRect(model, footprint, feature)) return false;
       }
     }
@@ -1762,7 +2440,11 @@ function playMoveHasNoWallOverlap(state: BattleState, movingUnit: BattleUnit, mo
   return true;
 }
 
-function playMoveHasNoEndCollision(state: BattleState, movingUnit: BattleUnit, movingIndices: Set<number>): boolean {
+function playMoveHasNoEndCollision(
+  state: BattleState,
+  movingUnit: BattleUnit,
+  movingIndices: Set<number>,
+): boolean {
   return playMoveHasNoBaseOverlap(state, movingUnit, movingIndices)
     && playMoveHasNoWallOverlap(state, movingUnit, movingIndices)
     && !inEngagement(movingUnit, enemies(state, movingUnit.side), rules40K10th.engagementRange());
@@ -1777,12 +2459,21 @@ function distancePointToSegment(point: Position, from: Position, to: Position): 
   return dist(point, { x: from.x + dx * t, y: from.y + dy * t });
 }
 
+function pointSegmentProjectionT(point: Position, from: Position, to: Position): number {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const lengthSq = dx * dx + dy * dy;
+  if (lengthSq <= 0.000001) return 0;
+  return Math.max(0, Math.min(1, ((point.x - from.x) * dx + (point.y - from.y) * dy) / lengthSq));
+}
+
 function playMovePathCrossesEnemyModels(
   state: BattleState,
   movingUnit: BattleUnit,
   movingIndices: Set<number>,
   dx: number,
   dy: number,
+  includeFriendly = false,
 ): boolean {
   if (hasKeyword(movingUnit, 'fly')) return false;
 
@@ -1791,8 +2482,11 @@ function playMovePathCrossesEnemyModels(
     const to = { x: from.x + dx, y: from.y + dy };
     const movingRadius = modelBaseRadius(movingUnit, modelIndex);
     for (const otherUnit of state.units) {
-      if (otherUnit.destroyed || otherUnit.side === movingUnit.side) continue;
+      if (otherUnit.destroyed || otherUnit.embarkedInUnitId) continue;
+      if (otherUnit.id === movingUnit.id || (!includeFriendly && otherUnit.side === movingUnit.side)) continue;
+      if (otherUnit.side !== movingUnit.side && isAircraft(otherUnit)) continue;
       for (let otherModelIndex = 0; otherModelIndex < otherUnit.modelPositions.length; otherModelIndex++) {
+        if (verticalDistance(from, otherUnit.modelPositions[otherModelIndex]) > 0.5) continue;
         const clearance = movingRadius + modelBaseRadius(otherUnit, otherModelIndex);
         if (distancePointToSegment(otherUnit.modelPositions[otherModelIndex], from, to) < clearance) return true;
       }
@@ -1816,10 +2510,13 @@ function playMoveEnemyCrossingModelIndices(
     const movingRadius = modelBaseRadius(movingUnit, modelIndex);
     const crossesEnemy = state.units.some(otherUnit => {
       if (otherUnit.destroyed || otherUnit.side === movingUnit.side) return false;
+      if (isAircraft(otherUnit)) return false;
       return otherUnit.modelPositions.some((otherModel, otherModelIndex) => {
-        const clearance = movingRadius + modelBaseRadius(otherUnit, otherModelIndex);
-        if (dist(otherModel, from) < clearance) return false;
-        return distancePointToSegment(otherModel, from, to) < clearance;
+      if (verticalDistance(from, otherModel) > 0.5) return false;
+      const clearance = movingRadius + modelBaseRadius(otherUnit, otherModelIndex);
+      if (dist(otherModel, from) < clearance && dist(otherModel, to) < clearance) return false;
+      if (pointSegmentProjectionT(otherModel, from, to) <= 0.05) return false;
+      return distancePointToSegment(otherModel, from, to) < clearance;
       });
     });
     if (crossesEnemy) crossingModelIndices.push(modelIndex);
@@ -1840,7 +2537,11 @@ function playMovePathCrossesBlockingTerrain(
   for (const modelIndex of movingIndices) {
     const from = movingUnit.modelPositions[modelIndex];
     const to = { x: from.x + dx, y: from.y + dy };
-    if (lineBlockedByMovement(from, to, state.terrain, movingUnit)) return true;
+    for (const terrain of state.terrain) {
+      for (const feature of terrain.features) {
+        if (featureBlocksMovementForUnit(feature, terrain, movingUnit) && lineIntersectsTerrain(from, to, feature)) return true;
+      }
+    }
   }
   return false;
 }
@@ -1851,9 +2552,9 @@ function playMoveHasNoPathCollision(
   movingIndices: Set<number>,
   dx: number,
   dy: number,
-  ignoreEnemyModelPath = false,
+  options: { ignoreEnemyModelPath?: boolean } = {},
 ): boolean {
-  return (ignoreEnemyModelPath || !playMovePathCrossesEnemyModels(state, movingUnit, movingIndices, dx, dy))
+  return (options.ignoreEnemyModelPath || !playMovePathCrossesEnemyModels(state, movingUnit, movingIndices, dx, dy, true))
     && !playMovePathCrossesBlockingTerrain(state, movingUnit, movingIndices, dx, dy);
 }
 
@@ -1879,12 +2580,192 @@ function unitHasBaseOverlap(state: BattleState, unit: BattleUnit): boolean {
       if (otherUnit.destroyed) continue;
       for (let otherModelIndex = 0; otherModelIndex < otherUnit.modelPositions.length; otherModelIndex++) {
         if (otherUnit.id === unit.id && otherModelIndex === modelIndex) continue;
+        if (verticalDistance(model, otherUnit.modelPositions[otherModelIndex]) > 0.5) continue;
         const otherFootprint = modelFootprint(otherUnit, otherModelIndex);
         if (baseFootprintsOverlap(model, footprint, otherUnit.modelPositions[otherModelIndex], otherFootprint, 0.001)) return true;
       }
     }
   }
   return false;
+}
+
+function unitHasModelOutsideBattlefield(unit: BattleUnit): boolean {
+  return unit.modelPositions.some((model, modelIndex) =>
+    !baseFootprintWithinRect(model, modelFootprint(unit, modelIndex), { x: 0, y: 0, width: 60, height: 44 }),
+  );
+}
+
+function aircraftForwardVector(unit: BattleUnit, modelIndex = 0): Position {
+  const rotation = unit.movementStartRotationsByModel?.[modelIndex] ?? modelRotation(unit, modelIndex);
+  const radians = (rotation * Math.PI) / 180;
+  return { x: Math.cos(radians), y: Math.sin(radians) };
+}
+
+function aircraftMoveIsStraightForward(unit: BattleUnit, modelIndices: number[], dx: number, dy: number): boolean {
+  const distance = Math.hypot(dx, dy);
+  if (distance < 0.001) return false;
+  return modelIndices.every(modelIndex => {
+    const forward = aircraftForwardVector(unit, modelIndex);
+    const parallel = dx * forward.x + dy * forward.y;
+    const perpendicular = Math.abs(dx * forward.y - dy * forward.x);
+    return parallel > 0 && perpendicular <= 0.01;
+  });
+}
+
+function aircraftMinimumMoveDistance(unit: BattleUnit): number {
+  return 20;
+}
+
+function aircraftMovedMinimumDistance(unit: BattleUnit): boolean {
+  if (!isAircraft(unit) || unit.inStrategicReserves) return true;
+  if (unit.movementAction !== 'normalMove') return false;
+  return unit.modelPositions.every((_, modelIndex) =>
+    modelMovementDistanceFromStart(unit, modelIndex) >= aircraftMinimumMoveDistance(unit) - 0.001,
+  );
+}
+
+function normalizedAngleDelta(a: number, b: number): number {
+  return ((((a - b) % 360) + 540) % 360) - 180;
+}
+
+function aircraftPivotWithinLimit(unit: BattleUnit, modelIndices: number[]): boolean {
+  return modelIndices.every(modelIndex => {
+    const start = unit.movementStartRotationsByModel?.[modelIndex] ?? modelRotation(unit, modelIndex);
+    return Math.abs(normalizedAngleDelta(modelRotation(unit, modelIndex), start)) <= 90.001;
+  });
+}
+
+function moveAircraftToStrategicReserves(state: BattleState, unit: BattleUnit): void {
+  unit.inStrategicReserves = true;
+  unit.modelPositions = [];
+  unit.modelRotations = [];
+  unit.position = { x: 0, y: 0 };
+  unit.movementAction = 'normalMove';
+  unit.movementAllowanceRemaining = 0;
+  unit.movementAllowanceRemainingByModel = [];
+  unit.movementAllowanceTotalByModel = [];
+  unit.movementStartPositionsByModel = [];
+  unit.movementStartRotationsByModel = [];
+  unit.movementComplete = true;
+  unit.inCombat = false;
+  state.log = [...state.log, log(
+    state,
+    unit.side,
+    unit.profile.name,
+    `${unit.profile.name} leaves the battlefield and is placed into Strategic Reserves.`,
+    'move',
+  )];
+}
+
+function unitHasWallOverlap(state: BattleState, unit: BattleUnit): boolean {
+  return !playMoveHasNoWallOverlap(state, unit, new Set(unit.modelPositions.map((_, modelIndex) => modelIndex)));
+}
+
+function movedModelDeltasFromStart(unit: BattleUnit): Array<{ modelIndex: number; dx: number; dy: number }> {
+  const starts = unit.movementStartPositionsByModel;
+  if (!starts?.length) return [];
+  return unit.modelPositions.flatMap((position, modelIndex) => {
+    const start = starts[modelIndex];
+    if (!start) return [];
+    const dx = position.x - start.x;
+    const dy = position.y - start.y;
+    return Math.hypot(dx, dy) > 0.001 ? [{ modelIndex, dx, dy }] : [];
+  });
+}
+
+function unitMoveCrossedEnemyModels(state: BattleState, unit: BattleUnit): boolean {
+  if (unit.movementAction !== 'normalMove' && unit.movementAction !== 'advanced') return false;
+  if (hasKeyword(unit, 'fly')) return false;
+  const starts = unit.movementStartPositionsByModel;
+  if (!starts?.length) return false;
+  return movedModelDeltasFromStart(unit).some(({ modelIndex }) => {
+    const from = starts[modelIndex] ?? unit.modelPositions[modelIndex];
+    const to = unit.modelPositions[modelIndex];
+    const movingRadius = modelBaseRadius(unit, modelIndex);
+    return state.units.some(otherUnit => {
+      if (otherUnit.destroyed || otherUnit.embarkedInUnitId || otherUnit.side === unit.side) return false;
+      if (isAircraft(otherUnit)) return false;
+      return otherUnit.modelPositions.some((otherModel, otherModelIndex) => {
+        if (verticalDistance(from, otherModel) > 0.5) return false;
+        const clearance = movingRadius + modelBaseRadius(otherUnit, otherModelIndex);
+        if (dist(otherModel, from) < clearance || dist(otherModel, to) < clearance) return false;
+        return distancePointToSegment(otherModel, from, to) < clearance;
+      });
+    });
+  });
+}
+
+function unitMoveCrossedBlockingTerrain(state: BattleState, unit: BattleUnit): boolean {
+  if (hasKeyword(unit, 'fly')) return false;
+  const starts = unit.movementStartPositionsByModel;
+  if (!starts?.length) return false;
+  return movedModelDeltasFromStart(unit).some(({ modelIndex }) => {
+    const from = starts[modelIndex] ?? unit.modelPositions[modelIndex];
+    const to = unit.modelPositions[modelIndex];
+    return state.terrain.some(terrain =>
+      terrain.features.some(feature =>
+        featureBlocksMovementForUnit(feature, terrain, unit) && lineIntersectsTerrain(from, to, feature),
+      ),
+    );
+  });
+}
+
+function monsterVehicleMovedOverFriendlyMonsterVehicle(state: BattleState, unit: BattleUnit): boolean {
+  if (!hasAnyKeyword(unit, ['monster', 'vehicle']) || hasKeyword(unit, 'fly')) return false;
+  const starts = unit.movementStartPositionsByModel;
+  if (!starts?.length) return false;
+  return movedModelDeltasFromStart(unit).some(({ modelIndex }) => {
+    const from = starts[modelIndex] ?? unit.modelPositions[modelIndex];
+    const to = unit.modelPositions[modelIndex];
+    const movingRadius = modelBaseRadius(unit, modelIndex);
+    return state.units.some(otherUnit => {
+      if (
+        otherUnit.id === unit.id
+        || otherUnit.side !== unit.side
+        || otherUnit.destroyed
+        || otherUnit.embarkedInUnitId
+        || !hasAnyKeyword(otherUnit, ['monster', 'vehicle'])
+      ) return false;
+      return otherUnit.modelPositions.some((otherModel, otherModelIndex) => {
+        if (verticalDistance(from, otherModel) > 0.5) return false;
+        const clearance = movingRadius + modelBaseRadius(otherUnit, otherModelIndex);
+        if (dist(otherModel, from) < clearance || dist(otherModel, to) < clearance) return false;
+        return distancePointToSegment(otherModel, from, to) < clearance;
+      });
+    });
+  });
+}
+
+function playMovementUnitLegalityIssues(state: BattleState, unit: BattleUnit): string[] {
+  if (unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves) return [];
+  const issues: string[] = [];
+  if (isAircraft(unit) && !aircraftMovedMinimumDistance(unit)) {
+    issues.push(`${unit.profile.name} is an Aircraft and must make a Normal move of at least 20".`);
+  }
+  if (unitHasModelOutsideBattlefield(unit)) issues.push(`${unit.profile.name} has a model across the battlefield edge.`);
+  if (unitHasBaseOverlap(state, unit)) issues.push(`${unit.profile.name} cannot end its move on top of another model.`);
+  if (unitHasWallOverlap(state, unit)) issues.push(`${unit.profile.name} cannot end its move inside blocking terrain.`);
+  if (
+    (unit.movementAction === 'normalMove' || unit.movementAction === 'advanced')
+    && inEngagement(unit, enemies(state, unit.side), rules40K10th.engagementRange())
+  ) {
+    issues.push(`${unit.profile.name} cannot end a Normal or Advance move within Engagement Range.`);
+  }
+  if (unitMoveCrossedEnemyModels(state, unit)) issues.push(`${unit.profile.name} moved across an enemy model.`);
+  if (unitMoveCrossedBlockingTerrain(state, unit)) issues.push(`${unit.profile.name} moved through blocking terrain.`);
+  if (monsterVehicleMovedOverFriendlyMonsterVehicle(state, unit)) {
+    issues.push(`${unit.profile.name} is a Monster or Vehicle and must move around friendly Monsters and Vehicles.`);
+  }
+  return issues;
+}
+
+function playMovementLegalityIssues(state: BattleState, side: Side): string[] {
+  if (state.phase !== 'movement') return [];
+  return Array.from(new Set(
+    state.units
+      .filter(unit => unit.side === side && !unit.destroyed && !unit.embarkedInUnitId)
+      .flatMap(unit => playMovementUnitLegalityIssues(state, unit)),
+  ));
 }
 
 function collisionAdjustedPlayMove(
@@ -1904,7 +2785,9 @@ function collisionAdjustedPlayMove(
   applyPlayModelTranslation(candidateUnit, modelIndices, dx, dy);
   if (
     playMoveHasNoEndCollision(candidate, candidateUnit, movingIndices)
-    && playMoveHasNoPathCollision(state, state.units.find(u => u.id === unitId && u.side === side && !u.destroyed)!, movingIndices, dx, dy, !!options.ignoreEnemyModelPath)
+    && playMoveHasNoPathCollision(state, state.units.find(u => u.id === unitId && u.side === side && !u.destroyed)!, movingIndices, dx, dy, {
+      ignoreEnemyModelPath: !!options.ignoreEnemyModelPath,
+    })
   ) return { dx, dy };
 
   let lo = 0;
@@ -1919,7 +2802,9 @@ function collisionAdjustedPlayMove(
     applyPlayModelTranslation(testUnit, modelIndices, dx * mid, dy * mid);
     if (
       playMoveHasNoEndCollision(test, testUnit, movingIndices)
-      && playMoveHasNoPathCollision(state, movingUnit, movingIndices, dx * mid, dy * mid, !!options.ignoreEnemyModelPath)
+      && playMoveHasNoPathCollision(state, movingUnit, movingIndices, dx * mid, dy * mid, {
+        ignoreEnemyModelPath: !!options.ignoreEnemyModelPath,
+      })
     ) lo = mid;
     else hi = mid;
   }
@@ -1928,32 +2813,66 @@ function collisionAdjustedPlayMove(
 }
 
 function movementAllowanceForPlayMove(unit: BattleUnit): number {
+  if (unit.movementAllowanceTotalByModel?.length) {
+    return Math.max(...unit.movementAllowanceTotalByModel);
+  }
   if (unit.movementAction === 'advanced') {
     return unit.movementAllowanceRemaining ?? normalMoveAllowance(unit);
   }
   return normalMoveAllowance(unit);
 }
 
-function ensureModelMovementAllowances(unit: BattleUnit): number[] {
-  const allowance = movementAllowanceForPlayMove(unit);
-  if (!unit.movementAllowanceRemainingByModel || unit.movementAllowanceRemainingByModel.length !== unit.modelPositions.length) {
-    unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => allowance);
+function ensureModelMovementStartPositions(unit: BattleUnit): Position[] {
+  if (!unit.movementStartPositionsByModel || unit.movementStartPositionsByModel.length !== unit.modelPositions.length) {
+    unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
   }
+  return unit.movementStartPositionsByModel;
+}
+
+function ensureModelMovementStartRotations(unit: BattleUnit): number[] {
+  if (!unit.movementStartRotationsByModel || unit.movementStartRotationsByModel.length !== unit.modelPositions.length) {
+    unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
+  }
+  return unit.movementStartRotationsByModel;
+}
+
+function ensureModelMovementAllowanceTotals(unit: BattleUnit): number[] {
+  const allowance = movementAllowanceForPlayMove(unit);
+  if (!unit.movementAllowanceTotalByModel || unit.movementAllowanceTotalByModel.length !== unit.modelPositions.length) {
+    unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => allowance);
+  }
+  return unit.movementAllowanceTotalByModel;
+}
+
+function modelMovementDistanceFromStart(unit: BattleUnit, modelIndex: number): number {
+  const position = unit.modelPositions[modelIndex];
+  const start = unit.movementStartPositionsByModel?.[modelIndex] ?? position;
+  const startRotation = unit.movementStartRotationsByModel?.[modelIndex] ?? modelRotation(unit, modelIndex);
+  const currentRotation = modelRotation(unit, modelIndex);
+  const horizontal = baseFootprintMaxPointDistance(
+    start,
+    modelFootprint(unit, modelIndex, startRotation),
+    position,
+    modelFootprint(unit, modelIndex, currentRotation),
+  );
+  return horizontal + verticalDistance(start, position);
+}
+
+function refreshModelMovementAllowances(unit: BattleUnit): number[] {
+  ensureModelMovementStartPositions(unit);
+  ensureModelMovementStartRotations(unit);
+  const totals = ensureModelMovementAllowanceTotals(unit);
+  unit.movementAllowanceRemainingByModel = unit.modelPositions.map((position, modelIndex) =>
+    Math.max(0, (totals[modelIndex] ?? 0) - modelMovementDistanceFromStart(unit, modelIndex)),
+  );
+  unit.movementAllowanceRemaining = unit.movementAllowanceRemainingByModel.length
+    ? Math.max(...unit.movementAllowanceRemainingByModel)
+    : 0;
   return unit.movementAllowanceRemainingByModel;
 }
 
-function selectedMovementAllowance(unit: BattleUnit, modelIndices: number[]): number {
-  const allowances = ensureModelMovementAllowances(unit);
-  return Math.min(...modelIndices.map(modelIndex => allowances[modelIndex] ?? 0));
-}
-
-function consumeModelMovementAllowance(unit: BattleUnit, modelIndices: number[], moved: number): void {
-  const allowances = ensureModelMovementAllowances(unit);
-  for (const modelIndex of modelIndices) {
-    allowances[modelIndex] = Math.max(0, (allowances[modelIndex] ?? 0) - moved);
-  }
-  unit.movementAllowanceRemaining = Math.max(...allowances);
-  if (unit.movementAllowanceRemaining <= 0.001) unit.movementComplete = true;
+function updateModelMovementAllowances(unit: BattleUnit): void {
+  refreshModelMovementAllowances(unit);
 }
 
 function playMovementGroupId(unit: BattleUnit): string {
@@ -1989,12 +2908,59 @@ function budgetAdjustedPlayMove(unit: BattleUnit, modelIndices: number[], dx: nu
   const distance = Math.hypot(dx, dy);
   if (distance < 0.001) return { dx, dy };
 
-  const remaining = selectedMovementAllowance(unit, modelIndices);
-  if (remaining <= 0) return { dx: 0, dy: 0 };
-  if (distance <= remaining) return { dx, dy };
+  ensureModelMovementStartPositions(unit);
+  ensureModelMovementStartRotations(unit);
+  ensureModelMovementAllowanceTotals(unit);
+  const moveWithinAllowance = (scale: number) => modelIndices.every(modelIndex => {
+    const current = unit.modelPositions[modelIndex];
+    const total = unit.movementAllowanceTotalByModel?.[modelIndex] ?? 0;
+    const proposed = { x: current.x + dx * scale, y: current.y + dy * scale };
+    const start = unit.movementStartPositionsByModel?.[modelIndex] ?? current;
+    const startRotation = unit.movementStartRotationsByModel?.[modelIndex] ?? modelRotation(unit, modelIndex);
+    return baseFootprintMaxPointDistance(
+      start,
+      modelFootprint(unit, modelIndex, startRotation),
+      proposed,
+      modelFootprint(unit, modelIndex),
+    ) <= total + 0.000001;
+  });
 
-  const scale = remaining / distance;
-  return { dx: dx * scale, dy: dy * scale };
+  if (moveWithinAllowance(1)) return { dx, dy };
+
+  const rotationsUnchanged = modelIndices.every(modelIndex =>
+    Math.abs((unit.movementStartRotationsByModel?.[modelIndex] ?? modelRotation(unit, modelIndex)) - modelRotation(unit, modelIndex)) < 0.001,
+  );
+  if (rotationsUnchanged) {
+    let scale = 1;
+    for (const modelIndex of modelIndices) {
+      const current = unit.modelPositions[modelIndex];
+      const start = unit.movementStartPositionsByModel?.[modelIndex] ?? current;
+      const total = unit.movementAllowanceTotalByModel?.[modelIndex] ?? 0;
+      const relX = current.x - start.x;
+      const relY = current.y - start.y;
+      const a = dx * dx + dy * dy;
+      const b = 2 * (relX * dx + relY * dy);
+      const c = relX * relX + relY * relY - total * total;
+      const discriminant = b * b - 4 * a * c;
+      if (discriminant < 0 || a <= 0.000001) {
+        scale = 0;
+        continue;
+      }
+      const limit = (-b + Math.sqrt(discriminant)) / (2 * a);
+      scale = Math.min(scale, Math.max(0, limit));
+    }
+    return { dx: dx * scale, dy: dy * scale };
+  }
+
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 16; i++) {
+    const mid = (lo + hi) / 2;
+    if (moveWithinAllowance(mid)) lo = mid;
+    else hi = mid;
+  }
+
+  return { dx: dx * lo, dy: dy * lo };
 }
 
 export function movePlayModels(
@@ -2019,7 +2985,7 @@ export function movePlayModels(
       || existingUnit.movementAction === 'fellBack'
       || existingUnit.movementAction === 'remainedStationary'
     ) return state;
-    if (engagedEnemies(state, existingUnit, rules40K10th).length > 0) return state;
+    if (!isAircraft(existingUnit) && nonAircraftEngagedEnemies(state, existingUnit, rules40K10th).length > 0) return state;
   }
 
   const s = clone(state);
@@ -2027,27 +2993,92 @@ export function movePlayModels(
   const uniqueIndices = Array.from(new Set(modelIndices)).filter(modelIndex => unit.modelPositions[modelIndex]);
   if (!uniqueIndices.length) return state;
 
-  const budgetMove = s.phase === 'movement' ? budgetAdjustedPlayMove(unit, uniqueIndices, dx, dy) : { dx, dy };
+  if (s.phase === 'movement' && isAircraft(unit)) {
+    ensureModelMovementStartPositions(unit);
+    ensureModelMovementStartRotations(unit);
+    ensureModelMovementAllowanceTotals(unit);
+    if (!aircraftMoveIsStraightForward(unit, uniqueIndices, dx, dy)) return state;
+  }
+
+  const budgetMove = s.phase === 'movement' && !isAircraft(unit) ? budgetAdjustedPlayMove(unit, uniqueIndices, dx, dy) : { dx, dy };
   if (Math.hypot(budgetMove.dx, budgetMove.dy) < 0.001) return state;
   if (
     s.phase === 'movement'
     && translatedPlayMoveEndsInEngagement(s, unit, uniqueIndices, budgetMove.dx, budgetMove.dy)
   ) return state;
 
-  const move = collide || s.phase === 'movement'
+  const move = collide
     ? collisionAdjustedPlayMove(s, unitId, side, uniqueIndices, budgetMove.dx, budgetMove.dy)
     : budgetMove;
   if (Math.hypot(move.dx, move.dy) < 0.001) return state;
+
+  if (s.phase === 'movement' && isAircraft(unit)) {
+    const test = clone(s);
+    const testUnit = test.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId)!;
+    for (const modelIndex of uniqueIndices) {
+      const position = testUnit.modelPositions[modelIndex];
+      testUnit.modelPositions[modelIndex] = { x: position.x + move.dx, y: position.y + move.dy };
+    }
+    testUnit.position = centroid(testUnit.modelPositions);
+    if (unitHasModelOutsideBattlefield(testUnit)) {
+      moveAircraftToStrategicReserves(s, unit);
+      return s;
+    }
+  }
 
   applyPlayModelTranslation(unit, uniqueIndices, move.dx, move.dy);
   if (s.phase === 'movement' && inEngagement(unit, enemies(s, side), rules40K10th.engagementRange())) return state;
 
   if (s.phase === 'movement') {
     lockOtherMovedPlayUnits(s, unit);
-    const moved = Math.hypot(move.dx, move.dy);
     unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
-    consumeModelMovementAllowance(unit, uniqueIndices, moved);
+    updateModelMovementAllowances(unit);
   }
+  return s;
+}
+
+export function movePlayModelsVertically(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  modelIndices: number[],
+  dz: number,
+): BattleState {
+  if (Math.abs(dz) < 0.001) return state;
+  if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return state;
+
+  const existingUnit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
+  if (!existingUnit) return state;
+  if (
+    existingUnit.inStrategicReserves
+    || existingUnit.movementComplete
+    || existingUnit.fellBack
+    || existingUnit.movementAction === 'fellBack'
+    || existingUnit.movementAction === 'remainedStationary'
+    || isAircraft(existingUnit)
+    || nonAircraftEngagedEnemies(state, existingUnit, rules40K10th).length > 0
+  ) return state;
+
+  const s = clone(state);
+  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId)!;
+  const uniqueIndices = Array.from(new Set(modelIndices)).filter(modelIndex => unit.modelPositions[modelIndex]);
+  if (!uniqueIndices.length) return state;
+
+  ensureModelMovementStartPositions(unit);
+  ensureModelMovementStartRotations(unit);
+  ensureModelMovementAllowanceTotals(unit);
+
+  const before = unit.modelPositions.map(position => ({ ...position }));
+  applyPlayModelVerticalTranslation(unit, uniqueIndices, dz);
+  if (uniqueIndices.every(modelIndex => Math.abs((unit.modelPositions[modelIndex].z ?? 0) - (before[modelIndex].z ?? 0)) < 0.001)) return state;
+
+  const totals = ensureModelMovementAllowanceTotals(unit);
+  if (uniqueIndices.some(modelIndex => modelMovementDistanceFromStart(unit, modelIndex) > (totals[modelIndex] ?? 0) + 0.001)) return state;
+  if (inEngagement(unit, enemies(s, side), rules40K10th.engagementRange())) return state;
+
+  lockOtherMovedPlayUnits(s, unit);
+  unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
+  updateModelMovementAllowances(unit);
   return s;
 }
 
@@ -2068,11 +3099,7 @@ export function removePlayModels(
     .sort((a, b) => b - a);
   if (!uniqueIndices.length) return s;
 
-  for (const modelIndex of uniqueIndices) {
-    unit.modelPositions.splice(modelIndex, 1);
-    unit.modelRotations?.splice(modelIndex, 1);
-    unit.movementAllowanceRemainingByModel?.splice(modelIndex, 1);
-  }
+  spliceModelIndices(unit, uniqueIndices);
 
   unit.remainingModels = Math.max(0, unit.remainingModels - uniqueIndices.length);
   unit.destroyed = unit.remainingModels <= 0 || unit.modelPositions.length === 0;
@@ -2085,6 +3112,9 @@ export function removePlayModels(
   } else {
     unit.movementAllowanceRemaining = 0;
     unit.movementAllowanceRemainingByModel = [];
+    unit.movementAllowanceTotalByModel = [];
+    unit.movementStartPositionsByModel = [];
+    unit.movementStartRotationsByModel = [];
   }
 
   s.log = [...s.log, log(
@@ -2097,6 +3127,136 @@ export function removePlayModels(
   return s;
 }
 
+export function removePlayCasualtyModels(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  modelIndices: number[],
+): BattleState {
+  const pendingUnit = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
+  const pendingCasualties = pendingUnit?.pendingCasualties ?? 0;
+  if (state.phase !== 'shooting' || !pendingUnit || pendingCasualties <= 0) return state;
+
+  const s = clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit) return state;
+  const uniqueIndices = Array.from(new Set(modelIndices))
+    .filter(modelIndex => unit.modelPositions[modelIndex])
+    .sort((a, b) => b - a)
+    .slice(0, pendingCasualties);
+  if (!uniqueIndices.length) return state;
+
+  spliceModelIndices(unit, uniqueIndices);
+
+  unit.remainingModels = Math.max(0, unit.remainingModels - uniqueIndices.length);
+  unit.pendingCasualties = Math.max(0, (unit.pendingCasualties ?? 0) - uniqueIndices.length);
+  if (unit.pendingCasualties <= 0) unit.pendingCasualties = undefined;
+  if (unit.remainingModels <= 0 || unit.modelPositions.length <= 0) {
+    unit.destroyed = true;
+    unit.remainingModels = 0;
+    unit.woundsOnLeadModel = 0;
+    unit.woundedModelIndex = undefined;
+    unit.pendingWoundAssignment = undefined;
+    unit.modelPositions = [];
+    unit.modelRotations = [];
+  } else {
+    unit.position = centroid(unit.modelPositions);
+    if (unit.woundsOnLeadModel <= 0) unit.woundsOnLeadModel = unit.profile.wounds;
+  }
+
+  s.log = [...s.log, log(
+    s,
+    state.activeArmy,
+    unit.profile.name,
+    `${unit.profile.name} removes ${uniqueIndices.length} selected casualty model${uniqueIndices.length === 1 ? '' : 's'}.`,
+    unit.destroyed ? 'death' : 'damage',
+  )];
+  return s;
+}
+
+export function assignPlayWoundedModel(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  modelIndex: number,
+): BattleState {
+  const pendingUnit = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
+  const pending = pendingUnit?.pendingWoundAssignment;
+  if (state.phase !== 'shooting' || !pendingUnit || !pending || (pendingUnit.pendingCasualties ?? 0) > 0) return state;
+
+  const s = clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || !unit.modelPositions[modelIndex] || !unit.pendingWoundAssignment) return state;
+  unit.woundedModelIndex = modelIndex;
+  unit.woundsOnLeadModel = unit.pendingWoundAssignment.woundsOnModel;
+  unit.pendingWoundAssignment = undefined;
+
+  s.log = [...s.log, log(
+    s,
+    state.activeArmy,
+    unit.profile.name,
+    `${unit.profile.name} marks model ${modelIndex + 1} as wounded (${unit.woundsOnLeadModel}W remaining).`,
+    'damage',
+  )];
+  return s;
+}
+
+export function allocatePlayDamageToModel(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  modelIndex: number,
+): BattleState {
+  const pendingUnit = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
+  const allocation = pendingUnit?.pendingDamageAllocations?.[0];
+  if (state.phase !== 'shooting' || !pendingUnit || !allocation || !pendingUnit.modelPositions[modelIndex]) return state;
+  if (pendingUnit.woundedModelIndex !== undefined && pendingUnit.woundedModelIndex !== modelIndex) return state;
+
+  const s = clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit?.pendingDamageAllocations?.length || !unit.modelPositions[modelIndex]) return state;
+  const damage = unit.pendingDamageAllocations.shift()!;
+  if (!unit.pendingDamageAllocations.length) unit.pendingDamageAllocations = undefined;
+
+  const currentWounds = unit.woundedModelIndex === modelIndex ? unit.woundsOnLeadModel : unit.profile.wounds;
+  if (damage.damage >= currentWounds) {
+    const carryOverDamage = damage.noCarryOver ? 0 : damage.damage - currentWounds;
+    spliceModelIndices(unit, [modelIndex]);
+    unit.remainingModels = Math.max(0, unit.remainingModels - 1);
+    unit.woundedModelIndex = undefined;
+    unit.woundsOnLeadModel = unit.remainingModels > 0 ? unit.profile.wounds : 0;
+    if (unit.remainingModels <= 0 || unit.modelPositions.length <= 0) {
+      unit.destroyed = true;
+      unit.remainingModels = 0;
+      unit.modelPositions = [];
+      unit.modelRotations = [];
+      unit.pendingDamageAllocations = undefined;
+    } else {
+      unit.position = centroid(unit.modelPositions);
+      if (carryOverDamage > 0) {
+        unit.pendingDamageAllocations = [
+          { ...damage, damage: carryOverDamage },
+          ...(unit.pendingDamageAllocations ?? []),
+        ];
+      }
+    }
+  } else {
+    unit.woundedModelIndex = modelIndex;
+    unit.woundsOnLeadModel = currentWounds - damage.damage;
+  }
+
+  s.log = [...s.log, log(
+    s,
+    state.activeArmy,
+    unit.profile.name,
+    damage.damage >= currentWounds
+      ? `${unit.profile.name} allocates ${damage.damage} damage to model ${modelIndex + 1}; model destroyed.`
+      : `${unit.profile.name} allocates ${damage.damage} damage to model ${modelIndex + 1} (${unit.woundsOnLeadModel}W remaining).`,
+    damage.damage >= currentWounds ? 'death' : 'damage',
+  )];
+  return s;
+}
+
 export function playUnitCanFallBack(
   state: BattleState,
   unitId: string,
@@ -2105,7 +3265,7 @@ export function playUnitCanFallBack(
 ): boolean {
   if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
   const unit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
-  return !!unit && !unit.movementComplete && !unit.movementAction && engagedEnemies(state, unit, rules).length > 0;
+  return !!unit && !unit.inStrategicReserves && !isAircraft(unit) && !unit.movementComplete && !unit.movementAction && nonAircraftEngagedEnemies(state, unit, rules).length > 0;
 }
 
 export function playUnitCanAdvance(
@@ -2118,13 +3278,18 @@ export function playUnitCanAdvance(
   const unit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
   if (
     !unit
+    || unit.inStrategicReserves
+    || isAircraft(unit)
     || unit.movementComplete
     || unit.fellBack
     || !!unit.movementAction
     || typeof unit.movementAllowanceRemaining === 'number'
     || !!unit.movementAllowanceRemainingByModel
+    || !!unit.movementAllowanceTotalByModel
+    || !!unit.movementStartPositionsByModel
+    || !!unit.movementStartRotationsByModel
   ) return false;
-  return engagedEnemies(state, unit, rules).length === 0;
+  return nonAircraftEngagedEnemies(state, unit, rules).length === 0;
 }
 
 export function advancePlayUnit(
@@ -2144,6 +3309,9 @@ export function advancePlayUnit(
   unit.movementAction = 'advanced';
   unit.movementAllowanceRemaining = advance.total;
   unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => advance.total);
+  unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => advance.total);
+  unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
+  unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
   unit.movementComplete = advance.total <= 0.001;
   unit.fellBack = false;
   s.log = [...s.log, log(
@@ -2196,6 +3364,9 @@ export function fallBackPlayUnit(
   unit.movementAction = 'fellBack';
   unit.movementAllowanceRemaining = 0;
   unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
+  unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => 0);
+  unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
+  unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
   unit.movementComplete = true;
   unit.fellBack = true;
   for (const enemy of engaged) {
@@ -2230,6 +3401,7 @@ export function completePlayUnitMovement(
     || existingUnit.movementComplete
     || (existingUnit.movementAction !== 'normalMove' && existingUnit.movementAction !== 'advanced')
   ) return state;
+  if (playMovementUnitLegalityIssues(state, existingUnit).length > 0) return state;
 
   const s = clone(state);
   const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId)!;
@@ -2322,6 +3494,12 @@ export function rotatePlayModels(
 
   const uniqueIndices = Array.from(new Set(modelIndices)).filter(modelIndex => unit.modelPositions[modelIndex]);
   if (uniqueIndices.length < 1) return s;
+  if (s.phase === 'movement') {
+    if (s.activeArmy !== side || unit.movementComplete || unit.movementAction === 'remainedStationary') return state;
+    ensureModelMovementStartPositions(unit);
+    ensureModelMovementStartRotations(unit);
+    ensureModelMovementAllowanceTotals(unit);
+  }
 
   const center = centroid(uniqueIndices.map(modelIndex => unit.modelPositions[modelIndex]));
   const radians = (degrees * Math.PI) / 180;
@@ -2341,6 +3519,18 @@ export function rotatePlayModels(
   unit.modelRotations = rotations;
   if (uniqueIndices.length === unit.modelPositions.length) unit.facingDeg = ((unit.facingDeg ?? 0) + degrees) % 360;
   unit.position = centroid(unit.modelPositions);
+  if (s.phase === 'movement' && isAircraft(unit)) {
+    if (!aircraftPivotWithinLimit(unit, uniqueIndices)) return state;
+    return s;
+  }
+  if (s.phase === 'movement') {
+    const totals = ensureModelMovementAllowanceTotals(unit);
+    const overBudget = uniqueIndices.some(modelIndex => modelMovementDistanceFromStart(unit, modelIndex) > (totals[modelIndex] ?? 0) + 0.001);
+    if (overBudget) return state;
+    lockOtherMovedPlayUnits(s, unit);
+    unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
+    updateModelMovementAllowances(unit);
+  }
   return s;
 }
 
@@ -2426,6 +3616,11 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
     activeUnits(s, side).forEach(u => newLogs.push(...runMovement(u, s, rules)));
   } else if (s.phase === 'movement') {
     if (movementStep(s) === 'moveUnits') {
+      const movementIssues = playMovementLegalityIssues(s, side);
+      if (movementIssues.length) {
+        s.log = [...s.log, log(s, side, armyName, `Movement is not legal: ${movementIssues.join(' ')}`, 'info')];
+        return s;
+      }
       markRemainingStationaryUnits(s, side);
       s.movementStep = 'reinforcements';
       newLogs.push(phaseLog(s, side, armyName, `\n--- Reinforcements Step ---`));
@@ -2465,7 +3660,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   const newLogs: LogEntry[] = [];
 
   // Reset per-turn flags
-  myUnits().forEach(u => { u.activated = false; u.charged = false; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementComplete = undefined; u.arrivedFromReinforcements = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
+  myUnits().forEach(u => { u.activated = false; u.charged = false; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.arrivedFromReinforcements = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
 
   // Command
   s.phase = 'command';

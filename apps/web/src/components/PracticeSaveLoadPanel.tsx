@@ -48,10 +48,16 @@ function actionLabel(action: GameAction): string {
   switch (action.type) {
     case 'play.placeUnit':
       return `Deploy unit ${action.unitIndex + 1}`;
+    case 'play.placeReinforcement':
+      return `Set up reinforcement ${action.armyUnitIndex + 1}`;
+    case 'play.placeStrategicReserveUnit':
+      return 'Return Strategic Reserve';
     case 'play.undeployUnit':
       return 'Undeploy unit';
     case 'play.moveModels':
       return `Move ${action.parts.reduce((sum, part) => sum + part.modelIndices.length, 0)} model${action.parts.length === 1 ? '' : 's'}`;
+    case 'play.moveModelsVertically':
+      return `Move height ${action.dz > 0 ? '+' : ''}${action.dz}"`;
     case 'play.fallBackUnit':
       return 'Fall Back';
     case 'play.advanceUnit':

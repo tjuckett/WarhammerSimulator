@@ -21,6 +21,7 @@ export type MovementStep = 'moveUnits' | 'reinforcements';
 export interface Position {
   x: number;
   y: number;
+  z?: number;
 }
 
 export interface BattleUnit {
@@ -31,7 +32,11 @@ export interface BattleUnit {
   profile: UnitProfile;
   remainingModels: number;
   woundsOnLeadModel: number;
-  position: Position;          // centroid of modelPositions; used for range/LOS checks
+  woundedModelIndex?: number;
+  pendingCasualties?: number;
+  pendingWoundAssignment?: { woundsOnModel: number };
+  pendingDamageAllocations?: Array<{ damage: number; noCarryOver?: boolean; source?: string }>;
+  position: Position;          // centroid of modelPositions; display and coarse AI positioning
   modelPositions: Position[];  // one entry per remaining model
   modelRotations?: number[];   // facing for each model footprint in degrees
   facingDeg: number;
@@ -39,11 +44,16 @@ export interface BattleUnit {
   movementAction?: MovementAction;
   movementAllowanceRemaining?: number;
   movementAllowanceRemainingByModel?: number[];
+  movementAllowanceTotalByModel?: number[];
+  movementStartPositionsByModel?: Position[];
+  movementStartRotationsByModel?: number[];
   movementComplete?: boolean;
   arrivedFromReinforcements?: boolean;
+  inStrategicReserves?: boolean;
   embarkedInUnitId?: string;
   emergencyDisembarkedThisTurn?: boolean;
   fellBack?: boolean;
+  firedWeaponIndices?: number[];
   inCombat: boolean;
   battleshocked: boolean;
   activated: boolean;

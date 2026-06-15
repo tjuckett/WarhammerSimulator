@@ -23,6 +23,7 @@ interface Props {
   onStrategyChange: (s: DeploymentStrategy) => void;
   onSelectPlayUnit?: (side: 0 | 1, unitIndex: number) => void;
   onSelectStagedUnit?: (side: 0 | 1, unitIndex: number) => void;
+  onSelectReserveUnit?: (side: 0 | 1, unitId: string) => void;
   onSelectPlacedUnit?: (unitId: string, side: 0 | 1) => void;
   onInspectUnit?: (unitId: string, side: 0 | 1) => void;
   onInspectProfile?: (side: 0 | 1, unitIndex: number) => void;
@@ -47,6 +48,7 @@ export function ArmyPanel({
   onStrategyChange,
   onSelectPlayUnit,
   onSelectStagedUnit,
+  onSelectReserveUnit,
   onSelectPlacedUnit,
   onInspectUnit,
   onInspectProfile,
@@ -156,7 +158,8 @@ export function ArmyPanel({
     }));
   }
 
-  const units = battleState ? battleState.units.filter(u => u.side === side) : null;
+  const units = battleState ? battleState.units.filter(u => u.side === side && !u.inStrategicReserves) : null;
+  const reserveUnits = battleState ? battleState.units.filter(u => u.side === side && !u.destroyed && u.inStrategicReserves) : [];
   const battlefieldUnits = army?.units.filter(unit => deploymentMode(unit) === 'battlefield').length ?? 0;
   const stagedUnits = army ? army.units.length - battlefieldUnits : 0;
 
@@ -224,6 +227,7 @@ export function ArmyPanel({
             side={side}
             army={army!}
             placedUnits={units ?? []}
+            reserveUnits={reserveUnits}
             unplacedUnits={battleState.unplacedUnits[side]}
             color={color}
             selectedIndex={selectedPlayUnitIndex}
@@ -231,6 +235,7 @@ export function ArmyPanel({
             onSelect={onSelectPlayUnit}
             onSelectPlacedUnit={onSelectPlacedUnit}
             onSelectStagedUnit={onSelectStagedUnit}
+            onSelectReserveUnit={onSelectReserveUnit}
             onInspectStagedUnit={onInspectProfile ? unitIndex => onInspectProfile(side, unitIndex) : undefined}
             onUndeployPlacedUnit={battleState.phase === 'deployment' ? onUndeployPlacedUnit : undefined}
           />
@@ -620,6 +625,7 @@ function PlayDeploymentList({
   side,
   army,
   placedUnits,
+  reserveUnits,
   unplacedUnits,
   color,
   selectedIndex,
@@ -627,12 +633,14 @@ function PlayDeploymentList({
   onSelect,
   onSelectPlacedUnit,
   onSelectStagedUnit,
+  onSelectReserveUnit,
   onInspectStagedUnit,
   onUndeployPlacedUnit,
 }: {
   side: 0 | 1;
   army: ImportedArmy;
   placedUnits: BattleUnit[];
+  reserveUnits: BattleUnit[];
   unplacedUnits: ImportedArmy['units'];
   color: string;
   selectedIndex: number | null;
@@ -640,11 +648,12 @@ function PlayDeploymentList({
   onSelect?: (side: 0 | 1, unitIndex: number) => void;
   onSelectPlacedUnit?: (unitId: string, side: 0 | 1) => void;
   onSelectStagedUnit?: (side: 0 | 1, unitIndex: number) => void;
+  onSelectReserveUnit?: (side: 0 | 1, unitId: string) => void;
   onInspectStagedUnit?: (unitIndex: number) => void;
   onUndeployPlacedUnit?: (unitId: string, side: 0 | 1) => void;
 }) {
   const unplacedDisplayItems = groupedPlayDropDisplayItems(army, unplacedUnits);
-  const stagedItems = groupedStagedDisplayItems(army, placedUnits);
+  const stagedItems = groupedStagedDisplayItems(army, placedUnits, reserveUnits);
   return (
     <>
       <PanelSectionHeader label="To Deploy" count={unplacedDisplayItems.length} color={color} />
@@ -688,11 +697,13 @@ function PlayDeploymentList({
       )}
 
       <PanelSectionHeader label="Staged" count={stagedItems.length} color="#8888aa" />
-      {stagedItems.length ? stagedItems.map(({ unit: u, index, indent, groupRole, groupIndex, kind, transportEntry }) => (
+      {stagedItems.length ? stagedItems.map(({ unit: u, index, indent, groupRole, groupIndex, kind, transportEntry, battleUnit }) => (
         <button
-          key={`${kind}-${unitRosterId(u)}-${index}-${groupRole}-${groupIndex}-staged`}
+          key={`${kind}-${battleUnit?.id ?? unitRosterId(u)}-${index}-${groupRole}-${groupIndex}-staged`}
           type="button"
-          onClick={() => onSelectStagedUnit ? onSelectStagedUnit(side, index) : onInspectStagedUnit?.(index)}
+          onClick={() => kind === 'reserve' && battleUnit
+            ? onSelectReserveUnit?.(side, battleUnit.id)
+            : onSelectStagedUnit ? onSelectStagedUnit(side, index) : onInspectStagedUnit?.(index)}
           style={{
             display: 'block',
             width: `calc(100% - ${indent ? 34 : 12}px)`,
@@ -701,17 +712,26 @@ function PlayDeploymentList({
             textAlign: 'left',
             background: kind === 'transport'
               ? 'rgba(255,224,102,0.07)'
+              : kind === 'reserve'
+                ? 'rgba(102,215,255,0.07)'
               : groupRole !== 'solo' ? 'rgba(80,120,210,0.06)' : '#111118',
-            border: `1px solid ${kind === 'transport' ? '#ffe06644' : groupRole !== 'solo' ? '#9ab7ff33' : '#24243a'}`,
+            border: `1px solid ${kind === 'transport' ? '#ffe06644' : kind === 'reserve' ? '#66d7ff44' : groupRole !== 'solo' ? '#9ab7ff33' : '#24243a'}`,
             borderLeft: kind === 'transport'
               ? '4px solid #ffe06688'
+              : kind === 'reserve'
+                ? '4px solid #66d7ff88'
               : groupRole !== 'solo' ? '4px solid #9ab7ff66' : '4px solid #24243a',
             borderRadius: 5,
             color: '#bbb',
             font: 'inherit',
-            cursor: onSelectStagedUnit || onInspectStagedUnit ? 'pointer' : 'default',
+            cursor: onSelectStagedUnit || onSelectReserveUnit || onInspectStagedUnit ? 'pointer' : 'default',
           }}
         >
+          {kind === 'reserve' && (
+            <div style={{ color: '#66d7ff', fontSize: 9, fontWeight: 800, textTransform: 'uppercase', marginBottom: 2 }}>
+              Strategic Reserves
+            </div>
+          )}
           {kind === 'transport' && (
             <div style={{ color: '#ffe066', fontSize: 9, fontWeight: 800, textTransform: 'uppercase', marginBottom: 2 }}>
               Transport contents
@@ -725,12 +745,15 @@ function PlayDeploymentList({
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center' }}>
             <span style={{ fontSize: 12, fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.name}</span>
             <span style={{ color: '#777', fontSize: 10, whiteSpace: 'nowrap' }}>
-              {kind === 'transport' && transportEntry
+              {kind === 'reserve'
+                ? 'Off-board'
+                : kind === 'transport' && transportEntry
                 ? `${transportEntry.used}/${transportEntry.capacity || '?'} embarked`
                 : deploymentLabel(u, army)}
             </span>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 4 }}>
+            {kind === 'reserve' && <Badge label="Aircraft" color="#66d7ff" />}
             {kind === 'transport' && <Badge label="Transport" color="#ffe066" />}
             {groupRole === 'leader' && <Badge label="Leader" color="#9ab7ff" />}
             {groupRole === 'bodyguard' && <Badge label="Bodyguard" color="#9ab7ff" />}
@@ -764,13 +787,14 @@ type PlayDropDisplayItem = {
 };
 
 type StagedDisplayItem = {
-  kind: 'unit' | 'transport';
+  kind: 'unit' | 'transport' | 'reserve';
   unit: UnitProfile;
   index: number;
   indent: number;
   groupRole: 'solo' | 'leader' | 'bodyguard';
   groupIndex: number;
   transportEntry?: TransportManifestEntry;
+  battleUnit?: BattleUnit;
 };
 
 function groupedPlayDropDisplayItems(army: ImportedArmy, unplacedUnits: UnitProfile[]): PlayDropDisplayItem[] {
@@ -802,9 +826,20 @@ function groupedPlayDropDisplayItems(army: ImportedArmy, unplacedUnits: UnitProf
   });
 }
 
-function groupedStagedDisplayItems(army: ImportedArmy, placedUnits: BattleUnit[] = []): StagedDisplayItem[] {
-  const placedProfileIds = new Set(placedUnits.filter(unit => !unit.destroyed).map(unit => unitRosterId(unit.profile)));
+function groupedStagedDisplayItems(army: ImportedArmy, placedUnits: BattleUnit[] = [], reserveUnits: BattleUnit[] = []): StagedDisplayItem[] {
+  const placedProfileIds = new Set(
+    [...placedUnits, ...reserveUnits].filter(unit => !unit.destroyed).map(unit => unitRosterId(unit.profile)),
+  );
   const groupedItems = groupedUnitDisplayItems(army);
+  const reserveStaged = reserveUnits.map((unit): StagedDisplayItem => ({
+    kind: 'reserve',
+    unit: unit.profile,
+    index: army.units.findIndex(candidate => unitRosterId(candidate) === unitRosterId(unit.profile)),
+    indent: 0,
+    groupRole: 'solo',
+    groupIndex: 0,
+    battleUnit: unit,
+  }));
   const nonTransportStaged = groupedItems.flatMap((item): StagedDisplayItem[] => {
     if (placedProfileIds.has(unitRosterId(item.unit))) return [];
     if (item.groupRole === 'leader') {
@@ -861,7 +896,7 @@ function groupedStagedDisplayItems(army: ImportedArmy, placedUnits: BattleUnit[]
         })),
     ]);
 
-  return [...nonTransportStaged, ...transportStaged];
+  return [...reserveStaged, ...nonTransportStaged, ...transportStaged];
 }
 
 function isEmbarkedInTransport(unit: UnitProfile, transport: TransportManifestEntry): boolean {

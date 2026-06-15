@@ -4,21 +4,28 @@ import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRo
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
 import {
   advancePlayUnit,
+  allocatePlayDamageToModel,
+  assignPlayWoundedModel,
   beginPlayBattle,
   completePlayUnitMovement,
   disembarkPlayUnit,
   embarkPlayUnit,
   fallBackPlayUnit,
+  lockPlayUnitShooting,
   markRemainingStationaryUnits,
   movementStep,
   movePlayModels,
+  movePlayModelsVertically,
   placePlayReinforcement,
+  placePlayStrategicReserveUnit,
   placePlayUnit,
   placeNextUnit,
   playPhaseCoherencyIssues,
+  removePlayCasualtyModels,
   removePlayModels,
   reorganizePlayModelsGrid,
   rotatePlayModels,
+  shootPlayUnitWeapon,
   simulateNextPhase,
   undeployPlayUnit,
 } from '../engine/simulator';
@@ -49,6 +56,12 @@ export type GameAction =
       position: Position;
     })
   | (GameActionBase & {
+      type: 'play.placeStrategicReserveUnit';
+      side: Side;
+      unitId: string;
+      position: Position;
+    })
+  | (GameActionBase & {
       type: 'play.undeployUnit';
       side: Side;
       unitId: string;
@@ -59,6 +72,11 @@ export type GameAction =
       dx: number;
       dy: number;
       collide: boolean;
+    })
+  | (GameActionBase & {
+      type: 'play.moveModelsVertically';
+      parts: ModelSelectionPart[];
+      dz: number;
     })
   | (GameActionBase & {
       type: 'play.fallBackUnit';
@@ -103,6 +121,34 @@ export type GameAction =
       parts: ModelSelectionPart[];
     })
   | (GameActionBase & {
+      type: 'play.removeCasualties';
+      parts: ModelSelectionPart[];
+    })
+  | (GameActionBase & {
+      type: 'play.assignWoundedModel';
+      side: Side;
+      unitId: string;
+      modelIndex: number;
+    })
+  | (GameActionBase & {
+      type: 'play.allocateDamage';
+      side: Side;
+      unitId: string;
+      modelIndex: number;
+    })
+  | (GameActionBase & {
+      type: 'play.shootUnitWeapon';
+      side: Side;
+      unitId: string;
+      targetUnitId: string;
+      weaponIndex: number | 'all';
+    })
+  | (GameActionBase & {
+      type: 'play.lockUnitShooting';
+      side: Side;
+      unitId: string;
+    })
+  | (GameActionBase & {
       type: 'play.beginBattle';
     })
   | (GameActionBase & {
@@ -141,6 +187,8 @@ function stepPlayPhase(state: BattleState): BattleState {
       unit.movementAction = undefined;
       unit.movementAllowanceRemaining = undefined;
       unit.movementAllowanceRemainingByModel = undefined;
+      unit.movementAllowanceTotalByModel = undefined;
+      unit.movementStartPositionsByModel = undefined;
       unit.movementComplete = undefined;
       unit.arrivedFromReinforcements = undefined;
       if (unit.emergencyDisembarkedThisTurn) unit.battleshocked = false;
@@ -210,12 +258,21 @@ export function applyGameAction(
     case 'play.placeReinforcement':
       return placePlayReinforcement(state, normalizedAction.side, normalizedAction.armyUnitIndex, normalizedAction.position);
 
+    case 'play.placeStrategicReserveUnit':
+      return placePlayStrategicReserveUnit(state, normalizedAction.side, normalizedAction.unitId, normalizedAction.position);
+
     case 'play.undeployUnit':
       return undeployPlayUnit(state, normalizedAction.unitId, normalizedAction.side);
 
     case 'play.moveModels':
       return normalizedAction.parts.reduce(
         (next, part) => movePlayModels(next, part.unitId, part.side, part.modelIndices, normalizedAction.dx, normalizedAction.dy, normalizedAction.collide),
+        state,
+      );
+
+    case 'play.moveModelsVertically':
+      return normalizedAction.parts.reduce(
+        (next, part) => movePlayModelsVertically(next, part.unitId, part.side, part.modelIndices, normalizedAction.dz),
         state,
       );
 
@@ -258,6 +315,31 @@ export function applyGameAction(
         state,
       );
 
+    case 'play.removeCasualties':
+      return normalizedAction.parts.reduce(
+        (next, part) => removePlayCasualtyModels(next, part.unitId, part.side, part.modelIndices),
+        state,
+      );
+
+    case 'play.assignWoundedModel':
+      return assignPlayWoundedModel(state, normalizedAction.unitId, normalizedAction.side, normalizedAction.modelIndex);
+
+    case 'play.allocateDamage':
+      return allocatePlayDamageToModel(state, normalizedAction.unitId, normalizedAction.side, normalizedAction.modelIndex);
+
+    case 'play.shootUnitWeapon':
+      return shootPlayUnitWeapon(
+        state,
+        normalizedAction.unitId,
+        normalizedAction.side,
+        normalizedAction.targetUnitId,
+        normalizedAction.weaponIndex,
+        context.rules,
+      );
+
+    case 'play.lockUnitShooting':
+      return lockPlayUnitShooting(state, normalizedAction.unitId, normalizedAction.side);
+
     case 'play.beginBattle':
       return beginPlayBattle(state);
 
@@ -276,6 +358,7 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
   const normalizedAction = normalizeGameAction(action);
   switch (normalizedAction.type) {
     case 'play.undeployUnit':
+    case 'play.placeStrategicReserveUnit':
     case 'play.fallBackUnit':
     case 'play.advanceUnit':
     case 'play.completeUnitMovement':
@@ -284,6 +367,7 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
     case 'play.disembarkUnit':
       return normalizedAction.passengerUnitId === unitId || normalizedAction.transportUnitId === unitId;
     case 'play.moveModels':
+    case 'play.moveModelsVertically':
     case 'play.rotateModels':
     case 'play.reorganizeModels':
     case 'play.removeModels':

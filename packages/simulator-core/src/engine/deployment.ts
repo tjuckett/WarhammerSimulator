@@ -6,6 +6,7 @@ import type { DeploymentZoneSet, DeploymentZoneShape } from '../data/deploymentZ
 import {
   axisAlignedBoxIntersectsTerrain,
   circleFullyInTerrain,
+  hasLOS,
   lineIntersectsTerrain,
   pointInTerrain,
   terrainCenter,
@@ -266,17 +267,6 @@ export function clearOfTerrain(x: number, y: number, hw: number, hh: number, ter
   return !terrain.some(t => axisAlignedBoxIntersectsTerrain(x, y, hw, hh, t));
 }
 
-// Returns true if any cover-providing terrain feature intersects the line from → to
-export function losBlocked(from: Position, to: Position, terrain: Terrain[]): boolean {
-  for (const t of terrain) {
-    if (!t.providesCover) continue;
-    if (t.features.some(feature => feature.blocksLOS && lineIntersectsTerrain(from, to, feature))) {
-      return true;
-    }
-  }
-  return false;
-}
-
 function opponentDeploymentSamples(side: 0 | 1, deployment = 'Default'): Position[] {
   const zone = zoneFor(side === 0 ? 1 : 0, deployment);
   const samples: Position[] = [];
@@ -297,7 +287,7 @@ export function screenedFromOpponentDeployment(
   deployment = 'Default',
 ): boolean {
   const to = { x, y };
-  return opponentDeploymentSamples(side, deployment).every(from => losBlocked(from, to, terrain));
+  return opponentDeploymentSamples(side, deployment).every(from => !hasLOS(from, to, terrain));
 }
 
 // Returns true if (x,y) lies inside a cover-providing terrain mat

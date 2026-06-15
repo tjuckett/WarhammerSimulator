@@ -8,6 +8,7 @@ import {
   MenuItem,
   Select,
   Slider,
+  Snackbar,
   Typography,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
@@ -15,12 +16,14 @@ import CasinoOutlinedIcon from '@mui/icons-material/CasinoOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import DoneIcon from '@mui/icons-material/Done';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SpeedIcon from '@mui/icons-material/Speed';
 import StopIcon from '@mui/icons-material/Stop';
-import type { BattleState, Phase, Position, Terrain, TerrainFeature, TerrainLayout } from '@warhammer-simulator/core/types/battle';
+import type { BattleState, BattleUnit, LogEntry, Phase, Position, Terrain, TerrainFeature, TerrainLayout } from '@warhammer-simulator/core/types/battle';
 import type { TerrainFeatureSpec, TerrainLayoutData, TerrainSpec } from '@warhammer-simulator/core/data/terrainLayoutTypes';
 import type { ImportedArmy, UnitProfile } from '@warhammer-simulator/core/types/army';
 import { EDITIONS, rulesEditionForRuleset, rulesetMetadataForState, type RulesEdition } from '@warhammer-simulator/core/engine/rulesEngine';
@@ -36,8 +39,8 @@ import {
   type TournamentMission,
 } from '@warhammer-simulator/core/engine/missions';
 import {
-  advancePlayUnit, battleModelIdsWithCoherencyIssues, beginPlayBattle, completePlayUnitMovement, createDeploymentState, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, placePlayReinforcement, placePlayUnit, placeNextUnit, removePlayModels,
-  reorganizePlayModelsGrid, rotatePlayModels, simulateNextPhase, undeployPlayUnit, type DeploymentStrategy,
+  advancePlayUnit, battleModelIdsWithCoherencyIssues, beginPlayBattle, completePlayUnitMovement, createDeploymentState, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placePlayReinforcement, placePlayStrategicReserveUnit, placePlayUnit, placeNextUnit, removePlayModels,
+  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, lockPlayUnitShooting, playShootingWeaponOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, undeployPlayUnit, type DeploymentStrategy, type PlayShootingWeaponOption, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -52,6 +55,7 @@ import { ArmyPanel } from './components/ArmyPanel';
 import { UnitStatsPanel } from './components/UnitStatsPanel';
 import { TerrainLayoutEditor } from './components/TerrainLayoutEditor';
 import { PracticeControlsPanel, PracticeLoadModal, PracticeSaveModal } from './components/PracticeSaveLoadPanel';
+import { CombatResultDialog } from './components/CombatResultDialog';
 import { moveFeature, rotateFeatureAround, terrainCenter, terrainCorners } from '@warhammer-simulator/core/engine/terrainGeometry';
 import { attachedUnitProfilesFor, isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
 import type { GameAction } from '@warhammer-simulator/core/practice/actions';
@@ -88,7 +92,10 @@ type AlignVertexLock = {
 
 type AppMode = 'play' | 'simulation' | 'editor';
 
-type PlayDeploySelection = { kind: 'deployment'; side: 0 | 1; unitIndex: number } | { kind: 'reinforcement'; side: 0 | 1; armyUnitIndex: number };
+type PlayDeploySelection =
+  | { kind: 'deployment'; side: 0 | 1; unitIndex: number }
+  | { kind: 'reinforcement'; side: 0 | 1; armyUnitIndex: number }
+  | { kind: 'strategicReserve'; side: 0 | 1; unitId: string };
 
 type PlayUndoEntry = {
   battleState: BattleState;
@@ -386,6 +393,237 @@ function rotateTerrainToSecondVertex(
   };
 }
 
+function calcWoundTarget(s: number, t: number): number {
+  if (s >= t * 2) return 2;
+  if (s > t) return 3;
+  if (s === t) return 4;
+  if (s * 2 <= t) return 6;
+  return 5;
+}
+
+function calcWoundTargetColor(wt: number): string {
+  if (wt <= 2) return '#4caf50';
+  if (wt === 3) return '#8bc34a';
+  if (wt === 4) return '#cddc39';
+  if (wt === 5) return '#ffc107';
+  return '#ff5722';
+}
+
+function calcEffectiveSave(save: number, ap: number, invuln?: number): number {
+  const modified = save + Math.abs(ap);
+  return invuln !== undefined ? Math.min(modified, invuln) : modified;
+}
+
+const shootingPanelSx = {
+  border: '1px solid rgba(255,255,255,0.12)',
+  borderRadius: '8px',
+  background: 'rgba(255,255,255,0.035)',
+  padding: 1.25,
+  display: 'grid',
+  gap: 1,
+};
+
+function PlayShootingPanel({
+  shooter,
+  targets,
+  selectedTarget,
+  targetIsValid,
+  damageAllocationLocked,
+  weaponOptions,
+  selectedTargetId,
+  selectedWeaponIndex,
+  coverUnitIds,
+  onTargetChange,
+  onWeaponChange,
+  onResolve,
+}: {
+  shooter: BattleUnit | null;
+  targets: BattleUnit[];
+  selectedTarget: BattleUnit | null;
+  targetIsValid: boolean;
+  damageAllocationLocked: boolean;
+  weaponOptions: PlayShootingWeaponOption[];
+  selectedTargetId: string;
+  selectedWeaponIndex: 'all' | string;
+  coverUnitIds?: Set<string>;
+  onTargetChange: (value: string) => void;
+  onWeaponChange: (value: 'all' | string) => void;
+  onResolve: () => void;
+}) {
+  if (!shooter) {
+    return (
+      <Box sx={shootingPanelSx}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>Shooting</Typography>
+        <Typography variant="body2" sx={{ color: '#888' }}>Select one of the active army&apos;s units on the battlefield.</Typography>
+      </Box>
+    );
+  }
+
+  const shootingLocked = damageAllocationLocked;
+  const canResolve = !shootingLocked && weaponOptions.some(option => option.targetIds.length > 0) && !!selectedTarget && targetIsValid && !shooter.activated;
+  const targetInCover = !!(selectedTarget && coverUnitIds?.has(selectedTarget.id));
+
+  const refWeapons = selectedTarget && targetIsValid
+    ? (selectedWeaponIndex === 'all'
+        ? weaponOptions.filter(o => o.targetIds.includes(selectedTargetId))
+        : weaponOptions.filter(o => String(o.weaponIndex) === selectedWeaponIndex && o.targetIds.includes(selectedTargetId))
+      ).map(o => shooter.profile.weapons[o.weaponIndex]).filter(Boolean)
+    : [];
+
+  return (
+    <Box sx={shootingPanelSx}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>Shooting</Typography>
+          <Typography variant="caption" sx={{ display: 'block', color: '#888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {shooter.profile.name}{shooter.activated ? ' — done' : (shooter.firedWeaponIndices?.length ? ` — ${shooter.firedWeaponIndices.length} fired` : '')}
+          </Typography>
+          {(shooter.firedWeaponIndices?.length ?? 0) > 0 && !shooter.activated && (
+            <Typography variant="caption" sx={{ display: 'block', color: '#556', fontStyle: 'italic', fontSize: 10 }}>
+              Already fired: {(shooter.firedWeaponIndices ?? []).map(i => shooter.profile.weapons[i]?.name).filter(Boolean).join(', ')}
+            </Typography>
+          )}
+        </Box>
+        <Button
+          size="small"
+          variant="contained"
+          startIcon={<CasinoOutlinedIcon />}
+          onClick={onResolve}
+          disabled={!canResolve}
+        >
+          Resolve
+        </Button>
+      </Box>
+
+      <FormControl size="small" fullWidth disabled={shootingLocked || !weaponOptions.length || shooter.activated}>
+        <InputLabel id="play-shooting-weapon-label">Weapon</InputLabel>
+        <Select
+          labelId="play-shooting-weapon-label"
+          label="Weapon"
+          value={selectedWeaponIndex}
+          onChange={(event: SelectChangeEvent) => onWeaponChange(event.target.value as 'all' | string)}
+        >
+          {weaponOptions.map(option => (
+            <MenuItem key={option.weaponIndex} value={String(option.weaponIndex)}>
+              {option.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      <FormControl size="small" fullWidth disabled={shootingLocked || !targets.length || shooter.activated}>
+        <InputLabel id="play-shooting-target-label">Target</InputLabel>
+        <Select
+          labelId="play-shooting-target-label"
+          label="Target"
+          value={selectedTargetId}
+          onChange={(event: SelectChangeEvent) => onTargetChange(event.target.value)}
+        >
+          {selectedTarget && !targetIsValid && (
+            <MenuItem value={selectedTarget.id} disabled>
+              {selectedTarget.profile.name} (not targetable)
+            </MenuItem>
+          )}
+          {targets.map(target => (
+            <MenuItem key={target.id} value={target.id}>
+              {target.profile.name} ({target.remainingModels} model{target.remainingModels === 1 ? '' : 's'}, {target.woundsOnLeadModel}W lead)
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      {shootingLocked ? (
+        <Typography variant="caption" sx={{ color: '#d8b35d' }}>
+          Allocate pending damage to defender models before selecting another shooter or target.
+        </Typography>
+      ) : !weaponOptions.length ? (
+        <Typography variant="caption" sx={{ color: '#9a8f6a' }}>No eligible ranged weapons for this unit.</Typography>
+      ) : !targets.length ? (
+        <Typography variant="caption" sx={{ color: '#9a8f6a' }}>No valid targets for the selected weapon.</Typography>
+      ) : refWeapons.length > 0 ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {refWeapons.map((weapon, i) => {
+            const wt = calcWoundTarget(weapon.strength, selectedTarget!.profile.toughness);
+            const sv = calcEffectiveSave(selectedTarget!.profile.save, weapon.ap, selectedTarget!.profile.invulnSave);
+            const usedInvuln = selectedTarget!.profile.invulnSave !== undefined && sv === selectedTarget!.profile.invulnSave;
+            const noSave = sv > 6;
+            const wtColor = calcWoundTargetColor(wt);
+            const coverBonus = targetInCover && (selectedTarget!.profile.save <= 6) ? 1 : 0;
+            const svWithCover = sv - coverBonus;
+            const noSaveWithCover = svWithCover > 6;
+            return (
+              <div key={i} style={{ background: '#080f18', border: '1px solid #1a3048', borderRadius: 6, overflow: 'hidden' }}>
+                {/* Weapon name */}
+                <div style={{
+                  padding: '5px 10px', borderBottom: '1px solid #1a3048',
+                }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#aac8e8' }}>{weapon.name}</span>
+                </div>
+                {/* Threshold grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr' }}>
+                  {/* Attacks */}
+                  <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: '1px solid #0e1e2e' }}>
+                    <div style={{ fontSize: 8, color: '#445', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Attacks</div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: '#e2c16b', lineHeight: 1 }}>{weapon.attacks}</div>
+                    <div style={{ fontSize: 9, color: '#556', marginTop: 3 }}>per model</div>
+                  </div>
+                  {/* Hit */}
+                  <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: '1px solid #0e1e2e' }}>
+                    <div style={{ fontSize: 8, color: '#445', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Hit</div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: '#8ab4ff', lineHeight: 1 }}>{weapon.skill}+</div>
+                  </div>
+                  {/* Wound */}
+                  <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: '1px solid #0e1e2e' }}>
+                    <div style={{ fontSize: 8, color: '#445', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Wound</div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: wtColor, lineHeight: 1 }}>{wt}+</div>
+                    <div style={{ fontSize: 9, color: '#556', marginTop: 3 }}>S{weapon.strength} v T{selectedTarget!.profile.toughness}</div>
+                  </div>
+                  {/* Save */}
+                  <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: '1px solid #0e1e2e' }}>
+                    <div style={{ fontSize: 8, color: '#445', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Save</div>
+                    {coverBonus > 0 ? (
+                      <>
+                        <div style={{ fontSize: 22, fontWeight: 800, lineHeight: 1, color: '#00dcc3' }}>
+                          {noSaveWithCover ? '—' : `${svWithCover}+`}
+                        </div>
+                        <div style={{ fontSize: 9, marginTop: 3, color: '#00aaa0' }}>
+                          ⛨ cover (+{coverBonus} save)
+                        </div>
+                        <div style={{ fontSize: 9, color: '#445' }}>
+                          base {noSave ? 'no save' : `${sv}+`} · AP{weapon.ap}{usedInvuln ? ' ★inv' : ''}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div style={{ fontSize: 22, fontWeight: 800, lineHeight: 1, color: noSave ? '#ff5722' : '#d07030' }}>
+                          {noSave ? '—' : `${sv}+`}
+                        </div>
+                        <div style={{ fontSize: 9, marginTop: 3, color: weapon.ap < 0 ? '#ff9f43' : '#445' }}>
+                          AP{weapon.ap}{usedInvuln ? ' ★inv' : ''}
+                        </div>
+                        {targetInCover && (
+                          <div style={{ fontSize: 9, color: '#558', marginTop: 2 }}>
+                            ⛨ cover (no save to improve)
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                  {/* Damage */}
+                  <div style={{ padding: '8px 4px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 8, color: '#445', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Dmg</div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: '#9b8fd4', lineHeight: 1 }}>{weapon.damage}</div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
+    </Box>
+  );
+}
+
 export default function App() {
   const [appMode, setAppMode] = useState<AppMode>('editor');
   const [army1, setArmy1] = useState<ImportedArmy>(() => loadSavedArmy(0, SAMPLE_ARMIES[0]));
@@ -423,6 +661,12 @@ export default function App() {
   const [simSpeedMs, setSimSpeedMs] = useState(600);
   const [playDeploySelection, setPlayDeploySelection] = useState<PlayDeploySelection | null>(null);
   const [playModelSelection, setPlayModelSelection] = useState<PlayModelSelection | null>(null);
+  const [selectedShootingTargetId, setSelectedShootingTargetId] = useState('');
+  const [selectedShootingWeaponIndex, setSelectedShootingWeaponIndex] = useState<'all' | string>('all');
+  const [casualtyRemovalShooterId, setCasualtyRemovalShooterId] = useState<string | null>(null);
+  const [shootingResultEntries, setShootingResultEntries] = useState<LogEntry[]>([]);
+  const [targetErrorMsg, setTargetErrorMsg] = useState<string | null>(null);
+  const lastShooterIdRef = useRef<string | null>(null);
   const [inspectedSelection, setInspectedSelection] = useState<InspectedSelection | null>(null);
   const [playUndoStack, setPlayUndoStack] = useState<PlayUndoEntry[]>([]);
   const playUndoStackRef = useRef<PlayUndoEntry[]>([]);
@@ -495,6 +739,13 @@ export default function App() {
       ? battleState.unplacedUnits[playDeploySelection.side][playDeploySelection.unitIndex] ?? null
       : playDeploySelection.kind === 'reinforcement' && isPlayReinforcementsStep
         ? battleState.armies[playDeploySelection.side].army.units[playDeploySelection.armyUnitIndex] ?? null
+        : playDeploySelection.kind === 'strategicReserve' && isPlayReinforcementsStep
+          ? battleState.units.find(unit =>
+            unit.id === playDeploySelection.unitId
+            && unit.side === playDeploySelection.side
+            && !unit.destroyed
+            && unit.inStrategicReserves,
+          )?.profile ?? null
         : null
     : null;
   const playIssues = isPlayMode && battleState?.phase === 'deployment'
@@ -557,7 +808,105 @@ export default function App() {
   const selectedPlayBattleUnit = battleState && primaryPlaySelection
     ? battleState.units.find(unit => unit.id === primaryPlaySelection.unitId && unit.side === primaryPlaySelection.side && !unit.destroyed) ?? null
     : null;
+  const selectedShootingUnit = battleState?.phase === 'shooting' && casualtyRemovalShooterId
+    ? battleState.units.find(unit => unit.id === casualtyRemovalShooterId && unit.side === battleState.activeArmy && !unit.destroyed && !unit.embarkedInUnitId) ?? selectedPlayBattleUnit
+    : selectedPlayBattleUnit;
   const activeRulesForBattle = battleState ? rulesEditionForRuleset(battleState.ruleset) : edition;
+  const selectedPlayShootingOptions = useMemo(
+    () => (
+      isPlayMode
+      && battleState?.phase === 'shooting'
+      && selectedShootingUnit
+      && selectedShootingUnit.side === battleState.activeArmy
+        ? playShootingWeaponOptions(battleState, selectedShootingUnit.id, selectedShootingUnit.side, activeRulesForBattle)
+        : []
+    ),
+    [isPlayMode, battleState, selectedShootingUnit, activeRulesForBattle],
+  );
+  const selectedPlayShootingTargets = useMemo(() => {
+    if (!battleState || !selectedShootingUnit) return [];
+    const selectedOption = selectedShootingWeaponIndex === 'all'
+      ? null
+      : selectedPlayShootingOptions.find(option => String(option.weaponIndex) === selectedShootingWeaponIndex) ?? null;
+    const targetIds = new Set(
+      (selectedOption ? [selectedOption] : selectedPlayShootingOptions)
+        .flatMap(option => option.targetIds),
+    );
+    return battleState.units.filter(unit =>
+      unit.side !== selectedShootingUnit.side
+      && !unit.destroyed
+      && !unit.embarkedInUnitId
+      && targetIds.has(unit.id),
+    );
+  }, [battleState, selectedShootingUnit, selectedPlayShootingOptions, selectedShootingWeaponIndex]);
+  const selectedShootingTargetUnit = useMemo(() => {
+    if (!battleState || !selectedShootingUnit || !selectedShootingTargetId) return null;
+    return battleState.units.find(unit =>
+      unit.id === selectedShootingTargetId
+      && unit.side !== selectedShootingUnit.side
+      && !unit.destroyed
+      && !unit.embarkedInUnitId
+    ) ?? null;
+  }, [battleState, selectedShootingUnit, selectedShootingTargetId]);
+  const selectedShootingTargetIsValid = !!(
+    selectedShootingTargetUnit
+    && selectedPlayShootingTargets.some(target => target.id === selectedShootingTargetUnit.id)
+  );
+
+  const coverUnitIds = useMemo<Set<string>>(() => {
+    if (!battleState || !selectedShootingUnit || battleState.phase !== 'shooting') return new Set();
+    const shooter = selectedShootingUnit;
+    return new Set(
+      battleState.units
+        .filter(u => u.side !== shooter.side && !u.destroyed && !u.embarkedInUnitId
+          && targetHasCoverFrom(shooter.modelPositions, u, battleState.terrain))
+        .map(u => u.id),
+    );
+  }, [battleState, selectedShootingUnit]);
+
+  const losRays = useMemo<LOSRay[]>(() => {
+    if (!battleState || !selectedShootingUnit || battleState.phase !== 'shooting') return [];
+    return battleState.units
+      .filter(unit => unit.side !== selectedShootingUnit.side && !unit.destroyed && !unit.embarkedInUnitId)
+      .flatMap(unit => shootingLOSRays(selectedShootingUnit, unit, battleState.terrain));
+  }, [battleState, selectedShootingUnit]);
+  const visibleOutOfRangeUnitIds = useMemo<Set<string>>(() => {
+    if (!battleState || !selectedShootingUnit || battleState.phase !== 'shooting') return new Set();
+    const options = selectedShootingWeaponIndex === 'all'
+      ? selectedPlayShootingOptions
+      : selectedPlayShootingOptions.filter(option => String(option.weaponIndex) === selectedShootingWeaponIndex);
+    const visibleUnitIds = new Set(losRays.filter(ray => !ray.blocked).map(ray => ray.toUnitId));
+    const maxRange = Math.max(
+      0,
+      ...options.map(option => selectedShootingUnit.profile.weapons[option.weaponIndex]?.range ?? 0),
+    );
+    if (maxRange <= 0) return visibleUnitIds;
+    return new Set(
+      battleState.units
+        .filter(unit => unit.side !== selectedShootingUnit.side && !unit.destroyed && !unit.embarkedInUnitId)
+        .filter(unit => visibleUnitIds.has(unit.id))
+        .filter(unit => !battleUnitsWithinBaseEdgeRange(selectedShootingUnit, unit, maxRange))
+        .map(unit => unit.id),
+    );
+  }, [battleState, selectedShootingUnit, selectedPlayShootingOptions, selectedShootingWeaponIndex, losRays]);
+  const shootingReadyUnitIds = useMemo<Set<string>>(() => {
+    if (!battleState || battleState.phase !== 'shooting') return new Set();
+    return new Set(
+      battleState.units
+        .filter(unit => unit.side === battleState.activeArmy && !unit.destroyed && !unit.embarkedInUnitId && !unit.activated)
+        .map(unit => unit.id),
+    );
+  }, [battleState]);
+  const pendingDamageAllocationUnitIds = useMemo<Set<string>>(() => {
+    if (!battleState || battleState.phase !== 'shooting') return new Set();
+    return new Set(
+      battleState.units
+        .filter(unit => !unit.destroyed && !unit.embarkedInUnitId && (unit.pendingDamageAllocations?.length ?? 0) > 0)
+        .map(unit => unit.id),
+    );
+  }, [battleState]);
+  const damageAllocationLocked = pendingDamageAllocationUnitIds.size > 0;
+
   const selectedPlayCanAdvance = !!(
     isPlayMode
     && battleState
@@ -598,6 +947,14 @@ export default function App() {
     && selectedPlayBattleUnit
     && !selectedPlayBattleUnit.movementComplete
     && (selectedPlayBattleUnit.movementAction === 'normalMove' || selectedPlayBattleUnit.movementAction === 'advanced')
+  );
+  const selectedPlayCanMoveVertically = !!(
+    isPlayMode
+    && battleState?.phase === 'movement'
+    && !isPlayReinforcementsStep
+    && playModelSelection
+    && primaryPlaySelection
+    && primaryPlaySelection.side === battleState.activeArmy
   );
   const selectedPlayCanEmbark = !!(
     isPlayMode
@@ -661,8 +1018,65 @@ export default function App() {
   }, [battleState]);
 
   useEffect(() => {
+    if (!battleState || battleState.phase !== 'shooting' || !selectedShootingUnit) {
+      setSelectedShootingTargetId('');
+      setSelectedShootingWeaponIndex('all');
+      setCasualtyRemovalShooterId(null);
+      return;
+    }
+    if (!selectedPlayShootingOptions.length) {
+      if (selectedShootingWeaponIndex !== 'all') setSelectedShootingWeaponIndex('all');
+      return;
+    }
+    if (
+      selectedShootingWeaponIndex === 'all'
+      || !selectedPlayShootingOptions.some(option => String(option.weaponIndex) === selectedShootingWeaponIndex)
+    ) {
+      setSelectedShootingWeaponIndex(String(selectedPlayShootingOptions[0].weaponIndex));
+      return;
+    }
+    const selectedTargetStillExists = !!(
+      selectedShootingTargetId
+      && battleState.units.some(unit =>
+        unit.id === selectedShootingTargetId
+        && unit.side !== selectedShootingUnit.side
+        && !unit.destroyed
+        && !unit.embarkedInUnitId
+      )
+    );
+    if (!selectedTargetStillExists) {
+      setSelectedShootingTargetId(selectedPlayShootingTargets[0]?.id ?? '');
+    }
+  }, [
+    battleState?.phase,
+    battleState?.units,
+    selectedShootingUnit?.id,
+    selectedShootingTargetId,
+    selectedShootingWeaponIndex,
+    selectedPlayShootingOptions,
+    selectedPlayShootingTargets,
+  ]);
+
+  useEffect(() => {
     if (playCoherencyIssues.length === 0) setPlayPhaseWarning('');
   }, [playCoherencyIssues.length]);
+
+  // Lock a partially-fired unit when the player switches to a different unit to shoot with.
+  useEffect(() => {
+    if (!isPlayMode) { lastShooterIdRef.current = null; return; }
+    const currentId = primaryPlaySelection?.unitId ?? null;
+    const lastId = lastShooterIdRef.current;
+    lastShooterIdRef.current = currentId;
+    if (!lastId || lastId === currentId) return;
+    const prev = battleStateRef.current;
+    if (!prev || prev.phase !== 'shooting') return;
+    const prevUnit = prev.units.find(u => u.id === lastId && !u.activated && !u.destroyed);
+    if (!prevUnit || !prevUnit.firedWeaponIndices?.length) return;
+    const next = lockPlayUnitShooting(prev, lastId, prevUnit.side);
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, { type: 'play.lockUnitShooting', unitId: lastId, side: prevUnit.side });
+    commitBattleState(next);
+  }, [primaryPlaySelection?.unitId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     void initializePracticeStorage();
@@ -1326,11 +1740,69 @@ export default function App() {
     setInspectedSelection({ kind: 'profile', side, unitIndex: armyUnitIndex });
   }
 
+  function selectPlayStrategicReserveUnit(side: 0 | 1, unitId: string) {
+    const current = battleStateRef.current;
+    const unit = current?.units.find(candidate =>
+      candidate.id === unitId
+      && candidate.side === side
+      && !candidate.destroyed
+      && candidate.inStrategicReserves,
+    );
+    if (!current || !unit) return;
+    if (current.phase !== 'movement' || movementStep(current) !== 'reinforcements' || current.activeArmy !== side) {
+      setInspectedSelection({ kind: 'battle', side, unitId });
+      return;
+    }
+    setPlayDeploySelection({ kind: 'strategicReserve', side, unitId });
+    setPlayModelSelection(null);
+    setInspectedSelection({ kind: 'battle', side, unitId });
+  }
+
   function inspectProfileUnit(side: 0 | 1, unitIndex: number) {
     setInspectedSelection({ kind: 'profile', side, unitIndex });
   }
 
   function selectPlayModels(selection: PlayModelSelection | null) {
+    if (damageAllocationLocked) {
+      const part = selection?.parts.find(candidate => pendingDamageAllocationUnitIds.has(candidate.unitId));
+      const modelIndex = part?.modelIndices[0];
+      const prev = battleStateRef.current;
+      if (!part || modelIndex === undefined || !prev) {
+        setTargetErrorMsg('Select a model to allocate the next pending damage');
+        return;
+      }
+      const next = allocatePlayDamageToModel(prev, part.unitId, part.side, modelIndex);
+      if (next === prev) {
+        setTargetErrorMsg('Damage must be allocated to the already wounded model until it is destroyed');
+        return;
+      }
+      pushPlayUndo(playUndoEntry(prev), next, {
+        type: 'play.allocateDamage',
+        unitId: part.unitId,
+        side: part.side,
+        modelIndex,
+      });
+      const stillPending = next.units.find(unit => unit.id === part.unitId && unit.side === part.side && (unit.pendingDamageAllocations?.length ?? 0) > 0);
+      if (stillPending) {
+        setPlayModelSelection(normalizePlaySelectionForState(next, {
+          side: stillPending.side,
+          parts: [{
+            unitId: stillPending.id,
+            side: stillPending.side,
+            modelIndices: stillPending.modelPositions.map((_, index) => index),
+          }],
+        }));
+        setInspectedSelection({ kind: 'battle', side: stillPending.side, unitId: stillPending.id });
+        setTargetErrorMsg('Select a model to allocate the next pending damage');
+      } else {
+        setPlayModelSelection(null);
+        setInspectedSelection(null);
+        setCasualtyRemovalShooterId(null);
+        setTargetErrorMsg(null);
+      }
+      commitBattleState(next);
+      return;
+    }
     const normalized = normalizePlaySelectionForState(battleState, selection);
     if (!normalized) {
       setPlayModelSelection(null);
@@ -1338,6 +1810,11 @@ export default function App() {
       return;
     }
     const primary = normalized.parts[0];
+    if (isPlayMode && battleState?.phase === 'shooting') {
+      const unit = battleState.units.find(u => u.id === primary.unitId && u.side === primary.side && !u.destroyed);
+      if (!unit) return;
+      if (primary.side !== battleState.activeArmy || unit.activated) return;
+    }
     setPlayDeploySelection(null);
     setInspectedSelection({ kind: 'battle', side: primary.side, unitId: primary.unitId });
     setPlayModelSelection(normalized);
@@ -1378,13 +1855,77 @@ export default function App() {
     setPlayModelSelection(selection);
   }
 
-  function inspectBattleUnit(unitId: string, side: 0 | 1) {
-    setInspectedSelection({ kind: 'battle', side, unitId });
-    if (isPlayMode && battleState && battleState.phase !== 'end') {
-      selectPlacedPlayUnit(unitId, side);
+  function invalidShootingTargetMessage(target: BattleUnit, shooter: BattleUnit) {
+    const weaponText = selectedShootingWeaponIndex === 'all' ? '' : ' with the selected weapon';
+    if (visibleOutOfRangeUnitIds.has(target.id)) {
+      if (selectedPlayShootingOptions.length === 0) {
+        return `${target.profile.name} is visible to ${shooter.profile.name}, but ${shooter.profile.name} has no eligible ranged weapons`;
+      }
+      return `${target.profile.name} is visible to ${shooter.profile.name} but out of range${weaponText}`;
     }
+    return `${target.profile.name} cannot be targeted by ${shooter.profile.name}${weaponText} - out of LOS, out of range, or blocked by shooting restrictions`;
   }
 
+  function inspectBattleUnit(unitId: string, side: 0 | 1) {
+    if (damageAllocationLocked && !pendingDamageAllocationUnitIds.has(unitId)) {
+      setTargetErrorMsg('Allocate pending damage before selecting another unit');
+      return;
+    }
+    if (isPlayMode && battleState?.phase === 'shooting') {
+      const clickedUnit = battleState.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+      if (!clickedUnit) return;
+      if (damageAllocationLocked) {
+        setInspectedSelection({ kind: 'battle', side, unitId });
+        return;
+      }
+
+      if (side === battleState.activeArmy) {
+        setInspectedSelection({ kind: 'battle', side, unitId });
+        setCasualtyRemovalShooterId(null);
+        const name = clickedUnit.profile.name;
+        if (clickedUnit.activated) {
+          setTargetErrorMsg(`${name} has already shot this phase`);
+          return;
+        }
+
+        const options = playShootingWeaponOptions(battleState, unitId, side, activeRulesForBattle);
+        selectPlacedPlayUnit(unitId, side);
+        setSelectedShootingWeaponIndex(options[0] ? String(options[0].weaponIndex) : 'all');
+        const firstTargetId = options.flatMap(option => option.targetIds)[0] ?? '';
+        setSelectedShootingTargetId(firstTargetId);
+        if (!firstTargetId) {
+          setTargetErrorMsg(`${name} has no valid shooting targets`);
+        } else {
+          setTargetErrorMsg(null);
+        }
+        return;
+      }
+
+      setInspectedSelection({ kind: 'battle', side, unitId });
+      setSelectedShootingTargetId(unitId);
+      if (!selectedPlayBattleUnit || selectedPlayBattleUnit.side !== battleState.activeArmy) {
+        setTargetErrorMsg('Select one of the active army units as the shooter first');
+        return;
+      }
+
+      const targetOptions = selectedShootingWeaponIndex === 'all'
+        ? selectedPlayShootingOptions
+        : selectedPlayShootingOptions.filter(option => String(option.weaponIndex) === selectedShootingWeaponIndex);
+      const canTarget = targetOptions.some(option => option.targetIds.includes(unitId));
+      if (!canTarget) {
+        setTargetErrorMsg(invalidShootingTargetMessage(clickedUnit, selectedPlayBattleUnit));
+        return;
+      }
+
+      setTargetErrorMsg(null);
+      return;
+    }
+
+    setInspectedSelection({ kind: 'battle', side, unitId });
+    if (!isPlayMode || !battleState || battleState.phase === 'end') return;
+
+    selectPlacedPlayUnit(unitId, side);
+  }
   function undeployPlacedPlayUnit(unitId: string, side: 0 | 1) {
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'deployment') return;
@@ -1497,10 +2038,14 @@ export default function App() {
     if (!prev) return;
     const next = playDeploySelection.kind === 'deployment'
       ? placePlayUnit(prev, playDeploySelection.side, playDeploySelection.unitIndex, { x, y })
-      : placePlayReinforcement(prev, playDeploySelection.side, playDeploySelection.armyUnitIndex, { x, y });
+      : playDeploySelection.kind === 'reinforcement'
+        ? placePlayReinforcement(prev, playDeploySelection.side, playDeploySelection.armyUnitIndex, { x, y })
+        : placePlayStrategicReserveUnit(prev, playDeploySelection.side, playDeploySelection.unitId, { x, y });
     const placed = playDeploySelection.kind === 'deployment'
       ? next.unplacedUnits[playDeploySelection.side].length < prev.unplacedUnits[playDeploySelection.side].length
-      : next.units.length > prev.units.length;
+      : playDeploySelection.kind === 'reinforcement'
+        ? next.units.length > prev.units.length
+        : !next.units.find(unit => unit.id === playDeploySelection.unitId && unit.side === playDeploySelection.side)?.inStrategicReserves;
     if (placed) {
       pushPlayUndo(playUndoEntry(prev), next, playDeploySelection.kind === 'deployment'
         ? {
@@ -1509,10 +2054,17 @@ export default function App() {
           unitIndex: playDeploySelection.unitIndex,
           position: { x, y },
         }
-        : {
+        : playDeploySelection.kind === 'reinforcement'
+          ? {
           type: 'play.placeReinforcement',
           side: playDeploySelection.side,
           armyUnitIndex: playDeploySelection.armyUnitIndex,
+          position: { x, y },
+        }
+          : {
+          type: 'play.placeStrategicReserveUnit',
+          side: playDeploySelection.side,
+          unitId: playDeploySelection.unitId,
           position: { x, y },
         });
       setPlayDeploySelection(null);
@@ -1565,6 +2117,26 @@ export default function App() {
       pendingAction.action.collide = pendingAction.action.collide || collide;
       pendingAction.stateAfter = next;
     }
+    commitBattleState(next);
+  }
+
+  function moveSelectedPlayModelsVertically(dz: number) {
+    commitPendingPlayModelMove();
+    const selection = playModelSelection;
+    const prev = battleStateRef.current;
+    if (!selection || !prev || prev.phase !== 'movement' || movementStep(prev) !== 'moveUnits') return;
+    let next = prev;
+    for (const part of selection.parts) {
+      next = movePlayModelsVertically(next, part.unitId, part.side, part.modelIndices, dz);
+    }
+    if (next === prev) return;
+    const nextSelection = normalizePlaySelectionForState(next, selection);
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.moveModelsVertically',
+      parts: clone(selection.parts),
+      dz,
+    });
+    setPlayModelSelection(nextSelection);
     commitBattleState(next);
   }
 
@@ -1625,6 +2197,64 @@ export default function App() {
       side: selection.side,
     });
     setPlayModelSelection(normalizePlaySelectionForState(next, playModelSelection));
+    commitBattleState(next);
+  }
+
+  function resolveSelectedPlayShooting() {
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || prev.phase !== 'shooting' || !selection || !selectedShootingTargetId) return;
+    if (damageAllocationLocked) {
+      setTargetErrorMsg('Allocate pending damage before shooting again');
+      return;
+    }
+    if (!selectedPlayShootingTargets.some(target => target.id === selectedShootingTargetId)) {
+      const target = prev.units.find(unit => unit.id === selectedShootingTargetId && !unit.destroyed);
+      if (target && selectedShootingUnit) {
+        setTargetErrorMsg(invalidShootingTargetMessage(target, selectedShootingUnit));
+      }
+      return;
+    }
+    const weaponIndex = selectedShootingWeaponIndex === 'all' ? 'all' : Number(selectedShootingWeaponIndex);
+    if (weaponIndex !== 'all' && !Number.isFinite(weaponIndex)) return;
+    const rules = rulesEditionForRuleset(prev.ruleset);
+    const next = shootPlayUnitWeapon(
+      prev,
+      selection.unitId,
+      selection.side,
+      selectedShootingTargetId,
+      weaponIndex,
+      rules,
+    );
+    if (next === prev) return;
+    setShootingResultEntries(next.log.slice(prev.log.length));
+    const pendingDamageUnit = next.units.find(unit => !unit.destroyed && !unit.embarkedInUnitId && (unit.pendingDamageAllocations?.length ?? 0) > 0);
+    if (pendingDamageUnit) {
+      setCasualtyRemovalShooterId(selection.unitId);
+      setPlayModelSelection(normalizePlaySelectionForState(next, {
+        side: pendingDamageUnit.side,
+        parts: [{
+          unitId: pendingDamageUnit.id,
+          side: pendingDamageUnit.side,
+          modelIndices: pendingDamageUnit.modelPositions.map((_, modelIndex) => modelIndex),
+        }],
+      }));
+      setInspectedSelection({ kind: 'battle', side: pendingDamageUnit.side, unitId: pendingDamageUnit.id });
+      setTargetErrorMsg('Select a model to allocate the next pending damage');
+    }
+    if (!pendingDamageUnit) {
+      setTargetErrorMsg(null);
+    }
+    // After a single-weapon fire the weapon is gone from the options; the effect picks the next available weapon.
+    if (weaponIndex !== 'all') setSelectedShootingWeaponIndex('all');
+
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.shootUnitWeapon',
+      unitId: selection.unitId,
+      side: selection.side,
+      targetUnitId: selectedShootingTargetId,
+      weaponIndex,
+    });
     commitBattleState(next);
   }
 
@@ -1819,6 +2449,9 @@ export default function App() {
         unit.movementAction = undefined;
         unit.movementAllowanceRemaining = undefined;
         unit.movementAllowanceRemainingByModel = undefined;
+        unit.movementAllowanceTotalByModel = undefined;
+        unit.movementStartPositionsByModel = undefined;
+        unit.movementStartRotationsByModel = undefined;
         unit.movementComplete = undefined;
         unit.arrivedFromReinforcements = undefined;
         if (unit.emergencyDisembarkedThisTurn) unit.battleshocked = false;
@@ -2064,6 +2697,7 @@ export default function App() {
             onStrategyChange={setStrategy1}
             onSelectPlayUnit={selectPlayDeployUnit}
             onSelectStagedUnit={selectPlayReinforcementUnit}
+            onSelectReserveUnit={selectPlayStrategicReserveUnit}
             onSelectPlacedUnit={selectPlacedPlayUnit}
             onInspectUnit={inspectBattleUnit}
             onInspectProfile={inspectProfileUnit}
@@ -2088,6 +2722,7 @@ export default function App() {
             onStrategyChange={setStrategy2}
             onSelectPlayUnit={selectPlayDeployUnit}
             onSelectStagedUnit={selectPlayReinforcementUnit}
+            onSelectReserveUnit={selectPlayStrategicReserveUnit}
             onSelectPlacedUnit={selectPlacedPlayUnit}
             onInspectUnit={inspectBattleUnit}
             onInspectProfile={inspectProfileUnit}
@@ -2100,14 +2735,22 @@ export default function App() {
           <Battlefield
             state={battleState ?? previewState}
             selectedUnitId={inspectedBattleUnitId}
-            selectedUnitIds={isPlayMode ? [] : inspectedBattleUnitIds}
+            selectedUnitIds={isPlayMode
+              ? (battleState?.phase === 'shooting' && selectedShootingTargetId ? [selectedShootingTargetId] : [])
+              : inspectedBattleUnitIds}
+            shooterUnitId={isPlayMode && battleState?.phase === 'shooting' ? selectedShootingUnit?.id ?? null : null}
+            targetUnitId={isPlayMode && battleState?.phase === 'shooting' ? selectedShootingTargetId : null}
+            shootingReadyUnitIds={isPlayMode && battleState?.phase === 'shooting' ? shootingReadyUnitIds : undefined}
+            coverUnitIds={isPlayMode ? coverUnitIds : undefined}
+            losRays={isPlayMode ? losRays : undefined}
+            visibleOutOfRangeUnitIds={isPlayMode ? visibleOutOfRangeUnitIds : undefined}
             onSelectUnit={inspectBattleUnit}
             deployer={isPlayMode && battleState && battleState.phase !== 'end' ? {
               enabled: true,
               onPlace: placeSelectedPlayUnit,
               canPlaceUnit: !!selectedPlayUnit && (
                 (battleState.phase === 'deployment' && playDeploySelection?.kind === 'deployment')
-                || (isPlayReinforcementsStep && playDeploySelection?.kind === 'reinforcement')
+                || (isPlayReinforcementsStep && (playDeploySelection?.kind === 'reinforcement' || playDeploySelection?.kind === 'strategicReserve'))
               ),
               selectedModel: playModelSelection,
               onSelectModel: selectPlayModels,
@@ -2117,7 +2760,7 @@ export default function App() {
               onRotateModel: canEditPlayModelsNow
                 ? (_selection, degrees, batched) => rotateSelectedPlayModels(degrees, batched)
                 : undefined,
-              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (selectedPlayCanAdvance || selectedPlayCanFallBack || selectedPlayCanCompleteMovement || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
+              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (selectedPlayCanAdvance || selectedPlayCanFallBack || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
                 <>
                   {selectedPlayCanAdvance && (
                     <Button size="small" color="success" variant="contained" startIcon={<SpeedIcon />} onClick={advanceSelectedPlayUnit}>
@@ -2128,6 +2771,16 @@ export default function App() {
                     <Button size="small" color="secondary" variant="contained" startIcon={<DirectionsRunIcon />} onClick={fallBackSelectedPlayUnit}>
                       Fall Back
                     </Button>
+                  )}
+                  {selectedPlayCanMoveVertically && (
+                    <>
+                      <Button size="small" color="info" variant="outlined" startIcon={<KeyboardArrowUpIcon />} onClick={() => moveSelectedPlayModelsVertically(1)}>
+                        1&quot;
+                      </Button>
+                      <Button size="small" color="info" variant="outlined" startIcon={<KeyboardArrowDownIcon />} onClick={() => moveSelectedPlayModelsVertically(-1)}>
+                        1&quot;
+                      </Button>
+                    </>
                   )}
                   {selectedPlayCanCompleteMovement && (
                     <Button size="small" color="primary" variant="contained" startIcon={<DoneIcon />} onClick={completeSelectedPlayUnitMovement}>
@@ -2180,6 +2833,8 @@ export default function App() {
               {selectedPlayUnit
                 ? playDeploySelection?.kind === 'reinforcement'
                   ? `Click to set up ${selectedPlayUnit.name} as Reinforcements more than 9" from enemies${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
+                  : playDeploySelection?.kind === 'strategicReserve'
+                    ? `Click to return ${selectedPlayUnit.name} from Strategic Reserves within 6" of a battlefield edge and more than 9" from enemies${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
                   : `Click to deploy ${selectedPlayUnit.name} for ${battleState.armies[playDeploySelection!.side].name}${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
                 : `Drag or shift-click deployed models to edit${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`}
             </div>
@@ -2188,7 +2843,7 @@ export default function App() {
             <div className="preview-caption">
               {battleState.phase === 'movement'
                 ? isPlayReinforcementsStep
-                  ? `Play Reinforcements step - select staged Deep Strike or Reserve units${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
+                  ? `Play Reinforcements step - select staged Deep Strike, Reserve, or off-board Aircraft units${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
                   : `Play Movement phase - drag selected models to move${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
                 : `Play ${PHASE_LABELS[battleState.phase] ?? battleState.phase} phase - select units on the board`}
             </div>
@@ -2235,6 +2890,22 @@ export default function App() {
             />
           ) : battleState || isPlayMode ? (
             <>
+              {isPlayMode && battleState?.phase === 'shooting' && (
+                <PlayShootingPanel
+                  shooter={selectedShootingUnit}
+                  targets={selectedPlayShootingTargets}
+                  selectedTarget={selectedShootingTargetUnit}
+                  targetIsValid={selectedShootingTargetIsValid}
+                  damageAllocationLocked={damageAllocationLocked}
+                  weaponOptions={selectedPlayShootingOptions}
+                  selectedTargetId={selectedShootingTargetId}
+                  selectedWeaponIndex={selectedShootingWeaponIndex}
+                  onTargetChange={setSelectedShootingTargetId}
+                  onWeaponChange={setSelectedShootingWeaponIndex}
+                  coverUnitIds={coverUnitIds}
+                  onResolve={resolveSelectedPlayShooting}
+                />
+              )}
               <UnitStatsPanel inspected={inspectedUnit} onClear={() => setInspectedSelection(null)} />
               {battleState ? (
                 <div style={{ flex: '1 1 0', minHeight: 0 }}>
@@ -2255,6 +2926,26 @@ export default function App() {
       </div>
 
       {/* ── Controls bar ─────────────────────────────────────────────────── */}
+      <CombatResultDialog
+        open={shootingResultEntries.length > 0}
+        entries={shootingResultEntries}
+        hasPendingCasualties={battleState?.units.some(unit => (unit.pendingDamageAllocations?.length ?? 0) > 0) ?? false}
+        onClose={() => setShootingResultEntries([])}
+      />
+
+      <Snackbar
+        open={!!targetErrorMsg}
+        onClose={(_, reason) => {
+          if (reason === 'clickaway') return;
+          setTargetErrorMsg(null);
+        }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert severity="warning" onClose={() => setTargetErrorMsg(null)} sx={{ width: '100%' }}>
+          {targetErrorMsg}
+        </Alert>
+      </Snackbar>
+
       <PracticeSaveModal
         open={practiceSaveModalOpen}
         timeline={practiceTimeline}

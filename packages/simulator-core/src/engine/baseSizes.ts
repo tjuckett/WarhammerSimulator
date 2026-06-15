@@ -5,6 +5,7 @@ const MM_PER_INCH = 25.4;
 
 export type ModelBaseFootprint =
   | { shape: 'circle'; radius: number }
+  | { shape: 'oval'; halfWidth: number; halfLength: number; rotationDeg?: number }
   | { shape: 'square'; halfSize: number; rotationDeg?: number }
   | { shape: 'rectangle'; halfWidth: number; halfLength: number; rotationDeg?: number };
 
@@ -33,7 +34,7 @@ export function hullBase(
 export function baseRadiusInches(base: ModelBase): number {
   const footprint = baseFootprintInches(base);
   if (footprint.shape === 'square') return footprint.halfSize;
-  if (footprint.shape === 'rectangle') return Math.max(footprint.halfWidth, footprint.halfLength);
+  if (footprint.shape === 'rectangle' || footprint.shape === 'oval') return Math.max(footprint.halfWidth, footprint.halfLength);
   return footprint.radius;
 }
 
@@ -47,9 +48,12 @@ export function baseFootprintInches(base: ModelBase, rotationDeg = 0): ModelBase
   }
   if (base.shape === 'round') return { shape: 'circle', radius: (base.diameterMm / MM_PER_INCH) / 2 };
   if (base.shape === 'other') return { shape: 'circle', radius: 0.9 };
-  const longestDimension = Math.max(base.widthMm, base.lengthMm);
-  if (longestDimension <= 0) return { shape: 'circle', radius: 0.9 };
-  return { shape: 'circle', radius: (longestDimension / MM_PER_INCH) / 2 };
+  if (base.shape === 'oval') {
+    const width = base.widthMm > 0 ? base.widthMm / MM_PER_INCH : 1.8;
+    const length = base.lengthMm > 0 ? base.lengthMm / MM_PER_INCH : width;
+    return { shape: 'oval', halfWidth: width / 2, halfLength: length / 2, rotationDeg };
+  }
+  return { shape: 'circle', radius: 0.9 };
 }
 
 export function modelBaseRadiusInches(profile: UnitProfile, modelIndex = 0): number {
@@ -79,6 +83,12 @@ export function pointInBaseFootprint(
     return Math.abs(local.x - center.x) <= footprint.halfLength
       && Math.abs(local.y - center.y) <= footprint.halfWidth;
   }
+  if (footprint.shape === 'oval') {
+    const local = rotatePoint(point, center, -(footprint.rotationDeg ?? 0));
+    const dx = (local.x - center.x) / footprint.halfLength;
+    const dy = (local.y - center.y) / footprint.halfWidth;
+    return dx * dx + dy * dy <= 1;
+  }
   return Math.hypot(point.x - center.x, point.y - center.y) <= footprint.radius;
 }
 
@@ -93,6 +103,10 @@ export function baseFootprintsOverlap(
     const dx = Math.abs(aCenter.x - bCenter.x);
     const dy = Math.abs(aCenter.y - bCenter.y);
     return Math.hypot(dx, dy) < aFootprint.radius + bFootprint.radius - tolerance;
+  }
+
+  if (aFootprint.shape === 'oval' || bFootprint.shape === 'oval') {
+    return baseFootprintDistance(aCenter, aFootprint, bCenter, bFootprint) <= Math.max(0, -tolerance);
   }
 
   const aRect = rectHalfExtents(aFootprint);
@@ -113,6 +127,78 @@ export function baseFootprintsOverlap(
     return rotatedRectCircleOverlap(rectFromFootprint(bCenter, bFootprint), aCenter, aFootprint.radius, tolerance);
   }
   return false;
+}
+
+export function baseFootprintDistance(
+  aCenter: { x: number; y: number },
+  aFootprint: ModelBaseFootprint,
+  bCenter: { x: number; y: number },
+  bFootprint: ModelBaseFootprint,
+): number {
+  if (aFootprint.shape === 'circle' && bFootprint.shape === 'circle') {
+    return Math.max(0, Math.hypot(aCenter.x - bCenter.x, aCenter.y - bCenter.y) - aFootprint.radius - bFootprint.radius);
+  }
+
+  const aPoints = footprintBoundaryPoints(aCenter, aFootprint);
+  const bPoints = footprintBoundaryPoints(bCenter, bFootprint);
+  if (footprintBoundariesTouch(aPoints, aFootprint, aCenter, bPoints, bFootprint, bCenter)) return 0;
+
+  let closest = Infinity;
+  for (let ai = 0; ai < aPoints.length; ai++) {
+    const a0 = aPoints[ai];
+    const a1 = aPoints[(ai + 1) % aPoints.length];
+    for (let bi = 0; bi < bPoints.length; bi++) {
+      const b0 = bPoints[bi];
+      const b1 = bPoints[(bi + 1) % bPoints.length];
+      closest = Math.min(
+        closest,
+        distancePointToSegment(a0, b0, b1),
+        distancePointToSegment(a1, b0, b1),
+        distancePointToSegment(b0, a0, a1),
+        distancePointToSegment(b1, a0, a1),
+      );
+    }
+  }
+  return closest;
+}
+
+export function baseFootprintMaxPointDistance(
+  startCenter: { x: number; y: number },
+  startFootprint: ModelBaseFootprint,
+  endCenter: { x: number; y: number },
+  endFootprint: ModelBaseFootprint,
+): number {
+  if (startFootprint.shape === 'circle' && endFootprint.shape === 'circle') {
+    return Math.hypot(endCenter.x - startCenter.x, endCenter.y - startCenter.y);
+  }
+
+  const startPoints = footprintBoundaryPoints(startCenter, startFootprint);
+  const endPoints = footprintBoundaryPoints(endCenter, endFootprint);
+  const count = Math.min(startPoints.length, endPoints.length);
+  let maxDistance = Math.hypot(endCenter.x - startCenter.x, endCenter.y - startCenter.y);
+  for (let i = 0; i < count; i++) {
+    maxDistance = Math.max(maxDistance, Math.hypot(endPoints[i].x - startPoints[i].x, endPoints[i].y - startPoints[i].y));
+  }
+  return maxDistance;
+}
+
+export function baseFootprintWithinRect(
+  center: { x: number; y: number },
+  footprint: ModelBaseFootprint,
+  rect: { x: number; y: number; width: number; height: number },
+): boolean {
+  if (footprint.shape === 'circle') {
+    return center.x - footprint.radius >= rect.x
+      && center.x + footprint.radius <= rect.x + rect.width
+      && center.y - footprint.radius >= rect.y
+      && center.y + footprint.radius <= rect.y + rect.height;
+  }
+  return footprintBoundaryPoints(center, footprint).every(point =>
+    point.x >= rect.x
+    && point.x <= rect.x + rect.width
+    && point.y >= rect.y
+    && point.y <= rect.y + rect.height,
+  );
 }
 
 export function baseFootprintIntersectsRect(
@@ -139,6 +225,14 @@ export function baseFootprintIntersectsRect(
     const nearestX = Math.max(rect.x, Math.min(rect.x + rect.width, localCenter.x));
     const nearestY = Math.max(rect.y, Math.min(rect.y + rect.height, localCenter.y));
     return Math.hypot(localCenter.x - nearestX, localCenter.y - nearestY) < footprint.radius - tolerance;
+  }
+  if (footprint.shape === 'oval') {
+    return baseFootprintDistance(
+      center,
+      footprint,
+      rectCenter,
+      { shape: 'rectangle', halfLength: rect.width / 2, halfWidth: rect.height / 2, rotationDeg: rect.rotationDeg ?? 0 },
+    ) <= Math.max(0, -tolerance);
   }
 
   return rotatedRectsOverlap(
@@ -224,6 +318,88 @@ function rotatedRectCircleOverlap(rect: OrientedRect, circleCenter: { x: number;
   const nearestX = Math.max(rect.center.x - rect.halfLength, Math.min(rect.center.x + rect.halfLength, local.x));
   const nearestY = Math.max(rect.center.y - rect.halfWidth, Math.min(rect.center.y + rect.halfWidth, local.y));
   return Math.hypot(local.x - nearestX, local.y - nearestY) < radius - tolerance;
+}
+
+function footprintBoundaryPoints(
+  center: { x: number; y: number },
+  footprint: ModelBaseFootprint,
+): Array<{ x: number; y: number }> {
+  if (footprint.shape === 'square' || footprint.shape === 'rectangle') {
+    return rectCorners(rectFromFootprint(center, footprint));
+  }
+
+  const pointCount = 72;
+  const rotation = ((footprint.shape === 'oval' ? footprint.rotationDeg ?? 0 : 0) * Math.PI) / 180;
+  const cos = Math.cos(rotation);
+  const sin = Math.sin(rotation);
+  const rx = footprint.shape === 'oval' ? footprint.halfLength : footprint.radius;
+  const ry = footprint.shape === 'oval' ? footprint.halfWidth : footprint.radius;
+  return Array.from({ length: pointCount }, (_, index) => {
+    const angle = (index / pointCount) * Math.PI * 2;
+    const localX = Math.cos(angle) * rx;
+    const localY = Math.sin(angle) * ry;
+    return {
+      x: center.x + localX * cos - localY * sin,
+      y: center.y + localX * sin + localY * cos,
+    };
+  });
+}
+
+function footprintBoundariesTouch(
+  aPoints: Array<{ x: number; y: number }>,
+  aFootprint: ModelBaseFootprint,
+  aCenter: { x: number; y: number },
+  bPoints: Array<{ x: number; y: number }>,
+  bFootprint: ModelBaseFootprint,
+  bCenter: { x: number; y: number },
+): boolean {
+  for (let ai = 0; ai < aPoints.length; ai++) {
+    const a0 = aPoints[ai];
+    const a1 = aPoints[(ai + 1) % aPoints.length];
+    for (let bi = 0; bi < bPoints.length; bi++) {
+      const b0 = bPoints[bi];
+      const b1 = bPoints[(bi + 1) % bPoints.length];
+      if (segmentsIntersect(a0, a1, b0, b1)) return true;
+    }
+  }
+  return pointInBaseFootprint(aPoints[0], bCenter, bFootprint)
+    || pointInBaseFootprint(bPoints[0], aCenter, aFootprint);
+}
+
+function distancePointToSegment(
+  point: { x: number; y: number },
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+): number {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const lenSq = dx * dx + dy * dy;
+  if (lenSq <= 0.000001) return Math.hypot(point.x - a.x, point.y - a.y);
+  const t = Math.max(0, Math.min(1, ((point.x - a.x) * dx + (point.y - a.y) * dy) / lenSq));
+  return Math.hypot(point.x - (a.x + dx * t), point.y - (a.y + dy * t));
+}
+
+function segmentsIntersect(
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+  c: { x: number; y: number },
+  d: { x: number; y: number },
+): boolean {
+  const ab = orientation(a, b, c) * orientation(a, b, d);
+  const cd = orientation(c, d, a) * orientation(c, d, b);
+  return ab <= 0 && cd <= 0
+    && Math.max(Math.min(a.x, b.x), Math.min(c.x, d.x)) <= Math.min(Math.max(a.x, b.x), Math.max(c.x, d.x)) + 0.000001
+    && Math.max(Math.min(a.y, b.y), Math.min(c.y, d.y)) <= Math.min(Math.max(a.y, b.y), Math.max(c.y, d.y)) + 0.000001;
+}
+
+function orientation(
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+  c: { x: number; y: number },
+): number {
+  const value = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+  if (Math.abs(value) < 0.000001) return 0;
+  return value > 0 ? 1 : -1;
 }
 
 export function unitMaxBaseRadiusInches(profile: UnitProfile): number {

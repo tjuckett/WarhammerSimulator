@@ -110,6 +110,8 @@ function featuresFromSpec(parent: Terrain, spec: TerrainSpec): TerrainFeature[] 
 }
 
 function inferFeatureHeight(spec: TerrainSpec): TerrainFeature['featureHeight'] {
+  // Obstacles and crates are solid objects — always tall enough to block LOS.
+  if (spec.kind === 'obstacle' || spec.kind === 'crate') return 'tall';
   return Math.min(spec.width, spec.height) <= 4 && Math.max(spec.width, spec.height) <= 6
     ? 'low'
     : 'tall';

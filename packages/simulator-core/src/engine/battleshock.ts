@@ -39,6 +39,8 @@ export function resolveDesperateEscapeTests(
       unit.modelPositions.splice(modelIndex, 1);
       unit.modelRotations?.splice(modelIndex, 1);
       unit.movementAllowanceRemainingByModel?.splice(modelIndex, 1);
+      unit.movementAllowanceTotalByModel?.splice(modelIndex, 1);
+      unit.movementStartPositionsByModel?.splice(modelIndex, 1);
     }
     unit.remainingModels = Math.min(unit.remainingModels, unit.modelPositions.length);
     unit.destroyed = unit.remainingModels <= 0;

@@ -48,7 +48,7 @@ export interface RulesEdition {
   // Core combat resolution
   woundTarget(strength: number, toughness: number): number;
   saveTarget(save: number, ap: number, invuln?: number): number;
-  coverSaveBonus(unit: BattleUnit, weapon: WeaponProfile): number;
+  coverSaveBonus(unit: BattleUnit): number;
 
   processHits(rolls: number[], skill: number, weapon: WeaponProfile): HitResult;
   processWounds(rolls: number[], woundTarget: number, weapon: WeaponProfile): WoundResult;
@@ -68,14 +68,18 @@ export interface RulesEdition {
   engagementRange(): number; // inches
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Weapon keyword helpers ────────────────────────────────────────────────────
+// Single source of truth for keyword lookups used by both the rules engine and the simulator.
+// Uses startsWith so that "Fire" does not accidentally match "Rapid Fire".
 
-function hasKw(w: WeaponProfile, kw: string): boolean {
-  return w.keywords.some(k => k.toLowerCase().includes(kw.toLowerCase()));
+export function weaponHasKeyword(weapon: WeaponProfile, keyword: string): boolean {
+  const needle = keyword.toLowerCase();
+  return weapon.keywords.some(k => k.toLowerCase().startsWith(needle));
 }
 
-function kwValue(w: WeaponProfile, kw: string): number {
-  const k = w.keywords.find(k => k.toLowerCase().includes(kw.toLowerCase()));
+export function weaponKeywordValue(weapon: WeaponProfile, keyword: string): number {
+  const needle = keyword.toLowerCase();
+  const k = weapon.keywords.find(k => k.toLowerCase().startsWith(needle));
   if (!k) return 0;
   const m = k.match(/(\d+)\s*$/);
   return m ? parseInt(m[1], 10) : 1;
@@ -118,14 +122,13 @@ export const rules40K10th: RulesEdition = {
     return modified;
   },
 
-  coverSaveBonus(unit: BattleUnit, weapon: WeaponProfile): number {
-    const isInfantry = unit.profile.keywords.some(k => k.toLowerCase() === 'infantry');
-    return isInfantry && weapon.ap >= -1 ? 1 : 0;
+  coverSaveBonus(unit: BattleUnit): number {
+    return unit.profile.save <= 6 ? 1 : 0;
   },
 
   processHits(rolls: number[], skill: number, weapon: WeaponProfile): HitResult {
     // Torrent: auto-hits, skip roll
-    if (hasKw(weapon, 'Torrent')) {
+    if (weaponHasKeyword(weapon,'Torrent')) {
       return {
         hits: rolls.length,
         rolls,
@@ -138,8 +141,8 @@ export const rules40K10th: RulesEdition = {
     let mortalsFromCrits = 0;
     const notes: string[] = [];
 
-    const sustainedVal = hasKw(weapon, 'Sustained Hits') ? kwValue(weapon, 'Sustained Hits') : 0;
-    const hasDeadlyDemise = hasKw(weapon, 'Deadly Demise');
+    const sustainedVal = weaponHasKeyword(weapon,'Sustained Hits') ? weaponKeywordValue(weapon,'Sustained Hits') : 0;
+    const hasDeadlyDemise = weaponHasKeyword(weapon,'Deadly Demise');
 
     for (const r of rolls) {
       if (r === 1) continue;
@@ -164,8 +167,8 @@ export const rules40K10th: RulesEdition = {
     let mortalsFromCrits = 0;
     const notes: string[] = [];
 
-    const hasDevWounds = hasKw(weapon, 'Devastating Wounds');
-    const hasLethal = hasKw(weapon, 'Lethal Hits');
+    const hasDevWounds = weaponHasKeyword(weapon,'Devastating Wounds');
+    const hasLethal = weaponHasKeyword(weapon,'Lethal Hits');
 
     for (const r of rolls) {
       if (r === 1) continue;
@@ -192,13 +195,13 @@ export const rules40K10th: RulesEdition = {
     let count = base;
 
     // Rapid Fire: extra shots within half range (per model)
-    if (hasKw(weapon, 'Rapid Fire') && distToTarget <= weapon.range / 2) {
-      const rfVal = kwValue(weapon, 'Rapid Fire');
+    if (weaponHasKeyword(weapon,'Rapid Fire') && distToTarget <= weapon.range / 2) {
+      const rfVal = weaponKeywordValue(weapon,'Rapid Fire');
       count += rfVal * firingUnit.remainingModels;
     }
 
     // Blast: minimum 3 attacks vs 6+ model units
-    if (hasKw(weapon, 'Blast') && targetModelCount >= 6) {
+    if (weaponHasKeyword(weapon,'Blast') && targetModelCount >= 6) {
       count = Math.max(count, 3);
     }
 
