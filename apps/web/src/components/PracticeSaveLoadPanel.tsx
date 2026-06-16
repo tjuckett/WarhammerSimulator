@@ -62,12 +62,36 @@ function actionLabel(action: GameAction): string {
       return 'Fall Back';
     case 'play.advanceUnit':
       return 'Advance';
+    case 'play.completeUnitMovement':
+      return 'Complete movement';
+    case 'play.embarkUnit':
+      return 'Embark';
+    case 'play.disembarkUnit':
+      return 'Disembark';
     case 'play.rotateModels':
       return `Rotate ${action.degrees}deg`;
     case 'play.reorganizeModels':
       return `${action.rows} row formation`;
     case 'play.removeModels':
       return `Remove ${action.parts.reduce((sum, part) => sum + part.modelIndices.length, 0)} model${action.parts.length === 1 ? '' : 's'}`;
+    case 'play.removeCasualties':
+      return `Remove casualties`;
+    case 'play.assignWoundedModel':
+      return 'Assign wounded model';
+    case 'play.allocateDamage':
+      return 'Allocate damage';
+    case 'play.shootUnitWeapon':
+      return 'Shoot';
+    case 'play.lockUnitShooting':
+      return 'Finish shooting';
+    case 'play.chargeUnitTarget':
+      return 'Charge';
+    case 'play.fightUnitWeapon':
+      return 'Fight';
+    case 'play.pileInUnit':
+      return 'Pile in';
+    case 'play.consolidateUnit':
+      return 'Consolidate';
     case 'play.beginBattle':
       return 'Start game';
     case 'play.stepPhase':

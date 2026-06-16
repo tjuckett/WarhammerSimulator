@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import type { BattleState, BattleUnit, Phase, Terrain } from '../src/types/battle';
+import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
-import { rules40K10th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, completePlayUnitMovement, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, markRemainingStationaryUnits, placePlayReinforcement, placePlayStrategicReserveUnit, playPhaseCoherencyIssues, playShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, targetHasCoverFrom, transportCapacityRemaining } from '../src/engine/simulator';
+import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
+import { advancePlayUnit, allocatePlayDamageToModel, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completePlayUnitMovement, consolidatePlayUnit, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, fightPlayUnitWeapon, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, targetHasCoverFrom, transportCapacityRemaining } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -15,6 +15,7 @@ import {
 import { applyGameAction } from '../src/practice/actions';
 import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
+import { scorePrimaryMission } from '../src/engine/missionScoring';
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -90,7 +91,7 @@ function state(phase: Phase, turn = 1): BattleState {
   };
 }
 
-function losTestUnit(id: string, side: 0 | 1, position: { x: number; y: number }, save = 4): BattleUnit {
+function losTestUnit(id: string, side: 0 | 1, position: Position, save = 4): BattleUnit {
   return {
     id,
     side,
@@ -237,6 +238,40 @@ test('battle-shocked units cannot receive stratagems and have zero objective con
 
   assert.equal(unitCanBeAffectedByStratagem(unit), false);
   assert.equal(objectiveControlValue(unit), 0);
+});
+
+test('primary scoring framework preserves current 10th marker objective fallback', () => {
+  const battle = state('fight');
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }];
+  battle.objectiveOwners = [null, null];
+  battle.units = [
+    losTestUnit('blue-1', 0, { x: 10, y: 10 }),
+    losTestUnit('red-1', 1, { x: 20, y: 10 }),
+  ];
+
+  const result = scorePrimaryMission(battle, 0, rules40K10th);
+
+  assert.equal(result.kind, 'scored');
+  assert.equal(result.scoringModel, 'generic-objective-control');
+  assert.equal(result.vpGained, 1);
+  assert.deepEqual(battle.objectiveOwners, [0, 1]);
+  assert.deepEqual(battle.scores, [1, 0]);
+});
+
+test('primary scoring framework leaves unsupported objective-control rules unscored', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.objectives = [{ x: 10, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.units = [losTestUnit('blue-1', 0, { x: 10, y: 10 })];
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.kind, 'unsupported');
+  assert.equal(result.vpGained, 0);
+  assert.deepEqual(battle.objectiveOwners, [null]);
+  assert.deepEqual(battle.scores, [0, 0]);
 });
 
 test('play Fall Back moves an engaged active unit out of Engagement Range', () => {
@@ -2444,6 +2479,49 @@ test('Lone Operative units can be targeted within 12 inches', () => {
   }
 });
 
+test('Lone Operative range is measured base edge to base edge', () => {
+  const battle = state('movement');
+  battle.movementStep = 'reinforcements';
+  const shooterProfile = {
+    name: 'Edge Rifle Squad',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Bolt Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const targetProfile = {
+    ...shooterProfile,
+    name: 'Edge Lone Operative',
+    wounds: 99,
+    keywords: ['Infantry', 'Lone Operative'],
+    weapons: [],
+  };
+  const shooter = losTestUnit('shooter-1', 0, { x: 0, y: 10 });
+  shooter.profile = shooterProfile;
+  const target = losTestUnit('target-1', 1, { x: 12.9, y: 10 });
+  target.profile = targetProfile;
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const shooting = simulateNextPhase(battle, rules40K10th);
+    assert.equal(shooting.log.some(entry => entry.message.includes('attacks vs Edge Lone Operative')), true);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('Ignores Cover weapons do not grant the target a cover save bonus', () => {
   const battle = state('movement');
   battle.movementStep = 'reinforcements';
@@ -2611,6 +2689,35 @@ test('woods footprints grant cover without blocking LOS', () => {
 
   assert.equal(hasLOSEdgeToEdge(shooter.position, 0.5, target.position, 0.5, terrain), true);
   assert.equal(targetHasCoverFrom(shooter.position, target, terrain), true);
+});
+
+test('elevated models can see over low and mid blocking features', () => {
+  const shooter = losTestUnit('shooter-1', 0, { x: 0, y: 10, z: 6 });
+  const target = losTestUnit('target-1', 1, { x: 12, y: 10, z: 6 });
+  const terrain = [terrainMat({
+    id: 'wall-mat-1',
+    name: 'Low Wall Footprint',
+    type: 'obstacle',
+    x: 5,
+    y: 8,
+    width: 3,
+    height: 4,
+    features: [{
+      id: 'wall-1',
+      name: 'Mid Wall',
+      x: 6,
+      y: 7,
+      width: 0.5,
+      height: 6,
+      featureHeight: 'mid',
+      blocksLOS: true,
+      blocksMovement: true,
+      difficult: false,
+    }],
+  })];
+
+  assert.equal(hasLOSEdgeToEdge(shooter.position, 0.5, target.position, 0.5, terrain), true);
+  assert.equal(targetHasCoverFrom(shooter.position, target, terrain), false);
 });
 
 test('Heavy weapons get +1 to Hit when the shooter Remained Stationary', () => {
@@ -3039,6 +3146,196 @@ test('Melta weapons add damage within half range', () => {
   }
 });
 
+test('Melta half range is measured base edge to base edge', () => {
+  const battle = state('movement');
+  battle.movementStep = 'reinforcements';
+  const shooterProfile = {
+    name: 'Edge Melta Gunner',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Meltagun', range: 12, attacks: '1', skill: 3, strength: 8, ap: 0, damage: '1', keywords: ['Melta 2'], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const targetProfile = {
+    ...shooterProfile,
+    name: 'Edge Target Dummy',
+    toughness: 4,
+    save: 6,
+    wounds: 5,
+    weapons: [],
+  };
+  const shooter = losTestUnit('shooter-1', 0, { x: 0, y: 10 });
+  shooter.profile = shooterProfile;
+  const target = losTestUnit('target-1', 1, { x: 6.9, y: 10 });
+  target.profile = targetProfile;
+  target.woundsOnLeadModel = 5;
+  battle.units = [shooter, target];
+
+  const rolls = [0.5, 0.5, 0];
+  const originalRandom = Math.random;
+  Math.random = () => rolls.shift() ?? 0.99;
+  try {
+    const shooting = simulateNextPhase(battle, rules40K10th);
+    const damagedTarget = shooting.units.find(unit => unit.id === 'target-1');
+    assert.equal(shooting.log.some(entry => entry.message.includes('Melta: +2 damage within half range')), true);
+    assert.equal(damagedTarget?.woundsOnLeadModel, 2);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('Rapid Fire half range is measured base edge to base edge', () => {
+  const battle = state('movement');
+  battle.movementStep = 'reinforcements';
+  const shooterProfile = {
+    name: 'Rapid Gunner',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Rapid Rifle', range: 12, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: ['Rapid Fire 2'], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const targetProfile = { ...shooterProfile, name: 'Rapid Target', wounds: 99, weapons: [] };
+  const shooter = losTestUnit('shooter-1', 0, { x: 0, y: 10 });
+  shooter.profile = shooterProfile;
+  const target = losTestUnit('target-1', 1, { x: 6.9, y: 10 });
+  target.profile = targetProfile;
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  const shooting = simulateNextPhase(battle, rules40K10th);
+  assert.equal(shooting.log.some(entry => entry.message.includes('Rapid Rifle') && entry.message.includes('= 3 attacks')), true);
+});
+
+test('Sustained Hits add extra hits on critical hit rolls', () => {
+  const battle = state('movement');
+  battle.movementStep = 'reinforcements';
+  const shooterProfile = {
+    name: 'Sustained Gunner',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Sustained Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: ['Sustained Hits 2'], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const targetProfile = { ...shooterProfile, name: 'Sustained Target', wounds: 99, weapons: [] };
+  const shooter = losTestUnit('shooter-1', 0, { x: 0, y: 10 });
+  shooter.profile = shooterProfile;
+  const target = losTestUnit('target-1', 1, { x: 12, y: 10 });
+  target.profile = targetProfile;
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const shooting = simulateNextPhase(battle, rules40K10th);
+    assert.equal(shooting.log.some(entry => entry.message.includes('Hit rolls') && entry.message.includes('3 hits')), true);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('Blast adds attacks based on target model count', () => {
+  const battle = state('movement');
+  battle.movementStep = 'reinforcements';
+  const shooterProfile = {
+    name: 'Blast Gunner',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Blast Cannon', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: ['Blast'], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const targetProfile = { ...shooterProfile, name: 'Blast Target', baseModelCount: 10, wounds: 99, weapons: [] };
+  const shooter = losTestUnit('shooter-1', 0, { x: 0, y: 10 });
+  shooter.profile = shooterProfile;
+  const target = losTestUnit('target-1', 1, { x: 12, y: 10 });
+  target.profile = targetProfile;
+  target.remainingModels = 10;
+  target.woundsOnLeadModel = 99;
+  target.modelPositions = Array.from({ length: 10 }, (_, i) => ({ x: 12, y: 7 + i * 0.7 }));
+  target.position = { x: 12, y: 10.15 };
+  battle.units = [shooter, target];
+
+  const shooting = simulateNextPhase(battle, rules40K10th);
+  assert.equal(shooting.log.some(entry => entry.message.includes('Blast Cannon') && entry.message.includes('= 3 attacks')), true);
+});
+
+test('Devastating Wounds bypass saves and apply weapon damage without mortal carryover', () => {
+  const battle = state('movement');
+  battle.movementStep = 'reinforcements';
+  const shooterProfile = {
+    name: 'Devastating Gunner',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Devastator Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '2', keywords: ['Devastating Wounds'], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const targetProfile = { ...shooterProfile, name: 'Devastating Target', save: 2, wounds: 3, weapons: [] };
+  const shooter = losTestUnit('shooter-1', 0, { x: 0, y: 10 });
+  shooter.profile = shooterProfile;
+  const target = losTestUnit('target-1', 1, { x: 12, y: 10 });
+  target.profile = targetProfile;
+  target.woundsOnLeadModel = 3;
+  battle.units = [shooter, target];
+
+  const rolls = [0.5, 0.99];
+  const originalRandom = Math.random;
+  Math.random = () => rolls.shift() ?? 0;
+  try {
+    const shooting = simulateNextPhase(battle, rules40K10th);
+    const damagedTarget = shooting.units.find(unit => unit.id === 'target-1');
+    assert.equal(shooting.log.some(entry => entry.message.includes('Devastating Wounds: 1 wound(s) bypass saves')), true);
+    assert.equal(shooting.log.some(entry => entry.message.includes('Save rolls')), false);
+    assert.equal(damagedTarget?.woundsOnLeadModel, 1);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('Indirect Fire weapons can target without LOS with hit penalty and cover', () => {
   const battle = state('movement');
   battle.movementStep = 'reinforcements';
@@ -3348,6 +3645,171 @@ test('Precision weapons can target attached leaders while their bodyguard is ali
   } finally {
     Math.random = originalRandom;
   }
+});
+
+test('play Charge resolves a selected charger into a selected target', () => {
+  const battle = state('charge');
+  const meleeWeapon = { name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true };
+  const chargerProfile = {
+    name: 'Charging Unit',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [meleeWeapon],
+    abilities: [],
+  };
+  const targetProfile = { ...chargerProfile, name: 'Charge Target', weapons: [] };
+  const charger = losTestUnit('charger-1', 0, { x: 0, y: 10 });
+  charger.profile = chargerProfile;
+  const target = losTestUnit('target-1', 1, { x: 6, y: 10 });
+  target.profile = targetProfile;
+  battle.units = [charger, target];
+
+  const options = playChargeTargetOptions(battle, 'charger-1', 0, rules40K10th);
+  assert.deepEqual(options.map(option => option.targetId), ['target-1']);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const charged = chargePlayUnitTarget(battle, 'charger-1', 0, 'target-1', rules40K10th);
+    const chargedUnit = charged.units.find(unit => unit.id === 'charger-1')!;
+    const chargedTarget = charged.units.find(unit => unit.id === 'target-1')!;
+    assert.equal(chargedUnit.charged, true);
+    assert.equal(chargedUnit.activated, true);
+    assert.equal(chargedUnit.inCombat, true);
+    assert.equal(chargedTarget.inCombat, true);
+    assert.equal(charged.log.some(entry => entry.message.includes('makes a successful charge')), true);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('play Fight resolves selected melee weapons into a selected target', () => {
+  const battle = state('fight');
+  const meleeWeapon = { name: 'Power Blade', range: 0, attacks: '1', skill: 2, strength: 10, ap: -10, damage: '2', keywords: [], isMelee: true };
+  const fighterProfile = {
+    name: 'Fighter',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [meleeWeapon],
+    abilities: [],
+  };
+  const targetProfile = { ...fighterProfile, name: 'Fight Target', save: 6, wounds: 3, weapons: [] };
+  const fighter = losTestUnit('fighter-1', 0, { x: 0, y: 10 });
+  fighter.profile = fighterProfile;
+  fighter.charged = true;
+  fighter.inCombat = true;
+  const target = losTestUnit('target-1', 1, { x: 0.9, y: 10 });
+  target.profile = targetProfile;
+  target.woundsOnLeadModel = 3;
+  target.inCombat = true;
+  battle.units = [fighter, target];
+
+  const options = playFightWeaponOptions(battle, 'fighter-1', 0, rules40K10th);
+  assert.deepEqual(options, [{ weaponIndex: 0, name: 'Power Blade', targetIds: ['target-1'] }]);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const fought = fightPlayUnitWeapon(battle, 'fighter-1', 0, 'target-1', 'all', rules40K10th);
+    const foughtUnit = fought.units.find(unit => unit.id === 'fighter-1')!;
+    const foughtTarget = fought.units.find(unit => unit.id === 'target-1')!;
+    assert.equal(foughtUnit.activated, true);
+    assert.deepEqual(foughtTarget.pendingDamageAllocations, [{ damage: 2, noCarryOver: true, source: 'Power Blade' }]);
+    assert.equal(fought.log.some(entry => entry.message.includes('Fighter fights Fight Target')), true);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('play Fight activation options require charged units to fight first', () => {
+  const battle = state('fight');
+  const meleeWeapon = { name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true };
+  const profile = {
+    name: 'Fighter',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [meleeWeapon],
+    abilities: [],
+  };
+  const charged = losTestUnit('charged-1', 0, { x: 0, y: 10 });
+  charged.profile = { ...profile, name: 'Charged Fighter' };
+  charged.charged = true;
+  charged.inCombat = true;
+  const normal = losTestUnit('normal-1', 0, { x: 0, y: 15 });
+  normal.profile = { ...profile, name: 'Normal Fighter' };
+  normal.inCombat = true;
+  const enemyA = losTestUnit('enemy-a', 1, { x: 0.9, y: 10 });
+  enemyA.profile = { ...profile, name: 'Enemy A', weapons: [] };
+  enemyA.inCombat = true;
+  const enemyB = losTestUnit('enemy-b', 1, { x: 0.9, y: 15 });
+  enemyB.profile = { ...profile, name: 'Enemy B', weapons: [] };
+  enemyB.inCombat = true;
+  battle.units = [charged, normal, enemyA, enemyB];
+
+  assert.deepEqual(playFightActivationUnitIds(battle, 0, rules40K10th), ['charged-1']);
+  assert.equal(playFightWeaponOptions(battle, 'normal-1', 0, rules40K10th).length, 0);
+  const afterCharged = { ...battle, units: battle.units.map(unit => unit.id === 'charged-1' ? { ...unit, activated: true } : unit) };
+  assert.deepEqual(playFightActivationUnitIds(afterCharged, 0, rules40K10th), ['normal-1']);
+});
+
+test('play Fight pile-in and consolidate move a selected unit once each', () => {
+  const battle = state('fight');
+  const meleeWeapon = { name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true };
+  const profile = {
+    name: 'Mover',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [meleeWeapon],
+    abilities: [],
+  };
+  const mover = losTestUnit('mover-1', 0, { x: 0, y: 10 });
+  mover.profile = profile;
+  mover.charged = true;
+  mover.inCombat = true;
+  const enemy = losTestUnit('enemy-1', 1, { x: 2.5, y: 10 });
+  enemy.profile = { ...profile, name: 'Enemy', weapons: [] };
+  enemy.inCombat = true;
+  battle.units = [mover, enemy];
+
+  const piled = pileInPlayUnit(battle, 'mover-1', 0, rules40K10th);
+  const piledMover = piled.units.find(unit => unit.id === 'mover-1')!;
+  assert.equal(piledMover.piledIn, true);
+  assert.equal(piledMover.position.x > mover.position.x, true);
+  assert.equal(pileInPlayUnit(piled, 'mover-1', 0, rules40K10th), piled);
+
+  const fought = fightPlayUnitWeapon(piled, 'mover-1', 0, 'enemy-1', 'all', rules40K10th);
+  const consolidated = consolidatePlayUnit(fought, 'mover-1', 0, rules40K10th);
+  const consolidatedMover = consolidated.units.find(unit => unit.id === 'mover-1')!;
+  assert.equal(consolidatedMover.consolidated, true);
+  assert.equal(consolidatePlayUnit(consolidated, 'mover-1', 0, rules40K10th), consolidated);
 });
 
 test('play Movement can embark a nearby unit into a transport', () => {

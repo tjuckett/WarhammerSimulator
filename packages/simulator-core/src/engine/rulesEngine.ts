@@ -19,6 +19,7 @@ export interface WoundResult {
   wounds: number;
   rolls: number[];
   mortalsFromCrits: number;
+  devastatingWounds: number;
   logNote: string;
 }
 
@@ -165,6 +166,7 @@ export const rules40K10th: RulesEdition = {
   processWounds(rolls: number[], wt: number, weapon: WeaponProfile): WoundResult {
     let wounds = 0;
     let mortalsFromCrits = 0;
+    let devastatingWounds = 0;
     const notes: string[] = [];
 
     const hasDevWounds = weaponHasKeyword(weapon,'Devastating Wounds');
@@ -174,8 +176,8 @@ export const rules40K10th: RulesEdition = {
       if (r === 1) continue;
       if (r === 6) {
         if (hasDevWounds) {
-          mortalsFromCrits++;
-          notes.push('crit wound→mortal (Devastating Wounds)');
+          devastatingWounds++;
+          notes.push('crit wound->no save (Devastating Wounds)');
           continue;
         }
         if (hasLethal) {
@@ -188,7 +190,7 @@ export const rules40K10th: RulesEdition = {
       }
     }
 
-    return { wounds, rolls, mortalsFromCrits, logNote: notes.join('; ') };
+    return { wounds, rolls, mortalsFromCrits, devastatingWounds, logNote: notes.join('; ') };
   },
 
   modifyAttackCount(base, firingUnit, weapon, distToTarget, targetModelCount): number {
@@ -200,9 +202,9 @@ export const rules40K10th: RulesEdition = {
       count += rfVal * firingUnit.remainingModels;
     }
 
-    // Blast: minimum 3 attacks vs 6+ model units
-    if (weaponHasKeyword(weapon,'Blast') && targetModelCount >= 6) {
-      count = Math.max(count, 3);
+    // Blast: add one attack for each five models in the target unit.
+    if (weaponHasKeyword(weapon,'Blast') && targetModelCount >= 5) {
+      count += Math.floor(targetModelCount / 5);
     }
 
     return count;

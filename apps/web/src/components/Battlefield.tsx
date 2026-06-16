@@ -6,6 +6,7 @@ import { zoneFor } from '@warhammer-simulator/core/engine/deployment';
 import { battleRound, maxBattleRounds } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import { battleModelIdsWithCoherencyIssues, movePlayModels, type LOSRay } from '@warhammer-simulator/core/engine/simulator';
+import { boardFormatForState } from '@warhammer-simulator/core/data/boardFormats';
 import {
   TENTH_EDITION_MARKER_OBJECTIVE_CONTROL,
   objectiveControlRadius,
@@ -66,8 +67,6 @@ interface Props {
   };
 }
 
-const BOARD_W = 60;
-const BOARD_H = 44;
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.25;
@@ -109,9 +108,10 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
 
     const cw = container.clientWidth;
     const ch = container.clientHeight;
-    const scale = Math.min(cw / BOARD_W, ch / BOARD_H);
-    const W = BOARD_W * scale;
-    const H = BOARD_H * scale;
+    const board = boardFormatForState(drawState);
+    const scale = Math.min(cw / board.width, ch / board.height);
+    const W = board.width * scale;
+    const H = board.height * scale;
     const bitmapW = Math.max(1, Math.round(W));
     const bitmapH = Math.max(1, Math.round(H));
     const styleW = `${W * zoom}px`;
@@ -193,9 +193,10 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
   }
 
   function nearestGridPoint(point: { x: number; y: number }) {
+    const board = boardFormatForState(state);
     return {
-      x: Math.max(0, Math.min(BOARD_W, Math.round(point.x))),
-      y: Math.max(0, Math.min(BOARD_H, Math.round(point.y))),
+      x: Math.max(0, Math.min(board.width, Math.round(point.x))),
+      y: Math.max(0, Math.min(board.height, Math.round(point.y))),
     };
   }
 
@@ -723,6 +724,7 @@ function draw(
   visibleOutOfRangeUnitIds: Set<string> = new Set(),
 ) {
   // ── Background ───────────────────────────────────────────────────────────
+  const board = boardFormatForState(state);
   ctx.fillStyle = '#2a4a1e';
   ctx.fillRect(0, 0, W, H);
 
@@ -730,7 +732,7 @@ function draw(
   drawDeploymentZones(ctx, state, scale);
 
   // ── Grid ─────────────────────────────────────────────────────────────────
-  drawBoardGrid(ctx, scale, W, H);
+  drawBoardGrid(ctx, scale, W, H, board.width, board.height);
 
   // ── Terrain ───────────────────────────────────────────────────────────────
   for (const t of state.terrain) {
@@ -836,7 +838,7 @@ function draw(
   for (const unit of state.units) {
     if (unit.destroyed || unit.embarkedInUnitId) continue;
     const selectedPart = selectedModelPartForUnit(activeSelectedModel, unit.id, unit.side);
-    const previewUnit = modelDragPreview ? unitWithModelDragPreview(unit, modelDragPreview) : unit;
+    const previewUnit = modelDragPreview ? unitWithModelDragPreview(unit, modelDragPreview, state) : unit;
     const unitHasLosTint = unit.modelPositions.some((_, index) => losModelStates.has(`${unit.id}:${index}`));
     const selectedModelIndices = selectedPart
       ? selectedPart.modelIndices
@@ -885,14 +887,16 @@ function displayCentroid(positions: Position[]): Position {
 function unitWithModelDragPreview(
   unit: BattleUnit,
   preview: { selection: PlayModelSelection; dx: number; dy: number },
+  state: BattleState,
 ): BattleUnit {
   const part = selectedModelPartForUnit(preview.selection, unit.id, unit.side);
   if (!part) return unit;
   const movingIndices = new Set(part.modelIndices);
+  const board = boardFormatForState(state);
   const modelPositions = unit.modelPositions.map((model, modelIndex) => movingIndices.has(modelIndex)
     ? {
-      x: Math.max(0, Math.min(BOARD_W, model.x + preview.dx)),
-      y: Math.max(0, Math.min(BOARD_H, model.y + preview.dy)),
+      x: Math.max(0, Math.min(board.width, model.x + preview.dx)),
+      y: Math.max(0, Math.min(board.height, model.y + preview.dy)),
     }
     : model);
 
@@ -938,6 +942,7 @@ function unitWithModelDragPreview(
 
 */
 function drawDeploymentZones(ctx: CanvasRenderingContext2D, state: BattleState, scale: number) {
+  const board = boardFormatForState(state);
   const styles = {
     defender: { fill: 'rgba(24, 74, 52, 0.52)', stroke: 'rgba(67, 137, 98, 0.90)', label: '#d9f5df' },
     attacker: { fill: 'rgba(154, 45, 38, 0.52)', stroke: 'rgba(229, 100, 86, 0.90)', label: '#ffe5e1' },
@@ -945,13 +950,13 @@ function drawDeploymentZones(ctx: CanvasRenderingContext2D, state: BattleState, 
 
   ctx.save();
   ctx.fillStyle = NO_MANS_LAND_FILL;
-  ctx.fillRect(0, 0, BOARD_W * scale, BOARD_H * scale);
+  ctx.fillRect(0, 0, board.width * scale, board.height * scale);
 
   ctx.setLineDash([5, 4]);
   ctx.lineWidth = 1.25;
 
   for (const side of [0, 1] as const) {
-    const zone = zoneFor(side, state.setup?.deployment);
+    const zone = zoneFor(side, state.setup?.deployment, board);
     const style = styles[zone.role];
     ctx.fillStyle = style.fill;
     ctx.strokeStyle = style.stroke;
@@ -960,7 +965,7 @@ function drawDeploymentZones(ctx: CanvasRenderingContext2D, state: BattleState, 
     ctx.setLineDash([]);
     ctx.fillStyle = style.label;
     ctx.font = `bold ${Math.max(8, scale * 0.55)}px monospace`;
-    drawDeploymentLabel(ctx, zone, scale);
+    drawDeploymentLabel(ctx, zone, scale, board.width, board.height);
     ctx.setLineDash([5, 4]);
   }
 
@@ -970,9 +975,10 @@ function drawDeploymentZones(ctx: CanvasRenderingContext2D, state: BattleState, 
 }
 
 function drawNoMansLandCutouts(ctx: CanvasRenderingContext2D, state: BattleState, scale: number) {
+  const board = boardFormatForState(state);
   const cutouts = new Map<string, { x: number; y: number; radius: number }>();
   for (const side of [0, 1] as const) {
-    const zone = zoneFor(side, state.setup?.deployment);
+    const zone = zoneFor(side, state.setup?.deployment, board);
     for (const shape of zone.shapes) {
       if (shape.type !== 'rectWithCircleCut') continue;
       const key = `${shape.cutoutCenter.x}:${shape.cutoutCenter.y}:${shape.cutoutRadius}`;
@@ -1002,14 +1008,16 @@ function drawDeploymentLabel(
   ctx: CanvasRenderingContext2D,
   zone: ReturnType<typeof zoneFor>,
   scale: number,
+  boardW: number,
+  boardH: number,
 ) {
   const inset = 1.15;
   const label = zone.role.toUpperCase();
   const edgeDistances = [
     { edge: 'left', distance: zone.x0 },
-    { edge: 'right', distance: BOARD_W - zone.x1 },
+    { edge: 'right', distance: boardW - zone.x1 },
     { edge: 'top', distance: zone.y0 },
-    { edge: 'bottom', distance: BOARD_H - zone.y1 },
+    { edge: 'bottom', distance: boardH - zone.y1 },
   ] as const;
   const nearest = edgeDistances.reduce((best, edge) => edge.distance < best.distance ? edge : best);
 
@@ -1022,30 +1030,30 @@ function drawDeploymentLabel(
     x = inset * scale;
     ctx.textAlign = 'left';
   } else if (nearest.edge === 'right') {
-    x = (BOARD_W - inset) * scale;
+    x = (boardW - inset) * scale;
     ctx.textAlign = 'right';
   } else if (nearest.edge === 'top') {
     y = inset * scale;
     ctx.textBaseline = 'top';
   } else {
-    y = (BOARD_H - inset) * scale;
+    y = (boardH - inset) * scale;
     ctx.textBaseline = 'bottom';
   }
 
   ctx.fillText(label, x, y);
 }
 
-function drawBoardGrid(ctx: CanvasRenderingContext2D, scale: number, W: number, H: number) {
+function drawBoardGrid(ctx: CanvasRenderingContext2D, scale: number, W: number, H: number, boardW: number, boardH: number) {
   ctx.save();
   ctx.setLineDash([]);
-  for (let x = 0; x <= BOARD_W; x += 1) {
-    const halfway = x === BOARD_W / 2;
+  for (let x = 0; x <= boardW; x += 1) {
+    const halfway = x === boardW / 2;
     ctx.strokeStyle = halfway ? 'rgba(0,0,0,0.45)' : 'rgba(0,0,0,0.12)';
     ctx.lineWidth = halfway ? 1.4 : 0.45;
     ctx.beginPath(); ctx.moveTo(x * scale, 0); ctx.lineTo(x * scale, H); ctx.stroke();
   }
-  for (let y = 0; y <= BOARD_H; y += 1) {
-    const halfway = y === BOARD_H / 2;
+  for (let y = 0; y <= boardH; y += 1) {
+    const halfway = y === boardH / 2;
     ctx.strokeStyle = halfway ? 'rgba(0,0,0,0.45)' : 'rgba(0,0,0,0.12)';
     ctx.lineWidth = halfway ? 1.4 : 0.45;
     ctx.beginPath(); ctx.moveTo(0, y * scale); ctx.lineTo(W, y * scale); ctx.stroke();
@@ -1093,6 +1101,7 @@ function drawEdgeGuides(
   W: number,
   H: number,
 ) {
+  const board = boardFormatForState(state);
   const item = selected.kind === 'terrain'
     ? state.terrain[selected.terrainIndex]
     : state.terrain[selected.terrainIndex]?.features[selected.featureIndex];
@@ -1121,9 +1130,9 @@ function drawEdgeGuides(
 
   const guides = [
     { from: { x: 0, y: center.y }, to: { x: minX, y: center.y }, label: `${minX.toFixed(1)}"`, lx: minX / 2, ly: center.y },
-    { from: { x: maxX, y: center.y }, to: { x: BOARD_W, y: center.y }, label: `${(BOARD_W - maxX).toFixed(1)}"`, lx: maxX + (BOARD_W - maxX) / 2, ly: center.y },
+    { from: { x: maxX, y: center.y }, to: { x: board.width, y: center.y }, label: `${(board.width - maxX).toFixed(1)}"`, lx: maxX + (board.width - maxX) / 2, ly: center.y },
     { from: { x: center.x, y: 0 }, to: { x: center.x, y: minY }, label: `${minY.toFixed(1)}"`, lx: center.x, ly: minY / 2 },
-    { from: { x: center.x, y: maxY }, to: { x: center.x, y: BOARD_H }, label: `${(BOARD_H - maxY).toFixed(1)}"`, lx: center.x, ly: maxY + (BOARD_H - maxY) / 2 },
+    { from: { x: center.x, y: maxY }, to: { x: center.x, y: board.height }, label: `${(board.height - maxY).toFixed(1)}"`, lx: center.x, ly: maxY + (board.height - maxY) / 2 },
   ];
 
   ctx.save();
@@ -1301,6 +1310,7 @@ function drawUnit(
   shootingRole: 'shooter' | 'target' | null = null,
   shootingReady = false,
 ) {
+  const board = boardFormatForState(state);
   const color = state.armies[unit.side].color;
   const modelRadii = unit.modelPositions.map((_, index) => modelBaseRadiusInches(unit.profile, index) * scale);
   const modelFootprints = unit.modelPositions.map((_, index) => modelBaseFootprintInches(unit.profile, index, modelRotation(unit, index)));
@@ -1437,7 +1447,7 @@ function drawUnit(
     const padX = Math.max(4, scale * 0.22);
     const badgeW = textW + padX * 2;
     const badgeH = fontSize + Math.max(4, scale * 0.22);
-    const badgeX = Math.max(badgeW / 2 + 2, Math.min(60 * scale - badgeW / 2 - 2, cx));
+    const badgeX = Math.max(badgeW / 2 + 2, Math.min(board.width * scale - badgeW / 2 - 2, cx));
     const badgeY = Math.max(badgeH / 2 + 2, topY - badgeH - 5);
     ctx.fillStyle = fill;
     ctx.fillRect(badgeX - badgeW / 2, badgeY - badgeH / 2, badgeW, badgeH);
@@ -1681,7 +1691,7 @@ function drawSelectedModelMovementHud(
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     const textW = ctx.measureText(remainingLabel).width;
-    const labelX = Math.max(textW / 2 + 4, Math.min(BOARD_W * scale - textW / 2 - 4, mx));
+    const labelX = Math.max(textW / 2 + 4, Math.min(board.width * scale - textW / 2 - 4, mx));
     const labelY = Math.max(fontSize + 5, my - baseRadius - fontSize - 7);
     ctx.fillStyle = 'rgba(8, 12, 18, 0.86)';
     ctx.fillRect(labelX - textW / 2 - 4, labelY - fontSize / 2 - 3, textW + 8, fontSize + 6);

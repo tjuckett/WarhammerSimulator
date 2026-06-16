@@ -71,7 +71,31 @@ function segmentsIntersect(a: Position, b: Position, c: Position, d: Position): 
   return ccw(a, c, d) !== ccw(b, c, d) && ccw(a, b, c) !== ccw(a, b, d);
 }
 
+function rectVerticalHeight(t: RectShape): number | null {
+  if (!('featureHeight' in t)) return null;
+  switch ((t as TerrainFeature).featureHeight) {
+    case 'low': return 2;
+    case 'mid': return 5;
+    case 'tall': return 10;
+    default: return null;
+  }
+}
+
+function sightLineClearsRect(from: Position, to: Position, t: RectShape): boolean {
+  const blockerHeight = rectVerticalHeight(t);
+  if (blockerHeight === null) return false;
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const lenSq = dx * dx + dy * dy;
+  if (lenSq < 0.0001) return Math.min(from.z ?? 0, to.z ?? 0) > blockerHeight;
+  const center = terrainCenter(t);
+  const along = Math.max(0, Math.min(1, ((center.x - from.x) * dx + (center.y - from.y) * dy) / lenSq));
+  const lineZ = (from.z ?? 0) + ((to.z ?? 0) - (from.z ?? 0)) * along;
+  return lineZ > blockerHeight;
+}
+
 export function lineIntersectsTerrain(from: Position, to: Position, t: RectShape): boolean {
+  if (sightLineClearsRect(from, to, t)) return false;
   if (pointInTerrain(from, t) || pointInTerrain(to, t)) return true;
   const corners = terrainCorners(t);
   return corners.some((corner, i) =>
@@ -82,6 +106,7 @@ export function lineIntersectsTerrain(from: Position, to: Position, t: RectShape
 // Returns true if the line passes THROUGH the terrain boundary (crosses an edge), but does NOT
 // count it as blocked when either endpoint is inside the terrain — models already inside can see out/in.
 export function linePassesThroughTerrain(from: Position, to: Position, t: RectShape): boolean {
+  if (sightLineClearsRect(from, to, t)) return false;
   if (pointInTerrain(from, t) || pointInTerrain(to, t)) return false;
   const corners = terrainCorners(t);
   return corners.some((corner, i) =>
@@ -126,16 +151,16 @@ export function findUnblockedLOSRay(
   const perp = { x: -dir.y, y: dir.x };
 
   const fromPoints: Position[] = [
-    { x: fromCenter.x + perp.x * fromRadius, y: fromCenter.y + perp.y * fromRadius },
-    { x: fromCenter.x - perp.x * fromRadius, y: fromCenter.y - perp.y * fromRadius },
-    { x: fromCenter.x + dir.x  * fromRadius, y: fromCenter.y + dir.y  * fromRadius },
+    { x: fromCenter.x + perp.x * fromRadius, y: fromCenter.y + perp.y * fromRadius, z: fromCenter.z },
+    { x: fromCenter.x - perp.x * fromRadius, y: fromCenter.y - perp.y * fromRadius, z: fromCenter.z },
+    { x: fromCenter.x + dir.x  * fromRadius, y: fromCenter.y + dir.y  * fromRadius, z: fromCenter.z },
   ];
   const toPoints: Position[] = [
     toCenter,
-    { x: toCenter.x + perp.x * toRadius, y: toCenter.y + perp.y * toRadius },
-    { x: toCenter.x - perp.x * toRadius, y: toCenter.y - perp.y * toRadius },
-    { x: toCenter.x - dir.x  * toRadius, y: toCenter.y - dir.y  * toRadius },
-    { x: toCenter.x + dir.x  * toRadius, y: toCenter.y + dir.y  * toRadius },
+    { x: toCenter.x + perp.x * toRadius, y: toCenter.y + perp.y * toRadius, z: toCenter.z },
+    { x: toCenter.x - perp.x * toRadius, y: toCenter.y - perp.y * toRadius, z: toCenter.z },
+    { x: toCenter.x - dir.x  * toRadius, y: toCenter.y - dir.y  * toRadius, z: toCenter.z },
+    { x: toCenter.x + dir.x  * toRadius, y: toCenter.y + dir.y  * toRadius, z: toCenter.z },
   ];
 
   for (const fp of fromPoints) {

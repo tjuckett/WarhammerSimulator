@@ -1,8 +1,9 @@
 import type { UnitProfile } from '../types/army';
-import type { Position, Terrain } from '../types/battle';
+import type { BoardFormat, Position, Terrain } from '../types/battle';
 import { unitMaxBaseRadiusInches } from './baseSizes';
 import { DEPLOYMENT_ZONE_SETS } from '../data/deploymentZones';
 import type { DeploymentZoneSet, DeploymentZoneShape } from '../data/deploymentZoneTypes';
+import { DEFAULT_BOARD_FORMAT, boardFormatForId } from '../data/boardFormats';
 import {
   axisAlignedBoxIntersectsTerrain,
   circleFullyInTerrain,
@@ -20,9 +21,9 @@ export const DEPLOYMENT_STRATEGIES: { id: DeploymentStrategy; name: string }[] =
   { id: 'objective-push', name: 'Objective Push' },
 ];
 
-export const BOARD_W = 60;
-export const BOARD_H = 44;
-export const DEPLOY_DEPTH = 12;
+export const BOARD_W = DEFAULT_BOARD_FORMAT.width;
+export const BOARD_H = DEFAULT_BOARD_FORMAT.height;
+export const DEPLOY_DEPTH = DEFAULT_BOARD_FORMAT.deploymentDepth;
 const DEPLOYMENT_PAD = 0.5;
 
 // ─── Zone geometry ────────────────────────────────────────────────────────────
@@ -53,6 +54,39 @@ function fallbackZoneSet(): DeploymentZoneSet {
   };
 }
 
+function scalePoint(point: Position, board: BoardFormat): Position {
+  return {
+    ...point,
+    x: point.x * board.width / BOARD_W,
+    y: point.y * board.height / BOARD_H,
+  };
+}
+
+function scaleDeploymentShape(shape: DeploymentZoneShape, board: BoardFormat): DeploymentZoneShape {
+  if (board.id === DEFAULT_BOARD_FORMAT.id) return shape;
+  if (shape.type === 'triangle') {
+    return { ...shape, points: shape.points.map(point => scalePoint(point, board)) as [Position, Position, Position] };
+  }
+  if (shape.type === 'rectWithCircleCut') {
+    return {
+      ...shape,
+      x1: shape.x1 * board.width / BOARD_W,
+      x2: shape.x2 * board.width / BOARD_W,
+      y1: shape.y1 * board.height / BOARD_H,
+      y2: shape.y2 * board.height / BOARD_H,
+      cutoutCenter: scalePoint(shape.cutoutCenter, board),
+      cutoutRadius: shape.cutoutRadius * Math.min(board.width / BOARD_W, board.height / BOARD_H),
+    };
+  }
+  return {
+    ...shape,
+    x1: shape.x1 * board.width / BOARD_W,
+    x2: shape.x2 * board.width / BOARD_W,
+    y1: shape.y1 * board.height / BOARD_H,
+    y2: shape.y2 * board.height / BOARD_H,
+  };
+}
+
 function boundsForShapes(shapes: DeploymentZoneShape[]) {
   const points = shapes.flatMap(shape => {
     if (shape.type === 'triangle') return shape.points;
@@ -69,17 +103,18 @@ function boundsForShapes(shapes: DeploymentZoneShape[]) {
   };
 }
 
-export function zoneFor(side: 0 | 1, deployment = 'Default'): DeploymentZone {
+export function zoneFor(side: 0 | 1, deployment = 'Default', board: BoardFormat = boardFormatForId()): DeploymentZone {
   const set = DEPLOYMENT_ZONE_SETS.find(zoneSet => zoneSet.deployment === deployment) ?? fallbackZoneSet();
   const zoneSide = set.sides[side];
+  const shapes = zoneSide.shapes.map(shape => scaleDeploymentShape(shape, board));
   return {
     deployment: set.deployment,
     side,
     name: zoneSide.name,
     role: zoneSide.role,
     axis: set.axis,
-    shapes: zoneSide.shapes,
-    ...boundsForShapes(zoneSide.shapes),
+    shapes,
+    ...boundsForShapes(shapes),
   };
 }
 
@@ -267,8 +302,8 @@ export function clearOfTerrain(x: number, y: number, hw: number, hh: number, ter
   return !terrain.some(t => axisAlignedBoxIntersectsTerrain(x, y, hw, hh, t));
 }
 
-function opponentDeploymentSamples(side: 0 | 1, deployment = 'Default'): Position[] {
-  const zone = zoneFor(side === 0 ? 1 : 0, deployment);
+function opponentDeploymentSamples(side: 0 | 1, deployment = 'Default', board: BoardFormat = DEFAULT_BOARD_FORMAT): Position[] {
+  const zone = zoneFor(side === 0 ? 1 : 0, deployment, board);
   const samples: Position[] = [];
   for (let x = zone.x0; x <= zone.x1 + 0.01; x += Math.max(3, (zone.x1 - zone.x0) / 3)) {
     for (let y = zone.y0; y <= zone.y1 + 0.01; y += Math.max(3, (zone.y1 - zone.y0) / 4)) {
@@ -285,9 +320,10 @@ export function screenedFromOpponentDeployment(
   side: 0 | 1,
   terrain: Terrain[],
   deployment = 'Default',
+  board: BoardFormat = DEFAULT_BOARD_FORMAT,
 ): boolean {
   const to = { x, y };
-  return opponentDeploymentSamples(side, deployment).every(from => !hasLOS(from, to, terrain));
+  return opponentDeploymentSamples(side, deployment, board).every(from => !hasLOS(from, to, terrain));
 }
 
 // Returns true if (x,y) lies inside a cover-providing terrain mat
@@ -305,9 +341,10 @@ export function modelScreenedByTerrainFeature(
   side: 0 | 1,
   terrain: Terrain[],
   deployment = 'Default',
+  board: BoardFormat = DEFAULT_BOARD_FORMAT,
 ): boolean {
   const to = { x, y };
-  return opponentDeploymentSamples(side, deployment).every(from =>
+  return opponentDeploymentSamples(side, deployment, board).every(from =>
     terrain.some(t =>
       t.providesCover
       && circleFullyInTerrain(to, 0.48, t)
@@ -322,6 +359,7 @@ export function modelBehindTerrainWall(
   side: 0 | 1,
   terrain: Terrain[],
   deployment = 'Default',
+  board: BoardFormat = DEFAULT_BOARD_FORMAT,
 ): boolean {
   const model = { x, y };
   return terrain.some(t => {
@@ -334,7 +372,7 @@ export function modelBehindTerrainWall(
 
       const horizontalReach = feature.height <= feature.width && Math.abs(y - center.y) <= Math.max(1.25, feature.height / 2 + 1);
       const verticalReach = feature.height > feature.width && y >= feature.y - 1 && y <= feature.y + feature.height + 1;
-      return horizontalReach || verticalReach || modelScreenedByTerrainFeature(x, y, side, terrain, deployment);
+      return horizontalReach || verticalReach || modelScreenedByTerrainFeature(x, y, side, terrain, deployment, board);
     });
   });
 }
@@ -346,11 +384,12 @@ function findSpot(
   zone: DeploymentZone,
   terrain: Terrain[],
   placed: Array<{ x: number; y: number; hw: number; hh: number }>,
+  board: BoardFormat = DEFAULT_BOARD_FORMAT,
 ): Position {
   const xMin = zone.x0 + hw;
   const xMax = zone.x1 - hw;
   const yMin = hh + 0.5;
-  const yMax = BOARD_H - hh - 0.5;
+  const yMax = board.height - hh - 0.5;
   const cx = Math.max(xMin, Math.min(xMax, desiredX));
   const cy = Math.max(yMin, Math.min(yMax, desiredY));
 
@@ -389,8 +428,9 @@ export function deployArmy(
   terrain: Terrain[],
   objectives: Position[],
   deployment = 'Default',
+  board: BoardFormat = DEFAULT_BOARD_FORMAT,
 ): Position[] {
-  const zone    = zoneFor(side, deployment);
+  const zone    = zoneFor(side, deployment, board);
   const zoneW   = zone.x1 - zone.x0;
   const zoneH   = zone.y1 - zone.y0;
   const frontX  = (side === 0) ? zone.x1 : zone.x0; // edge closest to enemy
@@ -429,7 +469,7 @@ export function deployArmy(
     const objYs = [...objectives].map(o => o.y).sort((a, b) => a - b);
     // Reorder: center-most first, alternating outward
     const centerFirst = [...objYs].sort((a, b) =>
-      Math.abs(a - BOARD_H / 2) - Math.abs(b - BOARD_H / 2),
+      Math.abs(a - board.height / 2) - Math.abs(b - board.height / 2),
     );
     const sortedByOC = [...tagged].sort((a, b) => b.oc - a.oc);
     for (let si = 0; si < sortedByOC.length; si++) {
@@ -441,8 +481,8 @@ export function deployArmy(
     // Fast assault units at the OUTER edge (they engage first and sweep outward).
     // Slow ranged units at the INNER edge (fire support from inside the mass).
     const useTop = Math.random() < 0.5;
-    const outerY = useTop ? 1.5 : BOARD_H - 1.5;
-    const innerY = useTop ? BOARD_H / 2 - 2 : BOARD_H / 2 + 2;
+    const outerY = useTop ? 1.5 : board.height - 1.5;
+    const innerY = useTop ? board.height / 2 - 2 : board.height / 2 + 2;
 
     const outerScore = (t: typeof tagged[0]) =>
       t.speed * (t.role === 'assault' ? 2.0 : t.role === 'mixed' ? 0.8 : 0.3);
@@ -459,14 +499,14 @@ export function deployArmy(
     // based on move speed. Fastest units target the most central/far objective;
     // slowest lock onto the nearest ones.
     const nearObjs = objectives
-      .filter(o => side === 0 ? o.x <= BOARD_W / 2 : o.x >= BOARD_W / 2)
+      .filter(o => side === 0 ? o.x <= board.width / 2 : o.x >= board.width / 2)
       .sort((a, b) => {
         // Priority: farthest-x objective first (hardest to reach = most reward)
-        const distA = side === 0 ? a.x : BOARD_W - a.x;
-        const distB = side === 0 ? b.x : BOARD_W - b.x;
+        const distA = side === 0 ? a.x : board.width - a.x;
+        const distB = side === 0 ? b.x : board.width - b.x;
         return distB - distA;
       });
-    if (!nearObjs.length) nearObjs.push({ x: BOARD_W / 2, y: BOARD_H / 2 });
+    if (!nearObjs.length) nearObjs.push({ x: board.width / 2, y: board.height / 2 });
 
     const sortedBySpeed = [...tagged].sort((a, b) => b.speed - a.speed);
     for (let si = 0; si < sortedBySpeed.length; si++) {
@@ -491,7 +531,7 @@ export function deployArmy(
 
   for (const t of order) {
     const { hw, hh } = fp(t.u.baseModelCount, unitMaxBaseRadiusInches(t.u));
-    const pos = findSpot(t.idealX, assignedY[t.i], hw, hh, zone, terrain, placed);
+    const pos = findSpot(t.idealX, assignedY[t.i], hw, hh, zone, terrain, placed, board);
     placed.push({ x: pos.x, y: pos.y, hw, hh });
     result[t.i] = pos;
   }

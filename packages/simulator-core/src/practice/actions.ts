@@ -2,20 +2,25 @@ import type { Phase, Position, Side, BattleState } from '../types/battle';
 import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
+import { scorePrimaryMission } from '../engine/missionScoring';
 import {
   advancePlayUnit,
   allocatePlayDamageToModel,
   assignPlayWoundedModel,
   beginPlayBattle,
+  chargePlayUnitTarget,
   completePlayUnitMovement,
+  consolidatePlayUnit,
   disembarkPlayUnit,
   embarkPlayUnit,
   fallBackPlayUnit,
+  fightPlayUnitWeapon,
   lockPlayUnitShooting,
   markRemainingStationaryUnits,
   movementStep,
   movePlayModels,
   movePlayModelsVertically,
+  pileInPlayUnit,
   placePlayReinforcement,
   placePlayStrategicReserveUnit,
   placePlayUnit,
@@ -149,6 +154,29 @@ export type GameAction =
       unitId: string;
     })
   | (GameActionBase & {
+      type: 'play.chargeUnitTarget';
+      side: Side;
+      unitId: string;
+      targetUnitId: string;
+    })
+  | (GameActionBase & {
+      type: 'play.fightUnitWeapon';
+      side: Side;
+      unitId: string;
+      targetUnitId: string;
+      weaponIndex: number | 'all';
+    })
+  | (GameActionBase & {
+      type: 'play.pileInUnit';
+      side: Side;
+      unitId: string;
+    })
+  | (GameActionBase & {
+      type: 'play.consolidateUnit';
+      side: Side;
+      unitId: string;
+    })
+  | (GameActionBase & {
       type: 'play.beginBattle';
     })
   | (GameActionBase & {
@@ -172,7 +200,7 @@ function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value));
 }
 
-function stepPlayPhase(state: BattleState): BattleState {
+function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   const next = clone(state);
   if (next.winner !== null || next.phase === 'deployment' || next.phase === 'end') return next;
   if (playPhaseCoherencyIssues(next).length > 0) return next;
@@ -184,6 +212,8 @@ function stepPlayPhase(state: BattleState): BattleState {
       if (unit.side !== next.activeArmy || unit.destroyed) continue;
       unit.activated = false;
       unit.charged = false;
+      unit.piledIn = undefined;
+      unit.consolidated = undefined;
       unit.movementAction = undefined;
       unit.movementAllowanceRemaining = undefined;
       unit.movementAllowanceRemainingByModel = undefined;
@@ -199,7 +229,10 @@ function stepPlayPhase(state: BattleState): BattleState {
     gainCommandPhaseCommandPoints(next);
   };
 
+  const phaseBeforeStep = next.phase;
+  const scoringSide = next.activeArmy;
   const currentIndex = PLAY_TURN_PHASES.indexOf(next.phase);
+  if (phaseBeforeStep === 'fight') scorePrimaryMission(next, scoringSide, rules);
   if (currentIndex < 0) {
     startCommand();
   } else if (currentIndex < PLAY_TURN_PHASES.length - 1) {
@@ -340,11 +373,30 @@ export function applyGameAction(
     case 'play.lockUnitShooting':
       return lockPlayUnitShooting(state, normalizedAction.unitId, normalizedAction.side);
 
+    case 'play.chargeUnitTarget':
+      return chargePlayUnitTarget(state, normalizedAction.unitId, normalizedAction.side, normalizedAction.targetUnitId, context.rules);
+
+    case 'play.fightUnitWeapon':
+      return fightPlayUnitWeapon(
+        state,
+        normalizedAction.unitId,
+        normalizedAction.side,
+        normalizedAction.targetUnitId,
+        normalizedAction.weaponIndex,
+        context.rules,
+      );
+
+    case 'play.pileInUnit':
+      return pileInPlayUnit(state, normalizedAction.unitId, normalizedAction.side, context.rules);
+
+    case 'play.consolidateUnit':
+      return consolidatePlayUnit(state, normalizedAction.unitId, normalizedAction.side, context.rules);
+
     case 'play.beginBattle':
       return beginPlayBattle(state);
 
     case 'play.stepPhase':
-      return stepPlayPhase(state);
+      return stepPlayPhase(state, context.rules);
 
     case 'simulation.placeNextUnit':
       return placeNextUnit(state);
@@ -363,7 +415,12 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
     case 'play.advanceUnit':
     case 'play.completeUnitMovement':
     case 'play.embarkUnit':
+    case 'play.chargeUnitTarget':
+    case 'play.pileInUnit':
+    case 'play.consolidateUnit':
       return normalizedAction.unitId === unitId;
+    case 'play.fightUnitWeapon':
+      return normalizedAction.unitId === unitId || normalizedAction.targetUnitId === unitId;
     case 'play.disembarkUnit':
       return normalizedAction.passengerUnitId === unitId || normalizedAction.transportUnitId === unitId;
     case 'play.moveModels':

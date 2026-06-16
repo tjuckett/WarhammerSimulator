@@ -25,6 +25,7 @@ import SpeedIcon from '@mui/icons-material/Speed';
 import StopIcon from '@mui/icons-material/Stop';
 import type { BattleState, BattleUnit, LogEntry, Phase, Position, Terrain, TerrainFeature, TerrainLayout } from '@warhammer-simulator/core/types/battle';
 import type { TerrainFeatureSpec, TerrainLayoutData, TerrainSpec } from '@warhammer-simulator/core/data/terrainLayoutTypes';
+import { BOARD_FORMATS, boardFormatForId, boardFormatForState, scalePositionsForBoard } from '@warhammer-simulator/core/data/boardFormats';
 import type { ImportedArmy, UnitProfile } from '@warhammer-simulator/core/types/army';
 import { EDITIONS, rulesEditionForRuleset, rulesetMetadataForState, type RulesEdition } from '@warhammer-simulator/core/engine/rulesEngine';
 import { terrainLayoutFromData, TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
@@ -40,10 +41,11 @@ import {
 } from '@warhammer-simulator/core/engine/missions';
 import {
   advancePlayUnit, battleModelIdsWithCoherencyIssues, beginPlayBattle, completePlayUnitMovement, createDeploymentState, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placePlayReinforcement, placePlayStrategicReserveUnit, placePlayUnit, placeNextUnit, removePlayModels,
-  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, lockPlayUnitShooting, playShootingWeaponOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, undeployPlayUnit, type DeploymentStrategy, type PlayShootingWeaponOption, type LOSRay,
+  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consolidatePlayUnit, fightPlayUnitWeapon, lockPlayUnitShooting, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, undeployPlayUnit, type DeploymentStrategy, type PlayChargeTargetOption, type PlayFightWeaponOption, type PlayShootingWeaponOption, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
+import { scorePrimaryMission } from '@warhammer-simulator/core/engine/missionScoring';
 import {
   loadBrain, saveBrain, recordGame, suggestStrategy, brainStats,
   type BrainMemory, type GameRecord,
@@ -414,6 +416,46 @@ function calcEffectiveSave(save: number, ap: number, invuln?: number): number {
   return invuln !== undefined ? Math.min(modified, invuln) : modified;
 }
 
+function pendingDamageLabel(unit: BattleUnit | null): string | null {
+  const allocation = unit?.pendingDamageAllocations?.[0];
+  if (!unit || !allocation) return null;
+  const source = allocation.source ? ` from ${allocation.source}` : '';
+  const spill = allocation.noCarryOver ? 'no spillover' : 'can spill over';
+  const remaining = unit.pendingDamageAllocations?.length ?? 0;
+  return `${allocation.damage} damage${source} (${spill})${remaining > 1 ? `, ${remaining} allocations queued` : ''}`;
+}
+
+function PendingDamageAllocationHud({ unit }: { unit: BattleUnit }) {
+  const label = pendingDamageLabel(unit);
+  if (!label) return null;
+  const forcedModel = unit.woundedModelIndex !== undefined
+    ? `Model ${unit.woundedModelIndex + 1} is already wounded and must take this.`
+    : 'Click a defender model to apply it.';
+
+  return (
+    <Box sx={{
+      minWidth: 210,
+      maxWidth: 280,
+      p: 1,
+      border: '1px solid rgba(255, 190, 85, 0.82)',
+      background: 'rgba(12, 10, 7, 0.94)',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.34)',
+      display: 'grid',
+      gap: 0.35,
+    }}>
+      <Typography variant="caption" sx={{ color: '#ffcf7a', fontWeight: 800, textTransform: 'uppercase', lineHeight: 1 }}>
+        Pending Damage
+      </Typography>
+      <Typography variant="body2" sx={{ color: '#fff3d1', fontWeight: 800, lineHeight: 1.15 }}>
+        {label}
+      </Typography>
+      <Typography variant="caption" sx={{ color: '#c7bda3', lineHeight: 1.2 }}>
+        {forcedModel}
+      </Typography>
+    </Box>
+  );
+}
+
 const shootingPanelSx = {
   border: '1px solid rgba(255,255,255,0.12)',
   borderRadius: '8px',
@@ -429,6 +471,7 @@ function PlayShootingPanel({
   selectedTarget,
   targetIsValid,
   damageAllocationLocked,
+  pendingDamageLabel,
   weaponOptions,
   selectedTargetId,
   selectedWeaponIndex,
@@ -442,6 +485,7 @@ function PlayShootingPanel({
   selectedTarget: BattleUnit | null;
   targetIsValid: boolean;
   damageAllocationLocked: boolean;
+  pendingDamageLabel?: string | null;
   weaponOptions: PlayShootingWeaponOption[];
   selectedTargetId: string;
   selectedWeaponIndex: 'all' | string;
@@ -534,7 +578,9 @@ function PlayShootingPanel({
 
       {shootingLocked ? (
         <Typography variant="caption" sx={{ color: '#d8b35d' }}>
-          Allocate pending damage to defender models before selecting another shooter or target.
+          {pendingDamageLabel
+            ? `Allocate ${pendingDamageLabel} before selecting another shooter or target.`
+            : 'Allocate pending damage to defender models before selecting another shooter or target.'}
         </Typography>
       ) : !weaponOptions.length ? (
         <Typography variant="caption" sx={{ color: '#9a8f6a' }}>No eligible ranged weapons for this unit.</Typography>
@@ -624,6 +670,163 @@ function PlayShootingPanel({
   );
 }
 
+function PlayChargePanel({
+  charger,
+  targets,
+  selectedTargetId,
+  options,
+  onTargetChange,
+  onResolve,
+}: {
+  charger: BattleUnit | null;
+  targets: BattleUnit[];
+  selectedTargetId: string;
+  options: PlayChargeTargetOption[];
+  onTargetChange: (value: string) => void;
+  onResolve: () => void;
+}) {
+  if (!charger) {
+    return (
+      <Box sx={shootingPanelSx}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>Charge</Typography>
+        <Typography variant="body2" sx={{ color: '#888' }}>Select one of the active army&apos;s units on the battlefield.</Typography>
+      </Box>
+    );
+  }
+  const selectedOption = options.find(option => option.targetId === selectedTargetId) ?? null;
+  const canResolve = !!selectedOption && !charger.activated;
+  return (
+    <Box sx={shootingPanelSx}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>Charge</Typography>
+          <Typography variant="caption" sx={{ display: 'block', color: '#888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {charger.profile.name}{charger.activated ? ' - done' : ''}
+          </Typography>
+        </Box>
+        <Button size="small" variant="contained" startIcon={<CasinoOutlinedIcon />} disabled={!canResolve} onClick={onResolve}>
+          Roll
+        </Button>
+      </Box>
+      <FormControl size="small" fullWidth disabled={!targets.length || charger.activated}>
+        <InputLabel id="play-charge-target-label">Target</InputLabel>
+        <Select
+          labelId="play-charge-target-label"
+          label="Target"
+          value={selectedTargetId}
+          onChange={(event: SelectChangeEvent) => onTargetChange(event.target.value)}
+        >
+          {targets.map(target => {
+            const needed = options.find(option => option.targetId === target.id)?.needed ?? 0;
+            return (
+              <MenuItem key={target.id} value={target.id}>
+                {target.profile.name} ({needed.toFixed(1)}&quot; needed)
+              </MenuItem>
+            );
+          })}
+        </Select>
+      </FormControl>
+      {!options.length && (
+        <Typography variant="caption" sx={{ color: '#9a8f6a' }}>No eligible charge targets.</Typography>
+      )}
+    </Box>
+  );
+}
+
+function PlayFightPanel({
+  fighter,
+  targets,
+  selectedTarget,
+  selectedTargetId,
+  selectedWeaponIndex,
+  weaponOptions,
+  damageAllocationLocked,
+  pendingDamageLabel,
+  onTargetChange,
+  onWeaponChange,
+  onResolve,
+}: {
+  fighter: BattleUnit | null;
+  targets: BattleUnit[];
+  selectedTarget: BattleUnit | null;
+  selectedTargetId: string;
+  selectedWeaponIndex: 'all' | string;
+  weaponOptions: PlayFightWeaponOption[];
+  damageAllocationLocked: boolean;
+  pendingDamageLabel?: string | null;
+  onTargetChange: (value: string) => void;
+  onWeaponChange: (value: 'all' | string) => void;
+  onResolve: () => void;
+}) {
+  if (!fighter) {
+    return (
+      <Box sx={shootingPanelSx}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>Fight</Typography>
+        <Typography variant="body2" sx={{ color: '#888' }}>Select one of the active army&apos;s eligible units.</Typography>
+      </Box>
+    );
+  }
+  const selectedOptions = selectedWeaponIndex === 'all'
+    ? weaponOptions
+    : weaponOptions.filter(option => String(option.weaponIndex) === selectedWeaponIndex);
+  const canResolve = !damageAllocationLocked
+    && !fighter.activated
+    && !!selectedTarget
+    && selectedOptions.some(option => option.targetIds.includes(selectedTargetId));
+  return (
+    <Box sx={shootingPanelSx}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>Fight</Typography>
+          <Typography variant="caption" sx={{ display: 'block', color: '#888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {fighter.profile.name}{fighter.activated ? ' - done' : ''}
+          </Typography>
+        </Box>
+        <Button size="small" variant="contained" startIcon={<CasinoOutlinedIcon />} disabled={!canResolve} onClick={onResolve}>
+          Resolve
+        </Button>
+      </Box>
+      <FormControl size="small" fullWidth disabled={damageAllocationLocked || !weaponOptions.length || fighter.activated}>
+        <InputLabel id="play-fight-weapon-label">Weapon</InputLabel>
+        <Select
+          labelId="play-fight-weapon-label"
+          label="Weapon"
+          value={selectedWeaponIndex}
+          onChange={(event: SelectChangeEvent) => onWeaponChange(event.target.value as 'all' | string)}
+        >
+          {weaponOptions.map(option => (
+            <MenuItem key={option.weaponIndex} value={String(option.weaponIndex)}>{option.name}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <FormControl size="small" fullWidth disabled={damageAllocationLocked || !targets.length || fighter.activated}>
+        <InputLabel id="play-fight-target-label">Target</InputLabel>
+        <Select
+          labelId="play-fight-target-label"
+          label="Target"
+          value={selectedTargetId}
+          onChange={(event: SelectChangeEvent) => onTargetChange(event.target.value)}
+        >
+          {targets.map(target => (
+            <MenuItem key={target.id} value={target.id}>
+              {target.profile.name} ({target.remainingModels} model{target.remainingModels === 1 ? '' : 's'})
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      {damageAllocationLocked ? (
+        <Typography variant="caption" sx={{ color: '#d8b35d' }}>
+          {pendingDamageLabel ? `Allocate ${pendingDamageLabel} before fighting again.` : 'Allocate pending damage before fighting again.'}
+        </Typography>
+      ) : !weaponOptions.length ? (
+        <Typography variant="caption" sx={{ color: '#9a8f6a' }}>No eligible melee weapons for this unit.</Typography>
+      ) : !targets.length ? (
+        <Typography variant="caption" sx={{ color: '#9a8f6a' }}>No enemy units in Engagement Range.</Typography>
+      ) : null}
+    </Box>
+  );
+}
+
 export default function App() {
   const [appMode, setAppMode] = useState<AppMode>('editor');
   const [army1, setArmy1] = useState<ImportedArmy>(() => loadSavedArmy(0, SAMPLE_ARMIES[0]));
@@ -643,6 +846,7 @@ export default function App() {
   const [practiceStorageStatus, setPracticeStorageStatus] = useState<PracticeStorageHealth | null>(null);
   const [playPhaseWarning, setPlayPhaseWarning] = useState('');
   const [editionId, setEditionId] = useState<string>(EDITIONS[0].id);
+  const [boardFormatId, setBoardFormatId] = useState<string>(BOARD_FORMATS[2].id);
   const [primaryMission, setPrimaryMission] = useState<string>(TOURNAMENT_MISSIONS[0].primaryMission);
   const [deployment, setDeployment] = useState<string>(TOURNAMENT_MISSIONS[0].deployment);
   const [layoutId, setLayoutId] = useState<string>(TOURNAMENT_MISSIONS[0].terrainLayoutIds[0]);
@@ -663,6 +867,9 @@ export default function App() {
   const [playModelSelection, setPlayModelSelection] = useState<PlayModelSelection | null>(null);
   const [selectedShootingTargetId, setSelectedShootingTargetId] = useState('');
   const [selectedShootingWeaponIndex, setSelectedShootingWeaponIndex] = useState<'all' | string>('all');
+  const [selectedChargeTargetId, setSelectedChargeTargetId] = useState('');
+  const [selectedFightTargetId, setSelectedFightTargetId] = useState('');
+  const [selectedFightWeaponIndex, setSelectedFightWeaponIndex] = useState<'all' | string>('all');
   const [casualtyRemovalShooterId, setCasualtyRemovalShooterId] = useState<string | null>(null);
   const [shootingResultEntries, setShootingResultEntries] = useState<LogEntry[]>([]);
   const [targetErrorMsg, setTargetErrorMsg] = useState<string | null>(null);
@@ -683,6 +890,7 @@ export default function App() {
   const winnerRecordedRef = useRef<string | null>(null);
 
   const edition: RulesEdition = EDITIONS.find(e => e.id === editionId) ?? EDITIONS[0];
+  const selectedBoardFormat = boardFormatForId(boardFormatId);
   const availableDeployments = deploymentsForPrimary(primaryMission);
   const selectedMission: TournamentMission = missionForSelection(primaryMission, deployment);
   const defaultTerrainLayoutIds = new Set(TERRAIN_LAYOUTS.map(layout => layout.id));
@@ -693,9 +901,15 @@ export default function App() {
   const compatibleLayouts = terrainLayouts.filter(l => selectedMission.terrainLayoutIds.includes(l.id));
   const selectedLayout = terrainLayouts.find(l => l.id === layoutId) ?? compatibleLayouts[0] ?? terrainLayouts[0];
   const selectedObjectives = useMemo(
-    () => edition.objectiveControl.kind === 'marker' ? objectivesForDeployment(selectedMission.deployment) : [],
-    [edition.objectiveControl.kind, selectedMission.deployment],
+    () => edition.objectiveControl.kind === 'marker'
+      ? scalePositionsForBoard(objectivesForDeployment(selectedMission.deployment), selectedBoardFormat)
+      : [],
+    [edition.objectiveControl.kind, selectedMission.deployment, selectedBoardFormat],
   );
+  const selectedSetup = useMemo(() => ({
+    ...setupLabel(selectedMission, editorLayout.name),
+    boardFormat: selectedBoardFormat.id,
+  }), [editorLayout.name, selectedBoardFormat.id, selectedMission]);
   const previewState: BattleState = useMemo(() => ({
     ruleset: rulesetMetadataForState(edition),
     battleRound: 1,
@@ -708,6 +922,7 @@ export default function App() {
     log: [],
     units: [],
     terrain: editorLayout.terrain,
+    board: selectedBoardFormat,
     armies: [
       { name: army1.name, faction: army1.faction, color: ARMY_COLORS[0], army: army1 },
       { name: army2.name, faction: army2.faction, color: ARMY_COLORS[1], army: army2 },
@@ -719,8 +934,8 @@ export default function App() {
     commandPoints: [0, 0],
     unplacedUnits: [[], []],
     deployStrategies: [strategy1, strategy2],
-    setup: setupLabel(selectedMission, editorLayout.name),
-  }), [army1, army2, editorLayout, edition, selectedMission, selectedObjectives, strategy1, strategy2]);
+    setup: selectedSetup,
+  }), [army1, army2, editorLayout.terrain, edition, selectedBoardFormat, selectedObjectives, selectedSetup, strategy1, strategy2]);
   const alignLockLabel = alignVertexLock
     ? `vertex ${alignVertexLock.vertexIndex + 1} at ${alignVertexLock.target.x.toFixed(1)}, ${alignVertexLock.target.y.toFixed(1)}`
     : null;
@@ -811,6 +1026,12 @@ export default function App() {
   const selectedShootingUnit = battleState?.phase === 'shooting' && casualtyRemovalShooterId
     ? battleState.units.find(unit => unit.id === casualtyRemovalShooterId && unit.side === battleState.activeArmy && !unit.destroyed && !unit.embarkedInUnitId) ?? selectedPlayBattleUnit
     : selectedPlayBattleUnit;
+  const selectedChargeUnit = battleState?.phase === 'charge' && selectedPlayBattleUnit?.side === battleState.activeArmy
+    ? selectedPlayBattleUnit
+    : null;
+  const selectedFightUnit = battleState?.phase === 'fight' && selectedPlayBattleUnit?.side === battleState.activeArmy
+    ? selectedPlayBattleUnit
+    : null;
   const activeRulesForBattle = battleState ? rulesEditionForRuleset(battleState.ruleset) : edition;
   const selectedPlayShootingOptions = useMemo(
     () => (
@@ -852,6 +1073,51 @@ export default function App() {
     selectedShootingTargetUnit
     && selectedPlayShootingTargets.some(target => target.id === selectedShootingTargetUnit.id)
   );
+  const selectedPlayChargeOptions = useMemo(
+    () => (
+      isPlayMode
+      && battleState?.phase === 'charge'
+      && selectedChargeUnit
+      && selectedChargeUnit.side === battleState.activeArmy
+        ? playChargeTargetOptions(battleState, selectedChargeUnit.id, selectedChargeUnit.side, activeRulesForBattle)
+        : []
+    ),
+    [isPlayMode, battleState, selectedChargeUnit, activeRulesForBattle],
+  );
+  const selectedPlayChargeTargets = useMemo(() => {
+    if (!battleState || !selectedChargeUnit) return [];
+    const targetIds = new Set(selectedPlayChargeOptions.map(option => option.targetId));
+    return battleState.units.filter(unit => unit.side !== selectedChargeUnit.side && !unit.destroyed && !unit.embarkedInUnitId && targetIds.has(unit.id));
+  }, [battleState, selectedChargeUnit, selectedPlayChargeOptions]);
+  const selectedPlayFightOptions = useMemo(
+    () => (
+      isPlayMode
+      && battleState?.phase === 'fight'
+      && selectedFightUnit
+      && selectedFightUnit.side === battleState.activeArmy
+        ? playFightWeaponOptions(battleState, selectedFightUnit.id, selectedFightUnit.side, activeRulesForBattle)
+        : []
+    ),
+    [isPlayMode, battleState, selectedFightUnit, activeRulesForBattle],
+  );
+  const selectedPlayFightTargets = useMemo(() => {
+    if (!battleState || !selectedFightUnit) return [];
+    const targetIds = new Set(
+      (selectedFightWeaponIndex === 'all'
+        ? selectedPlayFightOptions
+        : selectedPlayFightOptions.filter(option => String(option.weaponIndex) === selectedFightWeaponIndex)
+      ).flatMap(option => option.targetIds),
+    );
+    return battleState.units.filter(unit => unit.side !== selectedFightUnit.side && !unit.destroyed && !unit.embarkedInUnitId && targetIds.has(unit.id));
+  }, [battleState, selectedFightUnit, selectedPlayFightOptions, selectedFightWeaponIndex]);
+  const selectedFightTargetUnit = useMemo(() => {
+    if (!battleState || !selectedFightUnit || !selectedFightTargetId) return null;
+    return battleState.units.find(unit => unit.id === selectedFightTargetId && unit.side !== selectedFightUnit.side && !unit.destroyed && !unit.embarkedInUnitId) ?? null;
+  }, [battleState, selectedFightUnit, selectedFightTargetId]);
+  const fightActivationUnitIds = useMemo<Set<string>>(() => {
+    if (!battleState || battleState.phase !== 'fight') return new Set();
+    return new Set(playFightActivationUnitIds(battleState, battleState.activeArmy, activeRulesForBattle));
+  }, [battleState, activeRulesForBattle]);
 
   const coverUnitIds = useMemo<Set<string>>(() => {
     if (!battleState || !selectedShootingUnit || battleState.phase !== 'shooting') return new Set();
@@ -905,7 +1171,16 @@ export default function App() {
         .map(unit => unit.id),
     );
   }, [battleState]);
+  const pendingDamageAllocationUnit = useMemo(() => {
+    if (!battleState || battleState.phase !== 'shooting') return null;
+    return battleState.units.find(unit =>
+      !unit.destroyed
+      && !unit.embarkedInUnitId
+      && (unit.pendingDamageAllocations?.length ?? 0) > 0
+    ) ?? null;
+  }, [battleState]);
   const damageAllocationLocked = pendingDamageAllocationUnitIds.size > 0;
+  const pendingDamageText = pendingDamageLabel(pendingDamageAllocationUnit);
 
   const selectedPlayCanAdvance = !!(
     isPlayMode
@@ -955,6 +1230,21 @@ export default function App() {
     && playModelSelection
     && primaryPlaySelection
     && primaryPlaySelection.side === battleState.activeArmy
+  );
+  const selectedPlayCanPileIn = !!(
+    isPlayMode
+    && battleState
+    && primaryPlaySelection
+    && primaryPlaySelection.side === battleState.activeArmy
+    && fightActivationUnitIds.has(primaryPlaySelection.unitId)
+    && playUnitCanPileIn(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side, activeRulesForBattle)
+  );
+  const selectedPlayCanConsolidate = !!(
+    isPlayMode
+    && battleState
+    && primaryPlaySelection
+    && primaryPlaySelection.side === battleState.activeArmy
+    && playUnitCanConsolidate(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side)
   );
   const selectedPlayCanEmbark = !!(
     isPlayMode
@@ -1055,6 +1345,48 @@ export default function App() {
     selectedShootingWeaponIndex,
     selectedPlayShootingOptions,
     selectedPlayShootingTargets,
+  ]);
+
+  useEffect(() => {
+    if (!battleState || battleState.phase !== 'charge' || !selectedChargeUnit) {
+      setSelectedChargeTargetId('');
+      return;
+    }
+    if (
+      !selectedChargeTargetId
+      || !selectedPlayChargeOptions.some(option => option.targetId === selectedChargeTargetId)
+    ) {
+      setSelectedChargeTargetId(selectedPlayChargeOptions[0]?.targetId ?? '');
+    }
+  }, [battleState?.phase, battleState?.units, selectedChargeUnit?.id, selectedChargeTargetId, selectedPlayChargeOptions]);
+
+  useEffect(() => {
+    if (!battleState || battleState.phase !== 'fight' || !selectedFightUnit) {
+      setSelectedFightTargetId('');
+      setSelectedFightWeaponIndex('all');
+      return;
+    }
+    if (
+      selectedFightWeaponIndex === 'all'
+      || !selectedPlayFightOptions.some(option => String(option.weaponIndex) === selectedFightWeaponIndex)
+    ) {
+      setSelectedFightWeaponIndex(selectedPlayFightOptions[0] ? String(selectedPlayFightOptions[0].weaponIndex) : 'all');
+      return;
+    }
+    if (
+      !selectedFightTargetId
+      || !selectedPlayFightTargets.some(target => target.id === selectedFightTargetId)
+    ) {
+      setSelectedFightTargetId(selectedPlayFightTargets[0]?.id ?? '');
+    }
+  }, [
+    battleState?.phase,
+    battleState?.units,
+    selectedFightUnit?.id,
+    selectedFightTargetId,
+    selectedFightWeaponIndex,
+    selectedPlayFightOptions,
+    selectedPlayFightTargets,
   ]);
 
   useEffect(() => {
@@ -1173,6 +1505,7 @@ export default function App() {
     setArmy2(result.timeline.initialState.armies[1].army);
     setStrategy1(result.timeline.initialState.deployStrategies[0] as DeploymentStrategy);
     setStrategy2(result.timeline.initialState.deployStrategies[1] as DeploymentStrategy);
+    setBoardFormatId(boardFormatForState(result.timeline.initialState).id);
     const setup = result.timeline.initialState.setup;
     if (setup) {
       setPrimaryMission(setup.primaryMission);
@@ -1688,6 +2021,10 @@ export default function App() {
     clearPlayUndo();
     winnerRecordedRef.current = null;
     const layout = getLayout();
+    const battleSetup = {
+      ...setupLabel(selectedMission, layout.name),
+      boardFormat: selectedBoardFormat.id,
+    };
     const initialState = createDeploymentState(
       army1,
       ARMY_COLORS[0],
@@ -1696,7 +2033,7 @@ export default function App() {
       layout.terrain,
       strategy1,
       strategy2,
-      setupLabel(selectedMission, layout.name),
+      battleSetup,
       selectedObjectives,
       edition,
     );
@@ -1795,8 +2132,23 @@ export default function App() {
         setInspectedSelection({ kind: 'battle', side: stillPending.side, unitId: stillPending.id });
         setTargetErrorMsg('Select a model to allocate the next pending damage');
       } else {
-        setPlayModelSelection(null);
-        setInspectedSelection(null);
+        const actingUnit = next.phase === 'fight' && casualtyRemovalShooterId
+          ? next.units.find(unit => unit.id === casualtyRemovalShooterId && unit.side === next.activeArmy && !unit.destroyed && !unit.embarkedInUnitId)
+          : null;
+        if (actingUnit) {
+          setPlayModelSelection(normalizePlaySelectionForState(next, {
+            side: actingUnit.side,
+            parts: [{
+              unitId: actingUnit.id,
+              side: actingUnit.side,
+              modelIndices: actingUnit.modelPositions.map((_, modelIndex) => modelIndex),
+            }],
+          }));
+          setInspectedSelection({ kind: 'battle', side: actingUnit.side, unitId: actingUnit.id });
+        } else {
+          setPlayModelSelection(null);
+          setInspectedSelection(null);
+        }
         setCasualtyRemovalShooterId(null);
         setTargetErrorMsg(null);
       }
@@ -1811,6 +2163,11 @@ export default function App() {
     }
     const primary = normalized.parts[0];
     if (isPlayMode && battleState?.phase === 'shooting') {
+      const unit = battleState.units.find(u => u.id === primary.unitId && u.side === primary.side && !u.destroyed);
+      if (!unit) return;
+      if (primary.side !== battleState.activeArmy || unit.activated) return;
+    }
+    if (isPlayMode && (battleState?.phase === 'charge' || battleState?.phase === 'fight')) {
       const unit = battleState.units.find(u => u.id === primary.unitId && u.side === primary.side && !u.destroyed);
       if (!unit) return;
       if (primary.side !== battleState.activeArmy || unit.activated) return;
@@ -1918,6 +2275,58 @@ export default function App() {
       }
 
       setTargetErrorMsg(null);
+      return;
+    }
+
+    if (isPlayMode && battleState?.phase === 'charge') {
+      const clickedUnit = battleState.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+      if (!clickedUnit) return;
+      setInspectedSelection({ kind: 'battle', side, unitId });
+      if (side === battleState.activeArmy) {
+        const options = playChargeTargetOptions(battleState, unitId, side, activeRulesForBattle);
+        selectPlacedPlayUnit(unitId, side);
+        setSelectedChargeTargetId(options[0]?.targetId ?? '');
+        setTargetErrorMsg(options.length ? null : `${clickedUnit.profile.name} has no eligible charge targets`);
+        return;
+      }
+
+      setSelectedChargeTargetId(unitId);
+      if (!selectedChargeUnit) {
+        setTargetErrorMsg('Select one of the active army units as the charger first');
+        return;
+      }
+      const canCharge = selectedPlayChargeOptions.some(option => option.targetId === unitId);
+      setTargetErrorMsg(canCharge ? null : `${clickedUnit.profile.name} is not an eligible charge target`);
+      return;
+    }
+
+    if (isPlayMode && battleState?.phase === 'fight') {
+      const clickedUnit = battleState.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+      if (!clickedUnit) return;
+      if (damageAllocationLocked) {
+        setInspectedSelection({ kind: 'battle', side, unitId });
+        return;
+      }
+      setInspectedSelection({ kind: 'battle', side, unitId });
+      if (side === battleState.activeArmy) {
+        const options = playFightWeaponOptions(battleState, unitId, side, activeRulesForBattle);
+        selectPlacedPlayUnit(unitId, side);
+        setSelectedFightWeaponIndex(options[0] ? String(options[0].weaponIndex) : 'all');
+        setSelectedFightTargetId(options.flatMap(option => option.targetIds)[0] ?? '');
+        setTargetErrorMsg(options.length ? null : `${clickedUnit.profile.name} is not eligible to fight`);
+        return;
+      }
+
+      setSelectedFightTargetId(unitId);
+      if (!selectedFightUnit) {
+        setTargetErrorMsg('Select one of the active army units as the fighter first');
+        return;
+      }
+      const targetOptions = selectedFightWeaponIndex === 'all'
+        ? selectedPlayFightOptions
+        : selectedPlayFightOptions.filter(option => String(option.weaponIndex) === selectedFightWeaponIndex);
+      const canFight = targetOptions.some(option => option.targetIds.includes(unitId));
+      setTargetErrorMsg(canFight ? null : `${clickedUnit.profile.name} is not in Engagement Range of ${selectedFightUnit.profile.name}`);
       return;
     }
 
@@ -2258,6 +2667,97 @@ export default function App() {
     commitBattleState(next);
   }
 
+  function resolveSelectedPlayCharge() {
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || prev.phase !== 'charge' || !selection || !selectedChargeTargetId) return;
+    const next = chargePlayUnitTarget(prev, selection.unitId, selection.side, selectedChargeTargetId, activeRulesForBattle);
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.chargeUnitTarget',
+      unitId: selection.unitId,
+      side: selection.side,
+      targetUnitId: selectedChargeTargetId,
+    });
+    setTargetErrorMsg(null);
+    commitBattleState(next);
+  }
+
+  function selectPendingDamageUnit(next: BattleState, shooterUnitId: string | null) {
+    const pendingDamageUnit = next.units.find(unit => !unit.destroyed && !unit.embarkedInUnitId && (unit.pendingDamageAllocations?.length ?? 0) > 0);
+    if (!pendingDamageUnit) return false;
+    if (shooterUnitId) setCasualtyRemovalShooterId(shooterUnitId);
+    setPlayModelSelection(normalizePlaySelectionForState(next, {
+      side: pendingDamageUnit.side,
+      parts: [{
+        unitId: pendingDamageUnit.id,
+        side: pendingDamageUnit.side,
+        modelIndices: pendingDamageUnit.modelPositions.map((_, modelIndex) => modelIndex),
+      }],
+    }));
+    setInspectedSelection({ kind: 'battle', side: pendingDamageUnit.side, unitId: pendingDamageUnit.id });
+    setTargetErrorMsg('Select a model to allocate the next pending damage');
+    return true;
+  }
+
+  function resolveSelectedPlayFight() {
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || prev.phase !== 'fight' || !selection || !selectedFightTargetId) return;
+    if (damageAllocationLocked) {
+      setTargetErrorMsg('Allocate pending damage before fighting again');
+      return;
+    }
+    const weaponIndex = selectedFightWeaponIndex === 'all' ? 'all' : Number(selectedFightWeaponIndex);
+    if (weaponIndex !== 'all' && !Number.isFinite(weaponIndex)) return;
+    const next = fightPlayUnitWeapon(prev, selection.unitId, selection.side, selectedFightTargetId, weaponIndex, activeRulesForBattle);
+    if (next === prev) return;
+    setShootingResultEntries(next.log.slice(prev.log.length));
+    const hasPendingDamage = selectPendingDamageUnit(next, selection.unitId);
+    if (!hasPendingDamage) setTargetErrorMsg(null);
+    if (weaponIndex !== 'all') setSelectedFightWeaponIndex('all');
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.fightUnitWeapon',
+      unitId: selection.unitId,
+      side: selection.side,
+      targetUnitId: selectedFightTargetId,
+      weaponIndex,
+    });
+    commitBattleState(next);
+  }
+
+  function pileInSelectedPlayUnit() {
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || prev.phase !== 'fight' || !selection) return;
+    const next = pileInPlayUnit(prev, selection.unitId, selection.side, activeRulesForBattle);
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.pileInUnit',
+      unitId: selection.unitId,
+      side: selection.side,
+    });
+    setPlayModelSelection(normalizePlaySelectionForState(next, playModelSelection));
+    setTargetErrorMsg(null);
+    commitBattleState(next);
+  }
+
+  function consolidateSelectedPlayUnit() {
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || prev.phase !== 'fight' || !selection) return;
+    const next = consolidatePlayUnit(prev, selection.unitId, selection.side, activeRulesForBattle);
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.consolidateUnit',
+      unitId: selection.unitId,
+      side: selection.side,
+    });
+    setPlayModelSelection(normalizePlaySelectionForState(next, playModelSelection));
+    setTargetErrorMsg(null);
+    commitBattleState(next);
+  }
+
   function embarkSelectedPlayUnit() {
     commitPendingPlayModelMove();
     const selection = primaryPlaySelectionPart(playModelSelection);
@@ -2438,7 +2938,10 @@ export default function App() {
     }
     setPlayPhaseWarning('');
     const next = clone(prev);
+    const phaseBeforeStep = next.phase;
+    const scoringSide = next.activeArmy;
     const currentIndex = PLAY_TURN_PHASES.indexOf(next.phase);
+    if (phaseBeforeStep === 'fight') scorePrimaryMission(next, scoringSide, activeRulesForBattle);
     const startCommand = () => {
       next.phase = 'command';
       next.movementStep = undefined;
@@ -2446,6 +2949,8 @@ export default function App() {
         if (unit.side !== next.activeArmy || unit.destroyed) continue;
         unit.activated = false;
         unit.charged = false;
+        unit.piledIn = undefined;
+        unit.consolidated = undefined;
         unit.movementAction = undefined;
         unit.movementAllowanceRemaining = undefined;
         unit.movementAllowanceRemainingByModel = undefined;
@@ -2617,6 +3122,21 @@ export default function App() {
             </Select>
           </FormControl>
 
+          <FormControl sx={{ minWidth: 148 }}>
+            <InputLabel id="format-label">Format</InputLabel>
+            <Select
+              labelId="format-label"
+              value={boardFormatId}
+              label="Format"
+              disabled={!!battleState}
+              onChange={(e: SelectChangeEvent) => { setBoardFormatId(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
+            >
+              {BOARD_FORMATS.map(format => (
+                <MenuItem key={format.id} value={format.id}>{format.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <FormControl sx={{ minWidth: 132 }}>
             <InputLabel id="terrain-label">Terrain</InputLabel>
             <Select
@@ -2736,10 +3256,32 @@ export default function App() {
             state={battleState ?? previewState}
             selectedUnitId={inspectedBattleUnitId}
             selectedUnitIds={isPlayMode
-              ? (battleState?.phase === 'shooting' && selectedShootingTargetId ? [selectedShootingTargetId] : [])
+              ? (battleState?.phase === 'shooting' && selectedShootingTargetId
+                  ? [selectedShootingTargetId]
+                  : battleState?.phase === 'charge' && selectedChargeTargetId
+                    ? [selectedChargeTargetId]
+                    : battleState?.phase === 'fight' && selectedFightTargetId
+                      ? [selectedFightTargetId]
+                      : [])
               : inspectedBattleUnitIds}
-            shooterUnitId={isPlayMode && battleState?.phase === 'shooting' ? selectedShootingUnit?.id ?? null : null}
-            targetUnitId={isPlayMode && battleState?.phase === 'shooting' ? selectedShootingTargetId : null}
+            shooterUnitId={isPlayMode
+              ? battleState?.phase === 'shooting'
+                ? selectedShootingUnit?.id ?? null
+                : battleState?.phase === 'charge'
+                  ? selectedChargeUnit?.id ?? null
+                  : battleState?.phase === 'fight'
+                    ? selectedFightUnit?.id ?? null
+                    : null
+              : null}
+            targetUnitId={isPlayMode
+              ? battleState?.phase === 'shooting'
+                ? selectedShootingTargetId
+                : battleState?.phase === 'charge'
+                  ? selectedChargeTargetId
+                  : battleState?.phase === 'fight'
+                    ? selectedFightTargetId
+                    : null
+              : null}
             shootingReadyUnitIds={isPlayMode && battleState?.phase === 'shooting' ? shootingReadyUnitIds : undefined}
             coverUnitIds={isPlayMode ? coverUnitIds : undefined}
             losRays={isPlayMode ? losRays : undefined}
@@ -2760,8 +3302,16 @@ export default function App() {
               onRotateModel: canEditPlayModelsNow
                 ? (_selection, degrees, batched) => rotateSelectedPlayModels(degrees, batched)
                 : undefined,
-              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (selectedPlayCanAdvance || selectedPlayCanFallBack || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
+              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayCanAdvance || selectedPlayCanFallBack || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
                 <>
+                  {pendingDamageAllocationUnit && (
+                    <PendingDamageAllocationHud unit={pendingDamageAllocationUnit} />
+                  )}
+                  {selectedPlayCanPileIn && (
+                    <Button size="small" color="secondary" variant="contained" onClick={pileInSelectedPlayUnit}>
+                      Pile In
+                    </Button>
+                  )}
                   {selectedPlayCanAdvance && (
                     <Button size="small" color="success" variant="contained" startIcon={<SpeedIcon />} onClick={advanceSelectedPlayUnit}>
                       Advance
@@ -2785,6 +3335,11 @@ export default function App() {
                   {selectedPlayCanCompleteMovement && (
                     <Button size="small" color="primary" variant="contained" startIcon={<DoneIcon />} onClick={completeSelectedPlayUnitMovement}>
                       Done
+                    </Button>
+                  )}
+                  {selectedPlayCanConsolidate && (
+                    <Button size="small" color="secondary" variant="outlined" onClick={consolidateSelectedPlayUnit}>
+                      Consolidate
                     </Button>
                   )}
                   {battleState.phase === 'movement' && selectedPlayHasCoherencyIssue && (
@@ -2897,6 +3452,7 @@ export default function App() {
                   selectedTarget={selectedShootingTargetUnit}
                   targetIsValid={selectedShootingTargetIsValid}
                   damageAllocationLocked={damageAllocationLocked}
+                  pendingDamageLabel={pendingDamageText}
                   weaponOptions={selectedPlayShootingOptions}
                   selectedTargetId={selectedShootingTargetId}
                   selectedWeaponIndex={selectedShootingWeaponIndex}
@@ -2904,6 +3460,31 @@ export default function App() {
                   onWeaponChange={setSelectedShootingWeaponIndex}
                   coverUnitIds={coverUnitIds}
                   onResolve={resolveSelectedPlayShooting}
+                />
+              )}
+              {isPlayMode && battleState?.phase === 'charge' && (
+                <PlayChargePanel
+                  charger={selectedChargeUnit}
+                  targets={selectedPlayChargeTargets}
+                  selectedTargetId={selectedChargeTargetId}
+                  options={selectedPlayChargeOptions}
+                  onTargetChange={setSelectedChargeTargetId}
+                  onResolve={resolveSelectedPlayCharge}
+                />
+              )}
+              {isPlayMode && battleState?.phase === 'fight' && (
+                <PlayFightPanel
+                  fighter={selectedFightUnit}
+                  targets={selectedPlayFightTargets}
+                  selectedTarget={selectedFightTargetUnit}
+                  selectedTargetId={selectedFightTargetId}
+                  selectedWeaponIndex={selectedFightWeaponIndex}
+                  weaponOptions={selectedPlayFightOptions}
+                  damageAllocationLocked={damageAllocationLocked}
+                  pendingDamageLabel={pendingDamageText}
+                  onTargetChange={setSelectedFightTargetId}
+                  onWeaponChange={setSelectedFightWeaponIndex}
+                  onResolve={resolveSelectedPlayFight}
                 />
               )}
               <UnitStatsPanel inspected={inspectedUnit} onClear={() => setInspectedSelection(null)} />

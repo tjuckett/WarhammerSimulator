@@ -54,6 +54,8 @@ export interface BattleUnit {
   emergencyDisembarkedThisTurn?: boolean;
   fellBack?: boolean;
   firedWeaponIndices?: number[];
+  piledIn?: boolean;
+  consolidated?: boolean;
   inCombat: boolean;
   battleshocked: boolean;
   activated: boolean;
@@ -119,11 +121,20 @@ export interface TerrainLayout {
   terrain: Terrain[];
 }
 
+export interface BoardFormat {
+  id: 'combat-patrol' | 'incursion' | 'strike-force';
+  name: string;
+  width: number;
+  height: number;
+  deploymentDepth: number;
+}
+
 export interface BattleSetup {
   missionCode: string;
   primaryMission: string;
   deployment: string;
   terrainLayout: string;
+  boardFormat?: BoardFormat['id'];
 }
 
 export interface BattleState {
@@ -139,6 +150,7 @@ export interface BattleState {
   log: LogEntry[];
   units: BattleUnit[];
   terrain: Terrain[];
+  board?: BoardFormat;
   armies: [
     { name: string; faction: string; color: string; army: ImportedArmy },
     { name: string; faction: string; color: string; army: ImportedArmy },
