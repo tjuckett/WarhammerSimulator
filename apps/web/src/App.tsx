@@ -27,6 +27,8 @@ import type { BattleState, BattleUnit, LogEntry, Phase, Position, Terrain, Terra
 import type { TerrainFeatureSpec, TerrainLayoutData, TerrainSpec } from '@warhammer-simulator/core/data/terrainLayoutTypes';
 import { BOARD_FORMATS, boardFormatForId, boardFormatForState, scalePositionsForBoard } from '@warhammer-simulator/core/data/boardFormats';
 import type { ImportedArmy, UnitProfile } from '@warhammer-simulator/core/types/army';
+import type { AbilityTiming, UnitAbilityDefinition } from '@warhammer-simulator/core/types/ability';
+import type { StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { EDITIONS, rulesEditionForRuleset, rulesetMetadataForState, type RulesEdition } from '@warhammer-simulator/core/engine/rulesEngine';
 import { terrainLayoutFromData, TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
@@ -46,6 +48,8 @@ import {
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import { scorePrimaryMission } from '@warhammer-simulator/core/engine/missionScoring';
+import { availableStratagems, useStratagem } from '@warhammer-simulator/core/engine/stratagems';
+import { availableUnitAbilities, useUnitAbility } from '@warhammer-simulator/core/engine/unitAbilities';
 import {
   loadBrain, saveBrain, recordGame, suggestStrategy, brainStats,
   type BrainMemory, type GameRecord,
@@ -827,6 +831,106 @@ function PlayFightPanel({
   );
 }
 
+type AbilityOption = {
+  ability: UnitAbilityDefinition;
+  timing: AbilityTiming;
+};
+
+function PlayTacticsPanel({
+  state,
+  selectedUnit,
+  stratagems,
+  abilities,
+  selectedStratagemId,
+  selectedAbilityKey,
+  onStratagemChange,
+  onAbilityChange,
+  onUseStratagem,
+  onUseAbility,
+}: {
+  state: BattleState;
+  selectedUnit: BattleUnit | null;
+  stratagems: StratagemDefinition[];
+  abilities: AbilityOption[];
+  selectedStratagemId: string;
+  selectedAbilityKey: string;
+  onStratagemChange: (value: string) => void;
+  onAbilityChange: (value: string) => void;
+  onUseStratagem: () => void;
+  onUseAbility: () => void;
+}) {
+  const cp = commandPoints(state);
+  const selectedStratagem = stratagems.find(stratagem => stratagem.id === selectedStratagemId) ?? null;
+  const selectedAbility = abilities.find(option => abilityOptionKey(option) === selectedAbilityKey) ?? null;
+
+  return (
+    <Box sx={shootingPanelSx}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>Tactics</Typography>
+          <Typography variant="caption" sx={{ display: 'block', color: '#888' }}>
+            CP {cp[0]}-{cp[1]}
+          </Typography>
+        </Box>
+      </Box>
+
+      <FormControl size="small" fullWidth disabled={!stratagems.length}>
+        <InputLabel id="play-stratagem-label">Stratagem</InputLabel>
+        <Select
+          labelId="play-stratagem-label"
+          label="Stratagem"
+          value={selectedStratagemId}
+          onChange={(event: SelectChangeEvent) => onStratagemChange(event.target.value)}
+        >
+          {stratagems.map(stratagem => (
+            <MenuItem key={stratagem.id} value={stratagem.id}>
+              {stratagem.name} ({stratagem.cost}CP)
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <Button size="small" variant="outlined" disabled={!selectedStratagem} onClick={onUseStratagem}>
+        Use Stratagem
+      </Button>
+
+      <FormControl size="small" fullWidth disabled={!selectedUnit || !abilities.length}>
+        <InputLabel id="play-ability-label">Ability</InputLabel>
+        <Select
+          labelId="play-ability-label"
+          label="Ability"
+          value={selectedAbilityKey}
+          onChange={(event: SelectChangeEvent) => onAbilityChange(event.target.value)}
+        >
+          {abilities.map(option => (
+            <MenuItem key={abilityOptionKey(option)} value={abilityOptionKey(option)}>
+              {option.ability.name} ({abilityTimingLabel(option.timing)})
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <Button size="small" variant="outlined" disabled={!selectedAbility} onClick={onUseAbility}>
+        Use Ability
+      </Button>
+
+      {!stratagems.length && !abilities.length && (
+        <Typography variant="caption" sx={{ color: '#9a8f6a' }}>
+          No available stratagems or selected-unit abilities.
+        </Typography>
+      )}
+    </Box>
+  );
+}
+
+function abilityOptionKey(option: AbilityOption): string {
+  return `${option.timing}:${option.ability.id}`;
+}
+
+function abilityTimingLabel(timing: AbilityTiming): string {
+  if (timing === 'command-phase') return 'Command';
+  if (timing === 'end-of-phase') return 'End phase';
+  return 'Manual';
+}
+
 export default function App() {
   const [appMode, setAppMode] = useState<AppMode>('editor');
   const [army1, setArmy1] = useState<ImportedArmy>(() => loadSavedArmy(0, SAMPLE_ARMIES[0]));
@@ -870,6 +974,8 @@ export default function App() {
   const [selectedChargeTargetId, setSelectedChargeTargetId] = useState('');
   const [selectedFightTargetId, setSelectedFightTargetId] = useState('');
   const [selectedFightWeaponIndex, setSelectedFightWeaponIndex] = useState<'all' | string>('all');
+  const [selectedStratagemId, setSelectedStratagemId] = useState('');
+  const [selectedAbilityKey, setSelectedAbilityKey] = useState('');
   const [casualtyRemovalShooterId, setCasualtyRemovalShooterId] = useState<string | null>(null);
   const [shootingResultEntries, setShootingResultEntries] = useState<LogEntry[]>([]);
   const [targetErrorMsg, setTargetErrorMsg] = useState<string | null>(null);
@@ -1118,6 +1224,27 @@ export default function App() {
     if (!battleState || battleState.phase !== 'fight') return new Set();
     return new Set(playFightActivationUnitIds(battleState, battleState.activeArmy, activeRulesForBattle));
   }, [battleState, activeRulesForBattle]);
+  const selectedTacticsUnit = isPlayMode && battleState && selectedPlayBattleUnit?.side === battleState.activeArmy
+    ? selectedPlayBattleUnit
+    : null;
+  const availablePlayStratagems = useMemo(
+    () => {
+      if (!isPlayMode || !battleState) return [];
+      return availableStratagems(battleState, battleState.activeArmy, activeRulesForBattle, selectedTacticsUnit?.id)
+        .filter(stratagem => stratagem.target === 'none' || !!selectedTacticsUnit);
+    },
+    [isPlayMode, battleState, activeRulesForBattle, selectedTacticsUnit],
+  );
+  const availablePlayAbilities = useMemo<AbilityOption[]>(() => {
+    if (!isPlayMode || !battleState || !selectedTacticsUnit) return [];
+    const timings: AbilityTiming[] = ['manual'];
+    if (battleState.phase === 'command') timings.push('command-phase');
+    timings.push('end-of-phase');
+    return timings.flatMap(timing =>
+      availableUnitAbilities(battleState, selectedTacticsUnit.id, selectedTacticsUnit.side, timing, activeRulesForBattle)
+        .map(ability => ({ ability, timing })),
+    );
+  }, [isPlayMode, battleState, selectedTacticsUnit, activeRulesForBattle]);
 
   const coverUnitIds = useMemo<Set<string>>(() => {
     if (!battleState || !selectedShootingUnit || battleState.phase !== 'shooting') return new Set();
@@ -1252,6 +1379,22 @@ export default function App() {
     && primaryPlaySelection
     && playUnitCanEmbark(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side)
   );
+
+  useEffect(() => {
+    setSelectedStratagemId(prev =>
+      availablePlayStratagems.some(stratagem => stratagem.id === prev)
+        ? prev
+        : availablePlayStratagems[0]?.id ?? '',
+    );
+  }, [availablePlayStratagems]);
+
+  useEffect(() => {
+    setSelectedAbilityKey(prev =>
+      availablePlayAbilities.some(option => abilityOptionKey(option) === prev)
+        ? prev
+        : availablePlayAbilities[0] ? abilityOptionKey(availablePlayAbilities[0]) : '',
+    );
+  }, [availablePlayAbilities]);
   const selectedPlayDisembarkOptions = useMemo(() => {
     if (!isPlayMode || !battleState || !primaryPlaySelection || !selectedPlayBattleUnit) return [];
     const side = primaryPlaySelection.side;
@@ -2758,6 +2901,48 @@ export default function App() {
     commitBattleState(next);
   }
 
+  function useSelectedPlayStratagem() {
+    const prev = battleStateRef.current;
+    if (!prev || !isPlayMode || !selectedStratagemId) return;
+    const targetUnitId = selectedTacticsUnit?.id;
+    const stratagem = availablePlayStratagems.find(option => option.id === selectedStratagemId);
+    const next = useStratagem(prev, prev.activeArmy, selectedStratagemId, activeRulesForBattle, stratagem?.target === 'none' ? undefined : targetUnitId);
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.useStratagem',
+      side: prev.activeArmy,
+      stratagemId: selectedStratagemId,
+      targetUnitId: stratagem?.target === 'none' ? undefined : targetUnitId,
+    });
+    setTargetErrorMsg(`${stratagem?.name ?? 'Stratagem'} used.`);
+    commitBattleState(next);
+  }
+
+  function useSelectedPlayAbility() {
+    const prev = battleStateRef.current;
+    if (!prev || !isPlayMode || !selectedTacticsUnit || !selectedAbilityKey) return;
+    const option = availablePlayAbilities.find(candidate => abilityOptionKey(candidate) === selectedAbilityKey);
+    if (!option) return;
+    const next = useUnitAbility(
+      prev,
+      selectedTacticsUnit.id,
+      selectedTacticsUnit.side,
+      option.ability.id,
+      option.timing,
+      activeRulesForBattle,
+    );
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.useUnitAbility',
+      side: selectedTacticsUnit.side,
+      unitId: selectedTacticsUnit.id,
+      abilityId: option.ability.id,
+      timing: option.timing,
+    });
+    setTargetErrorMsg(`${option.ability.name} used.`);
+    commitBattleState(next);
+  }
+
   function embarkSelectedPlayUnit() {
     commitPendingPlayModelMove();
     const selection = primaryPlaySelectionPart(playModelSelection);
@@ -3445,6 +3630,20 @@ export default function App() {
             />
           ) : battleState || isPlayMode ? (
             <>
+              {isPlayMode && battleState && battleState.phase !== 'deployment' && battleState.phase !== 'end' && (
+                <PlayTacticsPanel
+                  state={battleState}
+                  selectedUnit={selectedTacticsUnit}
+                  stratagems={availablePlayStratagems}
+                  abilities={availablePlayAbilities}
+                  selectedStratagemId={selectedStratagemId}
+                  selectedAbilityKey={selectedAbilityKey}
+                  onStratagemChange={setSelectedStratagemId}
+                  onAbilityChange={setSelectedAbilityKey}
+                  onUseStratagem={useSelectedPlayStratagem}
+                  onUseAbility={useSelectedPlayAbility}
+                />
+              )}
               {isPlayMode && battleState?.phase === 'shooting' && (
                 <PlayShootingPanel
                   shooter={selectedShootingUnit}

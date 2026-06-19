@@ -1,6 +1,8 @@
 import type { UnitProfile, ImportedArmy } from './army';
 import type { ObjectiveControlProfile } from '../engine/objectiveGeometry';
 import type { RulesetMetadata } from '../engine/rulesEngine';
+import type { StratagemUse } from './stratagem';
+import type { UnitAbilityUse } from './ability';
 
 export type Phase =
   | 'deployment'
@@ -160,6 +162,8 @@ export interface BattleState {
   objectiveOwners: (Side | null)[];
   scores: [number, number];
   commandPoints?: [number, number];
+  stratagemUses?: StratagemUse[];
+  abilityUses?: UnitAbilityUse[];
   // Deployment phase: units not yet placed on the board
   unplacedUnits: [UnitProfile[], UnitProfile[]];
   deployStrategies: [string, string]; // DeploymentStrategy labels for record-keeping

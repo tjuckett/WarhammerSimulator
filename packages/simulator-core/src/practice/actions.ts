@@ -3,6 +3,9 @@ import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
 import { scorePrimaryMission } from '../engine/missionScoring';
+import { useStratagem } from '../engine/stratagems';
+import { useUnitAbility } from '../engine/unitAbilities';
+import type { AbilityTiming } from '../types/ability';
 import {
   advancePlayUnit,
   allocatePlayDamageToModel,
@@ -181,6 +184,20 @@ export type GameAction =
     })
   | (GameActionBase & {
       type: 'play.stepPhase';
+    })
+  | (GameActionBase & {
+      type: 'play.useStratagem';
+      side: Side;
+      stratagemId: string;
+      targetUnitId?: string;
+    })
+  | (GameActionBase & {
+      type: 'play.useUnitAbility';
+      side: Side;
+      unitId: string;
+      abilityId: string;
+      timing: AbilityTiming;
+      targetUnitId?: string;
     })
   | (GameActionBase & {
       type: 'simulation.placeNextUnit';
@@ -398,6 +415,20 @@ export function applyGameAction(
     case 'play.stepPhase':
       return stepPlayPhase(state, context.rules);
 
+    case 'play.useStratagem':
+      return useStratagem(state, normalizedAction.side, normalizedAction.stratagemId, context.rules, normalizedAction.targetUnitId);
+
+    case 'play.useUnitAbility':
+      return useUnitAbility(
+        state,
+        normalizedAction.unitId,
+        normalizedAction.side,
+        normalizedAction.abilityId,
+        normalizedAction.timing,
+        context.rules,
+        normalizedAction.targetUnitId,
+      );
+
     case 'simulation.placeNextUnit':
       return placeNextUnit(state);
 
@@ -420,6 +451,10 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
     case 'play.consolidateUnit':
       return normalizedAction.unitId === unitId;
     case 'play.fightUnitWeapon':
+      return normalizedAction.unitId === unitId || normalizedAction.targetUnitId === unitId;
+    case 'play.useStratagem':
+      return normalizedAction.targetUnitId === unitId;
+    case 'play.useUnitAbility':
       return normalizedAction.unitId === unitId || normalizedAction.targetUnitId === unitId;
     case 'play.disembarkUnit':
       return normalizedAction.passengerUnitId === unitId || normalizedAction.transportUnitId === unitId;

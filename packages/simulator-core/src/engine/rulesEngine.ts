@@ -1,5 +1,7 @@
 import type { BattleUnit } from '../types/battle';
 import type { WeaponProfile } from '../types/army';
+import type { StratagemDefinition } from '../types/stratagem';
+import type { UnitAbilityDefinition } from '../types/ability';
 import {
   ELEVENTH_EDITION_TERRAIN_OBJECTIVE_PLACEHOLDER,
   TENTH_EDITION_MARKER_OBJECTIVE_CONTROL,
@@ -45,6 +47,8 @@ export interface RulesEdition {
   metadata: RulesetMetadata;
   phases: PhaseDefinition[];
   objectiveControl: ObjectiveControlProfile;
+  stratagems: StratagemDefinition[];
+  unitAbilities: UnitAbilityDefinition[];
 
   // Core combat resolution
   woundTarget(strength: number, toughness: number): number;
@@ -100,6 +104,34 @@ export const rules40K10th: RulesEdition = {
     status: 'implemented',
   },
   objectiveControl: TENTH_EDITION_MARKER_OBJECTIVE_CONTROL,
+  stratagems: [
+    {
+      id: 'command-reroll',
+      name: 'Command Re-roll',
+      cost: 1,
+      phases: 'any',
+      target: 'none',
+      oncePerPhase: true,
+      description: 'Framework placeholder for spending CP on a core re-roll effect.',
+    },
+  ],
+  unitAbilities: [
+    {
+      id: 'waaagh',
+      name: 'Waaagh!',
+      timing: 'manual',
+      target: 'none',
+      oncePerBattle: true,
+      description: 'Framework placeholder for a once-per-battle army ability.',
+    },
+    {
+      id: 'reanimation-protocols',
+      name: 'Reanimation Protocols',
+      timing: 'end-of-phase',
+      target: 'self',
+      description: 'Framework placeholder for an end-of-phase unit ability.',
+    },
+  ],
 
   phases: [
     { id: 'command',      label: 'Command',      icon: '⚡' },
@@ -216,22 +248,126 @@ export const rules40K10th: RulesEdition = {
 };
 
 // ─── 40K 11th Edition (stub) ──────────────────────────────────────────────────
-// Rules not yet released. Mirrors 10th edition until the core rulebook drops.
+const ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE = true;
 
 export const rules40K11th: RulesEdition = {
   ...rules40K10th,
   id: 'w40k-11th',
   name: '40K 11th Edition',
   metadata: {
-    id: 'w40k-11e-unreleased-placeholder',
+    id: 'w40k-11e-preview-core',
     gameSystem: 'warhammer-40k',
     edition: '11e',
-    rulesVersion: 'unreleased',
-    status: 'unreleased',
+    rulesVersion: 'preview-core',
+    status: 'placeholder',
     compatibilitySourceId: rules40K10th.id,
   },
   objectiveControl: ELEVENTH_EDITION_TERRAIN_OBJECTIVE_PLACEHOLDER,
-  description: '11th Edition rules not yet published. Combat still mirrors 10th as a placeholder; objective control is isolated for terrain-objective rules.',
+  stratagems: [
+    {
+      id: 'command-reroll',
+      name: 'Command Re-roll',
+      cost: 1,
+      phases: 'any',
+      target: 'friendly-unit',
+      oncePerPhase: true,
+      targetOncePerPhase: ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE,
+      description: 'Re-roll one eligible roll for a friendly unit or model.',
+    },
+    {
+      id: 'epic-challenge',
+      name: 'Epic Challenge',
+      cost: 1,
+      phases: ['fight'],
+      target: 'friendly-unit',
+      oncePerPhase: true,
+      targetOncePerPhase: ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE,
+      description: 'A selected Character model gains Precision on melee weapons until the end of the phase.',
+    },
+    {
+      id: 'insane-bravery',
+      name: 'Insane Bravery',
+      cost: 1,
+      phases: ['command'],
+      target: 'friendly-unit',
+      oncePerPhase: true,
+      oncePerBattle: true,
+      targetOncePerPhase: ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE,
+      description: 'Automatically pass one Battle-shock roll for a friendly unit.',
+    },
+    {
+      id: 'explosives',
+      name: 'Explosives',
+      cost: 1,
+      phases: ['shooting'],
+      target: 'friendly-unit',
+      oncePerPhase: true,
+      targetOncePerPhase: ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE,
+      description: 'An eligible Explosives/Grenades unit can inflict mortal wounds on a visible enemy within 8 inches.',
+    },
+    {
+      id: 'crushing-impact',
+      name: 'Crushing Impact',
+      cost: 1,
+      phases: ['charge'],
+      target: 'friendly-unit',
+      oncePerPhase: true,
+      targetOncePerPhase: ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE,
+      description: 'A Monster or Vehicle that ended a charge move can roll against an engaged enemy for mortal wounds.',
+    },
+    {
+      id: 'rapid-ingress',
+      name: 'Rapid Ingress',
+      cost: 1,
+      phases: ['movement'],
+      target: 'friendly-unit',
+      oncePerPhase: true,
+      targetOncePerPhase: ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE,
+      description: 'A non-Aircraft unit in Strategic Reserves makes an ingress move at the end of the opponent movement phase.',
+    },
+    {
+      id: 'fire-overwatch',
+      name: 'Fire Overwatch',
+      cost: 1,
+      phases: ['movement'],
+      target: 'friendly-unit',
+      oncePerPhase: true,
+      targetOncePerPhase: ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE,
+      description: 'An unengaged non-Titanic unit uses snap shooting at the end of the opponent movement phase.',
+    },
+    {
+      id: 'smokescreen',
+      name: 'Smokescreen',
+      cost: 1,
+      phases: ['shooting'],
+      target: 'friendly-unit',
+      oncePerPhase: true,
+      targetOncePerPhase: ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE,
+      description: 'A Smoke unit grants the benefit of cover against attacks until the end of the phase.',
+    },
+    {
+      id: 'heroic-intervention',
+      name: 'Heroic Intervention',
+      cost: 1,
+      phases: ['charge'],
+      target: 'friendly-unit',
+      oncePerPhase: true,
+      targetOncePerPhase: ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE,
+      description: 'An unengaged friendly unit within 12 inches of enemy units resolves a charge at the end of the opponent charge phase.',
+    },
+    {
+      id: 'counteroffensive',
+      name: 'Counteroffensive',
+      cost: 2,
+      phases: ['fight'],
+      target: 'friendly-unit',
+      oncePerPhase: true,
+      targetOncePerPhase: ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE,
+      description: 'An eligible friendly unit gains Fights First and must be selected to fight next.',
+    },
+  ],
+  unitAbilities: [],
+  description: 'Warhammer 40,000 11th Edition preview core rules. Combat currently reuses implemented 10th mechanics where unchanged or not yet modeled; terrain objectives and core stratagem availability are isolated for 11th.',
 };
 
 // ─── Registry ─────────────────────────────────────────────────────────────────

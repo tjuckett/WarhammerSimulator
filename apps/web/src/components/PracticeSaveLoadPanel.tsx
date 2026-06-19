@@ -96,6 +96,10 @@ function actionLabel(action: GameAction): string {
       return 'Start game';
     case 'play.stepPhase':
       return 'Play phase';
+    case 'play.useStratagem':
+      return 'Use stratagem';
+    case 'play.useUnitAbility':
+      return 'Use ability';
     case 'simulation.placeNextUnit':
       return 'Auto deploy drop';
     case 'simulation.stepPhase':

@@ -25,10 +25,10 @@ export const TENTH_EDITION_MARKER_OBJECTIVE_CONTROL: ObjectiveControlProfile = {
 };
 
 export const ELEVENTH_EDITION_TERRAIN_OBJECTIVE_PLACEHOLDER: ObjectiveControlProfile = {
-  id: 'w40k-11e-terrain-objectives-placeholder',
+  id: 'w40k-11e-preview-terrain-objectives',
   label: '11e Terrain Objectives',
   kind: 'terrain-area',
-  description: 'Placeholder for 11th Edition terrain-mat objective rules.',
+  description: 'Models control terrain objectives while within the terrain area; scoring awaits terrain-objective placement data.',
 };
 
 export function objectiveControlRadius(profile: ObjectiveControlProfile): number | null {

@@ -16,6 +16,8 @@ import { applyGameAction } from '../src/practice/actions';
 import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
 import { scorePrimaryMission } from '../src/engine/missionScoring';
+import { availableStratagems, useStratagem } from '../src/engine/stratagems';
+import { availableUnitAbilities, useUnitAbility } from '../src/engine/unitAbilities';
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -238,6 +240,137 @@ test('battle-shocked units cannot receive stratagems and have zero objective con
 
   assert.equal(unitCanBeAffectedByStratagem(unit), false);
   assert.equal(objectiveControlValue(unit), 0);
+});
+
+test('stratagem framework spends command points and records the use once per phase', () => {
+  const battle = state('shooting');
+  battle.commandPoints = [2, 0];
+
+  const first = useStratagem(battle, 0, 'command-reroll', rules40K10th);
+  assert.deepEqual(first.commandPoints, [1, 0]);
+  assert.equal(first.stratagemUses?.length, 1);
+  assert.equal(first.stratagemUses?.[0].stratagemId, 'command-reroll');
+  assert.equal(first.stratagemUses?.[0].phase, 'shooting');
+
+  const second = useStratagem(first, 0, 'command-reroll', rules40K10th);
+  assert.deepEqual(second.commandPoints, [1, 0]);
+  assert.equal(second.stratagemUses?.length, 1);
+});
+
+test('stratagem framework blocks battle-shocked target units', () => {
+  const battle = state('command');
+  battle.commandPoints = [1, 0];
+  const target = losTestUnit('blue-1', 0, { x: 10, y: 10 });
+  target.battleshocked = true;
+  battle.units = [target];
+  const rules = {
+    ...rules40K10th,
+    stratagems: [{
+      id: 'test-friendly-buff',
+      name: 'Test Friendly Buff',
+      cost: 1,
+      phases: 'any' as const,
+      target: 'friendly-unit' as const,
+      description: 'Test stratagem with a friendly unit target.',
+    }],
+  };
+
+  assert.deepEqual(availableStratagems(battle, 0, rules, target.id), []);
+  const next = useStratagem(battle, 0, 'test-friendly-buff', rules, target.id);
+  assert.equal(next, battle);
+  assert.deepEqual(battle.commandPoints, [1, 0]);
+});
+
+test('11th edition preview exposes core stratagems from the rules preview', () => {
+  assert.equal(rules40K11th.metadata.status, 'placeholder');
+  assert.equal(rules40K11th.metadata.rulesVersion, 'preview-core');
+  assert.deepEqual(rules40K11th.stratagems.map(stratagem => stratagem.id), [
+    'command-reroll',
+    'epic-challenge',
+    'insane-bravery',
+    'explosives',
+    'crushing-impact',
+    'rapid-ingress',
+    'fire-overwatch',
+    'smokescreen',
+    'heroic-intervention',
+    'counteroffensive',
+  ]);
+  assert.equal(rules40K11th.objectiveControl.kind, 'terrain-area');
+});
+
+test('11th edition preview blocks multiple stratagems targeting the same unit in a phase', () => {
+  const battle = state('fight');
+  battle.commandPoints = [3, 0];
+  const character = losTestUnit('character-1', 0, { x: 10, y: 10 });
+  character.profile.keywords = ['Character', 'Infantry'];
+  battle.units = [character];
+
+  const challenged = useStratagem(battle, 0, 'epic-challenge', rules40K11th, character.id);
+  assert.deepEqual(challenged.commandPoints, [2, 0]);
+  assert.equal(challenged.stratagemUses?.length, 1);
+
+  assert.deepEqual(
+    availableStratagems(challenged, 0, rules40K11th, character.id).map(stratagem => stratagem.id),
+    [],
+  );
+  const counteredSameTarget = useStratagem(challenged, 0, 'counteroffensive', rules40K11th, character.id);
+  assert.equal(counteredSameTarget, challenged);
+});
+
+test('11th edition preview Insane Bravery can only be used once per battle', () => {
+  const battle = state('command');
+  battle.commandPoints = [2, 0];
+  const unit = losTestUnit('blue-1', 0, { x: 10, y: 10 });
+  battle.units = [unit];
+
+  const first = useStratagem(battle, 0, 'insane-bravery', rules40K11th, unit.id);
+  assert.deepEqual(first.commandPoints, [1, 0]);
+  assert.equal(first.stratagemUses?.length, 1);
+
+  const nextPhase = { ...first, phase: 'shooting' as Phase };
+  const nextCommand = { ...nextPhase, phase: 'command' as Phase };
+  const second = useStratagem(nextCommand, 0, 'insane-bravery', rules40K11th, unit.id);
+  assert.equal(second, nextCommand);
+  assert.deepEqual(second.commandPoints, [1, 0]);
+});
+
+test('unit ability framework matches profile ability text and records once-per-battle use', () => {
+  const battle = state('command');
+  const warboss = losTestUnit('warboss-1', 0, { x: 10, y: 10 });
+  warboss.profile.abilities = [{ name: 'Waaagh!', description: 'Once per battle.' }];
+  battle.units = [warboss];
+
+  const options = availableUnitAbilities(battle, warboss.id, 0, 'manual', rules40K10th);
+  assert.deepEqual(options.map(option => option.id), ['waaagh']);
+
+  const used = useUnitAbility(battle, warboss.id, 0, 'waaagh', 'manual', rules40K10th);
+  assert.equal(used.abilityUses?.length, 1);
+  assert.equal(used.abilityUses?.[0].abilityId, 'waaagh');
+  assert.equal(used.abilityUses?.[0].sourceUnitId, warboss.id);
+
+  assert.deepEqual(availableUnitAbilities(used, warboss.id, 0, 'manual', rules40K10th), []);
+});
+
+test('unit ability framework exposes end-of-phase abilities and replays use actions', () => {
+  const battle = state('fight');
+  const overlord = losTestUnit('overlord-1', 0, { x: 10, y: 10 });
+  overlord.profile.abilities = [{ name: 'Reanimation Protocols', description: 'At the end of each phase.' }];
+  battle.units = [overlord];
+
+  const options = availableUnitAbilities(battle, overlord.id, 0, 'end-of-phase', rules40K10th);
+  assert.deepEqual(options.map(option => option.id), ['reanimation-protocols']);
+
+  const replayed = applyGameAction(battle, {
+    type: 'play.useUnitAbility',
+    side: 0,
+    unitId: overlord.id,
+    abilityId: 'reanimation-protocols',
+    timing: 'end-of-phase',
+  }, { rules: rules40K10th });
+
+  assert.equal(replayed.abilityUses?.length, 1);
+  assert.equal(replayed.abilityUses?.[0].targetUnitId, overlord.id);
 });
 
 test('primary scoring framework preserves current 10th marker objective fallback', () => {
