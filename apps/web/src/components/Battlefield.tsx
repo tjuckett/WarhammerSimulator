@@ -60,6 +60,7 @@ interface Props {
     enabled: boolean;
     selected: TerrainEditSelection | null;
     onSelect: (selection: TerrainEditSelection | null) => void;
+    onCombineTerrain?: (targetTerrainIndex: number) => void;
     onMove: (selection: TerrainEditSelection, x: number, y: number) => void;
     onRotate: (degrees: number) => void;
     alignVertexIndex: number | null;
@@ -71,6 +72,7 @@ const MIN_ZOOM = 1;
 const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.25;
 const NO_MANS_LAND_FILL = 'rgb(240, 240, 232)';
+const ALIGN_VERTEX_PICK_RADIUS = 0.22;
 
 export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], shooterUnitId = null, targetUnitId = null, shootingReadyUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, onSelectUnit, deployer, editor }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -379,14 +381,14 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     for (const terrain of state.terrain) {
       for (const corner of terrainCorners(terrain)) {
         const distance = Math.hypot(point.x - corner.x, point.y - corner.y);
-        if (distance <= 0.65 && (!best || distance < best.distance)) {
+        if (distance <= ALIGN_VERTEX_PICK_RADIUS && (!best || distance < best.distance)) {
           best = { ...corner, distance };
         }
       }
       for (const feature of terrain.features) {
         for (const corner of terrainCorners(feature)) {
           const distance = Math.hypot(point.x - corner.x, point.y - corner.y);
-          if (distance <= 0.65 && (!best || distance < best.distance)) {
+          if (distance <= ALIGN_VERTEX_PICK_RADIUS && (!best || distance < best.distance)) {
             best = { ...corner, distance };
           }
         }
@@ -460,6 +462,10 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       return;
     }
     const selection = hitTest(point);
+    if (e.shiftKey && selection?.kind === 'terrain' && editor.onCombineTerrain) {
+      editor.onCombineTerrain(selection.terrainIndex);
+      return;
+    }
     editor.onSelect(selection);
     if (!selection) return;
     const target = targetOrigin(selection);
@@ -696,7 +702,10 @@ function battlefieldStatusLabel(state: BattleState): string {
     statusLabel = `Battle Round ${battleRound(state)}/${maxBattleRounds(state)} | ${state.phase.toUpperCase()} | ${state.armies[state.activeArmy].name} | ${vpStr} | ${cpStr}`;
   }
   if (state.setup) {
-    statusLabel += ` | ${state.setup.missionCode}: ${state.setup.primaryMission} / ${state.setup.deployment} / ${state.setup.terrainLayout}`;
+    const setupParts = [state.setup.primaryMission];
+    if (state.setup.deployment !== 'Layout Defined') setupParts.push(state.setup.deployment);
+    setupParts.push(state.setup.terrainLayout);
+    statusLabel += ` | ${state.setup.missionCode}: ${setupParts.join(' / ')}`;
   }
   return statusLabel;
 }
@@ -737,18 +746,25 @@ function draw(
   // ── Terrain ───────────────────────────────────────────────────────────────
   for (const t of state.terrain) {
     const center = terrainCenter(t);
+    const corners = terrainCorners(t);
     ctx.save();
-    ctx.translate(center.x * scale, center.y * scale);
-    ctx.rotate(((t.rotationDeg ?? 0) * Math.PI) / 180);
+    ctx.beginPath();
+    corners.forEach((corner, cornerIndex) => {
+      const x = corner.x * scale;
+      const y = corner.y * scale;
+      if (cornerIndex === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.closePath();
     ctx.fillStyle = t.color;
-    ctx.fillRect((-t.width / 2) * scale, (-t.height / 2) * scale, t.width * scale, t.height * scale);
+    ctx.fill();
     ctx.strokeStyle = 'rgba(0,0,0,0.4)';
     ctx.lineWidth = 1;
-    ctx.strokeRect((-t.width / 2) * scale, (-t.height / 2) * scale, t.width * scale, t.height * scale);
+    ctx.stroke();
     if (selected?.kind === 'terrain' && selected.terrainIndex === state.terrain.indexOf(t)) {
       ctx.strokeStyle = '#ffe066';
       ctx.lineWidth = 2;
-      ctx.strokeRect((-t.width / 2) * scale, (-t.height / 2) * scale, t.width * scale, t.height * scale);
+      ctx.stroke();
     }
     ctx.restore();
 
@@ -789,9 +805,56 @@ function draw(
     : 0;
   const objectiveRange = objectiveControlRadius(objectiveControl);
   for (let i = 0; i < state.objectives.length; i++) {
-    if (objectiveControl.kind !== 'marker' || objectiveRange === null) continue;
     const obj = state.objectives[i];
     const owner = state.objectiveOwners[i];
+
+    if (objectiveControl.kind === 'terrain-area') {
+      const terrainObjective = state.terrain
+        .filter(terrain => pointInTerrain(obj, terrain))
+        .sort((a, b) => (a.width * a.height) - (b.width * b.height))[0];
+      if (!terrainObjective) continue;
+
+      const corners = terrainCorners(terrainObjective);
+      const fillColor = owner === 0 ? `${state.armies[0].color}33`
+                      : owner === 1 ? `${state.armies[1].color}33`
+                      : 'rgba(56, 107, 128, 0.16)';
+      const strokeColor = owner === 0 ? state.armies[0].color
+                        : owner === 1 ? state.armies[1].color
+                        : 'rgba(165, 213, 228, 0.85)';
+
+      ctx.beginPath();
+      corners.forEach((corner, cornerIndex) => {
+        const x = corner.x * scale;
+        const y = corner.y * scale;
+        if (cornerIndex === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+      ctx.fillStyle = fillColor;
+      ctx.fill();
+      ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = owner !== null ? 2.25 : 1.6;
+      ctx.setLineDash(owner === null ? [4, 3] : []);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const center = terrainCenter(terrainObjective);
+      ctx.beginPath();
+      ctx.arc(center.x * scale, center.y * scale, Math.max(7, scale * 0.62), 0, Math.PI * 2);
+      ctx.fillStyle = owner !== null ? strokeColor : 'rgba(29, 47, 57, 0.78)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.72)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.fillStyle = '#fff';
+      ctx.font = `bold ${Math.max(6, scale * 0.48)}px monospace`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(objectiveRoleLabel(terrainObjective.objectiveRole) || String(i + 1), center.x * scale, center.y * scale);
+      continue;
+    }
+
+    if (objectiveControl.kind !== 'marker' || objectiveRange === null) continue;
     const cx = obj.x * scale;
     const cy = obj.y * scale;
     const markerRadius = objectiveMarkerRadius * scale;
@@ -884,6 +947,13 @@ function displayCentroid(positions: Position[]): Position {
   };
 }
 
+function objectiveRoleLabel(role: BattleState['terrain'][number]['objectiveRole']): string {
+  if (role === 'home-0') return 'BH';
+  if (role === 'home-1') return 'RH';
+  if (role === 'no-mans-land') return 'NML';
+  return '';
+}
+
 function unitWithModelDragPreview(
   unit: BattleUnit,
   preview: { selection: PlayModelSelection; dx: number; dy: number },
@@ -943,6 +1013,7 @@ function unitWithModelDragPreview(
 */
 function drawDeploymentZones(ctx: CanvasRenderingContext2D, state: BattleState, scale: number) {
   const board = boardFormatForState(state);
+  const deployment = state.setup?.deploymentZones ?? state.setup?.deployment;
   const styles = {
     defender: { fill: 'rgba(24, 74, 52, 0.52)', stroke: 'rgba(67, 137, 98, 0.90)', label: '#d9f5df' },
     attacker: { fill: 'rgba(154, 45, 38, 0.52)', stroke: 'rgba(229, 100, 86, 0.90)', label: '#ffe5e1' },
@@ -956,7 +1027,7 @@ function drawDeploymentZones(ctx: CanvasRenderingContext2D, state: BattleState, 
   ctx.lineWidth = 1.25;
 
   for (const side of [0, 1] as const) {
-    const zone = zoneFor(side, state.setup?.deployment, board);
+    const zone = zoneFor(side, deployment, board);
     const style = styles[zone.role];
     ctx.fillStyle = style.fill;
     ctx.strokeStyle = style.stroke;
@@ -976,9 +1047,10 @@ function drawDeploymentZones(ctx: CanvasRenderingContext2D, state: BattleState, 
 
 function drawNoMansLandCutouts(ctx: CanvasRenderingContext2D, state: BattleState, scale: number) {
   const board = boardFormatForState(state);
+  const deployment = state.setup?.deploymentZones ?? state.setup?.deployment;
   const cutouts = new Map<string, { x: number; y: number; radius: number }>();
   for (const side of [0, 1] as const) {
-    const zone = zoneFor(side, state.setup?.deployment, board);
+    const zone = zoneFor(side, deployment, board);
     for (const shape of zone.shapes) {
       if (shape.type !== 'rectWithCircleCut') continue;
       const key = `${shape.cutoutCenter.x}:${shape.cutoutCenter.y}:${shape.cutoutRadius}`;

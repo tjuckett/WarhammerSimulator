@@ -34,7 +34,11 @@ import { terrainLayoutFromData, TERRAIN_LAYOUTS } from '@warhammer-simulator/cor
 import {
   PRIMARY_MISSIONS,
   TOURNAMENT_MISSIONS,
+  ELEVENTH_EDITION_FORCE_DISPOSITIONS,
   deploymentsForPrimary,
+  eleventhLayoutIdsForDispositions,
+  eleventhPrimaryMissionsForDispositions,
+  eleventhSetupLabel,
   missionForSelection,
   objectivesForDeployment,
   randomMissionSet,
@@ -43,7 +47,7 @@ import {
 } from '@warhammer-simulator/core/engine/missions';
 import {
   advancePlayUnit, battleModelIdsWithCoherencyIssues, beginPlayBattle, completePlayUnitMovement, createDeploymentState, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placePlayReinforcement, placePlayStrategicReserveUnit, placePlayUnit, placeNextUnit, removePlayModels,
-  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consolidatePlayUnit, fightPlayUnitWeapon, lockPlayUnitShooting, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, undeployPlayUnit, type DeploymentStrategy, type PlayChargeTargetOption, type PlayFightWeaponOption, type PlayShootingWeaponOption, type LOSRay,
+  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consolidatePlayUnit, fightPlayUnitWeapon, lockPlayUnitShooting, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, undeployPlayUnit, type DeploymentStrategy, type PlayChargeTargetOption, type PlayFightWeaponOption, type PlayShootingWeaponOption, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -88,12 +92,19 @@ import {
 const ARMY_COLORS: [string, string] = ['#4af26a', '#f24a4a'];
 const practiceScenarioRepository = apiPracticeScenarioRepository;
 const CUSTOM_TERRAIN_KEY = 'warhammer-custom-terrain-layouts';
+const TERRAIN_MAT_TEMPLATE_KEY = 'warhammer-terrain-mat-templates';
 const SAVED_ARMY_KEYS = ['warhammer-saved-army-1', 'warhammer-saved-army-2'] as const;
 
 type AlignVertexLock = {
   selection: TerrainEditSelection;
   vertexIndex: number;
   target: Position;
+};
+
+export type TerrainMatTemplate = {
+  id: string;
+  name: string;
+  terrain: Terrain;
 };
 
 type AppMode = 'play' | 'simulation' | 'editor';
@@ -162,6 +173,20 @@ function loadCustomTerrainLayouts(): Record<string, TerrainLayout> {
 
 function saveCustomTerrainLayouts(layouts: Record<string, TerrainLayout>) {
   localStorage.setItem(CUSTOM_TERRAIN_KEY, JSON.stringify(layouts));
+}
+
+function loadTerrainMatTemplates(): Record<string, TerrainMatTemplate> {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(TERRAIN_MAT_TEMPLATE_KEY) ?? '{}');
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+    return parsed;
+  } catch {
+    return {};
+  }
+}
+
+function saveTerrainMatTemplates(templates: Record<string, TerrainMatTemplate>) {
+  localStorage.setItem(TERRAIN_MAT_TEMPLATE_KEY, JSON.stringify(templates));
 }
 
 function loadSavedArmy(side: 0 | 1, fallback: ImportedArmy): ImportedArmy {
@@ -273,6 +298,7 @@ function terrainLayoutToData(layout: TerrainLayout): TerrainLayoutData {
     id: layout.id,
     name: layout.name,
     description: layout.description,
+    deploymentZones: layout.deploymentZones,
     terrain: layout.terrain.map((terrain): TerrainSpec => ({
       kind: terrain.type,
       x: terrain.x,
@@ -280,10 +306,12 @@ function terrainLayoutToData(layout: TerrainLayout): TerrainLayoutData {
       width: terrain.width,
       height: terrain.height,
       rotationDeg: terrain.rotationDeg ?? 0,
+      polygonPoints: terrain.polygonPoints,
       name: terrain.name,
       providesCover: terrain.providesCover,
       difficult: terrain.difficult,
       color: terrain.color,
+      objectiveRole: terrain.objectiveRole,
       ...(terrain.features.length
         ? {
           features: terrain.features.map((feature): TerrainFeatureSpec => ({
@@ -321,6 +349,37 @@ function sameSelection(a: TerrainEditSelection, b: TerrainEditSelection): boolea
     && (a.kind === 'terrain' || b.kind === 'terrain' || a.featureIndex === b.featureIndex);
 }
 
+function cleanNumber(value: number): number {
+  const rounded = Math.round((value + Number.EPSILON) * 10000) / 10000;
+  return Object.is(rounded, -0) ? 0 : rounded;
+}
+
+function cross(a: Position, b: Position, c: Position): number {
+  return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+}
+
+function convexHull(points: Position[]): Position[] {
+  const sorted = [...points]
+    .map(point => ({ x: cleanNumber(point.x), y: cleanNumber(point.y) }))
+    .sort((a, b) => a.x - b.x || a.y - b.y)
+    .filter((point, index, list) => index === 0 || point.x !== list[index - 1].x || point.y !== list[index - 1].y);
+  if (sorted.length <= 3) return sorted;
+
+  const lower: Position[] = [];
+  for (const point of sorted) {
+    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], point) <= 0) lower.pop();
+    lower.push(point);
+  }
+
+  const upper: Position[] = [];
+  for (const point of [...sorted].reverse()) {
+    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], point) <= 0) upper.pop();
+    upper.push(point);
+  }
+
+  return [...lower.slice(0, -1), ...upper.slice(0, -1)];
+}
+
 function itemSnapStep(selection: TerrainEditSelection, item: Pick<Terrain | TerrainFeature, 'width' | 'height'>): number {
   return selection.kind === 'feature'
     ? Math.min(1, item.width, item.height)
@@ -332,6 +391,17 @@ function snappedPoint(point: Position, step: number, snap: boolean): Position {
   return {
     x: Math.round(point.x / step) * step,
     y: Math.round(point.y / step) * step,
+  };
+}
+
+function snapItemVertexToGrid<T extends Terrain | TerrainFeature>(item: T, vertexIndex = 0): T {
+  const corners = terrainCorners(item);
+  const corner = corners[vertexIndex] ?? corners[0];
+  if (!corner) return item;
+  return {
+    ...item,
+    x: cleanNumber(item.x + Math.round(corner.x) - corner.x),
+    y: cleanNumber(item.y + Math.round(corner.y) - corner.y),
   };
 }
 
@@ -471,6 +541,8 @@ const shootingPanelSx = {
 
 function PlayShootingPanel({
   shooter,
+  title = 'Shooting',
+  actionLabel = 'Resolve',
   targets,
   selectedTarget,
   targetIsValid,
@@ -485,6 +557,8 @@ function PlayShootingPanel({
   onResolve,
 }: {
   shooter: BattleUnit | null;
+  title?: string;
+  actionLabel?: string;
   targets: BattleUnit[];
   selectedTarget: BattleUnit | null;
   targetIsValid: boolean;
@@ -501,7 +575,7 @@ function PlayShootingPanel({
   if (!shooter) {
     return (
       <Box sx={shootingPanelSx}>
-        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>Shooting</Typography>
+        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>{title}</Typography>
         <Typography variant="body2" sx={{ color: '#888' }}>Select one of the active army&apos;s units on the battlefield.</Typography>
       </Box>
     );
@@ -522,7 +596,7 @@ function PlayShootingPanel({
     <Box sx={shootingPanelSx}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>Shooting</Typography>
+          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>{title}</Typography>
           <Typography variant="caption" sx={{ display: 'block', color: '#888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {shooter.profile.name}{shooter.activated ? ' — done' : (shooter.firedWeaponIndices?.length ? ` — ${shooter.firedWeaponIndices.length} fired` : '')}
           </Typography>
@@ -787,7 +861,7 @@ function PlayFightPanel({
           </Typography>
         </Box>
         <Button size="small" variant="contained" startIcon={<CasinoOutlinedIcon />} disabled={!canResolve} onClick={onResolve}>
-          Resolve
+          {actionLabel}
         </Button>
       </Box>
       <FormControl size="small" fullWidth disabled={damageAllocationLocked || !weaponOptions.length || fighter.activated}>
@@ -843,10 +917,12 @@ function PlayTacticsPanel({
   abilities,
   selectedStratagemId,
   selectedAbilityKey,
+  canStartAction,
   onStratagemChange,
   onAbilityChange,
   onUseStratagem,
   onUseAbility,
+  onStartAction,
 }: {
   state: BattleState;
   selectedUnit: BattleUnit | null;
@@ -854,10 +930,12 @@ function PlayTacticsPanel({
   abilities: AbilityOption[];
   selectedStratagemId: string;
   selectedAbilityKey: string;
+  canStartAction: boolean;
   onStratagemChange: (value: string) => void;
   onAbilityChange: (value: string) => void;
   onUseStratagem: () => void;
   onUseAbility: () => void;
+  onStartAction: () => void;
 }) {
   const cp = commandPoints(state);
   const selectedStratagem = stratagems.find(stratagem => stratagem.id === selectedStratagemId) ?? null;
@@ -912,9 +990,18 @@ function PlayTacticsPanel({
         Use Ability
       </Button>
 
-      {!stratagems.length && !abilities.length && (
+      <Button size="small" variant="outlined" disabled={!canStartAction} onClick={onStartAction}>
+        Start Action
+      </Button>
+      {selectedUnit?.performingAction && (
+        <Typography variant="caption" sx={{ color: '#b7d7c8' }}>
+          Performing {selectedUnit.performingAction.name}
+        </Typography>
+      )}
+
+      {!stratagems.length && !abilities.length && !canStartAction && !selectedUnit?.performingAction && (
         <Typography variant="caption" sx={{ color: '#9a8f6a' }}>
-          No available stratagems or selected-unit abilities.
+          No available stratagems, actions, or selected-unit abilities.
         </Typography>
       )}
     </Box>
@@ -954,7 +1041,11 @@ export default function App() {
   const [primaryMission, setPrimaryMission] = useState<string>(TOURNAMENT_MISSIONS[0].primaryMission);
   const [deployment, setDeployment] = useState<string>(TOURNAMENT_MISSIONS[0].deployment);
   const [layoutId, setLayoutId] = useState<string>(TOURNAMENT_MISSIONS[0].terrainLayoutIds[0]);
+  const [forceDisposition0, setForceDisposition0] = useState<string>(ELEVENTH_EDITION_FORCE_DISPOSITIONS[0].id);
+  const [forceDisposition1, setForceDisposition1] = useState<string>(ELEVENTH_EDITION_FORCE_DISPOSITIONS[1]?.id ?? ELEVENTH_EDITION_FORCE_DISPOSITIONS[0].id);
   const [customTerrainLayouts, setCustomTerrainLayouts] = useState<Record<string, TerrainLayout>>(loadCustomTerrainLayouts);
+  const [terrainMatTemplates, setTerrainMatTemplates] = useState<Record<string, TerrainMatTemplate>>(loadTerrainMatTemplates);
+  const [selectedTerrainMatTemplateId, setSelectedTerrainMatTemplateId] = useState('');
   const [terrainSaveStatus, setTerrainSaveStatus] = useState<string>('');
   const [editorLayout, setEditorLayout] = useState<TerrainLayout>(() => clone(TERRAIN_LAYOUTS[0]));
   const [selectedEdit, setSelectedEdit] = useState<TerrainEditSelection | null>(null);
@@ -974,6 +1065,7 @@ export default function App() {
   const [selectedChargeTargetId, setSelectedChargeTargetId] = useState('');
   const [selectedFightTargetId, setSelectedFightTargetId] = useState('');
   const [selectedFightWeaponIndex, setSelectedFightWeaponIndex] = useState<'all' | string>('all');
+  const [overwatchUnitId, setOverwatchUnitId] = useState('');
   const [selectedStratagemId, setSelectedStratagemId] = useState('');
   const [selectedAbilityKey, setSelectedAbilityKey] = useState('');
   const [casualtyRemovalShooterId, setCasualtyRemovalShooterId] = useState<string | null>(null);
@@ -996,6 +1088,7 @@ export default function App() {
   const winnerRecordedRef = useRef<string | null>(null);
 
   const edition: RulesEdition = EDITIONS.find(e => e.id === editionId) ?? EDITIONS[0];
+  const isEleventhEdition = edition.metadata.edition === '11e';
   const selectedBoardFormat = boardFormatForId(boardFormatId);
   const availableDeployments = deploymentsForPrimary(primaryMission);
   const selectedMission: TournamentMission = missionForSelection(primaryMission, deployment);
@@ -1004,18 +1097,33 @@ export default function App() {
     ...TERRAIN_LAYOUTS.map(layout => customTerrainLayouts[layout.id] ?? layout),
     ...Object.values(customTerrainLayouts).filter(layout => !defaultTerrainLayoutIds.has(layout.id)),
   ];
-  const compatibleLayouts = terrainLayouts.filter(l => selectedMission.terrainLayoutIds.includes(l.id));
+  const eleventhLayoutIds = useMemo(
+    () => eleventhLayoutIdsForDispositions([forceDisposition0, forceDisposition1]),
+    [forceDisposition0, forceDisposition1],
+  );
+  const activeCompatibleLayoutIds = isEleventhEdition ? eleventhLayoutIds : selectedMission.terrainLayoutIds;
+  const compatibleLayouts = terrainLayouts.filter(l => activeCompatibleLayoutIds.includes(l.id));
   const selectedLayout = terrainLayouts.find(l => l.id === layoutId) ?? compatibleLayouts[0] ?? terrainLayouts[0];
-  const selectedObjectives = useMemo(
-    () => edition.objectiveControl.kind === 'marker'
-      ? scalePositionsForBoard(objectivesForDeployment(selectedMission.deployment), selectedBoardFormat)
-      : [],
-    [edition.objectiveControl.kind, selectedMission.deployment, selectedBoardFormat],
+  const selectedObjectives = useMemo(() => {
+    if (isEleventhEdition) {
+      const terrainObjectives = editorLayout.terrain
+        .filter(terrain => terrain.objectiveRole)
+        .map(terrain => terrainCenter(terrain));
+      if (terrainObjectives.length) return terrainObjectives;
+    }
+    return scalePositionsForBoard(objectivesForDeployment(selectedMission.deployment), selectedBoardFormat);
+  }, [editorLayout.terrain, isEleventhEdition, selectedMission.deployment, selectedBoardFormat]);
+  const eleventhPrimaryMissions = useMemo<[string, string]>(
+    () => eleventhPrimaryMissionsForDispositions([forceDisposition0, forceDisposition1]),
+    [forceDisposition0, forceDisposition1],
   );
   const selectedSetup = useMemo(() => ({
-    ...setupLabel(selectedMission, editorLayout.name),
+    ...(isEleventhEdition
+      ? eleventhSetupLabel(selectedMission, editorLayout.name, [forceDisposition0, forceDisposition1])
+      : setupLabel(selectedMission, editorLayout.name)),
     boardFormat: selectedBoardFormat.id,
-  }), [editorLayout.name, selectedBoardFormat.id, selectedMission]);
+    ...(editorLayout.deploymentZones ? { deploymentZones: editorLayout.deploymentZones } : {}),
+  }), [editorLayout.deploymentZones, editorLayout.name, forceDisposition0, forceDisposition1, isEleventhEdition, selectedBoardFormat.id, selectedMission]);
   const previewState: BattleState = useMemo(() => ({
     ruleset: rulesetMetadataForState(edition),
     battleRound: 1,
@@ -1179,6 +1287,50 @@ export default function App() {
     selectedShootingTargetUnit
     && selectedPlayShootingTargets.some(target => target.id === selectedShootingTargetUnit.id)
   );
+  const overwatchUnit = useMemo(() => {
+    if (!battleState || battleState.phase !== 'movement' || !overwatchUnitId) return null;
+    return battleState.units.find(unit =>
+      unit.id === overwatchUnitId
+      && unit.side !== battleState.activeArmy
+      && !unit.destroyed
+      && !unit.embarkedInUnitId
+    ) ?? null;
+  }, [battleState, overwatchUnitId]);
+  const selectedOverwatchOptions = useMemo(
+    () => overwatchUnit && battleState
+      ? playSnapShootingWeaponOptions(battleState, overwatchUnit.id, overwatchUnit.side, activeRulesForBattle)
+      : [],
+    [battleState, overwatchUnit, activeRulesForBattle],
+  );
+  const selectedOverwatchTargets = useMemo(() => {
+    if (!battleState || !overwatchUnit) return [];
+    const selectedOption = selectedShootingWeaponIndex === 'all'
+      ? null
+      : selectedOverwatchOptions.find(option => String(option.weaponIndex) === selectedShootingWeaponIndex) ?? null;
+    const targetIds = new Set(
+      (selectedOption ? [selectedOption] : selectedOverwatchOptions)
+        .flatMap(option => option.targetIds),
+    );
+    return battleState.units.filter(unit =>
+      unit.side !== overwatchUnit.side
+      && !unit.destroyed
+      && !unit.embarkedInUnitId
+      && targetIds.has(unit.id),
+    );
+  }, [battleState, overwatchUnit, selectedOverwatchOptions, selectedShootingWeaponIndex]);
+  const selectedOverwatchTargetUnit = useMemo(() => {
+    if (!battleState || !overwatchUnit || !selectedShootingTargetId) return null;
+    return battleState.units.find(unit =>
+      unit.id === selectedShootingTargetId
+      && unit.side !== overwatchUnit.side
+      && !unit.destroyed
+      && !unit.embarkedInUnitId
+    ) ?? null;
+  }, [battleState, overwatchUnit, selectedShootingTargetId]);
+  const selectedOverwatchTargetIsValid = !!(
+    selectedOverwatchTargetUnit
+    && selectedOverwatchTargets.some(target => target.id === selectedOverwatchTargetUnit.id)
+  );
   const selectedPlayChargeOptions = useMemo(
     () => (
       isPlayMode
@@ -1224,16 +1376,17 @@ export default function App() {
     if (!battleState || battleState.phase !== 'fight') return new Set();
     return new Set(playFightActivationUnitIds(battleState, battleState.activeArmy, activeRulesForBattle));
   }, [battleState, activeRulesForBattle]);
-  const selectedTacticsUnit = isPlayMode && battleState && selectedPlayBattleUnit?.side === battleState.activeArmy
+  const selectedTacticsUnit = isPlayMode && battleState && selectedPlayBattleUnit && !selectedPlayBattleUnit.embarkedInUnitId
     ? selectedPlayBattleUnit
     : null;
+  const selectedTacticsSide = selectedTacticsUnit?.side ?? battleState?.activeArmy ?? 0;
   const availablePlayStratagems = useMemo(
     () => {
       if (!isPlayMode || !battleState) return [];
-      return availableStratagems(battleState, battleState.activeArmy, activeRulesForBattle, selectedTacticsUnit?.id)
+      return availableStratagems(battleState, selectedTacticsSide, activeRulesForBattle, selectedTacticsUnit?.id)
         .filter(stratagem => stratagem.target === 'none' || !!selectedTacticsUnit);
     },
-    [isPlayMode, battleState, activeRulesForBattle, selectedTacticsUnit],
+    [isPlayMode, battleState, activeRulesForBattle, selectedTacticsUnit, selectedTacticsSide],
   );
   const availablePlayAbilities = useMemo<AbilityOption[]>(() => {
     if (!isPlayMode || !battleState || !selectedTacticsUnit) return [];
@@ -1245,6 +1398,12 @@ export default function App() {
         .map(ability => ({ ability, timing })),
     );
   }, [isPlayMode, battleState, selectedTacticsUnit, activeRulesForBattle]);
+  const canSelectedUnitStartAction = useMemo(
+    () => !!battleState
+      && !!selectedTacticsUnit
+      && playUnitCanStartAction(battleState, selectedTacticsUnit.id, selectedTacticsUnit.side, activeRulesForBattle),
+    [battleState, selectedTacticsUnit, activeRulesForBattle],
+  );
 
   const coverUnitIds = useMemo<Set<string>>(() => {
     if (!battleState || !selectedShootingUnit || battleState.phase !== 'shooting') return new Set();
@@ -1491,6 +1650,40 @@ export default function App() {
   ]);
 
   useEffect(() => {
+    if (!battleState || battleState.phase !== 'movement' || !overwatchUnit) {
+      if (overwatchUnitId) setOverwatchUnitId('');
+      return;
+    }
+    if (!selectedOverwatchOptions.length) {
+      if (selectedShootingWeaponIndex !== 'all') setSelectedShootingWeaponIndex('all');
+      setSelectedShootingTargetId('');
+      return;
+    }
+    if (
+      selectedShootingWeaponIndex === 'all'
+      || !selectedOverwatchOptions.some(option => String(option.weaponIndex) === selectedShootingWeaponIndex)
+    ) {
+      setSelectedShootingWeaponIndex(String(selectedOverwatchOptions[0].weaponIndex));
+      return;
+    }
+    if (
+      !selectedShootingTargetId
+      || !selectedOverwatchTargets.some(target => target.id === selectedShootingTargetId)
+    ) {
+      setSelectedShootingTargetId(selectedOverwatchTargets[0]?.id ?? '');
+    }
+  }, [
+    battleState?.phase,
+    battleState?.units,
+    overwatchUnit?.id,
+    overwatchUnitId,
+    selectedShootingTargetId,
+    selectedShootingWeaponIndex,
+    selectedOverwatchOptions,
+    selectedOverwatchTargets,
+  ]);
+
+  useEffect(() => {
     if (!battleState || battleState.phase !== 'charge' || !selectedChargeUnit) {
       setSelectedChargeTargetId('');
       return;
@@ -1616,7 +1809,7 @@ export default function App() {
     setActivePracticeCheckpoint(null);
     const timeline = createPracticeTimeline(initialState, {
       title: initialState.setup
-        ? `${initialState.setup.missionCode}: ${initialState.setup.primaryMission}`
+        ? `${initialState.setup.missionCode}: ${initialState.setup.primaryMissions?.join(' vs ') ?? initialState.setup.primaryMission}`
         : 'Practice battle',
     });
     practiceTimelineRef.current = timeline;
@@ -1651,8 +1844,18 @@ export default function App() {
     setBoardFormatId(boardFormatForState(result.timeline.initialState).id);
     const setup = result.timeline.initialState.setup;
     if (setup) {
-      setPrimaryMission(setup.primaryMission);
-      setDeployment(setup.deployment);
+      if (setup.forceDispositions) {
+        const restored0 = ELEVENTH_EDITION_FORCE_DISPOSITIONS.find(disposition => disposition.name === setup.forceDispositions?.[0] || disposition.id === setup.forceDispositions?.[0]);
+        const restored1 = ELEVENTH_EDITION_FORCE_DISPOSITIONS.find(disposition => disposition.name === setup.forceDispositions?.[1] || disposition.id === setup.forceDispositions?.[1]);
+        if (restored0) setForceDisposition0(restored0.id);
+        if (restored1) setForceDisposition1(restored1.id);
+      } else if (PRIMARY_MISSIONS.includes(setup.primaryMission)) {
+        setPrimaryMission(setup.primaryMission);
+      } else {
+        const matchingMission = TOURNAMENT_MISSIONS.find(mission => mission.deployment === setup.deployment) ?? TOURNAMENT_MISSIONS[0];
+        setPrimaryMission(matchingMission.primaryMission);
+      }
+      if (!setup.forceDispositions) setDeployment(setup.deployment);
       const matchingLayout = terrainLayouts.find(layout => layout.name === setup.terrainLayout);
       if (matchingLayout) setLayoutId(matchingLayout.id);
     }
@@ -1919,9 +2122,18 @@ export default function App() {
 
   function randomizeMissionSet() {
     const mission = randomMissionSet();
-    const layout = mission.terrainLayoutIds[Math.floor(Math.random() * mission.terrainLayoutIds.length)];
+    let layoutPool = mission.terrainLayoutIds;
     setPrimaryMission(mission.primaryMission);
     setDeployment(mission.deployment);
+    if (isEleventhEdition) {
+      const shuffled = [...ELEVENTH_EDITION_FORCE_DISPOSITIONS].sort(() => Math.random() - 0.5);
+      const nextDisposition0 = shuffled[0]?.id ?? ELEVENTH_EDITION_FORCE_DISPOSITIONS[0].id;
+      const nextDisposition1 = shuffled[1]?.id ?? shuffled[0]?.id ?? ELEVENTH_EDITION_FORCE_DISPOSITIONS[0].id;
+      setForceDisposition0(nextDisposition0);
+      setForceDisposition1(nextDisposition1);
+      layoutPool = eleventhLayoutIdsForDispositions([nextDisposition0, nextDisposition1]);
+    }
+    const layout = layoutPool[Math.floor(Math.random() * layoutPool.length)];
     setLayoutId(layout);
     commitBattleState(null);
     setPlayDeploySelection(null);
@@ -1999,24 +2211,171 @@ export default function App() {
     reader.readAsText(file);
   }
 
+  function loadTerrainLayoutIntoCurrent(sourceLayoutId: string) {
+    const source = terrainLayouts.find(layout => layout.id === sourceLayoutId);
+    if (!source) {
+      setTerrainSaveStatus('Choose a terrain layout to copy from.');
+      return;
+    }
+    if (source.id === editorLayout.id) {
+      setTerrainSaveStatus('Choose a different terrain layout to copy from.');
+      return;
+    }
+    setEditorLayout(prev => ({
+      ...prev,
+      terrain: clone(source.terrain),
+      deploymentZones: source.deploymentZones ? clone(source.deploymentZones) : undefined,
+    }));
+    setSelectedEdit(null);
+    setAlignVertexLock(null);
+    setTerrainSaveStatus(`Loaded terrain from ${source.name} into ${editorLayout.name}. Save or export to keep it.`);
+  }
+
+  function selectedTerrainIndexForTemplate(): number | null {
+    if (!selectedEdit) return null;
+    return selectedEdit.terrainIndex;
+  }
+
+  function saveSelectedTerrainMatTemplate() {
+    const terrainIndex = selectedTerrainIndexForTemplate();
+    const terrain = terrainIndex !== null ? editorLayout.terrain[terrainIndex] : null;
+    if (!terrain) {
+      setTerrainSaveStatus('Select a terrain mat to save it as a template.');
+      return;
+    }
+    const defaultName = `${terrain.name} template`;
+    const name = window.prompt('Template name', defaultName)?.trim() ?? '';
+    if (!name) return;
+    const template: TerrainMatTemplate = {
+      id: makePracticeId('terrain-template'),
+      name,
+      terrain: clone(terrain),
+    };
+    setTerrainMatTemplates(prev => {
+      const next = { ...prev, [template.id]: template };
+      saveTerrainMatTemplates(next);
+      return next;
+    });
+    setSelectedTerrainMatTemplateId(template.id);
+    setTerrainSaveStatus(`Saved ${name} as a terrain mat template.`);
+  }
+
+  function applyTerrainMatTemplate(templateId: string) {
+    const template = terrainMatTemplates[templateId];
+    const terrainIndex = selectedTerrainIndexForTemplate();
+    const target = terrainIndex !== null ? editorLayout.terrain[terrainIndex] : null;
+    if (!template || !target || terrainIndex === null) {
+      setTerrainSaveStatus('Select a terrain mat and a saved template first.');
+      return;
+    }
+    const dx = target.x - template.terrain.x;
+    const dy = target.y - template.terrain.y;
+    setAlignVertexLock(null);
+    setEditorLayout(prev => ({
+      ...prev,
+      terrain: prev.terrain.map((terrain, index) => {
+        if (index !== terrainIndex) return terrain;
+        return {
+          ...clone(template.terrain),
+          id: terrain.id,
+          x: terrain.x,
+          y: terrain.y,
+          features: template.terrain.features.map((feature, featureIndex) => ({
+            ...clone(feature),
+            id: `${terrain.id}-template-feature-${featureIndex + 1}`,
+            x: feature.x + dx,
+            y: feature.y + dy,
+          })),
+        };
+      }),
+    }));
+    setSelectedEdit({ kind: 'terrain', terrainIndex });
+    setTerrainSaveStatus(`Applied ${template.name} to the selected mat.`);
+  }
+
+  function deleteTerrainMatTemplate(templateId: string) {
+    const template = terrainMatTemplates[templateId];
+    setTerrainMatTemplates(prev => {
+      const next = { ...prev };
+      delete next[templateId];
+      saveTerrainMatTemplates(next);
+      return next;
+    });
+    setSelectedTerrainMatTemplateId('');
+    setTerrainSaveStatus(template ? `Deleted terrain mat template ${template.name}.` : 'Deleted terrain mat template.');
+  }
+
+  function combineSelectedTerrain(targetIndex: number) {
+    if (!selectedEdit || selectedEdit.kind !== 'terrain' || selectedEdit.terrainIndex === targetIndex) {
+      setTerrainSaveStatus('Select one terrain mat, then Shift-click or press Combine on another mat.');
+      return;
+    }
+    const sourceIndex = selectedEdit.terrainIndex;
+    let combinedIndex: number | null = null;
+    let combinedName = '';
+
+    setAlignVertexLock(null);
+    setEditorLayout(prev => {
+      const source = prev.terrain[sourceIndex];
+      const target = prev.terrain[targetIndex];
+      if (!source || !target) return prev;
+
+      const corners = convexHull([...terrainCorners(source), ...terrainCorners(target)]);
+      if (corners.length < 3) return prev;
+
+      const minX = Math.min(...corners.map(point => point.x));
+      const minY = Math.min(...corners.map(point => point.y));
+      const maxX = Math.max(...corners.map(point => point.x));
+      const maxY = Math.max(...corners.map(point => point.y));
+      combinedIndex = Math.min(sourceIndex, targetIndex);
+      combinedName = `${target.name} + ${source.name}`;
+      const combined: Terrain = {
+        ...target,
+        id: `${target.id}-combined-${source.id}`,
+        name: combinedName,
+        x: cleanNumber(minX),
+        y: cleanNumber(minY),
+        width: cleanNumber(maxX - minX),
+        height: cleanNumber(maxY - minY),
+        rotationDeg: 0,
+        polygonPoints: corners.map(point => ({
+          x: cleanNumber(point.x - minX),
+          y: cleanNumber(point.y - minY),
+        })),
+        features: [...target.features, ...source.features],
+      };
+
+      return {
+        ...prev,
+        terrain: prev.terrain.flatMap((terrain, index) => {
+          if (index === combinedIndex) return [combined];
+          if (index === sourceIndex || index === targetIndex) return [];
+          return [terrain];
+        }),
+      };
+    });
+
+    if (combinedIndex !== null) {
+      setSelectedEdit({ kind: 'terrain', terrainIndex: combinedIndex });
+      setTerrainSaveStatus(`Combined ${combinedName}.`);
+    }
+  }
+
   function moveEditSelection(selection: TerrainEditSelection, x: number, y: number) {
     if (alignVertexLock && sameSelection(alignVertexLock.selection, selection)) return;
-    const snap = (value: number, step: number) => snapTerrainToGrid ? Math.round(value / step) * step : value;
-    const featureSnapStep = (feature: { width: number; height: number }) => Math.min(1, feature.width, feature.height);
     setEditorLayout(prev => ({
       ...prev,
       terrain: prev.terrain.map((terrain, terrainIndex) => {
         if (selection.kind === 'terrain' && selection.terrainIndex === terrainIndex) {
-          const stepX = Math.min(1, terrain.width);
-          const stepY = Math.min(1, terrain.height);
-          const nextX = snap(x, stepX);
-          const nextY = snap(y, stepY);
-          const dx = nextX - terrain.x;
-          const dy = nextY - terrain.y;
+          const moved = snapTerrainToGrid
+            ? snapItemVertexToGrid({ ...terrain, x, y })
+            : { ...terrain, x, y };
+          const dx = moved.x - terrain.x;
+          const dy = moved.y - terrain.y;
           return {
             ...terrain,
-            x: nextX,
-            y: nextY,
+            x: moved.x,
+            y: moved.y,
             features: terrain.features.map(feature => moveFeature(feature, dx, dy)),
           };
         }
@@ -2025,10 +2384,9 @@ export default function App() {
             ...terrain,
             features: terrain.features.map((feature, featureIndex) => {
               if (selection.featureIndex !== featureIndex) return feature;
-              const step = featureSnapStep(feature);
-              const nextX = snap(x, step);
-              const nextY = snap(y, step);
-              return { ...feature, x: nextX, y: nextY };
+              return snapTerrainToGrid
+                ? snapItemVertexToGrid({ ...feature, x, y })
+                : { ...feature, x, y };
             }),
           };
         }
@@ -2095,11 +2453,26 @@ export default function App() {
       ...prev,
       terrain: prev.terrain.map((terrain, terrainIndex) => {
         if (selectedEdit.kind === 'terrain' && selectedEdit.terrainIndex === terrainIndex) {
-          const origin = terrainCenter(terrain);
-          return {
+          const origin = terrainCorners(terrain)[0] ?? terrainCenter(terrain);
+          const rotated = {
             ...terrain,
             rotationDeg: (terrain.rotationDeg ?? 0) + degrees,
             features: terrain.features.map(feature => rotateFeatureAround(feature, origin, degrees)),
+          };
+          const rotatedCorner = terrainCorners(rotated)[0] ?? origin;
+          const pinned = {
+            ...rotated,
+            x: cleanNumber(rotated.x + origin.x - rotatedCorner.x),
+            y: cleanNumber(rotated.y + origin.y - rotatedCorner.y),
+            features: rotated.features,
+          };
+          if (!snapTerrainToGrid) return pinned;
+          const snapped = snapItemVertexToGrid(pinned);
+          const dx = snapped.x - pinned.x;
+          const dy = snapped.y - pinned.y;
+          return {
+            ...snapped,
+            features: pinned.features.map(feature => moveFeature(feature, dx, dy)),
           };
         }
         if (selectedEdit.kind === 'feature' && selectedEdit.terrainIndex === terrainIndex) {
@@ -2107,13 +2480,54 @@ export default function App() {
             ...terrain,
             features: terrain.features.map((feature, featureIndex) =>
               selectedEdit.featureIndex === featureIndex
-                ? { ...feature, rotationDeg: (feature.rotationDeg ?? 0) + degrees }
+                ? snapTerrainToGrid
+                  ? snapItemVertexToGrid({ ...feature, rotationDeg: (feature.rotationDeg ?? 0) + degrees })
+                  : { ...feature, rotationDeg: (feature.rotationDeg ?? 0) + degrees }
                 : feature,
             ),
           };
         }
         return terrain;
       }),
+    }));
+  }
+
+  function diagonalMirrorRotation(rotationDeg: number | undefined): number {
+    return (rotationDeg ?? 0) + 180;
+  }
+
+  function diagonalMirrorRect<T extends { x: number; y: number; width: number; height: number; rotationDeg?: number; polygonPoints?: Position[] }>(
+    item: T,
+  ): T {
+    return {
+      ...item,
+      x: selectedBoardFormat.width - item.x - item.width,
+      y: selectedBoardFormat.height - item.y - item.height,
+      rotationDeg: diagonalMirrorRotation(item.rotationDeg),
+      polygonPoints: item.polygonPoints?.map(point => ({ ...point })),
+    };
+  }
+
+  function mirrorTerrainLayout() {
+    setAlignVertexLock(null);
+    setSelectedEdit(null);
+    setEditorLayout(prev => ({
+      ...prev,
+      terrain: [
+        ...prev.terrain,
+        ...prev.terrain.map((terrain, terrainIndex) => {
+          const mirroredId = `${terrain.id}-mirror-diagonal-${terrainIndex + 1}-${makePracticeId('terrain')}`;
+          return {
+            ...diagonalMirrorRect(terrain),
+            id: mirroredId,
+            name: `${terrain.name} mirror`,
+            features: terrain.features.map((feature, featureIndex) => ({
+              ...diagonalMirrorRect(feature),
+              id: `${mirroredId}-feature-${featureIndex + 1}`,
+            })),
+          };
+        }),
+      ],
     }));
   }
 
@@ -2164,10 +2578,7 @@ export default function App() {
     clearPlayUndo();
     winnerRecordedRef.current = null;
     const layout = getLayout();
-    const battleSetup = {
-      ...setupLabel(selectedMission, layout.name),
-      boardFormat: selectedBoardFormat.id,
-    };
+    const battleSetup = { ...selectedSetup, terrainLayout: layout.name };
     const initialState = createDeploymentState(
       army1,
       ARMY_COLORS[0],
@@ -2810,6 +3221,42 @@ export default function App() {
     commitBattleState(next);
   }
 
+  function resolveSelectedPlayOverwatch() {
+    const prev = battleStateRef.current;
+    if (!prev || !overwatchUnit || !selectedShootingTargetId) return;
+    if (!selectedOverwatchTargets.some(target => target.id === selectedShootingTargetId)) {
+      setTargetErrorMsg('Selected unit cannot snap shoot that target.');
+      return;
+    }
+    const weaponIndex = selectedShootingWeaponIndex === 'all' ? 'all' : Number(selectedShootingWeaponIndex);
+    const next = snapShootPlayUnitWeapon(
+      prev,
+      overwatchUnit.id,
+      overwatchUnit.side,
+      selectedShootingTargetId,
+      weaponIndex,
+      activeRulesForBattle,
+    );
+    if (next === prev) {
+      setTargetErrorMsg('Snap shooting could not be resolved.');
+      return;
+    }
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.snapShootUnitWeapon',
+      side: overwatchUnit.side,
+      unitId: overwatchUnit.id,
+      targetUnitId: selectedShootingTargetId,
+      weaponIndex,
+    });
+    const newEntries = next.log.slice(prev.log.length);
+    setShootingResultEntries(newEntries);
+    setOverwatchUnitId('');
+    setSelectedShootingTargetId('');
+    setSelectedShootingWeaponIndex('all');
+    setTargetErrorMsg(null);
+    commitBattleState(next);
+  }
+
   function resolveSelectedPlayCharge() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
@@ -2905,16 +3352,24 @@ export default function App() {
     const prev = battleStateRef.current;
     if (!prev || !isPlayMode || !selectedStratagemId) return;
     const targetUnitId = selectedTacticsUnit?.id;
+    const stratagemSide = selectedTacticsUnit?.side ?? prev.activeArmy;
     const stratagem = availablePlayStratagems.find(option => option.id === selectedStratagemId);
-    const next = useStratagem(prev, prev.activeArmy, selectedStratagemId, activeRulesForBattle, stratagem?.target === 'none' ? undefined : targetUnitId);
+    const next = useStratagem(prev, stratagemSide, selectedStratagemId, activeRulesForBattle, stratagem?.target === 'none' ? undefined : targetUnitId);
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
       type: 'play.useStratagem',
-      side: prev.activeArmy,
+      side: stratagemSide,
       stratagemId: selectedStratagemId,
       targetUnitId: stratagem?.target === 'none' ? undefined : targetUnitId,
     });
-    setTargetErrorMsg(`${stratagem?.name ?? 'Stratagem'} used.`);
+    if (stratagem?.id === 'fire-overwatch' && targetUnitId) {
+      setOverwatchUnitId(targetUnitId);
+      setSelectedShootingWeaponIndex('all');
+      setSelectedShootingTargetId('');
+      setTargetErrorMsg(`${stratagem.name} used. Choose a snap shooting target.`);
+    } else {
+      setTargetErrorMsg(`${stratagem?.name ?? 'Stratagem'} used.`);
+    }
     commitBattleState(next);
   }
 
@@ -2940,6 +3395,22 @@ export default function App() {
       timing: option.timing,
     });
     setTargetErrorMsg(`${option.ability.name} used.`);
+    commitBattleState(next);
+  }
+
+  function startSelectedPlayAction() {
+    const prev = battleStateRef.current;
+    if (!prev || !isPlayMode || !selectedTacticsUnit) return;
+    const next = startPlayUnitAction(prev, selectedTacticsUnit.id, selectedTacticsUnit.side, 'generic-action', 'Action', activeRulesForBattle);
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.startAction',
+      side: selectedTacticsUnit.side,
+      unitId: selectedTacticsUnit.id,
+      actionId: 'generic-action',
+      actionName: 'Action',
+    });
+    setTargetErrorMsg(`${selectedTacticsUnit.profile.name} starts an action.`);
     commitBattleState(next);
   }
 
@@ -3232,14 +3703,14 @@ export default function App() {
 
   useEffect(() => {
     if (battleState) return;
-    if (!availableDeployments.includes(deployment)) {
+    if (!isEleventhEdition && !availableDeployments.includes(deployment)) {
       setDeployment(availableDeployments[0] ?? TOURNAMENT_MISSIONS[0].deployment);
       return;
     }
-    if (!selectedMission.terrainLayoutIds.includes(layoutId)) {
-      setLayoutId(selectedMission.terrainLayoutIds[0]);
+    if (!activeCompatibleLayoutIds.includes(layoutId)) {
+      setLayoutId(activeCompatibleLayoutIds[0] ?? selectedMission.terrainLayoutIds[0]);
     }
-  }, [availableDeployments, battleState, deployment, layoutId, selectedMission]);
+  }, [activeCompatibleLayoutIds, availableDeployments, battleState, deployment, isEleventhEdition, layoutId, selectedMission]);
 
   const isOver = battleState?.winner !== null;
   const winnerLabel = battleState?.winner === 'draw'
@@ -3277,35 +3748,75 @@ export default function App() {
             </Select>
           </FormControl>
 
-          <FormControl sx={{ minWidth: 190 }}>
-            <InputLabel id="mission-label">Mission</InputLabel>
-            <Select
-              labelId="mission-label"
-              value={primaryMission}
-              label="Mission"
-              disabled={!!battleState}
-              onChange={(e: SelectChangeEvent) => { setPrimaryMission(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
-            >
-              {PRIMARY_MISSIONS.map(name => (
-                <MenuItem key={name} value={name}>{name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          {!isEleventhEdition ? (
+            <FormControl sx={{ minWidth: 190 }}>
+              <InputLabel id="mission-label">Mission</InputLabel>
+              <Select
+                labelId="mission-label"
+                value={primaryMission}
+                label="Mission"
+                disabled={!!battleState}
+                onChange={(e: SelectChangeEvent) => { setPrimaryMission(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
+              >
+                {PRIMARY_MISSIONS.map(name => (
+                  <MenuItem key={name} value={name}>{name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          ) : (
+            <>
+              <FormControl sx={{ minWidth: 190 }}>
+                <InputLabel id="force-disposition-0-label">Blue Disposition</InputLabel>
+                <Select
+                  labelId="force-disposition-0-label"
+                  value={forceDisposition0}
+                  label="Blue Disposition"
+                  disabled={!!battleState}
+                  onChange={(e: SelectChangeEvent) => { setForceDisposition0(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
+                >
+                  {ELEVENTH_EDITION_FORCE_DISPOSITIONS.map(disposition => (
+                    <MenuItem key={disposition.id} value={disposition.id}>
+                      {disposition.name} - {eleventhPrimaryMissionsForDispositions([disposition.id, forceDisposition1])[0]}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
 
-          <FormControl sx={{ minWidth: 190 }}>
-            <InputLabel id="deployment-label">Deployment</InputLabel>
-            <Select
-              labelId="deployment-label"
-              value={selectedMission.deployment}
-              label="Deployment"
-              disabled={!!battleState}
-              onChange={(e: SelectChangeEvent) => { setDeployment(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
-            >
-              {availableDeployments.map(name => (
-                <MenuItem key={name} value={name}>{name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              <FormControl sx={{ minWidth: 190 }}>
+                <InputLabel id="force-disposition-1-label">Red Disposition</InputLabel>
+                <Select
+                  labelId="force-disposition-1-label"
+                  value={forceDisposition1}
+                  label="Red Disposition"
+                  disabled={!!battleState}
+                  onChange={(e: SelectChangeEvent) => { setForceDisposition1(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
+                >
+                  {ELEVENTH_EDITION_FORCE_DISPOSITIONS.map(disposition => (
+                    <MenuItem key={disposition.id} value={disposition.id}>
+                      {disposition.name} - {eleventhPrimaryMissionsForDispositions([forceDisposition0, disposition.id])[1]}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
+          )}
+
+          {!isEleventhEdition && (
+            <FormControl sx={{ minWidth: 190 }}>
+              <InputLabel id="deployment-label">Deployment</InputLabel>
+              <Select
+                labelId="deployment-label"
+                value={selectedMission.deployment}
+                label="Deployment"
+                disabled={!!battleState}
+                onChange={(e: SelectChangeEvent) => { setDeployment(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
+              >
+                {availableDeployments.map(name => (
+                  <MenuItem key={name} value={name}>{name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
 
           <FormControl sx={{ minWidth: 148 }}>
             <InputLabel id="format-label">Format</InputLabel>
@@ -3373,10 +3884,10 @@ export default function App() {
         </div>
       )}
 
-      {/* Edition stub notice */}
+      {/* Edition preview notice */}
       {editionId === 'w40k-11th' && (
-        <Alert severity="warning" className="notice" variant="outlined">
-          11th Edition is isolated as its own ruleset placeholder. Combat may mirror 10th for now, but objective logic will be implemented case by case.
+        <Alert severity="info" className="notice" variant="outlined">
+          11th Edition preview rules are active. Blue primary: {eleventhPrimaryMissions[0]}; Red primary: {eleventhPrimaryMissions[1]}. Terrain objectives, actions, snap shooting, aircraft and vertical movement, and core stratagem targeting/effects are implemented; compatible 10th Edition behavior is still used where final 11th rules are not modeled yet.
         </Alert>
       )}
 
@@ -3555,6 +4066,7 @@ export default function App() {
               enabled: true,
               selected: selectedEdit,
               onSelect: selectEdit,
+              onCombineTerrain: combineSelectedTerrain,
               onMove: moveEditSelection,
               onRotate: rotateEditSelection,
               alignVertexIndex,
@@ -3610,19 +4122,31 @@ export default function App() {
               layout={editorLayout}
               disabled={!!battleState}
               isCustom={!!customTerrainLayouts[editorLayout.id]}
+              boardWidth={selectedBoardFormat.width}
+              boardHeight={selectedBoardFormat.height}
               selected={selectedEdit}
               snapToGrid={snapTerrainToGrid}
               alignVertexIndex={alignVertexIndex}
               alignLockLabel={alignLockLabel}
               saveStatus={terrainSaveStatus}
+              availableLayouts={terrainLayouts}
+              matTemplates={Object.values(terrainMatTemplates)}
+              selectedMatTemplateId={selectedTerrainMatTemplateId}
               onSave={saveTerrainLayout}
               onReset={resetTerrainLayout}
               onExport={exportTerrainLayout}
               onExportAll={exportTerrainLayoutPack}
               onImport={importTerrainLayouts}
+              onLoadFromLayout={loadTerrainLayoutIntoCurrent}
+              onSaveMatTemplate={saveSelectedTerrainMatTemplate}
+              onApplyMatTemplate={applyTerrainMatTemplate}
+              onDeleteMatTemplate={deleteTerrainMatTemplate}
+              onMatTemplateChange={setSelectedTerrainMatTemplateId}
               onChange={setEditorLayout}
               onSelect={selectEdit}
+              onCombineTerrain={combineSelectedTerrain}
               onRotateSelected={rotateEditSelection}
+              onMirrorLayout={mirrorTerrainLayout}
               onAlignWallToMat={alignWallToMat}
               onSnapToGridChange={setSnapTerrainToGrid}
               onAlignVertexIndexChange={setAlignVertexIndex}
@@ -3638,10 +4162,12 @@ export default function App() {
                   abilities={availablePlayAbilities}
                   selectedStratagemId={selectedStratagemId}
                   selectedAbilityKey={selectedAbilityKey}
+                  canStartAction={canSelectedUnitStartAction}
                   onStratagemChange={setSelectedStratagemId}
                   onAbilityChange={setSelectedAbilityKey}
                   onUseStratagem={useSelectedPlayStratagem}
                   onUseAbility={useSelectedPlayAbility}
+                  onStartAction={startSelectedPlayAction}
                 />
               )}
               {isPlayMode && battleState?.phase === 'shooting' && (
@@ -3659,6 +4185,25 @@ export default function App() {
                   onWeaponChange={setSelectedShootingWeaponIndex}
                   coverUnitIds={coverUnitIds}
                   onResolve={resolveSelectedPlayShooting}
+                />
+              )}
+              {isPlayMode && battleState?.phase === 'movement' && overwatchUnit && (
+                <PlayShootingPanel
+                  shooter={overwatchUnit}
+                  title="Overwatch"
+                  actionLabel="Snap Shoot"
+                  targets={selectedOverwatchTargets}
+                  selectedTarget={selectedOverwatchTargetUnit}
+                  targetIsValid={selectedOverwatchTargetIsValid}
+                  damageAllocationLocked={damageAllocationLocked}
+                  pendingDamageLabel={pendingDamageText}
+                  weaponOptions={selectedOverwatchOptions}
+                  selectedTargetId={selectedShootingTargetId}
+                  selectedWeaponIndex={selectedShootingWeaponIndex}
+                  onTargetChange={setSelectedShootingTargetId}
+                  onWeaponChange={setSelectedShootingWeaponIndex}
+                  coverUnitIds={coverUnitIds}
+                  onResolve={resolveSelectedPlayOverwatch}
                 />
               )}
               {isPlayMode && battleState?.phase === 'charge' && (

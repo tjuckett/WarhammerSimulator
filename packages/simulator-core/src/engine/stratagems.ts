@@ -3,6 +3,10 @@ import type { StratagemDefinition, StratagemUse } from '../types/stratagem';
 import { battleRound } from './battleRound';
 import { canSpendCommandPoints, spendCommandPoints } from './commandPoints';
 import { unitCanBeAffectedByStratagem } from './battleshock';
+import { countSuccesses, rollMultiple } from './dice';
+import { hasLOSEdgeToEdge } from './terrainGeometry';
+import { battleUnitMaxBaseRadiusInches } from './baseSizes';
+import { applyDamage, battleUnitsBaseEdgeDistance } from './simulator';
 import type { RulesEdition } from './rulesEngine';
 
 let _stratagemUseId = 0;
@@ -23,24 +27,185 @@ function phaseAllowed(stratagem: StratagemDefinition, phase: Phase): boolean {
   return stratagem.phases === 'any' || stratagem.phases.includes(phase);
 }
 
+function turnAllowed(state: BattleState, side: Side, stratagem: StratagemDefinition): boolean {
+  if (!stratagem.turn || stratagem.turn === 'either') return true;
+  return stratagem.turn === 'own'
+    ? state.activeArmy === side
+    : state.activeArmy !== side;
+}
+
 function targetUnitFor(state: BattleState, targetUnitId?: string): BattleUnit | null {
   if (!targetUnitId) return null;
   return state.units.find(unit => unit.id === targetUnitId && !unit.destroyed && !unit.embarkedInUnitId) ?? null;
+}
+
+function appendStratagemEffectLog(
+  state: BattleState,
+  side: Side,
+  unitName: string,
+  message: string,
+  type: 'info' | 'roll' | 'damage' = 'info',
+): void {
+  state.log = [...state.log, {
+    id: nextLogId(state, type === 'info' ? 'stratagem' : type),
+    battleRound: battleRound(state),
+    turn: battleRound(state),
+    phase: state.phase,
+    side,
+    unitName,
+    message,
+    type,
+  }];
+}
+
+function unitHasKeyword(unit: BattleUnit, keyword: string): boolean {
+  return unit.profile.keywords.some(candidate => candidate.toLowerCase() === keyword.toLowerCase());
+}
+
+function unitHasAnyKeyword(unit: BattleUnit, keywords: string[]): boolean {
+  return keywords.some(keyword => unitHasKeyword(unit, keyword));
+}
+
+function enemies(state: BattleState, side: Side): BattleUnit[] {
+  return state.units.filter(unit =>
+    unit.side !== side
+    && !unit.destroyed
+    && !unit.embarkedInUnitId
+    && !unit.inStrategicReserves
+  );
+}
+
+function distance(a: { x: number; y: number }, b: { x: number; y: number }): number {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function unitHasVisibleLineToTarget(state: BattleState, unit: BattleUnit, target: BattleUnit): boolean {
+  const unitRadius = battleUnitMaxBaseRadiusInches(unit);
+  const targetRadius = battleUnitMaxBaseRadiusInches(target);
+  return unit.modelPositions.some(from =>
+    target.modelPositions.some(to => hasLOSEdgeToEdge(from, unitRadius, to, targetRadius, state.terrain))
+  );
+}
+
+function nearestValidEnemy(
+  state: BattleState,
+  unit: BattleUnit,
+  predicate: (enemy: BattleUnit) => boolean,
+): BattleUnit | null {
+  const candidates = enemies(state, unit.side).filter(predicate);
+  return candidates.reduce<BattleUnit | null>((best, enemy) => {
+    if (!best) return enemy;
+    return battleUnitsBaseEdgeDistance(unit, enemy) < battleUnitsBaseEdgeDistance(unit, best) ? enemy : best;
+  }, null);
+}
+
+function unitIsEngaged(state: BattleState, unit: BattleUnit, rules: RulesEdition): boolean {
+  return enemies(state, unit.side).some(enemy => distance(unit.position, enemy.position) <= rules.engagementRange());
+}
+
+function unitEligibleToShoot(state: BattleState, unit: BattleUnit, rules: RulesEdition): boolean {
+  if (unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves || unit.activated) return false;
+  if (unit.fellBack || unit.movementAction === 'fellBack') return false;
+  const advanced = unit.movementAction === 'advanced';
+  const engaged = unitIsEngaged(state, unit, rules);
+  const monsterOrVehicle = unitHasAnyKeyword(unit, ['Monster', 'Vehicle']);
+  return unit.profile.weapons.some(weapon =>
+    !weapon.isMelee
+    && weapon.range > 0
+    && (!advanced || weapon.keywords.some(keyword => keyword.toLowerCase().startsWith('assault')))
+    && (!engaged || monsterOrVehicle || weapon.keywords.some(keyword => keyword.toLowerCase().startsWith('pistol')))
+  );
+}
+
+function unitEligibleToFight(state: BattleState, unit: BattleUnit, rules: RulesEdition): boolean {
+  return !unit.destroyed
+    && !unit.embarkedInUnitId
+    && !unit.inStrategicReserves
+    && !unit.activated
+    && unitIsEngaged(state, unit, rules)
+    && unit.profile.weapons.some(weapon => weapon.isMelee);
+}
+
+function targetRestrictionsAllowed(
+  state: BattleState,
+  side: Side,
+  stratagem: StratagemDefinition,
+  target: BattleUnit,
+  rules: RulesEdition,
+): boolean {
+  if (stratagem.targetKeywordsAny?.length && !unitHasAnyKeyword(target, stratagem.targetKeywordsAny)) return false;
+  if (stratagem.targetForbiddenKeywordsAny?.length && unitHasAnyKeyword(target, stratagem.targetForbiddenKeywordsAny)) return false;
+  if (
+    stratagem.targetVehicleRequiresAnyKeywords?.length
+    && unitHasKeyword(target, 'Vehicle')
+    && !unitHasAnyKeyword(target, stratagem.targetVehicleRequiresAnyKeywords)
+  ) return false;
+  if (stratagem.targetMustBeInStrategicReserves && !target.inStrategicReserves) return false;
+  if (!stratagem.targetMustBeInStrategicReserves && target.inStrategicReserves) return false;
+  if (stratagem.targetMustBeUnengaged && unitIsEngaged(state, target, rules)) return false;
+  if (stratagem.targetMustBeEngaged && !unitIsEngaged(state, target, rules)) return false;
+  if (stratagem.targetMustBeEligibleToShoot && !unitEligibleToShoot(state, target, rules)) return false;
+  if (stratagem.targetMustBeEligibleToFight && !unitEligibleToFight(state, target, rules)) return false;
+  if (stratagem.targetMustHaveCharged && !target.charged) return false;
+  if (stratagem.targetMustNotHaveAdvanced && target.movementAction === 'advanced') return false;
+  if (
+    stratagem.targetWithinEnemyDistance !== undefined
+    && !enemies(state, side).some(enemy => distance(target.position, enemy.position) <= stratagem.targetWithinEnemyDistance!)
+  ) return false;
+  return true;
 }
 
 function targetAllowed(
   state: BattleState,
   side: Side,
   stratagem: StratagemDefinition,
+  rules: RulesEdition,
   targetUnitId?: string,
 ): boolean {
   if (stratagem.target === 'none') return targetUnitId === undefined;
   const target = targetUnitFor(state, targetUnitId);
   if (!target) return false;
   if (!unitCanBeAffectedByStratagem(target)) return false;
-  if (stratagem.target === 'friendly-unit') return target.side === side;
-  if (stratagem.target === 'enemy-unit') return target.side !== side;
+  if (stratagem.target === 'friendly-unit' && target.side !== side) return false;
+  if (stratagem.target === 'enemy-unit' && target.side === side) return false;
+  if (!targetRestrictionsAllowed(state, side, stratagem, target, rules)) return false;
   return true;
+}
+
+function applyMortalWoundStratagemEffect(
+  state: BattleState,
+  side: Side,
+  stratagem: StratagemDefinition,
+  targetUnitId?: string,
+): void {
+  const unit = targetUnitFor(state, targetUnitId);
+  if (!unit) return;
+
+  const enemy = stratagem.id === 'explosives'
+    ? nearestValidEnemy(state, unit, candidate =>
+        battleUnitsBaseEdgeDistance(unit, candidate) <= 8
+        && unitHasVisibleLineToTarget(state, unit, candidate)
+      )
+    : stratagem.id === 'crushing-impact'
+      ? nearestValidEnemy(state, unit, candidate =>
+          battleUnitsBaseEdgeDistance(unit, candidate) <= 1
+        )
+      : null;
+  if (!enemy) {
+    appendStratagemEffectLog(state, side, unit.profile.name, `${stratagem.name} has no valid enemy target.`, 'info');
+    return;
+  }
+
+  const rolls = rollMultiple(6);
+  const mortalWounds = countSuccesses(rolls, 4);
+  appendStratagemEffectLog(state, side, unit.profile.name, `${stratagem.name} targets ${enemy.profile.name}.`, 'info');
+  appendStratagemEffectLog(state, side, unit.profile.name, `${stratagem.name} rolls: [${rolls.join(', ')}] -> ${mortalWounds} mortal wound(s).`, 'roll');
+  if (mortalWounds > 0) {
+    state.log = [
+      ...state.log,
+      ...applyDamage(enemy, mortalWounds, state, side, { deferCasualties: true, source: stratagem.name }),
+    ];
+  }
 }
 
 function alreadyUsedThisPhase(state: BattleState, side: Side, stratagem: StratagemDefinition): boolean {
@@ -84,6 +249,7 @@ export function availableStratagems(
 ): StratagemDefinition[] {
   return rules.stratagems.filter(stratagem =>
     phaseAllowed(stratagem, state.phase)
+    && turnAllowed(state, side, stratagem)
     && canSpendCommandPoints(state, side, stratagem.cost)
     && !alreadyUsedThisPhase(state, side, stratagem)
     && !alreadyUsedThisBattle(state, side, stratagem)
@@ -91,7 +257,7 @@ export function availableStratagems(
     && (
       stratagem.target === 'none'
       || targetUnitId === undefined
-      || targetAllowed(state, side, stratagem, targetUnitId)
+      || targetAllowed(state, side, stratagem, rules, targetUnitId)
     )
   );
 }
@@ -106,10 +272,11 @@ export function useStratagem(
   const stratagem = stratagemById(rules, stratagemId);
   if (!stratagem) return state;
   if (!phaseAllowed(stratagem, state.phase)) return state;
+  if (!turnAllowed(state, side, stratagem)) return state;
   if (alreadyUsedThisPhase(state, side, stratagem)) return state;
   if (alreadyUsedThisBattle(state, side, stratagem)) return state;
   if (targetAlreadyUsedThisPhase(state, side, stratagem, targetUnitId)) return state;
-  if (!targetAllowed(state, side, stratagem, targetUnitId)) return state;
+  if (!targetAllowed(state, side, stratagem, rules, targetUnitId)) return state;
 
   const next: BattleState = JSON.parse(JSON.stringify(state));
   if (!spendCommandPoints(next, side, stratagem.cost)) return state;
@@ -135,5 +302,6 @@ export function useStratagem(
     message: `${next.armies[side].name} uses ${stratagem.name} for ${stratagem.cost}CP.`,
     type: 'info',
   }];
+  applyMortalWoundStratagemEffect(next, side, stratagem, targetUnitId);
   return next;
 }

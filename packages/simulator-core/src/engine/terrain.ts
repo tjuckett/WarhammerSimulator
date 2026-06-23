@@ -24,10 +24,12 @@ function terrainFromSpec(spec: TerrainSpec): Terrain {
     width: spec.width,
     height: spec.height,
     rotationDeg: spec.rotationDeg,
+    polygonPoints: spec.polygonPoints,
     type,
     providesCover: spec.providesCover ?? (type !== 'area' || spec.name !== 'Rubble'),
     difficult: spec.difficult ?? type === 'area',
     color: spec.color ?? colorFor(spec),
+    objectiveRole: spec.objectiveRole,
     features: [],
   };
   terrain.features = featuresFromSpec(terrain, spec);
@@ -44,6 +46,7 @@ export function terrainLayoutFromData(layout: TerrainLayoutData | TerrainLayout)
     id: layout.id,
     name: layout.name,
     description: layout.description,
+    deploymentZones: layout.deploymentZones,
     terrain: layout.terrain.map(terrainFromSpec),
   };
 }

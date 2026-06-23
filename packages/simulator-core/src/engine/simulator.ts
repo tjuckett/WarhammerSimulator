@@ -1,8 +1,8 @@
-import type { BattleState, BattleUnit, LogEntry, MovementStep, Phase, Position, Side, Terrain, TerrainFeature } from '../types/battle';
+import type { BattleSetup, BattleState, BattleUnit, LogEntry, MovementStep, Phase, Position, Side, Terrain, TerrainFeature } from '../types/battle';
 import type { ImportedArmy, UnitProfile, WeaponProfile } from '../types/army';
 import { rules40K10th, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
-import { deployArmy, distanceToDeploymentZone, fp, pointInDeploymentZone, zoneFor, unitRole, type DeploymentStrategy } from './deployment';
+import { deployArmy, distanceToDeploymentZone, fp, pointInDeploymentZone, zoneFor, unitRole, type DeploymentStrategy, type DeploymentZoneSource } from './deployment';
 import { selectUnitToDrop, reactivePosition, deployModelFormation } from './deploymentBrain';
 import { DEFAULT_OBJECTIVES } from './missions';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
@@ -87,10 +87,18 @@ function isAircraft(unit: BattleUnit): boolean {
   return hasKeyword(unit, 'aircraft');
 }
 
+function isFortification(unit: BattleUnit): boolean {
+  return hasKeyword(unit, 'fortification');
+}
+
 const INFILTRATORS_ENEMY_DEPLOYMENT_ZONE_BUFFER = 9;
 const FIGHT_PHASE_MOVE_RANGE = 3;
 
-function modelIsOutsideEnemyDeploymentZoneBuffer(unit: UnitProfile, side: Side, position: Position, modelIndex = 0, deployment?: string, board = boardFormatForId()): boolean {
+function setupDeploymentZoneSource(setup?: BattleSetup): DeploymentZoneSource {
+  return setup?.deploymentZones ?? setup?.deployment ?? 'Default';
+}
+
+function modelIsOutsideEnemyDeploymentZoneBuffer(unit: UnitProfile, side: Side, position: Position, modelIndex = 0, deployment: DeploymentZoneSource = 'Default', board = boardFormatForId()): boolean {
   if (!canDeployOutsideDeploymentZone(unit)) return true;
   const enemyZone = zoneFor((1 - side) as Side, deployment, board);
   return distanceToDeploymentZone(position, enemyZone) >= INFILTRATORS_ENEMY_DEPLOYMENT_ZONE_BUFFER + modelBaseRadiusInches(unit, modelIndex);
@@ -682,7 +690,7 @@ function resolveAttacks(
   hasCover: boolean,
   hitModifier = 0,
   hitModifierNote = '',
-  options: { deferCasualties?: boolean } = {},
+  options: { deferCasualties?: boolean; snapShooting?: boolean } = {},
 ): LogEntry[] {
   const logs: LogEntry[] = [];
   const rangeDistance = weapon.isMelee
@@ -722,7 +730,9 @@ function resolveAttacks(
 
   // ── Hit rolls ──────────────────────────────────────────────────────────────
   const isTorrent = weaponHasKeyword(weapon, 'Torrent');
-  if (hitModifierNote && !isTorrent) {
+  if (options.snapShooting && !isTorrent) {
+    logs.push(log(state, attacker.side, attacker.profile.name, '     Snap Shooting: unmodified 6s to hit; hit rolls cannot be re-rolled', 'info'));
+  } else if (hitModifierNote && !isTorrent) {
     logs.push(log(state, attacker.side, attacker.profile.name, `     ${hitModifierNote}`, 'info'));
   }
   let hitResult = { hits: numAttacks, rolls: [] as number[], mortalsFromCrits: 0, logNote: 'Torrent - auto-hits' };
@@ -734,7 +744,7 @@ function resolveAttacks(
     ));
   } else {
   const hitRolls = rollMultiple(numAttacks);
-  const hitTarget = Math.min(6, Math.max(2, weapon.skill + hitModifier));
+  const hitTarget = options.snapShooting ? 6 : Math.min(6, Math.max(2, weapon.skill + hitModifier));
   hitResult = rules.processHits(hitRolls, hitTarget, weapon);
   lethalAutoWounds = weaponHasKeyword(weapon, 'Lethal Hits')
     ? hitRolls.filter(roll => roll === 6).length
@@ -879,7 +889,7 @@ function resolveAttacks(
   return logs;
 }
 
-function applyDamage(
+export function applyDamage(
   unit: BattleUnit,
   totalDamage: number,
   state: BattleState,
@@ -1120,6 +1130,7 @@ function runMovement(unit: BattleUnit, state: BattleState, rules: RulesEdition):
   )];
 
   translateFormation(unit, newPos.x - unit.position.x, newPos.y - unit.position.y);
+  cancelUnitAction(state, unit, 'it made a move');
 
   resolveInternalModelOverlaps(unit);
   unit.position = centroid(unit.modelPositions);
@@ -1165,8 +1176,75 @@ function resolveHazardousTests(unit: BattleUnit, weapon: WeaponProfile, weaponIn
   return logs;
 }
 
+function cancelUnitAction(state: BattleState, unit: BattleUnit, reason: string): void {
+  if (!unit.performingAction) return;
+  const actionName = unit.performingAction.name;
+  unit.performingAction = undefined;
+  state.log = [...state.log, log(
+    state,
+    unit.side,
+    unit.profile.name,
+    `${unit.profile.name} does not complete ${actionName}: ${reason}.`,
+    'info',
+  )];
+}
+
+function unitIsEligibleToStartAction(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean {
+  if (unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves) return false;
+  if (isAircraft(unit) || isFortification(unit)) return false;
+  if (unit.battleshocked) return false;
+  if (unit.profile.oc <= 0) return false;
+  if (unit.actionStartedThisTurn || unit.performingAction) return false;
+  if (unit.movementAction === 'advanced' || unit.movementAction === 'fellBack' || unit.fellBack) return false;
+  if (!unitCanUseBigGunsNeverTire(unit) && inEngagement(unit, enemies(state, unit.side), rules.engagementRange())) return false;
+  return true;
+}
+
+export function playUnitCanStartAction(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rules40K10th,
+): boolean {
+  if (state.activeArmy !== side || state.phase === 'deployment' || state.phase === 'setup' || state.phase === 'end') return false;
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  return !!unit && unitIsEligibleToStartAction(unit, state, rules);
+}
+
+export function startPlayUnitAction(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  actionId = 'generic-action',
+  actionName = 'Action',
+  rules: RulesEdition = rules40K10th,
+): BattleState {
+  if (!playUnitCanStartAction(state, unitId, side, rules)) return state;
+  const next = clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
+  unit.performingAction = {
+    id: actionId,
+    name: actionName,
+    startedPhase: next.phase,
+    completesAt: 'end-of-turn',
+  };
+  unit.actionStartedThisTurn = true;
+  next.log = [...next.log, log(next, side, unit.profile.name, `${unit.profile.name} starts ${actionName}.`, 'info')];
+  return next;
+}
+
+export function completeEndOfTurnActions(state: BattleState, side: Side): void {
+  for (const unit of state.units) {
+    if (unit.side !== side || unit.destroyed || !unit.performingAction) continue;
+    const actionName = unit.performingAction.name;
+    unit.performingAction = undefined;
+    state.log = [...state.log, log(state, side, unit.profile.name, `${unit.profile.name} completes ${actionName}.`, 'info')];
+  }
+}
+
 function eligibleShootingWeapons(unit: BattleUnit, state: BattleState, rules: RulesEdition): WeaponProfile[] {
   if (unit.destroyed || unit.embarkedInUnitId || unit.activated) return [];
+  if (unit.performingAction && !unitCanUseBigGunsNeverTire(unit)) return [];
   if (unit.fellBack || unit.movementAction === 'fellBack') return [];
   const firedSet = new Set(unit.firedWeaponIndices ?? []);
   const foes = enemies(state, unit.side);
@@ -1213,6 +1291,40 @@ function shootingWeaponCanTarget(
     && (targetVisible || weaponHasKeyword(weapon, 'Indirect Fire'));
 }
 
+function unitHasVisibleModelToTarget(state: BattleState, unit: BattleUnit, target: BattleUnit): boolean {
+  return unit.modelPositions.some((from, i) => hasAnyModelLOS(from, modelBaseRadius(unit, i), target, state.terrain));
+}
+
+function snapShootingWeaponCanTarget(
+  state: BattleState,
+  unit: BattleUnit,
+  target: BattleUnit,
+  weapon: WeaponProfile,
+  rules: RulesEdition,
+): boolean {
+  return battleUnitsBaseEdgeDistance(unit, target) <= 24
+    && unitHasVisibleModelToTarget(state, unit, target)
+    && shootingWeaponCanTarget(state, unit, target, weapon, rules);
+}
+
+function activeStratagemTargets(state: BattleState, stratagemId: string, phase: Phase): Set<string> {
+  const round = battleRound(state);
+  return new Set(
+    (state.stratagemUses ?? [])
+      .filter(use =>
+        use.stratagemId === stratagemId
+        && use.phase === phase
+        && (use.battleRound ?? round) === round
+        && use.targetUnitId
+      )
+      .map(use => use.targetUnitId!),
+  );
+}
+
+function unitHasActiveStratagem(state: BattleState, unit: BattleUnit, stratagemId: string, phase: Phase): boolean {
+  return activeStratagemTargets(state, stratagemId, phase).has(unit.id);
+}
+
 export function battleUnitsBaseEdgeDistance(a: BattleUnit, b: BattleUnit): number {
   let closest = Infinity;
   for (let ai = 0; ai < a.modelPositions.length; ai++) {
@@ -1242,15 +1354,17 @@ function shootingWeaponModifiers(
   const bigGunsNeverTire = inEngagement(unit, foes, rules.engagementRange()) && unitCanUseBigGunsNeverTire(unit);
   const usesIndirectFirePenalty = weaponHasKeyword(weapon, 'Indirect Fire')
     && !unit.modelPositions.some((from, i) => hasAnyModelLOS(from, modelBaseRadius(unit, i), target, state.terrain));
-  const cover = targetHasTerrainCoverFrom(unit.modelPositions, target, state.terrain) || usesIndirectFirePenalty;
+  const usesSmokescreen = unitHasActiveStratagem(state, target, 'smokescreen', 'shooting');
+  const cover = targetHasTerrainCoverFrom(unit.modelPositions, target, state.terrain) || usesIndirectFirePenalty || usesSmokescreen;
   const usesBigGunsPenalty = (bigGunsNeverTire || targetWithinFriendlyEngagement(state, target, unit.side, rules))
     && !weaponHasKeyword(weapon, 'Pistol');
   const usesHeavyBonus = weaponHasKeyword(weapon, 'Heavy') && unit.movementAction === 'remainedStationary';
-  const hitModifier = (usesBigGunsPenalty ? 1 : 0) + (usesHeavyBonus ? -1 : 0) + (usesIndirectFirePenalty ? 1 : 0);
+  const hitModifier = (usesBigGunsPenalty ? 1 : 0) + (usesHeavyBonus ? -1 : 0) + (usesIndirectFirePenalty ? 1 : 0) + (usesSmokescreen ? 1 : 0);
   const hitModifierNotes = [
     usesBigGunsPenalty ? 'Big Guns Never Tire -1 to Hit' : '',
     usesHeavyBonus ? 'Heavy +1 to Hit' : '',
     usesIndirectFirePenalty ? 'Indirect Fire -1 to Hit; target has Benefit of Cover' : '',
+    usesSmokescreen ? 'Smokescreen -1 to Hit; target has Benefit of Cover' : '',
   ].filter(Boolean).join('; ');
   return { cover, hitModifier, hitModifierNotes };
 }
@@ -1262,9 +1376,10 @@ function resolveShootingWeaponIntoTarget(
   weapon: WeaponProfile,
   weaponIndex: number,
   rules: RulesEdition,
-  options: { deferCasualties?: boolean } = {},
+  options: { deferCasualties?: boolean; snapShooting?: boolean } = {},
 ): LogEntry[] {
   const modifiers = shootingWeaponModifiers(state, unit, target, weapon, rules);
+  const snapShooting = options.snapShooting ?? false;
   const logs = resolveAttacks(
     unit,
     target,
@@ -1273,8 +1388,8 @@ function resolveShootingWeaponIntoTarget(
     rules,
     state,
     modifiers.cover,
-    modifiers.hitModifier,
-    modifiers.hitModifierNotes,
+    snapShooting ? 0 : modifiers.hitModifier,
+    snapShooting ? '' : modifiers.hitModifierNotes,
     options,
   );
   logs.push(...resolveHazardousTests(unit, weapon, weaponIndex, state));
@@ -1337,6 +1452,29 @@ export function playShootingWeaponOptions(
     .filter(option => option.weaponIndex >= 0);
 }
 
+export function playSnapShootingWeaponOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rules40K10th,
+): PlayShootingWeaponOption[] {
+  if (state.phase !== 'movement' || state.activeArmy === side) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || unit.activated) return [];
+  return eligibleShootingWeapons(unit, state, rules)
+    .map(weapon => {
+      const weaponIndex = unit.profile.weapons.indexOf(weapon);
+      return {
+        weaponIndex,
+        name: weapon.name,
+        targetIds: enemies(state, side)
+          .filter(target => snapShootingWeaponCanTarget(state, unit, target, weapon, rules))
+          .map(target => target.id),
+      };
+    })
+    .filter(option => option.weaponIndex >= 0);
+}
+
 export function shootPlayUnitWeapon(
   state: BattleState,
   unitId: string,
@@ -1381,6 +1519,50 @@ export function shootPlayUnitWeapon(
       unit.activated = true;
     }
   }
+  s.log = [...s.log, ...logs];
+  return s;
+}
+
+export function snapShootPlayUnitWeapon(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  targetUnitId: string,
+  weaponIndex: number | 'all',
+  rules: RulesEdition = rules40K10th,
+): BattleState {
+  if (state.phase !== 'movement' || state.activeArmy === side) return state;
+  const s = clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const target = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || !target || unit.activated) return state;
+
+  const eligibleWeapons = eligibleShootingWeapons(unit, s, rules)
+    .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
+    .filter(option =>
+      option.weaponIndex >= 0
+      && aliveWeaponModelCount(unit, option.weaponIndex) > 0
+      && snapShootingWeaponCanTarget(s, unit, target, option.weapon, rules)
+    );
+  const selectedWeapons = weaponIndex === 'all'
+    ? eligibleWeapons
+    : eligibleWeapons.filter(option => option.weaponIndex === weaponIndex);
+  if (!selectedWeapons.length) return state;
+
+  const logs: LogEntry[] = [
+    log(s, side, unit.profile.name, `${unit.profile.name} snap shoots ${target.profile.name}:`, 'shoot'),
+  ];
+  for (const option of selectedWeapons) {
+    logs.push(...resolveShootingWeaponIntoTarget(s, unit, target, option.weapon, option.weaponIndex, rules, {
+      deferCasualties: true,
+      snapShooting: true,
+    }));
+    if (unit.destroyed || target.destroyed) break;
+  }
+
+  if (logs.length <= 1) return state;
+  unit.activated = true;
+  unit.actionStartedThisTurn = true;
   s.log = [...s.log, ...logs];
   return s;
 }
@@ -1451,6 +1633,7 @@ export function lockPlayUnitShooting(state: BattleState, unitId: string, side: S
 }
 
 function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
+  if (unit.performingAction) return [];
   if (unit.destroyed || unit.embarkedInUnitId || isAircraft(unit) || unit.inCombat || unit.fellBack || unit.arrivedFromReinforcements || unit.emergencyDisembarkedThisTurn || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return [];
   const foes = enemies(state, unit.side).filter(
     e => unitCanChargeTarget(unit, e) && dist(unit.position, e.position) <= rules.chargeRange(),
@@ -1520,6 +1703,7 @@ function chargeNeededDistance(unit: BattleUnit, target: BattleUnit, rules: Rules
 function unitCanDeclareCharge(unit: BattleUnit): boolean {
   return !unit.destroyed
     && !unit.embarkedInUnitId
+    && !unit.performingAction
     && !unit.activated
     && !isAircraft(unit)
     && !unit.inCombat
@@ -1622,13 +1806,27 @@ function unitCanFight(unit: BattleUnit, state: BattleState, rules: RulesEdition)
     && enemies(state, unit.side).some(enemy => unitCanFightTarget(unit, enemy) && inEngagement(unit, [enemy], rules.engagementRange()));
 }
 
+function unitHasCounteroffensive(state: BattleState, unit: BattleUnit): boolean {
+  return unitHasActiveStratagem(state, unit, 'counteroffensive', 'fight');
+}
+
+function sideCanSelectFightUnit(state: BattleState, side: Side): boolean {
+  return state.phase === 'fight'
+    && (state.activeArmy === side || activeUnits(state, side).some(unit => unitHasCounteroffensive(state, unit)));
+}
+
 export function playFightActivationUnitIds(
   state: BattleState,
   side: Side,
   rules: RulesEdition = rules40K10th,
 ): string[] {
-  if (state.phase !== 'fight' || state.activeArmy !== side) return [];
+  if (!sideCanSelectFightUnit(state, side)) return [];
   const eligible = activeUnits(state, side).filter(unit => unitCanFight(unit, state, rules));
+  if (state.activeArmy !== side) {
+    return eligible.filter(unit => unitHasCounteroffensive(state, unit)).map(unit => unit.id);
+  }
+  const counteroffensive = eligible.filter(unit => unitHasCounteroffensive(state, unit));
+  if (counteroffensive.length) return counteroffensive.map(unit => unit.id);
   const charged = eligible.filter(unit => unit.charged);
   return (charged.length ? charged : eligible).map(unit => unit.id);
 }
@@ -1781,7 +1979,7 @@ export function playFightWeaponOptions(
   side: Side,
   rules: RulesEdition = rules40K10th,
 ): PlayFightWeaponOption[] {
-  if (state.phase !== 'fight' || state.activeArmy !== side) return [];
+  if (!sideCanSelectFightUnit(state, side)) return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit || !unitCanFight(unit, state, rules)) return [];
   if (!playFightActivationUnitIds(state, side, rules).includes(unit.id)) return [];
@@ -1802,7 +2000,7 @@ export function fightPlayUnitWeapon(
   weaponIndex: number | 'all',
   rules: RulesEdition = rules40K10th,
 ): BattleState {
-  if (state.phase !== 'fight' || state.activeArmy !== side) return state;
+  if (!sideCanSelectFightUnit(state, side)) return state;
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   const target = state.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit || !target || !unitCanFight(unit, state, rules)) return state;
@@ -1990,6 +2188,7 @@ export function markRemainingStationaryUnits(state: BattleState, side: Side = st
 function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
   const side = s.activeArmy;
   const armyName = s.armies[side].name;
+  s.units.filter(u => u.side === side && !u.destroyed).forEach(u => { u.actionStartedThisTurn = undefined; });
   activeUnits(s, side).forEach(u => {
     u.activated = false;
     u.charged = false;
@@ -2079,7 +2278,7 @@ function makeBattleUnit(
   };
 }
 
-function leaderAnchor(bodyguard: BattleUnit, leader: UnitProfile, leaderIndex: number, side: Side, deployment?: string, board = boardFormatForId()): Position {
+function leaderAnchor(bodyguard: BattleUnit, leader: UnitProfile, leaderIndex: number, side: Side, deployment: DeploymentZoneSource = 'Default', board = boardFormatForId()): Position {
   const forward = side === 0 ? -1 : 1;
   const zone = zoneFor(side, deployment, board);
   const radius = modelBaseRadiusInches(leader);
@@ -2197,7 +2396,7 @@ export function createBattleState(
   const board = boardFormatForId(setup?.boardFormat);
   const objectives: Position[] = clone(objectivesOverride ?? DEFAULT_OBJECTIVES);
 
-  const deployment = setup?.deployment;
+  const deployment = setupDeploymentZoneSource(setup);
   const army1Deployable = deployableDrops(army1);
   const army2Deployable = deployableDrops(army2);
   const positions1 = deployArmy(army1Deployable, 0, strategy1, terrain, objectives, deployment, board);
@@ -2360,8 +2559,10 @@ export function placeNextUnit(state: BattleState): BattleState {
   const pos = reactivePosition(profile, side, s, s.terrain, placedThisSide);
   const allDeployedModels = s.units.flatMap(u => u.modelPositions);
   const allDeployedModelRadii = s.units.flatMap(u => u.modelPositions.map((_, modelIndex) => modelBaseRadius(u, modelIndex)));
+  const deployment = setupDeploymentZoneSource(s.setup);
+  const zone = zoneFor(side, deployment, board);
   const modelPos = deployModelFormation(
-    pos, profile.baseModelCount, unitRole(profile), side, s.terrain, zoneFor(side, s.setup?.deployment, board), allDeployedModels,
+    pos, profile.baseModelCount, unitRole(profile), side, s.terrain, zone, allDeployedModels,
     modelRadiiForProfile(profile),
     allDeployedModelRadii,
   );
@@ -2369,25 +2570,25 @@ export function placeNextUnit(state: BattleState): BattleState {
   const unit = makeBattleUnit(profile, side, modelPos);
   unit.position = pos;
 
-  resolveInternalModelOverlaps(unit, zoneFor(side, s.setup?.deployment, board), board);
-  avoidDeploymentOverlap(unit, s, zoneFor(side, s.setup?.deployment, board));
-  resolveInternalModelOverlaps(unit, zoneFor(side, s.setup?.deployment, board), board);
+  resolveInternalModelOverlaps(unit, zone, board);
+  avoidDeploymentOverlap(unit, s, zone);
+  resolveInternalModelOverlaps(unit, zone, board);
   s.units.push(unit);
   s.unplacedUnits[side] = [...unplaced.slice(0, unitIdx), ...unplaced.slice(unitIdx + 1)];
   const attachedLeaders = attachedFollowersFor(s.armies[side].army, profile);
   attachedLeaders.forEach((leader, leaderIndex) => {
-    const anchor = leaderAnchor(unit, leader, leaderIndex, side, s.setup?.deployment, board);
+    const anchor = leaderAnchor(unit, leader, leaderIndex, side, deployment, board);
     const deployedModels = s.units.flatMap(u => u.modelPositions);
     const deployedRadii = s.units.flatMap(u => u.modelPositions.map((_, modelIndex) => modelBaseRadius(u, modelIndex)));
     const leaderModelPos = deployModelFormation(
-      anchor, leader.baseModelCount, unitRole(leader), side, s.terrain, zoneFor(side, s.setup?.deployment, board), deployedModels,
+      anchor, leader.baseModelCount, unitRole(leader), side, s.terrain, zone, deployedModels,
       modelRadiiForProfile(leader),
       deployedRadii,
     );
     const leaderUnit = makeBattleUnit(leader, side, leaderModelPos, unit.id, unit.tabletopUnitId);
-    resolveInternalModelOverlaps(leaderUnit, zoneFor(side, s.setup?.deployment, board), board);
-    avoidDeploymentOverlap(leaderUnit, s, zoneFor(side, s.setup?.deployment, board));
-    resolveInternalModelOverlaps(leaderUnit, zoneFor(side, s.setup?.deployment, board), board);
+    resolveInternalModelOverlaps(leaderUnit, zone, board);
+    avoidDeploymentOverlap(leaderUnit, s, zone);
+    resolveInternalModelOverlaps(leaderUnit, zone, board);
     s.units.push(leaderUnit);
     removeUnitFromUnplaced(s, side, leader);
   });
@@ -2416,7 +2617,8 @@ export function placePlayUnit(state: BattleState, side: Side, unitIndex: number,
   const profile = unplaced[unitIndex];
   if (!profile) return s;
 
-  const zone = zoneFor(side, s.setup?.deployment, board);
+  const deployment = setupDeploymentZoneSource(s.setup);
+  const zone = zoneFor(side, deployment, board);
   if (!canDeployOutsideDeploymentZone(profile) && !pointInDeploymentZone(position, zone, modelBaseRadiusInches(profile))) {
     s.log = [...s.log, log(s, side, profile.name,
       `${profile.name} must be placed wholly inside ${zone.name}.`,
@@ -2424,7 +2626,7 @@ export function placePlayUnit(state: BattleState, side: Side, unitIndex: number,
     )];
     return s;
   }
-  if (!modelIsOutsideEnemyDeploymentZoneBuffer(profile, side, position, 0, s.setup?.deployment, board)) {
+  if (!modelIsOutsideEnemyDeploymentZoneBuffer(profile, side, position, 0, deployment, board)) {
     s.log = [...s.log, log(s, side, profile.name,
       `${profile.name} must be more than 9" from the enemy deployment zone.`,
       'info',
@@ -2439,12 +2641,12 @@ export function placePlayUnit(state: BattleState, side: Side, unitIndex: number,
   s.unplacedUnits[side] = [...unplaced.slice(0, unitIndex), ...unplaced.slice(unitIndex + 1)];
   const attachedLeaders = attachedFollowersFor(s.armies[side].army, profile);
   attachedLeaders.forEach((leader, leaderIndex) => {
-    const anchor = leaderAnchor(unit, leader, leaderIndex, side, s.setup?.deployment, board);
+    const anchor = leaderAnchor(unit, leader, leaderIndex, side, deployment, board);
     const leaderPositions = playGridFormation(leader, anchor, side);
     const leaderUnit = makeBattleUnit(leader, side, leaderPositions, unit.id, unit.tabletopUnitId);
-    resolveInternalModelOverlaps(leaderUnit, zoneFor(side, s.setup?.deployment, board), board);
-    avoidDeploymentOverlap(leaderUnit, s, zoneFor(side, s.setup?.deployment, board));
-    resolveInternalModelOverlaps(leaderUnit, zoneFor(side, s.setup?.deployment, board), board);
+    resolveInternalModelOverlaps(leaderUnit, zone, board);
+    avoidDeploymentOverlap(leaderUnit, s, zone);
+    resolveInternalModelOverlaps(leaderUnit, zone, board);
     s.units.push(leaderUnit);
     removeUnitFromUnplaced(s, side, leader);
   });
@@ -2568,6 +2770,7 @@ export function embarkPlayUnit(
   const s = clone(state);
   const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
   const transport = s.units.find(candidate => candidate.id === existingTransport.id && candidate.side === side && !candidate.destroyed)!;
+  cancelUnitAction(s, unit, 'it left the battlefield');
   unit.embarkedInUnitId = transport.id;
   unit.position = { ...transport.position };
   unit.modelPositions = transport.modelPositions.map(position => ({ ...position })).slice(0, Math.max(1, unit.remainingModels));
@@ -2755,9 +2958,10 @@ export function movePlayModel(state: BattleState, unitId: string, modelIndex: nu
   if (s.phase === 'deployment') {
     const board = boardFormatForState(s);
     const radius = modelBaseRadius(unit, modelIndex);
-    const zone = zoneFor(unit.side, s.setup?.deployment, board);
+    const deployment = setupDeploymentZoneSource(s.setup);
+    const zone = zoneFor(unit.side, deployment, board);
     if (!canDeployOutsideDeploymentZone(unit.profile) && !pointInDeploymentZone(position, zone, radius)) return s;
-    if (!modelIsOutsideEnemyDeploymentZoneBuffer(unit.profile, unit.side, position, modelIndex, s.setup?.deployment, board)) return s;
+    if (!modelIsOutsideEnemyDeploymentZoneBuffer(unit.profile, unit.side, position, modelIndex, deployment, board)) return s;
   }
 
   unit.modelPositions[modelIndex] = position;
@@ -3029,6 +3233,7 @@ function aircraftPivotWithinLimit(unit: BattleUnit, modelIndices: number[]): boo
 }
 
 function moveAircraftToStrategicReserves(state: BattleState, unit: BattleUnit): void {
+  cancelUnitAction(state, unit, 'it left the battlefield');
   unit.inStrategicReserves = true;
   unit.modelPositions = [];
   unit.modelRotations = [];
@@ -3421,6 +3626,7 @@ export function movePlayModels(
   }
 
   applyPlayModelTranslation(unit, uniqueIndices, move.dx, move.dy, boardFormatForState(s));
+  cancelUnitAction(s, unit, 'it made a move');
   if (s.phase === 'movement' && inEngagement(unit, enemies(s, side), rules40K10th.engagementRange())) return state;
 
   if (s.phase === 'movement') {
@@ -3471,6 +3677,7 @@ export function movePlayModelsVertically(
   if (inEngagement(unit, enemies(s, side), rules40K10th.engagementRange())) return state;
 
   lockOtherMovedPlayUnits(s, unit);
+  cancelUnitAction(s, unit, 'it made a move');
   unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
   updateModelMovementAllowances(unit);
   return s;
@@ -3698,6 +3905,7 @@ export function advancePlayUnit(
   const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
   if (!unit) return state;
   lockOtherMovedPlayUnits(s, unit);
+  cancelUnitAction(s, unit, 'it made an Advance move');
 
   const advance = advanceAllowance(unit, rules);
   unit.movementAction = 'advanced';
@@ -3752,6 +3960,7 @@ export function fallBackPlayUnit(
     : playMoveEnemyCrossingModelIndices(s, unit, new Set(modelIndices), move.dx, move.dy);
 
   applyPlayModelTranslation(unit, modelIndices, move.dx, move.dy, boardFormatForState(s));
+  cancelUnitAction(s, unit, 'it made a Fall Back move');
   if (inEngagement(unit, enemies(s, side), rules.engagementRange())) return state;
 
   unit.inCombat = false;
@@ -3946,10 +4155,11 @@ export function playDeploymentIssues(state: BattleState): string[] {
     if (unitHasBaseOverlap(state, unit)) issues.push(`${unit.profile.name} has overlapping bases.`);
 
     const board = boardFormatForState(state);
-    const zone = zoneFor(unit.side, state.setup?.deployment, board);
+    const deployment = setupDeploymentZoneSource(state.setup);
+    const zone = zoneFor(unit.side, deployment, board);
     if (canDeployOutsideDeploymentZone(unit.profile)) {
       const tooCloseToEnemyZone = unit.modelPositions.some((model, modelIndex) =>
-        !modelIsOutsideEnemyDeploymentZoneBuffer(unit.profile, unit.side, model, modelIndex, state.setup?.deployment, board),
+        !modelIsOutsideEnemyDeploymentZoneBuffer(unit.profile, unit.side, model, modelIndex, deployment, board),
       );
       if (tooCloseToEnemyZone) issues.push(`${unit.profile.name} is within 9" of the enemy deployment zone.`);
     } else {
@@ -4038,6 +4248,7 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
     s.units.filter(u => u.side !== side && !u.destroyed && u.inCombat)
       .forEach(u => newLogs.push(...runFight(u, s, rules)));
   } else if (s.phase === 'fight') {
+    completeEndOfTurnActions(s, side);
     newLogs.push(...scorePrimaryMissionLogs(s, side, rules));
     advanceTurnInPlace(s);
   }

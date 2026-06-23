@@ -13,6 +13,7 @@ import {
   beginPlayBattle,
   chargePlayUnitTarget,
   completePlayUnitMovement,
+  completeEndOfTurnActions,
   consolidatePlayUnit,
   disembarkPlayUnit,
   embarkPlayUnit,
@@ -35,6 +36,8 @@ import {
   rotatePlayModels,
   shootPlayUnitWeapon,
   simulateNextPhase,
+  snapShootPlayUnitWeapon,
+  startPlayUnitAction,
   undeployPlayUnit,
 } from '../engine/simulator';
 
@@ -152,6 +155,13 @@ export type GameAction =
       weaponIndex: number | 'all';
     })
   | (GameActionBase & {
+      type: 'play.snapShootUnitWeapon';
+      side: Side;
+      unitId: string;
+      targetUnitId: string;
+      weaponIndex: number | 'all';
+    })
+  | (GameActionBase & {
       type: 'play.lockUnitShooting';
       side: Side;
       unitId: string;
@@ -200,6 +210,13 @@ export type GameAction =
       targetUnitId?: string;
     })
   | (GameActionBase & {
+      type: 'play.startAction';
+      side: Side;
+      unitId: string;
+      actionId?: string;
+      actionName?: string;
+    })
+  | (GameActionBase & {
       type: 'simulation.placeNextUnit';
     })
   | (GameActionBase & {
@@ -238,6 +255,7 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
       unit.movementStartPositionsByModel = undefined;
       unit.movementComplete = undefined;
       unit.arrivedFromReinforcements = undefined;
+      unit.actionStartedThisTurn = undefined;
       if (unit.emergencyDisembarkedThisTurn) unit.battleshocked = false;
       unit.emergencyDisembarkedThisTurn = undefined;
       unit.fellBack = false;
@@ -249,7 +267,10 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   const phaseBeforeStep = next.phase;
   const scoringSide = next.activeArmy;
   const currentIndex = PLAY_TURN_PHASES.indexOf(next.phase);
-  if (phaseBeforeStep === 'fight') scorePrimaryMission(next, scoringSide, rules);
+  if (phaseBeforeStep === 'fight') {
+    completeEndOfTurnActions(next, scoringSide);
+    scorePrimaryMission(next, scoringSide, rules);
+  }
   if (currentIndex < 0) {
     startCommand();
   } else if (currentIndex < PLAY_TURN_PHASES.length - 1) {
@@ -387,6 +408,16 @@ export function applyGameAction(
         context.rules,
       );
 
+    case 'play.snapShootUnitWeapon':
+      return snapShootPlayUnitWeapon(
+        state,
+        normalizedAction.unitId,
+        normalizedAction.side,
+        normalizedAction.targetUnitId,
+        normalizedAction.weaponIndex,
+        context.rules,
+      );
+
     case 'play.lockUnitShooting':
       return lockPlayUnitShooting(state, normalizedAction.unitId, normalizedAction.side);
 
@@ -429,6 +460,16 @@ export function applyGameAction(
         normalizedAction.targetUnitId,
       );
 
+    case 'play.startAction':
+      return startPlayUnitAction(
+        state,
+        normalizedAction.unitId,
+        normalizedAction.side,
+        normalizedAction.actionId,
+        normalizedAction.actionName,
+        context.rules,
+      );
+
     case 'simulation.placeNextUnit':
       return placeNextUnit(state);
 
@@ -444,6 +485,7 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
     case 'play.placeStrategicReserveUnit':
     case 'play.fallBackUnit':
     case 'play.advanceUnit':
+    case 'play.startAction':
     case 'play.completeUnitMovement':
     case 'play.embarkUnit':
     case 'play.chargeUnitTarget':
@@ -451,6 +493,7 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
     case 'play.consolidateUnit':
       return normalizedAction.unitId === unitId;
     case 'play.fightUnitWeapon':
+    case 'play.snapShootUnitWeapon':
       return normalizedAction.unitId === unitId || normalizedAction.targetUnitId === unitId;
     case 'play.useStratagem':
       return normalizedAction.targetUnitId === unitId;

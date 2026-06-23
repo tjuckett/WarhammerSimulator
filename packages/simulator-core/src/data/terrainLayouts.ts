@@ -6,9 +6,10 @@ import layout5 from './terrainLayouts/layout-5.json';
 import layout6 from './terrainLayouts/layout-6.json';
 import layout7 from './terrainLayouts/layout-7.json';
 import layout8 from './terrainLayouts/layout-8.json';
+import eleventhEventLayouts from './terrainLayouts/11e-event-layouts.json';
 import type { TerrainLayoutPack } from './terrainLayoutTypes';
 
 export const DEFAULT_TERRAIN_LAYOUT_PACK = {
   version: 1,
-  layouts: [layout1, layout2, layout3, layout4, layout5, layout6, layout7, layout8],
+  layouts: [layout1, layout2, layout3, layout4, layout5, layout6, layout7, layout8, ...eleventhEventLayouts.layouts],
 } as TerrainLayoutPack;

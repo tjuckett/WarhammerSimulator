@@ -5,6 +5,24 @@ export interface TournamentMissionSpec {
   terrainLayoutIds: string[];
 }
 
+export type EleventhForceDispositionId =
+  | 'take-and-hold'
+  | 'disruption'
+  | 'purge-the-foe'
+  | 'priority-targets'
+  | 'reconnaissance';
+
+export interface EleventhForceDispositionSpec {
+  id: EleventhForceDispositionId;
+  name: string;
+}
+
+export interface EleventhMissionMatchupSpec {
+  forceDispositions: [EleventhForceDispositionId, EleventhForceDispositionId];
+  primaryMissions: [string, string];
+  layoutIds: [string, string, string];
+}
+
 const layouts = (ids: number[]) => ids.map(id => `layout-${id}`);
 
 export const CHAPTER_APPROVED_MISSION_POOL: TournamentMissionSpec[] = [
@@ -28,4 +46,35 @@ export const CHAPTER_APPROVED_MISSION_POOL: TournamentMissionSpec[] = [
   { code: 'R', primaryMission: 'Terraform', deployment: 'Sweeping Engagement', terrainLayoutIds: layouts([3, 5]) },
   { code: 'S', primaryMission: 'Linchpin', deployment: 'Dawn of War', terrainLayoutIds: layouts([5]) },
   { code: 'T', primaryMission: 'Purge the Foe', deployment: 'Dawn of War', terrainLayoutIds: layouts([5]) },
+];
+
+export const ELEVENTH_FORCE_DISPOSITIONS: EleventhForceDispositionSpec[] = [
+  { id: 'take-and-hold', name: 'Take & Hold' },
+  { id: 'purge-the-foe', name: 'Purge The Foe' },
+  { id: 'disruption', name: 'Disruption' },
+  { id: 'reconnaissance', name: 'Reconnaissance' },
+  { id: 'priority-targets', name: 'Priority Assets' },
+];
+
+function eleventhLayoutIds(a: EleventhForceDispositionId, b: EleventhForceDispositionId): [string, string, string] {
+  const base = `11e-${a}-vs-${b}`;
+  return [`${base}-a`, `${base}-b`, `${base}-c`];
+}
+
+export const ELEVENTH_EVENT_MISSION_MATCHUPS: EleventhMissionMatchupSpec[] = [
+  { forceDispositions: ['take-and-hold', 'take-and-hold'], primaryMissions: ['Battlefield Dominance', 'Battlefield Dominance'], layoutIds: eleventhLayoutIds('take-and-hold', 'take-and-hold') },
+  { forceDispositions: ['take-and-hold', 'purge-the-foe'], primaryMissions: ['Immovable Object', 'Unstoppable Force'], layoutIds: eleventhLayoutIds('take-and-hold', 'purge-the-foe') },
+  { forceDispositions: ['take-and-hold', 'disruption'], primaryMissions: ['Determined Acquisition', 'Death Trap'], layoutIds: eleventhLayoutIds('take-and-hold', 'disruption') },
+  { forceDispositions: ['take-and-hold', 'reconnaissance'], primaryMissions: ['Purge and Secure', 'Reconnaissance Sweep'], layoutIds: eleventhLayoutIds('take-and-hold', 'reconnaissance') },
+  { forceDispositions: ['take-and-hold', 'priority-targets'], primaryMissions: ['Inescapable Dominion', 'Secure Asset'], layoutIds: eleventhLayoutIds('take-and-hold', 'priority-targets') },
+  { forceDispositions: ['purge-the-foe', 'purge-the-foe'], primaryMissions: ['Meatgrinder', 'Meatgrinder'], layoutIds: eleventhLayoutIds('purge-the-foe', 'purge-the-foe') },
+  { forceDispositions: ['purge-the-foe', 'disruption'], primaryMissions: ['Punishment', 'Delaying Action'], layoutIds: eleventhLayoutIds('purge-the-foe', 'disruption') },
+  { forceDispositions: ['purge-the-foe', 'reconnaissance'], primaryMissions: ['Consecrate', 'Triangulation'], layoutIds: eleventhLayoutIds('purge-the-foe', 'reconnaissance') },
+  { forceDispositions: ['purge-the-foe', 'priority-targets'], primaryMissions: ["Destroyer's Wrath", 'Vital Link'], layoutIds: eleventhLayoutIds('purge-the-foe', 'priority-targets') },
+  { forceDispositions: ['disruption', 'disruption'], primaryMissions: ['Outmanoeuvre', 'Outmanoeuvre'], layoutIds: eleventhLayoutIds('disruption', 'disruption') },
+  { forceDispositions: ['disruption', 'reconnaissance'], primaryMissions: ['Smoke and Mirrors', 'Surveil the Foe'], layoutIds: eleventhLayoutIds('disruption', 'reconnaissance') },
+  { forceDispositions: ['disruption', 'priority-targets'], primaryMissions: ['Locate and Deny', 'Extract Relic'], layoutIds: eleventhLayoutIds('disruption', 'priority-targets') },
+  { forceDispositions: ['reconnaissance', 'reconnaissance'], primaryMissions: ['Gather Intel', 'Gather Intel'], layoutIds: eleventhLayoutIds('reconnaissance', 'reconnaissance') },
+  { forceDispositions: ['reconnaissance', 'priority-targets'], primaryMissions: ['Search and Scour', 'Vanguard Operation'], layoutIds: eleventhLayoutIds('reconnaissance', 'priority-targets') },
+  { forceDispositions: ['priority-targets', 'priority-targets'], primaryMissions: ['Sabotage', 'Sabotage'], layoutIds: eleventhLayoutIds('priority-targets', 'priority-targets') },
 ];

@@ -1,10 +1,14 @@
 import type { BattleSetup, Position } from '../types/battle';
-import { CHAPTER_APPROVED_MISSION_POOL, type TournamentMissionSpec } from '../data/missions';
+import { CHAPTER_APPROVED_MISSION_POOL, ELEVENTH_EVENT_MISSION_MATCHUPS, ELEVENTH_FORCE_DISPOSITIONS, type EleventhForceDispositionId, type EleventhForceDispositionSpec, type EleventhMissionMatchupSpec, type TournamentMissionSpec } from '../data/missions';
 import { DEFAULT_OBJECTIVE_MARKERS, OBJECTIVE_MARKER_SETS } from '../data/objectiveMarkers';
 
 export type TournamentMission = TournamentMissionSpec;
+export type EleventhForceDisposition = EleventhForceDispositionSpec;
+export type EleventhMissionMatchup = EleventhMissionMatchupSpec;
 
 export const TOURNAMENT_MISSIONS: TournamentMission[] = CHAPTER_APPROVED_MISSION_POOL;
+export const ELEVENTH_EDITION_FORCE_DISPOSITIONS: EleventhForceDisposition[] = ELEVENTH_FORCE_DISPOSITIONS;
+export const ELEVENTH_EDITION_MISSION_MATCHUPS: EleventhMissionMatchup[] = ELEVENTH_EVENT_MISSION_MATCHUPS;
 
 export const PRIMARY_MISSIONS = Array.from(new Set(
   TOURNAMENT_MISSIONS.map(mission => mission.primaryMission),
@@ -28,6 +32,62 @@ export function setupLabel(mission: TournamentMission, terrainLayoutName: string
     missionCode: mission.code,
     primaryMission: mission.primaryMission,
     deployment: mission.deployment,
+    terrainLayout: terrainLayoutName,
+  };
+}
+
+export function eleventhForceDispositionForId(id: string): EleventhForceDisposition {
+  return ELEVENTH_EDITION_FORCE_DISPOSITIONS.find(disposition => disposition.id === id)
+    ?? ELEVENTH_EDITION_FORCE_DISPOSITIONS[0];
+}
+
+export function eleventhMatchupForDispositions(
+  forceDispositions: [string, string],
+): EleventhMissionMatchup {
+  const left = eleventhForceDispositionForId(forceDispositions[0]).id;
+  const right = eleventhForceDispositionForId(forceDispositions[1]).id;
+  const direct = ELEVENTH_EDITION_MISSION_MATCHUPS.find(matchup =>
+    matchup.forceDispositions[0] === left && matchup.forceDispositions[1] === right
+  );
+  if (direct) return direct;
+
+  const reverse = ELEVENTH_EDITION_MISSION_MATCHUPS.find(matchup =>
+    matchup.forceDispositions[0] === right && matchup.forceDispositions[1] === left
+  );
+  if (reverse) {
+    return {
+      forceDispositions: [left, right],
+      primaryMissions: [reverse.primaryMissions[1], reverse.primaryMissions[0]],
+      layoutIds: reverse.layoutIds,
+    };
+  }
+
+  return ELEVENTH_EDITION_MISSION_MATCHUPS[0];
+}
+
+export function eleventhPrimaryMissionsForDispositions(forceDispositions: [string, string]): [string, string] {
+  return eleventhMatchupForDispositions(forceDispositions).primaryMissions;
+}
+
+export function eleventhLayoutIdsForDispositions(forceDispositions: [string, string]): [string, string, string] {
+  return eleventhMatchupForDispositions(forceDispositions).layoutIds;
+}
+
+export function eleventhSetupLabel(
+  mission: TournamentMission,
+  terrainLayoutName: string,
+  forceDispositions: [EleventhForceDispositionId | string, EleventhForceDispositionId | string],
+): BattleSetup {
+  const primaryMissions = eleventhPrimaryMissionsForDispositions(forceDispositions);
+  return {
+    missionCode: `11E-${mission.code}`,
+    primaryMission: `${primaryMissions[0]} / ${primaryMissions[1]}`,
+    primaryMissions,
+    forceDispositions: [
+      eleventhForceDispositionForId(forceDispositions[0]).name,
+      eleventhForceDispositionForId(forceDispositions[1]).name,
+    ],
+    deployment: 'Layout Defined',
     terrainLayout: terrainLayoutName,
   };
 }

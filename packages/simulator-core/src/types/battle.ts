@@ -3,6 +3,7 @@ import type { ObjectiveControlProfile } from '../engine/objectiveGeometry';
 import type { RulesetMetadata } from '../engine/rulesEngine';
 import type { StratagemUse } from './stratagem';
 import type { UnitAbilityUse } from './ability';
+import type { DeploymentZoneSet } from '../data/deploymentZoneTypes';
 
 export type Phase =
   | 'deployment'
@@ -54,6 +55,13 @@ export interface BattleUnit {
   inStrategicReserves?: boolean;
   embarkedInUnitId?: string;
   emergencyDisembarkedThisTurn?: boolean;
+  performingAction?: {
+    id: string;
+    name: string;
+    startedPhase: Phase;
+    completesAt: 'end-of-turn';
+  };
+  actionStartedThisTurn?: boolean;
   fellBack?: boolean;
   firedWeaponIndices?: number[];
   piledIn?: boolean;
@@ -94,10 +102,12 @@ export interface Terrain {
   width: number;
   height: number;
   rotationDeg?: number;
+  polygonPoints?: Position[];
   type: 'ruin' | 'obstacle' | 'area' | 'impassable';
   providesCover: boolean;
   difficult: boolean;
   color: string;
+  objectiveRole?: 'home-0' | 'home-1' | 'no-mans-land';
   features: TerrainFeature[];
 }
 
@@ -120,6 +130,7 @@ export interface TerrainLayout {
   id: string;
   name: string;
   description: string;
+  deploymentZones?: DeploymentZoneSet;
   terrain: Terrain[];
 }
 
@@ -134,7 +145,10 @@ export interface BoardFormat {
 export interface BattleSetup {
   missionCode: string;
   primaryMission: string;
+  primaryMissions?: [string, string];
+  forceDispositions?: [string, string];
   deployment: string;
+  deploymentZones?: DeploymentZoneSet;
   terrainLayout: string;
   boardFormat?: BoardFormat['id'];
 }

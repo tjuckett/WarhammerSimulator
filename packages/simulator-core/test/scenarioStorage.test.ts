@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completePlayUnitMovement, consolidatePlayUnit, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, fightPlayUnitWeapon, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, targetHasCoverFrom, transportCapacityRemaining } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completePlayUnitMovement, consolidatePlayUnit, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, fightPlayUnitWeapon, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -18,6 +18,7 @@ import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
 import { scorePrimaryMission } from '../src/engine/missionScoring';
 import { availableStratagems, useStratagem } from '../src/engine/stratagems';
 import { availableUnitAbilities, useUnitAbility } from '../src/engine/unitAbilities';
+import { eleventhSetupLabel, TOURNAMENT_MISSIONS } from '../src/engine/missions';
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -282,7 +283,7 @@ test('stratagem framework blocks battle-shocked target units', () => {
 });
 
 test('11th edition preview exposes core stratagems from the rules preview', () => {
-  assert.equal(rules40K11th.metadata.status, 'placeholder');
+  assert.equal(rules40K11th.metadata.status, 'implemented');
   assert.equal(rules40K11th.metadata.rulesVersion, 'preview-core');
   assert.deepEqual(rules40K11th.stratagems.map(stratagem => stratagem.id), [
     'command-reroll',
@@ -297,6 +298,15 @@ test('11th edition preview exposes core stratagems from the rules preview', () =
     'counteroffensive',
   ]);
   assert.equal(rules40K11th.objectiveControl.kind, 'terrain-area');
+});
+
+test('11th edition setup tracks each player primary mission separately', () => {
+  const setup = eleventhSetupLabel(TOURNAMENT_MISSIONS[0], 'Layout 1', ['take-and-hold', 'reconnaissance']);
+
+  assert.equal(setup.missionCode, `11E-${TOURNAMENT_MISSIONS[0].code}`);
+  assert.deepEqual(setup.forceDispositions, ['Take & Hold', 'Reconnaissance']);
+  assert.deepEqual(setup.primaryMissions, ['Purge and Secure', 'Reconnaissance Sweep']);
+  assert.equal(setup.primaryMission, 'Purge and Secure / Reconnaissance Sweep');
 });
 
 test('11th edition preview blocks multiple stratagems targeting the same unit in a phase', () => {
@@ -333,6 +343,185 @@ test('11th edition preview Insane Bravery can only be used once per battle', () 
   const second = useStratagem(nextCommand, 0, 'insane-bravery', rules40K11th, unit.id);
   assert.equal(second, nextCommand);
   assert.deepEqual(second.commandPoints, [1, 0]);
+});
+
+test('11th Fire Overwatch is only available in the opponent Movement phase', () => {
+  const battle = state('movement');
+  battle.activeArmy = 0;
+  battle.commandPoints = [1, 1];
+  const overwatcher = losTestUnit('overwatcher', 1, { x: 10, y: 10 });
+  overwatcher.profile.weapons = [
+    { name: 'Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+  ];
+  battle.units = [overwatcher];
+
+  assert.equal(
+    availableStratagems(battle, 1, rules40K11th, overwatcher.id).some(stratagem => stratagem.id === 'fire-overwatch'),
+    true,
+  );
+  assert.equal(
+    availableStratagems({ ...battle, activeArmy: 1 }, 1, rules40K11th, overwatcher.id).some(stratagem => stratagem.id === 'fire-overwatch'),
+    false,
+  );
+
+  const used = useStratagem(battle, 1, 'fire-overwatch', rules40K11th, overwatcher.id);
+  assert.deepEqual(used.commandPoints, [1, 0]);
+  assert.equal(used.stratagemUses?.at(-1)?.side, 1);
+});
+
+test('11th core stratagems enforce target keyword and reserve restrictions', () => {
+  const fight = state('fight');
+  fight.commandPoints = [3, 0];
+  const character = losTestUnit('captain', 0, { x: 10, y: 10 });
+  character.profile.keywords = ['Character', 'Infantry'];
+  const infantry = losTestUnit('intercessors', 0, { x: 12, y: 10 });
+  fight.units = [character, infantry];
+
+  assert.equal(availableStratagems(fight, 0, rules40K11th, character.id).some(stratagem => stratagem.id === 'epic-challenge'), true);
+  assert.equal(availableStratagems(fight, 0, rules40K11th, infantry.id).some(stratagem => stratagem.id === 'epic-challenge'), false);
+
+  const movement = state('movement');
+  movement.activeArmy = 0;
+  movement.commandPoints = [0, 2];
+  const reserve = losTestUnit('terminators', 1, { x: 0, y: 0 });
+  reserve.inStrategicReserves = true;
+  reserve.modelPositions = [];
+  const aircraft = losTestUnit('aircraft', 1, { x: 0, y: 0 });
+  aircraft.profile.keywords = ['Aircraft', 'Vehicle', 'Fly'];
+  aircraft.inStrategicReserves = true;
+  aircraft.modelPositions = [];
+  movement.units = [reserve, aircraft];
+
+  assert.equal(availableStratagems(movement, 1, rules40K11th, reserve.id).some(stratagem => stratagem.id === 'rapid-ingress'), true);
+  assert.equal(availableStratagems(movement, 1, rules40K11th, aircraft.id).some(stratagem => stratagem.id === 'rapid-ingress'), false);
+});
+
+test('11th Smokescreen applies cover and a hit penalty for the phase', () => {
+  const battle = state('shooting');
+  battle.activeArmy = 0;
+  battle.commandPoints = [0, 1];
+  const shooter = losTestUnit('shooter', 0, { x: 0, y: 0 });
+  shooter.profile.weapons = [
+    { name: 'Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+  ];
+  const smoke = losTestUnit('smoke', 1, { x: 12, y: 0 }, 4);
+  smoke.profile.keywords = ['Infantry', 'Smoke'];
+  smoke.profile.wounds = 3;
+  smoke.woundsOnLeadModel = 3;
+  battle.units = [shooter, smoke];
+
+  const screened = useStratagem(battle, 1, 'smokescreen', rules40K11th, smoke.id);
+  assert.deepEqual(screened.commandPoints, [0, 0]);
+
+  const originalRandom = Math.random;
+  const rolls = [0.5, 0.5, 0.34];
+  Math.random = () => rolls.shift() ?? 0.99;
+  try {
+    const shooting = shootPlayUnitWeapon(screened, shooter.id, 0, smoke.id, 'all', rules40K11th);
+    const messages = shooting.log.map(entry => entry.message).join(' ');
+    assert.match(messages, /Smokescreen -1 to Hit; target has Benefit of Cover/);
+    assert.match(messages, /Hit rolls \(4\+\)/);
+    assert.match(messages, /Save rolls \(3\+, cover \+1\)/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('11th Counteroffensive lets only the targeted defender fight next', () => {
+  const battle = state('fight');
+  battle.activeArmy = 0;
+  battle.commandPoints = [0, 2];
+  const charger = losTestUnit('charger', 0, { x: 10, y: 10 });
+  charger.charged = true;
+  charger.inCombat = true;
+  charger.profile.weapons = [
+    { name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true },
+  ];
+  const defender = losTestUnit('defender', 1, { x: 10.5, y: 10 });
+  defender.inCombat = true;
+  defender.profile.weapons = [
+    { name: 'Claw', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true },
+  ];
+  const otherDefender = losTestUnit('other-defender', 1, { x: 10, y: 10.5 });
+  otherDefender.inCombat = true;
+  otherDefender.profile.weapons = defender.profile.weapons;
+  battle.units = [charger, defender, otherDefender];
+
+  const countered = useStratagem(battle, 1, 'counteroffensive', rules40K11th, defender.id);
+  assert.deepEqual(countered.commandPoints, [0, 0]);
+  assert.deepEqual(playFightActivationUnitIds(countered, 1, rules40K11th), [defender.id]);
+  assert.deepEqual(playFightWeaponOptions(countered, defender.id, 1, rules40K11th).map(option => option.name), ['Claw']);
+  assert.deepEqual(playFightWeaponOptions(countered, otherDefender.id, 1, rules40K11th), []);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const fought = fightPlayUnitWeapon(countered, defender.id, 1, charger.id, 'all', rules40K11th);
+    assert.equal(fought.units.find(unit => unit.id === defender.id)?.activated, true);
+    assert.notEqual(fought, countered);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('11th Explosives deals mortal wounds to the nearest visible enemy within 8 inches', () => {
+  const battle = state('shooting');
+  battle.activeArmy = 0;
+  battle.commandPoints = [1, 0];
+  const grenadier = losTestUnit('grenadier', 0, { x: 10, y: 10 });
+  grenadier.profile.keywords = ['Infantry', 'Explosives'];
+  grenadier.profile.weapons = [
+    { name: 'Pistol', range: 12, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: ['Pistol'], isMelee: false },
+  ];
+  const target = losTestUnit('target', 1, { x: 16, y: 10 });
+  target.profile.wounds = 5;
+  target.woundsOnLeadModel = 5;
+  const farTarget = losTestUnit('far-target', 1, { x: 30, y: 10 });
+  battle.units = [grenadier, target, farTarget];
+
+  const originalRandom = Math.random;
+  const rolls = [0.5, 0.3, 0.67, 0.99, 0.0, 0.5];
+  Math.random = () => rolls.shift() ?? 0;
+  try {
+    const exploded = useStratagem(battle, 0, 'explosives', rules40K11th, grenadier.id);
+    assert.deepEqual(exploded.commandPoints, [0, 0]);
+    assert.deepEqual(exploded.units.find(unit => unit.id === target.id)?.pendingDamageAllocations, [
+      { damage: 4, noCarryOver: undefined, source: 'Explosives' },
+    ]);
+    assert.equal(exploded.units.find(unit => unit.id === farTarget.id)?.pendingDamageAllocations, undefined);
+    assert.match(exploded.log.map(entry => entry.message).join(' '), /Explosives targets target/);
+    assert.match(exploded.log.map(entry => entry.message).join(' '), /Explosives rolls: \[4, 2, 5, 6, 1, 4\] -> 4 mortal wound/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('11th Crushing Impact deals mortal wounds to an engaged enemy', () => {
+  const battle = state('charge');
+  battle.activeArmy = 0;
+  battle.commandPoints = [1, 0];
+  const crusher = losTestUnit('crusher', 0, { x: 10, y: 10 });
+  crusher.charged = true;
+  crusher.profile.keywords = ['Monster'];
+  const target = losTestUnit('target', 1, { x: 10.5, y: 10 });
+  target.profile.wounds = 4;
+  target.woundsOnLeadModel = 4;
+  battle.units = [crusher, target];
+
+  const originalRandom = Math.random;
+  const rolls = [0.5, 0.5, 0.3, 0.3, 0.99, 0.0];
+  Math.random = () => rolls.shift() ?? 0;
+  try {
+    const impacted = useStratagem(battle, 0, 'crushing-impact', rules40K11th, crusher.id);
+    assert.deepEqual(impacted.commandPoints, [0, 0]);
+    assert.deepEqual(impacted.units.find(unit => unit.id === target.id)?.pendingDamageAllocations, [
+      { damage: 3, noCarryOver: undefined, source: 'Crushing Impact' },
+    ]);
+    assert.match(impacted.log.map(entry => entry.message).join(' '), /Crushing Impact targets target/);
+    assert.match(impacted.log.map(entry => entry.message).join(' '), /Crushing Impact rolls: \[4, 4, 2, 2, 6, 1\] -> 3 mortal wound/);
+  } finally {
+    Math.random = originalRandom;
+  }
 });
 
 test('unit ability framework matches profile ability text and records once-per-battle use', () => {
@@ -405,6 +594,109 @@ test('primary scoring framework leaves unsupported objective-control rules unsco
   assert.equal(result.vpGained, 0);
   assert.deepEqual(battle.objectiveOwners, [null]);
   assert.deepEqual(battle.scores, [0, 0]);
+});
+
+test('11th terrain objectives score models inside the terrain area', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.objectives = [{ x: 10, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [terrainMat({
+    id: 'objective-ruin',
+    name: 'Objective Ruin',
+    type: 'ruin',
+    x: 8,
+    y: 8,
+    width: 6,
+    height: 6,
+  })];
+
+  const blue = losTestUnit('blue-1', 0, { x: 9, y: 9 });
+  blue.profile.oc = 2;
+  blue.remainingModels = 2;
+  blue.modelPositions = [{ x: 9, y: 9 }, { x: 20, y: 20 }];
+  const red = losTestUnit('red-1', 1, { x: 11, y: 11 });
+  red.profile.oc = 1;
+  battle.units = [blue, red];
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.kind, 'scored');
+  assert.equal(result.scoringModel, 'terrain-objective-control');
+  assert.equal(result.vpGained, 1);
+  assert.deepEqual(result.objectives[0].oc, [2, 1]);
+  assert.deepEqual(battle.objectiveOwners, [0]);
+  assert.deepEqual(battle.scores, [1, 0]);
+});
+
+test('11th actions block shooting and charging until completed or cancelled', () => {
+  const battle = state('shooting');
+  const unit = losTestUnit('action-unit', 0, { x: 10, y: 10 });
+  unit.profile.weapons = [
+    { name: 'Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    { name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true },
+  ];
+  const target = losTestUnit('target', 1, { x: 14, y: 10 });
+  battle.units = [unit, target];
+
+  assert.equal(playUnitCanStartAction(battle, unit.id, 0, rules40K11th), true);
+  const started = startPlayUnitAction(battle, unit.id, 0, 'deploy-device', 'Deploy Device', rules40K11th);
+  assert.equal(started.units.find(candidate => candidate.id === unit.id)?.performingAction?.name, 'Deploy Device');
+  assert.equal(playShootingWeaponOptions(started, unit.id, 0, rules40K11th).length, 0);
+
+  const charge = { ...started, phase: 'charge' as Phase };
+  assert.deepEqual(playChargeTargetOptions(charge, unit.id, 0, rules40K11th), []);
+});
+
+test('11th actions are cancelled by movement and complete at end of turn', () => {
+  const movement = state('movement');
+  const mover = losTestUnit('mover', 0, { x: 10, y: 10 });
+  movement.units = [mover];
+  const started = startPlayUnitAction(movement, mover.id, 0, 'deploy-device', 'Deploy Device', rules40K11th);
+  const moved = movePlayModels(started, mover.id, 0, [0], 1, 0);
+  const movedUnit = moved.units.find(candidate => candidate.id === mover.id)!;
+  assert.equal(movedUnit.performingAction, undefined);
+  assert.equal(movedUnit.actionStartedThisTurn, true);
+  assert.match(moved.log.at(-1)?.message ?? '', /does not complete Deploy Device/);
+
+  const fight = state('fight');
+  const finisher = losTestUnit('finisher', 0, { x: 10, y: 10 });
+  fight.units = [finisher];
+  const completing = startPlayUnitAction(fight, finisher.id, 0, 'deploy-device', 'Deploy Device', rules40K11th);
+  const nextTurn = applyGameAction(completing, { type: 'play.stepPhase' }, { rules: rules40K11th });
+  assert.equal(nextTurn.units.find(candidate => candidate.id === finisher.id)?.performingAction, undefined);
+  assert.match(nextTurn.log.map(entry => entry.message).join(' '), /completes Deploy Device/);
+});
+
+test('11th snap shooting targets one visible enemy within 24 inches and hits only on 6s', () => {
+  const battle = state('movement');
+  battle.activeArmy = 0;
+  const shooter = losTestUnit('overwatcher', 1, { x: 10, y: 10 });
+  shooter.profile.weapons = [
+    { name: 'Overwatch Rifle', range: 48, attacks: '2', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+  ];
+  const visibleTarget = losTestUnit('visible-target', 0, { x: 20, y: 10 });
+  const farTarget = losTestUnit('far-target', 0, { x: 40, y: 10 });
+  battle.units = [shooter, visibleTarget, farTarget];
+
+  assert.deepEqual(playSnapShootingWeaponOptions(battle, shooter.id, 1, rules40K11th)[0].targetIds, ['visible-target']);
+  assert.deepEqual(playSnapShootingWeaponOptions({ ...battle, activeArmy: 1 }, shooter.id, 1, rules40K11th), []);
+
+  const originalRandom = Math.random;
+  const rolls = [0.99, 0.1, 0.99, 0.99];
+  Math.random = () => rolls.shift() ?? 0.99;
+  try {
+    const snapped = snapShootPlayUnitWeapon(battle, shooter.id, 1, visibleTarget.id, 'all', rules40K11th);
+    const snappedShooter = snapped.units.find(unit => unit.id === shooter.id)!;
+    assert.equal(snappedShooter.activated, true);
+    assert.equal(snappedShooter.actionStartedThisTurn, true);
+    assert.equal(playUnitCanStartAction(snapped, shooter.id, 1, rules40K11th), false);
+    assert.match(snapped.log.map(entry => entry.message).join(' '), /Snap Shooting: unmodified 6s to hit/);
+    assert.match(snapped.log.map(entry => entry.message).join(' '), /Hit rolls \(6\+\): \[6, 1\].*1 hits/);
+  } finally {
+    Math.random = originalRandom;
+  }
 });
 
 test('play Fall Back moves an engaged active unit out of Engagement Range', () => {

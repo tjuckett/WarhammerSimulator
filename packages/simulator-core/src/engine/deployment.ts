@@ -41,6 +41,8 @@ export interface DeploymentZone {
   y1: number;
 }
 
+export type DeploymentZoneSource = string | DeploymentZoneSet;
+
 function fallbackZoneSet(): DeploymentZoneSet {
   return {
     id: 'default',
@@ -103,8 +105,10 @@ function boundsForShapes(shapes: DeploymentZoneShape[]) {
   };
 }
 
-export function zoneFor(side: 0 | 1, deployment = 'Default', board: BoardFormat = boardFormatForId()): DeploymentZone {
-  const set = DEPLOYMENT_ZONE_SETS.find(zoneSet => zoneSet.deployment === deployment) ?? fallbackZoneSet();
+export function zoneFor(side: 0 | 1, deployment: DeploymentZoneSource = 'Default', board: BoardFormat = boardFormatForId()): DeploymentZone {
+  const set = typeof deployment === 'string'
+    ? DEPLOYMENT_ZONE_SETS.find(zoneSet => zoneSet.deployment === deployment) ?? fallbackZoneSet()
+    : deployment;
   const zoneSide = set.sides[side];
   const shapes = zoneSide.shapes.map(shape => scaleDeploymentShape(shape, board));
   return {
@@ -302,7 +306,7 @@ export function clearOfTerrain(x: number, y: number, hw: number, hh: number, ter
   return !terrain.some(t => axisAlignedBoxIntersectsTerrain(x, y, hw, hh, t));
 }
 
-function opponentDeploymentSamples(side: 0 | 1, deployment = 'Default', board: BoardFormat = DEFAULT_BOARD_FORMAT): Position[] {
+function opponentDeploymentSamples(side: 0 | 1, deployment: DeploymentZoneSource = 'Default', board: BoardFormat = DEFAULT_BOARD_FORMAT): Position[] {
   const zone = zoneFor(side === 0 ? 1 : 0, deployment, board);
   const samples: Position[] = [];
   for (let x = zone.x0; x <= zone.x1 + 0.01; x += Math.max(3, (zone.x1 - zone.x0) / 3)) {
@@ -319,7 +323,7 @@ export function screenedFromOpponentDeployment(
   y: number,
   side: 0 | 1,
   terrain: Terrain[],
-  deployment = 'Default',
+  deployment: DeploymentZoneSource = 'Default',
   board: BoardFormat = DEFAULT_BOARD_FORMAT,
 ): boolean {
   const to = { x, y };
@@ -340,7 +344,7 @@ export function modelScreenedByTerrainFeature(
   y: number,
   side: 0 | 1,
   terrain: Terrain[],
-  deployment = 'Default',
+  deployment: DeploymentZoneSource = 'Default',
   board: BoardFormat = DEFAULT_BOARD_FORMAT,
 ): boolean {
   const to = { x, y };
@@ -358,7 +362,7 @@ export function modelBehindTerrainWall(
   y: number,
   side: 0 | 1,
   terrain: Terrain[],
-  deployment = 'Default',
+  deployment: DeploymentZoneSource = 'Default',
   board: BoardFormat = DEFAULT_BOARD_FORMAT,
 ): boolean {
   const model = { x, y };
@@ -427,7 +431,7 @@ export function deployArmy(
   strategy: DeploymentStrategy,
   terrain: Terrain[],
   objectives: Position[],
-  deployment = 'Default',
+  deployment: DeploymentZoneSource = 'Default',
   board: BoardFormat = DEFAULT_BOARD_FORMAT,
 ): Position[] {
   const zone    = zoneFor(side, deployment, board);

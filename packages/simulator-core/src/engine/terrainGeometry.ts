@@ -1,6 +1,8 @@
 import type { Position, Terrain, TerrainFeature } from '../types/battle';
 
-type RectShape = Pick<Terrain | TerrainFeature, 'x' | 'y' | 'width' | 'height' | 'rotationDeg'>;
+type RectShape = Pick<Terrain | TerrainFeature, 'x' | 'y' | 'width' | 'height' | 'rotationDeg'> & {
+  polygonPoints?: Position[];
+};
 
 export function terrainCenter(t: RectShape): Position {
   return { x: t.x + t.width / 2, y: t.y + t.height / 2 };
@@ -38,7 +40,10 @@ export function rotateFeatureAround(feature: TerrainFeature, origin: Position, d
 
 export function terrainCorners(t: RectShape): Position[] {
   const c = terrainCenter(t);
-  const corners = [
+  const corners = t.polygonPoints?.length ? t.polygonPoints.map(point => ({
+    x: t.x + point.x,
+    y: t.y + point.y,
+  })) : [
     { x: t.x, y: t.y },
     { x: t.x + t.width, y: t.y },
     { x: t.x + t.width, y: t.y + t.height },
@@ -48,6 +53,11 @@ export function terrainCorners(t: RectShape): Position[] {
 }
 
 export function pointInTerrain(p: Position, t: RectShape): boolean {
+  if (t.polygonPoints?.length) {
+    const corners = terrainCorners(t);
+    return corners.some((corner, i) => pointOnSegment(p, corner, corners[(i + 1) % corners.length]))
+      || pointInPolygon(p, corners);
+  }
   const c = terrainCenter(t);
   const local = rotatePoint(p, c, -(t.rotationDeg ?? 0));
   return local.x >= t.x && local.x <= t.x + t.width
@@ -55,6 +65,15 @@ export function pointInTerrain(p: Position, t: RectShape): boolean {
 }
 
 export function circleFullyInTerrain(p: Position, radius: number, t: RectShape): boolean {
+  if (t.polygonPoints?.length) {
+    return [
+      p,
+      { x: p.x - radius, y: p.y },
+      { x: p.x + radius, y: p.y },
+      { x: p.x, y: p.y - radius },
+      { x: p.x, y: p.y + radius },
+    ].every(point => pointInTerrain(point, t));
+  }
   const c = terrainCenter(t);
   const local = rotatePoint(p, c, -(t.rotationDeg ?? 0));
   return local.x - radius >= t.x
@@ -65,6 +84,27 @@ export function circleFullyInTerrain(p: Position, radius: number, t: RectShape):
 
 function ccw(a: Position, b: Position, c: Position): boolean {
   return (c.y - a.y) * (b.x - a.x) > (b.y - a.y) * (c.x - a.x);
+}
+
+function pointOnSegment(p: Position, a: Position, b: Position): boolean {
+  const cross = (p.y - a.y) * (b.x - a.x) - (p.x - a.x) * (b.y - a.y);
+  if (Math.abs(cross) > 0.0001) return false;
+  const dot = (p.x - a.x) * (b.x - a.x) + (p.y - a.y) * (b.y - a.y);
+  if (dot < 0) return false;
+  const lenSq = (b.x - a.x) ** 2 + (b.y - a.y) ** 2;
+  return dot <= lenSq;
+}
+
+function pointInPolygon(p: Position, polygon: Position[]): boolean {
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const a = polygon[i];
+    const b = polygon[j];
+    const intersects = ((a.y > p.y) !== (b.y > p.y))
+      && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x;
+    if (intersects) inside = !inside;
+  }
+  return inside;
 }
 
 function segmentsIntersect(a: Position, b: Position, c: Position, d: Position): boolean {

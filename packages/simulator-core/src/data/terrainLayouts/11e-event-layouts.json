@@ -1,0 +1,4370 @@
+{
+  "version": 1,
+  "layouts": [
+    {
+      "id": "11e-take-and-hold-vs-take-and-hold-a",
+      "name": "Battlefield Dominance vs Battlefield Dominance Layout A",
+      "description": "11th Event Companion Battlefield Dominance vs Battlefield Dominance layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-take-and-hold-b",
+      "name": "Battlefield Dominance vs Battlefield Dominance Layout B",
+      "description": "11th Event Companion Battlefield Dominance vs Battlefield Dominance layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-take-and-hold-c",
+      "name": "Battlefield Dominance vs Battlefield Dominance Layout C",
+      "description": "11th Event Companion Battlefield Dominance vs Battlefield Dominance layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-purge-the-foe-a",
+      "name": "Immovable Object vs Unstoppable Force Layout A",
+      "description": "11th Event Companion Immovable Object vs Unstoppable Force layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-purge-the-foe-b",
+      "name": "Immovable Object vs Unstoppable Force Layout B",
+      "description": "11th Event Companion Immovable Object vs Unstoppable Force layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-purge-the-foe-c",
+      "name": "Immovable Object vs Unstoppable Force Layout C",
+      "description": "11th Event Companion Immovable Object vs Unstoppable Force layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-disruption-a",
+      "name": "Determined Acquisition vs Death Trap Layout A",
+      "description": "11th Event Companion Determined Acquisition vs Death Trap layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-disruption-b",
+      "name": "Determined Acquisition vs Death Trap Layout B",
+      "description": "11th Event Companion Determined Acquisition vs Death Trap layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-disruption-c",
+      "name": "Determined Acquisition vs Death Trap Layout C",
+      "description": "11th Event Companion Determined Acquisition vs Death Trap layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-reconnaissance-a",
+      "name": "Purge and Secure vs Reconnaissance Sweep Layout A",
+      "description": "11th Event Companion Purge and Secure vs Reconnaissance Sweep layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-reconnaissance-b",
+      "name": "Purge and Secure vs Reconnaissance Sweep Layout B",
+      "description": "11th Event Companion Purge and Secure vs Reconnaissance Sweep layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-reconnaissance-c",
+      "name": "Purge and Secure vs Reconnaissance Sweep Layout C",
+      "description": "11th Event Companion Purge and Secure vs Reconnaissance Sweep layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-priority-targets-a",
+      "name": "Inescapable Dominion vs Secure Asset Layout A",
+      "description": "11th Event Companion Inescapable Dominion vs Secure Asset layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-priority-targets-b",
+      "name": "Inescapable Dominion vs Secure Asset Layout B",
+      "description": "11th Event Companion Inescapable Dominion vs Secure Asset layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-priority-targets-c",
+      "name": "Inescapable Dominion vs Secure Asset Layout C",
+      "description": "11th Event Companion Inescapable Dominion vs Secure Asset layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-purge-the-foe-a",
+      "name": "Meatgrinder vs Meatgrinder Layout A",
+      "description": "11th Event Companion Meatgrinder vs Meatgrinder layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-purge-the-foe-b",
+      "name": "Meatgrinder vs Meatgrinder Layout B",
+      "description": "11th Event Companion Meatgrinder vs Meatgrinder layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-purge-the-foe-c",
+      "name": "Meatgrinder vs Meatgrinder Layout C",
+      "description": "11th Event Companion Meatgrinder vs Meatgrinder layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-disruption-a",
+      "name": "Punishment vs Delaying Action Layout A",
+      "description": "11th Event Companion Punishment vs Delaying Action layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-disruption-b",
+      "name": "Punishment vs Delaying Action Layout B",
+      "description": "11th Event Companion Punishment vs Delaying Action layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-disruption-c",
+      "name": "Punishment vs Delaying Action Layout C",
+      "description": "11th Event Companion Punishment vs Delaying Action layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-reconnaissance-a",
+      "name": "Consecrate vs Triangulation Layout A",
+      "description": "11th Event Companion Consecrate vs Triangulation layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-reconnaissance-b",
+      "name": "Consecrate vs Triangulation Layout B",
+      "description": "11th Event Companion Consecrate vs Triangulation layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-reconnaissance-c",
+      "name": "Consecrate vs Triangulation Layout C",
+      "description": "11th Event Companion Consecrate vs Triangulation layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-priority-targets-a",
+      "name": "Destroyer's Wrath vs Vital Link Layout A",
+      "description": "11th Event Companion Destroyer's Wrath vs Vital Link layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-priority-targets-b",
+      "name": "Destroyer's Wrath vs Vital Link Layout B",
+      "description": "11th Event Companion Destroyer's Wrath vs Vital Link layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-priority-targets-c",
+      "name": "Destroyer's Wrath vs Vital Link Layout C",
+      "description": "11th Event Companion Destroyer's Wrath vs Vital Link layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-disruption-a",
+      "name": "Outmanoeuvre vs Outmanoeuvre Layout A",
+      "description": "11th Event Companion Outmanoeuvre vs Outmanoeuvre layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-disruption-b",
+      "name": "Outmanoeuvre vs Outmanoeuvre Layout B",
+      "description": "11th Event Companion Outmanoeuvre vs Outmanoeuvre layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-disruption-c",
+      "name": "Outmanoeuvre vs Outmanoeuvre Layout C",
+      "description": "11th Event Companion Outmanoeuvre vs Outmanoeuvre layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-reconnaissance-a",
+      "name": "Smoke and Mirrors vs Surveil the Foe Layout A",
+      "description": "11th Event Companion Smoke and Mirrors vs Surveil the Foe layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-reconnaissance-b",
+      "name": "Smoke and Mirrors vs Surveil the Foe Layout B",
+      "description": "11th Event Companion Smoke and Mirrors vs Surveil the Foe layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-reconnaissance-c",
+      "name": "Smoke and Mirrors vs Surveil the Foe Layout C",
+      "description": "11th Event Companion Smoke and Mirrors vs Surveil the Foe layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-priority-targets-a",
+      "name": "Locate and Deny vs Extract Relic Layout A",
+      "description": "11th Event Companion Locate and Deny vs Extract Relic layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-priority-targets-b",
+      "name": "Locate and Deny vs Extract Relic Layout B",
+      "description": "11th Event Companion Locate and Deny vs Extract Relic layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-priority-targets-c",
+      "name": "Locate and Deny vs Extract Relic Layout C",
+      "description": "11th Event Companion Locate and Deny vs Extract Relic layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-reconnaissance-vs-reconnaissance-a",
+      "name": "Gather Intel vs Gather Intel Layout A",
+      "description": "11th Event Companion Gather Intel vs Gather Intel layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-reconnaissance-vs-reconnaissance-b",
+      "name": "Gather Intel vs Gather Intel Layout B",
+      "description": "11th Event Companion Gather Intel vs Gather Intel layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-reconnaissance-vs-reconnaissance-c",
+      "name": "Gather Intel vs Gather Intel Layout C",
+      "description": "11th Event Companion Gather Intel vs Gather Intel layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-reconnaissance-vs-priority-targets-a",
+      "name": "Search and Scour vs Vanguard Operation Layout A",
+      "description": "11th Event Companion Search and Scour vs Vanguard Operation layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-reconnaissance-vs-priority-targets-b",
+      "name": "Search and Scour vs Vanguard Operation Layout B",
+      "description": "11th Event Companion Search and Scour vs Vanguard Operation layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-reconnaissance-vs-priority-targets-c",
+      "name": "Search and Scour vs Vanguard Operation Layout C",
+      "description": "11th Event Companion Search and Scour vs Vanguard Operation layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-priority-targets-vs-priority-targets-a",
+      "name": "Sabotage vs Sabotage Layout A",
+      "description": "11th Event Companion Sabotage vs Sabotage layout A. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-priority-targets-vs-priority-targets-b",
+      "name": "Sabotage vs Sabotage Layout B",
+      "description": "11th Event Companion Sabotage vs Sabotage layout B. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    },
+    {
+      "id": "11e-priority-targets-vs-priority-targets-c",
+      "name": "Sabotage vs Sabotage Layout C",
+      "description": "11th Event Companion Sabotage vs Sabotage layout C. Template includes one mirrored half of the standard terrain footprints for manual transcription.",
+      "terrain": [
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 1",
+          "x": 2,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 4 Area 2",
+          "x": 11,
+          "y": 2,
+          "width": 6,
+          "height": 4,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "10 x 2.5 Area 1",
+          "x": 20,
+          "y": 2,
+          "width": 10,
+          "height": 2.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 1",
+          "x": 2,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "6 x 2 Area 2",
+          "x": 11,
+          "y": 10,
+          "width": 6,
+          "height": 2,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 1",
+          "x": 2,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "7 x 11.5 Area 2",
+          "x": 13,
+          "y": 16,
+          "width": 7,
+          "height": 11.5,
+          "featureShape": "none"
+        },
+        {
+          "kind": "ruin",
+          "name": "8 x 11 7/8 Polygon Area 1",
+          "x": 24,
+          "y": 16,
+          "width": 8,
+          "height": 11.875,
+          "polygonPoints": [
+            {
+              "x": 6,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 0
+            },
+            {
+              "x": 8,
+              "y": 11.875
+            },
+            {
+              "x": 0,
+              "y": 11.875
+            }
+          ],
+          "featureShape": "none"
+        }
+      ]
+    }
+  ]
+}

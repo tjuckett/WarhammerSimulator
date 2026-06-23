@@ -1073,10 +1073,29 @@ html, body, #root {
 
 .terrain-card-head {
   display: grid;
-  grid-template-columns: minmax(110px, 1fr) 92px auto;
+  grid-template-columns: minmax(84px, 1fr) 82px;
   gap: 4px;
   align-items: center;
   margin-bottom: 5px;
+}
+
+.terrain-card-controls {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.terrain-card-controls .MuiButton-root {
+  min-width: 0;
+  padding: 3px 5px;
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.terrain-card-controls .MuiButton-startIcon {
+  margin-left: -2px;
+  margin-right: 2px;
 }
 
 .terrain-card input,
@@ -1119,6 +1138,61 @@ html, body, #root {
   margin-top: 5px;
 }
 
+.terrain-objective-role {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  color: #888;
+  font-size: 10px;
+  margin-top: 5px;
+}
+
+.terrain-objective-role select {
+  width: 100%;
+  min-width: 0;
+  background: #1e1e36;
+  color: #ccc;
+  border: 1px solid #33335a;
+  border-radius: 3px;
+  padding: 3px 4px;
+  font: inherit;
+  font-size: 12px;
+}
+
+.polygon-editor {
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px solid #222238;
+}
+
+.polygon-editor-head,
+.polygon-point-row {
+  display: grid;
+  align-items: end;
+  gap: 4px;
+}
+
+.polygon-editor-head {
+  grid-template-columns: 1fr auto;
+  color: #9999cc;
+  font-size: 10px;
+}
+
+.polygon-point-row {
+  grid-template-columns: 18px repeat(2, minmax(48px, 1fr));
+}
+
+.polygon-point-row > span {
+  align-self: center;
+  color: #777;
+  font-size: 10px;
+  font-weight: 700;
+  text-align: center;
+}
+
 .feature-header {
   display: flex;
   align-items: center;
@@ -1154,6 +1228,25 @@ html, body, #root {
   border-bottom: 1px solid #1e1e2e;
 }
 
+.terrain-template-actions {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) auto auto auto;
+  gap: 4px;
+  padding: 6px;
+  border-bottom: 1px solid #1e1e2e;
+}
+
+.terrain-template-actions select {
+  min-width: 0;
+  background: #1e1e36;
+  color: #ccc;
+  border: 1px solid #33335a;
+  border-radius: 3px;
+  padding: 3px 4px;
+  font: inherit;
+  font-size: 12px;
+}
+
 .terrain-align-actions {
   display: flex;
   align-items: center;
@@ -1171,6 +1264,98 @@ html, body, #root {
   color: #888;
   font-size: 10px;
   border-bottom: 1px solid #1e1e2e;
+}
+
+.deployment-zone-editor {
+  display: grid;
+  gap: 5px;
+  padding: 6px;
+  border-bottom: 1px solid #1e1e2e;
+}
+
+.deployment-zone-header,
+.deployment-zone-side-head,
+.deployment-zone-row {
+  display: grid;
+  align-items: end;
+  gap: 4px;
+}
+
+.deployment-zone-header {
+  grid-template-columns: 1fr auto;
+  color: #9999cc;
+  font-size: 10px;
+}
+
+.deployment-zone-header-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.deployment-cutout-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #888;
+  font-size: 10px;
+}
+
+.deployment-zone-side {
+  display: grid;
+  gap: 4px;
+}
+
+.deployment-zone-side-head {
+  grid-template-columns: 1fr auto;
+}
+
+.deployment-zone-row {
+  grid-template-columns: 18px repeat(4, minmax(42px, 1fr)) auto;
+}
+
+.deployment-triangle-row {
+  display: grid;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid #24243a;
+  background: rgba(20, 20, 36, 0.65);
+}
+
+.deployment-triangle-head,
+.deployment-triangle-point-row {
+  display: grid;
+  align-items: end;
+  gap: 4px;
+}
+
+.deployment-triangle-head {
+  grid-template-columns: 1fr auto;
+}
+
+.deployment-triangle-point-row {
+  grid-template-columns: 24px repeat(2, minmax(54px, 1fr));
+}
+
+.deployment-zone-blue,
+.deployment-zone-red,
+.deployment-zone-index {
+  align-self: center;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.deployment-zone-index {
+  color: #777;
+  text-align: center;
+}
+
+.deployment-zone-blue {
+  color: #8fb7ff;
+}
+
+.deployment-zone-red {
+  color: #ff9b91;
 }
 
 .terrain-editor-hint {
