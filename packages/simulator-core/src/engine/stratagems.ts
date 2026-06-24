@@ -165,11 +165,53 @@ function targetAllowed(
   if (stratagem.target === 'none') return targetUnitId === undefined;
   const target = targetUnitFor(state, targetUnitId);
   if (!target) return false;
-  if (!unitCanBeAffectedByStratagem(target)) return false;
+  if (stratagem.id !== 'insane-bravery' && !unitCanBeAffectedByStratagem(target)) return false;
   if (stratagem.target === 'friendly-unit' && target.side !== side) return false;
   if (stratagem.target === 'enemy-unit' && target.side === side) return false;
   if (!targetRestrictionsAllowed(state, side, stratagem, target, rules)) return false;
   return true;
+}
+
+function applyInsaneBraveryStratagemEffect(
+  state: BattleState,
+  side: Side,
+  stratagem: StratagemDefinition,
+  targetUnitId?: string,
+): void {
+  if (stratagem.id !== 'insane-bravery') return;
+  const unit = targetUnitFor(state, targetUnitId);
+  if (!unit) return;
+
+  unit.battleshocked = false;
+  appendStratagemEffectLog(state, side, unit.profile.name, `${unit.profile.name} automatically passes its Battle-shock test.`, 'info');
+}
+
+function applyRapidIngressStratagemEffect(
+  state: BattleState,
+  side: Side,
+  stratagem: StratagemDefinition,
+  targetUnitId?: string,
+): void {
+  if (stratagem.id !== 'rapid-ingress') return;
+  const unit = targetUnitFor(state, targetUnitId);
+  if (!unit) return;
+
+  unit.rapidIngressThisPhase = true;
+  appendStratagemEffectLog(state, side, unit.profile.name, `${unit.profile.name} can be set up from Strategic Reserves this phase.`, 'info');
+}
+
+function applyHeroicInterventionStratagemEffect(
+  state: BattleState,
+  side: Side,
+  stratagem: StratagemDefinition,
+  targetUnitId?: string,
+): void {
+  if (stratagem.id !== 'heroic-intervention') return;
+  const unit = targetUnitFor(state, targetUnitId);
+  if (!unit) return;
+
+  unit.heroicInterventionThisPhase = true;
+  appendStratagemEffectLog(state, side, unit.profile.name, `${unit.profile.name} can declare a Heroic Intervention charge this phase.`, 'info');
 }
 
 function applyMortalWoundStratagemEffect(
@@ -178,6 +220,7 @@ function applyMortalWoundStratagemEffect(
   stratagem: StratagemDefinition,
   targetUnitId?: string,
 ): void {
+  if (stratagem.id !== 'explosives' && stratagem.id !== 'crushing-impact') return;
   const unit = targetUnitFor(state, targetUnitId);
   if (!unit) return;
 
@@ -302,6 +345,9 @@ export function useStratagem(
     message: `${next.armies[side].name} uses ${stratagem.name} for ${stratagem.cost}CP.`,
     type: 'info',
   }];
+  applyInsaneBraveryStratagemEffect(next, side, stratagem, targetUnitId);
+  applyRapidIngressStratagemEffect(next, side, stratagem, targetUnitId);
+  applyHeroicInterventionStratagemEffect(next, side, stratagem, targetUnitId);
   applyMortalWoundStratagemEffect(next, side, stratagem, targetUnitId);
   return next;
 }

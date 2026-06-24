@@ -1,0 +1,371 @@
+import type { Side } from '../types/battle';
+import type { GameAction } from '../practice/actions';
+import type { RulesEdition } from './rulesEngine';
+import { rules40K10th } from './rulesEngine';
+import { availableStratagems } from './stratagems';
+import { availableUnitAbilities } from './unitAbilities';
+import {
+  movementStep,
+  playChargeTargetOptions,
+  playDeploymentIssues,
+  playFightActivationUnitIds,
+  playFightWeaponOptions,
+  playPhaseCoherencyIssues,
+  playShootingWeaponOptions,
+  playSnapShootingWeaponOptions,
+  playTransportPassengers,
+  playUnitCanAdvance,
+  playUnitCanConsolidate,
+  playUnitCanDisembark,
+  playUnitCanEmbark,
+  playUnitCanFallBack,
+  playUnitCanPileIn,
+  playUnitCanStartAction,
+} from './simulator';
+import type { BattleState, BattleUnit } from '../types/battle';
+import type { AbilityTiming } from '../types/ability';
+
+export type LegalActionCategory =
+  | 'phase'
+  | 'deployment'
+  | 'movement'
+  | 'shooting'
+  | 'charge'
+  | 'fight'
+  | 'damage'
+  | 'stratagem'
+  | 'ability'
+  | 'action';
+
+export interface LegalAction {
+  action: GameAction;
+  category: LegalActionCategory;
+  side: Side;
+  unitId?: string;
+  targetUnitId?: string;
+  label: string;
+}
+
+export interface LegalActionOptions {
+  includePhaseStep?: boolean;
+  includeStratagems?: boolean;
+  includeAbilities?: boolean;
+}
+
+function activeUnits(state: BattleState, side: Side): BattleUnit[] {
+  return state.units.filter(unit =>
+    unit.side === side
+    && !unit.destroyed
+    && !unit.embarkedInUnitId
+    && !unit.inStrategicReserves,
+  );
+}
+
+function addPhaseActions(actions: LegalAction[], state: BattleState, side: Side, includePhaseStep: boolean) {
+  if (!includePhaseStep || state.activeArmy !== side) return;
+  if (state.phase === 'deployment') {
+    if (state.unplacedUnits[side]?.length && playDeploymentIssues(state).length === 0) {
+      actions.push({
+        action: { type: 'simulation.placeNextUnit' },
+        category: 'deployment',
+        side,
+        label: 'Auto-place next deployment unit',
+      });
+    }
+    return;
+  }
+  if (state.phase !== 'end' && playPhaseCoherencyIssues(state).length === 0) {
+    actions.push({
+      action: { type: 'play.stepPhase' },
+      category: 'phase',
+      side,
+      label: 'Advance phase',
+    });
+  }
+}
+
+function addMovementActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
+  if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return;
+  const units = activeUnits(state, side);
+  const transports = units.filter(unit => unit.profile.transportCapacity);
+  for (const unit of units) {
+    if (playUnitCanAdvance(state, unit.id, side, rules)) {
+      actions.push({
+        action: { type: 'play.advanceUnit', side, unitId: unit.id },
+        category: 'movement',
+        side,
+        unitId: unit.id,
+        label: `${unit.profile.name}: Advance`,
+      });
+    }
+    if (playUnitCanFallBack(state, unit.id, side, rules)) {
+      actions.push({
+        action: { type: 'play.fallBackUnit', side, unitId: unit.id },
+        category: 'movement',
+        side,
+        unitId: unit.id,
+        label: `${unit.profile.name}: Fall Back`,
+      });
+    }
+    actions.push(...transports
+      .filter(transport => playUnitCanEmbark(state, unit.id, side, transport.id))
+      .map((transport): LegalAction => ({
+        action: { type: 'play.embarkUnit', side, unitId: unit.id, transportUnitId: transport.id },
+        category: 'movement',
+        side,
+        unitId: unit.id,
+        targetUnitId: transport.id,
+        label: `${unit.profile.name}: Embark in ${transport.profile.name}`,
+      })));
+    if (unit.profile.transportCapacity) {
+      actions.push(...playTransportPassengers(state, unit.id)
+        .filter(passenger => playUnitCanDisembark(state, side, unit.id, passenger.id))
+        .map((passenger): LegalAction => ({
+          action: { type: 'play.disembarkUnit', side, transportUnitId: unit.id, passengerUnitId: passenger.id },
+          category: 'movement',
+          side,
+          unitId: passenger.id,
+          targetUnitId: unit.id,
+          label: `${passenger.profile.name}: Disembark from ${unit.profile.name}`,
+        })));
+    }
+    if (playUnitCanStartAction(state, unit.id, side, rules)) {
+      actions.push({
+        action: { type: 'play.startAction', side, unitId: unit.id },
+        category: 'action',
+        side,
+        unitId: unit.id,
+        label: `${unit.profile.name}: Start action`,
+      });
+    }
+    const canComplete = unit.movementAction && !unit.movementComplete;
+    if (canComplete) {
+      actions.push({
+        action: { type: 'play.completeUnitMovement', side, unitId: unit.id },
+        category: 'movement',
+        side,
+        unitId: unit.id,
+        label: `${unit.profile.name}: Complete movement`,
+      });
+    }
+  }
+}
+
+function addShootingActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
+  if (state.phase !== 'shooting' || state.activeArmy !== side) return;
+  for (const unit of activeUnits(state, side)) {
+    const options = playShootingWeaponOptions(state, unit.id, side, rules);
+    for (const option of options) {
+      for (const targetUnitId of option.targetIds) {
+        actions.push({
+          action: { type: 'play.shootUnitWeapon', side, unitId: unit.id, targetUnitId, weaponIndex: option.weaponIndex },
+          category: 'shooting',
+          side,
+          unitId: unit.id,
+          targetUnitId,
+          label: `${unit.profile.name}: Shoot ${option.name}`,
+        });
+      }
+    }
+    if (options.length && options.every(option => option.targetIds.length === 0)) {
+      actions.push({
+        action: { type: 'play.lockUnitShooting', side, unitId: unit.id },
+        category: 'shooting',
+        side,
+        unitId: unit.id,
+        label: `${unit.profile.name}: No shooting targets`,
+      });
+    }
+  }
+}
+
+function addSnapShootingActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
+  if (state.phase !== 'movement' || state.activeArmy === side) return;
+  for (const unit of activeUnits(state, side)) {
+    for (const option of playSnapShootingWeaponOptions(state, unit.id, side, rules)) {
+      for (const targetUnitId of option.targetIds) {
+        actions.push({
+          action: { type: 'play.snapShootUnitWeapon', side, unitId: unit.id, targetUnitId, weaponIndex: option.weaponIndex },
+          category: 'shooting',
+          side,
+          unitId: unit.id,
+          targetUnitId,
+          label: `${unit.profile.name}: Snap shoot ${option.name}`,
+        });
+      }
+    }
+  }
+}
+
+function addChargeActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
+  if (state.phase !== 'charge' || state.activeArmy !== side) return;
+  for (const unit of activeUnits(state, side)) {
+    for (const option of playChargeTargetOptions(state, unit.id, side, rules)) {
+      actions.push({
+        action: { type: 'play.chargeUnitTarget', side, unitId: unit.id, targetUnitId: option.targetId },
+        category: 'charge',
+        side,
+        unitId: unit.id,
+        targetUnitId: option.targetId,
+        label: `${unit.profile.name}: Charge (${option.needed.toFixed(1)}" needed)`,
+      });
+    }
+  }
+}
+
+function addFightActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
+  if (state.phase !== 'fight') return;
+  for (const unitId of playFightActivationUnitIds(state, side, rules)) {
+    const unit = state.units.find(candidate => candidate.id === unitId);
+    if (!unit) continue;
+    if (playUnitCanPileIn(state, unit.id, side, rules)) {
+      actions.push({
+        action: { type: 'play.pileInUnit', side, unitId: unit.id },
+        category: 'fight',
+        side,
+        unitId: unit.id,
+        label: `${unit.profile.name}: Pile In`,
+      });
+    }
+    for (const option of playFightWeaponOptions(state, unit.id, side, rules)) {
+      for (const targetUnitId of option.targetIds) {
+        actions.push({
+          action: { type: 'play.fightUnitWeapon', side, unitId: unit.id, targetUnitId, weaponIndex: option.weaponIndex },
+          category: 'fight',
+          side,
+          unitId: unit.id,
+          targetUnitId,
+          label: `${unit.profile.name}: Fight with ${option.name}`,
+        });
+      }
+    }
+    if (playUnitCanConsolidate(state, unit.id, side)) {
+      actions.push({
+        action: { type: 'play.consolidateUnit', side, unitId: unit.id },
+        category: 'fight',
+        side,
+        unitId: unit.id,
+        label: `${unit.profile.name}: Consolidate`,
+      });
+    }
+  }
+}
+
+function addDamageActions(actions: LegalAction[], state: BattleState, side: Side) {
+  for (const unit of activeUnits(state, side)) {
+    if (unit.pendingCasualties) {
+      unit.modelPositions.forEach((_model, modelIndex) => {
+        actions.push({
+          action: { type: 'play.removeCasualties', parts: [{ side, unitId: unit.id, modelIndices: [modelIndex] }] },
+          category: 'damage',
+          side,
+          unitId: unit.id,
+          label: `${unit.profile.name}: Remove casualty ${modelIndex + 1}`,
+        });
+      });
+    }
+    if (unit.pendingDamageAllocations?.length) {
+      const forcedModel = unit.woundedModelIndex;
+      const modelIndices = forcedModel !== undefined
+        ? [forcedModel]
+        : unit.modelPositions.map((_model, modelIndex) => modelIndex);
+      for (const modelIndex of modelIndices) {
+        actions.push({
+          action: { type: 'play.allocateDamage', side, unitId: unit.id, modelIndex },
+          category: 'damage',
+          side,
+          unitId: unit.id,
+          label: `${unit.profile.name}: Allocate damage to model ${modelIndex + 1}`,
+        });
+      }
+    }
+  }
+}
+
+function timingsForPhase(state: BattleState): AbilityTiming[] {
+  const timings: AbilityTiming[] = ['manual', 'end-of-phase'];
+  if (state.phase === 'command') timings.push('command-phase');
+  return timings;
+}
+
+function addStratagemActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
+  for (const stratagem of availableStratagems(state, side, rules)) {
+    if (stratagem.target === 'none') {
+      actions.push({
+        action: { type: 'play.useStratagem', side, stratagemId: stratagem.id },
+        category: 'stratagem',
+        side,
+        label: `Use ${stratagem.name}`,
+      });
+    }
+  }
+  for (const unit of activeUnits(state, side)) {
+    for (const stratagem of availableStratagems(state, side, rules, unit.id)) {
+      if (stratagem.target === 'none') continue;
+      actions.push({
+        action: { type: 'play.useStratagem', side, stratagemId: stratagem.id, targetUnitId: unit.id },
+        category: 'stratagem',
+        side,
+        unitId: unit.id,
+        targetUnitId: unit.id,
+        label: `${unit.profile.name}: Use ${stratagem.name}`,
+      });
+    }
+  }
+}
+
+function addAbilityActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
+  const units = activeUnits(state, side);
+  const targets = state.units.filter(unit => !unit.destroyed && !unit.embarkedInUnitId);
+  for (const timing of timingsForPhase(state)) {
+    for (const unit of units) {
+      for (const ability of availableUnitAbilities(state, unit.id, side, timing, rules)) {
+        actions.push({
+          action: { type: 'play.useUnitAbility', side, unitId: unit.id, abilityId: ability.id, timing },
+          category: 'ability',
+          side,
+          unitId: unit.id,
+          label: `${unit.profile.name}: Use ${ability.name}`,
+        });
+      }
+      for (const target of targets) {
+        for (const ability of availableUnitAbilities(state, unit.id, side, timing, rules, target.id)) {
+          actions.push({
+            action: { type: 'play.useUnitAbility', side, unitId: unit.id, abilityId: ability.id, timing, targetUnitId: target.id },
+            category: 'ability',
+            side,
+            unitId: unit.id,
+            targetUnitId: target.id,
+            label: `${unit.profile.name}: Use ${ability.name}`,
+          });
+        }
+      }
+    }
+  }
+}
+
+export function getLegalActions(
+  state: BattleState,
+  side: Side = state.activeArmy,
+  rules: RulesEdition = rules40K10th,
+  options: LegalActionOptions = {},
+): LegalAction[] {
+  const includePhaseStep = options.includePhaseStep ?? true;
+  const includeStratagems = options.includeStratagems ?? true;
+  const includeAbilities = options.includeAbilities ?? true;
+  const actions: LegalAction[] = [];
+
+  addDamageActions(actions, state, side);
+  if (actions.length) return actions;
+
+  addPhaseActions(actions, state, side, includePhaseStep);
+  addMovementActions(actions, state, side, rules);
+  addShootingActions(actions, state, side, rules);
+  addSnapShootingActions(actions, state, side, rules);
+  addChargeActions(actions, state, side, rules);
+  addFightActions(actions, state, side, rules);
+  if (includeStratagems) addStratagemActions(actions, state, side, rules);
+  if (includeAbilities) addAbilityActions(actions, state, side, rules);
+
+  return actions;
+}

@@ -1,5 +1,80 @@
 # Warhammer Simulator — TODOs
 
+## 11th Edition Rules Handoff - 2026-06-23
+
+Use this section as the current pickup point for 11th Edition work. Older sections below are historical and may include stale wording.
+
+### Implemented So Far
+- [x] 11th Edition ruleset is selectable independently from 10th Edition.
+- [x] 11th rules metadata tracks `edition: 11e`, `rulesVersion: preview-core`, and compatibility fallback to 10th.
+- [x] 11th setup supports per-player Force Dispositions instead of one shared deployment type.
+- [x] Force Disposition combinations map to the correct paired primary mission names.
+- [x] Each 11th Force Disposition matchup exposes three associated terrain layout choices.
+- [x] 11th terrain layouts load from JSON files through the shared terrain layout registry.
+- [x] Terrain objective control is implemented for 11th: models control objective terrain areas instead of fixed marker radii.
+- [x] Objective marker roles can be tagged as home or no man's land in terrain layouts.
+- [x] Actions are implemented at the core level: units can start actions, actions block shooting/charging, movement cancels actions, and actions can complete at end of turn.
+- [x] Snap shooting is implemented for 11th preview behavior: one visible target within 24 inches, hits only on 6s.
+- [x] 11th core stratagem list is present: Command Re-roll, Epic Challenge, Insane Bravery, Explosives, Crushing Impact, Rapid Ingress, Fire Overwatch, Smokescreen, Heroic Intervention, Counteroffensive.
+- [x] 11th core stratagem targeting restrictions are partially implemented, including once-per-phase, once-per-battle, per-target limits, keyword restrictions, reserves restrictions, engagement restrictions, and CP spending.
+- [x] Implemented effects for Insane Bravery, Explosives, Crushing Impact, Smokescreen, Fire Overwatch/Snap Shooting, Counteroffensive, and Epic Challenge targeting.
+- [x] Aircraft rules are implemented for movement, Strategic Reserves exit/return, charge restrictions, and fight restrictions.
+- [x] Vertical movement is implemented: model heights, vertical movement allowance, vertical coherency, vertical engagement, and vertical range.
+- [x] Movement coherency policy is implemented: temporary incoherency during movement is allowed, but Movement phase cannot advance until active-army units are coherent.
+- [x] Shooting, charge, and fight phase mechanics are implemented mostly through shared 10th-compatible behavior.
+- [x] Damage allocation was reset to defender-choice flow: remove destroyed models first, assign remaining wounds, damaged models must keep taking damage until destroyed, and non-mortal damage does not spill over.
+- [x] Shooting LOS/range target UI supports visible, out-of-range, and no-ranged-weapon target states.
+- [x] AI-prep data helpers exist: legal action generation and battle observation summaries.
+
+### Manual Data Work
+- [ ] Finish manually transcribing the 45 11th Event Companion terrain layouts.
+  - Owner: Tim/manual editor work.
+  - Keep walls in the saved terrain mat templates where needed.
+  - Use objective role tagging for home/no man's land objectives.
+  - Use deployment zone polygons/triangles and center exclusions where required by the layout.
+
+### Remaining 11th Rules TODOs
+- [x] Create a mission scoring definition table keyed by 11th primary mission name.
+- [x] Stop known 11th primary missions from awarding generic fallback VP while scoring text is missing.
+- [x] Show an unsupported-scoring warning during manual play when a known 11th primary mission has no transcribed scoring text.
+- [ ] Find or transcribe source text for all 24 unique 11th primary missions.
+- [ ] Implement exact scoring for all 24 unique 11th primary missions once source text is available.
+- [ ] Add tests for every implemented 11th primary mission scoring rule.
+- [ ] Update primary scoring logs/UI so they explain why each player scored VP for their own mission.
+- [ ] Audit each 11th core stratagem against final wording once the final 11th rules are available.
+- [ ] Implement any missing 11th-specific effect for Command Re-roll. It is currently framework-level, not a concrete reroll prompt/resolution.
+- [x] Implement Rapid Ingress resolution flow: target validation marks a non-Aircraft Strategic Reserve unit so it can be placed during the opponent Movement/Reinforcements step.
+- [x] Implement Heroic Intervention resolution flow: target validation marks an eligible defender so it can declare and resolve a Heroic Intervention charge during the opponent Charge phase.
+- [ ] Audit shared 10th-compatible movement, shooting, charge, fight, Battle-shock, objective control, reserves, transports, terrain, aircraft, and vertical rules for final 11th wording differences.
+- [ ] Remove or narrow the 11th preview notice once final 11th rules are fully modeled.
+- [ ] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.
+
+### 11th Primary Missions To Implement
+- [ ] Battlefield Dominance
+- [ ] Consecrate
+- [ ] Death Trap
+- [ ] Delaying Action
+- [ ] Determined Acquisition
+- [ ] Destroyer's Wrath
+- [ ] Extract Relic
+- [ ] Gather Intel
+- [ ] Immovable Object
+- [ ] Inescapable Dominion
+- [ ] Locate and Deny
+- [ ] Meatgrinder
+- [ ] Outmanoeuvre
+- [ ] Punishment
+- [ ] Purge and Secure
+- [ ] Reconnaissance Sweep
+- [ ] Sabotage
+- [ ] Search and Scour
+- [ ] Secure Asset
+- [ ] Smoke and Mirrors
+- [ ] Surveil the Foe
+- [ ] Triangulation
+- [ ] Unstoppable Force
+- [ ] Vanguard Operation
+
 ## Current Rules Handoff - 2026-06-12
 
 Use this section as the next-session pickup point for the rules implementation work.

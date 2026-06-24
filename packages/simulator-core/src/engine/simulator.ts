@@ -1714,15 +1714,19 @@ function unitCanDeclareCharge(unit: BattleUnit): boolean {
     && unit.movementAction !== 'advanced';
 }
 
+function sideCanDeclareCharge(state: BattleState, side: Side, unit: BattleUnit): boolean {
+  return state.activeArmy === side || (state.activeArmy !== side && unit.heroicInterventionThisPhase === true);
+}
+
 export function playChargeTargetOptions(
   state: BattleState,
   unitId: string,
   side: Side,
   rules: RulesEdition = rules40K10th,
 ): PlayChargeTargetOption[] {
-  if (state.phase !== 'charge' || state.activeArmy !== side) return [];
+  if (state.phase !== 'charge') return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || !unitCanDeclareCharge(unit)) return [];
+  if (!unit || !sideCanDeclareCharge(state, side, unit) || !unitCanDeclareCharge(unit)) return [];
   return enemies(state, side)
     .filter(target => unitCanChargeTarget(unit, target))
     .map(target => ({ targetId: target.id, needed: chargeNeededDistance(unit, target, rules) }))
@@ -1736,10 +1740,10 @@ export function chargePlayUnitTarget(
   targetUnitId: string,
   rules: RulesEdition = rules40K10th,
 ): BattleState {
-  if (state.phase !== 'charge' || state.activeArmy !== side) return state;
+  if (state.phase !== 'charge') return state;
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   const target = state.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || !target || !unitCanDeclareCharge(unit) || !unitCanChargeTarget(unit, target)) return state;
+  if (!unit || !target || !sideCanDeclareCharge(state, side, unit) || !unitCanDeclareCharge(unit) || !unitCanChargeTarget(unit, target)) return state;
   const needed = chargeNeededDistance(unit, target, rules);
   if (needed > rules.chargeRange()) return state;
 
@@ -1760,6 +1764,7 @@ export function chargePlayUnitTarget(
 
   if (roll + 0.001 < needed) {
     chargingUnit.activated = true;
+    chargingUnit.heroicInterventionThisPhase = undefined;
     logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} fails the charge.`, 'charge'));
     s.log = [...s.log, ...logs];
     return s;
@@ -1785,9 +1790,10 @@ export function chargePlayUnitTarget(
 
   chargingUnit.activated = true;
   chargingUnit.charged = true;
+  chargingUnit.heroicInterventionThisPhase = undefined;
   chargingUnit.inCombat = true;
   chargeTarget.inCombat = true;
-  logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} makes a successful charge.`, 'charge'));
+  logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} makes a successful${state.activeArmy !== side ? ' Heroic Intervention' : ''} charge.`, 'charge'));
   s.log = [...s.log, ...logs];
   return s;
 }
@@ -2066,11 +2072,29 @@ function isBelowHalfStrength(unit: BattleUnit): boolean {
   return unit.remainingModels < unit.profile.baseModelCount / 2;
 }
 
+function unitHasInsaneBraveryForCurrentBattleshock(state: BattleState, unit: BattleUnit): boolean {
+  const currentRound = battleRound(state);
+  return (state.stratagemUses ?? []).some(use =>
+    use.stratagemId === 'insane-bravery'
+    && use.targetUnitId === unit.id
+    && use.phase === 'command'
+    && use.battleRound === currentRound
+  );
+}
+
 function runBattleshock(state: BattleState, side: Side): LogEntry[] {
   const logs: LogEntry[] = [];
   for (const unit of state.units) {
     if (unit.destroyed || unit.side !== side) continue;
     if (isBelowHalfStrength(unit)) {
+      if (unitHasInsaneBraveryForCurrentBattleshock(state, unit)) {
+        unit.battleshocked = false;
+        logs.push(log(state, unit.side, unit.profile.name,
+          `${unit.profile.name} automatically passes its Battle-shock test with Insane Bravery.`,
+          'info',
+        ));
+        continue;
+      }
       const rolls = [d6(), d6()];
       const roll = rolls[0] + rolls[1];
       const needed = bestLeadership(unit);
@@ -2203,6 +2227,8 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
     u.movementStartRotationsByModel = undefined;
     u.movementComplete = undefined;
     u.arrivedFromReinforcements = undefined;
+    u.rapidIngressThisPhase = undefined;
+    u.heroicInterventionThisPhase = undefined;
     u.emergencyDisembarkedThisTurn = undefined;
     u.fellBack = false;
     u.inCombat = false;
@@ -2691,13 +2717,16 @@ export function placePlayReinforcement(state: BattleState, side: Side, armyUnitI
 }
 
 export function placePlayStrategicReserveUnit(state: BattleState, side: Side, unitId: string, position: Position): BattleState {
-  if (state.phase !== 'movement' || movementStep(state) !== 'reinforcements' || state.activeArmy !== side) return state;
+  if (state.phase !== 'movement' || movementStep(state) !== 'reinforcements') return state;
   const existing = state.units.find(unit =>
     unit.id === unitId
     && unit.side === side
     && !unit.destroyed
     && unit.inStrategicReserves
-    && isAircraft(unit)
+    && (
+      (state.activeArmy === side && isAircraft(unit))
+      || (state.activeArmy !== side && unit.rapidIngressThisPhase)
+    )
   );
   if (!existing) return state;
 
@@ -2709,6 +2738,7 @@ export function placePlayStrategicReserveUnit(state: BattleState, side: Side, un
   unit.facingDeg = side === 0 ? 0 : 180;
   unit.position = centroid(unit.modelPositions);
   unit.inStrategicReserves = false;
+  unit.rapidIngressThisPhase = undefined;
   markUnitArrivedFromReinforcements(unit);
   resolveInternalModelOverlaps(unit, undefined, board);
 
@@ -2724,7 +2754,7 @@ export function placePlayStrategicReserveUnit(state: BattleState, side: Side, un
     s,
     side,
     unit.profile.name,
-    `${s.armies[side].name} returns ${unit.profile.name} from Strategic Reserves more than 9" from enemy models.`,
+    `${s.armies[side].name} returns ${unit.profile.name} from Strategic Reserves more than 9" from enemy models${state.activeArmy !== side ? ' using Rapid Ingress' : ''}.`,
     'move',
   )];
   return s;
@@ -4266,7 +4296,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   const newLogs: LogEntry[] = [];
 
   // Reset per-turn flags
-  myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.arrivedFromReinforcements = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
+  myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
 
   // Command
   s.phase = 'command';

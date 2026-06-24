@@ -53,6 +53,8 @@ export interface BattleUnit {
   movementComplete?: boolean;
   arrivedFromReinforcements?: boolean;
   inStrategicReserves?: boolean;
+  rapidIngressThisPhase?: boolean;
+  heroicInterventionThisPhase?: boolean;
   embarkedInUnitId?: string;
   emergencyDisembarkedThisTurn?: boolean;
   performingAction?: {

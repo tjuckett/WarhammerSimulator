@@ -255,6 +255,8 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
       unit.movementStartPositionsByModel = undefined;
       unit.movementComplete = undefined;
       unit.arrivedFromReinforcements = undefined;
+      unit.rapidIngressThisPhase = undefined;
+      unit.heroicInterventionThisPhase = undefined;
       unit.actionStartedThisTurn = undefined;
       if (unit.emergencyDisembarkedThisTurn) unit.battleshocked = false;
       unit.emergencyDisembarkedThisTurn = undefined;

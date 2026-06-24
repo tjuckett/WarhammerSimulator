@@ -51,7 +51,7 @@ import {
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
-import { scorePrimaryMission } from '@warhammer-simulator/core/engine/missionScoring';
+import { formatPrimaryScoringResult, scorePrimaryMission } from '@warhammer-simulator/core/engine/missionScoring';
 import { availableStratagems, useStratagem } from '@warhammer-simulator/core/engine/stratagems';
 import { availableUnitAbilities, useUnitAbility } from '@warhammer-simulator/core/engine/unitAbilities';
 import {
@@ -1336,7 +1336,6 @@ export default function App() {
       isPlayMode
       && battleState?.phase === 'charge'
       && selectedChargeUnit
-      && selectedChargeUnit.side === battleState.activeArmy
         ? playChargeTargetOptions(battleState, selectedChargeUnit.id, selectedChargeUnit.side, activeRulesForBattle)
         : []
     ),
@@ -2640,7 +2639,10 @@ export default function App() {
       && candidate.inStrategicReserves,
     );
     if (!current || !unit) return;
-    if (current.phase !== 'movement' || movementStep(current) !== 'reinforcements' || current.activeArmy !== side) {
+    const canPlaceStrategicReserve = current.phase === 'movement'
+      && movementStep(current) === 'reinforcements'
+      && (current.activeArmy === side || unit.rapidIngressThisPhase);
+    if (!canPlaceStrategicReserve) {
       setInspectedSelection({ kind: 'battle', side, unitId });
       return;
     }
@@ -2836,8 +2838,8 @@ export default function App() {
       const clickedUnit = battleState.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
       if (!clickedUnit) return;
       setInspectedSelection({ kind: 'battle', side, unitId });
-      if (side === battleState.activeArmy) {
-        const options = playChargeTargetOptions(battleState, unitId, side, activeRulesForBattle);
+      const options = playChargeTargetOptions(battleState, unitId, side, activeRulesForBattle);
+      if (options.length > 0 || side === battleState.activeArmy) {
         selectPlacedPlayUnit(unitId, side);
         setSelectedChargeTargetId(options[0]?.targetId ?? '');
         setTargetErrorMsg(options.length ? null : `${clickedUnit.profile.name} has no eligible charge targets`);
@@ -3597,7 +3599,10 @@ export default function App() {
     const phaseBeforeStep = next.phase;
     const scoringSide = next.activeArmy;
     const currentIndex = PLAY_TURN_PHASES.indexOf(next.phase);
-    if (phaseBeforeStep === 'fight') scorePrimaryMission(next, scoringSide, activeRulesForBattle);
+    if (phaseBeforeStep === 'fight') {
+      const scoringResult = scorePrimaryMission(next, scoringSide, activeRulesForBattle);
+      if (scoringResult.kind === 'unsupported') setPlayPhaseWarning(formatPrimaryScoringResult(scoringResult));
+    }
     const startCommand = () => {
       next.phase = 'command';
       next.movementStep = undefined;
@@ -3615,6 +3620,8 @@ export default function App() {
         unit.movementStartRotationsByModel = undefined;
         unit.movementComplete = undefined;
         unit.arrivedFromReinforcements = undefined;
+        unit.rapidIngressThisPhase = undefined;
+        unit.heroicInterventionThisPhase = undefined;
         if (unit.emergencyDisembarkedThisTurn) unit.battleshocked = false;
         unit.emergencyDisembarkedThisTurn = undefined;
         unit.fellBack = false;

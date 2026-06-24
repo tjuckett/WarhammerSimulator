@@ -15,10 +15,11 @@ import {
 import { applyGameAction } from '../src/practice/actions';
 import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
-import { scorePrimaryMission } from '../src/engine/missionScoring';
+import { formatPrimaryScoringResult, scorePrimaryMission, updateObjectiveControl } from '../src/engine/missionScoring';
 import { availableStratagems, useStratagem } from '../src/engine/stratagems';
 import { availableUnitAbilities, useUnitAbility } from '../src/engine/unitAbilities';
 import { eleventhSetupLabel, TOURNAMENT_MISSIONS } from '../src/engine/missions';
+import { ELEVENTH_PRIMARY_MISSION_RULES } from '../src/data/missionRules';
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -309,6 +310,12 @@ test('11th edition setup tracks each player primary mission separately', () => {
   assert.equal(setup.primaryMission, 'Purge and Secure / Reconnaissance Sweep');
 });
 
+test('11th primary mission rules are tracked as missing source placeholders', () => {
+  assert.equal(ELEVENTH_PRIMARY_MISSION_RULES.length, 24);
+  assert.equal(ELEVENTH_PRIMARY_MISSION_RULES.every(rule => rule.status === 'missing-source'), true);
+  assert.equal(ELEVENTH_PRIMARY_MISSION_RULES.some(rule => rule.name === "Destroyer's Wrath"), true);
+});
+
 test('11th edition preview blocks multiple stratagems targeting the same unit in a phase', () => {
   const battle = state('fight');
   battle.commandPoints = [3, 0];
@@ -343,6 +350,21 @@ test('11th edition preview Insane Bravery can only be used once per battle', () 
   const second = useStratagem(nextCommand, 0, 'insane-bravery', rules40K11th, unit.id);
   assert.equal(second, nextCommand);
   assert.deepEqual(second.commandPoints, [1, 0]);
+});
+
+test('11th edition preview Insane Bravery clears Battle-shock on its target', () => {
+  const battle = state('command');
+  battle.commandPoints = [1, 0];
+  const unit = losTestUnit('blue-1', 0, { x: 10, y: 10 });
+  unit.battleshocked = true;
+  battle.units = [unit];
+
+  const next = useStratagem(battle, 0, 'insane-bravery', rules40K11th, unit.id);
+
+  assert.equal(next.units[0].battleshocked, false);
+  assert.deepEqual(next.commandPoints, [0, 0]);
+  assert.equal(next.stratagemUses?.at(-1)?.stratagemId, 'insane-bravery');
+  assert.equal(next.log.at(-1)?.message, 'blue-1 automatically passes its Battle-shock test.');
 });
 
 test('11th Fire Overwatch is only available in the opponent Movement phase', () => {
@@ -394,6 +416,63 @@ test('11th core stratagems enforce target keyword and reserve restrictions', () 
 
   assert.equal(availableStratagems(movement, 1, rules40K11th, reserve.id).some(stratagem => stratagem.id === 'rapid-ingress'), true);
   assert.equal(availableStratagems(movement, 1, rules40K11th, aircraft.id).some(stratagem => stratagem.id === 'rapid-ingress'), false);
+});
+
+test('11th Rapid Ingress lets a non-Aircraft unit return from Strategic Reserves in the opponent Movement phase', () => {
+  const battle = state('movement');
+  battle.activeArmy = 0;
+  battle.movementStep = 'reinforcements';
+  battle.commandPoints = [0, 1];
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const reserve = losTestUnit('reserve-1', 1, { x: 0, y: 0 });
+  reserve.profile.name = 'Reserve Infantry';
+  reserve.inStrategicReserves = true;
+  reserve.modelPositions = [];
+  battle.units = [reserve];
+
+  const blocked = placePlayStrategicReserveUnit(battle, 1, reserve.id, { x: 3, y: 10 });
+  assert.equal(blocked, battle);
+
+  const ingress = useStratagem(battle, 1, 'rapid-ingress', rules40K11th, reserve.id);
+  assert.equal(ingress.commandPoints?.[1], 0);
+  assert.equal(ingress.units[0].rapidIngressThisPhase, true);
+
+  const returned = placePlayStrategicReserveUnit(ingress, 1, reserve.id, { x: 3, y: 10 });
+  const returnedReserve = returned.units.find(unit => unit.id === reserve.id)!;
+  assert.equal(returnedReserve.inStrategicReserves, false);
+  assert.equal(returnedReserve.arrivedFromReinforcements, true);
+  assert.equal(returnedReserve.rapidIngressThisPhase, undefined);
+  assert.match(returned.log.at(-1)?.message ?? '', /using Rapid Ingress/);
+});
+
+test('11th Heroic Intervention lets the targeted defender declare a charge in the opponent Charge phase', () => {
+  const battle = state('charge');
+  battle.activeArmy = 0;
+  battle.commandPoints = [0, 1];
+  const attacker = losTestUnit('attacker', 0, { x: 10, y: 10 });
+  const defender = losTestUnit('defender', 1, { x: 16, y: 10 });
+  battle.units = [attacker, defender];
+
+  assert.deepEqual(playChargeTargetOptions(battle, defender.id, 1, rules40K11th), []);
+
+  const intervening = useStratagem(battle, 1, 'heroic-intervention', rules40K11th, defender.id);
+  assert.equal(intervening.commandPoints?.[1], 0);
+  assert.equal(intervening.units.find(unit => unit.id === defender.id)?.heroicInterventionThisPhase, true);
+  assert.deepEqual(playChargeTargetOptions(intervening, defender.id, 1, rules40K11th).map(option => option.targetId), [attacker.id]);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const charged = chargePlayUnitTarget(intervening, defender.id, 1, attacker.id, rules40K11th);
+    const chargedDefender = charged.units.find(unit => unit.id === defender.id)!;
+    assert.equal(chargedDefender.charged, true);
+    assert.equal(chargedDefender.heroicInterventionThisPhase, undefined);
+    assert.equal(chargedDefender.inCombat, true);
+    assert.equal(charged.units.find(unit => unit.id === attacker.id)?.inCombat, true);
+    assert.match(charged.log.at(-1)?.message ?? '', /Heroic Intervention charge/);
+  } finally {
+    Math.random = originalRandom;
+  }
 });
 
 test('11th Smokescreen applies cover and a hit penalty for the phase', () => {
@@ -596,7 +675,42 @@ test('primary scoring framework leaves unsupported objective-control rules unsco
   assert.deepEqual(battle.scores, [0, 0]);
 });
 
-test('11th terrain objectives score models inside the terrain area', () => {
+test('11th known primary missions do not score until mission text is transcribed', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Battlefield Dominance', 'Battlefield Dominance'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [terrainMat({
+    id: 'objective-ruin',
+    name: 'Objective Ruin',
+    type: 'ruin',
+    x: 8,
+    y: 8,
+    width: 6,
+    height: 6,
+  })];
+  battle.units = [losTestUnit('blue-1', 0, { x: 9, y: 9 })];
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.kind, 'unsupported');
+  assert.equal(result.scoringModel, 'missing-11th-primary-mission-source');
+  assert.equal(result.vpGained, 0);
+  assert.deepEqual(result.objectives[0].owner, 0);
+  assert.deepEqual(battle.objectiveOwners, [0]);
+  assert.deepEqual(battle.scores, [0, 0]);
+  assert.equal(
+    formatPrimaryScoringResult(result),
+    'Primary scoring unavailable for Battlefield Dominance: mission scoring text has not been transcribed yet.',
+  );
+});
+
+test('11th terrain objective control counts models inside the terrain area', () => {
   const battle = state('fight');
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.objectiveControl = rules40K11th.objectiveControl;
@@ -620,14 +734,11 @@ test('11th terrain objectives score models inside the terrain area', () => {
   red.profile.oc = 1;
   battle.units = [blue, red];
 
-  const result = scorePrimaryMission(battle, 0, rules40K11th);
+  const objectives = updateObjectiveControl(battle, rules40K11th);
 
-  assert.equal(result.kind, 'scored');
-  assert.equal(result.scoringModel, 'terrain-objective-control');
-  assert.equal(result.vpGained, 1);
-  assert.deepEqual(result.objectives[0].oc, [2, 1]);
+  assert.deepEqual(objectives?.[0].oc, [2, 1]);
   assert.deepEqual(battle.objectiveOwners, [0]);
-  assert.deepEqual(battle.scores, [1, 0]);
+  assert.deepEqual(battle.scores, [0, 0]);
 });
 
 test('11th actions block shooting and charging until completed or cancelled', () => {

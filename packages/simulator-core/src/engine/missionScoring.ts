@@ -2,6 +2,7 @@ import type { BattleState, BattleUnit, Side } from '../types/battle';
 import { modelBaseRadiusInches } from './baseSizes';
 import { objectiveControlValue } from './battleshock';
 import { distance } from './coherency';
+import { eleventhPrimaryMissionRuleForName } from '../data/missionRules';
 import { objectiveControlRadius } from './objectiveGeometry';
 import type { RulesEdition } from './rulesEngine';
 import { pointInTerrain } from './terrainGeometry';
@@ -17,6 +18,7 @@ export interface PrimaryScoringResult {
   missionName: string;
   scoringModel: string;
   objectiveControlLabel: string;
+  unsupportedReason?: string;
   side: Side;
   vpGained: number;
   score: [number, number];
@@ -101,6 +103,23 @@ export function updateObjectiveControl(state: BattleState, rules: RulesEdition):
 export function scorePrimaryMission(state: BattleState, side: Side, rules: RulesEdition): PrimaryScoringResult {
   const missionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission ?? 'Primary Mission';
   const objectiveControl = state.objectiveControl ?? rules.objectiveControl;
+  const eleventhMissionRule = rules.metadata.edition === '11e'
+    ? eleventhPrimaryMissionRuleForName(missionName)
+    : null;
+  if (eleventhMissionRule?.status === 'missing-source') {
+    return {
+      kind: 'unsupported',
+      missionName,
+      scoringModel: 'missing-11th-primary-mission-source',
+      objectiveControlLabel: objectiveControl.label,
+      unsupportedReason: eleventhMissionRule.notes,
+      side,
+      vpGained: 0,
+      score: [...state.scores],
+      objectives: updateObjectiveControl(state, rules) ?? [],
+    };
+  }
+
   const objectives = updateObjectiveControl(state, rules);
 
   if (!objectives) {
@@ -109,6 +128,7 @@ export function scorePrimaryMission(state: BattleState, side: Side, rules: Rules
       missionName,
       scoringModel: 'unsupported-objective-control',
       objectiveControlLabel: objectiveControl.label,
+      unsupportedReason: `Objective scoring unavailable for ${objectiveControl.label}.`,
       side,
       vpGained: 0,
       score: [...state.scores],
@@ -133,7 +153,10 @@ export function scorePrimaryMission(state: BattleState, side: Side, rules: Rules
 
 export function formatPrimaryScoringResult(result: PrimaryScoringResult): string {
   if (result.kind === 'unsupported') {
-    return `Primary scoring unavailable for ${result.objectiveControlLabel}; implement this ruleset case-by-case.`;
+    if (result.scoringModel === 'missing-11th-primary-mission-source') {
+      return `Primary scoring unavailable for ${result.missionName}: mission scoring text has not been transcribed yet.`;
+    }
+    return result.unsupportedReason ?? `Primary scoring unavailable for ${result.objectiveControlLabel}; implement this ruleset case-by-case.`;
   }
 
   const parts = result.objectives.map(objective => {
