@@ -9,6 +9,7 @@ import {
   Select,
   Slider,
   Snackbar,
+  TextField,
   Typography,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
@@ -52,7 +53,7 @@ import {
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import { formatPrimaryScoringResult, scorePrimaryMission } from '@warhammer-simulator/core/engine/missionScoring';
-import { availableStratagems, useStratagem } from '@warhammer-simulator/core/engine/stratagems';
+import { availableStratagems, resolveCommandReroll, useStratagem } from '@warhammer-simulator/core/engine/stratagems';
 import { availableUnitAbilities, useUnitAbility } from '@warhammer-simulator/core/engine/unitAbilities';
 import {
   loadBrain, saveBrain, recordGame, suggestStrategy, brainStats,
@@ -582,7 +583,14 @@ function PlayShootingPanel({
   }
 
   const shootingLocked = damageAllocationLocked;
-  const canResolve = !shootingLocked && weaponOptions.some(option => option.targetIds.length > 0) && !!selectedTarget && targetIsValid && !shooter.activated;
+  const noAttackSelected = selectedWeaponIndex !== 'all'
+    && weaponOptions.some(option => String(option.weaponIndex) === selectedWeaponIndex && option.weaponIndex < 0);
+  const canResolve = !shootingLocked
+    && !shooter.activated
+    && (
+      noAttackSelected
+      || (weaponOptions.some(option => option.targetIds.length > 0) && !!selectedTarget && targetIsValid)
+    );
   const targetInCover = !!(selectedTarget && coverUnitIds?.has(selectedTarget.id));
 
   const refWeapons = selectedTarget && targetIsValid
@@ -633,7 +641,7 @@ function PlayShootingPanel({
         </Select>
       </FormControl>
 
-      <FormControl size="small" fullWidth disabled={shootingLocked || !targets.length || shooter.activated}>
+      <FormControl size="small" fullWidth disabled={shootingLocked || noAttackSelected || !targets.length || shooter.activated}>
         <InputLabel id="play-shooting-target-label">Target</InputLabel>
         <Select
           labelId="play-shooting-target-label"
@@ -660,6 +668,8 @@ function PlayShootingPanel({
             ? `Allocate ${pendingDamageLabel} before selecting another shooter or target.`
             : 'Allocate pending damage to defender models before selecting another shooter or target.'}
         </Typography>
+      ) : noAttackSelected ? (
+        <Typography variant="caption" sx={{ color: '#9a8f6a' }}>This unit can be selected to shoot, but will make no attacks.</Typography>
       ) : !weaponOptions.length ? (
         <Typography variant="caption" sx={{ color: '#9a8f6a' }}>No eligible ranged weapons for this unit.</Typography>
       ) : !targets.length ? (
@@ -923,6 +933,7 @@ function PlayTacticsPanel({
   onUseStratagem,
   onUseAbility,
   onStartAction,
+  onResolveCommandReroll,
 }: {
   state: BattleState;
   selectedUnit: BattleUnit | null;
@@ -933,13 +944,16 @@ function PlayTacticsPanel({
   canStartAction: boolean;
   onStratagemChange: (value: string) => void;
   onAbilityChange: (value: string) => void;
-  onUseStratagem: () => void;
+  onUseStratagem: (stratagemId: string) => void;
   onUseAbility: () => void;
   onStartAction: () => void;
+  onResolveCommandReroll: (originalRolls: number[], label: string) => void;
 }) {
   const cp = commandPoints(state);
-  const selectedStratagem = stratagems.find(stratagem => stratagem.id === selectedStratagemId) ?? null;
   const selectedAbility = abilities.find(option => abilityOptionKey(option) === selectedAbilityKey) ?? null;
+  const pendingFollowUps = stratagemFollowUpLabels(state);
+  const [commandRerollInput, setCommandRerollInput] = useState('');
+  const commandRerollRolls = parseDiceInput(commandRerollInput);
 
   return (
     <Box sx={shootingPanelSx}>
@@ -952,24 +966,58 @@ function PlayTacticsPanel({
         </Box>
       </Box>
 
-      <FormControl size="small" fullWidth disabled={!stratagems.length}>
-        <InputLabel id="play-stratagem-label">Stratagem</InputLabel>
-        <Select
-          labelId="play-stratagem-label"
-          label="Stratagem"
-          value={selectedStratagemId}
-          onChange={(event: SelectChangeEvent) => onStratagemChange(event.target.value)}
-        >
-          {stratagems.map(stratagem => (
-            <MenuItem key={stratagem.id} value={stratagem.id}>
-              {stratagem.name} ({stratagem.cost}CP)
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <Button size="small" variant="outlined" disabled={!selectedStratagem} onClick={onUseStratagem}>
-        Use Stratagem
-      </Button>
+      <Box sx={{ display: 'grid', gap: 0.75 }}>
+        <Typography variant="caption" sx={{ color: '#aaa', fontWeight: 800 }}>Stratagems</Typography>
+        {pendingFollowUps.map(label => (
+          <Typography key={label} variant="caption" sx={{ color: '#d8b35d' }}>
+            {label}
+          </Typography>
+        ))}
+        {state.pendingCommandReroll && (
+          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 0.75, alignItems: 'center' }}>
+            <TextField
+              size="small"
+              label="Original roll"
+              placeholder="6 or 1,2"
+              value={commandRerollInput}
+              onChange={event => setCommandRerollInput(event.target.value)}
+              error={commandRerollInput.trim().length > 0 && commandRerollRolls.length === 0}
+              helperText="D6 values"
+            />
+            <Button
+              size="small"
+              variant="contained"
+              disabled={!commandRerollRolls.length}
+              onClick={() => {
+                onResolveCommandReroll(commandRerollRolls, 'roll');
+                setCommandRerollInput('');
+              }}
+            >
+              Resolve
+            </Button>
+          </Box>
+        )}
+        {stratagems.map(stratagem => (
+          <Button
+            key={stratagem.id}
+            size="small"
+            variant={stratagem.id === selectedStratagemId ? 'contained' : 'outlined'}
+            onMouseEnter={() => onStratagemChange(stratagem.id)}
+            onFocus={() => onStratagemChange(stratagem.id)}
+            onClick={() => onUseStratagem(stratagem.id)}
+            title={stratagem.description}
+            sx={{ justifyContent: 'space-between', textTransform: 'none' }}
+          >
+            <span>{stratagem.name}</span>
+            <span>{stratagem.cost}CP</span>
+          </Button>
+        ))}
+        {!stratagems.length && (
+          <Typography variant="caption" sx={{ color: '#9a8f6a' }}>
+            No available stratagems for the selected unit/timing.
+          </Typography>
+        )}
+      </Box>
 
       <FormControl size="small" fullWidth disabled={!selectedUnit || !abilities.length}>
         <InputLabel id="play-ability-label">Ability</InputLabel>
@@ -1006,6 +1054,30 @@ function PlayTacticsPanel({
       )}
     </Box>
   );
+}
+
+function parseDiceInput(value: string): number[] {
+  const parts = value
+    .split(/[,\s]+/)
+    .map(part => part.trim())
+    .filter(Boolean);
+  if (!parts.length) return [];
+  const rolls = parts.map(part => Number(part));
+  if (rolls.some(roll => !Number.isInteger(roll) || roll < 1 || roll > 6)) return [];
+  return rolls;
+}
+
+function stratagemFollowUpLabels(state: BattleState): string[] {
+  const labels: string[] = [];
+  if (state.pendingCommandReroll) {
+    labels.push('Command Re-roll pending: choose a roll to reroll.');
+  }
+  for (const unit of state.units) {
+    if (unit.destroyed) continue;
+    if (unit.rapidIngressThisPhase) labels.push(`Rapid Ingress: place ${unit.profile.name} from Strategic Reserves.`);
+    if (unit.heroicInterventionThisPhase) labels.push(`Heroic Intervention: declare a charge with ${unit.profile.name}.`);
+  }
+  return labels;
 }
 
 function abilityOptionKey(option: AbilityOption): string {
@@ -3168,26 +3240,28 @@ export default function App() {
   function resolveSelectedPlayShooting() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
-    if (!prev || prev.phase !== 'shooting' || !selection || !selectedShootingTargetId) return;
+    if (!prev || prev.phase !== 'shooting' || !selection) return;
     if (damageAllocationLocked) {
       setTargetErrorMsg('Allocate pending damage before shooting again');
       return;
     }
-    if (!selectedPlayShootingTargets.some(target => target.id === selectedShootingTargetId)) {
+    const weaponIndex = selectedShootingWeaponIndex === 'all' ? 'all' : Number(selectedShootingWeaponIndex);
+    if (weaponIndex !== 'all' && !Number.isFinite(weaponIndex)) return;
+    const noAttackSelected = weaponIndex !== 'all' && weaponIndex < 0;
+    if (!noAttackSelected && !selectedShootingTargetId) return;
+    if (!noAttackSelected && !selectedPlayShootingTargets.some(target => target.id === selectedShootingTargetId)) {
       const target = prev.units.find(unit => unit.id === selectedShootingTargetId && !unit.destroyed);
       if (target && selectedShootingUnit) {
         setTargetErrorMsg(invalidShootingTargetMessage(target, selectedShootingUnit));
       }
       return;
     }
-    const weaponIndex = selectedShootingWeaponIndex === 'all' ? 'all' : Number(selectedShootingWeaponIndex);
-    if (weaponIndex !== 'all' && !Number.isFinite(weaponIndex)) return;
     const rules = rulesEditionForRuleset(prev.ruleset);
     const next = shootPlayUnitWeapon(
       prev,
       selection.unitId,
       selection.side,
-      selectedShootingTargetId,
+      noAttackSelected ? undefined : selectedShootingTargetId,
       weaponIndex,
       rules,
     );
@@ -3217,7 +3291,7 @@ export default function App() {
       type: 'play.shootUnitWeapon',
       unitId: selection.unitId,
       side: selection.side,
-      targetUnitId: selectedShootingTargetId,
+      targetUnitId: noAttackSelected ? '' : selectedShootingTargetId,
       weaponIndex,
     });
     commitBattleState(next);
@@ -3350,18 +3424,19 @@ export default function App() {
     commitBattleState(next);
   }
 
-  function useSelectedPlayStratagem() {
+  function useSelectedPlayStratagem(stratagemId = selectedStratagemId) {
     const prev = battleStateRef.current;
-    if (!prev || !isPlayMode || !selectedStratagemId) return;
+    if (!prev || !isPlayMode || !stratagemId) return;
     const targetUnitId = selectedTacticsUnit?.id;
     const stratagemSide = selectedTacticsUnit?.side ?? prev.activeArmy;
-    const stratagem = availablePlayStratagems.find(option => option.id === selectedStratagemId);
-    const next = useStratagem(prev, stratagemSide, selectedStratagemId, activeRulesForBattle, stratagem?.target === 'none' ? undefined : targetUnitId);
+    const stratagem = availablePlayStratagems.find(option => option.id === stratagemId);
+    const next = useStratagem(prev, stratagemSide, stratagemId, activeRulesForBattle, stratagem?.target === 'none' ? undefined : targetUnitId);
     if (next === prev) return;
+    setSelectedStratagemId(stratagemId);
     pushPlayUndo(playUndoEntry(prev), next, {
       type: 'play.useStratagem',
       side: stratagemSide,
-      stratagemId: selectedStratagemId,
+      stratagemId,
       targetUnitId: stratagem?.target === 'none' ? undefined : targetUnitId,
     });
     if (stratagem?.id === 'fire-overwatch' && targetUnitId) {
@@ -3372,6 +3447,22 @@ export default function App() {
     } else {
       setTargetErrorMsg(`${stratagem?.name ?? 'Stratagem'} used.`);
     }
+    commitBattleState(next);
+  }
+
+  function resolvePendingCommandReroll(originalRolls: number[], label: string) {
+    const prev = battleStateRef.current;
+    if (!prev || !isPlayMode || !prev.pendingCommandReroll) return;
+    const side = prev.pendingCommandReroll.side;
+    const next = resolveCommandReroll(prev, side, originalRolls, { label });
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: 'play.resolveCommandReroll',
+      side,
+      originalRolls,
+      label,
+    });
+    setTargetErrorMsg('Command Re-roll resolved.');
     commitBattleState(next);
   }
 
@@ -3599,6 +3690,10 @@ export default function App() {
     const phaseBeforeStep = next.phase;
     const scoringSide = next.activeArmy;
     const currentIndex = PLAY_TURN_PHASES.indexOf(next.phase);
+    if (phaseBeforeStep === 'command') {
+      const scoringResult = scorePrimaryMission(next, scoringSide, activeRulesForBattle);
+      if (scoringResult.kind === 'unsupported') setPlayPhaseWarning(formatPrimaryScoringResult(scoringResult));
+    }
     if (phaseBeforeStep === 'fight') {
       const scoringResult = scorePrimaryMission(next, scoringSide, activeRulesForBattle);
       if (scoringResult.kind === 'unsupported') setPlayPhaseWarning(formatPrimaryScoringResult(scoringResult));
@@ -4175,6 +4270,7 @@ export default function App() {
                   onUseStratagem={useSelectedPlayStratagem}
                   onUseAbility={useSelectedPlayAbility}
                   onStartAction={startSelectedPlayAction}
+                  onResolveCommandReroll={resolvePendingCommandReroll}
                 />
               )}
               {isPlayMode && battleState?.phase === 'shooting' && (

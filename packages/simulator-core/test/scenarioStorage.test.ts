@@ -16,10 +16,10 @@ import { applyGameAction } from '../src/practice/actions';
 import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
 import { formatPrimaryScoringResult, scorePrimaryMission, updateObjectiveControl } from '../src/engine/missionScoring';
-import { availableStratagems, useStratagem } from '../src/engine/stratagems';
+import { availableStratagems, resolveCommandReroll, useStratagem } from '../src/engine/stratagems';
 import { availableUnitAbilities, useUnitAbility } from '../src/engine/unitAbilities';
 import { eleventhSetupLabel, TOURNAMENT_MISSIONS } from '../src/engine/missions';
-import { ELEVENTH_PRIMARY_MISSION_RULES } from '../src/data/missionRules';
+import { ELEVENTH_PRIMARY_MISSION_RULES, ELEVENTH_SECONDARY_MISSION_RULES, eleventhSecondaryMissionRuleForName } from '../src/data/missionRules';
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -259,6 +259,46 @@ test('stratagem framework spends command points and records the use once per pha
   assert.equal(second.stratagemUses?.length, 1);
 });
 
+test('Command Re-roll creates and resolves a pending reroll token', () => {
+  const battle = state('charge');
+  battle.commandPoints = [1, 0];
+
+  const used = useStratagem(battle, 0, 'command-reroll', rules40K10th);
+  assert.equal(used.pendingCommandReroll?.side, 0);
+  assert.equal(used.pendingCommandReroll?.phase, 'charge');
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const resolved = resolveCommandReroll(used, 0, [1, 2], { label: 'charge roll' });
+    assert.equal(resolved.pendingCommandReroll, undefined);
+    assert.match(resolved.log.at(-1)?.message ?? '', /Command Re-roll charge roll: \[1, 2\] -> \[6, 6\]/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('Command Re-roll can be replayed through practice actions', () => {
+  const battle = state('shooting');
+  battle.commandPoints = [1, 0];
+  const used = useStratagem(battle, 0, 'command-reroll', rules40K10th);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0;
+  try {
+    const replayed = applyGameAction(used, {
+      type: 'play.resolveCommandReroll',
+      side: 0,
+      originalRolls: [6],
+      label: 'save roll',
+    }, { rules: rules40K10th });
+    assert.equal(replayed.pendingCommandReroll, undefined);
+    assert.match(replayed.log.at(-1)?.message ?? '', /Command Re-roll save roll: \[6\] -> \[1\]/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('stratagem framework blocks battle-shocked target units', () => {
   const battle = state('command');
   battle.commandPoints = [1, 0];
@@ -311,9 +351,60 @@ test('11th edition setup tracks each player primary mission separately', () => {
 });
 
 test('11th primary mission rules are tracked as missing source placeholders', () => {
-  assert.equal(ELEVENTH_PRIMARY_MISSION_RULES.length, 24);
-  assert.equal(ELEVENTH_PRIMARY_MISSION_RULES.every(rule => rule.status === 'missing-source'), true);
+  assert.equal(ELEVENTH_PRIMARY_MISSION_RULES.length, 25);
+  assert.equal(ELEVENTH_PRIMARY_MISSION_RULES.filter(rule => rule.status === 'implemented').length, 25);
   assert.equal(ELEVENTH_PRIMARY_MISSION_RULES.some(rule => rule.name === "Destroyer's Wrath"), true);
+  assert.equal(ELEVENTH_PRIMARY_MISSION_RULES.some(rule => rule.name === 'Vital Link'), true);
+});
+
+test('11th secondary mission rules track transcribed scoring text', () => {
+  assert.equal(ELEVENTH_SECONDARY_MISSION_RULES.length, 18);
+  assert.deepEqual(ELEVENTH_SECONDARY_MISSION_RULES.map(rule => rule.name), [
+    'A Grievous Blow',
+    'A Tempting Target',
+    'Assassination',
+    'Beacon',
+    'Behind Enemy Lines',
+    'Bring It Down',
+    'Burden of Trust',
+    'Centre Ground',
+    'Cleanse',
+    'Defend Stronghold',
+    'Display of Might',
+    'Engage on All Fronts',
+    'Forward Position',
+    'No Prisoners',
+    'Outflank',
+    'Overwhelming Force',
+    'Plunder',
+    "Secure No Man's Land",
+  ]);
+  assert.equal(ELEVENTH_SECONDARY_MISSION_RULES.every(rule => rule.deck === 'secondary'), true);
+
+  const assassination = eleventhSecondaryMissionRuleForName('Assassination');
+  assert.equal(assassination?.mode, 'fixed-or-tactical');
+  assert.equal(assassination?.scoring.length, 4);
+
+  const behindEnemyLines = eleventhSecondaryMissionRuleForName('Behind Enemy Lines');
+  assert.equal(behindEnemyLines?.scoring[0].maxVp, 5);
+  assert.match(behindEnemyLines?.scoring[0].notes ?? '', /deployment-zone geometry/);
+
+  const burden = eleventhSecondaryMissionRuleForName('Burden of Trust');
+  assert.equal(burden?.scoring[0].maxVp, 5);
+  assert.match(burden?.whenDrawn ?? '', /guard/);
+
+  const engage = eleventhSecondaryMissionRuleForName('Engage on All Fronts');
+  assert.equal(engage?.mode, 'fixed-or-tactical');
+  assert.equal(engage?.scoring.length, 4);
+
+  const noPrisoners = eleventhSecondaryMissionRuleForName('No Prisoners');
+  assert.equal(noPrisoners?.scoring[0].maxVp, 5);
+
+  const plunder = eleventhSecondaryMissionRuleForName('Plunder');
+  assert.match(plunder?.whenDrawn ?? '', /Cleanse/);
+
+  const secureNoMansLand = eleventhSecondaryMissionRuleForName("Secure No Man's Land");
+  assert.match(secureNoMansLand?.scoring[0].sourceText ?? '', /two or more objectives/);
 });
 
 test('11th edition preview blocks multiple stratagems targeting the same unit in a phase', () => {
@@ -401,6 +492,12 @@ test('11th core stratagems enforce target keyword and reserve restrictions', () 
 
   assert.equal(availableStratagems(fight, 0, rules40K11th, character.id).some(stratagem => stratagem.id === 'epic-challenge'), true);
   assert.equal(availableStratagems(fight, 0, rules40K11th, infantry.id).some(stratagem => stratagem.id === 'epic-challenge'), false);
+
+  const abilityCharacter = losTestUnit('ability-captain', 0, { x: 14, y: 10 });
+  abilityCharacter.profile.keywords = ['Infantry'];
+  abilityCharacter.profile.abilities = [{ name: 'Character', description: 'This model is a Character.' }];
+  fight.units = [abilityCharacter];
+  assert.equal(availableStratagems(fight, 0, rules40K11th, abilityCharacter.id).some(stratagem => stratagem.id === 'epic-challenge'), true);
 
   const movement = state('movement');
   movement.activeArmy = 0;
@@ -675,39 +772,356 @@ test('primary scoring framework leaves unsupported objective-control rules unsco
   assert.deepEqual(battle.scores, [0, 0]);
 });
 
-test('11th known primary missions do not score until mission text is transcribed', () => {
-  const battle = state('fight');
+test('11th Battlefield Dominance scores from mission data', () => {
+  const battle = state('fight', 1);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.objectiveControl = rules40K11th.objectiveControl;
   battle.setup = {
     ...battle.setup!,
     primaryMissions: ['Battlefield Dominance', 'Battlefield Dominance'],
   };
-  battle.objectives = [{ x: 10, y: 10 }];
-  battle.objectiveOwners = [null];
-  battle.terrain = [terrainMat({
-    id: 'objective-ruin',
-    name: 'Objective Ruin',
-    type: 'ruin',
-    x: 8,
-    y: 8,
-    width: 6,
-    height: 6,
-  })];
-  battle.units = [losTestUnit('blue-1', 0, { x: 9, y: 9 })];
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }];
+  battle.objectiveOwners = [null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  battle.units = [
+    losTestUnit('blue-home', 0, { x: 10, y: 10 }),
+    losTestUnit('blue-mid', 0, { x: 20, y: 10 }),
+    losTestUnit('red-home', 1, { x: 30, y: 10 }),
+  ];
+
+  const roundOne = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(roundOne.kind, 'scored');
+  assert.equal(roundOne.scoringModel, '11e-data:Battlefield Dominance');
+  assert.equal(roundOne.vpGained, 2);
+  assert.deepEqual(battle.scores, [2, 0]);
+
+  const command = { ...battle, phase: 'command' as Phase, battleRound: 2, turn: 2, scores: [0, 0] as [number, number] };
+  const roundTwo = scorePrimaryMission(command, 0, rules40K11th);
+
+  assert.equal(roundTwo.vpGained, 8);
+  assert.deepEqual(command.scores, [8, 0]);
+  assert.match(formatPrimaryScoringResult(roundTwo), /Battlefield Dominance/);
+});
+
+test('11th Inescapable Dominion scores fixed objective conditions from mission data', () => {
+  const battle = state('command', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Inescapable Dominion', 'Secure Asset'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }];
+  battle.objectiveOwners = [null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  battle.units = [
+    losTestUnit('blue-home', 0, { x: 10, y: 10 }),
+    losTestUnit('blue-mid', 0, { x: 20, y: 10 }),
+    losTestUnit('red-home', 1, { x: 30, y: 10 }),
+  ];
 
   const result = scorePrimaryMission(battle, 0, rules40K11th);
 
-  assert.equal(result.kind, 'unsupported');
-  assert.equal(result.scoringModel, 'missing-11th-primary-mission-source');
-  assert.equal(result.vpGained, 0);
-  assert.deepEqual(result.objectives[0].owner, 0);
-  assert.deepEqual(battle.objectiveOwners, [0]);
-  assert.deepEqual(battle.scores, [0, 0]);
-  assert.equal(
-    formatPrimaryScoringResult(result),
-    'Primary scoring unavailable for Battlefield Dominance: mission scoring text has not been transcribed yet.',
-  );
+  assert.equal(result.kind, 'scored');
+  assert.equal(result.scoringModel, '11e-data:Inescapable Dominion');
+  assert.equal(result.vpGained, 9);
+  assert.deepEqual(battle.scores, [9, 0]);
+});
+
+test("11th Destroyer's Wrath scores objective control clauses from mission data", () => {
+  const battle = state('command', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ["Destroyer's Wrath", 'Vital Link'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }];
+  battle.objectiveOwners = [null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  battle.units = [
+    losTestUnit('blue-home', 0, { x: 10, y: 10 }),
+    losTestUnit('blue-mid', 0, { x: 20, y: 10 }),
+    losTestUnit('red-home', 1, { x: 30, y: 10 }),
+  ];
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.kind, 'scored');
+  assert.equal(result.scoringModel, "11e-data:Destroyer's Wrath");
+  assert.equal(result.vpGained, 10);
+  assert.deepEqual(battle.scores, [10, 0]);
+});
+
+test('11th Meatgrinder records unsupported kill clauses and scores opponent home control', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Meatgrinder', 'Meatgrinder'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }];
+  battle.objectiveOwners = [null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  battle.units = [
+    losTestUnit('blue-home', 0, { x: 10, y: 10 }),
+    losTestUnit('blue-red-home', 0, { x: 30, y: 10 }),
+  ];
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.kind, 'scored');
+  assert.equal(result.scoringModel, '11e-data:Meatgrinder');
+  assert.equal(result.vpGained, 5);
+  assert.equal(result.unsupportedClauses?.length, 2);
+  assert.match(formatPrimaryScoringResult(result), /Unsupported clauses:/);
+});
+
+test('11th Gather Intel scores objective control and records action marker clauses', () => {
+  const battle = state('fight', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Gather Intel', 'Gather Intel'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }];
+  battle.objectiveOwners = [null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  battle.units = [losTestUnit('blue-mid', 0, { x: 20, y: 10 })];
+
+  const roundOne = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(roundOne.kind, 'scored');
+  assert.equal(roundOne.scoringModel, '11e-data:Gather Intel');
+  assert.equal(roundOne.vpGained, 6);
+
+  const roundTwo = { ...battle, phase: 'fight' as Phase, battleRound: 2, turn: 2, scores: [0, 0] as [number, number] };
+  const endTurn = scorePrimaryMission(roundTwo, 0, rules40K11th);
+
+  assert.equal(endTurn.vpGained, 0);
+  assert.equal(endTurn.unsupportedClauses?.length, 1);
+  assert.match(formatPrimaryScoringResult(endTurn), /Extract Intelligence/);
+});
+
+test('11th Triangulation scores control clauses and records triangulated objective clauses', () => {
+  const battle = state('command', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Triangulation', 'Triangulation'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }, { x: 40, y: 10 }];
+  battle.objectiveOwners = [null, null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid-a', name: 'Mid A', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'mid-b', name: 'Mid B', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 38, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  battle.units = [
+    losTestUnit('blue-home', 0, { x: 10, y: 10 }),
+    losTestUnit('blue-mid-a', 0, { x: 20, y: 10 }),
+    losTestUnit('blue-mid-b', 0, { x: 30, y: 10 }),
+    losTestUnit('blue-red-home', 0, { x: 40, y: 10 }),
+  ];
+
+  const command = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(command.kind, 'scored');
+  assert.equal(command.scoringModel, '11e-data:Triangulation');
+  assert.equal(command.vpGained, 4);
+
+  const endBattle = { ...battle, phase: 'end' as Phase, scores: [0, 0] as [number, number] };
+  const final = scorePrimaryMission(endBattle, 0, rules40K11th);
+
+  assert.equal(final.vpGained, 10);
+});
+
+test('11th Secure Asset scores objective control clauses from mission data', () => {
+  const battle = state('command', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Secure Asset', 'Secure Asset'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }];
+  battle.objectiveOwners = [null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  battle.units = [
+    losTestUnit('blue-home', 0, { x: 10, y: 10 }),
+    losTestUnit('blue-mid', 0, { x: 20, y: 10 }),
+    losTestUnit('blue-red-home', 0, { x: 30, y: 10 }),
+  ];
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.kind, 'scored');
+  assert.equal(result.scoringModel, '11e-data:Secure Asset');
+  assert.equal(result.vpGained, 8);
+});
+
+test('11th Vital Link scores control clauses and records operation marker clauses', () => {
+  const battle = state('command', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Vital Link', 'Vital Link'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }];
+  battle.objectiveOwners = [null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  battle.units = [
+    losTestUnit('blue-mid', 0, { x: 20, y: 10 }),
+    losTestUnit('blue-red-home', 0, { x: 30, y: 10 }),
+  ];
+
+  const command = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(command.kind, 'scored');
+  assert.equal(command.scoringModel, '11e-data:Vital Link');
+  assert.equal(command.vpGained, 8);
+
+  const endTurn = { ...battle, phase: 'fight' as Phase, battleRound: 1, turn: 1, scores: [0, 0] as [number, number] };
+  const roundOne = scorePrimaryMission(endTurn, 0, rules40K11th);
+
+  assert.equal(roundOne.vpGained, 2);
+  assert.equal(roundOne.unsupportedClauses?.length, 1);
+  assert.match(formatPrimaryScoringResult(roundOne), /Maintain Control/);
+});
+
+test('11th Vanguard Operation scores opponent home control at end of battle', () => {
+  const battle = state('end', 5);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Vanguard Operation', 'Vanguard Operation'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 30, y: 10 }];
+  battle.objectiveOwners = [null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  battle.units = [losTestUnit('blue-red-home', 0, { x: 30, y: 10 })];
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.kind, 'scored');
+  assert.equal(result.scoringModel, '11e-data:Vanguard Operation');
+  assert.equal(result.vpGained, 10);
+});
+
+test('11th Delaying Action scores objective control clauses from mission data', () => {
+  const battle = state('command', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Delaying Action', 'Delaying Action'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }];
+  battle.objectiveOwners = [null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  battle.units = [
+    losTestUnit('blue-mid', 0, { x: 20, y: 10 }),
+    losTestUnit('blue-red-home', 0, { x: 30, y: 10 }),
+  ];
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.kind, 'scored');
+  assert.equal(result.scoringModel, '11e-data:Delaying Action');
+  assert.equal(result.vpGained, 10);
+});
+
+test('11th Smoke and Mirrors records decoy clauses and scores non-home objective control', () => {
+  const battle = state('fight', 5);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Smoke and Mirrors', 'Smoke and Mirrors'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }];
+  battle.objectiveOwners = [null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  battle.units = [losTestUnit('blue-mid', 0, { x: 20, y: 10 })];
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.kind, 'scored');
+  assert.equal(result.scoringModel, '11e-data:Smoke and Mirrors');
+  assert.equal(result.vpGained, 4);
+  assert.equal(result.unsupportedClauses?.length, 1);
+  assert.match(formatPrimaryScoringResult(result), /Decoy/);
+});
+
+test('11th Outmanoeuvre scores escalating objective control and opponent home clauses', () => {
+  const battle = state('fight', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Outmanoeuvre', 'Outmanoeuvre'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }];
+  battle.objectiveOwners = [null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  battle.units = [
+    losTestUnit('blue-mid', 0, { x: 20, y: 10 }),
+    losTestUnit('blue-red-home', 0, { x: 30, y: 10 }),
+  ];
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.kind, 'scored');
+  assert.equal(result.scoringModel, '11e-data:Outmanoeuvre');
+  assert.equal(result.vpGained, 15);
 });
 
 test('11th terrain objective control counts models inside the terrain area', () => {
@@ -2239,6 +2653,38 @@ test('play Shooting range respects oval and rotated square base shapes', () => {
   assert.deepEqual(playShootingWeaponOptions(battle, 'square-shooter', 0, rules40K10th)[0].targetIds, ['square-target']);
 });
 
+test('shooting applies target Stealth ability as a hit modifier', () => {
+  const battle = state('shooting');
+  battle.activeArmy = 0;
+  const shooter = losTestUnit('stealth-shooter', 0, { x: 10, y: 10 });
+  shooter.profile = {
+    ...shooter.profile,
+    name: 'Stealth Shooter',
+    weapons: [
+      { name: 'Test Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    ],
+  };
+  const target = losTestUnit('stealth-target', 1, { x: 15, y: 10 }, 6);
+  target.profile = {
+    ...target.profile,
+    name: 'Stealth Target',
+    abilities: [{ name: 'Stealth', description: 'Each time a ranged attack targets this unit, subtract 1 from the Hit roll.' }],
+  };
+  battle.units = [shooter, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.34;
+  try {
+    const shot = shootPlayUnitWeapon(battle, shooter.id, 0, target.id, 0, rules40K10th);
+    const messages = shot.log.map(entry => entry.message).join(' ');
+    assert.match(messages, /Stealth -1 to Hit/);
+    assert.match(messages, /Hit rolls \(4\+\): \[3\]/);
+    assert.equal(shot.units.find(unit => unit.id === target.id)?.pendingDamageAllocations, undefined);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('play Shooting lets the defender remove selected casualty models', () => {
   const battle = state('shooting');
   battle.activeArmy = 0;
@@ -2401,6 +2847,67 @@ test('play Shooting removes slain models before assigning a newly wounded model'
   }
 });
 
+test('damage allocation applies Feel No Pain before wounds are removed', () => {
+  const battle = state('shooting');
+  battle.activeArmy = 0;
+  const target = losTestUnit('fnp-target', 1, { x: 12, y: 10 });
+  target.profile = {
+    ...target.profile,
+    name: 'Feel No Pain Target',
+    wounds: 3,
+    abilities: [{ name: 'Feel No Pain 5+', description: 'Each time this model would lose a wound, roll one D6; on a 5+, that wound is not lost.' }],
+  };
+  target.woundsOnLeadModel = 3;
+  target.pendingDamageAllocations = [{ damage: 3, noCarryOver: true, source: 'Test Damage' }];
+  battle.units = [target];
+
+  const rolls = [0.99, 0, 0.83];
+  const originalRandom = Math.random;
+  Math.random = () => rolls.shift() ?? 0;
+  try {
+    const allocated = allocatePlayDamageToModel(battle, target.id, 1, 0);
+    const allocatedTarget = allocated.units.find(unit => unit.id === target.id)!;
+    const messages = allocated.log.map(entry => entry.message).join(' ');
+    assert.equal(allocatedTarget.remainingModels, 1);
+    assert.equal(allocatedTarget.woundedModelIndex, 0);
+    assert.equal(allocatedTarget.woundsOnLeadModel, 2);
+    assert.equal(allocatedTarget.pendingDamageAllocations, undefined);
+    assert.match(messages, /Feel No Pain \(5\+\): \[6, 1, 5\] -> 2 ignored, 1 damage remains/);
+    assert.match(messages, /allocates 1 damage to model 1 \(2W remaining\)/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('damage allocation can ignore all damage with Feel No Pain', () => {
+  const battle = state('shooting');
+  battle.activeArmy = 0;
+  const target = losTestUnit('fnp-all-target', 1, { x: 12, y: 10 });
+  target.profile = {
+    ...target.profile,
+    name: 'Full Ignore Target',
+    wounds: 2,
+    abilities: [{ name: 'Feel No Pain 4+', description: 'Ignore wounds on a 4+.' }],
+  };
+  target.woundsOnLeadModel = 2;
+  target.pendingDamageAllocations = [{ damage: 2, noCarryOver: true, source: 'Test Damage' }];
+  battle.units = [target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const allocated = allocatePlayDamageToModel(battle, target.id, 1, 0);
+    const allocatedTarget = allocated.units.find(unit => unit.id === target.id)!;
+    assert.equal(allocatedTarget.remainingModels, 1);
+    assert.equal(allocatedTarget.woundedModelIndex, undefined);
+    assert.equal(allocatedTarget.woundsOnLeadModel, 2);
+    assert.equal(allocatedTarget.pendingDamageAllocations, undefined);
+    assert.match(allocated.log.map(entry => entry.message).join(' '), /no damage gets through/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('Advanced units can shoot Assault weapons but not other ranged weapons', () => {
   const battle = state('movement');
   battle.movementStep = 'reinforcements';
@@ -2536,6 +3043,214 @@ test('Engaged units can shoot Pistols but not other ranged weapons', () => {
     assert.equal(shooting.log.some(entry => entry.message.includes('Pistol Shooter shoots')), true);
     assert.equal(shooting.log.some(entry => entry.message.includes('Bolt Pistol')), true);
     assert.equal(shooting.log.some(entry => entry.message.includes('Bolt Rifle')), false);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('Sidearms are not mixed with other ranged weapons when shooting all weapons', () => {
+  const battle = state('shooting');
+  const profile = {
+    name: 'Sidearm Squad',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Bolt Pistol', range: 12, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: ['Pistol'], isMelee: false },
+      { name: 'Bolt Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const shooter = losTestUnit('sidearm-shooter', 0, { x: 0, y: 10 });
+  shooter.profile = profile;
+  const target = losTestUnit('sidearm-target', 1, { x: 12, y: 10 }, 6);
+  target.profile = { ...profile, name: 'Target Dummy', wounds: 99, weapons: [] };
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const next = shootPlayUnitWeapon(battle, shooter.id, shooter.side, target.id, 'all', rules40K10th);
+    const messages = next.log.map(entry => entry.message).join(' ');
+    assert.match(messages, /Bolt Rifle/);
+    assert.equal(messages.includes('Bolt Pistol'), false);
+    assert.equal(next.units.find(unit => unit.id === shooter.id)?.activated, true);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('Choosing non-sidearm ranged weapons locks out sidearms for the rest of that shooting activation', () => {
+  const battle = state('shooting');
+  const profile = {
+    name: 'Two Rifle Squad',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Bolt Pistol', range: 12, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: ['Pistol'], isMelee: false },
+      { name: 'Bolt Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+      { name: 'Plasma Gun', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const shooter = losTestUnit('two-rifle-shooter', 0, { x: 0, y: 10 });
+  shooter.profile = profile;
+  const target = losTestUnit('two-rifle-target', 1, { x: 12, y: 10 }, 6);
+  target.profile = { ...profile, name: 'Target Dummy', wounds: 99, weapons: [] };
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const afterRifle = shootPlayUnitWeapon(battle, shooter.id, shooter.side, target.id, 1, rules40K10th);
+    const options = playShootingWeaponOptions(afterRifle, shooter.id, shooter.side, rules40K10th);
+    assert.equal(afterRifle.units.find(unit => unit.id === shooter.id)?.activated, false);
+    assert.deepEqual(options.map(option => option.name), ['Plasma Gun']);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('Multiple ranged weapon profiles choose only one profile when shooting all weapons', () => {
+  const battle = state('shooting');
+  const profile = {
+    name: 'Missile Squad',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Frag Missile', profileGroup: 'Missile Launcher', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+      { name: 'Krak Missile', profileGroup: 'Missile Launcher', range: 24, attacks: '1', skill: 3, strength: 8, ap: -2, damage: '2', keywords: [], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const shooter = losTestUnit('missile-shooter', 0, { x: 0, y: 10 });
+  shooter.profile = profile;
+  const target = losTestUnit('missile-target', 1, { x: 12, y: 10 }, 6);
+  target.profile = { ...profile, name: 'Target Dummy', wounds: 99, weapons: [] };
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const next = shootPlayUnitWeapon(battle, shooter.id, shooter.side, target.id, 'all', rules40K10th);
+    const messages = next.log.map(entry => entry.message).join(' ');
+    assert.match(messages, /Frag Missile/);
+    assert.equal(messages.includes('Krak Missile'), false);
+    assert.equal(next.units.find(unit => unit.id === shooter.id)?.activated, true);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('Firing one ranged weapon profile locks out its alternate profiles', () => {
+  const battle = state('shooting');
+  const profile = {
+    name: 'Profile Squad',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Frag Missile', profileGroup: 'Missile Launcher', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+      { name: 'Krak Missile', profileGroup: 'Missile Launcher', range: 24, attacks: '1', skill: 3, strength: 8, ap: -2, damage: '2', keywords: [], isMelee: false },
+      { name: 'Boltgun', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const shooter = losTestUnit('profile-shooter', 0, { x: 0, y: 10 });
+  shooter.profile = profile;
+  const target = losTestUnit('profile-target', 1, { x: 12, y: 10 }, 6);
+  target.profile = { ...profile, name: 'Target Dummy', wounds: 99, weapons: [] };
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const afterFrag = shootPlayUnitWeapon(battle, shooter.id, shooter.side, target.id, 0, rules40K10th);
+    const options = playShootingWeaponOptions(afterFrag, shooter.id, shooter.side, rules40K10th);
+    assert.equal(afterFrag.units.find(unit => unit.id === shooter.id)?.activated, false);
+    assert.deepEqual(options.map(option => option.name), ['Boltgun']);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('Selected weapon profile abilities do not affect alternate profiles', () => {
+  const battle = state('shooting');
+  const profile = {
+    name: 'Profile Ability Squad',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Plain Missile', profileGroup: 'Missile Launcher', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+      { name: 'Coverbreaker Missile', profileGroup: 'Missile Launcher', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: ['Ignores Cover'], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const shooter = losTestUnit('profile-ability-shooter', 0, { x: 0, y: 10 });
+  shooter.profile = profile;
+  const target = losTestUnit('profile-ability-target', 1, { x: 12, y: 10 }, 6);
+  target.profile = { ...profile, name: 'Target Dummy', save: 4, wounds: 99, weapons: [] };
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+  battle.terrain = [{
+    id: 'cover-1',
+    name: 'Cover',
+    x: 10,
+    y: 8,
+    width: 4,
+    height: 4,
+    type: 'area',
+    providesCover: true,
+    difficult: false,
+    color: '#555',
+    features: [],
+  }];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const next = shootPlayUnitWeapon(battle, shooter.id, shooter.side, target.id, 0, rules40K11th);
+    const messages = next.log.map(entry => entry.message).join(' ');
+    assert.match(messages, /Plain Missile/);
+    assert.match(messages, /Save rolls \(3\+, cover \+1\)/);
+    assert.equal(messages.includes('Coverbreaker Missile'), false);
   } finally {
     Math.random = originalRandom;
   }
@@ -2944,6 +3659,45 @@ test('Lone Operative units cannot be targeted from more than 12 inches away', ()
   assert.equal(shooting.log.some(entry => entry.message.includes('Rifle Squad shoots')), true);
   assert.equal(shooting.log.some(entry => entry.message.includes('Bolt Rifle: no valid targets')), true);
   assert.equal(shooting.log.some(entry => entry.message.includes('attacks vs Lone Operative Target')), false);
+});
+
+test('Lone Operative ability text blocks targeting from more than 12 inches away', () => {
+  const battle = state('movement');
+  battle.movementStep = 'reinforcements';
+  const shooterProfile = {
+    name: 'Ability Rifle Squad',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Bolt Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const targetProfile = {
+    ...shooterProfile,
+    name: 'Ability Lone Operative',
+    wounds: 99,
+    weapons: [],
+    abilities: [{ name: 'Lone Operative', description: 'Unless the attacking model is within 12 inches, this unit cannot be selected as the target of ranged attacks.' }],
+  };
+  const shooter = losTestUnit('ability-shooter', 0, { x: 0, y: 10 });
+  shooter.profile = shooterProfile;
+  const target = losTestUnit('ability-target', 1, { x: 13, y: 10 });
+  target.profile = targetProfile;
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  const shooting = simulateNextPhase(battle, rules40K10th);
+  assert.equal(shooting.phase, 'shooting');
+  assert.equal(shooting.log.some(entry => entry.message.includes('Bolt Rifle: no valid targets')), true);
+  assert.equal(shooting.log.some(entry => entry.message.includes('attacks vs Ability Lone Operative')), false);
 });
 
 test('Lone Operative units can be targeted within 12 inches', () => {
@@ -3400,6 +4154,40 @@ test('Torrent weapons automatically hit instead of rolling to hit', () => {
   } finally {
     Math.random = originalRandom;
   }
+});
+
+test('units with no ranged weapons can be selected to shoot and make no attacks', () => {
+  const battle = state('shooting');
+  const shooter = losTestUnit('Unarmed Shooter', 0, { x: 0, y: 10 });
+  const target = losTestUnit('Target Dummy', 1, { x: 12, y: 10 });
+  battle.units = [shooter, target];
+
+  const options = playShootingWeaponOptions(battle, shooter.id, shooter.side, rules40K10th);
+  assert.equal(options.length, 1);
+  assert.equal(options[0].weaponIndex, -1);
+  assert.deepEqual(options[0].targetIds, []);
+
+  const next = shootPlayUnitWeapon(battle, shooter.id, shooter.side, undefined, -1, rules40K10th);
+  const resolvedShooter = next.units.find(unit => unit.id === shooter.id);
+  assert.equal(resolvedShooter?.activated, true);
+  assert.match(next.log.at(-1)?.message ?? '', /has no ranged weapons, so it makes no attacks/);
+});
+
+test('units with no melee weapons can be selected to fight and make no attacks', () => {
+  const battle = state('fight');
+  const fighter = losTestUnit('Unarmed Fighter', 0, { x: 10, y: 10 });
+  const target = losTestUnit('Engaged Target', 1, { x: 10.8, y: 10 });
+  battle.units = [fighter, target];
+
+  const options = playFightWeaponOptions(battle, fighter.id, fighter.side, rules40K10th);
+  assert.equal(options.length, 1);
+  assert.equal(options[0].weaponIndex, -1);
+  assert.deepEqual(options[0].targetIds, [target.id]);
+
+  const next = fightPlayUnitWeapon(battle, fighter.id, fighter.side, target.id, -1, rules40K10th);
+  const resolvedFighter = next.units.find(unit => unit.id === fighter.id);
+  assert.equal(resolvedFighter?.activated, true);
+  assert.match(next.log.at(-1)?.message ?? '', /has no melee weapons, so it makes no attacks/);
 });
 
 test('Hazardous shooting destroys one normal model on a failed test', () => {
@@ -4271,6 +5059,47 @@ test('play Fight resolves selected melee weapons into a selected target', () => 
   }
 });
 
+test('Multiple melee weapon profiles choose only one profile when fighting all weapons', () => {
+  const battle = state('fight');
+  const profile = {
+    name: 'Axe Fighter',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Sweep', profileGroup: 'Power Axe', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true },
+      { name: 'Strike', profileGroup: 'Power Axe', range: 0, attacks: '1', skill: 3, strength: 8, ap: -2, damage: '2', keywords: [], isMelee: true },
+    ],
+    abilities: [],
+  };
+  const fighter = losTestUnit('axe-fighter', 0, { x: 10, y: 10 });
+  fighter.profile = profile;
+  fighter.inCombat = true;
+  const target = losTestUnit('axe-target', 1, { x: 10.8, y: 10 }, 6);
+  target.profile = { ...profile, name: 'Target Dummy', wounds: 99, weapons: [] };
+  target.woundsOnLeadModel = 99;
+  target.inCombat = true;
+  battle.units = [fighter, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const next = fightPlayUnitWeapon(battle, fighter.id, fighter.side, target.id, 'all', rules40K10th);
+    const messages = next.log.map(entry => entry.message).join(' ');
+    assert.match(messages, /Sweep/);
+    assert.equal(messages.includes('Strike'), false);
+    assert.equal(next.units.find(unit => unit.id === fighter.id)?.activated, true);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('play Fight activation options require charged units to fight first', () => {
   const battle = state('fight');
   const meleeWeapon = { name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true };
@@ -4307,6 +5136,51 @@ test('play Fight activation options require charged units to fight first', () =>
   assert.equal(playFightWeaponOptions(battle, 'normal-1', 0, rules40K10th).length, 0);
   const afterCharged = { ...battle, units: battle.units.map(unit => unit.id === 'charged-1' ? { ...unit, activated: true } : unit) };
   assert.deepEqual(playFightActivationUnitIds(afterCharged, 0, rules40K10th), ['normal-1']);
+});
+
+test('play Fight activation treats Fights First ability as fight priority', () => {
+  const battle = state('fight');
+  const meleeWeapon = { name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true };
+  const profile = {
+    name: 'Fighter',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [meleeWeapon],
+    abilities: [],
+  };
+  const charged = losTestUnit('charged-first', 0, { x: 0, y: 10 });
+  charged.profile = { ...profile, name: 'Charged Fighter' };
+  charged.charged = true;
+  charged.inCombat = true;
+  const fightsFirst = losTestUnit('ability-first', 0, { x: 0, y: 15 });
+  fightsFirst.profile = {
+    ...profile,
+    name: 'Fights First Fighter',
+    abilities: [{ name: 'Fights First', description: 'This unit fights first.' }],
+  };
+  fightsFirst.inCombat = true;
+  const normal = losTestUnit('normal-later', 0, { x: 0, y: 20 });
+  normal.profile = { ...profile, name: 'Normal Fighter' };
+  normal.inCombat = true;
+  const enemyA = losTestUnit('enemy-first-a', 1, { x: 0.9, y: 10 });
+  enemyA.profile = { ...profile, name: 'Enemy A', weapons: [] };
+  enemyA.inCombat = true;
+  const enemyB = losTestUnit('enemy-first-b', 1, { x: 0.9, y: 15 });
+  enemyB.profile = { ...profile, name: 'Enemy B', weapons: [] };
+  enemyB.inCombat = true;
+  const enemyC = losTestUnit('enemy-first-c', 1, { x: 0.9, y: 20 });
+  enemyC.profile = { ...profile, name: 'Enemy C', weapons: [] };
+  enemyC.inCombat = true;
+  battle.units = [charged, fightsFirst, normal, enemyA, enemyB, enemyC];
+
+  assert.deepEqual(playFightActivationUnitIds(battle, 0, rules40K10th), ['charged-first', 'ability-first']);
 });
 
 test('play Fight pile-in and consolidate move a selected unit once each', () => {

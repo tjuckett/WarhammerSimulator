@@ -21,6 +21,7 @@ import {
   canDeployOutsideDeploymentZone,
   deployableDrops,
   isAttachedLeaderDrop,
+  unitHasRule,
   unitMatchesAttachmentTarget,
   unitRosterId,
 } from './armyUnits';
@@ -478,6 +479,26 @@ function aliveWeaponModelCount(
   return count;
 }
 
+function weaponIsSidearm(weapon: WeaponProfile): boolean {
+  return weaponHasKeyword(weapon, 'Pistol') || weaponHasKeyword(weapon, 'Sidearm');
+}
+
+function weaponProfileGroup(weapon: WeaponProfile): string | null {
+  const group = weapon.profileGroup?.trim();
+  return group ? group.toLowerCase() : null;
+}
+
+function chooseOneProfilePerGroup<T extends { weapon: WeaponProfile }>(weapons: T[]): T[] {
+  const usedGroups = new Set<string>();
+  return weapons.filter(option => {
+    const group = weaponProfileGroup(option.weapon);
+    if (!group) return true;
+    if (usedGroups.has(group)) return false;
+    usedGroups.add(group);
+    return true;
+  });
+}
+
 
 // True if the shooter model (at fromCenter with fromRadius) has edge-to-edge LOS
 // to at least one model in the target unit.
@@ -909,6 +930,10 @@ export function applyDamage(
     return logs;
   }
 
+  const feelNoPain = applyFeelNoPain(unit, totalDamage, state);
+  logs.push(...feelNoPain.logs);
+  totalDamage = feelNoPain.damage;
+
   let remaining = totalDamage;
   let killed = 0;
   let simulatedModels = unit.remainingModels - (unit.pendingCasualties ?? 0);
@@ -1147,6 +1172,47 @@ function unitHasKeyword(unit: BattleUnit, keyword: string): boolean {
   return unit.profile.keywords.some(candidate => candidate.toLowerCase() === needle);
 }
 
+function unitHasDatasheetRule(unit: BattleUnit, ruleName: string): boolean {
+  return unitHasRule(unit.profile, ruleName);
+}
+
+function datasheetRuleText(unit: BattleUnit): string[] {
+  return [
+    ...unit.profile.keywords,
+    ...unit.profile.factionKeywords,
+    ...(unit.profile.abilities ?? []).flatMap(rule => [rule.name, rule.description]),
+    ...(unit.profile.rules ?? []).flatMap(rule => [rule.name, rule.description]),
+  ].filter(Boolean);
+}
+
+function feelNoPainTarget(unit: BattleUnit): number | null {
+  for (const text of datasheetRuleText(unit)) {
+    const match = text.match(/feel\s+no\s+pain(?:\s*\(?\s*)?([2-6])\+/i);
+    if (match) return Number(match[1]);
+  }
+  return null;
+}
+
+function applyFeelNoPain(
+  unit: BattleUnit,
+  damage: number,
+  state: BattleState,
+): { damage: number; logs: LogEntry[] } {
+  const target = feelNoPainTarget(unit);
+  if (!target || damage <= 0) return { damage, logs: [] };
+
+  const rolls = rollMultiple(damage);
+  const ignored = countSuccesses(rolls, target);
+  const remaining = Math.max(0, damage - ignored);
+  return {
+    damage: remaining,
+    logs: [log(state, unit.side, unit.profile.name,
+      `     Feel No Pain (${target}+): [${rolls.join(', ')}] -> ${ignored} ignored, ${remaining} damage remains`,
+      'roll',
+    )],
+  };
+}
+
 function unitCanUseBigGunsNeverTire(unit: BattleUnit): boolean {
   return unitHasKeyword(unit, 'Vehicle') || unitHasKeyword(unit, 'Monster');
 }
@@ -1247,6 +1313,18 @@ function eligibleShootingWeapons(unit: BattleUnit, state: BattleState, rules: Ru
   if (unit.performingAction && !unitCanUseBigGunsNeverTire(unit)) return [];
   if (unit.fellBack || unit.movementAction === 'fellBack') return [];
   const firedSet = new Set(unit.firedWeaponIndices ?? []);
+  const firedProfileGroups = new Set(
+    unit.profile.weapons
+      .filter((_weapon, weaponIndex) => firedSet.has(weaponIndex))
+      .map(weaponProfileGroup)
+      .filter((group): group is string => !!group),
+  );
+  const firedSidearm = unit.profile.weapons.some((weapon, weaponIndex) =>
+    firedSet.has(weaponIndex) && weaponIsSidearm(weapon),
+  );
+  const firedNonSidearm = unit.profile.weapons.some((weapon, weaponIndex) =>
+    firedSet.has(weaponIndex) && !weapon.isMelee && weapon.range > 0 && !weaponIsSidearm(weapon),
+  );
   const foes = enemies(state, unit.side);
   const engaged = inEngagement(unit, foes, rules.engagementRange());
   const bigGunsNeverTire = engaged && unitCanUseBigGunsNeverTire(unit);
@@ -1255,9 +1333,26 @@ function eligibleShootingWeapons(unit: BattleUnit, state: BattleState, rules: Ru
     !w.isMelee
     && w.range > 0
     && !firedSet.has(idx)
+    && !firedProfileGroups.has(weaponProfileGroup(w) ?? '')
     && (!advanced || weaponHasKeyword(w, 'Assault'))
-    && (!engaged || weaponHasKeyword(w, 'Pistol') || bigGunsNeverTire),
+    && (!engaged || weaponIsSidearm(w) || bigGunsNeverTire),
+  ).filter(w =>
+    (!firedSidearm || weaponIsSidearm(w))
+    && (!firedNonSidearm || !weaponIsSidearm(w))
   );
+}
+
+function shootingWeaponSelectionForAll(weapons: Array<{ weapon: WeaponProfile; weaponIndex: number }>): Array<{ weapon: WeaponProfile; weaponIndex: number }> {
+  const nonSidearms = weapons.filter(option => !weaponIsSidearm(option.weapon));
+  return chooseOneProfilePerGroup(nonSidearms.length ? nonSidearms : weapons);
+}
+
+function unitCanBeSelectedToShootWithoutAttacks(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean {
+  if (unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves || unit.activated) return false;
+  if (unit.performingAction && !unitCanUseBigGunsNeverTire(unit)) return false;
+  if (unit.fellBack || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return false;
+  const engaged = inEngagement(unit, enemies(state, unit.side), rules.engagementRange());
+  return !engaged || unitCanUseBigGunsNeverTire(unit);
 }
 
 function shootingWeaponCanTarget(
@@ -1277,12 +1372,12 @@ function shootingWeaponCanTarget(
 
   const targetEngagedWithFriendly = targetWithinFriendlyEngagement(state, target, unit.side, rules);
   const targetEngagedWithShooter = inEngagement(unit, [target], eng);
-  if (unitHasKeyword(target, 'Lone Operative') && battleUnitsBaseEdgeDistance(unit, target) > 12) return false;
+  if (unitHasDatasheetRule(target, 'Lone Operative') && battleUnitsBaseEdgeDistance(unit, target) > 12) return false;
   if (attachedBodyguardAlive(state, target) && !weaponHasKeyword(weapon, 'Precision')) return false;
   if (weaponHasKeyword(weapon, 'Blast') && targetEngagedWithFriendly) return false;
   if (
     targetEngagedWithFriendly
-    && !(weaponHasKeyword(weapon, 'Pistol') && targetEngagedWithShooter)
+    && !(weaponIsSidearm(weapon) && targetEngagedWithShooter)
     && !(bigGunsNeverTire && targetEngagedWithShooter)
     && !unitCanUseBigGunsNeverTire(target)
   ) return false;
@@ -1357,14 +1452,16 @@ function shootingWeaponModifiers(
   const usesSmokescreen = unitHasActiveStratagem(state, target, 'smokescreen', 'shooting');
   const cover = targetHasTerrainCoverFrom(unit.modelPositions, target, state.terrain) || usesIndirectFirePenalty || usesSmokescreen;
   const usesBigGunsPenalty = (bigGunsNeverTire || targetWithinFriendlyEngagement(state, target, unit.side, rules))
-    && !weaponHasKeyword(weapon, 'Pistol');
+    && !weaponIsSidearm(weapon);
   const usesHeavyBonus = weaponHasKeyword(weapon, 'Heavy') && unit.movementAction === 'remainedStationary';
-  const hitModifier = (usesBigGunsPenalty ? 1 : 0) + (usesHeavyBonus ? -1 : 0) + (usesIndirectFirePenalty ? 1 : 0) + (usesSmokescreen ? 1 : 0);
+  const usesStealth = unitHasDatasheetRule(target, 'Stealth');
+  const hitModifier = (usesBigGunsPenalty ? 1 : 0) + (usesHeavyBonus ? -1 : 0) + (usesIndirectFirePenalty ? 1 : 0) + (usesSmokescreen ? 1 : 0) + (usesStealth ? 1 : 0);
   const hitModifierNotes = [
     usesBigGunsPenalty ? 'Big Guns Never Tire -1 to Hit' : '',
     usesHeavyBonus ? 'Heavy +1 to Hit' : '',
     usesIndirectFirePenalty ? 'Indirect Fire -1 to Hit; target has Benefit of Cover' : '',
     usesSmokescreen ? 'Smokescreen -1 to Hit; target has Benefit of Cover' : '',
+    usesStealth ? 'Stealth -1 to Hit' : '',
   ].filter(Boolean).join('; ');
   return { cover, hitModifier, hitModifierNotes };
 }
@@ -1397,15 +1494,18 @@ function resolveShootingWeaponIntoTarget(
 }
 
 function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
-  const rangedWeapons = eligibleShootingWeapons(unit, state, rules);
+  const rangedWeapons = shootingWeaponSelectionForAll(
+    eligibleShootingWeapons(unit, state, rules)
+      .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
+      .filter(option => option.weaponIndex >= 0),
+  );
   if (!rangedWeapons.length) return [];
 
   const logs: LogEntry[] = [
     log(state, unit.side, unit.profile.name, `🔫 ${unit.profile.name} shoots:`, 'shoot'),
   ];
 
-  for (const weapon of rangedWeapons) {
-    const weaponIndex = unit.profile.weapons.indexOf(weapon);
+  for (const { weapon, weaponIndex } of rangedWeapons) {
     if (aliveWeaponModelCount(unit, weaponIndex) <= 0) continue;
     const validTargets = enemies(state, unit.side).filter(e => shootingWeaponCanTarget(state, unit, e, weapon, rules));
     if (!validTargets.length) {
@@ -1438,7 +1538,7 @@ export function playShootingWeaponOptions(
   if (state.phase !== 'shooting' || state.activeArmy !== side) return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit) return [];
-  return eligibleShootingWeapons(unit, state, rules)
+  const options = eligibleShootingWeapons(unit, state, rules)
     .map(weapon => {
       const weaponIndex = unit.profile.weapons.indexOf(weapon);
       return {
@@ -1450,6 +1550,10 @@ export function playShootingWeaponOptions(
       };
     })
     .filter(option => option.weaponIndex >= 0);
+  if (options.length === 0 && unitCanBeSelectedToShootWithoutAttacks(unit, state, rules)) {
+    return [{ weaponIndex: -1, name: 'No ranged weapons', targetIds: [] }];
+  }
+  return options;
 }
 
 export function playSnapShootingWeaponOptions(
@@ -1479,21 +1583,30 @@ export function shootPlayUnitWeapon(
   state: BattleState,
   unitId: string,
   side: Side,
-  targetUnitId: string,
+  targetUnitId: string | undefined,
   weaponIndex: number | 'all',
   rules: RulesEdition = rules40K10th,
 ): BattleState {
   if (state.phase !== 'shooting' || state.activeArmy !== side) return state;
   const s = clone(state);
   const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || unit.activated) return state;
+
+  if (weaponIndex === -1 || (weaponIndex === 'all' && !eligibleShootingWeapons(unit, s, rules).length)) {
+    if (!unitCanBeSelectedToShootWithoutAttacks(unit, s, rules) || eligibleShootingWeapons(unit, s, rules).length > 0) return state;
+    unit.activated = true;
+    s.log = [...s.log, log(s, side, unit.profile.name, `${unit.profile.name} is selected to shoot but has no ranged weapons, so it makes no attacks.`, 'shoot')];
+    return s;
+  }
+
   const target = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || !target || unit.activated) return state;
+  if (!target) return state;
 
   const eligibleWeapons = eligibleShootingWeapons(unit, s, rules)
     .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
     .filter(option => option.weaponIndex >= 0 && aliveWeaponModelCount(unit, option.weaponIndex) > 0);
   const selectedWeapons = weaponIndex === 'all'
-    ? eligibleWeapons
+    ? shootingWeaponSelectionForAll(eligibleWeapons)
     : eligibleWeapons.filter(option => option.weaponIndex === weaponIndex);
   if (!selectedWeapons.length) return state;
 
@@ -1545,7 +1658,7 @@ export function snapShootPlayUnitWeapon(
       && snapShootingWeaponCanTarget(s, unit, target, option.weapon, rules)
     );
   const selectedWeapons = weaponIndex === 'all'
-    ? eligibleWeapons
+    ? shootingWeaponSelectionForAll(eligibleWeapons)
     : eligibleWeapons.filter(option => option.weaponIndex === weaponIndex);
   if (!selectedWeapons.length) return state;
 
@@ -1808,12 +1921,15 @@ function unitCanFight(unit: BattleUnit, state: BattleState, rules: RulesEdition)
   return !unit.destroyed
     && !unit.embarkedInUnitId
     && !unit.activated
-    && unit.profile.weapons.some(weapon => weapon.isMelee)
     && enemies(state, unit.side).some(enemy => unitCanFightTarget(unit, enemy) && inEngagement(unit, [enemy], rules.engagementRange()));
 }
 
 function unitHasCounteroffensive(state: BattleState, unit: BattleUnit): boolean {
   return unitHasActiveStratagem(state, unit, 'counteroffensive', 'fight');
+}
+
+function unitHasFightsFirst(state: BattleState, unit: BattleUnit): boolean {
+  return unit.charged || unitHasCounteroffensive(state, unit) || unitHasDatasheetRule(unit, 'Fights First');
 }
 
 function sideCanSelectFightUnit(state: BattleState, side: Side): boolean {
@@ -1833,8 +1949,8 @@ export function playFightActivationUnitIds(
   }
   const counteroffensive = eligible.filter(unit => unitHasCounteroffensive(state, unit));
   if (counteroffensive.length) return counteroffensive.map(unit => unit.id);
-  const charged = eligible.filter(unit => unit.charged);
-  return (charged.length ? charged : eligible).map(unit => unit.id);
+  const fightsFirst = eligible.filter(unit => unitHasFightsFirst(state, unit));
+  return (fightsFirst.length ? fightsFirst : eligible).map(unit => unit.id);
 }
 
 function closestEnemyModelFor(
@@ -1992,10 +2108,12 @@ export function playFightWeaponOptions(
   const targetIds = enemies(state, side)
     .filter(target => unitCanFightTarget(unit, target) && inEngagement(unit, [target], rules.engagementRange()))
     .map(target => target.id);
-  return unit.profile.weapons
+  const options = unit.profile.weapons
     .map((weapon, weaponIndex) => ({ weapon, weaponIndex }))
     .filter(option => option.weapon.isMelee)
     .map(option => ({ weaponIndex: option.weaponIndex, name: option.weapon.name, targetIds }));
+  if (options.length === 0) return [{ weaponIndex: -1, name: 'No melee weapons', targetIds }];
+  return options;
 }
 
 export function fightPlayUnitWeapon(
@@ -2017,15 +2135,24 @@ export function fightPlayUnitWeapon(
   const fightingUnit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   const fightTarget = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!fightingUnit || !fightTarget) return state;
+  if (weaponIndex === -1 || (weaponIndex === 'all' && !fightingUnit.profile.weapons.some(weapon => weapon.isMelee))) {
+    if (fightingUnit.profile.weapons.some(weapon => weapon.isMelee)) return state;
+    fightingUnit.activated = true;
+    s.log = [...s.log, log(s, side, fightingUnit.profile.name, `${fightingUnit.profile.name} is selected to fight ${fightTarget.profile.name} but has no melee weapons, so it makes no attacks.`, 'fight')];
+    return s;
+  }
   const meleeWeapons = fightingUnit.profile.weapons
     .map((weapon, weaponIndex) => ({ weapon, weaponIndex }))
     .filter(option => option.weapon.isMelee && (weaponIndex === 'all' || option.weaponIndex === weaponIndex));
-  if (!meleeWeapons.length) return state;
+  const selectedMeleeWeapons = weaponIndex === 'all'
+    ? chooseOneProfilePerGroup(meleeWeapons)
+    : meleeWeapons;
+  if (!selectedMeleeWeapons.length) return state;
 
   const logs: LogEntry[] = [
     log(s, side, fightingUnit.profile.name, `${fightingUnit.profile.name} fights ${fightTarget.profile.name}:`, 'fight'),
   ];
-  for (const option of meleeWeapons) {
+  for (const option of selectedMeleeWeapons) {
     logs.push(...resolveAttacks(fightingUnit, fightTarget, option.weapon, option.weaponIndex, rules, s, false, 0, '', { deferCasualties: true }));
     if (fightingUnit.destroyed || fightTarget.destroyed) break;
   }
@@ -2040,7 +2167,11 @@ function runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): Lo
   const foes = enemies(state, unit.side).filter(e => unitCanFightTarget(unit, e) && inEngagement(unit, [e], eng));
   if (!foes.length) return [];
 
-  const meleeWeapons = unit.profile.weapons.filter(w => w.isMelee);
+  const meleeWeapons = chooseOneProfilePerGroup(
+    unit.profile.weapons
+      .map((weapon, weaponIndex) => ({ weapon, weaponIndex }))
+      .filter(option => option.weapon.isMelee),
+  );
   if (!meleeWeapons.length) return [];
 
   const target = nearest(unit, foes)!;
@@ -2048,8 +2179,7 @@ function runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): Lo
     log(state, unit.side, unit.profile.name, `🗡️  ${unit.profile.name} fights ${target.profile.name}:`, 'fight'),
   ];
 
-  for (const weapon of meleeWeapons) {
-    const weaponIndex = unit.profile.weapons.indexOf(weapon);
+  for (const { weapon, weaponIndex } of meleeWeapons) {
     if (aliveWeaponModelCount(unit, weaponIndex) <= 0) continue;
     logs.push(...resolveAttacks(unit, target, weapon, weaponIndex, rules, state, false));
   }
@@ -3849,9 +3979,22 @@ export function allocatePlayDamageToModel(
   const damage = unit.pendingDamageAllocations.shift()!;
   if (!unit.pendingDamageAllocations.length) unit.pendingDamageAllocations = undefined;
 
+  const feelNoPain = applyFeelNoPain(unit, damage.damage, s);
+  const appliedDamage = feelNoPain.damage;
+  if (appliedDamage <= 0) {
+    s.log = [...s.log, ...feelNoPain.logs, log(
+      s,
+      state.activeArmy,
+      unit.profile.name,
+      `${unit.profile.name} allocates ${damage.damage} damage to model ${modelIndex + 1}; no damage gets through.`,
+      'damage',
+    )];
+    return s;
+  }
+
   const currentWounds = unit.woundedModelIndex === modelIndex ? unit.woundsOnLeadModel : unit.profile.wounds;
-  if (damage.damage >= currentWounds) {
-    const carryOverDamage = damage.noCarryOver ? 0 : damage.damage - currentWounds;
+  if (appliedDamage >= currentWounds) {
+    const carryOverDamage = damage.noCarryOver ? 0 : appliedDamage - currentWounds;
     spliceModelIndices(unit, [modelIndex]);
     unit.remainingModels = Math.max(0, unit.remainingModels - 1);
     unit.woundedModelIndex = undefined;
@@ -3873,17 +4016,17 @@ export function allocatePlayDamageToModel(
     }
   } else {
     unit.woundedModelIndex = modelIndex;
-    unit.woundsOnLeadModel = currentWounds - damage.damage;
+    unit.woundsOnLeadModel = currentWounds - appliedDamage;
   }
 
-  s.log = [...s.log, log(
+  s.log = [...s.log, ...feelNoPain.logs, log(
     s,
     state.activeArmy,
     unit.profile.name,
-    damage.damage >= currentWounds
-      ? `${unit.profile.name} allocates ${damage.damage} damage to model ${modelIndex + 1}; model destroyed.`
-      : `${unit.profile.name} allocates ${damage.damage} damage to model ${modelIndex + 1} (${unit.woundsOnLeadModel}W remaining).`,
-    damage.damage >= currentWounds ? 'death' : 'damage',
+    appliedDamage >= currentWounds
+      ? `${unit.profile.name} allocates ${appliedDamage} damage to model ${modelIndex + 1}; model destroyed.`
+      : `${unit.profile.name} allocates ${appliedDamage} damage to model ${modelIndex + 1} (${unit.woundsOnLeadModel}W remaining).`,
+    appliedDamage >= currentWounds ? 'death' : 'damage',
   )];
   return s;
 }
@@ -4245,6 +4388,7 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
   }
 
   if (s.phase === 'command') {
+    newLogs.push(...scorePrimaryMissionLogs(s, side, rules));
     s.phase = 'movement';
     s.movementStep = 'moveUnits';
     newLogs.push(phaseLog(s, side, armyName, `\n--- Movement Phase ---`));
@@ -4306,6 +4450,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
     `\n═══ BATTLE ROUND ${battleRound(s)} — ${armyName.toUpperCase()} — ${rules.name.toUpperCase()} ═══`));
   newLogs.push(log(s, side, armyName, `Both players gain 1CP (${nextCommandPoints[0]}CP / ${nextCommandPoints[1]}CP).`, 'info'));
   newLogs.push(...runBattleshock(s, side));
+  newLogs.push(...scorePrimaryMissionLogs(s, side, rules));
 
   // Movement
   s.phase = 'movement';

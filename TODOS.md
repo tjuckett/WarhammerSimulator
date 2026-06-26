@@ -22,9 +22,14 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
 - [x] Vertical movement is implemented: model heights, vertical movement allowance, vertical coherency, vertical engagement, and vertical range.
 - [x] Movement coherency policy is implemented: temporary incoherency during movement is allowed, but Movement phase cannot advance until active-army units are coherent.
 - [x] Shooting, charge, and fight phase mechanics are implemented mostly through shared 10th-compatible behavior.
+- [x] 11th Core 04.01.01 Models Without Ranged/Melee Weapons: units can be selected to shoot/fight with no matching weapons, resolve no attacks, and count as activated.
+- [x] 11th Core 04.01.02 Sidearms: sidearm/Pistol weapons can be selected separately, but cannot be mixed with other ranged weapons during the same shooting activation.
+- [x] 11th Core 04.01.03 Multiple Weapon Profiles: weapon data can mark alternate profiles with `profileGroup`; shooting/fighting resolves only one profile per group.
+- [x] 11th Core 04.01.04 Attack Characteristics and Abilities: attacks resolve from the selected weapon/profile only, with weapon-scoped modifiers and abilities staying on that attack sequence.
 - [x] Damage allocation was reset to defender-choice flow: remove destroyed models first, assign remaining wounds, damaged models must keep taking damage until destroyed, and non-mortal damage does not spill over.
 - [x] Shooting LOS/range target UI supports visible, out-of-range, and no-ranged-weapon target states.
 - [x] AI-prep data helpers exist: legal action generation and battle observation summaries.
+- [x] Imported datasheet abilities/rules can affect core passive rules for Stealth shooting modifiers, Fights First fight priority, Feel No Pain damage prevention, Lone Operative targeting, and stratagem keyword restrictions.
 
 ### Manual Data Work
 - [ ] Finish manually transcribing the 45 11th Event Companion terrain layouts.
@@ -37,43 +42,63 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
 - [x] Create a mission scoring definition table keyed by 11th primary mission name.
 - [x] Stop known 11th primary missions from awarding generic fallback VP while scoring text is missing.
 - [x] Show an unsupported-scoring warning during manual play when a known 11th primary mission has no transcribed scoring text.
-- [ ] Find or transcribe source text for all 24 unique 11th primary missions.
-- [ ] Implement exact scoring for all 24 unique 11th primary missions once source text is available.
+- [x] Transcribe and add data-driven scoring for the five Take and Hold 11th primary missions: Battlefield Dominance, Determined Acquisition, Immovable Object, Inescapable Dominion, and Purge and Secure.
+- [x] Transcribe and add data-driven scoring for the five Purge the Foe 11th primary missions: Consecrate, Destroyer's Wrath, Meatgrinder, Punishment, and Unstoppable Force.
+- [x] Transcribe and add data-driven scoring for the five Reconnaissance 11th primary missions: Gather Intel, Reconnaissance Sweep, Search and Scour, Surveil the Foe, and Triangulation.
+- [x] Transcribe and add data-driven scoring for the five Priority Assets 11th primary missions: Extract Relic, Sabotage, Secure Asset, Vanguard Operation, and Vital Link.
+- [x] Transcribe and add data-driven scoring for the five Disruption 11th primary missions: Death Trap, Delaying Action, Locate and Deny, Outmanoeuvre, and Smoke and Mirrors.
+- [ ] Add state tracking for unsupported mission event clauses: objectives controlled at start of turn, destroyed enemy units this turn, objective proximity at turn start / kill source, terrain-area occupancy at turn start, table-quarter occupancy, operation markers, objective actions, consecrated/triangulated/surveilled/extracted/sensor sweep/sabotage/secure asset/vanguard/booby trap/decoy markers, territory geometry, expansion objective roles, and condemned enemy units leaving the battlefield.
+- [x] Find or transcribe source text for all 25 unique 11th primary missions.
+- [ ] Implement exact scoring for all 25 unique 11th primary missions once source text is available. All mission texts are transcribed; event clauses need the state tracking above.
 - [ ] Add tests for every implemented 11th primary mission scoring rule.
 - [ ] Update primary scoring logs/UI so they explain why each player scored VP for their own mission.
+- [x] Create a secondary mission definition table keyed by 11th secondary mission name.
+- [x] Transcribe and add data-driven definitions for the first five secondary missions: A Grievous Blow, A Tempting Target, Assassination, Beacon, and Behind Enemy Lines.
+- [x] Transcribe and add data-driven definitions for the second five secondary missions: Bring It Down, Burden of Trust, Centre Ground, Cleanse, and Defend Stronghold.
+- [x] Transcribe and add data-driven definitions for the third five secondary missions: Display of Might, Engage on All Fronts, Forward Position, No Prisoners, and Outflank.
+- [x] Transcribe and add data-driven definitions for the final three secondary missions: Overwhelming Force, Plunder, and Secure No Man's Land.
+- [x] Find or transcribe source text for all 18 11th secondary missions.
+- [ ] Add secondary mission state tracking: active fixed/tactical cards, when-drawn selections, tempting target objective, beacon unit, guarded objective/unit selections, destroyed-unit/model events, character destruction, starting strength, wounds characteristic, cleanse/plunder action state, centre proximity, table-quarter presence, battlefield-edge proximity, no-man's-land/territory/deployment-zone geometry, expansion objective roles, start-of-turn objective proximity, terrain-area action markers, and whole-unit containment.
+- [ ] Implement automatic scoring for 11th secondary missions once the required state tracking exists.
 - [ ] Audit each 11th core stratagem against final wording once the final 11th rules are available.
-- [ ] Implement any missing 11th-specific effect for Command Re-roll. It is currently framework-level, not a concrete reroll prompt/resolution.
+- [x] Implement Command Re-roll pending reroll/resolution support. UI can now wire a prompt to `resolveCommandReroll`; current support records the pending token, rerolls matching dice, logs the result, and supports practice replay.
 - [x] Implement Rapid Ingress resolution flow: target validation marks a non-Aircraft Strategic Reserve unit so it can be placed during the opponent Movement/Reinforcements step.
 - [x] Implement Heroic Intervention resolution flow: target validation marks an eligible defender so it can declare and resolve a Heroic Intervention charge during the opponent Charge phase.
-- [ ] Audit shared 10th-compatible movement, shooting, charge, fight, Battle-shock, objective control, reserves, transports, terrain, aircraft, and vertical rules for final 11th wording differences.
+- [x] Start stratagem UI cleanup: Tactics panel now shows direct stratagem action buttons and pending follow-up labels for Command Re-roll, Rapid Ingress, and Heroic Intervention.
+- [x] Add simple Command Re-roll UI resolution: pending reroll accepts original D6 values, resolves through core rules, logs the new roll, and records practice replay.
+- [x] Create 11th core audit from available local preview/event-companion sources. See `rules/11th-core-rules-audit.md`.
+- [ ] Add the final full 11th Edition core rules source to `rules/` when available.
+- [ ] Re-audit shared 10th-compatible movement, shooting, charge, fight, Battle-shock, objective control, reserves, transports, terrain, aircraft, and vertical rules against the final full 11th wording.
 - [ ] Remove or narrow the 11th preview notice once final 11th rules are fully modeled.
 - [ ] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.
+- [ ] Continue datasheet/character ability support beyond the first passive hooks: Leader aura/attached-unit modifiers, Precision interactions beyond targeting, and faction-specific abilities as source text/data becomes available.
 
 ### 11th Primary Missions To Implement
-- [ ] Battlefield Dominance
-- [ ] Consecrate
-- [ ] Death Trap
-- [ ] Delaying Action
-- [ ] Determined Acquisition
-- [ ] Destroyer's Wrath
-- [ ] Extract Relic
-- [ ] Gather Intel
-- [ ] Immovable Object
-- [ ] Inescapable Dominion
-- [ ] Locate and Deny
-- [ ] Meatgrinder
-- [ ] Outmanoeuvre
-- [ ] Punishment
-- [ ] Purge and Secure
-- [ ] Reconnaissance Sweep
-- [ ] Sabotage
-- [ ] Search and Scour
-- [ ] Secure Asset
-- [ ] Smoke and Mirrors
-- [ ] Surveil the Foe
-- [ ] Triangulation
-- [ ] Unstoppable Force
-- [ ] Vanguard Operation
+- [x] Battlefield Dominance
+- [x] Consecrate
+- [x] Death Trap
+- [x] Delaying Action
+- [x] Determined Acquisition
+- [x] Destroyer's Wrath
+- [x] Extract Relic
+- [x] Gather Intel
+- [x] Immovable Object
+- [x] Inescapable Dominion
+- [x] Locate and Deny
+- [x] Meatgrinder
+- [x] Outmanoeuvre
+- [x] Punishment
+- [x] Purge and Secure
+- [x] Reconnaissance Sweep
+- [x] Sabotage
+- [x] Search and Scour
+- [x] Secure Asset
+- [x] Smoke and Mirrors
+- [x] Surveil the Foe
+- [x] Triangulation
+- [x] Unstoppable Force
+- [x] Vanguard Operation
+- [x] Vital Link
 
 ## Current Rules Handoff - 2026-06-12
 
@@ -190,7 +215,7 @@ The current runtime now has both terrain mats and terrain features. Continue sou
   - Waaagh! (Orks): one-use buff to charge/fight
 - [x] **Assault keyword** - Advanced units can shoot Assault weapons but not other ranged weapons.
 - [ ] **11th edition rules** — stub in place, fill in when the core rulebook drops (update `rulesEngine.ts → rules40K11th`)
-- [ ] **Secondary objectives** — fixed/tactical secondaries on top of primary VP
+- [ ] **Secondary objectives** — fixed/tactical secondary definitions have started; scoring still needs active-card state and event/geometry tracking.
 - [ ] **Morale/flee** — units that fail battle-shock should have a chance to flee (lose models), not just lose OC
 - [ ] **Stratagems / command points** — basic CP economy and a few key stratagems per faction
 - [ ] **Better AI movement** — units should consider objective control in their movement decisions (not just rush nearest enemy)

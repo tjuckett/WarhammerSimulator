@@ -98,6 +98,8 @@ function actionLabel(action: GameAction): string {
       return 'Play phase';
     case 'play.useStratagem':
       return 'Use stratagem';
+    case 'play.resolveCommandReroll':
+      return 'Command Re-roll';
     case 'play.useUnitAbility':
       return 'Use ability';
     case 'simulation.placeNextUnit':

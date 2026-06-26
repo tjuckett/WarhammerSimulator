@@ -179,6 +179,13 @@ export interface BattleState {
   scores: [number, number];
   commandPoints?: [number, number];
   stratagemUses?: StratagemUse[];
+  pendingCommandReroll?: {
+    side: Side;
+    stratagemUseId: string;
+    phase: Phase;
+    battleRound?: number;
+    targetUnitId?: string;
+  };
   abilityUses?: UnitAbilityUse[];
   // Deployment phase: units not yet placed on the board
   unplacedUnits: [UnitProfile[], UnitProfile[]];

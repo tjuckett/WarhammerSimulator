@@ -8,6 +8,7 @@ import { hasLOSEdgeToEdge } from './terrainGeometry';
 import { battleUnitMaxBaseRadiusInches } from './baseSizes';
 import { applyDamage, battleUnitsBaseEdgeDistance } from './simulator';
 import type { RulesEdition } from './rulesEngine';
+import { unitHasRule } from './armyUnits';
 
 let _stratagemUseId = 0;
 
@@ -59,11 +60,18 @@ function appendStratagemEffectLog(
 }
 
 function unitHasKeyword(unit: BattleUnit, keyword: string): boolean {
-  return unit.profile.keywords.some(candidate => candidate.toLowerCase() === keyword.toLowerCase());
+  return unitHasRule(unit.profile, keyword);
 }
 
 function unitHasAnyKeyword(unit: BattleUnit, keywords: string[]): boolean {
   return keywords.some(keyword => unitHasKeyword(unit, keyword));
+}
+
+function weaponIsSidearm(weapon: BattleUnit['profile']['weapons'][number]): boolean {
+  return weapon.keywords.some(keyword => {
+    const normalized = keyword.toLowerCase();
+    return normalized.startsWith('pistol') || normalized.startsWith('sidearm');
+  });
 }
 
 function enemies(state: BattleState, side: Side): BattleUnit[] {
@@ -109,11 +117,14 @@ function unitEligibleToShoot(state: BattleState, unit: BattleUnit, rules: RulesE
   const advanced = unit.movementAction === 'advanced';
   const engaged = unitIsEngaged(state, unit, rules);
   const monsterOrVehicle = unitHasAnyKeyword(unit, ['Monster', 'Vehicle']);
+  if (!unit.profile.weapons.some(weapon => !weapon.isMelee && weapon.range > 0)) {
+    return !advanced && (!engaged || monsterOrVehicle);
+  }
   return unit.profile.weapons.some(weapon =>
     !weapon.isMelee
     && weapon.range > 0
     && (!advanced || weapon.keywords.some(keyword => keyword.toLowerCase().startsWith('assault')))
-    && (!engaged || monsterOrVehicle || weapon.keywords.some(keyword => keyword.toLowerCase().startsWith('pistol')))
+    && (!engaged || monsterOrVehicle || weaponIsSidearm(weapon))
   );
 }
 
@@ -212,6 +223,59 @@ function applyHeroicInterventionStratagemEffect(
 
   unit.heroicInterventionThisPhase = true;
   appendStratagemEffectLog(state, side, unit.profile.name, `${unit.profile.name} can declare a Heroic Intervention charge this phase.`, 'info');
+}
+
+function rollDie(sides: number): number {
+  return Math.floor(Math.random() * sides) + 1;
+}
+
+function applyCommandRerollStratagemEffect(
+  state: BattleState,
+  side: Side,
+  use: StratagemUse,
+): void {
+  if (use.stratagemId !== 'command-reroll') return;
+  state.pendingCommandReroll = {
+    side,
+    stratagemUseId: use.id,
+    phase: state.phase,
+    battleRound: battleRound(state),
+    targetUnitId: use.targetUnitId,
+  };
+}
+
+export function resolveCommandReroll(
+  state: BattleState,
+  side: Side,
+  originalRolls: number[],
+  options: { sides?: number; label?: string } = {},
+): BattleState {
+  const pending = state.pendingCommandReroll;
+  const sides = options.sides ?? 6;
+  if (
+    !pending
+    || pending.side !== side
+    || pending.phase !== state.phase
+    || pending.battleRound !== battleRound(state)
+    || originalRolls.length === 0
+    || sides < 2
+  ) return state;
+
+  const next: BattleState = JSON.parse(JSON.stringify(state));
+  const rerolls = originalRolls.map(() => rollDie(sides));
+  next.pendingCommandReroll = undefined;
+  const label = options.label ?? 'roll';
+  next.log = [...next.log, {
+    id: nextLogId(next, 'command-reroll'),
+    battleRound: battleRound(next),
+    turn: battleRound(next),
+    phase: next.phase,
+    side,
+    unitName: next.armies[side].name,
+    message: `Command Re-roll ${label}: [${originalRolls.join(', ')}] -> [${rerolls.join(', ')}].`,
+    type: 'roll',
+  }];
+  return next;
 }
 
 function applyMortalWoundStratagemEffect(
@@ -345,6 +409,7 @@ export function useStratagem(
     message: `${next.armies[side].name} uses ${stratagem.name} for ${stratagem.cost}CP.`,
     type: 'info',
   }];
+  applyCommandRerollStratagemEffect(next, side, use);
   applyInsaneBraveryStratagemEffect(next, side, stratagem, targetUnitId);
   applyRapidIngressStratagemEffect(next, side, stratagem, targetUnitId);
   applyHeroicInterventionStratagemEffect(next, side, stratagem, targetUnitId);

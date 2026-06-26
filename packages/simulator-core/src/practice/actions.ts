@@ -3,7 +3,7 @@ import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
 import { scorePrimaryMission } from '../engine/missionScoring';
-import { useStratagem } from '../engine/stratagems';
+import { resolveCommandReroll, useStratagem } from '../engine/stratagems';
 import { useUnitAbility } from '../engine/unitAbilities';
 import type { AbilityTiming } from '../types/ability';
 import {
@@ -202,6 +202,13 @@ export type GameAction =
       targetUnitId?: string;
     })
   | (GameActionBase & {
+      type: 'play.resolveCommandReroll';
+      side: Side;
+      originalRolls: number[];
+      sides?: number;
+      label?: string;
+    })
+  | (GameActionBase & {
       type: 'play.useUnitAbility';
       side: Side;
       unitId: string;
@@ -269,6 +276,9 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   const phaseBeforeStep = next.phase;
   const scoringSide = next.activeArmy;
   const currentIndex = PLAY_TURN_PHASES.indexOf(next.phase);
+  if (phaseBeforeStep === 'command') {
+    scorePrimaryMission(next, scoringSide, rules);
+  }
   if (phaseBeforeStep === 'fight') {
     completeEndOfTurnActions(next, scoringSide);
     scorePrimaryMission(next, scoringSide, rules);
@@ -450,6 +460,12 @@ export function applyGameAction(
 
     case 'play.useStratagem':
       return useStratagem(state, normalizedAction.side, normalizedAction.stratagemId, context.rules, normalizedAction.targetUnitId);
+
+    case 'play.resolveCommandReroll':
+      return resolveCommandReroll(state, normalizedAction.side, normalizedAction.originalRolls, {
+        sides: normalizedAction.sides,
+        label: normalizedAction.label,
+      });
 
     case 'play.useUnitAbility':
       return useUnitAbility(

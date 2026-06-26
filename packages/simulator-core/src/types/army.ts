@@ -1,5 +1,6 @@
 export interface WeaponProfile {
   name: string;
+  profileGroup?: string; // alternate profiles for the same physical weapon; choose one profile per attack sequence
   range: number;       // inches; 0 = melee
   attacks: string;     // "2", "D6", "2D3+1"
   skill: number;       // target number (3 = 3+, 4 = 4+, etc.)
