@@ -482,6 +482,194 @@ test('11th Fire Overwatch is only available in the opponent Movement phase', () 
   assert.equal(used.stratagemUses?.at(-1)?.side, 1);
 });
 
+test('11th battle round flow starts player turns at Command and advances rounds after both players', () => {
+  const battle = state('setup', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.commandPoints = [0, 0];
+  battle.units = [
+    losTestUnit('blue-1', 0, { x: 10, y: 10 }),
+    losTestUnit('red-1', 1, { x: 30, y: 10 }),
+  ];
+
+  const blueCommand = simulateNextPhase(battle, rules40K11th);
+  assert.equal(blueCommand.phase, 'command');
+  assert.equal(blueCommand.activeArmy, 0);
+  assert.equal(blueCommand.battleRound, 1);
+  assert.equal(blueCommand.turn, 1);
+  assert.deepEqual(blueCommand.commandPoints, [1, 1]);
+
+  const blueTurnEnd = { ...blueCommand, phase: 'fight' as Phase, scores: [0, 0] as [number, number] };
+  const redSetup = simulateNextPhase(blueTurnEnd, rules40K11th);
+  assert.equal(redSetup.phase, 'setup');
+  assert.equal(redSetup.activeArmy, 1);
+  assert.equal(redSetup.battleRound, 1);
+  assert.equal(redSetup.turn, 1);
+
+  const redTurnEnd = { ...redSetup, phase: 'fight' as Phase, scores: [0, 0] as [number, number] };
+  const nextRound = simulateNextPhase(redTurnEnd, rules40K11th);
+  assert.equal(nextRound.phase, 'setup');
+  assert.equal(nextRound.activeArmy, 0);
+  assert.equal(nextRound.battleRound, 2);
+  assert.equal(nextRound.turn, 2);
+});
+
+test('11th command phase grants core CP and resets active player turn state', () => {
+  const battle = state('setup', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.commandPoints = [2, 5];
+  const blue = losTestUnit('blue-1', 0, { x: 10, y: 10 });
+  blue.activated = true;
+  blue.charged = true;
+  blue.piledIn = true;
+  blue.consolidated = true;
+  blue.firedWeaponIndices = [0];
+  blue.movementAction = 'normalMove';
+  blue.movementComplete = true;
+  blue.arrivedFromReinforcements = true;
+  blue.rapidIngressThisPhase = true;
+  blue.heroicInterventionThisPhase = true;
+  blue.emergencyDisembarkedThisTurn = true;
+  blue.fellBack = true;
+  blue.inCombat = true;
+  blue.actionStartedThisTurn = true;
+  const red = losTestUnit('red-1', 1, { x: 30, y: 10 });
+  red.activated = true;
+  battle.units = [blue, red];
+
+  const command = simulateNextPhase(battle, rules40K11th);
+  const resetBlue = command.units.find(unit => unit.id === blue.id)!;
+  const waitingRed = command.units.find(unit => unit.id === red.id)!;
+
+  assert.equal(command.phase, 'command');
+  assert.equal(command.movementStep, undefined);
+  assert.deepEqual(command.commandPoints, [3, 6]);
+  assert.equal(resetBlue.activated, false);
+  assert.equal(resetBlue.charged, false);
+  assert.equal(resetBlue.piledIn, undefined);
+  assert.equal(resetBlue.consolidated, undefined);
+  assert.equal(resetBlue.firedWeaponIndices, undefined);
+  assert.equal(resetBlue.movementAction, undefined);
+  assert.equal(resetBlue.movementComplete, undefined);
+  assert.equal(resetBlue.arrivedFromReinforcements, undefined);
+  assert.equal(resetBlue.rapidIngressThisPhase, undefined);
+  assert.equal(resetBlue.heroicInterventionThisPhase, undefined);
+  assert.equal(resetBlue.emergencyDisembarkedThisTurn, undefined);
+  assert.equal(resetBlue.fellBack, false);
+  assert.equal(resetBlue.inCombat, false);
+  assert.equal(resetBlue.actionStartedThisTurn, undefined);
+  assert.equal(waitingRed.activated, true);
+});
+
+test('11th battle-shock step tests damaged active units and clears healthy units', () => {
+  const battle = state('setup', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const failing = losTestUnit('failing', 0, { x: 10, y: 10 });
+  failing.profile.wounds = 4;
+  failing.woundsOnLeadModel = 1;
+  const passing = losTestUnit('passing', 0, { x: 12, y: 10 });
+  passing.profile.wounds = 4;
+  passing.woundsOnLeadModel = 1;
+  const healthy = losTestUnit('healthy', 0, { x: 14, y: 10 });
+  healthy.battleshocked = true;
+  battle.units = [failing, passing, healthy];
+
+  const originalRandom = Math.random;
+  const rolls = [0, 0, 0.99, 0.99];
+  Math.random = () => rolls.shift() ?? 0.99;
+  try {
+    const command = simulateNextPhase(battle, rules40K11th);
+
+    assert.equal(command.units.find(unit => unit.id === failing.id)?.battleshocked, true);
+    assert.equal(command.units.find(unit => unit.id === passing.id)?.battleshocked, false);
+    assert.equal(command.units.find(unit => unit.id === healthy.id)?.battleshocked, false);
+    assert.equal(command.log.filter(entry => entry.message.includes('Battle-shock')).length, 2);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('11th command abilities are only exposed during the Command phase', () => {
+  const command = state('command');
+  command.ruleset = rulesetMetadataForState(rules40K11th);
+  const captain = losTestUnit('captain', 0, { x: 10, y: 10 });
+  captain.profile.abilities = [{ name: 'Command Vox', description: 'Command ability.' }];
+  command.units = [captain];
+  const rules = {
+    ...rules40K11th,
+    unitAbilities: [{
+      id: 'command-vox',
+      name: 'Command Vox',
+      timing: 'command-phase' as const,
+      target: 'self' as const,
+      oncePerTurn: true,
+      description: 'Test command phase ability.',
+    }],
+  };
+
+  assert.deepEqual(availableUnitAbilities(command, captain.id, 0, 'command-phase', rules).map(option => option.id), ['command-vox']);
+
+  const used = useUnitAbility(command, captain.id, 0, 'command-vox', 'command-phase', rules);
+  assert.equal(used.abilityUses?.at(-1)?.phase, 'command');
+  assert.deepEqual(availableUnitAbilities(used, captain.id, 0, 'command-phase', rules), []);
+
+  const movement = { ...command, phase: 'movement' as Phase };
+  assert.deepEqual(availableUnitAbilities(movement, captain.id, 0, 'command-phase', rules), []);
+});
+
+test('11th battle round flow ends the battle after the second player turn of the final round', () => {
+  const battle = state('fight', 5);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.activeArmy = 1;
+  battle.scores = [12, 8];
+  battle.units = [
+    losTestUnit('blue-1', 0, { x: 10, y: 10 }),
+    losTestUnit('red-1', 1, { x: 30, y: 10 }),
+  ];
+
+  const ended = simulateNextPhase(battle, rules40K11th);
+
+  assert.equal(ended.phase, 'end');
+  assert.equal(ended.activeArmy, 0);
+  assert.equal(ended.battleRound, 6);
+  assert.equal(ended.winner, 0);
+});
+
+test('11th out-of-phase snap shooting does not consume normal shooting-phase weapon state', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.activeArmy = 0;
+  battle.commandPoints = [1, 1];
+  const overwatcher = losTestUnit('overwatcher', 1, { x: 10, y: 10 });
+  overwatcher.profile.weapons = [
+    { name: 'Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+  ];
+  const target = losTestUnit('target', 0, { x: 18, y: 10 });
+  target.profile.wounds = 10;
+  target.woundsOnLeadModel = 10;
+  battle.units = [target, overwatcher];
+
+  const used = useStratagem(battle, 1, 'fire-overwatch', rules40K11th, overwatcher.id);
+  const snapped = snapShootPlayUnitWeapon(used, overwatcher.id, 1, target.id, 'all', rules40K11th);
+  const snappedUnit = snapped.units.find(unit => unit.id === overwatcher.id)!;
+
+  assert.equal(snappedUnit.activated, true);
+  assert.equal(snappedUnit.actionStartedThisTurn, true);
+  assert.equal(snappedUnit.firedWeaponIndices, undefined);
+
+  const reinforcements = simulateNextPhase(snapped, rules40K11th);
+  const shooting = simulateNextPhase(reinforcements, rules40K11th);
+  const charge = simulateNextPhase(shooting, rules40K11th);
+  const fight = simulateNextPhase(charge, rules40K11th);
+  const redSetup = simulateNextPhase(fight, rules40K11th);
+  const redCommand = simulateNextPhase(redSetup, rules40K11th);
+  const resetUnit = redCommand.units.find(unit => unit.id === overwatcher.id)!;
+
+  assert.equal(redCommand.activeArmy, 1);
+  assert.equal(redCommand.phase, 'command');
+  assert.equal(resetUnit.activated, false);
+  assert.equal(resetUnit.actionStartedThisTurn, undefined);
+});
+
 test('11th core stratagems enforce target keyword and reserve restrictions', () => {
   const fight = state('fight');
   fight.commandPoints = [3, 0];
@@ -1277,6 +1465,28 @@ test('play Fall Back moves an engaged active unit out of Engagement Range', () =
   assert.ok(moved.position.x < unit.position.x);
   assert.ok(Math.hypot(moved.position.x - foe.position.x, moved.position.y - foe.position.y) > rules40K10th.engagementRange());
   assert.match(next.log.at(-1)?.message ?? '', /Falls Back/);
+});
+
+test('11th Movement mode choices depend on Engagement Range', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const unengaged = losTestUnit('unengaged', 0, { x: 5, y: 5 });
+  const engaged = losTestUnit('engaged', 0, { x: 10, y: 10 });
+  const enemy = losTestUnit('enemy', 1, { x: 10.5, y: 10 });
+  battle.units = [unengaged, engaged, enemy];
+
+  assert.equal(playUnitCanAdvance(battle, unengaged.id, 0, rules40K11th), true);
+  assert.equal(playUnitCanFallBack(battle, unengaged.id, 0, rules40K11th), false);
+  assert.equal(movePlayModels(battle, unengaged.id, 0, [0], 1, 0).units.find(unit => unit.id === unengaged.id)?.movementAction, 'normalMove');
+
+  assert.equal(playUnitCanAdvance(battle, engaged.id, 0, rules40K11th), false);
+  assert.equal(movePlayModels(battle, engaged.id, 0, [0], 1, 0).units.find(unit => unit.id === engaged.id)?.position.x, engaged.position.x);
+  assert.equal(playUnitCanFallBack(battle, engaged.id, 0, rules40K11th), true);
+
+  markRemainingStationaryUnits(battle, 0);
+  const stationary = battle.units.find(unit => unit.id === engaged.id)!;
+  assert.equal(stationary.movementAction, 'remainedStationary');
+  assert.equal(stationary.movementComplete, true);
 });
 
 test('play Fall Back makes crossing models take Desperate Escape tests', () => {
@@ -2505,6 +2715,80 @@ test('play Shooting resolves a selected weapon into a selected target', () => {
   }
 });
 
+test('11th Shooting phase exposes weapons only during the active player Shoot step and advances to Charge', () => {
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const shooter = losTestUnit('shooter', 0, { x: 0, y: 10 });
+  shooter.profile.weapons = [
+    { name: 'Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+  ];
+  const target = losTestUnit('target', 1, { x: 12, y: 10 });
+  battle.units = [shooter, target];
+
+  assert.equal(playShootingWeaponOptions(battle, shooter.id, 0, rules40K11th).length, 1);
+  assert.deepEqual(playShootingWeaponOptions({ ...battle, activeArmy: 1 }, shooter.id, 0, rules40K11th), []);
+  assert.deepEqual(playShootingWeaponOptions({ ...battle, phase: 'movement' }, shooter.id, 0, rules40K11th), []);
+
+  const charge = simulateNextPhase(battle, rules40K11th);
+  assert.equal(charge.phase, 'charge');
+  assert.equal(charge.movementStep, undefined);
+});
+
+test('wound rolls use the highest toughness in a mixed-profile target unit', () => {
+  const battle = state('shooting');
+  battle.activeArmy = 0;
+  const shooterProfile = {
+    name: 'Mixed Toughness Shooter',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Strength Eight Rifle', range: 24, attacks: '1', skill: 3, strength: 8, ap: -10, damage: '1', keywords: [], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const targetProfile = {
+    ...shooterProfile,
+    name: 'Mixed Toughness Target',
+    toughness: 4,
+    save: 6,
+    wounds: 3,
+    baseModelCount: 2,
+    modelProfiles: [
+      { name: 'Guard', count: 1, move: 6, toughness: 4, save: 6, wounds: 3, leadership: 7, oc: 1 },
+      { name: 'Brute', count: 1, move: 6, toughness: 8, save: 6, wounds: 3, leadership: 7, oc: 1 },
+    ],
+    weapons: [],
+  };
+  const shooter = losTestUnit('shooter-1', 0, { x: 0, y: 10 });
+  shooter.profile = shooterProfile;
+  const target = losTestUnit('target-1', 1, { x: 12, y: 10 });
+  target.profile = targetProfile;
+  target.remainingModels = 2;
+  target.woundsOnLeadModel = 3;
+  target.modelPositions = [{ x: 12, y: 10 }, { x: 12, y: 11 }];
+  battle.units = [shooter, target];
+
+  const rolls = [0.5, 0.4];
+  const originalRandom = Math.random;
+  Math.random = () => rolls.shift() ?? 0;
+  try {
+    const shot = shootPlayUnitWeapon(battle, 'shooter-1', 0, 'target-1', 0, rules40K11th);
+    const shotTarget = shot.units.find(unit => unit.id === 'target-1')!;
+    const messages = shot.log.map(entry => entry.message).join(' ');
+    assert.equal(shotTarget.pendingDamageAllocations, undefined);
+    assert.match(messages, /\[combat-stats\].*t=8/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('play Shooting measures weapon range base edge to base edge', () => {
   const battle = state('shooting');
   battle.activeArmy = 0;
@@ -3251,6 +3535,53 @@ test('Selected weapon profile abilities do not affect alternate profiles', () =>
     assert.match(messages, /Plain Missile/);
     assert.match(messages, /Save rolls \(3\+, cover \+1\)/);
     assert.equal(messages.includes('Coverbreaker Missile'), false);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('Selected ranged target only resolves weapons that can still attack that target', () => {
+  const battle = state('shooting');
+  const profile = {
+    name: 'Split Range Squad',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Short Blaster', range: 12, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+      { name: 'Long Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const shooter = losTestUnit('split-range-shooter', 0, { x: 0, y: 10 });
+  shooter.profile = profile;
+  const target = losTestUnit('split-range-target', 1, { x: 20, y: 10 }, 7);
+  target.profile = { ...profile, name: 'Far Target', save: 7, wounds: 99, weapons: [] };
+  target.woundsOnLeadModel = 99;
+  const nearTarget = losTestUnit('split-range-near-target', 1, { x: 8, y: 10 }, 7);
+  nearTarget.profile = { ...profile, name: 'Near Target', save: 7, wounds: 99, weapons: [] };
+  nearTarget.woundsOnLeadModel = 99;
+  battle.units = [shooter, target, nearTarget];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const next = shootPlayUnitWeapon(battle, shooter.id, shooter.side, target.id, 'all', rules40K11th);
+    const messages = next.log.map(entry => entry.message).join(' ');
+    const nextShooter = next.units.find(unit => unit.id === shooter.id)!;
+    assert.match(messages, /Long Rifle/);
+    assert.match(messages, /Short Blaster: Far Target is not a valid target/);
+    assert.equal(nextShooter.activated, false);
+    assert.deepEqual(nextShooter.firedWeaponIndices, [1]);
+    assert.deepEqual(playShootingWeaponOptions(next, shooter.id, shooter.side, rules40K11th), [
+      { weaponIndex: 0, name: 'Short Blaster', targetIds: [nearTarget.id] },
+    ]);
   } finally {
     Math.random = originalRandom;
   }
@@ -4329,6 +4660,124 @@ test('Hazardous Vehicle shooting takes 3 damage on a failed test', () => {
   }
 });
 
+test('Hazardous ranged tests only models that could attack the visible target', () => {
+  const battle = state('shooting');
+  battle.activeArmy = 0;
+  battle.terrain = [
+    terrainMat({
+      type: 'obstacle',
+      x: 5,
+      y: 9.8,
+      width: 2,
+      height: 2.8,
+      providesCover: false,
+      features: [{ id: 'wall-1', name: 'Wall', x: 5, y: 9.8, width: 2, height: 2.8, blocksLOS: true, blocksMovement: true, featureHeight: 'tall', difficult: false }],
+    }),
+  ];
+
+  const shooterProfile = {
+    name: 'Split Plasma Team',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 2,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Hazard Flamer', range: 24, attacks: '1', skill: 6, strength: 1, ap: 0, damage: '1', keywords: ['Torrent', 'Hazardous'], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const targetProfile = {
+    ...shooterProfile,
+    name: 'Target Dummy',
+    toughness: 99,
+    wounds: 99,
+    baseModelCount: 1,
+    weapons: [],
+  };
+  const shooter = losTestUnit('shooter-1', 0, { x: 0, y: 9 });
+  shooter.profile = shooterProfile;
+  shooter.remainingModels = 2;
+  shooter.modelPositions = [{ x: 0, y: 9 }, { x: 0, y: 12 }];
+  shooter.position = { x: 0, y: 10.5 };
+  const target = losTestUnit('target-1', 1, { x: 12, y: 9 });
+  target.profile = targetProfile;
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  const rolls = [0.5, 0];
+  const originalRandom = Math.random;
+  Math.random = () => rolls.shift() ?? 0.99;
+  try {
+    const shot = shootPlayUnitWeapon(battle, 'shooter-1', 0, 'target-1', 0, rules40K11th);
+    const messages = shot.log.map(entry => entry.message).join(' ');
+    assert.match(messages, /Hazard Flamer .* 1 model\(s\).* = 1 attacks/);
+    assert.match(messages, /Hazardous tests for Hazard Flamer: \[1\] -> 1 failure/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('Hazardous melee weapons test after their fight attacks resolve', () => {
+  const battle = state('fight');
+  battle.activeArmy = 0;
+  const fighter = losTestUnit('fighter-1', 0, { x: 10, y: 10 });
+  fighter.profile = {
+    ...fighter.profile,
+    name: 'Risky Fighter',
+    weapons: [
+      { name: 'Hazard Blade', range: 0, attacks: '1', skill: 3, strength: 1, ap: 0, damage: '1', keywords: ['Hazardous'], isMelee: true },
+    ],
+  };
+  const target = losTestUnit('target-1', 1, { x: 10.8, y: 10 });
+  target.profile = { ...target.profile, name: 'Fight Target', toughness: 99 };
+  battle.units = [fighter, target];
+
+  const rolls = [0.5, 0.5, 0];
+  const originalRandom = Math.random;
+  Math.random = () => rolls.shift() ?? 0.99;
+  try {
+    const fought = fightPlayUnitWeapon(battle, 'fighter-1', 0, 'target-1', 0, rules40K11th);
+    const messages = fought.log.map(entry => entry.message).join(' ');
+    assert.match(messages, /Hazard Blade/);
+    assert.match(messages, /Hazardous tests for Hazard Blade: \[1\] -> 1 failure/);
+    assert.equal(fought.units.find(unit => unit.id === 'fighter-1')?.destroyed, true);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('deferred mortal damage carries over during defender allocation', () => {
+  const battle = state('shooting');
+  battle.activeArmy = 0;
+  const target = losTestUnit('target-1', 1, { x: 12, y: 10 });
+  target.profile = {
+    ...target.profile,
+    name: 'Mortal Target',
+    baseModelCount: 2,
+    wounds: 1,
+  };
+  target.remainingModels = 2;
+  target.modelPositions = [{ x: 12, y: 10 }, { x: 13, y: 10 }];
+  target.position = { x: 12.5, y: 10 };
+  target.pendingDamageAllocations = [{ damage: 2, source: 'mortal wounds' }];
+  battle.units = [target];
+
+  const first = allocatePlayDamageToModel(battle, 'target-1', 1, 0);
+  const afterFirst = first.units.find(unit => unit.id === 'target-1')!;
+  assert.equal(afterFirst.remainingModels, 1);
+  assert.deepEqual(afterFirst.pendingDamageAllocations, [{ damage: 1, source: 'mortal wounds' }]);
+
+  const second = allocatePlayDamageToModel(first, 'target-1', 1, 0);
+  const afterSecond = second.units.find(unit => unit.id === 'target-1')!;
+  assert.equal(afterSecond.destroyed, true);
+  assert.equal(afterSecond.pendingDamageAllocations, undefined);
+});
+
 test('Twin-linked weapons reroll failed wound rolls once', () => {
   const battle = state('movement');
   battle.movementStep = 'reinforcements';
@@ -4546,6 +4995,137 @@ test('Rapid Fire half range is measured base edge to base edge', () => {
 
   const shooting = simulateNextPhase(battle, rules40K10th);
   assert.equal(shooting.log.some(entry => entry.message.includes('Rapid Rifle') && entry.message.includes('= 3 attacks')), true);
+});
+
+test('One Shot ranged weapons can only be fired once per battle', () => {
+  const battle = state('shooting');
+  const profile = {
+    name: 'Missile Team',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Hunter Missile', range: 48, attacks: '1', skill: 3, strength: 10, ap: -2, damage: 'D6', keywords: ['One Shot'], isMelee: false },
+      { name: 'Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const shooter = losTestUnit('missile-team', 0, { x: 0, y: 10 });
+  shooter.profile = profile;
+  const target = losTestUnit('target', 1, { x: 12, y: 10 }, 7);
+  target.profile = { ...profile, name: 'Target', toughness: 99, wounds: 99, weapons: [] };
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  assert.deepEqual(playShootingWeaponOptions(battle, shooter.id, 0, rules40K11th).map(option => option.name), ['Hunter Missile', 'Rifle']);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const fired = shootPlayUnitWeapon(battle, shooter.id, 0, target.id, 0, rules40K11th);
+    const firedShooter = fired.units.find(unit => unit.id === shooter.id)!;
+    assert.deepEqual(firedShooter.oneShotSpentWeaponIndices, [0]);
+
+    const later = {
+      ...fired,
+      units: fired.units.map(unit => unit.id === shooter.id
+        ? { ...unit, activated: false, firedWeaponIndices: undefined }
+        : unit),
+    };
+    assert.deepEqual(playShootingWeaponOptions(later, shooter.id, 0, rules40K11th).map(option => option.name), ['Rifle']);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('Anti weapons score critical wounds against matching target keywords', () => {
+  const battle = state('shooting');
+  const profile = {
+    name: 'Poison Team',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Poison Rifle', range: 24, attacks: '1', skill: 3, strength: 3, ap: -10, damage: '1', keywords: ['Anti-Infantry 4+'], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const shooter = losTestUnit('poison-team', 0, { x: 0, y: 10 });
+  shooter.profile = profile;
+  const target = losTestUnit('target', 1, { x: 12, y: 10 }, 6);
+  target.profile = { ...profile, name: 'Infantry Target', toughness: 10, wounds: 2, weapons: [] };
+  target.woundsOnLeadModel = 2;
+  battle.units = [shooter, target];
+
+  const originalRandom = Math.random;
+  const rolls = [0.5, 0.5];
+  Math.random = () => rolls.shift() ?? 0.99;
+  try {
+    const shot = shootPlayUnitWeapon(battle, shooter.id, 0, target.id, 0, rules40K11th);
+    const shotTarget = shot.units.find(unit => unit.id === target.id)!;
+    const messages = shot.log.map(entry => entry.message).join(' ');
+    assert.deepEqual(shotTarget.pendingDamageAllocations, [{ damage: 1, noCarryOver: true, source: 'Poison Rifle' }]);
+    assert.match(messages, /Anti 4\+ critical wounds/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('Anti weapons use attached unit keywords while bodyguard is alive', () => {
+  const battle = state('shooting');
+  const shooterProfile = {
+    name: 'Witch Hunter',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Judgement Rifle', range: 24, attacks: '1', skill: 3, strength: 1, ap: -10, damage: '1', keywords: ['Anti-Character 4+'], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const bodyguardProfile = { ...shooterProfile, name: 'Bodyguard Unit', toughness: 10, wounds: 2, weapons: [] };
+  const leaderProfile = { ...bodyguardProfile, name: 'Attached Leader', keywords: ['Infantry', 'Character'] };
+  const shooter = losTestUnit('witch-hunter', 0, { x: 0, y: 10 });
+  shooter.profile = shooterProfile;
+  const bodyguard = losTestUnit('bodyguard', 1, { x: 12, y: 10 });
+  bodyguard.profile = bodyguardProfile;
+  bodyguard.woundsOnLeadModel = 2;
+  const leader = losTestUnit('leader', 1, { x: 10, y: 10 });
+  leader.profile = leaderProfile;
+  leader.attachedToUnitId = bodyguard.id;
+  leader.woundsOnLeadModel = 2;
+  battle.units = [shooter, bodyguard, leader];
+
+  const originalRandom = Math.random;
+  const rolls = [0.5, 0.5];
+  Math.random = () => rolls.shift() ?? 0.99;
+  try {
+    const shot = shootPlayUnitWeapon(battle, shooter.id, 0, bodyguard.id, 0, rules40K11th);
+    const shotTarget = shot.units.find(unit => unit.id === bodyguard.id)!;
+    const messages = shot.log.map(entry => entry.message).join(' ');
+    assert.deepEqual(shotTarget.pendingDamageAllocations, [{ damage: 1, noCarryOver: true, source: 'Judgement Rifle' }]);
+    assert.match(messages, /Anti 4\+ critical wounds/);
+  } finally {
+    Math.random = originalRandom;
+  }
 });
 
 test('Sustained Hits add extra hits on critical hit rolls', () => {
@@ -5014,6 +5594,35 @@ test('play Charge resolves a selected charger into a selected target', () => {
   }
 });
 
+test('11th Charge phase gates charge declarations and failed charges activate the unit without moving', () => {
+  const battle = state('charge');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const meleeWeapon = { name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true };
+  const charger = losTestUnit('charger-1', 0, { x: 0, y: 10 });
+  charger.profile = { ...charger.profile, name: 'Charging Unit', weapons: [meleeWeapon] };
+  const target = losTestUnit('target-1', 1, { x: 8.4, y: 10 });
+  target.profile = { ...target.profile, name: 'Charge Target', weapons: [] };
+  battle.units = [charger, target];
+
+  assert.equal(playChargeTargetOptions(battle, charger.id, 0, rules40K11th).length, 1);
+  assert.deepEqual(playChargeTargetOptions({ ...battle, activeArmy: 1 }, charger.id, 0, rules40K11th), []);
+  assert.deepEqual(playChargeTargetOptions({ ...battle, phase: 'shooting' }, charger.id, 0, rules40K11th), []);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0;
+  try {
+    const failed = chargePlayUnitTarget(battle, charger.id, 0, target.id, rules40K11th);
+    const failedCharger = failed.units.find(unit => unit.id === charger.id)!;
+    assert.equal(failedCharger.activated, true);
+    assert.equal(failedCharger.charged, false);
+    assert.equal(failedCharger.inCombat, false);
+    assert.deepEqual(failedCharger.position, charger.position);
+    assert.match(failed.log.map(entry => entry.message).join(' '), /fails the charge/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('play Fight resolves selected melee weapons into a selected target', () => {
   const battle = state('fight');
   const meleeWeapon = { name: 'Power Blade', range: 0, attacks: '1', skill: 2, strength: 10, ap: -10, damage: '2', keywords: [], isMelee: true };
@@ -5059,6 +5668,84 @@ test('play Fight resolves selected melee weapons into a selected target', () => 
   }
 });
 
+test('fight damage allocation lets the defender pick the damaged model', () => {
+  const battle = state('fight');
+  const meleeWeapon = { name: 'Power Blade', range: 0, attacks: '1', skill: 2, strength: 10, ap: -10, damage: '2', keywords: [], isMelee: true };
+  const fighterProfile = {
+    name: 'Fighter',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [meleeWeapon],
+    abilities: [],
+  };
+  const targetProfile = { ...fighterProfile, name: 'Fight Target', save: 6, wounds: 3, baseModelCount: 2, weapons: [] };
+  const fighter = losTestUnit('fighter-1', 0, { x: 0, y: 10 });
+  fighter.profile = fighterProfile;
+  fighter.charged = true;
+  fighter.inCombat = true;
+  const target = losTestUnit('target-1', 1, { x: 0.9, y: 10 });
+  target.profile = targetProfile;
+  target.remainingModels = 2;
+  target.woundsOnLeadModel = 3;
+  target.modelPositions = [{ x: 0.9, y: 10 }, { x: 0.9, y: 11 }];
+  target.inCombat = true;
+  battle.units = [fighter, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const fought = fightPlayUnitWeapon(battle, 'fighter-1', 0, 'target-1', 'all', rules40K10th);
+    const allocated = allocatePlayDamageToModel(fought, 'target-1', 1, 1);
+    const allocatedTarget = allocated.units.find(unit => unit.id === 'target-1')!;
+    assert.equal(allocatedTarget.remainingModels, 2);
+    assert.equal(allocatedTarget.woundedModelIndex, 1);
+    assert.equal(allocatedTarget.woundsOnLeadModel, 1);
+    assert.equal(allocatedTarget.pendingDamageAllocations, undefined);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('normal damage allocated to a model does not carry excess damage to another model', () => {
+  const battle = state('shooting');
+  battle.activeArmy = 0;
+  const profile = {
+    name: 'Multiwound Target',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 3,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 2,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+  };
+  const target = losTestUnit('target-1', 1, { x: 10, y: 10 });
+  target.profile = profile;
+  target.remainingModels = 2;
+  target.woundsOnLeadModel = 3;
+  target.modelPositions = [{ x: 10, y: 10 }, { x: 10, y: 11 }];
+  target.pendingDamageAllocations = [{ damage: 5, noCarryOver: true, source: 'High Damage Hit' }];
+  battle.units = [target];
+
+  const allocated = allocatePlayDamageToModel(battle, 'target-1', 1, 0);
+  const allocatedTarget = allocated.units.find(unit => unit.id === 'target-1')!;
+  assert.equal(allocatedTarget.remainingModels, 1);
+  assert.equal(allocatedTarget.woundedModelIndex, undefined);
+  assert.equal(allocatedTarget.woundsOnLeadModel, 3);
+  assert.equal(allocatedTarget.pendingDamageAllocations, undefined);
+});
+
 test('Multiple melee weapon profiles choose only one profile when fighting all weapons', () => {
   const battle = state('fight');
   const profile = {
@@ -5095,6 +5782,64 @@ test('Multiple melee weapon profiles choose only one profile when fighting all w
     assert.match(messages, /Sweep/);
     assert.equal(messages.includes('Strike'), false);
     assert.equal(next.units.find(unit => unit.id === fighter.id)?.activated, true);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('Melee weapons can split declared attacks between engaged targets', () => {
+  const battle = state('fight');
+  const profile = {
+    name: 'Split Fighter',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [
+      { name: 'Chainblade', range: 0, attacks: '4', skill: 3, strength: 8, ap: -5, damage: '1', keywords: [], isMelee: true },
+    ],
+    abilities: [],
+  };
+  const fighter = losTestUnit('split-fighter', 0, { x: 10, y: 10 });
+  fighter.profile = profile;
+  fighter.inCombat = true;
+  const targetA = losTestUnit('split-target-a', 1, { x: 10.8, y: 10 }, 7);
+  targetA.profile = { ...profile, name: 'Target A', save: 7, wounds: 99, weapons: [] };
+  targetA.woundsOnLeadModel = 99;
+  targetA.inCombat = true;
+  const targetB = losTestUnit('split-target-b', 1, { x: 10, y: 10.8 }, 7);
+  targetB.profile = { ...profile, name: 'Target B', save: 7, wounds: 99, weapons: [] };
+  targetB.woundsOnLeadModel = 99;
+  targetB.inCombat = true;
+  battle.units = [fighter, targetA, targetB];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const next = fightPlayUnitWeapon(battle, fighter.id, fighter.side, targetA.id, 0, rules40K11th, [
+      { targetUnitId: targetA.id, attacks: 2 },
+      { targetUnitId: targetB.id, attacks: 2 },
+    ]);
+    const nextFighter = next.units.find(unit => unit.id === fighter.id)!;
+    const nextTargetA = next.units.find(unit => unit.id === targetA.id)!;
+    const nextTargetB = next.units.find(unit => unit.id === targetB.id)!;
+    const messages = next.log.map(entry => entry.message).join(' ');
+    assert.equal(nextFighter.activated, true);
+    assert.deepEqual(nextTargetA.pendingDamageAllocations, [
+      { damage: 1, noCarryOver: true, source: 'Chainblade' },
+      { damage: 1, noCarryOver: true, source: 'Chainblade' },
+    ]);
+    assert.deepEqual(nextTargetB.pendingDamageAllocations, [
+      { damage: 1, noCarryOver: true, source: 'Chainblade' },
+      { damage: 1, noCarryOver: true, source: 'Chainblade' },
+    ]);
+    assert.match(messages, /Split melee attacks: 2 attack\(s\) declared against Target A/);
+    assert.match(messages, /Split melee attacks: 2 attack\(s\) declared against Target B/);
   } finally {
     Math.random = originalRandom;
   }
@@ -5220,6 +5965,43 @@ test('play Fight pile-in and consolidate move a selected unit once each', () => 
   const consolidatedMover = consolidated.units.find(unit => unit.id === 'mover-1')!;
   assert.equal(consolidatedMover.consolidated, true);
   assert.equal(consolidatePlayUnit(consolidated, 'mover-1', 0, rules40K10th), consolidated);
+});
+
+test('11th Fight phase lets a charged unit pile in before selecting melee attacks', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const meleeWeapon = { name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true };
+  const profile = {
+    name: 'Overrun Fighter',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [meleeWeapon],
+    abilities: [],
+  };
+  const fighter = losTestUnit('fighter-1', 0, { x: 0, y: 10 });
+  fighter.profile = profile;
+  fighter.charged = true;
+  fighter.inCombat = false;
+  const target = losTestUnit('target-1', 1, { x: 2.5, y: 10 });
+  target.profile = { ...profile, name: 'Fight Target', weapons: [] };
+  battle.units = [fighter, target];
+
+  assert.deepEqual(playFightWeaponOptions(battle, fighter.id, 0, rules40K11th), []);
+
+  const piled = pileInPlayUnit(battle, fighter.id, 0, rules40K11th);
+  const piledFighter = piled.units.find(unit => unit.id === fighter.id)!;
+  assert.equal(piledFighter.piledIn, true);
+  assert.equal(piledFighter.inCombat, true);
+  assert.deepEqual(playFightWeaponOptions(piled, fighter.id, 0, rules40K11th), [
+    { weaponIndex: 0, name: 'Blade', targetIds: [target.id] },
+  ]);
 });
 
 test('play Movement can embark a nearby unit into a transport', () => {

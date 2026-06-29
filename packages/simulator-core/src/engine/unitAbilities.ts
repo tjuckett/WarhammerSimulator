@@ -55,6 +55,11 @@ function targetAllowed(
   return true;
 }
 
+function timingAllowed(state: BattleState, timing: AbilityTiming): boolean {
+  if (timing === 'command-phase') return state.phase === 'command';
+  return true;
+}
+
 export function availableUnitAbilities(
   state: BattleState,
   unitId: string,
@@ -73,6 +78,7 @@ export function availableUnitAbilities(
 
   return rules.unitAbilities.filter(ability =>
     ability.timing === timing
+    && timingAllowed(state, timing)
     && unitHasAbility(unit, ability)
     && !abilityUsed(state, unit, ability)
     && targetAllowed(state, unit, ability, targetUnitId)

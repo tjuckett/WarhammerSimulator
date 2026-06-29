@@ -66,6 +66,7 @@ export interface BattleUnit {
   actionStartedThisTurn?: boolean;
   fellBack?: boolean;
   firedWeaponIndices?: number[];
+  oneShotSpentWeaponIndices?: number[];
   piledIn?: boolean;
   consolidated?: boolean;
   inCombat: boolean;
