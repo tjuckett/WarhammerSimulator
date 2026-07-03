@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
-import type { Position, TerrainLayout } from '@warhammer-simulator/core/types/battle';
+import type { TerrainLayout } from '@warhammer-simulator/core/types/battle';
 import type { TerrainEditSelection } from '../components/Battlefield';
 import {
   loadCustomTerrainLayouts,
@@ -11,12 +11,7 @@ import {
   terrainLayoutToData,
   type TerrainMatTemplate,
 } from './terrainStorage';
-
-type AlignVertexLock = {
-  selection: TerrainEditSelection;
-  vertexIndex: number;
-  target: Position;
-};
+import { sameSelection, type AlignVertexLock } from './terrainEditing';
 
 type ImportTerrainLayoutOptions = {
   onFirstLayoutImported?: (layout: TerrainLayout) => void;
@@ -30,12 +25,6 @@ type UseTerrainLayoutsOptions = {
 
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value));
-}
-
-function sameSelection(a: TerrainEditSelection, b: TerrainEditSelection): boolean {
-  return a.kind === b.kind
-    && a.terrainIndex === b.terrainIndex
-    && (a.kind === 'terrain' || b.kind === 'terrain' || a.featureIndex === b.featureIndex);
 }
 
 export function useTerrainLayouts({

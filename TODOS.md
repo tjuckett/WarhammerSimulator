@@ -33,6 +33,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Completed fourteenth slice: extracted battle setup state, derived setup values, randomization, and setup validation into `useBattleSetupControls`.
   - Completed fifteenth slice: extracted terrain localStorage, import parsing, export serialization, and terrain mat template typing into `terrainStorage`.
   - Completed sixteenth slice: extracted terrain editor state, terrain layout save/import/export actions, and terrain mat template actions into `useTerrainLayouts`.
+  - Completed seventeenth slice: extracted pure terrain editing geometry helpers into `terrainEditing` for reuse by `App` and terrain hooks.
   - Verify with root `npm run build` and relevant simulator-core tests.
   - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.
 - [ ] Resume and finish the remaining 11th Edition rules work.
