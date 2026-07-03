@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import type { PracticeTimeline, PracticeTimelineEntry } from '@warhammer-simulator/core/practice/timeline';
 import type { GameAction } from '@warhammer-simulator/core/practice/actions';
 import type { PracticeScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
+import { CHECKPOINT_KIND_SHORT_LABELS } from '../gameSession/checkpointHelpers';
 import type { GameSessionStorageHealth } from '../gameSession/gameSessionRepository';
 
 interface ControlsProps {
@@ -114,7 +115,7 @@ function visibleEntries(timeline: PracticeTimeline): PracticeTimelineEntry[] {
 }
 
 function checkpointKindLabel(scenario: PracticeScenarioSummary): string {
-  return scenario.checkpointKind === 'auto-phase' ? 'Auto' : 'Play';
+  return CHECKPOINT_KIND_SHORT_LABELS[scenario.checkpointKind ?? 'play'];
 }
 
 function phaseTitleLines(scenario: PracticeScenarioSummary): string[] {

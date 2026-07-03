@@ -25,6 +25,11 @@ export const CHECKPOINT_KIND_SAVED_LABELS = {
   play: 'Saved checkpoint',
 } satisfies Record<PracticeCheckpointKind, string>;
 
+export const CHECKPOINT_KIND_SHORT_LABELS = {
+  'auto-phase': 'Auto',
+  play: 'Play',
+} satisfies Record<PracticeCheckpointKind, string>;
+
 export function checkpointLabelForState(state: BattleState, kind: PracticeCheckpointKind): string {
   const suffix = CHECKPOINT_KIND_SUFFIX_LABELS[kind];
   if (state.phase === 'deployment') return `Deployment ${suffix}`;

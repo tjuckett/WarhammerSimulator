@@ -1,4 +1,4 @@
-import type { PracticeScenario } from '@warhammer-simulator/core/practice/scenarios';
+import type { PracticeCheckpointKind, PracticeScenario } from '@warhammer-simulator/core/practice/scenarios';
 import type { PracticeScenarioRepository } from '@warhammer-simulator/core/practice/scenarioRepository';
 import type { PracticeScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
 import type { BattleState } from '@warhammer-simulator/core/types/battle';
@@ -12,6 +12,16 @@ import {
 import { prisma } from '../db';
 
 type StoredCheckpointKind = 'MANUAL' | 'AUTO_PHASE';
+
+const CHECKPOINT_KIND_TO_DB = {
+  'auto-phase': 'AUTO_PHASE',
+  play: 'MANUAL',
+} satisfies Record<PracticeCheckpointKind, StoredCheckpointKind>;
+
+const CHECKPOINT_KIND_FROM_DB = {
+  AUTO_PHASE: 'auto-phase',
+  MANUAL: 'play',
+} satisfies Record<StoredCheckpointKind, PracticeCheckpointKind>;
 
 type StoredCheckpoint = {
   id: string;
@@ -43,11 +53,11 @@ type StoredTimelineEntry = {
 };
 
 function checkpointKindToDb(kind: PracticeScenario['metadata']['checkpointKind']): StoredCheckpointKind {
-  return kind === 'auto-phase' ? 'AUTO_PHASE' : 'MANUAL';
+  return CHECKPOINT_KIND_TO_DB[kind ?? 'play'];
 }
 
 function checkpointKindFromDb(kind: StoredCheckpointKind): PracticeScenario['metadata']['checkpointKind'] {
-  return kind === 'AUTO_PHASE' ? 'auto-phase' : 'play';
+  return CHECKPOINT_KIND_FROM_DB[kind];
 }
 
 function clone<T>(value: T): T {
