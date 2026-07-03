@@ -88,9 +88,8 @@ import {
 } from '@warhammer-simulator/core/practice/scenarioStorage';
 import {
   gameSessionRepository,
-  gameSessionStorageHealth,
-  type GameSessionStorageHealth,
 } from './gameSession/gameSessionRepository';
+import { useGameSessionStorage } from './gameSession/useGameSessionStorage';
 import type { AppMode } from './modes/appMode';
 import { AppHeader } from './modes/AppHeader';
 import { ModeChooserDialog } from './modes/ModeChooserDialog';
@@ -1101,7 +1100,12 @@ export default function App() {
   const [battleState, setBattleState] = useState<BattleState | null>(null);
   const [modeChooserOpen, setModeChooserOpen] = useState(true);
   const [practiceTimeline, setPracticeTimeline] = useState<PracticeTimeline | null>(null);
-  const [savedScenarios, setSavedScenarios] = useState<PracticeScenarioSummary[]>([]);
+  const {
+    savedScenarios,
+    setSavedScenarios,
+    storageStatus: practiceStorageStatus,
+    refreshSavedScenarios,
+  } = useGameSessionStorage();
   const [activeCheckpointId, setActiveCheckpointId] = useState<string | null>(null);
   const [activeGameId, setActiveGameId] = useState<string | null>(null);
   const [selectedSaveGameId, setSelectedSaveGameId] = useState<string | null>(null);
@@ -1110,7 +1114,6 @@ export default function App() {
   const [practiceSaveModalOpen, setPracticeSaveModalOpen] = useState(false);
   const [practiceLoadModalOpen, setPracticeLoadModalOpen] = useState(false);
   const [practiceSaveStatus, setPracticeSaveStatus] = useState('');
-  const [practiceStorageStatus, setPracticeStorageStatus] = useState<GameSessionStorageHealth | null>(null);
   const [playPhaseWarning, setPlayPhaseWarning] = useState('');
   const [editionId, setEditionId] = useState<string>(EDITIONS[0].id);
   const [boardFormatId, setBoardFormatId] = useState<string>(BOARD_FORMATS[2].id);
@@ -1821,10 +1824,6 @@ export default function App() {
     commitBattleState(next);
   }, [primaryPlaySelection?.unitId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    void initializePracticeStorage();
-  }, []);
-
   useEffect(() => () => {
     if (playRotationUndoTimerRef.current) clearTimeout(playRotationUndoTimerRef.current);
   }, []);
@@ -1955,16 +1954,6 @@ export default function App() {
     const timeline = practiceTimelineRef.current;
     if (!timeline) return;
     restorePracticeTimelineResult(seekTimeline(timeline, cursor));
-  }
-
-  async function initializePracticeStorage() {
-    const health = await gameSessionStorageHealth();
-    setPracticeStorageStatus(health);
-    setSavedScenarios(await scenarioRepository.listSummaries());
-  }
-
-  async function refreshSavedScenarios() {
-    setSavedScenarios(await scenarioRepository.listSummaries());
   }
 
   function checkpointLabelForState(state: BattleState, kind: PracticeCheckpointKind): string {

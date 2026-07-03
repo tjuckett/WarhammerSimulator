@@ -20,6 +20,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Completed second slice: extracted setup/header controls into `AppHeader` in `apps/web/src/modes`.
   - Completed third slice: extracted checkpoint load/delete confirmation dialogs into `GameSessionCheckpointDialogs` in `apps/web/src/gameSession`.
   - Completed fourth slice: added `gameSessionRepository` as the new app-facing save/load boundary over the current practice scenario repository.
+  - Completed fifth slice: extracted saved scenario summaries and storage health into `useGameSessionStorage`.
   - Verify with root `npm run build` and relevant simulator-core tests.
   - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.
 - [ ] Resume and finish the remaining 11th Edition rules work.
