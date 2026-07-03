@@ -1,13 +1,4 @@
-type PendingCheckpointLoad = {
-  scenarioId: string;
-  scenarioName: string;
-};
-
-type PendingCheckpointDelete = {
-  scenarioId: string;
-  scenarioName: string;
-  deleteIds: string[];
-};
+import type { PendingCheckpointDelete, PendingCheckpointLoad } from './useGameSessionSelection';
 
 type GameSessionCheckpointDialogsProps = {
   pendingLoad: PendingCheckpointLoad | null;

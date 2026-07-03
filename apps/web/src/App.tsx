@@ -89,6 +89,7 @@ import {
 import {
   gameSessionRepository,
 } from './gameSession/gameSessionRepository';
+import { useGameSessionSelection } from './gameSession/useGameSessionSelection';
 import { useGameSessionStorage } from './gameSession/useGameSessionStorage';
 import type { AppMode } from './modes/appMode';
 import { AppHeader } from './modes/AppHeader';
@@ -128,17 +129,6 @@ type PendingPlayTimelineAction = {
   undoEntry: PlayUndoEntry;
   action: GameAction;
   stateAfter: BattleState;
-};
-
-type PendingCheckpointLoad = {
-  scenarioId: string;
-  scenarioName: string;
-};
-
-type PendingCheckpointDelete = {
-  scenarioId: string;
-  scenarioName: string;
-  deleteIds: string[];
 };
 
 type InspectedSelection =
@@ -1106,11 +1096,20 @@ export default function App() {
     storageStatus: practiceStorageStatus,
     refreshSavedScenarios,
   } = useGameSessionStorage();
-  const [activeCheckpointId, setActiveCheckpointId] = useState<string | null>(null);
-  const [activeGameId, setActiveGameId] = useState<string | null>(null);
-  const [selectedSaveGameId, setSelectedSaveGameId] = useState<string | null>(null);
-  const [pendingCheckpointLoad, setPendingCheckpointLoad] = useState<PendingCheckpointLoad | null>(null);
-  const [pendingCheckpointDelete, setPendingCheckpointDelete] = useState<PendingCheckpointDelete | null>(null);
+  const {
+    activeCheckpointId,
+    activeGameId,
+    selectedSaveGameId,
+    setSelectedSaveGameId,
+    pendingCheckpointLoad,
+    setPendingCheckpointLoad,
+    pendingCheckpointDelete,
+    setPendingCheckpointDelete,
+    activeCheckpointIdRef,
+    activeGameIdRef,
+    setActiveCheckpointId: setActivePracticeCheckpoint,
+    setActiveGameId: setActivePracticeGame,
+  } = useGameSessionSelection();
   const [practiceSaveModalOpen, setPracticeSaveModalOpen] = useState(false);
   const [practiceLoadModalOpen, setPracticeLoadModalOpen] = useState(false);
   const [practiceSaveStatus, setPracticeSaveStatus] = useState('');
@@ -1161,8 +1160,6 @@ export default function App() {
   const playRotationUndoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const battleStateRef = useRef<BattleState | null>(null);
   const practiceTimelineRef = useRef<PracticeTimeline | null>(null);
-  const activeCheckpointIdRef = useRef<string | null>(null);
-  const activeGameIdRef = useRef<string | null>(null);
   const checkpointBranchIdRef = useRef<string>(makePracticeId('checkpoint-branch'));
   const winnerRecordedRef = useRef<string | null>(null);
 
@@ -1831,17 +1828,6 @@ export default function App() {
   function commitBattleState(next: BattleState | null) {
     battleStateRef.current = next;
     setBattleState(next);
-  }
-
-  function setActivePracticeCheckpoint(checkpointId: string | null) {
-    activeCheckpointIdRef.current = checkpointId;
-    setActiveCheckpointId(checkpointId);
-  }
-
-  function setActivePracticeGame(gameId: string | null) {
-    activeGameIdRef.current = gameId;
-    setActiveGameId(gameId);
-    setSelectedSaveGameId(gameId);
   }
 
   function getLayout() {
