@@ -89,6 +89,13 @@ import {
 import {
   gameSessionRepository,
 } from './gameSession/gameSessionRepository';
+import {
+  CHECKPOINT_KIND_SAVED_LABELS,
+  checkpointDescendantIds,
+  checkpointLabelForState,
+  nextCheckpointSequence,
+  PHASE_LABELS,
+} from './gameSession/checkpointHelpers';
 import { useGameSessionSelection } from './gameSession/useGameSessionSelection';
 import { useGameSessionStorage } from './gameSession/useGameSessionStorage';
 import type { AppMode } from './modes/appMode';
@@ -137,16 +144,6 @@ type InspectedSelection =
 
 const PLAY_TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight'];
 const PLAY_MODEL_EDIT_PHASES: Phase[] = ['deployment', 'movement'];
-const PHASE_LABELS: Partial<Record<Phase, string>> = {
-  setup: 'Ready',
-  command: 'Command',
-  movement: 'Movement',
-  shooting: 'Shooting',
-  charge: 'Charge',
-  fight: 'Fight',
-  'battle-shock': 'Battle-shock',
-  end: 'End',
-};
 
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value));
@@ -1942,21 +1939,6 @@ export default function App() {
     restorePracticeTimelineResult(seekTimeline(timeline, cursor));
   }
 
-  function checkpointLabelForState(state: BattleState, kind: PracticeCheckpointKind): string {
-    const suffix = kind === 'auto-phase' ? 'checkpoint' : 'play save';
-    if (state.phase === 'deployment') return `Deployment ${suffix}`;
-    if (state.phase === 'end') return `Game end ${suffix}`;
-    const phaseLabel = PHASE_LABELS[state.phase] ?? state.phase;
-    const armyName = state.armies[state.activeArmy]?.name ?? `Player ${state.activeArmy + 1}`;
-    return `Battle Round ${battleRound(state)} - ${armyName} ${phaseLabel} ${suffix}`;
-  }
-
-  async function nextCheckpointSequence(gameId: string): Promise<number> {
-    return (await scenarioRepository.listSummaries())
-      .filter(scenario => scenario.gameId === gameId)
-      .reduce((highest, scenario) => Math.max(highest, scenario.sequence ?? 0), 0) + 1;
-  }
-
   async function savePracticeCheckpoint(kind: PracticeCheckpointKind) {
     const timeline = practiceTimelineRef.current;
     if (!timeline) return null;
@@ -1970,7 +1952,7 @@ export default function App() {
       parentCheckpointId: activeCheckpointIdRef.current ?? undefined,
       checkpointKind: kind,
       checkpointLabel: label,
-      sequence: await nextCheckpointSequence(gameId),
+      sequence: await nextCheckpointSequence(scenarioRepository, gameId),
       timelineCursor: timeline.cursor,
     });
     let summaries: PracticeScenarioSummary[];
@@ -1982,9 +1964,7 @@ export default function App() {
     }
     setSavedScenarios(summaries);
     setActivePracticeCheckpoint(scenario.metadata.id);
-    setPracticeSaveStatus(kind === 'auto-phase'
-      ? `Auto-saved ${scenario.metadata.name}.`
-      : `Saved checkpoint ${scenario.metadata.name}.`);
+    setPracticeSaveStatus(`${CHECKPOINT_KIND_SAVED_LABELS[kind]} ${scenario.metadata.name}.`);
     return scenario;
   }
 
@@ -2045,26 +2025,6 @@ export default function App() {
     void loadSavedPracticeScenario(pendingCheckpointLoad.scenarioId, { branchOnNextSave: true });
   }
 
-  function checkpointDescendantIds(scenarioId: string): string[] {
-    const childrenByParent = new Map<string, string[]>();
-    for (const scenario of savedScenarios) {
-      if (!scenario.parentCheckpointId) continue;
-      childrenByParent.set(scenario.parentCheckpointId, [
-        ...(childrenByParent.get(scenario.parentCheckpointId) ?? []),
-        scenario.id,
-      ]);
-    }
-
-    const ids: string[] = [];
-    const stack = [scenarioId];
-    while (stack.length) {
-      const id = stack.pop()!;
-      ids.push(id);
-      stack.push(...(childrenByParent.get(id) ?? []));
-    }
-    return ids;
-  }
-
   function requestDeleteSavedPracticeScenario(scenarioId: string) {
     const scenario = savedScenarios.find(candidate => candidate.id === scenarioId);
     if (!scenario) {
@@ -2075,7 +2035,7 @@ export default function App() {
     setPendingCheckpointDelete({
       scenarioId,
       scenarioName: scenario.name,
-      deleteIds: checkpointDescendantIds(scenarioId),
+      deleteIds: checkpointDescendantIds(savedScenarios, scenarioId),
     });
   }
 

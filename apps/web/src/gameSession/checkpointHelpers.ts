@@ -1,0 +1,67 @@
+import { battleRound } from '@warhammer-simulator/core/engine/battleRound';
+import type { BattleState, Phase } from '@warhammer-simulator/core/types/battle';
+import type { PracticeCheckpointKind } from '@warhammer-simulator/core/practice/scenarios';
+import type { PracticeScenarioRepository } from '@warhammer-simulator/core/practice/scenarioRepository';
+import type { PracticeScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
+
+export const PHASE_LABELS: Partial<Record<Phase, string>> = {
+  setup: 'Ready',
+  command: 'Command',
+  movement: 'Movement',
+  shooting: 'Shooting',
+  charge: 'Charge',
+  fight: 'Fight',
+  'battle-shock': 'Battle-shock',
+  end: 'End',
+};
+
+export const CHECKPOINT_KIND_SUFFIX_LABELS = {
+  'auto-phase': 'checkpoint',
+  play: 'play save',
+} satisfies Record<PracticeCheckpointKind, string>;
+
+export const CHECKPOINT_KIND_SAVED_LABELS = {
+  'auto-phase': 'Auto-saved',
+  play: 'Saved checkpoint',
+} satisfies Record<PracticeCheckpointKind, string>;
+
+export function checkpointLabelForState(state: BattleState, kind: PracticeCheckpointKind): string {
+  const suffix = CHECKPOINT_KIND_SUFFIX_LABELS[kind];
+  if (state.phase === 'deployment') return `Deployment ${suffix}`;
+  if (state.phase === 'end') return `Game end ${suffix}`;
+  const phaseLabel = PHASE_LABELS[state.phase] ?? state.phase;
+  const armyName = state.armies[state.activeArmy]?.name ?? `Player ${state.activeArmy + 1}`;
+  return `Battle Round ${battleRound(state)} - ${armyName} ${phaseLabel} ${suffix}`;
+}
+
+export async function nextCheckpointSequence(
+  repository: PracticeScenarioRepository,
+  gameId: string,
+): Promise<number> {
+  return (await repository.listSummaries())
+    .filter(scenario => scenario.gameId === gameId)
+    .reduce((highest, scenario) => Math.max(highest, scenario.sequence ?? 0), 0) + 1;
+}
+
+export function checkpointDescendantIds(
+  savedScenarios: PracticeScenarioSummary[],
+  scenarioId: string,
+): string[] {
+  const childrenByParent = new Map<string, string[]>();
+  for (const scenario of savedScenarios) {
+    if (!scenario.parentCheckpointId) continue;
+    childrenByParent.set(scenario.parentCheckpointId, [
+      ...(childrenByParent.get(scenario.parentCheckpointId) ?? []),
+      scenario.id,
+    ]);
+  }
+
+  const ids: string[] = [];
+  const stack = [scenarioId];
+  while (stack.length) {
+    const id = stack.pop()!;
+    ids.push(id);
+    stack.push(...(childrenByParent.get(id) ?? []));
+  }
+  return ids;
+}
