@@ -90,7 +90,9 @@ import {
   type PracticeStorageHealth,
 } from './practice/apiPracticeScenarioRepository';
 import type { AppMode } from './modes/appMode';
+import { AppHeader } from './modes/AppHeader';
 import { ModeChooserDialog } from './modes/ModeChooserDialog';
+import { GameSessionCheckpointDialogs } from './gameSession/GameSessionCheckpointDialogs';
 
 const ARMY_COLORS: [string, string] = ['#4af26a', '#f24a4a'];
 const practiceScenarioRepository = apiPracticeScenarioRepository;
@@ -3824,142 +3826,28 @@ export default function App() {
   return (
     <div className="app">
       {/* ── Header ──────────────────────────────────────────────────────────── */}
-      <header className="header">
-        <Typography className="title" component="h1" variant="subtitle1">
-          Warhammer Battle Simulator
-        </Typography>
-
-        <Button size="small" color="secondary" variant="outlined" onClick={() => setModeChooserOpen(true)}>
-          Change Mode
-        </Button>
-
-        {!battleState && (
-        <Box className="header-controls">
-          <FormControl sx={{ minWidth: 132 }}>
-            <InputLabel id="edition-label">Edition</InputLabel>
-            <Select
-              labelId="edition-label"
-              value={editionId}
-              label="Edition"
-              disabled={!!battleState}
-              onChange={(e: SelectChangeEvent) => { setEditionId(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
-            >
-              {EDITIONS.map(ed => (
-                <MenuItem key={ed.id} value={ed.id} title={ed.description}>{ed.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          {!isEleventhEdition ? (
-            <FormControl sx={{ minWidth: 190 }}>
-              <InputLabel id="mission-label">Mission</InputLabel>
-              <Select
-                labelId="mission-label"
-                value={primaryMission}
-                label="Mission"
-                disabled={!!battleState}
-                onChange={(e: SelectChangeEvent) => { setPrimaryMission(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
-              >
-                {PRIMARY_MISSIONS.map(name => (
-                  <MenuItem key={name} value={name}>{name}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          ) : (
-            <>
-              <FormControl sx={{ minWidth: 190 }}>
-                <InputLabel id="force-disposition-0-label">Blue Disposition</InputLabel>
-                <Select
-                  labelId="force-disposition-0-label"
-                  value={forceDisposition0}
-                  label="Blue Disposition"
-                  disabled={!!battleState}
-                  onChange={(e: SelectChangeEvent) => { setForceDisposition0(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
-                >
-                  {ELEVENTH_EDITION_FORCE_DISPOSITIONS.map(disposition => (
-                    <MenuItem key={disposition.id} value={disposition.id}>
-                      {disposition.name} - {eleventhPrimaryMissionsForDispositions([disposition.id, forceDisposition1])[0]}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <FormControl sx={{ minWidth: 190 }}>
-                <InputLabel id="force-disposition-1-label">Red Disposition</InputLabel>
-                <Select
-                  labelId="force-disposition-1-label"
-                  value={forceDisposition1}
-                  label="Red Disposition"
-                  disabled={!!battleState}
-                  onChange={(e: SelectChangeEvent) => { setForceDisposition1(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
-                >
-                  {ELEVENTH_EDITION_FORCE_DISPOSITIONS.map(disposition => (
-                    <MenuItem key={disposition.id} value={disposition.id}>
-                      {disposition.name} - {eleventhPrimaryMissionsForDispositions([forceDisposition0, disposition.id])[1]}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </>
-          )}
-
-          {!isEleventhEdition && (
-            <FormControl sx={{ minWidth: 190 }}>
-              <InputLabel id="deployment-label">Deployment</InputLabel>
-              <Select
-                labelId="deployment-label"
-                value={selectedMission.deployment}
-                label="Deployment"
-                disabled={!!battleState}
-                onChange={(e: SelectChangeEvent) => { setDeployment(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
-              >
-                {availableDeployments.map(name => (
-                  <MenuItem key={name} value={name}>{name}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-
-          <FormControl sx={{ minWidth: 148 }}>
-            <InputLabel id="format-label">Format</InputLabel>
-            <Select
-              labelId="format-label"
-              value={boardFormatId}
-              label="Format"
-              disabled={!!battleState}
-              onChange={(e: SelectChangeEvent) => { setBoardFormatId(e.target.value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
-            >
-              {BOARD_FORMATS.map(format => (
-                <MenuItem key={format.id} value={format.id}>{format.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl sx={{ minWidth: 132 }}>
-            <InputLabel id="terrain-label">Terrain</InputLabel>
-            <Select
-              labelId="terrain-label"
-              value={layoutId}
-              label="Terrain"
-              disabled={!!battleState}
-              onChange={(e: SelectChangeEvent) => { setLayoutId(e.target.value); clearPlayUndo(); resetPracticeTimeline(); }}
-            >
-              {compatibleLayouts.map(l => (
-                <MenuItem key={l.id} value={l.id} title={l.description}>{l.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Button
-            color="secondary"
-            startIcon={<CasinoOutlinedIcon />}
-            onClick={randomizeMissionSet}
-            disabled={!!battleState}
-          >
-            Random Set
-          </Button>
-        </Box>
-        )}
-      </header>
+      <AppHeader
+        battleStarted={!!battleState}
+        editionId={editionId}
+        isEleventhEdition={isEleventhEdition}
+        primaryMission={primaryMission}
+        forceDisposition0={forceDisposition0}
+        forceDisposition1={forceDisposition1}
+        deployment={selectedMission.deployment}
+        availableDeployments={availableDeployments}
+        boardFormatId={boardFormatId}
+        layoutId={layoutId}
+        compatibleLayouts={compatibleLayouts}
+        onOpenModeChooser={() => setModeChooserOpen(true)}
+        onEditionChange={value => { setEditionId(value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
+        onPrimaryMissionChange={value => { setPrimaryMission(value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
+        onForceDisposition0Change={value => { setForceDisposition0(value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
+        onForceDisposition1Change={value => { setForceDisposition1(value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
+        onDeploymentChange={value => { setDeployment(value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
+        onBoardFormatChange={value => { setBoardFormatId(value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
+        onLayoutChange={value => { setLayoutId(value); clearPlayUndo(); resetPracticeTimeline(); }}
+        onRandomizeMissionSet={randomizeMissionSet}
+      />
 
       {modeChooserOpen && (
         <ModeChooserDialog
@@ -4374,59 +4262,15 @@ export default function App() {
         onClose={() => setPracticeLoadModalOpen(false)}
       />
 
-      {pendingCheckpointLoad && (
-        <div className="practice-load-modal-backdrop">
-          <div
-            className="practice-load-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="practice-load-title"
-          >
-            <div className="practice-load-title" id="practice-load-title">Load Checkpoint?</div>
-            <p>
-              Loading {pendingCheckpointLoad.scenarioName} will replace your current table state. Save the current
-              progress before starting from that checkpoint?
-            </p>
-            <div className="practice-load-actions">
-              <button type="button" className="primary" onClick={saveCurrentAndLoadPendingCheckpoint}>
-                Save and Load
-              </button>
-              <button type="button" onClick={loadPendingCheckpointWithoutSaving}>
-                Load Without Saving
-              </button>
-              <button type="button" onClick={() => setPendingCheckpointLoad(null)}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {pendingCheckpointDelete && (
-        <div className="practice-load-modal-backdrop">
-          <div
-            className="practice-load-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="practice-delete-title"
-          >
-            <div className="practice-load-title" id="practice-delete-title">Delete Checkpoint?</div>
-            <p>
-              {pendingCheckpointDelete.deleteIds.length > 1
-                ? `Deleting ${pendingCheckpointDelete.scenarioName} will also delete ${pendingCheckpointDelete.deleteIds.length - 1} later checkpoint${pendingCheckpointDelete.deleteIds.length - 1 === 1 ? '' : 's'} chained after it.`
-                : `Deleting ${pendingCheckpointDelete.scenarioName} will remove this checkpoint.`}
-            </p>
-            <div className="practice-load-actions">
-              <button type="button" className="danger" onClick={confirmDeleteSavedPracticeScenario}>
-                Delete
-              </button>
-              <button type="button" onClick={() => setPendingCheckpointDelete(null)}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <GameSessionCheckpointDialogs
+        pendingLoad={pendingCheckpointLoad}
+        pendingDelete={pendingCheckpointDelete}
+        onSaveAndLoad={saveCurrentAndLoadPendingCheckpoint}
+        onLoadWithoutSaving={loadPendingCheckpointWithoutSaving}
+        onCancelLoad={() => setPendingCheckpointLoad(null)}
+        onConfirmDelete={confirmDeleteSavedPracticeScenario}
+        onCancelDelete={() => setPendingCheckpointDelete(null)}
+      />
 
       <Box className="controls">
         <div className="controls-edge controls-edge-left">

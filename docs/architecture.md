@@ -316,6 +316,7 @@ The app should support three play styles without changing the core game model:
 - Human controls both armies.
 - Human controls one army and AI controls the other.
 - AI controls both armies for simulation.
+- Remote humans play each other over the network.
 
 The architecture should model this as player seats/controllers, not as separate game types.
 
@@ -326,14 +327,20 @@ flowchart TD
 
   Seat0 --> Human0[Human controller]
   Seat0 --> AI0[AI controller]
+  Seat0 --> Remote0[Remote human controller]
   Seat1 --> Human1[Human controller]
   Seat1 --> AI1[AI controller]
+  Seat1 --> Remote1[Remote human controller]
 
   Human0 --> GameAction[GameAction]
   Human1 --> GameAction
+  Remote0 --> NetworkAction[network action request]
+  Remote1 --> NetworkAction
   AI0 --> Policy[AI policy]
   AI1 --> Policy
 
+  NetworkAction --> ServerValidator[server validates/applies action]
+  ServerValidator --> GameAction
   Policy --> Observation[observeBattleState]
   Policy --> LegalActions[getLegalActions]
   Policy --> GameAction
@@ -355,6 +362,7 @@ Target concepts:
 - `PlayerSeat`: side, controller type, display name, and optional AI policy id/config.
 - `PlayerController`: interface that can request/choose the next `GameAction` for a side.
 - `HumanController`: waits for UI input and dispatches explicit actions.
+- `RemoteHumanController`: sends intended actions to an authoritative server and receives accepted state updates.
 - `AiController`: observes the battle, gets legal actions, asks a policy to choose one, then dispatches it.
 - `AiPolicy`: pure decision layer that can start simple and later become heuristic, learned, remote, or model-backed.
 - `CommandRunner`: applies a `GameAction` to a `BattleState` through core commands and returns the next state plus logs/errors.
@@ -362,10 +370,12 @@ Target concepts:
 Design rules:
 
 - AI must choose from legal core actions; it should not mutate `BattleState` directly.
-- The same `GameAction` path should drive human play, AI-vs-human, AI-vs-AI simulation, replay, and saved timelines.
+- Remote players should send intended `GameAction`s, not mutated `BattleState`; the server validates/applies the action and broadcasts the resulting state.
+- The same `GameAction` path should drive human play, network play, AI-vs-human, AI-vs-AI simulation, replay, and saved timelines.
 - AI policy code belongs in simulator-core or a future AI package when it is pure. UI adapters and hosted model calls belong in web/server code.
 - Persist AI seat configuration and action history with game sessions so simulations can be replayed and compared.
 - Keep observations intentionally compact and serializable so they can feed heuristics now and training/evaluation later.
+- Persist remote player seat/participant metadata with game sessions so reconnects and future multiplayer ownership can work.
 
 Suggested future files:
 
@@ -374,6 +384,7 @@ Suggested future files:
 - `packages/simulator-core/src/engine/gameActionRunner.ts`
 - `packages/simulator-core/src/ai/heuristicPolicy.ts` if AI grows beyond engine helpers.
 - `apps/web/src/hooks/usePlayerControllers.ts`
+- `apps/web/src/server/gameSessions/*` for authoritative network/session adapters later.
 
 Next after this task: make `GameAction` execution a clean core boundary before adding complex AI behavior.
 

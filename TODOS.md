@@ -17,6 +17,8 @@ Use this section as the current high-level pickup order before starting large ne
   - Preserve persistence seams for database-backed game sessions, saved armies, custom terrain layouts, users/sharing, and future AI memory.
   - Preserve AI seams for human-vs-human, human-vs-AI, and AI-vs-AI by routing decisions through legal `GameAction` choices and serializable battle observations.
   - Completed first slice: extracted `AppMode` and `ModeChooserDialog` into `apps/web/src/modes`.
+  - Completed second slice: extracted setup/header controls into `AppHeader` in `apps/web/src/modes`.
+  - Completed third slice: extracted checkpoint load/delete confirmation dialogs into `GameSessionCheckpointDialogs` in `apps/web/src/gameSession`.
   - Verify with root `npm run build` and relevant simulator-core tests.
   - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.
 - [ ] Resume and finish the remaining 11th Edition rules work.
@@ -32,8 +34,9 @@ Use this section as the current high-level pickup order before starting large ne
   - Start with available units from sample/imported armies, then add a real unit catalog/source later if needed.
   - Next after this task: decide whether full roster validation and complete faction catalog data belong in app data, imported BattleScribe data, or a separate catalog package.
 - [ ] Add player/AI controller architecture.
-  - Model each side as a player seat controlled by a human or AI policy.
-  - Ensure human play, human-vs-AI, AI-vs-AI simulation, replay, and saved sessions all use the same core `GameAction` execution path.
+  - Model each side as a player seat controlled by a local human, remote human, or AI policy.
+  - Ensure local play, network play, human-vs-AI, AI-vs-AI simulation, replay, and saved sessions all use the same core `GameAction` execution path.
+  - Remote players should send intended actions to an authoritative server; they should not send mutated `BattleState`.
   - Keep AI policy decisions behind legal action generation and battle observation helpers.
   - Next after this task: add simple heuristic AI actions before considering learned or external model-backed policies.
 - [ ] Add AI army generation architecture.
