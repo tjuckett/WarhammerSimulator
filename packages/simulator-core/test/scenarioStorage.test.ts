@@ -345,7 +345,7 @@ test('11th edition setup tracks each player primary mission separately', () => {
   const setup = eleventhSetupLabel(TOURNAMENT_MISSIONS[0], 'Layout 1', ['take-and-hold', 'reconnaissance']);
 
   assert.equal(setup.missionCode, `11E-${TOURNAMENT_MISSIONS[0].code}`);
-  assert.deepEqual(setup.forceDispositions, ['Take & Hold', 'Reconnaissance']);
+  assert.deepEqual(setup.forceDispositions, ['take-and-hold', 'reconnaissance']);
   assert.deepEqual(setup.primaryMissions, ['Purge and Secure', 'Reconnaissance Sweep']);
   assert.equal(setup.primaryMission, 'Purge and Secure / Reconnaissance Sweep');
 });

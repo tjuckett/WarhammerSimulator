@@ -37,6 +37,7 @@ import {
   TOURNAMENT_MISSIONS,
   ELEVENTH_EDITION_FORCE_DISPOSITIONS,
   deploymentsForPrimary,
+  eleventhForceDispositionIdForValue,
   eleventhLayoutIdsForDispositions,
   eleventhPrimaryMissionsForDispositions,
   eleventhSetupLabel,
@@ -45,6 +46,7 @@ import {
   randomMissionSet,
   setupLabel,
   type TournamentMission,
+  type EleventhForceDispositionId,
 } from '@warhammer-simulator/core/engine/missions';
 import {
   advancePlayUnit, battleModelIdsWithCoherencyIssues, beginPlayBattle, completePlayUnitMovement, createDeploymentState, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placePlayReinforcement, placePlayStrategicReserveUnit, placePlayUnit, placeNextUnit, removePlayModels,
@@ -1115,8 +1117,8 @@ export default function App() {
   const [primaryMission, setPrimaryMission] = useState<string>(TOURNAMENT_MISSIONS[0].primaryMission);
   const [deployment, setDeployment] = useState<string>(TOURNAMENT_MISSIONS[0].deployment);
   const [layoutId, setLayoutId] = useState<string>(TOURNAMENT_MISSIONS[0].terrainLayoutIds[0]);
-  const [forceDisposition0, setForceDisposition0] = useState<string>(ELEVENTH_EDITION_FORCE_DISPOSITIONS[0].id);
-  const [forceDisposition1, setForceDisposition1] = useState<string>(ELEVENTH_EDITION_FORCE_DISPOSITIONS[1]?.id ?? ELEVENTH_EDITION_FORCE_DISPOSITIONS[0].id);
+  const [forceDisposition0, setForceDisposition0] = useState<EleventhForceDispositionId>(ELEVENTH_EDITION_FORCE_DISPOSITIONS[0].id);
+  const [forceDisposition1, setForceDisposition1] = useState<EleventhForceDispositionId>(ELEVENTH_EDITION_FORCE_DISPOSITIONS[1]?.id ?? ELEVENTH_EDITION_FORCE_DISPOSITIONS[0].id);
   const [customTerrainLayouts, setCustomTerrainLayouts] = useState<Record<string, TerrainLayout>>(loadCustomTerrainLayouts);
   const [terrainMatTemplates, setTerrainMatTemplates] = useState<Record<string, TerrainMatTemplate>>(loadTerrainMatTemplates);
   const [selectedTerrainMatTemplateId, setSelectedTerrainMatTemplateId] = useState('');
@@ -1918,10 +1920,8 @@ export default function App() {
     const setup = result.timeline.initialState.setup;
     if (setup) {
       if (setup.forceDispositions) {
-        const restored0 = ELEVENTH_EDITION_FORCE_DISPOSITIONS.find(disposition => disposition.name === setup.forceDispositions?.[0] || disposition.id === setup.forceDispositions?.[0]);
-        const restored1 = ELEVENTH_EDITION_FORCE_DISPOSITIONS.find(disposition => disposition.name === setup.forceDispositions?.[1] || disposition.id === setup.forceDispositions?.[1]);
-        if (restored0) setForceDisposition0(restored0.id);
-        if (restored1) setForceDisposition1(restored1.id);
+        setForceDisposition0(eleventhForceDispositionIdForValue(setup.forceDispositions[0]));
+        setForceDisposition1(eleventhForceDispositionIdForValue(setup.forceDispositions[1]));
       } else if (PRIMARY_MISSIONS.includes(setup.primaryMission)) {
         setPrimaryMission(setup.primaryMission);
       } else {

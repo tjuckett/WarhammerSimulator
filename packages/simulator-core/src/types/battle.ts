@@ -4,6 +4,7 @@ import type { RulesetMetadata } from '../engine/rulesEngine';
 import type { StratagemUse } from './stratagem';
 import type { UnitAbilityUse } from './ability';
 import type { DeploymentZoneSet } from '../data/deploymentZoneTypes';
+import type { EleventhForceDispositionId } from '../data/missions';
 
 export type Phase =
   | 'deployment'
@@ -171,7 +172,7 @@ export interface BattleSetup {
   missionCode: string;
   primaryMission: string;
   primaryMissions?: [string, string];
-  forceDispositions?: [string, string];
+  forceDispositions?: [EleventhForceDispositionId, EleventhForceDispositionId];
   deployment: string;
   deploymentZones?: DeploymentZoneSet;
   terrainLayout: string;

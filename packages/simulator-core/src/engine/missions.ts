@@ -1,10 +1,12 @@
 import type { BattleSetup, Position } from '../types/battle';
-import { CHAPTER_APPROVED_MISSION_POOL, ELEVENTH_EVENT_MISSION_MATCHUPS, ELEVENTH_FORCE_DISPOSITIONS, type EleventhForceDispositionId, type EleventhForceDispositionSpec, type EleventhMissionMatchupSpec, type TournamentMissionSpec } from '../data/missions';
+import { CHAPTER_APPROVED_MISSION_POOL, ELEVENTH_EVENT_MISSION_MATCHUPS, ELEVENTH_FORCE_DISPOSITIONS, type EleventhForceDispositionId as DataEleventhForceDispositionId, type EleventhForceDispositionSpec, type EleventhMissionMatchupSpec, type TournamentMissionSpec } from '../data/missions';
 import { DEFAULT_OBJECTIVE_MARKERS, OBJECTIVE_MARKER_SETS } from '../data/objectiveMarkers';
 
 export type TournamentMission = TournamentMissionSpec;
+export type EleventhForceDispositionId = DataEleventhForceDispositionId;
 export type EleventhForceDisposition = EleventhForceDispositionSpec;
 export type EleventhMissionMatchup = EleventhMissionMatchupSpec;
+export type EleventhForceDispositionPair = [EleventhForceDispositionId, EleventhForceDispositionId];
 
 export const TOURNAMENT_MISSIONS: TournamentMission[] = CHAPTER_APPROVED_MISSION_POOL;
 export const ELEVENTH_EDITION_FORCE_DISPOSITIONS: EleventhForceDisposition[] = ELEVENTH_FORCE_DISPOSITIONS;
@@ -36,16 +38,22 @@ export function setupLabel(mission: TournamentMission, terrainLayoutName: string
   };
 }
 
-export function eleventhForceDispositionForId(id: string): EleventhForceDisposition {
+export function eleventhForceDispositionForId(id: EleventhForceDispositionId): EleventhForceDisposition {
   return ELEVENTH_EDITION_FORCE_DISPOSITIONS.find(disposition => disposition.id === id)
     ?? ELEVENTH_EDITION_FORCE_DISPOSITIONS[0];
 }
 
+export function eleventhForceDispositionIdForValue(value: string): EleventhForceDispositionId {
+  return ELEVENTH_EDITION_FORCE_DISPOSITIONS.find(disposition =>
+    disposition.id === value || disposition.name === value
+  )?.id ?? ELEVENTH_EDITION_FORCE_DISPOSITIONS[0].id;
+}
+
 export function eleventhMatchupForDispositions(
-  forceDispositions: [string, string],
+  forceDispositions: EleventhForceDispositionPair,
 ): EleventhMissionMatchup {
-  const left = eleventhForceDispositionForId(forceDispositions[0]).id;
-  const right = eleventhForceDispositionForId(forceDispositions[1]).id;
+  const left = forceDispositions[0];
+  const right = forceDispositions[1];
   const direct = ELEVENTH_EDITION_MISSION_MATCHUPS.find(matchup =>
     matchup.forceDispositions[0] === left && matchup.forceDispositions[1] === right
   );
@@ -65,28 +73,25 @@ export function eleventhMatchupForDispositions(
   return ELEVENTH_EDITION_MISSION_MATCHUPS[0];
 }
 
-export function eleventhPrimaryMissionsForDispositions(forceDispositions: [string, string]): [string, string] {
+export function eleventhPrimaryMissionsForDispositions(forceDispositions: EleventhForceDispositionPair): [string, string] {
   return eleventhMatchupForDispositions(forceDispositions).primaryMissions;
 }
 
-export function eleventhLayoutIdsForDispositions(forceDispositions: [string, string]): [string, string, string] {
+export function eleventhLayoutIdsForDispositions(forceDispositions: EleventhForceDispositionPair): [string, string, string] {
   return eleventhMatchupForDispositions(forceDispositions).layoutIds;
 }
 
 export function eleventhSetupLabel(
   mission: TournamentMission,
   terrainLayoutName: string,
-  forceDispositions: [EleventhForceDispositionId | string, EleventhForceDispositionId | string],
+  forceDispositions: EleventhForceDispositionPair,
 ): BattleSetup {
   const primaryMissions = eleventhPrimaryMissionsForDispositions(forceDispositions);
   return {
     missionCode: `11E-${mission.code}`,
     primaryMission: `${primaryMissions[0]} / ${primaryMissions[1]}`,
     primaryMissions,
-    forceDispositions: [
-      eleventhForceDispositionForId(forceDispositions[0]).name,
-      eleventhForceDispositionForId(forceDispositions[1]).name,
-    ],
+    forceDispositions,
     deployment: 'Layout Defined',
     terrainLayout: terrainLayoutName,
   };

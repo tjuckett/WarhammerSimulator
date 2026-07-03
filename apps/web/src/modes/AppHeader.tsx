@@ -16,6 +16,7 @@ import {
   ELEVENTH_EDITION_FORCE_DISPOSITIONS,
   PRIMARY_MISSIONS,
   eleventhPrimaryMissionsForDispositions,
+  type EleventhForceDispositionId,
 } from '@warhammer-simulator/core/engine/missions';
 
 type Props = {
@@ -23,8 +24,8 @@ type Props = {
   editionId: string;
   isEleventhEdition: boolean;
   primaryMission: string;
-  forceDisposition0: string;
-  forceDisposition1: string;
+  forceDisposition0: EleventhForceDispositionId;
+  forceDisposition1: EleventhForceDispositionId;
   deployment: string;
   availableDeployments: string[];
   boardFormatId: string;
@@ -33,8 +34,8 @@ type Props = {
   onOpenModeChooser: () => void;
   onEditionChange: (value: string) => void;
   onPrimaryMissionChange: (value: string) => void;
-  onForceDisposition0Change: (value: string) => void;
-  onForceDisposition1Change: (value: string) => void;
+  onForceDisposition0Change: (value: EleventhForceDispositionId) => void;
+  onForceDisposition1Change: (value: EleventhForceDispositionId) => void;
   onDeploymentChange: (value: string) => void;
   onBoardFormatChange: (value: string) => void;
   onLayoutChange: (value: string) => void;
@@ -116,7 +117,7 @@ export function AppHeader({
                   value={forceDisposition0}
                   label="Blue Disposition"
                   disabled={battleStarted}
-                  onChange={(event: SelectChangeEvent) => onForceDisposition0Change(event.target.value)}
+                  onChange={(event: SelectChangeEvent) => onForceDisposition0Change(event.target.value as EleventhForceDispositionId)}
                 >
                   {ELEVENTH_EDITION_FORCE_DISPOSITIONS.map(disposition => (
                     <MenuItem key={disposition.id} value={disposition.id}>
@@ -133,7 +134,7 @@ export function AppHeader({
                   value={forceDisposition1}
                   label="Red Disposition"
                   disabled={battleStarted}
-                  onChange={(event: SelectChangeEvent) => onForceDisposition1Change(event.target.value)}
+                  onChange={(event: SelectChangeEvent) => onForceDisposition1Change(event.target.value as EleventhForceDispositionId)}
                 >
                   {ELEVENTH_EDITION_FORCE_DISPOSITIONS.map(disposition => (
                     <MenuItem key={disposition.id} value={disposition.id}>
@@ -207,4 +208,3 @@ export function AppHeader({
     </header>
   );
 }
-
