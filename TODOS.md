@@ -16,6 +16,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Rename new target APIs away from "practice" language; use game/session wording for user-facing concepts and new controllers.
   - Preserve persistence seams for database-backed game sessions, saved armies, custom terrain layouts, users/sharing, and future AI memory.
   - Preserve AI seams for human-vs-human, human-vs-AI, and AI-vs-AI by routing decisions through legal `GameAction` choices and serializable battle observations.
+  - Review large hook return objects as each area is touched. Keep controller APIs when they represent a clear boundary, but group or split returns that expose too many raw setters or unrelated responsibilities.
   - Completed first slice: extracted `AppMode` and `ModeChooserDialog` into `apps/web/src/modes`.
   - Completed second slice: extracted setup/header controls into `AppHeader` in `apps/web/src/modes`.
   - Completed third slice: extracted checkpoint load/delete confirmation dialogs into `GameSessionCheckpointDialogs` in `apps/web/src/gameSession`.
@@ -31,6 +32,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Completed thirteenth slice: consolidated repeated battle/play UI reset logic into local reset helpers in `App`.
   - Completed fourteenth slice: extracted battle setup state, derived setup values, randomization, and setup validation into `useBattleSetupControls`.
   - Completed fifteenth slice: extracted terrain localStorage, import parsing, export serialization, and terrain mat template typing into `terrainStorage`.
+  - Completed sixteenth slice: extracted terrain editor state, terrain layout save/import/export actions, and terrain mat template actions into `useTerrainLayouts`.
   - Verify with root `npm run build` and relevant simulator-core tests.
   - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.
 - [ ] Resume and finish the remaining 11th Edition rules work.
