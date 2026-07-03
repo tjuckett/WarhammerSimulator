@@ -26,26 +26,11 @@ import SpeedIcon from '@mui/icons-material/Speed';
 import StopIcon from '@mui/icons-material/Stop';
 import type { BattleState, BattleUnit, LogEntry, Phase, Position, Terrain, TerrainFeature, TerrainLayout } from '@warhammer-simulator/core/types/battle';
 import type { TerrainFeatureSpec, TerrainLayoutData, TerrainSpec } from '@warhammer-simulator/core/data/terrainLayoutTypes';
-import { BOARD_FORMATS, boardFormatForId, scalePositionsForBoard } from '@warhammer-simulator/core/data/boardFormats';
 import type { ImportedArmy, UnitProfile } from '@warhammer-simulator/core/types/army';
 import type { AbilityTiming, UnitAbilityDefinition } from '@warhammer-simulator/core/types/ability';
 import type { StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
-import { EDITIONS, rulesEditionForRuleset, rulesetMetadataForState, type RulesEdition } from '@warhammer-simulator/core/engine/rulesEngine';
+import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simulator/core/engine/rulesEngine';
 import { terrainLayoutFromData, TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
-import {
-  TOURNAMENT_MISSIONS,
-  ELEVENTH_EDITION_FORCE_DISPOSITIONS,
-  deploymentsForPrimary,
-  eleventhLayoutIdsForDispositions,
-  eleventhPrimaryMissionsForDispositions,
-  eleventhSetupLabel,
-  missionForSelection,
-  objectivesForDeployment,
-  randomMissionSet,
-  setupLabel,
-  type TournamentMission,
-  type EleventhForceDispositionId,
-} from '@warhammer-simulator/core/engine/missions';
 import {
   advancePlayUnit, battleModelIdsWithCoherencyIssues, beginPlayBattle, completePlayUnitMovement, createDeploymentState, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placePlayReinforcement, placePlayStrategicReserveUnit, placePlayUnit, placeNextUnit, removePlayModels,
   allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consolidatePlayUnit, fightPlayUnitWeapon, lockPlayUnitShooting, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, undeployPlayUnit, type DeploymentStrategy, type PlayChargeTargetOption, type PlayFightWeaponOption, type PlayShootingWeaponOption, type LOSRay,
@@ -81,6 +66,7 @@ import { useGameSessionSelection } from './gameSession/useGameSessionSelection';
 import { useGameSessionStorage } from './gameSession/useGameSessionStorage';
 import { useGameSessionTimeline } from './gameSession/useGameSessionTimeline';
 import { restoredTimelineSetupForResult } from './gameSession/restoreTimelineSetup';
+import { useBattleSetupControls } from './battleSetup/useBattleSetupControls';
 import type { AppMode } from './modes/appMode';
 import { AppHeader } from './modes/AppHeader';
 import { ModeChooserDialog } from './modes/ModeChooserDialog';
@@ -1089,13 +1075,6 @@ export default function App() {
     setActiveGameId: setActivePracticeGame,
   } = useGameSessionSelection();
   const [playPhaseWarning, setPlayPhaseWarning] = useState('');
-  const [editionId, setEditionId] = useState<string>(EDITIONS[0].id);
-  const [boardFormatId, setBoardFormatId] = useState<string>(BOARD_FORMATS[2].id);
-  const [primaryMission, setPrimaryMission] = useState<string>(TOURNAMENT_MISSIONS[0].primaryMission);
-  const [deployment, setDeployment] = useState<string>(TOURNAMENT_MISSIONS[0].deployment);
-  const [layoutId, setLayoutId] = useState<string>(TOURNAMENT_MISSIONS[0].terrainLayoutIds[0]);
-  const [forceDisposition0, setForceDisposition0] = useState<EleventhForceDispositionId>(ELEVENTH_EDITION_FORCE_DISPOSITIONS[0].id);
-  const [forceDisposition1, setForceDisposition1] = useState<EleventhForceDispositionId>(ELEVENTH_EDITION_FORCE_DISPOSITIONS[1]?.id ?? ELEVENTH_EDITION_FORCE_DISPOSITIONS[0].id);
   const [customTerrainLayouts, setCustomTerrainLayouts] = useState<Record<string, TerrainLayout>>(loadCustomTerrainLayouts);
   const [terrainMatTemplates, setTerrainMatTemplates] = useState<Record<string, TerrainMatTemplate>>(loadTerrainMatTemplates);
   const [selectedTerrainMatTemplateId, setSelectedTerrainMatTemplateId] = useState('');
@@ -1136,6 +1115,47 @@ export default function App() {
   const battleStateRef = useRef<BattleState | null>(null);
   const checkpointBranchIdRef = useRef<string>(makePracticeId('checkpoint-branch'));
   const winnerRecordedRef = useRef<string | null>(null);
+  const defaultTerrainLayoutIds = new Set(TERRAIN_LAYOUTS.map(layout => layout.id));
+  const terrainLayouts = [
+    ...TERRAIN_LAYOUTS.map(layout => customTerrainLayouts[layout.id] ?? layout),
+    ...Object.values(customTerrainLayouts).filter(layout => !defaultTerrainLayoutIds.has(layout.id)),
+  ];
+
+  const {
+    editionId,
+    boardFormatId,
+    primaryMission,
+    layoutId,
+    forceDisposition0,
+    forceDisposition1,
+    edition,
+    isEleventhEdition,
+    selectedBoardFormat,
+    availableDeployments,
+    selectedMission,
+    compatibleLayouts,
+    selectedLayout,
+    selectedObjectives,
+    eleventhPrimaryMissions,
+    selectedSetup,
+    changeEdition,
+    changePrimaryMission,
+    changeForceDisposition0,
+    changeForceDisposition1,
+    changeDeployment,
+    changeBoardFormat,
+    changeLayout,
+    setLayoutId,
+    randomizeSetup,
+    restoreSetup,
+  } = useBattleSetupControls({
+    battleState,
+    terrainLayouts,
+    editorLayout,
+    onBattleSetupChanged: resetBattleConfiguration,
+    onLayoutChanged: () => { clearPlayUndo(); resetPracticeTimeline(); },
+    onConfiguredBattleChanged: resetConfiguredBattle,
+  });
 
   const {
     timeline: practiceTimeline,
@@ -1188,43 +1208,6 @@ export default function App() {
     createBranchId: () => makePracticeId('checkpoint-branch'),
   });
 
-  const edition: RulesEdition = EDITIONS.find(e => e.id === editionId) ?? EDITIONS[0];
-  const isEleventhEdition = edition.metadata.edition === '11e';
-  const selectedBoardFormat = boardFormatForId(boardFormatId);
-  const availableDeployments = deploymentsForPrimary(primaryMission);
-  const selectedMission: TournamentMission = missionForSelection(primaryMission, deployment);
-  const defaultTerrainLayoutIds = new Set(TERRAIN_LAYOUTS.map(layout => layout.id));
-  const terrainLayouts = [
-    ...TERRAIN_LAYOUTS.map(layout => customTerrainLayouts[layout.id] ?? layout),
-    ...Object.values(customTerrainLayouts).filter(layout => !defaultTerrainLayoutIds.has(layout.id)),
-  ];
-  const eleventhLayoutIds = useMemo(
-    () => eleventhLayoutIdsForDispositions([forceDisposition0, forceDisposition1]),
-    [forceDisposition0, forceDisposition1],
-  );
-  const activeCompatibleLayoutIds = isEleventhEdition ? eleventhLayoutIds : selectedMission.terrainLayoutIds;
-  const compatibleLayouts = terrainLayouts.filter(l => activeCompatibleLayoutIds.includes(l.id));
-  const selectedLayout = terrainLayouts.find(l => l.id === layoutId) ?? compatibleLayouts[0] ?? terrainLayouts[0];
-  const selectedObjectives = useMemo(() => {
-    if (isEleventhEdition) {
-      const terrainObjectives = editorLayout.terrain
-        .filter(terrain => terrain.objectiveRole)
-        .map(terrain => terrainCenter(terrain));
-      if (terrainObjectives.length) return terrainObjectives;
-    }
-    return scalePositionsForBoard(objectivesForDeployment(selectedMission.deployment), selectedBoardFormat);
-  }, [editorLayout.terrain, isEleventhEdition, selectedMission.deployment, selectedBoardFormat]);
-  const eleventhPrimaryMissions = useMemo<[string, string]>(
-    () => eleventhPrimaryMissionsForDispositions([forceDisposition0, forceDisposition1]),
-    [forceDisposition0, forceDisposition1],
-  );
-  const selectedSetup = useMemo(() => ({
-    ...(isEleventhEdition
-      ? eleventhSetupLabel(selectedMission, editorLayout.name, [forceDisposition0, forceDisposition1])
-      : setupLabel(selectedMission, editorLayout.name)),
-    boardFormat: selectedBoardFormat.id,
-    ...(editorLayout.deploymentZones ? { deploymentZones: editorLayout.deploymentZones } : {}),
-  }), [editorLayout.deploymentZones, editorLayout.name, forceDisposition0, forceDisposition1, isEleventhEdition, selectedBoardFormat.id, selectedMission]);
   const previewState: BattleState = useMemo(() => ({
     ruleset: rulesetMetadataForState(edition),
     battleRound: 1,
@@ -1908,17 +1891,11 @@ export default function App() {
   function restorePracticeTimelineResult(result: TimelineStateResult) {
     restorePracticeResultTimeline(result);
     const restoredSetup = restoredTimelineSetupForResult(result, terrainLayouts);
-    setEditionId(restoredSetup.editionId);
     setArmy1(restoredSetup.army1);
     setArmy2(restoredSetup.army2);
     setStrategy1(restoredSetup.strategy1);
     setStrategy2(restoredSetup.strategy2);
-    setBoardFormatId(restoredSetup.boardFormatId);
-    if (restoredSetup.forceDisposition0) setForceDisposition0(restoredSetup.forceDisposition0);
-    if (restoredSetup.forceDisposition1) setForceDisposition1(restoredSetup.forceDisposition1);
-    if (restoredSetup.primaryMission) setPrimaryMission(restoredSetup.primaryMission);
-    if (restoredSetup.deployment) setDeployment(restoredSetup.deployment);
-    if (restoredSetup.layoutId) setLayoutId(restoredSetup.layoutId);
+    restoreSetup(restoredSetup);
     clearPlayUiState();
     commitBattleState(result.state);
   }
@@ -1999,24 +1976,6 @@ export default function App() {
     const clickedSameSelection = selection && selectedEdit && sameSelection(selection, selectedEdit);
     setSelectedEdit(selection);
     if (!clickedSameSelection) setAlignVertexLock(null);
-  }
-
-  function randomizeMissionSet() {
-    const mission = randomMissionSet();
-    let layoutPool = mission.terrainLayoutIds;
-    setPrimaryMission(mission.primaryMission);
-    setDeployment(mission.deployment);
-    if (isEleventhEdition) {
-      const shuffled = [...ELEVENTH_EDITION_FORCE_DISPOSITIONS].sort(() => Math.random() - 0.5);
-      const nextDisposition0 = shuffled[0]?.id ?? ELEVENTH_EDITION_FORCE_DISPOSITIONS[0].id;
-      const nextDisposition1 = shuffled[1]?.id ?? shuffled[0]?.id ?? ELEVENTH_EDITION_FORCE_DISPOSITIONS[0].id;
-      setForceDisposition0(nextDisposition0);
-      setForceDisposition1(nextDisposition1);
-      layoutPool = eleventhLayoutIdsForDispositions([nextDisposition0, nextDisposition1]);
-    }
-    const layout = layoutPool[Math.floor(Math.random() * layoutPool.length)];
-    setLayoutId(layout);
-    resetConfiguredBattle();
   }
 
   function saveTerrainLayout(layout: TerrainLayout) {
@@ -3600,17 +3559,6 @@ export default function App() {
 
   const toggleAuto = () => setAutoRunning(prev => !prev);
 
-  useEffect(() => {
-    if (battleState) return;
-    if (!isEleventhEdition && !availableDeployments.includes(deployment)) {
-      setDeployment(availableDeployments[0] ?? TOURNAMENT_MISSIONS[0].deployment);
-      return;
-    }
-    if (!activeCompatibleLayoutIds.includes(layoutId)) {
-      setLayoutId(activeCompatibleLayoutIds[0] ?? selectedMission.terrainLayoutIds[0]);
-    }
-  }, [activeCompatibleLayoutIds, availableDeployments, battleState, deployment, isEleventhEdition, layoutId, selectedMission]);
-
   const isOver = battleState?.winner !== null;
   const winnerLabel = battleState?.winner === 'draw'
     ? `⚔️ DRAW! (${battleState.scores[0]}-${battleState.scores[1]} VP)`
@@ -3634,14 +3582,14 @@ export default function App() {
         layoutId={layoutId}
         compatibleLayouts={compatibleLayouts}
         onOpenModeChooser={() => setModeChooserOpen(true)}
-        onEditionChange={value => { setEditionId(value); resetBattleConfiguration(); }}
-        onPrimaryMissionChange={value => { setPrimaryMission(value); resetBattleConfiguration(); }}
-        onForceDisposition0Change={value => { setForceDisposition0(value); resetBattleConfiguration(); }}
-        onForceDisposition1Change={value => { setForceDisposition1(value); resetBattleConfiguration(); }}
-        onDeploymentChange={value => { setDeployment(value); resetBattleConfiguration(); }}
-        onBoardFormatChange={value => { setBoardFormatId(value); resetBattleConfiguration(); }}
-        onLayoutChange={value => { setLayoutId(value); clearPlayUndo(); resetPracticeTimeline(); }}
-        onRandomizeMissionSet={randomizeMissionSet}
+        onEditionChange={changeEdition}
+        onPrimaryMissionChange={changePrimaryMission}
+        onForceDisposition0Change={changeForceDisposition0}
+        onForceDisposition1Change={changeForceDisposition1}
+        onDeploymentChange={changeDeployment}
+        onBoardFormatChange={changeBoardFormat}
+        onLayoutChange={changeLayout}
+        onRandomizeMissionSet={randomizeSetup}
       />
 
       {modeChooserOpen && (
