@@ -73,13 +73,7 @@ import { moveFeature, rotateFeatureAround, terrainCenter, terrainCorners } from 
 import { attachedUnitProfilesFor, isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
 import type { GameAction } from '@warhammer-simulator/core/practice/actions';
 import {
-  appendResolvedTimelineAction,
-  createPracticeTimeline,
-  redoTimeline,
-  seekTimeline,
-  undoTimeline,
   type TimelineStateResult,
-  type PracticeTimeline,
 } from '@warhammer-simulator/core/practice/timeline';
 import { useGameSessionController } from './gameSession/useGameSessionController';
 import {
@@ -87,6 +81,7 @@ import {
 } from './gameSession/checkpointHelpers';
 import { useGameSessionSelection } from './gameSession/useGameSessionSelection';
 import { useGameSessionStorage } from './gameSession/useGameSessionStorage';
+import { useGameSessionTimeline } from './gameSession/useGameSessionTimeline';
 import type { AppMode } from './modes/appMode';
 import { AppHeader } from './modes/AppHeader';
 import { ModeChooserDialog } from './modes/ModeChooserDialog';
@@ -1074,7 +1069,6 @@ export default function App() {
   const [army2, setArmy2] = useState<ImportedArmy>(() => loadSavedArmy(1, SAMPLE_ARMIES[1]));
   const [battleState, setBattleState] = useState<BattleState | null>(null);
   const [modeChooserOpen, setModeChooserOpen] = useState(true);
-  const [practiceTimeline, setPracticeTimeline] = useState<PracticeTimeline | null>(null);
   const {
     savedScenarios,
     setSavedScenarios,
@@ -1141,9 +1135,28 @@ export default function App() {
   const pendingPlayRotationActionRef = useRef<PendingPlayTimelineAction | null>(null);
   const playRotationUndoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const battleStateRef = useRef<BattleState | null>(null);
-  const practiceTimelineRef = useRef<PracticeTimeline | null>(null);
   const checkpointBranchIdRef = useRef<string>(makePracticeId('checkpoint-branch'));
   const winnerRecordedRef = useRef<string | null>(null);
+
+  const {
+    timeline: practiceTimeline,
+    timelineRef: practiceTimelineRef,
+    resetTimeline: resetPracticeTimeline,
+    startTimeline: startPracticeTimeline,
+    recordAction: recordPracticeAction,
+    undoTimelineCursor: undoPracticeTimelineCursor,
+    restoreResultTimeline: restorePracticeResultTimeline,
+    undoTimelineAction: undoPracticeTimelineAction,
+    redoTimelineAction: redoPracticeTimelineAction,
+    seekTimelineAction: seekPracticeTimelineAction,
+  } = useGameSessionTimeline({
+    createBranchId: () => makePracticeId('checkpoint-branch'),
+    checkpointBranchIdRef,
+    setActiveCheckpointId: setActivePracticeCheckpoint,
+    setActiveGameId: setActivePracticeGame,
+    setPendingCheckpointLoad,
+    restoreTimelineResult: restorePracticeTimelineResult,
+  });
 
   const {
     saveModalOpen: practiceSaveModalOpen,
@@ -1690,10 +1703,6 @@ export default function App() {
   }, [selectedLayout]);
 
   useEffect(() => {
-    practiceTimelineRef.current = practiceTimeline;
-  }, [practiceTimeline]);
-
-  useEffect(() => {
     battleStateRef.current = battleState;
   }, [battleState]);
 
@@ -1868,46 +1877,8 @@ export default function App() {
     };
   }
 
-  function resetPracticeTimeline() {
-    practiceTimelineRef.current = null;
-    setPracticeTimeline(null);
-    setActivePracticeCheckpoint(null);
-    setActivePracticeGame(null);
-    checkpointBranchIdRef.current = makePracticeId('checkpoint-branch');
-    setPendingCheckpointLoad(null);
-  }
-
-  function startPracticeTimeline(initialState: BattleState) {
-    checkpointBranchIdRef.current = makePracticeId('checkpoint-branch');
-    setActivePracticeCheckpoint(null);
-    const timeline = createPracticeTimeline(initialState, {
-      title: initialState.setup
-        ? `${initialState.setup.missionCode}: ${initialState.setup.primaryMissions?.join(' vs ') ?? initialState.setup.primaryMission}`
-        : 'Practice battle',
-    });
-    practiceTimelineRef.current = timeline;
-    setActivePracticeGame(timeline.metadata.id);
-    setPracticeTimeline(timeline);
-  }
-
-  function recordPracticeAction(stateBefore: BattleState, stateAfter: BattleState, action: GameAction) {
-    const timeline = practiceTimelineRef.current ?? createPracticeTimeline(stateBefore);
-    const nextTimeline = appendResolvedTimelineAction(timeline, action, { stateBefore, stateAfter });
-    practiceTimelineRef.current = nextTimeline;
-    setPracticeTimeline(nextTimeline);
-  }
-
-  function undoPracticeTimelineCursor() {
-    const timeline = practiceTimelineRef.current;
-    if (!timeline) return;
-    const result = undoTimeline(timeline);
-    practiceTimelineRef.current = result.timeline;
-    setPracticeTimeline(result.timeline);
-  }
-
   function restorePracticeTimelineResult(result: TimelineStateResult) {
-    practiceTimelineRef.current = result.timeline;
-    setPracticeTimeline(result.timeline);
+    restorePracticeResultTimeline(result);
     const restoredEdition = rulesEditionForRuleset(result.timeline.metadata.ruleset);
     setEditionId(restoredEdition.id);
     setArmy1(result.timeline.initialState.armies[0].army);
@@ -1935,24 +1906,6 @@ export default function App() {
     setPlayModelSelection(null);
     setInspectedSelection(null);
     commitBattleState(result.state);
-  }
-
-  function undoPracticeTimelineAction() {
-    const timeline = practiceTimelineRef.current;
-    if (!timeline) return;
-    restorePracticeTimelineResult(undoTimeline(timeline));
-  }
-
-  function redoPracticeTimelineAction() {
-    const timeline = practiceTimelineRef.current;
-    if (!timeline) return;
-    restorePracticeTimelineResult(redoTimeline(timeline));
-  }
-
-  function seekPracticeTimelineAction(cursor: number) {
-    const timeline = practiceTimelineRef.current;
-    if (!timeline) return;
-    restorePracticeTimelineResult(seekTimeline(timeline, cursor));
   }
 
   function pushPlayUndoEntry(entry: PlayUndoEntry) {
