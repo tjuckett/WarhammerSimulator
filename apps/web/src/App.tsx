@@ -1868,6 +1868,35 @@ export default function App() {
     }
   }
 
+  function clearPlayUiState() {
+    setPlayDeploySelection(null);
+    setPlayModelSelection(null);
+    setInspectedSelection(null);
+    clearPlayUndo();
+  }
+
+  function resetConfiguredBattle() {
+    commitBattleState(null);
+    clearPlayUiState();
+    resetPracticeTimeline();
+  }
+
+  function resetBattleConfiguration() {
+    commitBattleState(null);
+    clearPlayUndo();
+    resetPracticeTimeline();
+  }
+
+  function updateArmy1(nextArmy: ImportedArmy) {
+    setArmy1(nextArmy);
+    resetConfiguredBattle();
+  }
+
+  function updateArmy2(nextArmy: ImportedArmy) {
+    setArmy2(nextArmy);
+    resetConfiguredBattle();
+  }
+
   function playUndoEntry(state: BattleState): PlayUndoEntry {
     return {
       battleState: clone(state),
@@ -1890,10 +1919,7 @@ export default function App() {
     if (restoredSetup.primaryMission) setPrimaryMission(restoredSetup.primaryMission);
     if (restoredSetup.deployment) setDeployment(restoredSetup.deployment);
     if (restoredSetup.layoutId) setLayoutId(restoredSetup.layoutId);
-    clearPlayUndo();
-    setPlayDeploySelection(null);
-    setPlayModelSelection(null);
-    setInspectedSelection(null);
+    clearPlayUiState();
     commitBattleState(result.state);
   }
 
@@ -1957,10 +1983,10 @@ export default function App() {
     setAppMode(mode);
     setAutoRunning(false);
     setAutoDeploying(false);
+    commitBattleState(null);
     setPlayDeploySelection(null);
     setPlayModelSelection(null);
     clearPlayUndo();
-    commitBattleState(null);
     resetPracticeTimeline();
   }
 
@@ -1990,12 +2016,7 @@ export default function App() {
     }
     const layout = layoutPool[Math.floor(Math.random() * layoutPool.length)];
     setLayoutId(layout);
-    commitBattleState(null);
-    setPlayDeploySelection(null);
-    setPlayModelSelection(null);
-    setInspectedSelection(null);
-    clearPlayUndo();
-    resetPracticeTimeline();
+    resetConfiguredBattle();
   }
 
   function saveTerrainLayout(layout: TerrainLayout) {
@@ -2427,10 +2448,7 @@ export default function App() {
   function startBattle() {
     setAutoRunning(false);
     setAutoDeploying(false);
-    setPlayDeploySelection(null);
-    setPlayModelSelection(null);
-    setInspectedSelection(null);
-    clearPlayUndo();
+    clearPlayUiState();
     winnerRecordedRef.current = null;
     const layout = getLayout();
     const battleSetup = { ...selectedSetup, terrainLayout: layout.name };
@@ -2453,12 +2471,7 @@ export default function App() {
   function resetBattle() {
     setAutoRunning(false);
     setAutoDeploying(false);
-    setPlayDeploySelection(null);
-    setPlayModelSelection(null);
-    setInspectedSelection(null);
-    clearPlayUndo();
-    resetPracticeTimeline();
-    commitBattleState(null);
+    resetConfiguredBattle();
   }
 
   function selectPlayDeployUnit(side: 0 | 1, unitIndex: number) {
@@ -3621,12 +3634,12 @@ export default function App() {
         layoutId={layoutId}
         compatibleLayouts={compatibleLayouts}
         onOpenModeChooser={() => setModeChooserOpen(true)}
-        onEditionChange={value => { setEditionId(value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
-        onPrimaryMissionChange={value => { setPrimaryMission(value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
-        onForceDisposition0Change={value => { setForceDisposition0(value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
-        onForceDisposition1Change={value => { setForceDisposition1(value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
-        onDeploymentChange={value => { setDeployment(value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
-        onBoardFormatChange={value => { setBoardFormatId(value); commitBattleState(null); clearPlayUndo(); resetPracticeTimeline(); }}
+        onEditionChange={value => { setEditionId(value); resetBattleConfiguration(); }}
+        onPrimaryMissionChange={value => { setPrimaryMission(value); resetBattleConfiguration(); }}
+        onForceDisposition0Change={value => { setForceDisposition0(value); resetBattleConfiguration(); }}
+        onForceDisposition1Change={value => { setForceDisposition1(value); resetBattleConfiguration(); }}
+        onDeploymentChange={value => { setDeployment(value); resetBattleConfiguration(); }}
+        onBoardFormatChange={value => { setBoardFormatId(value); resetBattleConfiguration(); }}
         onLayoutChange={value => { setLayoutId(value); clearPlayUndo(); resetPracticeTimeline(); }}
         onRandomizeMissionSet={randomizeMissionSet}
       />
@@ -3654,8 +3667,8 @@ export default function App() {
             selectedPlayModelUnitId={primaryPlaySelection?.side === 0 ? primaryPlaySelection.unitId : null}
             selectedInspectedUnitId={inspectedBattleUnitId}
             selectedInspectedProfileIndex={inspectedProfileSide === 0 ? inspectedProfileIndex : null}
-            onImport={a => { setArmy1(a); commitBattleState(null); setPlayDeploySelection(null); setPlayModelSelection(null); setInspectedSelection(null); clearPlayUndo(); resetPracticeTimeline(); }}
-            onChange={a => { setArmy1(a); commitBattleState(null); setPlayDeploySelection(null); setPlayModelSelection(null); setInspectedSelection(null); clearPlayUndo(); resetPracticeTimeline(); }}
+            onImport={updateArmy1}
+            onChange={updateArmy1}
             onSaveLocal={() => saveArmy(0, army1)}
             onExport={() => downloadJson(`${army1.name.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'army-1'}.json`, army1)}
             onStrategyChange={setStrategy1}
@@ -3679,8 +3692,8 @@ export default function App() {
             selectedPlayModelUnitId={primaryPlaySelection?.side === 1 ? primaryPlaySelection.unitId : null}
             selectedInspectedUnitId={inspectedBattleUnitId}
             selectedInspectedProfileIndex={inspectedProfileSide === 1 ? inspectedProfileIndex : null}
-            onImport={a => { setArmy2(a); commitBattleState(null); setPlayDeploySelection(null); setPlayModelSelection(null); setInspectedSelection(null); clearPlayUndo(); resetPracticeTimeline(); }}
-            onChange={a => { setArmy2(a); commitBattleState(null); setPlayDeploySelection(null); setPlayModelSelection(null); setInspectedSelection(null); clearPlayUndo(); resetPracticeTimeline(); }}
+            onImport={updateArmy2}
+            onChange={updateArmy2}
             onSaveLocal={() => saveArmy(1, army2)}
             onExport={() => downloadJson(`${army2.name.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'army-2'}.json`, army2)}
             onStrategyChange={setStrategy2}

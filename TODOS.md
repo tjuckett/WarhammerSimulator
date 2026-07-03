@@ -28,6 +28,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Completed tenth slice: extracted checkpoint save/load/delete handlers and modal state into `useGameSessionController`.
   - Completed eleventh slice: extracted timeline state/ref and reset/start/record/undo/redo/seek operations into `useGameSessionTimeline`.
   - Completed twelfth slice: extracted loaded timeline setup derivation into `restoreTimelineSetup`.
+  - Completed thirteenth slice: consolidated repeated battle/play UI reset logic into local reset helpers in `App`.
   - Verify with root `npm run build` and relevant simulator-core tests.
   - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.
 - [ ] Resume and finish the remaining 11th Edition rules work.
