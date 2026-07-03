@@ -2,12 +2,12 @@ import { useMemo } from 'react';
 import type { PracticeTimeline, PracticeTimelineEntry } from '@warhammer-simulator/core/practice/timeline';
 import type { GameAction } from '@warhammer-simulator/core/practice/actions';
 import type { PracticeScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
-import type { PracticeStorageHealth } from '../practice/apiPracticeScenarioRepository';
+import type { GameSessionStorageHealth } from '../gameSession/gameSessionRepository';
 
 interface ControlsProps {
   timeline: PracticeTimeline | null;
   status: string;
-  storageStatus: PracticeStorageHealth | null;
+  storageStatus: GameSessionStorageHealth | null;
   onUndo: () => void;
   onRedo: () => void;
   onSeek: (cursor: number) => void;
@@ -19,7 +19,7 @@ interface SaveModalProps {
   open: boolean;
   timeline: PracticeTimeline | null;
   status: string;
-  storageStatus: PracticeStorageHealth | null;
+  storageStatus: GameSessionStorageHealth | null;
   onUndo: () => void;
   onRedo: () => void;
   onSeek: (cursor: number) => void;

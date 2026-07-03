@@ -87,17 +87,17 @@ import {
   type PracticeScenarioSummary,
 } from '@warhammer-simulator/core/practice/scenarioStorage';
 import {
-  apiPracticeScenarioRepository,
-  practiceStorageHealth,
-  type PracticeStorageHealth,
-} from './practice/apiPracticeScenarioRepository';
+  gameSessionRepository,
+  gameSessionStorageHealth,
+  type GameSessionStorageHealth,
+} from './gameSession/gameSessionRepository';
 import type { AppMode } from './modes/appMode';
 import { AppHeader } from './modes/AppHeader';
 import { ModeChooserDialog } from './modes/ModeChooserDialog';
 import { GameSessionCheckpointDialogs } from './gameSession/GameSessionCheckpointDialogs';
 
 const ARMY_COLORS: [string, string] = ['#4af26a', '#f24a4a'];
-const practiceScenarioRepository = apiPracticeScenarioRepository;
+const scenarioRepository = gameSessionRepository;
 const CUSTOM_TERRAIN_KEY = 'warhammer-custom-terrain-layouts';
 const TERRAIN_MAT_TEMPLATE_KEY = 'warhammer-terrain-mat-templates';
 const SAVED_ARMY_KEYS = ['warhammer-saved-army-1', 'warhammer-saved-army-2'] as const;
@@ -1110,7 +1110,7 @@ export default function App() {
   const [practiceSaveModalOpen, setPracticeSaveModalOpen] = useState(false);
   const [practiceLoadModalOpen, setPracticeLoadModalOpen] = useState(false);
   const [practiceSaveStatus, setPracticeSaveStatus] = useState('');
-  const [practiceStorageStatus, setPracticeStorageStatus] = useState<PracticeStorageHealth | null>(null);
+  const [practiceStorageStatus, setPracticeStorageStatus] = useState<GameSessionStorageHealth | null>(null);
   const [playPhaseWarning, setPlayPhaseWarning] = useState('');
   const [editionId, setEditionId] = useState<string>(EDITIONS[0].id);
   const [boardFormatId, setBoardFormatId] = useState<string>(BOARD_FORMATS[2].id);
@@ -1958,13 +1958,13 @@ export default function App() {
   }
 
   async function initializePracticeStorage() {
-    const health = await practiceStorageHealth();
+    const health = await gameSessionStorageHealth();
     setPracticeStorageStatus(health);
-    setSavedScenarios(await practiceScenarioRepository.listSummaries());
+    setSavedScenarios(await scenarioRepository.listSummaries());
   }
 
   async function refreshSavedScenarios() {
-    setSavedScenarios(await practiceScenarioRepository.listSummaries());
+    setSavedScenarios(await scenarioRepository.listSummaries());
   }
 
   function checkpointLabelForState(state: BattleState, kind: PracticeCheckpointKind): string {
@@ -1977,7 +1977,7 @@ export default function App() {
   }
 
   async function nextCheckpointSequence(gameId: string): Promise<number> {
-    return (await practiceScenarioRepository.listSummaries())
+    return (await scenarioRepository.listSummaries())
       .filter(scenario => scenario.gameId === gameId)
       .reduce((highest, scenario) => Math.max(highest, scenario.sequence ?? 0), 0) + 1;
   }
@@ -2000,7 +2000,7 @@ export default function App() {
     });
     let summaries: PracticeScenarioSummary[];
     try {
-      summaries = await practiceScenarioRepository.saveScenario(scenario);
+      summaries = await scenarioRepository.saveScenario(scenario);
     } catch {
       setPracticeSaveStatus('Save failed: browser storage is full. Delete older checkpoints or export a backup.');
       return null;
@@ -2022,7 +2022,7 @@ export default function App() {
     scenarioId: string,
     options: { branchOnNextSave?: boolean; statusPrefix?: string } = {},
   ) {
-    const scenario = await practiceScenarioRepository.loadScenario(scenarioId);
+    const scenario = await scenarioRepository.loadScenario(scenarioId);
     if (!scenario) {
       void refreshSavedScenarios();
       setPendingCheckpointLoad(null);
@@ -2107,7 +2107,7 @@ export default function App() {
   async function confirmDeleteSavedPracticeScenario() {
     if (!pendingCheckpointDelete) return;
     const deleteIds = pendingCheckpointDelete.deleteIds;
-    setSavedScenarios(await practiceScenarioRepository.deleteScenarios(deleteIds));
+    setSavedScenarios(await scenarioRepository.deleteScenarios(deleteIds));
     if (activeCheckpointIdRef.current && deleteIds.includes(activeCheckpointIdRef.current)) {
       setActivePracticeCheckpoint(null);
     }
