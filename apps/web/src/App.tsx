@@ -25,12 +25,11 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SpeedIcon from '@mui/icons-material/Speed';
 import StopIcon from '@mui/icons-material/Stop';
 import type { BattleState, BattleUnit, LogEntry, Phase, Position, Terrain, TerrainFeature, TerrainLayout } from '@warhammer-simulator/core/types/battle';
-import type { TerrainFeatureSpec, TerrainLayoutData, TerrainSpec } from '@warhammer-simulator/core/data/terrainLayoutTypes';
 import type { ImportedArmy, UnitProfile } from '@warhammer-simulator/core/types/army';
 import type { AbilityTiming, UnitAbilityDefinition } from '@warhammer-simulator/core/types/ability';
 import type { StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simulator/core/engine/rulesEngine';
-import { terrainLayoutFromData, TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
+import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
   advancePlayUnit, battleModelIdsWithCoherencyIssues, beginPlayBattle, completePlayUnitMovement, createDeploymentState, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placePlayReinforcement, placePlayStrategicReserveUnit, placePlayUnit, placeNextUnit, removePlayModels,
   allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consolidatePlayUnit, fightPlayUnitWeapon, lockPlayUnitShooting, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, undeployPlayUnit, type DeploymentStrategy, type PlayChargeTargetOption, type PlayFightWeaponOption, type PlayShootingWeaponOption, type LOSRay,
@@ -71,22 +70,23 @@ import type { AppMode } from './modes/appMode';
 import { AppHeader } from './modes/AppHeader';
 import { ModeChooserDialog } from './modes/ModeChooserDialog';
 import { GameSessionCheckpointDialogs } from './gameSession/GameSessionCheckpointDialogs';
+import {
+  loadCustomTerrainLayouts,
+  loadTerrainMatTemplates,
+  readImportedTerrainLayouts,
+  saveCustomTerrainLayouts,
+  saveTerrainMatTemplates,
+  terrainLayoutToData,
+  type TerrainMatTemplate,
+} from './terrain/terrainStorage';
 
 const ARMY_COLORS: [string, string] = ['#4af26a', '#f24a4a'];
-const CUSTOM_TERRAIN_KEY = 'warhammer-custom-terrain-layouts';
-const TERRAIN_MAT_TEMPLATE_KEY = 'warhammer-terrain-mat-templates';
 const SAVED_ARMY_KEYS = ['warhammer-saved-army-1', 'warhammer-saved-army-2'] as const;
 
 type AlignVertexLock = {
   selection: TerrainEditSelection;
   vertexIndex: number;
   target: Position;
-};
-
-export type TerrainMatTemplate = {
-  id: string;
-  name: string;
-  terrain: Terrain;
 };
 
 type PlayDeploySelection =
@@ -120,32 +120,6 @@ function clone<T>(value: T): T {
 function makePracticeId(prefix: string): string {
   const randomId = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   return `${prefix}-${randomId}`;
-}
-
-function loadCustomTerrainLayouts(): Record<string, TerrainLayout> {
-  try {
-    return JSON.parse(localStorage.getItem(CUSTOM_TERRAIN_KEY) ?? '{}');
-  } catch {
-    return {};
-  }
-}
-
-function saveCustomTerrainLayouts(layouts: Record<string, TerrainLayout>) {
-  localStorage.setItem(CUSTOM_TERRAIN_KEY, JSON.stringify(layouts));
-}
-
-function loadTerrainMatTemplates(): Record<string, TerrainMatTemplate> {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(TERRAIN_MAT_TEMPLATE_KEY) ?? '{}');
-    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
-    return parsed;
-  } catch {
-    return {};
-  }
-}
-
-function saveTerrainMatTemplates(templates: Record<string, TerrainMatTemplate>) {
-  localStorage.setItem(TERRAIN_MAT_TEMPLATE_KEY, JSON.stringify(templates));
 }
 
 function loadSavedArmy(side: 0 | 1, fallback: ImportedArmy): ImportedArmy {
@@ -232,64 +206,6 @@ function battleUnitForProfile(state: BattleState | null, side: 0 | 1, profile: U
     && !candidate.destroyed
     && unitRosterId(candidate.profile) === rosterId,
   );
-}
-
-function isTerrainLayoutData(value: unknown): value is TerrainLayoutData {
-  if (!value || typeof value !== 'object') return false;
-  const layout = value as Partial<TerrainLayoutData>;
-  return typeof layout.id === 'string'
-    && typeof layout.name === 'string'
-    && typeof layout.description === 'string'
-    && Array.isArray(layout.terrain);
-}
-
-function readImportedTerrainLayouts(value: unknown): TerrainLayout[] {
-  if (Array.isArray(value)) return value.filter(isTerrainLayoutData).map(terrainLayoutFromData);
-  if (isTerrainLayoutData(value)) return [terrainLayoutFromData(value)];
-  if (value && typeof value === 'object' && Array.isArray((value as { layouts?: unknown }).layouts)) {
-    return (value as { layouts: unknown[] }).layouts.filter(isTerrainLayoutData).map(terrainLayoutFromData);
-  }
-  return [];
-}
-
-function terrainLayoutToData(layout: TerrainLayout): TerrainLayoutData {
-  return {
-    id: layout.id,
-    name: layout.name,
-    description: layout.description,
-    deploymentZones: layout.deploymentZones,
-    terrain: layout.terrain.map((terrain): TerrainSpec => ({
-      kind: terrain.type,
-      x: terrain.x,
-      y: terrain.y,
-      width: terrain.width,
-      height: terrain.height,
-      rotationDeg: terrain.rotationDeg ?? 0,
-      polygonPoints: terrain.polygonPoints,
-      name: terrain.name,
-      providesCover: terrain.providesCover,
-      difficult: terrain.difficult,
-      color: terrain.color,
-      objectiveRole: terrain.objectiveRole,
-      ...(terrain.features.length
-        ? {
-          features: terrain.features.map((feature): TerrainFeatureSpec => ({
-            x: feature.x,
-            y: feature.y,
-            width: feature.width,
-            height: feature.height,
-            rotationDeg: feature.rotationDeg ?? 0,
-            featureHeight: feature.featureHeight,
-            blocksLOS: feature.blocksLOS,
-            blocksMovement: feature.blocksMovement,
-            difficult: feature.difficult,
-            color: feature.color,
-            name: feature.name,
-          })),
-        }
-        : { featureShape: 'none' }),
-    })),
-  };
 }
 
 function downloadJson(filename: string, value: unknown) {
