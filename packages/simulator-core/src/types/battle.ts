@@ -97,6 +97,28 @@ export interface LogEntry {
   type: LogType;
 }
 
+export interface DestroyedUnitMissionEvent {
+  unitId: string;
+  side: Side;
+  unitName: string;
+  destroyedBySide: Side;
+  battleRound: number;
+  turn: number;
+  phase: Phase;
+}
+
+export interface CompletedTurnMissionEventSummary {
+  activeSide: Side;
+  battleRound: number;
+  turn: number;
+  destroyedUnitCounts: [number, number];
+}
+
+export interface MissionEvents {
+  destroyedUnitsThisTurn?: DestroyedUnitMissionEvent[];
+  lastCompletedTurn?: CompletedTurnMissionEventSummary;
+}
+
 export interface Terrain {
   id: string;
   name: string;
@@ -188,6 +210,7 @@ export interface BattleState {
     targetUnitId?: string;
   };
   abilityUses?: UnitAbilityUse[];
+  missionEvents?: MissionEvents;
   // Deployment phase: units not yet placed on the board
   unplacedUnits: [UnitProfile[], UnitProfile[]];
   deployStrategies: [string, string]; // DeploymentStrategy labels for record-keeping

@@ -155,6 +155,12 @@ function objectiveMatchesFilter(
   return true;
 }
 
+function destroyedEnemyUnitsThisTurn(state: BattleState, side: Side): number {
+  return (state.missionEvents?.destroyedUnitsThisTurn ?? []).filter(event =>
+    event.destroyedBySide === side && event.side !== side,
+  ).length;
+}
+
 function conditionMet(
   state: BattleState,
   objectives: ObjectiveControlResult[],
@@ -180,13 +186,15 @@ function conditionMet(
       return controlled.some(objective => objectiveRole(state, objective) === homeRole(side));
     case 'controls-opponent-home-objective':
       return controlled.some(objective => objectiveRole(state, objective) === opponentHomeRole(side));
+    case 'destroyed-enemy-this-turn':
+      return destroyedEnemyUnitsThisTurn(state, side) > 0;
+    case 'more-enemy-units-destroyed-than-friendly-previous-turn':
+      return destroyedEnemyUnitsThisTurn(state, side) > (state.missionEvents?.lastCompletedTurn?.destroyedUnitCounts[side] ?? 0);
     case 'controls-central-and-expansion-objectives':
     case 'controlled-objective-not-controlled-at-start-of-turn':
     case 'destroyed-enemy-near-objective':
     case 'destroyed-enemy-in-terrain':
     case 'destroyed-enemy-started-near-central-objective':
-    case 'destroyed-enemy-this-turn':
-    case 'more-enemy-units-destroyed-than-friendly-previous-turn':
     case 'friendly-units-in-three-table-quarters':
     case 'friendly-units-in-four-table-quarters':
     case 'condemned-enemy-left-battlefield':

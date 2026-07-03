@@ -66,6 +66,52 @@ function phaseLog(state: BattleState, side: Side, armyName: string, label: strin
 
 // ─── Geometry helpers ────────────────────────────────────────────────────────
 
+function resetMissionEventsForNewTurn(state: BattleState): void {
+  state.missionEvents = {
+    ...(state.missionEvents ?? {}),
+    destroyedUnitsThisTurn: [],
+  };
+}
+
+function completeMissionEventsForCurrentTurn(state: BattleState): void {
+  const destroyedUnitCounts: [number, number] = [0, 0];
+  for (const event of state.missionEvents?.destroyedUnitsThisTurn ?? []) {
+    destroyedUnitCounts[event.side] += 1;
+  }
+
+  state.missionEvents = {
+    ...(state.missionEvents ?? {}),
+    lastCompletedTurn: {
+      activeSide: state.activeArmy,
+      battleRound: battleRound(state),
+      turn: state.turn,
+      destroyedUnitCounts,
+    },
+  };
+}
+
+function recordDestroyedUnitMissionEvent(state: BattleState, unit: BattleUnit, destroyedBySide: Side): void {
+  state.missionEvents = state.missionEvents ?? {};
+  const destroyedUnitsThisTurn = state.missionEvents.destroyedUnitsThisTurn ?? [];
+  if (destroyedUnitsThisTurn.some(event => event.unitId === unit.id)) {
+    state.missionEvents.destroyedUnitsThisTurn = destroyedUnitsThisTurn;
+    return;
+  }
+
+  state.missionEvents.destroyedUnitsThisTurn = [
+    ...destroyedUnitsThisTurn,
+    {
+      unitId: unit.id,
+      side: unit.side,
+      unitName: unit.profile.name,
+      destroyedBySide,
+      battleRound: battleRound(state),
+      turn: state.turn,
+      phase: state.phase,
+    },
+  ];
+}
+
 function moveToward(from: Position, to: Position, maxInches: number, stopGap = 1.05): Position {
   const d = dist(from, to);
   const target = Math.max(0, d - stopGap);
@@ -1095,6 +1141,7 @@ export function applyDamage(
     : unit.remainingModels;
   if (killed > 0 && effectiveRemaining <= 0 && !options.deferCasualties) {
     unit.destroyed = true;
+    recordDestroyedUnitMissionEvent(state, unit, attackerSide);
     logs.push(log(state, attackerSide, unit.profile.name,
       `  💀 ${unit.profile.name} DESTROYED`,
       'death',
@@ -1173,6 +1220,7 @@ function emergencyDisembarkDestroyedTransport(
       unit.remainingModels = 0;
       unit.modelPositions = [];
       if (!existingPassenger) state.units.push(unit);
+      recordDestroyedUnitMissionEvent(state, unit, attackerSide);
       logs.push(log(state, attackerSide, unit.profile.name,
         `${unit.profile.name} cannot disembark from the destroyed ${transport.profile.name} and is destroyed.`,
         'death',
@@ -1199,7 +1247,9 @@ function emergencyDisembarkDestroyedTransport(
 
     const rolls = unit.modelPositions.map(() => d6());
     const destroyedModels = rolls.filter(roll => roll === 1).length;
+    const wasDestroyed = unit.destroyed;
     destroyPassengerModels(unit, destroyedModels);
+    if (!wasDestroyed && unit.destroyed) recordDestroyedUnitMissionEvent(state, unit, attackerSide);
     logs.push(log(state, attackerSide, unit.profile.name,
       `${unit.profile.name} emergency disembarks from ${transport.profile.name}; rolls ${rolls.join(', ')}${destroyedModels ? `; ${destroyedModels} model${destroyedModels === 1 ? '' : 's'} destroyed` : '; no models destroyed'}.`,
       destroyedModels && unit.destroyed ? 'death' : 'roll',
@@ -2505,6 +2555,7 @@ export function markRemainingStationaryUnits(state: BattleState, side: Side = st
 function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
   const side = s.activeArmy;
   const armyName = s.armies[side].name;
+  resetMissionEventsForNewTurn(s);
   s.units.filter(u => u.side === side && !u.destroyed).forEach(u => { u.actionStartedThisTurn = undefined; });
   activeUnits(s, side).forEach(u => {
     u.activated = false;
@@ -2540,6 +2591,7 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
 
 function advanceTurnInPlace(s: BattleState): void {
   if (s.winner !== null) return;
+  completeMissionEventsForCurrentTurn(s);
 
   if (s.activeArmy === 0) {
     s.activeArmy = 1;
@@ -4039,6 +4091,7 @@ export function removePlayModels(
     unit.movementAllowanceTotalByModel = [];
     unit.movementStartPositionsByModel = [];
     unit.movementStartRotationsByModel = [];
+    recordDestroyedUnitMissionEvent(s, unit, side);
   }
 
   s.log = [...s.log, log(
@@ -4083,6 +4136,7 @@ export function removePlayCasualtyModels(
     unit.pendingWoundAssignment = undefined;
     unit.modelPositions = [];
     unit.modelRotations = [];
+    recordDestroyedUnitMissionEvent(s, unit, state.activeArmy);
   } else {
     unit.position = centroid(unit.modelPositions);
     if (unit.woundsOnLeadModel <= 0) unit.woundsOnLeadModel = unit.profile.wounds;
@@ -4168,6 +4222,7 @@ export function allocatePlayDamageToModel(
       unit.modelPositions = [];
       unit.modelRotations = [];
       unit.pendingDamageAllocations = undefined;
+      recordDestroyedUnitMissionEvent(s, unit, state.activeArmy);
     } else {
       unit.position = centroid(unit.modelPositions);
       if (carryOverDamage > 0) {
@@ -4603,6 +4658,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   const newLogs: LogEntry[] = [];
 
   // Reset per-turn flags
+  resetMissionEventsForNewTurn(s);
   myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
 
   // Command
@@ -4661,6 +4717,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
 export function advanceTurn(state: BattleState): BattleState {
   const s = clone(state);
   if (s.winner !== null) return s;
+  completeMissionEventsForCurrentTurn(s);
 
   if (s.activeArmy === 0) {
     s.activeArmy = 1;

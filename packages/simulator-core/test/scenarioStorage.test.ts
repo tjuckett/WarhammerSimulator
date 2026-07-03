@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completePlayUnitMovement, consolidatePlayUnit, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, fightPlayUnitWeapon, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completePlayUnitMovement, consolidatePlayUnit, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, fightPlayUnitWeapon, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -1054,7 +1054,122 @@ test("11th Destroyer's Wrath scores objective control clauses from mission data"
   assert.deepEqual(battle.scores, [10, 0]);
 });
 
-test('11th Meatgrinder records unsupported kill clauses and scores opponent home control', () => {
+test("11th destroyed-unit mission events score Destroyer's Wrath kill clause", () => {
+  const battle = state('fight', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ["Destroyer's Wrath", 'Vital Link'],
+  };
+  const target = losTestUnit('red-target', 1, { x: 20, y: 10 });
+  battle.units = [
+    losTestUnit('blue-attacker', 0, { x: 10, y: 10 }),
+    target,
+  ];
+
+  applyDamage(target, 1, battle, 0);
+
+  assert.equal(target.destroyed, true);
+  assert.equal(battle.missionEvents?.destroyedUnitsThisTurn?.length, 1);
+  assert.equal(battle.missionEvents?.destroyedUnitsThisTurn?.[0].destroyedBySide, 0);
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.kind, 'scored');
+  assert.equal(result.vpGained, 3);
+  assert.deepEqual(result.unsupportedClauses, []);
+  assert.match(formatPrimaryScoringResult(result), /One or more enemy units were destroyed this turn/);
+});
+
+test('11th destroyed-unit mission events reset at the start of a new player turn', () => {
+  const battle = state('setup', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.missionEvents = {
+    destroyedUnitsThisTurn: [{
+      unitId: 'old-red-target',
+      side: 1,
+      unitName: 'Old Red Target',
+      destroyedBySide: 0,
+      battleRound: 1,
+      turn: 1,
+      phase: 'fight',
+    }],
+  };
+
+  const command = simulateNextPhase(battle, rules40K11th);
+
+  assert.equal(command.phase, 'command');
+  assert.deepEqual(command.missionEvents?.destroyedUnitsThisTurn, []);
+});
+
+test("11th Destroyer's Wrath scores previous-turn destroyed-unit comparison", () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ["Destroyer's Wrath", 'Vital Link'],
+  };
+  battle.missionEvents = {
+    destroyedUnitsThisTurn: [{
+      unitId: 'red-target',
+      side: 1,
+      unitName: 'Red Target',
+      destroyedBySide: 0,
+      battleRound: 2,
+      turn: 2,
+      phase: 'fight',
+    }],
+    lastCompletedTurn: {
+      activeSide: 1,
+      battleRound: 1,
+      turn: 1,
+      destroyedUnitCounts: [0, 0],
+    },
+  };
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.kind, 'scored');
+  assert.equal(result.vpGained, 7);
+  assert.deepEqual(result.unsupportedClauses, []);
+  assert.match(formatPrimaryScoringResult(result), /More enemy units were destroyed this turn/);
+});
+
+test("11th Destroyer's Wrath withholds previous-turn kill bonus when counts tie", () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ["Destroyer's Wrath", 'Vital Link'],
+  };
+  battle.missionEvents = {
+    destroyedUnitsThisTurn: [{
+      unitId: 'red-target',
+      side: 1,
+      unitName: 'Red Target',
+      destroyedBySide: 0,
+      battleRound: 2,
+      turn: 2,
+      phase: 'fight',
+    }],
+    lastCompletedTurn: {
+      activeSide: 1,
+      battleRound: 1,
+      turn: 1,
+      destroyedUnitCounts: [1, 0],
+    },
+  };
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.vpGained, 3);
+  assert.deepEqual(result.unsupportedClauses, []);
+});
+
+test('11th Meatgrinder scores kill clauses and opponent home control', () => {
   const battle = state('fight', 2);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.objectiveControl = rules40K11th.objectiveControl;
@@ -1079,8 +1194,8 @@ test('11th Meatgrinder records unsupported kill clauses and scores opponent home
   assert.equal(result.kind, 'scored');
   assert.equal(result.scoringModel, '11e-data:Meatgrinder');
   assert.equal(result.vpGained, 5);
-  assert.equal(result.unsupportedClauses?.length, 2);
-  assert.match(formatPrimaryScoringResult(result), /Unsupported clauses:/);
+  assert.deepEqual(result.unsupportedClauses, []);
+  assert.doesNotMatch(formatPrimaryScoringResult(result), /Unsupported clauses:/);
 });
 
 test('11th Gather Intel scores objective control and records action marker clauses', () => {

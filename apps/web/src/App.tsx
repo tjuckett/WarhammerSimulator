@@ -89,6 +89,8 @@ import {
   practiceStorageHealth,
   type PracticeStorageHealth,
 } from './practice/apiPracticeScenarioRepository';
+import type { AppMode } from './modes/appMode';
+import { ModeChooserDialog } from './modes/ModeChooserDialog';
 
 const ARMY_COLORS: [string, string] = ['#4af26a', '#f24a4a'];
 const practiceScenarioRepository = apiPracticeScenarioRepository;
@@ -107,8 +109,6 @@ export type TerrainMatTemplate = {
   name: string;
   terrain: Terrain;
 };
-
-type AppMode = 'play' | 'simulation' | 'editor';
 
 type PlayDeploySelection =
   | { kind: 'deployment'; side: 0 | 1; unitIndex: number }
@@ -3962,35 +3962,11 @@ export default function App() {
       </header>
 
       {modeChooserOpen && (
-        <div className="mode-modal-backdrop">
-          <div className="mode-modal" role="dialog" aria-modal="true" aria-labelledby="mode-modal-title">
-            <div className="mode-modal-title" id="mode-modal-title">Choose Mode</div>
-            <div className="mode-modal-options">
-              <button type="button" className={appMode === 'play' ? 'is-active' : ''} onClick={() => chooseMode('play')}>
-                <strong>Play</strong>
-                <span>Move models and step through phases yourself.</span>
-              </button>
-              <button type="button" className={appMode === 'simulation' ? 'is-active' : ''} onClick={() => chooseMode('simulation')}>
-                <strong>Simulation</strong>
-                <span>Run automated deployment and phase resolution.</span>
-              </button>
-              <button type="button" className={appMode === 'editor' ? 'is-active' : ''} onClick={() => chooseMode('editor')}>
-                <strong>Editor</strong>
-                <span>Edit terrain layouts before starting a game.</span>
-              </button>
-            </div>
-            <button type="button" className="mode-modal-close" onClick={() => setModeChooserOpen(false)}>
-              Keep Current
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Edition preview notice */}
-      {editionId === 'w40k-11th' && (
-        <Alert severity="info" className="notice" variant="outlined">
-          11th Edition preview rules are active. Blue primary: {eleventhPrimaryMissions[0]}; Red primary: {eleventhPrimaryMissions[1]}. Terrain objectives, actions, snap shooting, aircraft and vertical movement, and core stratagem targeting/effects are implemented; compatible 10th Edition behavior is still used where final 11th rules are not modeled yet.
-        </Alert>
+        <ModeChooserDialog
+          appMode={appMode}
+          onChooseMode={chooseMode}
+          onClose={() => setModeChooserOpen(false)}
+        />
       )}
 
       {/* ── Main layout ───────────────────────────────────────────────────── */}

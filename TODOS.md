@@ -1,5 +1,48 @@
 # Warhammer Simulator — TODOs
 
+## Architecture and Feature Roadmap Handoff - 2026-07-02
+
+Use this section as the current high-level pickup order before starting large new feature work. The goal is to keep the repo easy to continue from another computer and avoid adding Army Builder or remaining 11th Edition rules work through oversized React components or scattered core logic.
+
+### Recommended Order
+- [x] Run an architecture pass before adding new feature surface area.
+  - Review `apps/web/src/App.tsx`, `apps/web/src/components/ArmyPanel.tsx`, and shared rule modules in `packages/simulator-core`.
+  - Identify oversized modules, mixed responsibilities, duplicated army editing logic, and React UI code that should call focused core helpers instead.
+  - Produced checked-in architecture notes in `docs/architecture.md` with current boundaries, target boundaries, diagrams, and a prioritized refactor list.
+  - Next after this task: do the smallest refactor pass that unlocks the next rules/UI work without changing behavior.
+- [ ] Do a small refactor pass from the architecture notes.
+  - Prefer extracting stable boundaries over redesigning everything at once.
+  - Likely candidates: app mode shell/layout, army editing helpers, game session save/load state, battle phase controls, and rules-event tracking helpers.
+  - Rename new target APIs away from "practice" language; use game/session wording for user-facing concepts and new controllers.
+  - Preserve persistence seams for database-backed game sessions, saved armies, custom terrain layouts, users/sharing, and future AI memory.
+  - Preserve AI seams for human-vs-human, human-vs-AI, and AI-vs-AI by routing decisions through legal `GameAction` choices and serializable battle observations.
+  - Completed first slice: extracted `AppMode` and `ModeChooserDialog` into `apps/web/src/modes`.
+  - Verify with root `npm run build` and relevant simulator-core tests.
+  - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.
+- [ ] Resume and finish the remaining 11th Edition rules work.
+  - Prioritize mission/event state tracking, automatic secondary scoring, primary scoring tests, scoring log explanations, and remaining core rule audit items listed below.
+  - Keep edition-specific behavior behind `RulesEdition` or focused simulator-core helpers.
+  - Next after this task: build Army Builder mode using the cleaned-up army editing and import/export boundaries.
+- [ ] Add a dedicated Army Builder mode.
+  - Add a fourth app mode for army/list management with no battlefield canvas.
+  - Top bar should show army-focused controls instead of play controls: army slot, army type/faction, saved army dropdown, New, Save, Import JSON, and Export JSON.
+  - Main layout should be three focused columns: available unit library on the left, current army selection in the middle, selected unit stats/options on the right.
+  - Reuse existing army capabilities: model count, leader attachment, transport/deployment setup, model loadouts, BattleScribe JSON import, local save, and JSON export.
+  - Design the save/load path around an army repository so local storage can be replaced or backed by Postgres without changing the builder UI.
+  - Start with available units from sample/imported armies, then add a real unit catalog/source later if needed.
+  - Next after this task: decide whether full roster validation and complete faction catalog data belong in app data, imported BattleScribe data, or a separate catalog package.
+- [ ] Add player/AI controller architecture.
+  - Model each side as a player seat controlled by a human or AI policy.
+  - Ensure human play, human-vs-AI, AI-vs-AI simulation, replay, and saved sessions all use the same core `GameAction` execution path.
+  - Keep AI policy decisions behind legal action generation and battle observation helpers.
+  - Next after this task: add simple heuristic AI actions before considering learned or external model-backed policies.
+- [ ] Add AI army generation architecture.
+  - Support AI-created armies through the same Army Builder and saved-army repository path as human-created armies.
+  - Start from imported/sample army data and simple role/package swaps before requiring a full faction catalog.
+  - Evaluate candidate lists with heuristics first, then small mission/opponent scenario matrices.
+  - Save explanations with generated armies so the user can understand the list plan and edit it.
+  - Next after this task: define the army catalog and roster validation source of truth.
+
 ## 11th Edition Rules Handoff - 2026-06-23
 
 Use this section as the current pickup point for 11th Edition work. Older sections below are historical and may include stale wording.
@@ -50,8 +93,9 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
 - [x] Imported datasheet abilities/rules can affect core passive rules for Stealth shooting modifiers, Fights First fight priority, Feel No Pain damage prevention, Lone Operative targeting, and stratagem keyword restrictions.
 
 ### Manual Data Work
-- [ ] Finish manually transcribing the 45 11th Event Companion terrain layouts.
+- [ ] Validate and finalize the 45 11th Event Companion terrain layouts already present in `11e-event-layouts.json`.
   - Owner: Tim/manual editor work.
+  - Replace any mirrored-half/template placeholder descriptions or coordinates with exact full-layout data where needed.
   - Keep walls in the saved terrain mat templates where needed.
   - Use objective role tagging for home/no man's land objectives.
   - Use deployment zone polygons/triangles and center exclusions where required by the layout.
@@ -65,7 +109,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
 - [x] Transcribe and add data-driven scoring for the five Reconnaissance 11th primary missions: Gather Intel, Reconnaissance Sweep, Search and Scour, Surveil the Foe, and Triangulation.
 - [x] Transcribe and add data-driven scoring for the five Priority Assets 11th primary missions: Extract Relic, Sabotage, Secure Asset, Vanguard Operation, and Vital Link.
 - [x] Transcribe and add data-driven scoring for the five Disruption 11th primary missions: Death Trap, Delaying Action, Locate and Deny, Outmanoeuvre, and Smoke and Mirrors.
-- [ ] Add state tracking for unsupported mission event clauses: objectives controlled at start of turn, destroyed enemy units this turn, objective proximity at turn start / kill source, terrain-area occupancy at turn start, table-quarter occupancy, operation markers, objective actions, consecrated/triangulated/surveilled/extracted/sensor sweep/sabotage/secure asset/vanguard/booby trap/decoy markers, territory geometry, expansion objective roles, and condemned enemy units leaving the battlefield.
+- [ ] Add state tracking for unsupported mission event clauses: objectives controlled at start of turn, per-unit destroyed enemy scoring, objective proximity at turn start / kill source, terrain-area occupancy at turn start, table-quarter occupancy, operation markers, objective actions, consecrated/triangulated/surveilled/extracted/sensor sweep/sabotage/secure asset/vanguard/booby trap/decoy markers, territory geometry, expansion objective roles, and condemned enemy units leaving the battlefield.
 - [x] Find or transcribe source text for all 25 unique 11th primary missions.
 - [ ] Implement exact scoring for all 25 unique 11th primary missions once source text is available. All mission texts are transcribed; event clauses need the state tracking above.
 - [ ] Add tests for every implemented 11th primary mission scoring rule.
@@ -185,7 +229,7 @@ Use this section as the next-session pickup point for the rules implementation w
 - [ ] Shared concepts likely worth keeping edition-neutral: battle rounds, active army, phase/step cursor, unit/model positions, dice helpers, objective ownership scaffolding.
 
 ### Known Rules/UI Followups
-- [ ] Review whether "practice game" naming should be changed to a more future-proof term before multiplayer features are added.
+- [x] Review whether "practice game" naming should be changed to a more future-proof term before multiplayer features are added. Decision: use game/session language going forward; existing `practice` code paths can be migrated in a focused rename later.
 - [ ] Improve selected-model action placement/UI if Advance/Fall Back/Movement Done still feel disconnected from selected unit actions.
 - [ ] Add tests when each rule is implemented in `packages/simulator-core/test/`.
 - [ ] Re-run `npx tsc -p apps/web/tsconfig.json --noEmit`, `npm run lint`, and root `npm run build` after frontend/rules changes.

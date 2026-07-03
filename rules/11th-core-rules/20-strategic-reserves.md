@@ -1,0 +1,22 @@
+# 20 Strategic Reserves
+
+Source: https://gdmissions.app/11th/rules/core-rules
+
+## Indexed Entries
+
+- 20.01 Placing Units In Strategic Reserves
+  - 20.01.01 Reserves
+- 20.02 Repositioned Units
+- 20.03 Arriving From Strategic Reserves
+  - 20.03.01 Set Up As Reinforcements
+- 20.04 Ingress Move
+
+## Implementation Notes
+
+- Reserve placement, Reinforcements step placement, more-than-9-inch enemy restriction, Rapid Ingress, Aircraft reserve return, and reinforcement charge restrictions are represented.
+
+## TODO
+
+- Re-audit final reserves, repositioning, and Rapid Ingress timing/restrictions.
+- Add tests for impossible placement and large-model setup.
+
