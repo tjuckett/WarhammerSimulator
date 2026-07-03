@@ -26,18 +26,16 @@ import SpeedIcon from '@mui/icons-material/Speed';
 import StopIcon from '@mui/icons-material/Stop';
 import type { BattleState, BattleUnit, LogEntry, Phase, Position, Terrain, TerrainFeature, TerrainLayout } from '@warhammer-simulator/core/types/battle';
 import type { TerrainFeatureSpec, TerrainLayoutData, TerrainSpec } from '@warhammer-simulator/core/data/terrainLayoutTypes';
-import { BOARD_FORMATS, boardFormatForId, boardFormatForState, scalePositionsForBoard } from '@warhammer-simulator/core/data/boardFormats';
+import { BOARD_FORMATS, boardFormatForId, scalePositionsForBoard } from '@warhammer-simulator/core/data/boardFormats';
 import type { ImportedArmy, UnitProfile } from '@warhammer-simulator/core/types/army';
 import type { AbilityTiming, UnitAbilityDefinition } from '@warhammer-simulator/core/types/ability';
 import type { StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { EDITIONS, rulesEditionForRuleset, rulesetMetadataForState, type RulesEdition } from '@warhammer-simulator/core/engine/rulesEngine';
 import { terrainLayoutFromData, TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
-  PRIMARY_MISSIONS,
   TOURNAMENT_MISSIONS,
   ELEVENTH_EDITION_FORCE_DISPOSITIONS,
   deploymentsForPrimary,
-  eleventhForceDispositionIdForValue,
   eleventhLayoutIdsForDispositions,
   eleventhPrimaryMissionsForDispositions,
   eleventhSetupLabel,
@@ -82,6 +80,7 @@ import {
 import { useGameSessionSelection } from './gameSession/useGameSessionSelection';
 import { useGameSessionStorage } from './gameSession/useGameSessionStorage';
 import { useGameSessionTimeline } from './gameSession/useGameSessionTimeline';
+import { restoredTimelineSetupForResult } from './gameSession/restoreTimelineSetup';
 import type { AppMode } from './modes/appMode';
 import { AppHeader } from './modes/AppHeader';
 import { ModeChooserDialog } from './modes/ModeChooserDialog';
@@ -1879,28 +1878,18 @@ export default function App() {
 
   function restorePracticeTimelineResult(result: TimelineStateResult) {
     restorePracticeResultTimeline(result);
-    const restoredEdition = rulesEditionForRuleset(result.timeline.metadata.ruleset);
-    setEditionId(restoredEdition.id);
-    setArmy1(result.timeline.initialState.armies[0].army);
-    setArmy2(result.timeline.initialState.armies[1].army);
-    setStrategy1(result.timeline.initialState.deployStrategies[0] as DeploymentStrategy);
-    setStrategy2(result.timeline.initialState.deployStrategies[1] as DeploymentStrategy);
-    setBoardFormatId(boardFormatForState(result.timeline.initialState).id);
-    const setup = result.timeline.initialState.setup;
-    if (setup) {
-      if (setup.forceDispositions) {
-        setForceDisposition0(eleventhForceDispositionIdForValue(setup.forceDispositions[0]));
-        setForceDisposition1(eleventhForceDispositionIdForValue(setup.forceDispositions[1]));
-      } else if (PRIMARY_MISSIONS.includes(setup.primaryMission)) {
-        setPrimaryMission(setup.primaryMission);
-      } else {
-        const matchingMission = TOURNAMENT_MISSIONS.find(mission => mission.deployment === setup.deployment) ?? TOURNAMENT_MISSIONS[0];
-        setPrimaryMission(matchingMission.primaryMission);
-      }
-      if (!setup.forceDispositions) setDeployment(setup.deployment);
-      const matchingLayout = terrainLayouts.find(layout => layout.name === setup.terrainLayout);
-      if (matchingLayout) setLayoutId(matchingLayout.id);
-    }
+    const restoredSetup = restoredTimelineSetupForResult(result, terrainLayouts);
+    setEditionId(restoredSetup.editionId);
+    setArmy1(restoredSetup.army1);
+    setArmy2(restoredSetup.army2);
+    setStrategy1(restoredSetup.strategy1);
+    setStrategy2(restoredSetup.strategy2);
+    setBoardFormatId(restoredSetup.boardFormatId);
+    if (restoredSetup.forceDisposition0) setForceDisposition0(restoredSetup.forceDisposition0);
+    if (restoredSetup.forceDisposition1) setForceDisposition1(restoredSetup.forceDisposition1);
+    if (restoredSetup.primaryMission) setPrimaryMission(restoredSetup.primaryMission);
+    if (restoredSetup.deployment) setDeployment(restoredSetup.deployment);
+    if (restoredSetup.layoutId) setLayoutId(restoredSetup.layoutId);
     clearPlayUndo();
     setPlayDeploySelection(null);
     setPlayModelSelection(null);
