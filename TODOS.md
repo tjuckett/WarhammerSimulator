@@ -25,6 +25,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Completed seventh slice: extracted checkpoint labels, sequencing, descendant lookup, and phase labels into `gameSession/checkpointHelpers`.
   - Completed eighth slice: replaced checkpoint-kind string branching with typed label maps in `checkpointHelpers`.
   - Completed ninth slice: reused typed checkpoint-kind maps in the save/load panel and Prisma checkpoint kind conversion.
+  - Completed tenth slice: extracted checkpoint save/load/delete handlers and modal state into `useGameSessionController`.
   - Verify with root `npm run build` and relevant simulator-core tests.
   - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.
 - [ ] Resume and finish the remaining 11th Edition rules work.

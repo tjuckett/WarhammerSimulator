@@ -75,25 +75,14 @@ import type { GameAction } from '@warhammer-simulator/core/practice/actions';
 import {
   appendResolvedTimelineAction,
   createPracticeTimeline,
-  currentTimelineState,
   redoTimeline,
   seekTimeline,
   undoTimeline,
   type TimelineStateResult,
   type PracticeTimeline,
 } from '@warhammer-simulator/core/practice/timeline';
-import { scenarioFromTimeline, type PracticeCheckpointKind } from '@warhammer-simulator/core/practice/scenarios';
+import { useGameSessionController } from './gameSession/useGameSessionController';
 import {
-  type PracticeScenarioSummary,
-} from '@warhammer-simulator/core/practice/scenarioStorage';
-import {
-  gameSessionRepository,
-} from './gameSession/gameSessionRepository';
-import {
-  CHECKPOINT_KIND_SAVED_LABELS,
-  checkpointDescendantIds,
-  checkpointLabelForState,
-  nextCheckpointSequence,
   PHASE_LABELS,
 } from './gameSession/checkpointHelpers';
 import { useGameSessionSelection } from './gameSession/useGameSessionSelection';
@@ -104,7 +93,6 @@ import { ModeChooserDialog } from './modes/ModeChooserDialog';
 import { GameSessionCheckpointDialogs } from './gameSession/GameSessionCheckpointDialogs';
 
 const ARMY_COLORS: [string, string] = ['#4af26a', '#f24a4a'];
-const scenarioRepository = gameSessionRepository;
 const CUSTOM_TERRAIN_KEY = 'warhammer-custom-terrain-layouts';
 const TERRAIN_MAT_TEMPLATE_KEY = 'warhammer-terrain-mat-templates';
 const SAVED_ARMY_KEYS = ['warhammer-saved-army-1', 'warhammer-saved-army-2'] as const;
@@ -1107,9 +1095,6 @@ export default function App() {
     setActiveCheckpointId: setActivePracticeCheckpoint,
     setActiveGameId: setActivePracticeGame,
   } = useGameSessionSelection();
-  const [practiceSaveModalOpen, setPracticeSaveModalOpen] = useState(false);
-  const [practiceLoadModalOpen, setPracticeLoadModalOpen] = useState(false);
-  const [practiceSaveStatus, setPracticeSaveStatus] = useState('');
   const [playPhaseWarning, setPlayPhaseWarning] = useState('');
   const [editionId, setEditionId] = useState<string>(EDITIONS[0].id);
   const [boardFormatId, setBoardFormatId] = useState<string>(BOARD_FORMATS[2].id);
@@ -1159,6 +1144,37 @@ export default function App() {
   const practiceTimelineRef = useRef<PracticeTimeline | null>(null);
   const checkpointBranchIdRef = useRef<string>(makePracticeId('checkpoint-branch'));
   const winnerRecordedRef = useRef<string | null>(null);
+
+  const {
+    saveModalOpen: practiceSaveModalOpen,
+    setSaveModalOpen: setPracticeSaveModalOpen,
+    loadModalOpen: practiceLoadModalOpen,
+    setLoadModalOpen: setPracticeLoadModalOpen,
+    saveStatus: practiceSaveStatus,
+    saveCheckpoint: savePracticeCheckpoint,
+    saveActiveScenarioAndClose: saveActivePracticeScenarioAndClose,
+    requestLoadSavedScenario: requestLoadSavedPracticeScenario,
+    saveCurrentAndLoadPendingCheckpoint,
+    loadPendingCheckpointWithoutSaving,
+    requestDeleteSavedScenario: requestDeleteSavedPracticeScenario,
+    confirmDeleteSavedScenario: confirmDeleteSavedPracticeScenario,
+  } = useGameSessionController({
+    practiceTimelineRef,
+    checkpointBranchIdRef,
+    activeCheckpointIdRef,
+    activeGameIdRef,
+    savedScenarios,
+    setSavedScenarios,
+    refreshSavedScenarios,
+    pendingCheckpointLoad,
+    setPendingCheckpointLoad,
+    pendingCheckpointDelete,
+    setPendingCheckpointDelete,
+    setActiveCheckpointId: setActivePracticeCheckpoint,
+    setActiveGameId: setActivePracticeGame,
+    restoreTimelineResult: restorePracticeTimelineResult,
+    createBranchId: () => makePracticeId('checkpoint-branch'),
+  });
 
   const edition: RulesEdition = EDITIONS.find(e => e.id === editionId) ?? EDITIONS[0];
   const isEleventhEdition = edition.metadata.edition === '11e';
@@ -1937,117 +1953,6 @@ export default function App() {
     const timeline = practiceTimelineRef.current;
     if (!timeline) return;
     restorePracticeTimelineResult(seekTimeline(timeline, cursor));
-  }
-
-  async function savePracticeCheckpoint(kind: PracticeCheckpointKind) {
-    const timeline = practiceTimelineRef.current;
-    if (!timeline) return null;
-    const state = currentTimelineState(timeline);
-    const label = checkpointLabelForState(state, kind);
-    const gameId = activeGameIdRef.current ?? timeline.metadata.id;
-    const scenario = scenarioFromTimeline(timeline, {
-      name: label,
-      gameId,
-      branchId: checkpointBranchIdRef.current,
-      parentCheckpointId: activeCheckpointIdRef.current ?? undefined,
-      checkpointKind: kind,
-      checkpointLabel: label,
-      sequence: await nextCheckpointSequence(scenarioRepository, gameId),
-      timelineCursor: timeline.cursor,
-    });
-    let summaries: PracticeScenarioSummary[];
-    try {
-      summaries = await scenarioRepository.saveScenario(scenario);
-    } catch {
-      setPracticeSaveStatus('Save failed: browser storage is full. Delete older checkpoints or export a backup.');
-      return null;
-    }
-    setSavedScenarios(summaries);
-    setActivePracticeCheckpoint(scenario.metadata.id);
-    setPracticeSaveStatus(`${CHECKPOINT_KIND_SAVED_LABELS[kind]} ${scenario.metadata.name}.`);
-    return scenario;
-  }
-
-  async function saveActivePracticeScenarioAndClose() {
-    const saved = await savePracticeCheckpoint('play');
-    if (saved) setPracticeSaveModalOpen(false);
-  }
-
-  async function loadSavedPracticeScenario(
-    scenarioId: string,
-    options: { branchOnNextSave?: boolean; statusPrefix?: string } = {},
-  ) {
-    const scenario = await scenarioRepository.loadScenario(scenarioId);
-    if (!scenario) {
-      void refreshSavedScenarios();
-      setPendingCheckpointLoad(null);
-      return;
-    }
-    restorePracticeTimelineResult({
-      timeline: scenario.timeline,
-      state: currentTimelineState(scenario.timeline),
-    });
-    setActivePracticeCheckpoint(scenario.metadata.id);
-    setActivePracticeGame(scenario.metadata.gameId ?? scenario.timeline.metadata.id);
-    checkpointBranchIdRef.current = options.branchOnNextSave
-      ? makePracticeId('checkpoint-branch')
-      : scenario.metadata.branchId ?? makePracticeId('checkpoint-branch');
-    setPendingCheckpointLoad(null);
-    setPracticeSaveStatus(
-      `${options.statusPrefix ?? ''}Loaded ${scenario.metadata.name}.${options.branchOnNextSave ? ' Future checkpoints will branch from here.' : ''}`,
-    );
-  }
-
-  function requestLoadSavedPracticeScenario(scenarioId: string) {
-    if (!practiceTimelineRef.current) {
-      setPracticeLoadModalOpen(false);
-      void loadSavedPracticeScenario(scenarioId, { branchOnNextSave: true });
-      return;
-    }
-    const scenarioName = savedScenarios.find(scenario => scenario.id === scenarioId)?.name ?? 'saved checkpoint';
-    setPracticeLoadModalOpen(false);
-    setPendingCheckpointLoad({ scenarioId, scenarioName });
-  }
-
-  async function saveCurrentAndLoadPendingCheckpoint() {
-    if (!pendingCheckpointLoad) return;
-    const nextLoad = pendingCheckpointLoad;
-    const saved = await savePracticeCheckpoint('play');
-    if (!saved) return;
-    await loadSavedPracticeScenario(nextLoad.scenarioId, {
-      branchOnNextSave: true,
-      statusPrefix: 'Saved current progress, then ',
-    });
-  }
-
-  function loadPendingCheckpointWithoutSaving() {
-    if (!pendingCheckpointLoad) return;
-    void loadSavedPracticeScenario(pendingCheckpointLoad.scenarioId, { branchOnNextSave: true });
-  }
-
-  function requestDeleteSavedPracticeScenario(scenarioId: string) {
-    const scenario = savedScenarios.find(candidate => candidate.id === scenarioId);
-    if (!scenario) {
-      void refreshSavedScenarios();
-      return;
-    }
-    setPracticeLoadModalOpen(false);
-    setPendingCheckpointDelete({
-      scenarioId,
-      scenarioName: scenario.name,
-      deleteIds: checkpointDescendantIds(savedScenarios, scenarioId),
-    });
-  }
-
-  async function confirmDeleteSavedPracticeScenario() {
-    if (!pendingCheckpointDelete) return;
-    const deleteIds = pendingCheckpointDelete.deleteIds;
-    setSavedScenarios(await scenarioRepository.deleteScenarios(deleteIds));
-    if (activeCheckpointIdRef.current && deleteIds.includes(activeCheckpointIdRef.current)) {
-      setActivePracticeCheckpoint(null);
-    }
-    setPendingCheckpointDelete(null);
-    setPracticeSaveStatus(`Deleted ${deleteIds.length} checkpoint${deleteIds.length === 1 ? '' : 's'}.`);
   }
 
   function pushPlayUndoEntry(entry: PlayUndoEntry) {
