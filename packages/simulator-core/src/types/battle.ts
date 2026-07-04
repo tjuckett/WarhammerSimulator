@@ -6,21 +6,29 @@ import type { UnitAbilityUse } from './ability';
 import type { DeploymentZoneSet } from '../data/deploymentZoneTypes';
 import type { EleventhForceDispositionId } from '../data/missions';
 
-export type Phase =
-  | 'deployment'
-  | 'setup'
-  | 'command'
-  | 'movement'
-  | 'shooting'
-  | 'charge'
-  | 'fight'
-  | 'battle-shock'
-  | 'end';
+export const BATTLE_PHASE = {
+  Deployment: 'deployment',
+  Setup: 'setup',
+  Command: 'command',
+  Movement: 'movement',
+  Shooting: 'shooting',
+  Charge: 'charge',
+  Fight: 'fight',
+  BattleShock: 'battle-shock',
+  End: 'end',
+} as const;
+
+export type Phase = (typeof BATTLE_PHASE)[keyof typeof BATTLE_PHASE];
 
 export type Side = 0 | 1;
 
 export type MovementAction = 'remainedStationary' | 'normalMove' | 'advanced' | 'fellBack';
-export type MovementStep = 'moveUnits' | 'reinforcements';
+export const MOVEMENT_STEP = {
+  MoveUnits: 'moveUnits',
+  Reinforcements: 'reinforcements',
+} as const;
+
+export type MovementStep = (typeof MOVEMENT_STEP)[keyof typeof MOVEMENT_STEP];
 
 export interface Position {
   x: number;

@@ -44,6 +44,8 @@ Use this section as the current high-level pickup order before starting large ne
   - Completed twenty-fifth slice: extracted play display math, pending-damage labels, dice parsing, stratagem follow-up labels, and ability option helpers into `playUiHelpers`.
   - Completed twenty-sixth slice: extracted play phase panels and the pending-damage HUD into `PlayPanels`.
   - Completed twenty-seventh slice: added shared UI tokens and adopted them in `PlayPanels` for panel chrome, status text, and combat stat colors.
+  - Completed twenty-eighth slice: extracted shared play model edit gates and selection transforms into `playMovementHelpers`.
+  - Completed twenty-ninth slice: added shared battle phase and movement-step constants in simulator-core and adopted them in phase progression/edit helpers.
   - Before closing the refactor pass, audit untouched UI files for repeated hardcoded colors, spacing, labels, and panel styles; adopt shared tokens only where it improves consistency without making the code harder to read.
   - Verify with root `npm run build` and relevant simulator-core tests.
   - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.

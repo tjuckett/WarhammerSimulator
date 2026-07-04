@@ -1,18 +1,18 @@
 import { battleRound } from '@warhammer-simulator/core/engine/battleRound';
-import type { BattleState, Phase } from '@warhammer-simulator/core/types/battle';
+import { BATTLE_PHASE, type BattleState, type Phase } from '@warhammer-simulator/core/types/battle';
 import type { PracticeCheckpointKind } from '@warhammer-simulator/core/practice/scenarios';
 import type { PracticeScenarioRepository } from '@warhammer-simulator/core/practice/scenarioRepository';
 import type { PracticeScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
 
 export const PHASE_LABELS: Partial<Record<Phase, string>> = {
-  setup: 'Ready',
-  command: 'Command',
-  movement: 'Movement',
-  shooting: 'Shooting',
-  charge: 'Charge',
-  fight: 'Fight',
-  'battle-shock': 'Battle-shock',
-  end: 'End',
+  [BATTLE_PHASE.Setup]: 'Ready',
+  [BATTLE_PHASE.Command]: 'Command',
+  [BATTLE_PHASE.Movement]: 'Movement',
+  [BATTLE_PHASE.Shooting]: 'Shooting',
+  [BATTLE_PHASE.Charge]: 'Charge',
+  [BATTLE_PHASE.Fight]: 'Fight',
+  [BATTLE_PHASE.BattleShock]: 'Battle-shock',
+  [BATTLE_PHASE.End]: 'End',
 };
 
 export const CHECKPOINT_KIND_SUFFIX_LABELS = {
@@ -32,8 +32,8 @@ export const CHECKPOINT_KIND_SHORT_LABELS = {
 
 export function checkpointLabelForState(state: BattleState, kind: PracticeCheckpointKind): string {
   const suffix = CHECKPOINT_KIND_SUFFIX_LABELS[kind];
-  if (state.phase === 'deployment') return `Deployment ${suffix}`;
-  if (state.phase === 'end') return `Game end ${suffix}`;
+  if (state.phase === BATTLE_PHASE.Deployment) return `Deployment ${suffix}`;
+  if (state.phase === BATTLE_PHASE.End) return `Game end ${suffix}`;
   const phaseLabel = PHASE_LABELS[state.phase] ?? state.phase;
   const armyName = state.armies[state.activeArmy]?.name ?? `Player ${state.activeArmy + 1}`;
   return `Battle Round ${battleRound(state)} - ${armyName} ${phaseLabel} ${suffix}`;

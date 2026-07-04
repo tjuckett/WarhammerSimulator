@@ -17,7 +17,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SpeedIcon from '@mui/icons-material/Speed';
 import StopIcon from '@mui/icons-material/Stop';
-import type { BattleState, BattleUnit, Phase, Position, TerrainLayout } from '@warhammer-simulator/core/types/battle';
+import { BATTLE_PHASE, MOVEMENT_STEP, type BattleState, type BattleUnit, type Phase, type Position, type TerrainLayout } from '@warhammer-simulator/core/types/battle';
 import type { ImportedArmy, UnitProfile } from '@warhammer-simulator/core/types/army';
 import type { AbilityTiming } from '@warhammer-simulator/core/types/ability';
 import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simulator/core/engine/rulesEngine';
@@ -78,6 +78,11 @@ import {
   type AbilityOption,
 } from './play/playUiHelpers';
 import {
+  canEditMovementModels,
+  canEditPlayModels,
+  transformPlayModelSelection,
+} from './play/playMovementHelpers';
+import {
   PendingDamageAllocationHud,
   PlayChargePanel,
   PlayFightPanel,
@@ -88,8 +93,13 @@ import {
 const ARMY_COLORS: [string, string] = ['#4af26a', '#f24a4a'];
 const SAVED_ARMY_KEYS = ['warhammer-saved-army-1', 'warhammer-saved-army-2'] as const;
 
-const PLAY_TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight'];
-const PLAY_MODEL_EDIT_PHASES: Phase[] = ['deployment', 'movement'];
+const PLAY_TURN_PHASES: Phase[] = [
+  BATTLE_PHASE.Command,
+  BATTLE_PHASE.Movement,
+  BATTLE_PHASE.Shooting,
+  BATTLE_PHASE.Charge,
+  BATTLE_PHASE.Fight,
+];
 
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value));
@@ -417,7 +427,7 @@ export default function App() {
     turn: 1,
     maxTurns: 5,
     activeArmy: 0,
-    phase: 'setup',
+    phase: BATTLE_PHASE.Setup,
     winner: null,
     log: [],
     units: [],
@@ -443,12 +453,9 @@ export default function App() {
   const isPlayMode = appMode === 'play';
   const isSimulationMode = appMode === 'simulation';
   const canEditTerrain = isEditorMode && !battleState;
-  const playMovementStep = battleState?.phase === 'movement' ? movementStep(battleState) : null;
-  const isPlayReinforcementsStep = playMovementStep === 'reinforcements';
-  const canEditPlayModelsNow = !!(
-    battleState
-    && (battleState.phase === 'deployment' || (battleState.phase === 'movement' && !isPlayReinforcementsStep))
-  );
+  const playMovementStep = battleState?.phase === BATTLE_PHASE.Movement ? movementStep(battleState) : null;
+  const isPlayReinforcementsStep = playMovementStep === MOVEMENT_STEP.Reinforcements;
+  const canEditPlayModelsNow = canEditPlayModels(battleState);
   const selectedPlayUnit = playDeploySelection
     ? playDeploySelection.kind === 'deployment' && battleState?.phase === 'deployment'
       ? battleState.unplacedUnits[playDeploySelection.side][playDeploySelection.unitIndex] ?? null
@@ -1494,12 +1501,10 @@ export default function App() {
     const selection = playModelSelection;
     if (!selection) return;
     const prev = battleStateRef.current;
-    if (!prev || !PLAY_MODEL_EDIT_PHASES.includes(prev.phase)) return;
-    if (prev.phase === 'movement' && movementStep(prev) !== 'moveUnits') return;
-    let next = prev;
-    for (const part of selection.parts) {
-      next = reorganizePlayModelsGrid(next, part.unitId, part.side, part.modelIndices, rows);
-    }
+    if (!canEditPlayModels(prev)) return;
+    const next = transformPlayModelSelection(prev, selection, (current, part) =>
+      reorganizePlayModelsGrid(current, part.unitId, part.side, part.modelIndices, rows),
+    );
     if (next !== prev) {
       pushPlayUndo(playUndoEntry(prev), next, {
         type: 'play.reorganizeModels',
@@ -1515,12 +1520,10 @@ export default function App() {
     const selection = playModelSelection;
     if (!selection) return;
     const prev = battleStateRef.current;
-    if (!prev || !PLAY_MODEL_EDIT_PHASES.includes(prev.phase)) return;
-    if (prev.phase === 'movement' && movementStep(prev) !== 'moveUnits') return;
-    let next = prev;
-    for (const part of selection.parts) {
-      next = rotatePlayModels(next, part.unitId, part.side, part.modelIndices, degrees);
-    }
+    if (!canEditPlayModels(prev)) return;
+    const next = transformPlayModelSelection(prev, selection, (current, part) =>
+      rotatePlayModels(current, part.unitId, part.side, part.modelIndices, degrees),
+    );
     if (next === prev) return;
 
     if (batched) {
@@ -1557,7 +1560,7 @@ export default function App() {
   function removeSelectedPlayModelsForCoherency() {
     const selection = playModelSelection;
     const prev = battleStateRef.current;
-    if (!selection || !prev || prev.phase !== 'movement' || movementStep(prev) !== 'moveUnits' || !selectedPlayHasCoherencyIssue) return;
+    if (!selection || !canEditMovementModels(prev) || !selectedPlayHasCoherencyIssue) return;
     let next = prev;
     for (const part of selection.parts) {
       const issueModelIndices = part.modelIndices.filter(modelIndex =>
@@ -1626,8 +1629,7 @@ export default function App() {
 
   function beginPlayModelMove(selection: PlayModelSelection) {
     const current = battleStateRef.current;
-    if (!current || !PLAY_MODEL_EDIT_PHASES.includes(current.phase)) return;
-    if (current.phase === 'movement' && movementStep(current) !== 'moveUnits') return;
+    if (!canEditPlayModels(current)) return;
     const normalized = normalizePlaySelectionForState(current, selection);
     if (!normalized) return;
     pendingPlayModelMoveUndoRef.current = {
@@ -1652,14 +1654,12 @@ export default function App() {
 
   function moveSelectedPlayModel(selection: PlayModelSelection, dx: number, dy: number, collide: boolean) {
     const prev = battleStateRef.current;
-    if (!prev || !PLAY_MODEL_EDIT_PHASES.includes(prev.phase)) return;
-    if (prev.phase === 'movement' && movementStep(prev) !== 'moveUnits') return;
+    if (!canEditPlayModels(prev)) return;
     const normalized = normalizePlaySelectionForState(prev, selection);
     if (!normalized) return;
-    let next = prev;
-    for (const part of normalized.parts) {
-      next = movePlayModels(next, part.unitId, part.side, part.modelIndices, dx, dy, collide);
-    }
+    const next = transformPlayModelSelection(prev, normalized, (current, part) =>
+      movePlayModels(current, part.unitId, part.side, part.modelIndices, dx, dy, collide),
+    );
     if (next === prev) return;
 
     const pendingAction = pendingPlayModelMoveActionRef.current;
@@ -1676,11 +1676,10 @@ export default function App() {
     commitPendingPlayModelMove();
     const selection = playModelSelection;
     const prev = battleStateRef.current;
-    if (!selection || !prev || prev.phase !== 'movement' || movementStep(prev) !== 'moveUnits') return;
-    let next = prev;
-    for (const part of selection.parts) {
-      next = movePlayModelsVertically(next, part.unitId, part.side, part.modelIndices, dz);
-    }
+    if (!selection || !canEditMovementModels(prev)) return;
+    const next = transformPlayModelSelection(prev, selection, (current, part) =>
+      movePlayModelsVertically(current, part.unitId, part.side, part.modelIndices, dz),
+    );
     if (next === prev) return;
     const nextSelection = normalizePlaySelectionForState(next, selection);
     pushPlayUndo(playUndoEntry(prev), next, {
@@ -2141,8 +2140,7 @@ export default function App() {
         redoPlayAction();
         return;
       }
-      if (!battleState || !PLAY_MODEL_EDIT_PHASES.includes(battleState.phase)) return;
-      if (battleState.phase === 'movement' && movementStep(battleState) !== 'moveUnits') return;
+      if (!canEditPlayModels(battleState)) return;
       if (!e.ctrlKey && !e.metaKey && !e.altKey && /^[1-9]$/.test(e.key)) {
         e.preventDefault();
         reorganizeSelectedPlayUnit(Number(e.key));
@@ -2161,7 +2159,7 @@ export default function App() {
     }
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isPlayMode, battleState?.phase, undoPlayAction, redoPlayAction, reorganizeSelectedPlayUnit, rotateSelectedPlayModels]);
+  }, [isPlayMode, battleState?.phase, battleState?.movementStep, undoPlayAction, redoPlayAction, reorganizeSelectedPlayUnit, rotateSelectedPlayModels]);
 
   const stepDrop = useCallback(() => {
     const prev = battleStateRef.current;
@@ -2173,7 +2171,7 @@ export default function App() {
 
   const stepPhase = useCallback(() => {
     const prev = battleStateRef.current;
-    if (!prev || prev.winner !== null || prev.phase === 'deployment') return;
+    if (!prev || prev.winner !== null || prev.phase === BATTLE_PHASE.Deployment) return;
     const activeRules = rulesEditionForRuleset(prev.ruleset);
     const next = simulateNextPhase(prev, activeRules);
     if (next !== prev) {
@@ -2185,7 +2183,7 @@ export default function App() {
 
   const stepPlayPhase = useCallback(() => {
     const prev = battleStateRef.current;
-    if (!prev || prev.winner !== null || prev.phase === 'deployment' || prev.phase === 'end') return;
+    if (!prev || prev.winner !== null || prev.phase === BATTLE_PHASE.Deployment || prev.phase === BATTLE_PHASE.End) return;
     const coherencyIssues = playPhaseCoherencyIssues(prev);
     if (coherencyIssues.length > 0) {
       setPlayPhaseWarning(`${coherencyIssues[0]} Restore coherency before advancing the phase.`);
@@ -2196,16 +2194,16 @@ export default function App() {
     const phaseBeforeStep = next.phase;
     const scoringSide = next.activeArmy;
     const currentIndex = PLAY_TURN_PHASES.indexOf(next.phase);
-    if (phaseBeforeStep === 'command') {
+    if (phaseBeforeStep === BATTLE_PHASE.Command) {
       const scoringResult = scorePrimaryMission(next, scoringSide, activeRulesForBattle);
       if (scoringResult.kind === 'unsupported') setPlayPhaseWarning(formatPrimaryScoringResult(scoringResult));
     }
-    if (phaseBeforeStep === 'fight') {
+    if (phaseBeforeStep === BATTLE_PHASE.Fight) {
       const scoringResult = scorePrimaryMission(next, scoringSide, activeRulesForBattle);
       if (scoringResult.kind === 'unsupported') setPlayPhaseWarning(formatPrimaryScoringResult(scoringResult));
     }
     const startCommand = () => {
-      next.phase = 'command';
+      next.phase = BATTLE_PHASE.Command;
       next.movementStep = undefined;
       for (const unit of next.units) {
         if (unit.side !== next.activeArmy || unit.destroyed) continue;
@@ -2234,17 +2232,17 @@ export default function App() {
     if (currentIndex < 0) {
       startCommand();
     } else if (currentIndex < PLAY_TURN_PHASES.length - 1) {
-      if (next.phase === 'movement') {
-        if (movementStep(next) === 'moveUnits') {
+      if (next.phase === BATTLE_PHASE.Movement) {
+        if (movementStep(next) === MOVEMENT_STEP.MoveUnits) {
           markRemainingStationaryUnits(next);
-          next.movementStep = 'reinforcements';
+          next.movementStep = MOVEMENT_STEP.Reinforcements;
         } else {
           next.movementStep = undefined;
           next.phase = PLAY_TURN_PHASES[currentIndex + 1];
         }
       } else {
         next.phase = PLAY_TURN_PHASES[currentIndex + 1];
-        if (next.phase === 'movement') next.movementStep = 'moveUnits';
+        if (next.phase === BATTLE_PHASE.Movement) next.movementStep = MOVEMENT_STEP.MoveUnits;
         else next.movementStep = undefined;
       }
     } else if (next.activeArmy === 0) {
@@ -2253,11 +2251,11 @@ export default function App() {
     } else {
       next.activeArmy = 0;
       setBattleRound(next, battleRound(next) + 1);
-      if (battleRound(next) > maxBattleRounds(next)) next.phase = 'end';
+      if (battleRound(next) > maxBattleRounds(next)) next.phase = BATTLE_PHASE.End;
       else startCommand();
     }
 
-    if (next.phase === 'end') {
+    if (next.phase === BATTLE_PHASE.End) {
       next.movementStep = undefined;
       if (next.scores[0] > next.scores[1]) next.winner = 0;
       else if (next.scores[1] > next.scores[0]) next.winner = 1;

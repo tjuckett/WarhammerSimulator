@@ -1,4 +1,4 @@
-import type { Phase, Position, Side, BattleState } from '../types/battle';
+import { BATTLE_PHASE, MOVEMENT_STEP, type Phase, type Position, type Side, type BattleState } from '../types/battle';
 import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
@@ -234,7 +234,13 @@ export interface GameActionContext {
   rules: RulesEdition;
 }
 
-const PLAY_TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight'];
+const PLAY_TURN_PHASES: Phase[] = [
+  BATTLE_PHASE.Command,
+  BATTLE_PHASE.Movement,
+  BATTLE_PHASE.Shooting,
+  BATTLE_PHASE.Charge,
+  BATTLE_PHASE.Fight,
+];
 const LEGACY_PLAY_ACTION_PREFIX = 'man' + 'ual.';
 
 function clone<T>(value: T): T {
@@ -243,11 +249,11 @@ function clone<T>(value: T): T {
 
 function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   const next = clone(state);
-  if (next.winner !== null || next.phase === 'deployment' || next.phase === 'end') return next;
+  if (next.winner !== null || next.phase === BATTLE_PHASE.Deployment || next.phase === BATTLE_PHASE.End) return next;
   if (playPhaseCoherencyIssues(next).length > 0) return next;
 
   const startCommand = (): void => {
-    next.phase = 'command';
+    next.phase = BATTLE_PHASE.Command;
     next.movementStep = undefined;
     for (const unit of next.units) {
       if (unit.side !== next.activeArmy || unit.destroyed) continue;
@@ -276,27 +282,27 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   const phaseBeforeStep = next.phase;
   const scoringSide = next.activeArmy;
   const currentIndex = PLAY_TURN_PHASES.indexOf(next.phase);
-  if (phaseBeforeStep === 'command') {
+  if (phaseBeforeStep === BATTLE_PHASE.Command) {
     scorePrimaryMission(next, scoringSide, rules);
   }
-  if (phaseBeforeStep === 'fight') {
+  if (phaseBeforeStep === BATTLE_PHASE.Fight) {
     completeEndOfTurnActions(next, scoringSide);
     scorePrimaryMission(next, scoringSide, rules);
   }
   if (currentIndex < 0) {
     startCommand();
   } else if (currentIndex < PLAY_TURN_PHASES.length - 1) {
-    if (next.phase === 'movement') {
-      if (movementStep(next) === 'moveUnits') {
+    if (next.phase === BATTLE_PHASE.Movement) {
+      if (movementStep(next) === MOVEMENT_STEP.MoveUnits) {
         markRemainingStationaryUnits(next);
-        next.movementStep = 'reinforcements';
+        next.movementStep = MOVEMENT_STEP.Reinforcements;
       } else {
         next.movementStep = undefined;
         next.phase = PLAY_TURN_PHASES[currentIndex + 1];
       }
     } else {
       next.phase = PLAY_TURN_PHASES[currentIndex + 1];
-      if (next.phase === 'movement') next.movementStep = 'moveUnits';
+      if (next.phase === BATTLE_PHASE.Movement) next.movementStep = MOVEMENT_STEP.MoveUnits;
       else next.movementStep = undefined;
     }
   } else if (next.activeArmy === 0) {
@@ -305,11 +311,11 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   } else {
     next.activeArmy = 0;
     setBattleRound(next, battleRound(next) + 1);
-    if (battleRound(next) > maxBattleRounds(next)) next.phase = 'end';
+    if (battleRound(next) > maxBattleRounds(next)) next.phase = BATTLE_PHASE.End;
     else startCommand();
   }
 
-  if (next.phase === 'end') {
+  if (next.phase === BATTLE_PHASE.End) {
     next.movementStep = undefined;
     if (next.scores[0] > next.scores[1]) next.winner = 0;
     else if (next.scores[1] > next.scores[0]) next.winner = 1;
