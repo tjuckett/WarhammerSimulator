@@ -33,17 +33,27 @@ export function useGameSessionSelection() {
   }
 
   return {
-    activeCheckpointId,
-    activeGameId,
-    selectedSaveGameId,
-    setSelectedSaveGameId,
-    pendingCheckpointLoad,
-    setPendingCheckpointLoad,
-    pendingCheckpointDelete,
-    setPendingCheckpointDelete,
-    activeCheckpointIdRef,
-    activeGameIdRef,
-    setActiveCheckpointId,
-    setActiveGameId,
+    active: {
+      activeCheckpointId,
+      activeGameId,
+    },
+    saveSelection: {
+      selectedSaveGameId,
+      setSelectedSaveGameId,
+    },
+    pending: {
+      pendingCheckpointLoad,
+      setPendingCheckpointLoad,
+      pendingCheckpointDelete,
+      setPendingCheckpointDelete,
+    },
+    refs: {
+      activeCheckpointIdRef,
+      activeGameIdRef,
+    },
+    actions: {
+      setActiveCheckpointId,
+      setActiveGameId,
+    },
   };
 }

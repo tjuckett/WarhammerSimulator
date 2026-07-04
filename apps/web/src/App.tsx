@@ -837,18 +837,28 @@ export default function App() {
     refreshSavedScenarios,
   } = useGameSessionStorage();
   const {
-    activeCheckpointId,
-    activeGameId,
-    selectedSaveGameId,
-    setSelectedSaveGameId,
-    pendingCheckpointLoad,
-    setPendingCheckpointLoad,
-    pendingCheckpointDelete,
-    setPendingCheckpointDelete,
-    activeCheckpointIdRef,
-    activeGameIdRef,
-    setActiveCheckpointId: setActivePracticeCheckpoint,
-    setActiveGameId: setActivePracticeGame,
+    active: {
+      activeCheckpointId,
+      activeGameId,
+    },
+    saveSelection: {
+      selectedSaveGameId,
+      setSelectedSaveGameId,
+    },
+    pending: {
+      pendingCheckpointLoad,
+      setPendingCheckpointLoad,
+      pendingCheckpointDelete,
+      setPendingCheckpointDelete,
+    },
+    refs: {
+      activeCheckpointIdRef,
+      activeGameIdRef,
+    },
+    actions: {
+      setActiveCheckpointId: setActivePracticeCheckpoint,
+      setActiveGameId: setActivePracticeGame,
+    },
   } = useGameSessionSelection();
   const [playPhaseWarning, setPlayPhaseWarning] = useState('');
   const {
@@ -990,16 +1000,22 @@ export default function App() {
   });
 
   const {
-    timeline: practiceTimeline,
-    timelineRef: practiceTimelineRef,
-    resetTimeline: resetPracticeTimeline,
-    startTimeline: startPracticeTimeline,
-    recordAction: recordPracticeAction,
-    undoTimelineCursor: undoPracticeTimelineCursor,
-    restoreResultTimeline: restorePracticeResultTimeline,
-    undoTimelineAction: undoPracticeTimelineAction,
-    redoTimelineAction: redoPracticeTimelineAction,
-    seekTimelineAction: seekPracticeTimelineAction,
+    state: {
+      timeline: practiceTimeline,
+    },
+    refs: {
+      timelineRef: practiceTimelineRef,
+    },
+    actions: {
+      resetTimeline: resetPracticeTimeline,
+      startTimeline: startPracticeTimeline,
+      recordAction: recordPracticeAction,
+      undoTimelineCursor: undoPracticeTimelineCursor,
+      restoreResultTimeline: restorePracticeResultTimeline,
+      undoTimelineAction: undoPracticeTimelineAction,
+      redoTimelineAction: redoPracticeTimelineAction,
+      seekTimelineAction: seekPracticeTimelineAction,
+    },
   } = useGameSessionTimeline({
     createBranchId: () => makePracticeId('checkpoint-branch'),
     checkpointBranchIdRef,
@@ -1010,18 +1026,24 @@ export default function App() {
   });
 
   const {
-    saveModalOpen: practiceSaveModalOpen,
-    setSaveModalOpen: setPracticeSaveModalOpen,
-    loadModalOpen: practiceLoadModalOpen,
-    setLoadModalOpen: setPracticeLoadModalOpen,
-    saveStatus: practiceSaveStatus,
-    saveCheckpoint: savePracticeCheckpoint,
-    saveActiveScenarioAndClose: saveActivePracticeScenarioAndClose,
-    requestLoadSavedScenario: requestLoadSavedPracticeScenario,
-    saveCurrentAndLoadPendingCheckpoint,
-    loadPendingCheckpointWithoutSaving,
-    requestDeleteSavedScenario: requestDeleteSavedPracticeScenario,
-    confirmDeleteSavedScenario: confirmDeleteSavedPracticeScenario,
+    modals: {
+      saveModalOpen: practiceSaveModalOpen,
+      setSaveModalOpen: setPracticeSaveModalOpen,
+      loadModalOpen: practiceLoadModalOpen,
+      setLoadModalOpen: setPracticeLoadModalOpen,
+    },
+    status: {
+      saveStatus: practiceSaveStatus,
+    },
+    actions: {
+      saveCheckpoint: savePracticeCheckpoint,
+      saveActiveScenarioAndClose: saveActivePracticeScenarioAndClose,
+      requestLoadSavedScenario: requestLoadSavedPracticeScenario,
+      saveCurrentAndLoadPendingCheckpoint,
+      loadPendingCheckpointWithoutSaving,
+      requestDeleteSavedScenario: requestDeleteSavedPracticeScenario,
+      confirmDeleteSavedScenario: confirmDeleteSavedPracticeScenario,
+    },
   } = useGameSessionController({
     practiceTimelineRef,
     checkpointBranchIdRef,

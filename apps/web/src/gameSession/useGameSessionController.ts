@@ -168,17 +168,23 @@ export function useGameSessionController({
   }
 
   return {
-    saveModalOpen,
-    setSaveModalOpen,
-    loadModalOpen,
-    setLoadModalOpen,
-    saveStatus,
-    saveCheckpoint,
-    saveActiveScenarioAndClose,
-    requestLoadSavedScenario,
-    saveCurrentAndLoadPendingCheckpoint,
-    loadPendingCheckpointWithoutSaving,
-    requestDeleteSavedScenario,
-    confirmDeleteSavedScenario,
+    modals: {
+      saveModalOpen,
+      setSaveModalOpen,
+      loadModalOpen,
+      setLoadModalOpen,
+    },
+    status: {
+      saveStatus,
+    },
+    actions: {
+      saveCheckpoint,
+      saveActiveScenarioAndClose,
+      requestLoadSavedScenario,
+      saveCurrentAndLoadPendingCheckpoint,
+      loadPendingCheckpointWithoutSaving,
+      requestDeleteSavedScenario,
+      confirmDeleteSavedScenario,
+    },
   };
 }

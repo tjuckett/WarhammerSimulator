@@ -96,16 +96,22 @@ export function useGameSessionTimeline({
   }
 
   return {
-    timeline,
-    timelineRef,
-    setCurrentTimeline,
-    resetTimeline,
-    startTimeline,
-    recordAction,
-    undoTimelineCursor,
-    restoreResultTimeline,
-    undoTimelineAction,
-    redoTimelineAction,
-    seekTimelineAction,
+    state: {
+      timeline,
+    },
+    refs: {
+      timelineRef,
+    },
+    actions: {
+      setCurrentTimeline,
+      resetTimeline,
+      startTimeline,
+      recordAction,
+      undoTimelineCursor,
+      restoreResultTimeline,
+      undoTimelineAction,
+      redoTimelineAction,
+      seekTimelineAction,
+    },
   };
 }
