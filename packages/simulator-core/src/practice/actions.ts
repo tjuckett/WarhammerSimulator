@@ -53,6 +53,14 @@ export interface ModelSelectionPart {
   modelIndices: number[];
 }
 
+export const GAME_ACTION_TYPE = {
+  AdvanceUnit: 'play.advanceUnit',
+  FallBackUnit: 'play.fallBackUnit',
+  CompleteUnitMovement: 'play.completeUnitMovement',
+  EmbarkUnit: 'play.embarkUnit',
+  DisembarkUnit: 'play.disembarkUnit',
+} as const;
+
 export type GameAction =
   | (GameActionBase & {
       type: 'play.placeUnit';
@@ -90,28 +98,28 @@ export type GameAction =
       dz: number;
     })
   | (GameActionBase & {
-      type: 'play.fallBackUnit';
+      type: typeof GAME_ACTION_TYPE.FallBackUnit;
       side: Side;
       unitId: string;
     })
   | (GameActionBase & {
-      type: 'play.advanceUnit';
+      type: typeof GAME_ACTION_TYPE.AdvanceUnit;
       side: Side;
       unitId: string;
     })
   | (GameActionBase & {
-      type: 'play.completeUnitMovement';
+      type: typeof GAME_ACTION_TYPE.CompleteUnitMovement;
       side: Side;
       unitId: string;
     })
   | (GameActionBase & {
-      type: 'play.embarkUnit';
+      type: typeof GAME_ACTION_TYPE.EmbarkUnit;
       side: Side;
       unitId: string;
       transportUnitId?: string;
     })
   | (GameActionBase & {
-      type: 'play.disembarkUnit';
+      type: typeof GAME_ACTION_TYPE.DisembarkUnit;
       side: Side;
       transportUnitId: string;
       passengerUnitId?: string;
@@ -365,19 +373,19 @@ export function applyGameAction(
         state,
       );
 
-    case 'play.fallBackUnit':
+    case GAME_ACTION_TYPE.FallBackUnit:
       return fallBackPlayUnit(state, normalizedAction.unitId, normalizedAction.side, context.rules);
 
-    case 'play.advanceUnit':
+    case GAME_ACTION_TYPE.AdvanceUnit:
       return advancePlayUnit(state, normalizedAction.unitId, normalizedAction.side, context.rules);
 
-    case 'play.completeUnitMovement':
+    case GAME_ACTION_TYPE.CompleteUnitMovement:
       return completePlayUnitMovement(state, normalizedAction.unitId, normalizedAction.side);
 
-    case 'play.embarkUnit':
+    case GAME_ACTION_TYPE.EmbarkUnit:
       return embarkPlayUnit(state, normalizedAction.unitId, normalizedAction.side, normalizedAction.transportUnitId);
 
-    case 'play.disembarkUnit':
+    case GAME_ACTION_TYPE.DisembarkUnit:
       return disembarkPlayUnit(
         state,
         normalizedAction.side,
@@ -507,11 +515,11 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
   switch (normalizedAction.type) {
     case 'play.undeployUnit':
     case 'play.placeStrategicReserveUnit':
-    case 'play.fallBackUnit':
-    case 'play.advanceUnit':
+    case GAME_ACTION_TYPE.FallBackUnit:
+    case GAME_ACTION_TYPE.AdvanceUnit:
     case 'play.startAction':
-    case 'play.completeUnitMovement':
-    case 'play.embarkUnit':
+    case GAME_ACTION_TYPE.CompleteUnitMovement:
+    case GAME_ACTION_TYPE.EmbarkUnit:
     case 'play.chargeUnitTarget':
     case 'play.pileInUnit':
     case 'play.consolidateUnit':
@@ -523,7 +531,7 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
       return normalizedAction.targetUnitId === unitId;
     case 'play.useUnitAbility':
       return normalizedAction.unitId === unitId || normalizedAction.targetUnitId === unitId;
-    case 'play.disembarkUnit':
+    case GAME_ACTION_TYPE.DisembarkUnit:
       return normalizedAction.passengerUnitId === unitId || normalizedAction.transportUnitId === unitId;
     case 'play.moveModels':
     case 'play.moveModelsVertically':

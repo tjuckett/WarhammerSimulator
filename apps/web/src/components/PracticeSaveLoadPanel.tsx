@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { PracticeTimeline, PracticeTimelineEntry } from '@warhammer-simulator/core/practice/timeline';
-import type { GameAction } from '@warhammer-simulator/core/practice/actions';
+import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
 import type { PracticeScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
 import { CHECKPOINT_KIND_SHORT_LABELS } from '../gameSession/checkpointHelpers';
 import type { GameSessionStorageHealth } from '../gameSession/gameSessionRepository';
@@ -59,15 +59,15 @@ function actionLabel(action: GameAction): string {
       return `Move ${action.parts.reduce((sum, part) => sum + part.modelIndices.length, 0)} model${action.parts.length === 1 ? '' : 's'}`;
     case 'play.moveModelsVertically':
       return `Move height ${action.dz > 0 ? '+' : ''}${action.dz}"`;
-    case 'play.fallBackUnit':
+    case GAME_ACTION_TYPE.FallBackUnit:
       return 'Fall Back';
-    case 'play.advanceUnit':
+    case GAME_ACTION_TYPE.AdvanceUnit:
       return 'Advance';
-    case 'play.completeUnitMovement':
+    case GAME_ACTION_TYPE.CompleteUnitMovement:
       return 'Complete movement';
-    case 'play.embarkUnit':
+    case GAME_ACTION_TYPE.EmbarkUnit:
       return 'Embark';
-    case 'play.disembarkUnit':
+    case GAME_ACTION_TYPE.DisembarkUnit:
       return 'Disembark';
     case 'play.rotateModels':
       return `Rotate ${action.degrees}deg`;

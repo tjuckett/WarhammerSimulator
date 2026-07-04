@@ -23,7 +23,7 @@ import type { AbilityTiming } from '@warhammer-simulator/core/types/ability';
 import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simulator/core/engine/rulesEngine';
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
-  advancePlayUnit, battleModelIdsWithCoherencyIssues, beginPlayBattle, completePlayUnitMovement, createDeploymentState, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels,
+  battleModelIdsWithCoherencyIssues, beginPlayBattle, createDeploymentState, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels,
   allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consolidatePlayUnit, fightPlayUnitWeapon, lockPlayUnitShooting, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, undeployPlayUnit, type DeploymentStrategy, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
@@ -82,6 +82,14 @@ import {
   canEditPlayModels,
   transformPlayModelSelection,
 } from './play/playMovementHelpers';
+import {
+  resolveAdvancePlayUnitAction,
+  resolveCompletePlayUnitMovementAction,
+  resolveDisembarkPlayUnitAction,
+  resolveEmbarkPlayUnitAction,
+  resolveFallBackPlayUnitAction,
+  type PlayDisembarkOption,
+} from './play/playMovementActions';
 import {
   canSelectPlayReinforcementUnit,
   canSelectPlayStrategicReserveUnit,
@@ -1668,18 +1676,12 @@ export default function App() {
     const prev = battleStateRef.current;
     if (!prev || !selection) return;
     const rules = rulesEditionForRuleset(prev.ruleset);
-    if (!playUnitCanAdvance(prev, selection.unitId, selection.side, rules)) return;
+    const result = resolveAdvancePlayUnitAction(prev, selection, rules);
+    if (!result) return;
 
-    const next = advancePlayUnit(prev, selection.unitId, selection.side, rules);
-    if (next === prev) return;
-
-    pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.advanceUnit',
-      unitId: selection.unitId,
-      side: selection.side,
-    });
-    setPlayModelSelection(normalizePlaySelectionForState(next, playModelSelection));
-    commitBattleState(next);
+    pushPlayUndo(playUndoEntry(prev), result.next, result.action);
+    setPlayModelSelection(normalizePlaySelectionForState(result.next, playModelSelection));
+    commitBattleState(result.next);
   }
 
   function fallBackSelectedPlayUnit() {
@@ -1687,18 +1689,12 @@ export default function App() {
     const prev = battleStateRef.current;
     if (!prev || !selection) return;
     const rules = rulesEditionForRuleset(prev.ruleset);
-    if (!playUnitCanFallBack(prev, selection.unitId, selection.side, rules)) return;
+    const result = resolveFallBackPlayUnitAction(prev, selection, rules);
+    if (!result) return;
 
-    const next = fallBackPlayUnit(prev, selection.unitId, selection.side, rules);
-    if (next === prev) return;
-
-    pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.fallBackUnit',
-      unitId: selection.unitId,
-      side: selection.side,
-    });
-    setPlayModelSelection(normalizePlaySelectionForState(next, playModelSelection));
-    commitBattleState(next);
+    pushPlayUndo(playUndoEntry(prev), result.next, result.action);
+    setPlayModelSelection(normalizePlaySelectionForState(result.next, playModelSelection));
+    commitBattleState(result.next);
   }
 
   function completeSelectedPlayUnitMovement() {
@@ -1706,17 +1702,12 @@ export default function App() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
     if (!prev || !selection) return;
+    const result = resolveCompletePlayUnitMovementAction(prev, selection);
+    if (!result) return;
 
-    const next = completePlayUnitMovement(prev, selection.unitId, selection.side);
-    if (next === prev) return;
-
-    pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.completeUnitMovement',
-      unitId: selection.unitId,
-      side: selection.side,
-    });
-    setPlayModelSelection(normalizePlaySelectionForState(next, playModelSelection));
-    commitBattleState(next);
+    pushPlayUndo(playUndoEntry(prev), result.next, result.action);
+    setPlayModelSelection(normalizePlaySelectionForState(result.next, playModelSelection));
+    commitBattleState(result.next);
   }
 
   function resolveSelectedPlayShooting() {
@@ -1993,44 +1984,27 @@ export default function App() {
     commitPendingPlayModelMove();
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
-    if (!prev || !selection || !playUnitCanEmbark(prev, selection.unitId, selection.side)) return;
+    if (!prev || !selection) return;
+    const result = resolveEmbarkPlayUnitAction(prev, selection);
+    if (!result) return;
 
-    const next = embarkPlayUnit(prev, selection.unitId, selection.side);
-    if (next === prev) return;
-
-    pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.embarkUnit',
-      unitId: selection.unitId,
-      side: selection.side,
-    });
+    pushPlayUndo(playUndoEntry(prev), result.next, result.action);
     setPlayModelSelection(null);
     setInspectedSelection(null);
-    commitBattleState(next);
+    commitBattleState(result.next);
   }
 
-  function disembarkSelectedTransportPassenger(option: { passengerUnitId?: string; armyUnitIndex?: number }) {
+  function disembarkSelectedTransportPassenger(option: PlayDisembarkOption) {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
     if (!prev || !selection) return;
-    const next = disembarkPlayUnit(prev, selection.side, selection.unitId, option.passengerUnitId, option.armyUnitIndex);
-    if (next === prev) return;
+    const result = resolveDisembarkPlayUnitAction(prev, selection, option);
+    if (!result) return;
 
-    pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.disembarkUnit',
-      side: selection.side,
-      transportUnitId: selection.unitId,
-      passengerUnitId: option.passengerUnitId,
-      armyUnitIndex: option.armyUnitIndex,
-    });
-    const disembarked = option.passengerUnitId
-      ? next.units.find(unit => unit.id === option.passengerUnitId && !unit.destroyed && !unit.embarkedInUnitId)
-      : next.units.find(unit =>
-        unit.side === selection.side
-        && !unit.destroyed
-        && !unit.embarkedInUnitId
-        && typeof option.armyUnitIndex === 'number'
-        && unitRosterId(unit.profile) === unitRosterId(next.armies[selection.side].army.units[option.armyUnitIndex]),
-      );
+    pushPlayUndo(playUndoEntry(prev), result.next, result.action);
+    const disembarked = result.disembarkedUnitId
+      ? result.next.units.find(unit => unit.id === result.disembarkedUnitId && !unit.destroyed && !unit.embarkedInUnitId)
+      : null;
     if (disembarked) {
       setPlayModelSelection({
         side: disembarked.side,
@@ -2042,9 +2016,9 @@ export default function App() {
       });
       setInspectedSelection({ kind: 'battle', side: disembarked.side, unitId: disembarked.id });
     } else {
-      setPlayModelSelection(normalizePlaySelectionForState(next, playModelSelection));
+      setPlayModelSelection(normalizePlaySelectionForState(result.next, playModelSelection));
     }
-    commitBattleState(next);
+    commitBattleState(result.next);
   }
 
   function startPlayBattle() {

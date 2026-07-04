@@ -49,6 +49,8 @@ Use this section as the current high-level pickup order before starting large ne
   - Completed thirtieth slice: extracted play deployment/reinforcement/reserve placement validation and placement action creation into `playDeploymentHelpers`.
   - Completed thirty-first slice: added constants for unit deployment modes and play deployment selection kinds, then adopted them in deployment helpers and touched App wiring.
   - Completed thirty-second slice: adopted shared unit deployment mode constants in `ArmyPanel` and simulator transport/reinforcement checks.
+  - Completed thirty-third slice: extracted play movement unit action resolution for advance, fall back, complete movement, embark, and disembark into `playMovementActions`.
+  - Completed thirty-fourth slice: added shared movement game action type constants and adopted them in movement action creation, replay, touched-unit checks, and timeline labels.
   - Before closing the refactor pass, audit untouched UI files for repeated hardcoded colors, spacing, labels, and panel styles; adopt shared tokens only where it improves consistency without making the code harder to read.
   - Verify with root `npm run build` and relevant simulator-core tests.
   - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.
