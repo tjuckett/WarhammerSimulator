@@ -51,7 +51,7 @@ import { UnitStatsPanel } from './components/UnitStatsPanel';
 import { TerrainLayoutEditor } from './components/TerrainLayoutEditor';
 import { PracticeControlsPanel, PracticeLoadModal, PracticeSaveModal } from './components/PracticeSaveLoadPanel';
 import { CombatResultDialog } from './components/CombatResultDialog';
-import { attachedUnitProfilesFor, isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
+import { isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
 import type { GameAction } from '@warhammer-simulator/core/practice/actions';
 import {
   type TimelineStateResult,
@@ -73,6 +73,13 @@ import { useTerrainLayouts } from './terrain/useTerrainLayouts';
 import { useTerrainEditing } from './terrain/useTerrainEditing';
 import { usePlayUiState, type PlayDeploySelection } from './play/usePlayUiState';
 import { usePlayUndoState, type PendingPlayTimelineAction, type PlayUndoEntry } from './play/usePlayUndoState';
+import {
+  attachedBattleUnitIdsForSelection,
+  attachedProfilesForInspection,
+  battleUnitForProfile,
+  normalizePlaySelectionForState,
+  primaryPlaySelectionPart,
+} from './play/playSelectionHelpers';
 
 const ARMY_COLORS: [string, string] = ['#4af26a', '#f24a4a'];
 const SAVED_ARMY_KEYS = ['warhammer-saved-army-1', 'warhammer-saved-army-2'] as const;
@@ -102,77 +109,6 @@ function loadSavedArmy(side: 0 | 1, fallback: ImportedArmy): ImportedArmy {
 
 function saveArmy(side: 0 | 1, army: ImportedArmy) {
   localStorage.setItem(SAVED_ARMY_KEYS[side], JSON.stringify(army));
-}
-
-function normalizePlaySelectionParts(selection: PlayModelSelection): PlayModelSelection['parts'] {
-  return selection.parts
-    .map(part => ({
-      unitId: part.unitId,
-      side: part.side,
-      modelIndices: Array.from(new Set(part.modelIndices)).sort((a, b) => a - b),
-    }))
-    .filter(part => part.modelIndices.length > 0);
-}
-
-function normalizePlaySelectionForState(
-  state: BattleState | null,
-  selection: PlayModelSelection | null,
-): PlayModelSelection | null {
-  if (!state || !selection) return null;
-  const rawParts = normalizePlaySelectionParts(selection);
-  const primary = rawParts[0];
-  if (!primary) return null;
-
-  const primaryUnit = state.units.find(unit =>
-    unit.id === primary.unitId && unit.side === primary.side && !unit.destroyed,
-  );
-  if (!primaryUnit) return null;
-
-  const allowedUnitIds = new Set(attachedBattleUnitIdsForSelection(state, primary.unitId));
-  if (!allowedUnitIds.size) allowedUnitIds.add(primary.unitId);
-
-  const parts = rawParts.flatMap(part => {
-    if (part.side !== primary.side || !allowedUnitIds.has(part.unitId)) return [];
-    const unit = state.units.find(candidate =>
-      candidate.id === part.unitId && candidate.side === part.side && !candidate.destroyed,
-    );
-    if (!unit) return [];
-    const modelIndices = part.modelIndices.filter(modelIndex => modelIndex >= 0 && modelIndex < unit.modelPositions.length);
-    return modelIndices.length ? [{ unitId: unit.id, side: unit.side, modelIndices }] : [];
-  });
-
-  return parts.length ? { side: primary.side, parts } : null;
-}
-
-function primaryPlaySelectionPart(selection: PlayModelSelection | null): PlayModelSelection['parts'][number] | null {
-  return selection?.parts[0] ?? null;
-}
-
-function attachedProfilesForInspection(army: ImportedArmy, unit: UnitProfile): UnitProfile[] {
-  const selectedId = unitRosterId(unit);
-  return attachedUnitProfilesFor(army, unit, army.units).filter(profile => unitRosterId(profile) !== selectedId);
-}
-
-function attachedBattleUnitIdsForSelection(state: BattleState | null, unitId: string | null): string[] {
-  if (!state || !unitId) return [];
-  const selected = state.units.find(unit => unit.id === unitId && !unit.destroyed);
-  if (!selected) return [];
-
-  const army = state.armies[selected.side].army;
-  const groupProfiles = attachedUnitProfilesFor(army, selected.profile, army.units);
-  const groupIds = new Set(groupProfiles.map(unitRosterId));
-  return state.units
-    .filter(unit => unit.side === selected.side && !unit.destroyed && groupIds.has(unitRosterId(unit.profile)))
-    .map(unit => unit.id);
-}
-
-function battleUnitForProfile(state: BattleState | null, side: 0 | 1, profile: UnitProfile) {
-  const rosterId = unitRosterId(profile);
-  return state?.units.find(candidate =>
-    candidate.side === side
-    && !candidate.destroyed
-    && unitRosterId(candidate.profile) === rosterId,
-  );
 }
 
 function downloadJson(filename: string, value: unknown) {
