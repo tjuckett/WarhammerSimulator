@@ -72,21 +72,10 @@ import { GameSessionCheckpointDialogs } from './gameSession/GameSessionCheckpoin
 import { useTerrainLayouts } from './terrain/useTerrainLayouts';
 import { useTerrainEditing } from './terrain/useTerrainEditing';
 import { usePlayUiState, type PlayDeploySelection } from './play/usePlayUiState';
+import { usePlayUndoState, type PendingPlayTimelineAction, type PlayUndoEntry } from './play/usePlayUndoState';
 
 const ARMY_COLORS: [string, string] = ['#4af26a', '#f24a4a'];
 const SAVED_ARMY_KEYS = ['warhammer-saved-army-1', 'warhammer-saved-army-2'] as const;
-
-type PlayUndoEntry = {
-  battleState: BattleState;
-  playDeploySelection: PlayDeploySelection | null;
-  playModelSelection: PlayModelSelection | null;
-};
-
-type PendingPlayTimelineAction = {
-  undoEntry: PlayUndoEntry;
-  action: GameAction;
-  stateAfter: BattleState;
-};
 
 const PLAY_TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight'];
 const PLAY_MODEL_EDIT_PHASES: Phase[] = ['deployment', 'movement'];
@@ -948,13 +937,27 @@ export default function App() {
       clearPlayUiSelection,
     },
   } = usePlayUiState();
-  const [playUndoStack, setPlayUndoStack] = useState<PlayUndoEntry[]>([]);
-  const playUndoStackRef = useRef<PlayUndoEntry[]>([]);
-  const pendingPlayModelMoveUndoRef = useRef<PlayUndoEntry | null>(null);
-  const pendingPlayModelMoveActionRef = useRef<PendingPlayTimelineAction | null>(null);
-  const pendingPlayRotationUndoRef = useRef<PlayUndoEntry | null>(null);
-  const pendingPlayRotationActionRef = useRef<PendingPlayTimelineAction | null>(null);
-  const playRotationUndoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const {
+    state: {
+      playUndoStack,
+    },
+    refs: {
+      playUndoStackRef,
+      pendingPlayModelMoveUndoRef,
+      pendingPlayModelMoveActionRef,
+      pendingPlayRotationUndoRef,
+      pendingPlayRotationActionRef,
+      playRotationUndoTimerRef,
+    },
+    actions: {
+      pushPlayUndoEntry,
+      popPlayUndoEntry,
+      clearPlayUndo,
+      clearPendingPlayModelMove,
+      clearPendingPlayRotation,
+      clearPlayRotationUndoTimer,
+    },
+  } = usePlayUndoState();
   const battleStateRef = useRef<BattleState | null>(null);
   const checkpointBranchIdRef = useRef<string>(makePracticeId('checkpoint-branch'));
   const winnerRecordedRef = useRef<string | null>(null);
@@ -1702,8 +1705,8 @@ export default function App() {
   }, [primaryPlaySelection?.unitId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => () => {
-    if (playRotationUndoTimerRef.current) clearTimeout(playRotationUndoTimerRef.current);
-  }, []);
+    clearPlayRotationUndoTimer();
+  }, [clearPlayRotationUndoTimer]);
 
   function commitBattleState(next: BattleState | null) {
     battleStateRef.current = next;
@@ -1712,19 +1715,6 @@ export default function App() {
 
   function getLayout() {
     return editorLayout ?? TERRAIN_LAYOUTS[0];
-  }
-
-  function clearPlayUndo() {
-    playUndoStackRef.current = [];
-    setPlayUndoStack([]);
-    pendingPlayModelMoveUndoRef.current = null;
-    pendingPlayModelMoveActionRef.current = null;
-    pendingPlayRotationUndoRef.current = null;
-    pendingPlayRotationActionRef.current = null;
-    if (playRotationUndoTimerRef.current) {
-      clearTimeout(playRotationUndoTimerRef.current);
-      playRotationUndoTimerRef.current = null;
-    }
   }
 
   function clearPlayUiState() {
@@ -1774,12 +1764,6 @@ export default function App() {
     commitBattleState(result.state);
   }
 
-  function pushPlayUndoEntry(entry: PlayUndoEntry) {
-    const nextStack = [...playUndoStackRef.current, entry].slice(-100);
-    playUndoStackRef.current = nextStack;
-    setPlayUndoStack(nextStack);
-  }
-
   function commitPlayTimelineAction(pending: PendingPlayTimelineAction) {
     recordPracticeAction(pending.undoEntry.battleState, pending.stateAfter, pending.action);
     pushPlayUndoEntry(pending.undoEntry);
@@ -1795,15 +1779,11 @@ export default function App() {
   }
 
   function commitPendingPlayRotationUndo() {
-    if (playRotationUndoTimerRef.current) {
-      clearTimeout(playRotationUndoTimerRef.current);
-      playRotationUndoTimerRef.current = null;
-    }
+    clearPlayRotationUndoTimer();
     const entry = pendingPlayRotationUndoRef.current;
     if (!entry) return;
-    pendingPlayRotationUndoRef.current = null;
     const pendingAction = pendingPlayRotationActionRef.current;
-    pendingPlayRotationActionRef.current = null;
+    clearPendingPlayRotation();
     if (pendingAction) {
       if (pendingAction.action.type === 'play.rotateModels' && pendingAction.action.degrees === 0) return;
       commitPlayTimelineAction(pendingAction);
@@ -1815,8 +1795,7 @@ export default function App() {
   function commitPendingPlayModelMove() {
     const entry = pendingPlayModelMoveUndoRef.current;
     const pendingAction = pendingPlayModelMoveActionRef.current;
-    pendingPlayModelMoveUndoRef.current = null;
-    pendingPlayModelMoveActionRef.current = null;
+    clearPendingPlayModelMove();
     if (!entry) return;
     if (pendingAction) {
       if (
@@ -2243,7 +2222,7 @@ export default function App() {
         pendingAction.action.degrees += degrees;
         pendingAction.stateAfter = next;
       }
-      if (playRotationUndoTimerRef.current) clearTimeout(playRotationUndoTimerRef.current);
+      clearPlayRotationUndoTimer();
       playRotationUndoTimerRef.current = setTimeout(commitPendingPlayRotationUndo, 350);
     } else {
       pushPlayUndo(playUndoEntry(prev), next, {
@@ -2799,17 +2778,11 @@ export default function App() {
     if (!isPlayMode) return;
     if (pendingPlayRotationUndoRef.current) {
       const entry = pendingPlayRotationUndoRef.current;
-      if (playRotationUndoTimerRef.current) {
-        clearTimeout(playRotationUndoTimerRef.current);
-        playRotationUndoTimerRef.current = null;
-      }
-      pendingPlayRotationUndoRef.current = null;
-      pendingPlayRotationActionRef.current = null;
+      clearPendingPlayRotation();
       commitBattleState(clone(entry.battleState));
       setPlayDeploySelection(clone(entry.playDeploySelection));
       setPlayModelSelection(clone(entry.playModelSelection));
-      pendingPlayModelMoveUndoRef.current = null;
-      pendingPlayModelMoveActionRef.current = null;
+      clearPendingPlayModelMove();
       return;
     }
     const entry = playUndoStackRef.current[playUndoStackRef.current.length - 1];
@@ -2821,11 +2794,8 @@ export default function App() {
     commitBattleState(clone(entry.battleState));
     setPlayDeploySelection(clone(entry.playDeploySelection));
     setPlayModelSelection(clone(entry.playModelSelection));
-    pendingPlayModelMoveUndoRef.current = null;
-    pendingPlayModelMoveActionRef.current = null;
-    const nextStack = playUndoStackRef.current.slice(0, -1);
-    playUndoStackRef.current = nextStack;
-    setPlayUndoStack(nextStack);
+    clearPendingPlayModelMove();
+    popPlayUndoEntry();
   }, [isPlayMode]);
 
   const redoPlayAction = useCallback(() => {

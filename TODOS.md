@@ -39,6 +39,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Completed twentieth slice: grouped `useBattleSetupControls` return API into selection, derived setup data, and actions.
   - Completed twenty-first slice: grouped game session selection, timeline, and controller hook return APIs by state, refs, modal/status data, pending data, and actions.
   - Completed twenty-second slice: extracted play UI selection, targeting, tactics, feedback, inspection state, and shooter refs into `usePlayUiState`.
+  - Completed twenty-third slice: extracted play undo stack and pending move/rotation refs into `usePlayUndoState`.
   - Verify with root `npm run build` and relevant simulator-core tests.
   - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.
 - [ ] Resume and finish the remaining 11th Edition rules work.
