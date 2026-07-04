@@ -152,7 +152,7 @@ function scoreCpLabel(scenario: PracticeScenarioSummary): string {
   return [score, cp].filter(Boolean).join(' - ');
 }
 
-export function PracticeControlsPanel({
+export function GameSessionControlsPanel({
   timeline,
   status,
   storageStatus,
@@ -194,14 +194,14 @@ export function PracticeControlsPanel({
       )}
       <div className={`practice-storage practice-storage-${storageStatus?.storage ?? 'unknown'}`}>
         <strong>{storageStatus?.storage === 'database' ? 'Database saves' : 'Local saves'}</strong>
-        <span>{storageStatus?.message ?? 'Checking practice save storage...'}</span>
+        <span>{storageStatus?.message ?? 'Checking game save storage...'}</span>
       </div>
       {status && <div className="practice-status">{status}</div>}
     </section>
   );
 }
 
-export function PracticeSaveModal({
+export function GameSessionSaveModal({
   open,
   timeline,
   status,
@@ -236,7 +236,7 @@ export function PracticeSaveModal({
         </div>
         <div className={`practice-storage practice-storage-${storageStatus?.storage ?? 'unknown'}`}>
           <strong>{storageStatus?.storage === 'database' ? 'Database saves' : 'Local saves'}</strong>
-          <span>{storageStatus?.message ?? 'Checking practice save storage...'}</span>
+          <span>{storageStatus?.message ?? 'Checking game save storage...'}</span>
         </div>
         {status && <div className="practice-status">{status}</div>}
         <div className="practice-seek">
@@ -279,7 +279,7 @@ export function PracticeSaveModal({
   );
 }
 
-export function PracticeLoadModal({
+export function GameSessionLoadModal({
   open,
   savedScenarios,
   activeCheckpointId,

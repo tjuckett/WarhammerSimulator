@@ -41,7 +41,7 @@ import { BattleLog } from './components/BattleLog';
 import { ArmyPanel } from './components/ArmyPanel';
 import { UnitStatsPanel } from './components/UnitStatsPanel';
 import { TerrainLayoutEditor } from './components/TerrainLayoutEditor';
-import { PracticeControlsPanel, PracticeLoadModal, PracticeSaveModal } from './components/PracticeSaveLoadPanel';
+import { GameSessionControlsPanel, GameSessionLoadModal, GameSessionSaveModal } from './components/GameSessionSaveLoadPanel';
 import { CombatResultDialog } from './components/CombatResultDialog';
 import { isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
 import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
@@ -118,7 +118,7 @@ function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value));
 }
 
-function makePracticeId(prefix: string): string {
+function makeGameSessionId(prefix: string): string {
   const randomId = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   return `${prefix}-${randomId}`;
 }
@@ -157,7 +157,7 @@ export default function App() {
   const {
     savedScenarios,
     setSavedScenarios,
-    storageStatus: practiceStorageStatus,
+    storageStatus: gameSessionStorageStatus,
     refreshSavedScenarios,
   } = useGameSessionStorage();
   const {
@@ -180,8 +180,8 @@ export default function App() {
       activeGameIdRef,
     },
     actions: {
-      setActiveCheckpointId: setActivePracticeCheckpoint,
-      setActiveGameId: setActivePracticeGame,
+      setActiveCheckpointId: setActiveGameSessionCheckpoint,
+      setActiveGameId: setActiveGameSessionGame,
     },
   } = useGameSessionSelection();
   const [playPhaseWarning, setPlayPhaseWarning] = useState('');
@@ -223,7 +223,7 @@ export default function App() {
       deleteTerrainMatTemplate,
     },
   } = useTerrainLayouts({
-    createId: makePracticeId,
+    createId: makeGameSessionId,
     downloadJson,
   });
   const [brain, setBrain] = useState<BrainMemory>(loadBrain);
@@ -302,7 +302,7 @@ export default function App() {
     },
   } = usePlayUndoState();
   const battleStateRef = useRef<BattleState | null>(null);
-  const checkpointBranchIdRef = useRef<string>(makePracticeId('checkpoint-branch'));
+  const checkpointBranchIdRef = useRef<string>(makeGameSessionId('checkpoint-branch'));
   const winnerRecordedRef = useRef<string | null>(null);
 
   const {
@@ -343,7 +343,7 @@ export default function App() {
     terrainLayouts,
     editorLayout,
     onBattleSetupChanged: resetBattleConfiguration,
-    onLayoutChanged: () => { clearPlayUndo(); resetPracticeTimeline(); },
+    onLayoutChanged: () => { clearPlayUndo(); resetGameSessionTimeline(); },
     onConfiguredBattleChanged: resetConfiguredBattle,
   });
   const {
@@ -367,56 +367,56 @@ export default function App() {
     setAlignVertexLock,
     setTerrainSaveStatus,
     selectedBoardFormat,
-    createId: makePracticeId,
+    createId: makeGameSessionId,
   });
 
   const {
     state: {
-      timeline: practiceTimeline,
+      timeline: gameSessionTimeline,
     },
     refs: {
-      timelineRef: practiceTimelineRef,
+      timelineRef: gameSessionTimelineRef,
     },
     actions: {
-      resetTimeline: resetPracticeTimeline,
-      startTimeline: startPracticeTimeline,
-      recordAction: recordPracticeAction,
-      undoTimelineCursor: undoPracticeTimelineCursor,
-      restoreResultTimeline: restorePracticeResultTimeline,
-      undoTimelineAction: undoPracticeTimelineAction,
-      redoTimelineAction: redoPracticeTimelineAction,
-      seekTimelineAction: seekPracticeTimelineAction,
+      resetTimeline: resetGameSessionTimeline,
+      startTimeline: startGameSessionTimeline,
+      recordAction: recordGameSessionAction,
+      undoTimelineCursor: undoGameSessionTimelineCursor,
+      restoreResultTimeline: restoreGameSessionResultTimeline,
+      undoTimelineAction: undoGameSessionTimelineAction,
+      redoTimelineAction: redoGameSessionTimelineAction,
+      seekTimelineAction: seekGameSessionTimelineAction,
     },
   } = useGameSessionTimeline({
-    createBranchId: () => makePracticeId('checkpoint-branch'),
+    createBranchId: () => makeGameSessionId('checkpoint-branch'),
     checkpointBranchIdRef,
-    setActiveCheckpointId: setActivePracticeCheckpoint,
-    setActiveGameId: setActivePracticeGame,
+    setActiveCheckpointId: setActiveGameSessionCheckpoint,
+    setActiveGameId: setActiveGameSessionGame,
     setPendingCheckpointLoad,
-    restoreTimelineResult: restorePracticeTimelineResult,
+    restoreTimelineResult: restoreGameSessionTimelineResult,
   });
 
   const {
     modals: {
-      saveModalOpen: practiceSaveModalOpen,
-      setSaveModalOpen: setPracticeSaveModalOpen,
-      loadModalOpen: practiceLoadModalOpen,
-      setLoadModalOpen: setPracticeLoadModalOpen,
+      saveModalOpen: gameSessionSaveModalOpen,
+      setSaveModalOpen: setGameSessionSaveModalOpen,
+      loadModalOpen: gameSessionLoadModalOpen,
+      setLoadModalOpen: setGameSessionLoadModalOpen,
     },
     status: {
-      saveStatus: practiceSaveStatus,
+      saveStatus: gameSessionSaveStatus,
     },
     actions: {
-      saveCheckpoint: savePracticeCheckpoint,
-      saveActiveScenarioAndClose: saveActivePracticeScenarioAndClose,
-      requestLoadSavedScenario: requestLoadSavedPracticeScenario,
+      saveCheckpoint: saveGameSessionCheckpoint,
+      saveActiveScenarioAndClose: saveActiveGameSessionScenarioAndClose,
+      requestLoadSavedScenario: requestLoadSavedGameSessionScenario,
       saveCurrentAndLoadPendingCheckpoint,
       loadPendingCheckpointWithoutSaving,
-      requestDeleteSavedScenario: requestDeleteSavedPracticeScenario,
-      confirmDeleteSavedScenario: confirmDeleteSavedPracticeScenario,
+      requestDeleteSavedScenario: requestDeleteSavedGameSessionScenario,
+      confirmDeleteSavedScenario: confirmDeleteSavedGameSessionScenario,
     },
   } = useGameSessionController({
-    practiceTimelineRef,
+    practiceTimelineRef: gameSessionTimelineRef,
     checkpointBranchIdRef,
     activeCheckpointIdRef,
     activeGameIdRef,
@@ -427,10 +427,10 @@ export default function App() {
     setPendingCheckpointLoad,
     pendingCheckpointDelete,
     setPendingCheckpointDelete,
-    setActiveCheckpointId: setActivePracticeCheckpoint,
-    setActiveGameId: setActivePracticeGame,
-    restoreTimelineResult: restorePracticeTimelineResult,
-    createBranchId: () => makePracticeId('checkpoint-branch'),
+    setActiveCheckpointId: setActiveGameSessionCheckpoint,
+    setActiveGameId: setActiveGameSessionGame,
+    restoreTimelineResult: restoreGameSessionTimelineResult,
+    createBranchId: () => makeGameSessionId('checkpoint-branch'),
   });
 
   const previewState: BattleState = useMemo(() => ({
@@ -1065,13 +1065,13 @@ export default function App() {
   function resetConfiguredBattle() {
     commitBattleState(null);
     clearPlayUiState();
-    resetPracticeTimeline();
+    resetGameSessionTimeline();
   }
 
   function resetBattleConfiguration() {
     commitBattleState(null);
     clearPlayUndo();
-    resetPracticeTimeline();
+    resetGameSessionTimeline();
   }
 
   function updateArmy1(nextArmy: ImportedArmy) {
@@ -1092,8 +1092,8 @@ export default function App() {
     };
   }
 
-  function restorePracticeTimelineResult(result: TimelineStateResult) {
-    restorePracticeResultTimeline(result);
+  function restoreGameSessionTimelineResult(result: TimelineStateResult) {
+    restoreGameSessionResultTimeline(result);
     const restoredSetup = restoredTimelineSetupForResult(result, terrainLayouts);
     setArmy1(restoredSetup.army1);
     setArmy2(restoredSetup.army2);
@@ -1105,7 +1105,7 @@ export default function App() {
   }
 
   function commitPlayTimelineAction(pending: PendingPlayTimelineAction) {
-    recordPracticeAction(pending.undoEntry.battleState, pending.stateAfter, pending.action);
+    recordGameSessionAction(pending.undoEntry.battleState, pending.stateAfter, pending.action);
     pushPlayUndoEntry(pending.undoEntry);
   }
 
@@ -1157,7 +1157,7 @@ export default function App() {
     setPlayDeploySelection(null);
     setPlayModelSelection(null);
     clearPlayUndo();
-    resetPracticeTimeline();
+    resetGameSessionTimeline();
   }
 
   function chooseMode(mode: AppMode) {
@@ -1202,7 +1202,7 @@ export default function App() {
       selectedObjectives,
       edition,
     );
-    startPracticeTimeline(initialState);
+    startGameSessionTimeline(initialState);
     commitBattleState(initialState);
   }
 
@@ -2026,8 +2026,8 @@ export default function App() {
     if (!prev || prev.phase !== 'deployment') return;
     const next = beginPlayBattle(prev);
     if (next.phase !== 'deployment') {
-      recordPracticeAction(prev, next, { type: GAME_ACTION_TYPE.BeginBattle });
-      void savePracticeCheckpoint('auto-phase');
+      recordGameSessionAction(prev, next, { type: GAME_ACTION_TYPE.BeginBattle });
+      void saveGameSessionCheckpoint('auto-phase');
       setPlayDeploySelection(null);
       setPlayModelSelection(null);
       clearPlayUndo();
@@ -2048,10 +2048,10 @@ export default function App() {
     }
     const entry = playUndoStackRef.current[playUndoStackRef.current.length - 1];
     if (!entry) {
-      undoPracticeTimelineAction();
+      undoGameSessionTimelineAction();
       return;
     }
-    undoPracticeTimelineCursor();
+    undoGameSessionTimelineCursor();
     commitBattleState(clone(entry.battleState));
     setPlayDeploySelection(clone(entry.playDeploySelection));
     setPlayModelSelection(clone(entry.playModelSelection));
@@ -2061,7 +2061,7 @@ export default function App() {
 
   const redoPlayAction = useCallback(() => {
     if (!isPlayMode) return;
-    redoPracticeTimelineAction();
+    redoGameSessionTimelineAction();
   }, [isPlayMode]);
 
   useEffect(() => {
@@ -2107,7 +2107,7 @@ export default function App() {
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'deployment') return;
     const next = placeNextUnit(prev);
-    if (next !== prev) recordPracticeAction(prev, next, { type: GAME_ACTION_TYPE.SimulationPlaceNextUnit });
+    if (next !== prev) recordGameSessionAction(prev, next, { type: GAME_ACTION_TYPE.SimulationPlaceNextUnit });
     commitBattleState(next);
   }, []);
 
@@ -2117,8 +2117,8 @@ export default function App() {
     const activeRules = rulesEditionForRuleset(prev.ruleset);
     const next = simulateNextPhase(prev, activeRules);
     if (next !== prev) {
-      recordPracticeAction(prev, next, { type: GAME_ACTION_TYPE.SimulationStepPhase });
-      void savePracticeCheckpoint('auto-phase');
+      recordGameSessionAction(prev, next, { type: GAME_ACTION_TYPE.SimulationStepPhase });
+      void saveGameSessionCheckpoint('auto-phase');
     }
     commitBattleState(next);
   }, []);
@@ -2204,8 +2204,8 @@ export default function App() {
       else next.winner = 'draw';
     }
 
-    recordPracticeAction(prev, next, { type: GAME_ACTION_TYPE.StepPhase });
-    void savePracticeCheckpoint('auto-phase');
+    recordGameSessionAction(prev, next, { type: GAME_ACTION_TYPE.StepPhase });
+    void saveGameSessionCheckpoint('auto-phase');
     commitBattleState(next);
   }, []);
 
@@ -2505,15 +2505,15 @@ export default function App() {
         <div className="log-panel">
           <div className="log-header">{isEditorMode ? 'Terrain Editor' : isPlayMode ? 'Play' : 'Battle Log'}</div>
           {!isEditorMode && (
-            <PracticeControlsPanel
-              timeline={practiceTimeline}
-              status={practiceSaveStatus}
-              storageStatus={practiceStorageStatus}
-              onUndo={undoPracticeTimelineAction}
-              onRedo={redoPracticeTimelineAction}
-              onSeek={seekPracticeTimelineAction}
-              onOpenSave={() => setPracticeSaveModalOpen(true)}
-              onOpenLoad={() => setPracticeLoadModalOpen(true)}
+            <GameSessionControlsPanel
+              timeline={gameSessionTimeline}
+              status={gameSessionSaveStatus}
+              storageStatus={gameSessionStorageStatus}
+              onUndo={undoGameSessionTimelineAction}
+              onRedo={redoGameSessionTimelineAction}
+              onSeek={seekGameSessionTimelineAction}
+              onOpenSave={() => setGameSessionSaveModalOpen(true)}
+              onOpenLoad={() => setGameSessionLoadModalOpen(true)}
             />
           )}
           {isEditorMode ? (
@@ -2674,28 +2674,28 @@ export default function App() {
         </Alert>
       </Snackbar>
 
-      <PracticeSaveModal
-        open={practiceSaveModalOpen}
-        timeline={practiceTimeline}
-        status={practiceSaveStatus}
-        storageStatus={practiceStorageStatus}
-        onUndo={undoPracticeTimelineAction}
-        onRedo={redoPracticeTimelineAction}
-        onSeek={seekPracticeTimelineAction}
-        onSave={saveActivePracticeScenarioAndClose}
-        onClose={() => setPracticeSaveModalOpen(false)}
+      <GameSessionSaveModal
+        open={gameSessionSaveModalOpen}
+        timeline={gameSessionTimeline}
+        status={gameSessionSaveStatus}
+        storageStatus={gameSessionStorageStatus}
+        onUndo={undoGameSessionTimelineAction}
+        onRedo={redoGameSessionTimelineAction}
+        onSeek={seekGameSessionTimelineAction}
+        onSave={saveActiveGameSessionScenarioAndClose}
+        onClose={() => setGameSessionSaveModalOpen(false)}
       />
 
-      <PracticeLoadModal
-        open={practiceLoadModalOpen}
+      <GameSessionLoadModal
+        open={gameSessionLoadModalOpen}
         savedScenarios={savedScenarios}
         activeCheckpointId={activeCheckpointId}
         activeGameId={activeGameId}
         selectedGameId={selectedSaveGameId}
         onSelectGame={setSelectedSaveGameId}
-        onLoad={requestLoadSavedPracticeScenario}
-        onDelete={requestDeleteSavedPracticeScenario}
-        onClose={() => setPracticeLoadModalOpen(false)}
+        onLoad={requestLoadSavedGameSessionScenario}
+        onDelete={requestDeleteSavedGameSessionScenario}
+        onClose={() => setGameSessionLoadModalOpen(false)}
       />
 
       <GameSessionCheckpointDialogs
@@ -2704,7 +2704,7 @@ export default function App() {
         onSaveAndLoad={saveCurrentAndLoadPendingCheckpoint}
         onLoadWithoutSaving={loadPendingCheckpointWithoutSaving}
         onCancelLoad={() => setPendingCheckpointLoad(null)}
-        onConfirmDelete={confirmDeleteSavedPracticeScenario}
+        onConfirmDelete={confirmDeleteSavedGameSessionScenario}
         onCancelDelete={() => setPendingCheckpointDelete(null)}
       />
 
