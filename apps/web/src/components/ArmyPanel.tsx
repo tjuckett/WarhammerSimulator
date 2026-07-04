@@ -1,6 +1,6 @@
 import React from 'react';
 import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
-import type { ImportedArmy, UnitDeploymentMode, UnitProfile } from '@warhammer-simulator/core/types/army';
+import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitDeploymentMode, type UnitProfile } from '@warhammer-simulator/core/types/army';
 import { DEPLOYMENT_STRATEGIES, type DeploymentStrategy } from '@warhammer-simulator/core/engine/deployment';
 import { applyBaseSizesToArmy } from '@warhammer-simulator/core/data/unitBaseSizes';
 import { canDeployOutsideDeploymentZone, isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
@@ -94,8 +94,8 @@ export function ArmyPanel({
     const normalizedUnit = previousUnit?.baseModelCount !== nextUnit.baseModelCount
       ? { ...nextUnit, modelBases: undefined }
       : nextUnit;
-    const previousDeployment = previousUnit?.deployment?.mode === 'transport' ? previousUnit.deployment : undefined;
-    const nextDeployment = normalizedUnit.deployment?.mode === 'transport' ? normalizedUnit.deployment : undefined;
+    const previousDeployment = previousUnit?.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport ? previousUnit.deployment : undefined;
+    const nextDeployment = normalizedUnit.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport ? normalizedUnit.deployment : undefined;
     const transportChanged = previousDeployment?.transportUnitId !== nextDeployment?.transportUnitId
       || previousDeployment?.transportName !== nextDeployment?.transportName
       || previousUnit?.deployment?.mode !== normalizedUnit.deployment?.mode;
@@ -121,7 +121,7 @@ export function ArmyPanel({
         .filter((_, index) => index !== unitIndex)
         .map(unit => {
           const nextUnit = unit.deployment?.transportUnitId === removedId
-            ? { ...unit, deployment: { mode: 'transport' as const } }
+            ? { ...unit, deployment: { mode: UNIT_DEPLOYMENT_MODE.Transport } }
             : unit;
           return nextUnit.leaderAttachment?.attachedToUnitId === removedId
             ? { ...nextUnit, leaderAttachment: undefined }
@@ -160,7 +160,7 @@ export function ArmyPanel({
 
   const units = battleState ? battleState.units.filter(u => u.side === side && !u.inStrategicReserves) : null;
   const reserveUnits = battleState ? battleState.units.filter(u => u.side === side && !u.destroyed && u.inStrategicReserves) : [];
-  const battlefieldUnits = army?.units.filter(unit => deploymentMode(unit) === 'battlefield').length ?? 0;
+  const battlefieldUnits = army?.units.filter(unit => deploymentMode(unit) === UNIT_DEPLOYMENT_MODE.Battlefield).length ?? 0;
   const stagedUnits = army ? army.units.length - battlefieldUnits : 0;
 
   return (
@@ -263,7 +263,7 @@ export function ArmyPanel({
 }
 
 function deploymentMode(unit: UnitProfile): UnitDeploymentMode {
-  return unit.deployment?.mode ?? 'battlefield';
+  return unit.deployment?.mode ?? UNIT_DEPLOYMENT_MODE.Battlefield;
 }
 
 function isTransportUnit(unit: UnitProfile): boolean {
@@ -271,9 +271,9 @@ function isTransportUnit(unit: UnitProfile): boolean {
 }
 
 function deploymentLabel(unit: UnitProfile, army: ImportedArmy): string {
-  if (unit.deployment?.mode === 'deepStrike') return 'Deep Strike';
-  if (unit.deployment?.mode === 'strategicReserve') return 'Reserves';
-  if (unit.deployment?.mode === 'transport') {
+  if (unit.deployment?.mode === UNIT_DEPLOYMENT_MODE.DeepStrike) return 'Deep Strike';
+  if (unit.deployment?.mode === UNIT_DEPLOYMENT_MODE.StrategicReserve) return 'Reserves';
+  if (unit.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport) {
     const transport = findTransportUnit(army, unit.deployment);
     return transport ? `In ${transport.name}` : 'In transport';
   }
@@ -297,10 +297,10 @@ function normalizeArmyForEditing(army: ImportedArmy): ImportedArmy {
   const unitsWithIds = army.units.map(unit => unit.rosterId ? unit : { ...unit, rosterId: generateRosterId() });
   const units = unitsWithIds.map(unit => {
     let nextUnit = unit;
-    if (isTransportUnit(unit) && unit.deployment?.mode === 'transport') {
+    if (isTransportUnit(unit) && unit.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport) {
       nextUnit = { ...nextUnit, deployment: undefined };
     }
-    if (nextUnit.deployment?.mode === 'transport' && !nextUnit.deployment.transportUnitId && nextUnit.deployment.transportName) {
+    if (nextUnit.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport && !nextUnit.deployment.transportUnitId && nextUnit.deployment.transportName) {
       const transport = unitsWithIds.find(candidate => candidate.name === nextUnit.deployment?.transportName);
       if (transport?.rosterId) {
         nextUnit = { ...nextUnit, deployment: { ...nextUnit.deployment, transportUnitId: transport.rosterId } };
@@ -321,7 +321,7 @@ function normalizeArmyForEditing(army: ImportedArmy): ImportedArmy {
 }
 
 function findTransportUnit(army: ImportedArmy, deployment: UnitProfile['deployment']): UnitProfile | null {
-  if (!deployment || deployment.mode !== 'transport') return null;
+  if (!deployment || deployment.mode !== UNIT_DEPLOYMENT_MODE.Transport) return null;
   if (deployment.transportUnitId) {
     const byId = army.units.find((unit, index) => unitKey(unit, index) === deployment.transportUnitId);
     if (byId) return byId;
@@ -367,7 +367,7 @@ function buildTransportManifest(army: ImportedArmy): TransportManifestEntry[] {
     .filter((entry): entry is TransportManifestEntry => entry !== null);
 
   for (const passenger of army.units) {
-    if (passenger.deployment?.mode !== 'transport') continue;
+    if (passenger.deployment?.mode !== UNIT_DEPLOYMENT_MODE.Transport) continue;
     const target = entries.find(entry =>
       entry.id === passenger.deployment?.transportUnitId
       || (!passenger.deployment?.transportUnitId && entry.unit.name === passenger.deployment?.transportName),
@@ -847,7 +847,7 @@ function groupedStagedDisplayItems(army: ImportedArmy, placedUnits: BattleUnit[]
         item.unit.leaderAttachment?.attachedToUnitId === unitRosterId(unit)
         || (!item.unit.leaderAttachment?.attachedToUnitId && item.unit.leaderAttachment?.attachedToName === unit.name),
       );
-      if (!target || deploymentMode(target) === 'battlefield' || deploymentMode(target) === 'transport') return [];
+      if (!target || deploymentMode(target) === UNIT_DEPLOYMENT_MODE.Battlefield || deploymentMode(target) === UNIT_DEPLOYMENT_MODE.Transport) return [];
       return [{
         kind: 'unit',
         unit: item.unit,
@@ -859,7 +859,7 @@ function groupedStagedDisplayItems(army: ImportedArmy, placedUnits: BattleUnit[]
     }
 
     const mode = deploymentMode(item.unit);
-    if (mode === 'battlefield' || mode === 'transport') return [];
+    if (mode === UNIT_DEPLOYMENT_MODE.Battlefield || mode === UNIT_DEPLOYMENT_MODE.Transport) return [];
     return [{
       kind: 'unit',
       unit: item.unit,
@@ -900,7 +900,7 @@ function groupedStagedDisplayItems(army: ImportedArmy, placedUnits: BattleUnit[]
 }
 
 function isEmbarkedInTransport(unit: UnitProfile, transport: TransportManifestEntry): boolean {
-  return unit.deployment?.mode === 'transport'
+  return unit.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport
     && (
       unit.deployment.transportUnitId === transport.id
       || (!unit.deployment.transportUnitId && unit.deployment.transportName === transport.unit.name)
@@ -1032,7 +1032,7 @@ function StaticUnitList({
         const expanded = expandedUnitId === id || !editable;
         const currentTransportId = u.deployment?.transportUnitId ?? '';
         const currentLeaderTargetId = u.leaderAttachment?.attachedToUnitId ?? '';
-        const currentPassengerCount = deploymentMode(u) === 'transport' ? attachmentGroupModelCount(army, i) : 0;
+        const currentPassengerCount = deploymentMode(u) === UNIT_DEPLOYMENT_MODE.Transport ? attachmentGroupModelCount(army, i) : 0;
         const unitIsTransport = isTransportUnit(u);
         const showTransportCapacity = unitIsTransport || !!u.transportCapacity;
         const unitIsLeader = isLeaderUnit(u);
@@ -1189,7 +1189,7 @@ function StaticUnitList({
                     onChange={event => onChangeUnit(i, {
                       ...u,
                       transportCapacity: Math.max(0, Number(event.target.value) || 0) || undefined,
-                      deployment: Math.max(0, Number(event.target.value) || 0) > 0 && u.deployment?.mode === 'transport'
+                      deployment: Math.max(0, Number(event.target.value) || 0) > 0 && u.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport
                         ? undefined
                         : u.deployment,
                     })}
@@ -1203,24 +1203,24 @@ function StaticUnitList({
                   value={deploymentMode(u)}
                   onChange={event => {
                     const mode = event.target.value as UnitDeploymentMode;
-                    if (mode === 'transport' && unitIsTransport) return;
+                    if (mode === UNIT_DEPLOYMENT_MODE.Transport && unitIsTransport) return;
                     onChangeUnit(i, {
                       ...u,
-                      deployment: mode === 'battlefield'
+                      deployment: mode === UNIT_DEPLOYMENT_MODE.Battlefield
                         ? undefined
                         : {
                           mode,
-                          transportUnitId: mode === 'transport' ? u.deployment?.transportUnitId : undefined,
-                          transportName: mode === 'transport' ? u.deployment?.transportName : undefined,
+                          transportUnitId: mode === UNIT_DEPLOYMENT_MODE.Transport ? u.deployment?.transportUnitId : undefined,
+                          transportName: mode === UNIT_DEPLOYMENT_MODE.Transport ? u.deployment?.transportName : undefined,
                         },
                     });
                   }}
                   style={selectInputStyle(color)}
                 >
-                  <option value="battlefield">Battlefield</option>
-                  <option value="deepStrike">Deep Strike</option>
-                  <option value="strategicReserve">Reserves</option>
-                  <option value="transport" disabled={unitIsTransport}>Transport</option>
+                  <option value={UNIT_DEPLOYMENT_MODE.Battlefield}>Battlefield</option>
+                  <option value={UNIT_DEPLOYMENT_MODE.DeepStrike}>Deep Strike</option>
+                  <option value={UNIT_DEPLOYMENT_MODE.StrategicReserve}>Reserves</option>
+                  <option value={UNIT_DEPLOYMENT_MODE.Transport} disabled={unitIsTransport}>Transport</option>
                 </select>
               </label>
             </div>
@@ -1286,7 +1286,7 @@ function StaticUnitList({
               onChange={modelWeaponLoadouts => onChangeUnit(i, { ...u, modelWeaponLoadouts })}
             />
           )}
-          {editable && deploymentMode(u) === 'transport' && (
+          {editable && deploymentMode(u) === UNIT_DEPLOYMENT_MODE.Transport && (
             <label style={{ display: 'block', color: '#777', fontSize: 10, marginTop: 4 }}>
               Transport
               <select
@@ -1296,7 +1296,7 @@ function StaticUnitList({
                   onChangeUnit(i, {
                     ...u,
                     deployment: {
-                      mode: 'transport',
+                      mode: UNIT_DEPLOYMENT_MODE.Transport,
                       transportUnitId: target?.id,
                       transportName: target?.unit.name,
                     },
@@ -1323,7 +1323,7 @@ function StaticUnitList({
               </select>
             </label>
           )}
-          {editable && deploymentMode(u) === 'transport' && selectedTransportOverCapacity && (
+          {editable && deploymentMode(u) === UNIT_DEPLOYMENT_MODE.Transport && selectedTransportOverCapacity && (
             <div style={{ color: '#ff8a8a', fontSize: 10, marginTop: 2 }}>
               Transport over capacity: {selectedTransport.used}/{selectedTransport.capacity}
             </div>
@@ -1338,7 +1338,7 @@ function StaticUnitList({
               {ownTransportEntry.passengers.length ? ` - ${ownTransportEntry.passengers.map(passenger => passenger.name).join(', ')}` : ''}
             </div>
           )}
-          {deploymentMode(u) !== 'battlefield' && (
+          {deploymentMode(u) !== UNIT_DEPLOYMENT_MODE.Battlefield && (
             <div style={{ color, fontSize: 10, marginTop: 1 }}>
               {deploymentLabel(u, army)}
             </div>
@@ -1435,7 +1435,7 @@ function UnitSummaryBadges({
 }) {
   const badges: { label: string; color: string }[] = [];
   const mode = deploymentMode(unit);
-  if (mode !== 'battlefield') badges.push({ label: deploymentLabel(unit, army), color });
+  if (mode !== UNIT_DEPLOYMENT_MODE.Battlefield) badges.push({ label: deploymentLabel(unit, army), color });
   if (unit.leaderAttachment) {
     const target = leaderManifest.find(entry => entry.id === unit.leaderAttachment?.attachedToUnitId)?.unit.name
       ?? unit.leaderAttachment.attachedToName

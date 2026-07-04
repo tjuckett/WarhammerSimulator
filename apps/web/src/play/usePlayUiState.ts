@@ -2,10 +2,16 @@ import { useRef, useState } from 'react';
 import type { LogEntry } from '@warhammer-simulator/core/types/battle';
 import type { PlayModelSelection } from '../components/Battlefield';
 
+export const PLAY_DEPLOY_SELECTION_KIND = {
+  Deployment: 'deployment',
+  Reinforcement: 'reinforcement',
+  StrategicReserve: 'strategicReserve',
+} as const;
+
 export type PlayDeploySelection =
-  | { kind: 'deployment'; side: 0 | 1; unitIndex: number }
-  | { kind: 'reinforcement'; side: 0 | 1; armyUnitIndex: number }
-  | { kind: 'strategicReserve'; side: 0 | 1; unitId: string };
+  | { kind: typeof PLAY_DEPLOY_SELECTION_KIND.Deployment; side: 0 | 1; unitIndex: number }
+  | { kind: typeof PLAY_DEPLOY_SELECTION_KIND.Reinforcement; side: 0 | 1; armyUnitIndex: number }
+  | { kind: typeof PLAY_DEPLOY_SELECTION_KIND.StrategicReserve; side: 0 | 1; unitId: string };
 
 export type InspectedSelection =
   | { kind: 'battle'; side: 0 | 1; unitId: string }

@@ -46,6 +46,9 @@ Use this section as the current high-level pickup order before starting large ne
   - Completed twenty-seventh slice: added shared UI tokens and adopted them in `PlayPanels` for panel chrome, status text, and combat stat colors.
   - Completed twenty-eighth slice: extracted shared play model edit gates and selection transforms into `playMovementHelpers`.
   - Completed twenty-ninth slice: added shared battle phase and movement-step constants in simulator-core and adopted them in phase progression/edit helpers.
+  - Completed thirtieth slice: extracted play deployment/reinforcement/reserve placement validation and placement action creation into `playDeploymentHelpers`.
+  - Completed thirty-first slice: added constants for unit deployment modes and play deployment selection kinds, then adopted them in deployment helpers and touched App wiring.
+  - Completed thirty-second slice: adopted shared unit deployment mode constants in `ArmyPanel` and simulator transport/reinforcement checks.
   - Before closing the refactor pass, audit untouched UI files for repeated hardcoded colors, spacing, labels, and panel styles; adopt shared tokens only where it improves consistency without making the code harder to read.
   - Verify with root `npm run build` and relevant simulator-core tests.
   - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.

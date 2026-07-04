@@ -70,7 +70,14 @@ export interface ImportedArmy {
   units: UnitProfile[];
 }
 
-export type UnitDeploymentMode = 'battlefield' | 'deepStrike' | 'strategicReserve' | 'transport';
+export const UNIT_DEPLOYMENT_MODE = {
+  Battlefield: 'battlefield',
+  DeepStrike: 'deepStrike',
+  StrategicReserve: 'strategicReserve',
+  Transport: 'transport',
+} as const;
+
+export type UnitDeploymentMode = (typeof UNIT_DEPLOYMENT_MODE)[keyof typeof UNIT_DEPLOYMENT_MODE];
 
 export interface UnitDeploymentAssignment {
   mode: UnitDeploymentMode;

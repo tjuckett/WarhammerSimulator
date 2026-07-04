@@ -1,5 +1,5 @@
 import type { BattleSetup, BattleState, BattleUnit, LogEntry, MovementStep, Phase, Position, Side, Terrain, TerrainFeature } from '../types/battle';
-import type { ImportedArmy, UnitProfile, WeaponProfile } from '../types/army';
+import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile, type WeaponProfile } from '../types/army';
 import { rules40K10th, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
 import { deployArmy, distanceToDeploymentZone, fp, pointInDeploymentZone, zoneFor, unitRole, type DeploymentStrategy, type DeploymentZoneSource } from './deployment';
@@ -2667,7 +2667,8 @@ function removeUnitFromUnplaced(s: BattleState, side: Side, profile: UnitProfile
 }
 
 function unitIsStagedReinforcement(unit: UnitProfile): boolean {
-  return unit.deployment?.mode === 'deepStrike' || unit.deployment?.mode === 'strategicReserve';
+  return unit.deployment?.mode === UNIT_DEPLOYMENT_MODE.DeepStrike
+    || unit.deployment?.mode === UNIT_DEPLOYMENT_MODE.StrategicReserve;
 }
 
 function reinforcementPlacementIsOutsideEnemyRange(state: BattleState, side: Side, modelPositions: Position[], minRange = 9): boolean {
@@ -2712,7 +2713,7 @@ function markUnitArrivedFromReinforcements(unit: BattleUnit): void {
 const TRANSPORT_ACCESS_RANGE = 3;
 
 function unitAssignedToTransport(profile: UnitProfile, transport: BattleUnit): boolean {
-  return profile.deployment?.mode === 'transport'
+  return profile.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport
     && (
       profile.deployment.transportUnitId === unitRosterId(transport.profile)
       || (!profile.deployment.transportUnitId && profile.deployment.transportName === transport.profile.name)

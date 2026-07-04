@@ -18,12 +18,12 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SpeedIcon from '@mui/icons-material/Speed';
 import StopIcon from '@mui/icons-material/Stop';
 import { BATTLE_PHASE, MOVEMENT_STEP, type BattleState, type BattleUnit, type Phase, type Position, type TerrainLayout } from '@warhammer-simulator/core/types/battle';
-import type { ImportedArmy, UnitProfile } from '@warhammer-simulator/core/types/army';
+import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile } from '@warhammer-simulator/core/types/army';
 import type { AbilityTiming } from '@warhammer-simulator/core/types/ability';
 import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simulator/core/engine/rulesEngine';
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
-  advancePlayUnit, battleModelIdsWithCoherencyIssues, beginPlayBattle, completePlayUnitMovement, createDeploymentState, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placePlayReinforcement, placePlayStrategicReserveUnit, placePlayUnit, placeNextUnit, removePlayModels,
+  advancePlayUnit, battleModelIdsWithCoherencyIssues, beginPlayBattle, completePlayUnitMovement, createDeploymentState, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels,
   allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consolidatePlayUnit, fightPlayUnitWeapon, lockPlayUnitShooting, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, undeployPlayUnit, type DeploymentStrategy, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
@@ -63,7 +63,7 @@ import { ModeChooserDialog } from './modes/ModeChooserDialog';
 import { GameSessionCheckpointDialogs } from './gameSession/GameSessionCheckpointDialogs';
 import { useTerrainLayouts } from './terrain/useTerrainLayouts';
 import { useTerrainEditing } from './terrain/useTerrainEditing';
-import { usePlayUiState, type PlayDeploySelection } from './play/usePlayUiState';
+import { PLAY_DEPLOY_SELECTION_KIND, usePlayUiState, type PlayDeploySelection } from './play/usePlayUiState';
 import { usePlayUndoState, type PendingPlayTimelineAction, type PlayUndoEntry } from './play/usePlayUndoState';
 import {
   attachedBattleUnitIdsForSelection,
@@ -82,6 +82,11 @@ import {
   canEditPlayModels,
   transformPlayModelSelection,
 } from './play/playMovementHelpers';
+import {
+  canSelectPlayReinforcementUnit,
+  canSelectPlayStrategicReserveUnit,
+  resolvePlayPlacement,
+} from './play/playDeploymentHelpers';
 import {
   PendingDamageAllocationHud,
   PlayChargePanel,
@@ -457,11 +462,11 @@ export default function App() {
   const isPlayReinforcementsStep = playMovementStep === MOVEMENT_STEP.Reinforcements;
   const canEditPlayModelsNow = canEditPlayModels(battleState);
   const selectedPlayUnit = playDeploySelection
-    ? playDeploySelection.kind === 'deployment' && battleState?.phase === 'deployment'
+    ? playDeploySelection.kind === PLAY_DEPLOY_SELECTION_KIND.Deployment && battleState?.phase === BATTLE_PHASE.Deployment
       ? battleState.unplacedUnits[playDeploySelection.side][playDeploySelection.unitIndex] ?? null
-      : playDeploySelection.kind === 'reinforcement' && isPlayReinforcementsStep
+      : playDeploySelection.kind === PLAY_DEPLOY_SELECTION_KIND.Reinforcement && isPlayReinforcementsStep
         ? battleState.armies[playDeploySelection.side].army.units[playDeploySelection.armyUnitIndex] ?? null
-        : playDeploySelection.kind === 'strategicReserve' && isPlayReinforcementsStep
+        : playDeploySelection.kind === PLAY_DEPLOY_SELECTION_KIND.StrategicReserve && isPlayReinforcementsStep
           ? battleState.units.find(unit =>
             unit.id === playDeploySelection.unitId
             && unit.side === playDeploySelection.side
@@ -861,7 +866,7 @@ export default function App() {
     const stagedPassengers = battleState.armies[side].army.units
       .map((unit, armyUnitIndex) => ({ unit, armyUnitIndex }))
       .filter(({ unit }) =>
-        unit.deployment?.mode === 'transport'
+        unit.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport
         && (
           unit.deployment.transportUnitId === transportRosterId
           || (!unit.deployment.transportUnitId && unit.deployment.transportName === selectedPlayBattleUnit.profile.name)
@@ -1200,26 +1205,20 @@ export default function App() {
   }
 
   function selectPlayDeployUnit(side: 0 | 1, unitIndex: number) {
-    setPlayDeploySelection({ kind: 'deployment', side, unitIndex });
+    setPlayDeploySelection({ kind: PLAY_DEPLOY_SELECTION_KIND.Deployment, side, unitIndex });
     setPlayModelSelection(null);
     setInspectedSelection({ kind: 'profile', side, unitIndex });
     const current = battleStateRef.current;
-    if (current?.phase === 'deployment') commitBattleState({ ...current, activeArmy: side });
+    if (current?.phase === BATTLE_PHASE.Deployment) commitBattleState({ ...current, activeArmy: side });
   }
 
   function selectPlayReinforcementUnit(side: 0 | 1, armyUnitIndex: number) {
     const current = battleStateRef.current;
-    if (!current || current.phase !== 'movement' || movementStep(current) !== 'reinforcements' || current.activeArmy !== side) {
+    if (!canSelectPlayReinforcementUnit(current, side, armyUnitIndex)) {
       inspectProfileUnit(side, armyUnitIndex);
       return;
     }
-    const unit = current.armies[side].army.units[armyUnitIndex];
-    const mode = unit?.deployment?.mode;
-    if (mode !== 'deepStrike' && mode !== 'strategicReserve') {
-      inspectProfileUnit(side, armyUnitIndex);
-      return;
-    }
-    setPlayDeploySelection({ kind: 'reinforcement', side, armyUnitIndex });
+    setPlayDeploySelection({ kind: PLAY_DEPLOY_SELECTION_KIND.Reinforcement, side, armyUnitIndex });
     setPlayModelSelection(null);
     setInspectedSelection({ kind: 'profile', side, unitIndex: armyUnitIndex });
   }
@@ -1233,14 +1232,11 @@ export default function App() {
       && candidate.inStrategicReserves,
     );
     if (!current || !unit) return;
-    const canPlaceStrategicReserve = current.phase === 'movement'
-      && movementStep(current) === 'reinforcements'
-      && (current.activeArmy === side || unit.rapidIngressThisPhase);
-    if (!canPlaceStrategicReserve) {
+    if (!canSelectPlayStrategicReserveUnit(current, side, unitId)) {
       setInspectedSelection({ kind: 'battle', side, unitId });
       return;
     }
-    setPlayDeploySelection({ kind: 'strategicReserve', side, unitId });
+    setPlayDeploySelection({ kind: PLAY_DEPLOY_SELECTION_KIND.StrategicReserve, side, unitId });
     setPlayModelSelection(null);
     setInspectedSelection({ kind: 'battle', side, unitId });
   }
@@ -1487,11 +1483,11 @@ export default function App() {
   }
   function undeployPlacedPlayUnit(unitId: string, side: 0 | 1) {
     const prev = battleStateRef.current;
-    if (!prev || prev.phase !== 'deployment') return;
+    if (!prev || prev.phase !== BATTLE_PHASE.Deployment) return;
     const next = undeployPlayUnit(prev, unitId, side);
     if (next !== prev && next.units.length !== prev.units.length) {
       pushPlayUndo(playUndoEntry(prev), next, { type: 'play.undeployUnit', unitId, side });
-      setPlayDeploySelection({ kind: 'deployment', side, unitIndex: 0 });
+      setPlayDeploySelection({ kind: PLAY_DEPLOY_SELECTION_KIND.Deployment, side, unitIndex: 0 });
       setPlayModelSelection(null);
       commitBattleState(next);
     }
@@ -1591,37 +1587,9 @@ export default function App() {
     setPlayModelSelection(null);
     const prev = battleStateRef.current;
     if (!prev) return;
-    const next = playDeploySelection.kind === 'deployment'
-      ? placePlayUnit(prev, playDeploySelection.side, playDeploySelection.unitIndex, { x, y })
-      : playDeploySelection.kind === 'reinforcement'
-        ? placePlayReinforcement(prev, playDeploySelection.side, playDeploySelection.armyUnitIndex, { x, y })
-        : placePlayStrategicReserveUnit(prev, playDeploySelection.side, playDeploySelection.unitId, { x, y });
-    const placed = playDeploySelection.kind === 'deployment'
-      ? next.unplacedUnits[playDeploySelection.side].length < prev.unplacedUnits[playDeploySelection.side].length
-      : playDeploySelection.kind === 'reinforcement'
-        ? next.units.length > prev.units.length
-        : !next.units.find(unit => unit.id === playDeploySelection.unitId && unit.side === playDeploySelection.side)?.inStrategicReserves;
+    const { next, placed, action } = resolvePlayPlacement(prev, playDeploySelection, { x, y });
     if (placed) {
-      pushPlayUndo(playUndoEntry(prev), next, playDeploySelection.kind === 'deployment'
-        ? {
-          type: 'play.placeUnit',
-          side: playDeploySelection.side,
-          unitIndex: playDeploySelection.unitIndex,
-          position: { x, y },
-        }
-        : playDeploySelection.kind === 'reinforcement'
-          ? {
-          type: 'play.placeReinforcement',
-          side: playDeploySelection.side,
-          armyUnitIndex: playDeploySelection.armyUnitIndex,
-          position: { x, y },
-        }
-          : {
-          type: 'play.placeStrategicReserveUnit',
-          side: playDeploySelection.side,
-          unitId: playDeploySelection.unitId,
-          position: { x, y },
-        });
+      pushPlayUndo(playUndoEntry(prev), next, action);
       setPlayDeploySelection(null);
       commitBattleState(next);
     }
@@ -2359,7 +2327,7 @@ export default function App() {
             color={ARMY_COLORS[0]}
             strategy={strategy1}
             playDeployment={isPlayMode}
-            selectedPlayUnitIndex={playDeploySelection?.kind === 'deployment' && playDeploySelection.side === 0 ? playDeploySelection.unitIndex : null}
+            selectedPlayUnitIndex={playDeploySelection?.kind === PLAY_DEPLOY_SELECTION_KIND.Deployment && playDeploySelection.side === 0 ? playDeploySelection.unitIndex : null}
             selectedPlayModelUnitId={primaryPlaySelection?.side === 0 ? primaryPlaySelection.unitId : null}
             selectedInspectedUnitId={inspectedBattleUnitId}
             selectedInspectedProfileIndex={inspectedProfileSide === 0 ? inspectedProfileIndex : null}
@@ -2384,7 +2352,7 @@ export default function App() {
             color={ARMY_COLORS[1]}
             strategy={strategy2}
             playDeployment={isPlayMode}
-            selectedPlayUnitIndex={playDeploySelection?.kind === 'deployment' && playDeploySelection.side === 1 ? playDeploySelection.unitIndex : null}
+            selectedPlayUnitIndex={playDeploySelection?.kind === PLAY_DEPLOY_SELECTION_KIND.Deployment && playDeploySelection.side === 1 ? playDeploySelection.unitIndex : null}
             selectedPlayModelUnitId={primaryPlaySelection?.side === 1 ? primaryPlaySelection.unitId : null}
             selectedInspectedUnitId={inspectedBattleUnitId}
             selectedInspectedProfileIndex={inspectedProfileSide === 1 ? inspectedProfileIndex : null}
@@ -2444,8 +2412,8 @@ export default function App() {
               enabled: true,
               onPlace: placeSelectedPlayUnit,
               canPlaceUnit: !!selectedPlayUnit && (
-                (battleState.phase === 'deployment' && playDeploySelection?.kind === 'deployment')
-                || (isPlayReinforcementsStep && (playDeploySelection?.kind === 'reinforcement' || playDeploySelection?.kind === 'strategicReserve'))
+                (battleState.phase === BATTLE_PHASE.Deployment && playDeploySelection?.kind === PLAY_DEPLOY_SELECTION_KIND.Deployment)
+                || (isPlayReinforcementsStep && (playDeploySelection?.kind === PLAY_DEPLOY_SELECTION_KIND.Reinforcement || playDeploySelection?.kind === PLAY_DEPLOY_SELECTION_KIND.StrategicReserve))
               ),
               selectedModel: playModelSelection,
               onSelectModel: selectPlayModels,
@@ -2540,9 +2508,9 @@ export default function App() {
           {isPlayMode && battleState?.phase === 'deployment' && (
             <div className="preview-caption">
               {selectedPlayUnit
-                ? playDeploySelection?.kind === 'reinforcement'
+                ? playDeploySelection?.kind === PLAY_DEPLOY_SELECTION_KIND.Reinforcement
                   ? `Click to set up ${selectedPlayUnit.name} as Reinforcements more than 9" from enemies${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
-                  : playDeploySelection?.kind === 'strategicReserve'
+                  : playDeploySelection?.kind === PLAY_DEPLOY_SELECTION_KIND.StrategicReserve
                     ? `Click to return ${selectedPlayUnit.name} from Strategic Reserves within 6" of a battlefield edge and more than 9" from enemies${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
                   : `Click to deploy ${selectedPlayUnit.name} for ${battleState.armies[playDeploySelection!.side].name}${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
                 : `Drag or shift-click deployed models to edit${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`}
