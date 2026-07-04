@@ -47,17 +47,17 @@ const ROW_GAP = 18;
 
 function actionLabel(action: GameAction): string {
   switch (action.type) {
-    case 'play.placeUnit':
+    case GAME_ACTION_TYPE.PlaceUnit:
       return `Deploy unit ${action.unitIndex + 1}`;
-    case 'play.placeReinforcement':
+    case GAME_ACTION_TYPE.PlaceReinforcement:
       return `Set up reinforcement ${action.armyUnitIndex + 1}`;
-    case 'play.placeStrategicReserveUnit':
+    case GAME_ACTION_TYPE.PlaceStrategicReserveUnit:
       return 'Return Strategic Reserve';
-    case 'play.undeployUnit':
+    case GAME_ACTION_TYPE.UndeployUnit:
       return 'Undeploy unit';
-    case 'play.moveModels':
+    case GAME_ACTION_TYPE.MoveModels:
       return `Move ${action.parts.reduce((sum, part) => sum + part.modelIndices.length, 0)} model${action.parts.length === 1 ? '' : 's'}`;
-    case 'play.moveModelsVertically':
+    case GAME_ACTION_TYPE.MoveModelsVertically:
       return `Move height ${action.dz > 0 ? '+' : ''}${action.dz}"`;
     case GAME_ACTION_TYPE.FallBackUnit:
       return 'Fall Back';
@@ -69,43 +69,47 @@ function actionLabel(action: GameAction): string {
       return 'Embark';
     case GAME_ACTION_TYPE.DisembarkUnit:
       return 'Disembark';
-    case 'play.rotateModels':
+    case GAME_ACTION_TYPE.RotateModels:
       return `Rotate ${action.degrees}deg`;
-    case 'play.reorganizeModels':
+    case GAME_ACTION_TYPE.ReorganizeModels:
       return `${action.rows} row formation`;
-    case 'play.removeModels':
+    case GAME_ACTION_TYPE.RemoveModels:
       return `Remove ${action.parts.reduce((sum, part) => sum + part.modelIndices.length, 0)} model${action.parts.length === 1 ? '' : 's'}`;
-    case 'play.removeCasualties':
+    case GAME_ACTION_TYPE.RemoveCasualties:
       return `Remove casualties`;
-    case 'play.assignWoundedModel':
+    case GAME_ACTION_TYPE.AssignWoundedModel:
       return 'Assign wounded model';
-    case 'play.allocateDamage':
+    case GAME_ACTION_TYPE.AllocateDamage:
       return 'Allocate damage';
-    case 'play.shootUnitWeapon':
+    case GAME_ACTION_TYPE.ShootUnitWeapon:
       return 'Shoot';
-    case 'play.lockUnitShooting':
+    case GAME_ACTION_TYPE.SnapShootUnitWeapon:
+      return 'Snap Shoot';
+    case GAME_ACTION_TYPE.LockUnitShooting:
       return 'Finish shooting';
-    case 'play.chargeUnitTarget':
+    case GAME_ACTION_TYPE.ChargeUnitTarget:
       return 'Charge';
-    case 'play.fightUnitWeapon':
+    case GAME_ACTION_TYPE.FightUnitWeapon:
       return 'Fight';
-    case 'play.pileInUnit':
+    case GAME_ACTION_TYPE.PileInUnit:
       return 'Pile in';
-    case 'play.consolidateUnit':
+    case GAME_ACTION_TYPE.ConsolidateUnit:
       return 'Consolidate';
-    case 'play.beginBattle':
+    case GAME_ACTION_TYPE.BeginBattle:
       return 'Start game';
-    case 'play.stepPhase':
+    case GAME_ACTION_TYPE.StepPhase:
       return 'Play phase';
-    case 'play.useStratagem':
+    case GAME_ACTION_TYPE.UseStratagem:
       return 'Use stratagem';
-    case 'play.resolveCommandReroll':
+    case GAME_ACTION_TYPE.ResolveCommandReroll:
       return 'Command Re-roll';
-    case 'play.useUnitAbility':
+    case GAME_ACTION_TYPE.UseUnitAbility:
       return 'Use ability';
-    case 'simulation.placeNextUnit':
+    case GAME_ACTION_TYPE.StartAction:
+      return 'Start action';
+    case GAME_ACTION_TYPE.SimulationPlaceNextUnit:
       return 'Auto deploy drop';
-    case 'simulation.stepPhase':
+    case GAME_ACTION_TYPE.SimulationStepPhase:
       return 'Step phase';
   }
 }

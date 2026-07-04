@@ -11,14 +11,14 @@ import {
   placePlayUnit,
 } from '@warhammer-simulator/core/engine/simulator';
 import { UNIT_DEPLOYMENT_MODE } from '@warhammer-simulator/core/types/army';
-import type { GameAction } from '@warhammer-simulator/core/practice/actions';
+import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
 import { PLAY_DEPLOY_SELECTION_KIND, type PlayDeploySelection } from './usePlayUiState';
 
 type PlayPlacementAction = Extract<
   GameAction,
-  | { type: 'play.placeUnit' }
-  | { type: 'play.placeReinforcement' }
-  | { type: 'play.placeStrategicReserveUnit' }
+  | { type: typeof GAME_ACTION_TYPE.PlaceUnit }
+  | { type: typeof GAME_ACTION_TYPE.PlaceReinforcement }
+  | { type: typeof GAME_ACTION_TYPE.PlaceStrategicReserveUnit }
 >;
 
 export function canSelectPlayReinforcementUnit(
@@ -68,7 +68,7 @@ export function resolvePlayPlacement(
       next,
       placed: next.unplacedUnits[selection.side].length < state.unplacedUnits[selection.side].length,
       action: {
-        type: 'play.placeUnit',
+        type: GAME_ACTION_TYPE.PlaceUnit,
         side: selection.side,
         unitIndex: selection.unitIndex,
         position,
@@ -82,7 +82,7 @@ export function resolvePlayPlacement(
       next,
       placed: next.units.length > state.units.length,
       action: {
-        type: 'play.placeReinforcement',
+        type: GAME_ACTION_TYPE.PlaceReinforcement,
         side: selection.side,
         armyUnitIndex: selection.armyUnitIndex,
         position,
@@ -95,7 +95,7 @@ export function resolvePlayPlacement(
     next,
     placed: !next.units.find(unit => unit.id === selection.unitId && unit.side === selection.side)?.inStrategicReserves,
     action: {
-      type: 'play.placeStrategicReserveUnit',
+      type: GAME_ACTION_TYPE.PlaceStrategicReserveUnit,
       side: selection.side,
       unitId: selection.unitId,
       position,

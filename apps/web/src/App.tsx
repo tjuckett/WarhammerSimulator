@@ -44,7 +44,7 @@ import { TerrainLayoutEditor } from './components/TerrainLayoutEditor';
 import { PracticeControlsPanel, PracticeLoadModal, PracticeSaveModal } from './components/PracticeSaveLoadPanel';
 import { CombatResultDialog } from './components/CombatResultDialog';
 import { isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
-import type { GameAction } from '@warhammer-simulator/core/practice/actions';
+import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
 import {
   type TimelineStateResult,
 } from '@warhammer-simulator/core/practice/timeline';
@@ -1040,7 +1040,7 @@ export default function App() {
     if (!prevUnit || !prevUnit.firedWeaponIndices?.length) return;
     const next = lockPlayUnitShooting(prev, lastId, prevUnit.side);
     if (next === prev) return;
-    pushPlayUndo(playUndoEntry(prev), next, { type: 'play.lockUnitShooting', unitId: lastId, side: prevUnit.side });
+    pushPlayUndo(playUndoEntry(prev), next, { type: GAME_ACTION_TYPE.LockUnitShooting, unitId: lastId, side: prevUnit.side });
     commitBattleState(next);
   }, [primaryPlaySelection?.unitId]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -1125,7 +1125,7 @@ export default function App() {
     const pendingAction = pendingPlayRotationActionRef.current;
     clearPendingPlayRotation();
     if (pendingAction) {
-      if (pendingAction.action.type === 'play.rotateModels' && pendingAction.action.degrees === 0) return;
+      if (pendingAction.action.type === GAME_ACTION_TYPE.RotateModels && pendingAction.action.degrees === 0) return;
       commitPlayTimelineAction(pendingAction);
       return;
     }
@@ -1139,7 +1139,7 @@ export default function App() {
     if (!entry) return;
     if (pendingAction) {
       if (
-        pendingAction.action.type === 'play.moveModels'
+        pendingAction.action.type === GAME_ACTION_TYPE.MoveModels
         && pendingAction.action.dx === 0
         && pendingAction.action.dy === 0
       ) return;
@@ -1268,7 +1268,7 @@ export default function App() {
         return;
       }
       pushPlayUndo(playUndoEntry(prev), next, {
-        type: 'play.allocateDamage',
+        type: GAME_ACTION_TYPE.AllocateDamage,
         unitId: part.unitId,
         side: part.side,
         modelIndex,
@@ -1494,7 +1494,7 @@ export default function App() {
     if (!prev || prev.phase !== BATTLE_PHASE.Deployment) return;
     const next = undeployPlayUnit(prev, unitId, side);
     if (next !== prev && next.units.length !== prev.units.length) {
-      pushPlayUndo(playUndoEntry(prev), next, { type: 'play.undeployUnit', unitId, side });
+      pushPlayUndo(playUndoEntry(prev), next, { type: GAME_ACTION_TYPE.UndeployUnit, unitId, side });
       setPlayDeploySelection({ kind: PLAY_DEPLOY_SELECTION_KIND.Deployment, side, unitIndex: 0 });
       setPlayModelSelection(null);
       commitBattleState(next);
@@ -1511,7 +1511,7 @@ export default function App() {
     );
     if (next !== prev) {
       pushPlayUndo(playUndoEntry(prev), next, {
-        type: 'play.reorganizeModels',
+        type: GAME_ACTION_TYPE.ReorganizeModels,
         parts: clone(selection.parts),
         rows,
       });
@@ -1537,7 +1537,7 @@ export default function App() {
         pendingPlayRotationActionRef.current = {
           undoEntry,
           action: {
-            type: 'play.rotateModels',
+            type: GAME_ACTION_TYPE.RotateModels,
             parts: clone(selection.parts),
             degrees: 0,
           },
@@ -1545,7 +1545,7 @@ export default function App() {
         };
       }
       const pendingAction = pendingPlayRotationActionRef.current;
-      if (pendingAction?.action.type === 'play.rotateModels') {
+      if (pendingAction?.action.type === GAME_ACTION_TYPE.RotateModels) {
         pendingAction.action.degrees += degrees;
         pendingAction.stateAfter = next;
       }
@@ -1553,7 +1553,7 @@ export default function App() {
       playRotationUndoTimerRef.current = setTimeout(commitPendingPlayRotationUndo, 350);
     } else {
       pushPlayUndo(playUndoEntry(prev), next, {
-        type: 'play.rotateModels',
+        type: GAME_ACTION_TYPE.RotateModels,
         parts: clone(selection.parts),
         degrees,
       });
@@ -1576,7 +1576,7 @@ export default function App() {
     if (next === prev) return;
     const nextSelection = normalizePlaySelectionForState(next, selection);
     pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.removeModels',
+      type: GAME_ACTION_TYPE.RemoveModels,
       parts: selection.parts
         .map(part => ({
           ...part,
@@ -1618,7 +1618,7 @@ export default function App() {
         playModelSelection: normalized,
       },
       action: {
-        type: 'play.moveModels',
+        type: GAME_ACTION_TYPE.MoveModels,
         parts: clone(normalized.parts),
         dx: 0,
         dy: 0,
@@ -1639,7 +1639,7 @@ export default function App() {
     if (next === prev) return;
 
     const pendingAction = pendingPlayModelMoveActionRef.current;
-    if (pendingAction?.action.type === 'play.moveModels') {
+    if (pendingAction?.action.type === GAME_ACTION_TYPE.MoveModels) {
       pendingAction.action.dx += dx;
       pendingAction.action.dy += dy;
       pendingAction.action.collide = pendingAction.action.collide || collide;
@@ -1659,7 +1659,7 @@ export default function App() {
     if (next === prev) return;
     const nextSelection = normalizePlaySelectionForState(next, selection);
     pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.moveModelsVertically',
+      type: GAME_ACTION_TYPE.MoveModelsVertically,
       parts: clone(selection.parts),
       dz,
     });
@@ -1761,7 +1761,7 @@ export default function App() {
     if (weaponIndex !== 'all') setSelectedShootingWeaponIndex('all');
 
     pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.shootUnitWeapon',
+      type: GAME_ACTION_TYPE.ShootUnitWeapon,
       unitId: selection.unitId,
       side: selection.side,
       targetUnitId: noAttackSelected ? '' : selectedShootingTargetId,
@@ -1791,7 +1791,7 @@ export default function App() {
       return;
     }
     pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.snapShootUnitWeapon',
+      type: GAME_ACTION_TYPE.SnapShootUnitWeapon,
       side: overwatchUnit.side,
       unitId: overwatchUnit.id,
       targetUnitId: selectedShootingTargetId,
@@ -1813,7 +1813,7 @@ export default function App() {
     const next = chargePlayUnitTarget(prev, selection.unitId, selection.side, selectedChargeTargetId, activeRulesForBattle);
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.chargeUnitTarget',
+      type: GAME_ACTION_TYPE.ChargeUnitTarget,
       unitId: selection.unitId,
       side: selection.side,
       targetUnitId: selectedChargeTargetId,
@@ -1856,7 +1856,7 @@ export default function App() {
     if (!hasPendingDamage) setTargetErrorMsg(null);
     if (weaponIndex !== 'all') setSelectedFightWeaponIndex('all');
     pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.fightUnitWeapon',
+      type: GAME_ACTION_TYPE.FightUnitWeapon,
       unitId: selection.unitId,
       side: selection.side,
       targetUnitId: selectedFightTargetId,
@@ -1872,7 +1872,7 @@ export default function App() {
     const next = pileInPlayUnit(prev, selection.unitId, selection.side, activeRulesForBattle);
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.pileInUnit',
+      type: GAME_ACTION_TYPE.PileInUnit,
       unitId: selection.unitId,
       side: selection.side,
     });
@@ -1888,7 +1888,7 @@ export default function App() {
     const next = consolidatePlayUnit(prev, selection.unitId, selection.side, activeRulesForBattle);
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.consolidateUnit',
+      type: GAME_ACTION_TYPE.ConsolidateUnit,
       unitId: selection.unitId,
       side: selection.side,
     });
@@ -1907,7 +1907,7 @@ export default function App() {
     if (next === prev) return;
     setSelectedStratagemId(stratagemId);
     pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.useStratagem',
+      type: GAME_ACTION_TYPE.UseStratagem,
       side: stratagemSide,
       stratagemId,
       targetUnitId: stratagem?.target === 'none' ? undefined : targetUnitId,
@@ -1930,7 +1930,7 @@ export default function App() {
     const next = resolveCommandReroll(prev, side, originalRolls, { label });
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.resolveCommandReroll',
+      type: GAME_ACTION_TYPE.ResolveCommandReroll,
       side,
       originalRolls,
       label,
@@ -1954,7 +1954,7 @@ export default function App() {
     );
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.useUnitAbility',
+      type: GAME_ACTION_TYPE.UseUnitAbility,
       side: selectedTacticsUnit.side,
       unitId: selectedTacticsUnit.id,
       abilityId: option.ability.id,
@@ -1970,7 +1970,7 @@ export default function App() {
     const next = startPlayUnitAction(prev, selectedTacticsUnit.id, selectedTacticsUnit.side, 'generic-action', 'Action', activeRulesForBattle);
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
-      type: 'play.startAction',
+      type: GAME_ACTION_TYPE.StartAction,
       side: selectedTacticsUnit.side,
       unitId: selectedTacticsUnit.id,
       actionId: 'generic-action',
@@ -2026,7 +2026,7 @@ export default function App() {
     if (!prev || prev.phase !== 'deployment') return;
     const next = beginPlayBattle(prev);
     if (next.phase !== 'deployment') {
-      recordPracticeAction(prev, next, { type: 'play.beginBattle' });
+      recordPracticeAction(prev, next, { type: GAME_ACTION_TYPE.BeginBattle });
       void savePracticeCheckpoint('auto-phase');
       setPlayDeploySelection(null);
       setPlayModelSelection(null);
@@ -2107,7 +2107,7 @@ export default function App() {
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'deployment') return;
     const next = placeNextUnit(prev);
-    if (next !== prev) recordPracticeAction(prev, next, { type: 'simulation.placeNextUnit' });
+    if (next !== prev) recordPracticeAction(prev, next, { type: GAME_ACTION_TYPE.SimulationPlaceNextUnit });
     commitBattleState(next);
   }, []);
 
@@ -2117,7 +2117,7 @@ export default function App() {
     const activeRules = rulesEditionForRuleset(prev.ruleset);
     const next = simulateNextPhase(prev, activeRules);
     if (next !== prev) {
-      recordPracticeAction(prev, next, { type: 'simulation.stepPhase' });
+      recordPracticeAction(prev, next, { type: GAME_ACTION_TYPE.SimulationStepPhase });
       void savePracticeCheckpoint('auto-phase');
     }
     commitBattleState(next);
@@ -2204,7 +2204,7 @@ export default function App() {
       else next.winner = 'draw';
     }
 
-    recordPracticeAction(prev, next, { type: 'play.stepPhase' });
+    recordPracticeAction(prev, next, { type: GAME_ACTION_TYPE.StepPhase });
     void savePracticeCheckpoint('auto-phase');
     commitBattleState(next);
   }, []);

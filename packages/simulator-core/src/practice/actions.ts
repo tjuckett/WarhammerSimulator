@@ -54,46 +54,73 @@ export interface ModelSelectionPart {
 }
 
 export const GAME_ACTION_TYPE = {
+  PlaceUnit: 'play.placeUnit',
+  PlaceReinforcement: 'play.placeReinforcement',
+  PlaceStrategicReserveUnit: 'play.placeStrategicReserveUnit',
+  UndeployUnit: 'play.undeployUnit',
+  MoveModels: 'play.moveModels',
+  MoveModelsVertically: 'play.moveModelsVertically',
   AdvanceUnit: 'play.advanceUnit',
   FallBackUnit: 'play.fallBackUnit',
   CompleteUnitMovement: 'play.completeUnitMovement',
   EmbarkUnit: 'play.embarkUnit',
   DisembarkUnit: 'play.disembarkUnit',
+  RotateModels: 'play.rotateModels',
+  ReorganizeModels: 'play.reorganizeModels',
+  RemoveModels: 'play.removeModels',
+  RemoveCasualties: 'play.removeCasualties',
+  AssignWoundedModel: 'play.assignWoundedModel',
+  AllocateDamage: 'play.allocateDamage',
+  ShootUnitWeapon: 'play.shootUnitWeapon',
+  SnapShootUnitWeapon: 'play.snapShootUnitWeapon',
+  LockUnitShooting: 'play.lockUnitShooting',
+  ChargeUnitTarget: 'play.chargeUnitTarget',
+  FightUnitWeapon: 'play.fightUnitWeapon',
+  PileInUnit: 'play.pileInUnit',
+  ConsolidateUnit: 'play.consolidateUnit',
+  BeginBattle: 'play.beginBattle',
+  StepPhase: 'play.stepPhase',
+  UseStratagem: 'play.useStratagem',
+  ResolveCommandReroll: 'play.resolveCommandReroll',
+  UseUnitAbility: 'play.useUnitAbility',
+  StartAction: 'play.startAction',
+  SimulationPlaceNextUnit: 'simulation.placeNextUnit',
+  SimulationStepPhase: 'simulation.stepPhase',
 } as const;
 
 export type GameAction =
   | (GameActionBase & {
-      type: 'play.placeUnit';
+      type: typeof GAME_ACTION_TYPE.PlaceUnit;
       side: Side;
       unitIndex: number;
       position: Position;
     })
   | (GameActionBase & {
-      type: 'play.placeReinforcement';
+      type: typeof GAME_ACTION_TYPE.PlaceReinforcement;
       side: Side;
       armyUnitIndex: number;
       position: Position;
     })
   | (GameActionBase & {
-      type: 'play.placeStrategicReserveUnit';
+      type: typeof GAME_ACTION_TYPE.PlaceStrategicReserveUnit;
       side: Side;
       unitId: string;
       position: Position;
     })
   | (GameActionBase & {
-      type: 'play.undeployUnit';
+      type: typeof GAME_ACTION_TYPE.UndeployUnit;
       side: Side;
       unitId: string;
     })
   | (GameActionBase & {
-      type: 'play.moveModels';
+      type: typeof GAME_ACTION_TYPE.MoveModels;
       parts: ModelSelectionPart[];
       dx: number;
       dy: number;
       collide: boolean;
     })
   | (GameActionBase & {
-      type: 'play.moveModelsVertically';
+      type: typeof GAME_ACTION_TYPE.MoveModelsVertically;
       parts: ModelSelectionPart[];
       dz: number;
     })
@@ -126,98 +153,98 @@ export type GameAction =
       armyUnitIndex?: number;
     })
   | (GameActionBase & {
-      type: 'play.rotateModels';
+      type: typeof GAME_ACTION_TYPE.RotateModels;
       parts: ModelSelectionPart[];
       degrees: number;
     })
   | (GameActionBase & {
-      type: 'play.reorganizeModels';
+      type: typeof GAME_ACTION_TYPE.ReorganizeModels;
       parts: ModelSelectionPart[];
       rows: number;
     })
   | (GameActionBase & {
-      type: 'play.removeModels';
+      type: typeof GAME_ACTION_TYPE.RemoveModels;
       parts: ModelSelectionPart[];
     })
   | (GameActionBase & {
-      type: 'play.removeCasualties';
+      type: typeof GAME_ACTION_TYPE.RemoveCasualties;
       parts: ModelSelectionPart[];
     })
   | (GameActionBase & {
-      type: 'play.assignWoundedModel';
+      type: typeof GAME_ACTION_TYPE.AssignWoundedModel;
       side: Side;
       unitId: string;
       modelIndex: number;
     })
   | (GameActionBase & {
-      type: 'play.allocateDamage';
+      type: typeof GAME_ACTION_TYPE.AllocateDamage;
       side: Side;
       unitId: string;
       modelIndex: number;
     })
   | (GameActionBase & {
-      type: 'play.shootUnitWeapon';
+      type: typeof GAME_ACTION_TYPE.ShootUnitWeapon;
       side: Side;
       unitId: string;
       targetUnitId: string;
       weaponIndex: number | 'all';
     })
   | (GameActionBase & {
-      type: 'play.snapShootUnitWeapon';
+      type: typeof GAME_ACTION_TYPE.SnapShootUnitWeapon;
       side: Side;
       unitId: string;
       targetUnitId: string;
       weaponIndex: number | 'all';
     })
   | (GameActionBase & {
-      type: 'play.lockUnitShooting';
+      type: typeof GAME_ACTION_TYPE.LockUnitShooting;
       side: Side;
       unitId: string;
     })
   | (GameActionBase & {
-      type: 'play.chargeUnitTarget';
+      type: typeof GAME_ACTION_TYPE.ChargeUnitTarget;
       side: Side;
       unitId: string;
       targetUnitId: string;
     })
   | (GameActionBase & {
-      type: 'play.fightUnitWeapon';
+      type: typeof GAME_ACTION_TYPE.FightUnitWeapon;
       side: Side;
       unitId: string;
       targetUnitId: string;
       weaponIndex: number | 'all';
     })
   | (GameActionBase & {
-      type: 'play.pileInUnit';
+      type: typeof GAME_ACTION_TYPE.PileInUnit;
       side: Side;
       unitId: string;
     })
   | (GameActionBase & {
-      type: 'play.consolidateUnit';
+      type: typeof GAME_ACTION_TYPE.ConsolidateUnit;
       side: Side;
       unitId: string;
     })
   | (GameActionBase & {
-      type: 'play.beginBattle';
+      type: typeof GAME_ACTION_TYPE.BeginBattle;
     })
   | (GameActionBase & {
-      type: 'play.stepPhase';
+      type: typeof GAME_ACTION_TYPE.StepPhase;
     })
   | (GameActionBase & {
-      type: 'play.useStratagem';
+      type: typeof GAME_ACTION_TYPE.UseStratagem;
       side: Side;
       stratagemId: string;
       targetUnitId?: string;
     })
   | (GameActionBase & {
-      type: 'play.resolveCommandReroll';
+      type: typeof GAME_ACTION_TYPE.ResolveCommandReroll;
       side: Side;
       originalRolls: number[];
       sides?: number;
       label?: string;
     })
   | (GameActionBase & {
-      type: 'play.useUnitAbility';
+      type: typeof GAME_ACTION_TYPE.UseUnitAbility;
       side: Side;
       unitId: string;
       abilityId: string;
@@ -225,17 +252,17 @@ export type GameAction =
       targetUnitId?: string;
     })
   | (GameActionBase & {
-      type: 'play.startAction';
+      type: typeof GAME_ACTION_TYPE.StartAction;
       side: Side;
       unitId: string;
       actionId?: string;
       actionName?: string;
     })
   | (GameActionBase & {
-      type: 'simulation.placeNextUnit';
+      type: typeof GAME_ACTION_TYPE.SimulationPlaceNextUnit;
     })
   | (GameActionBase & {
-      type: 'simulation.stepPhase';
+      type: typeof GAME_ACTION_TYPE.SimulationStepPhase;
     });
 
 export interface GameActionContext {
@@ -349,25 +376,25 @@ export function applyGameAction(
 ): BattleState {
   const normalizedAction = normalizeGameAction(action);
   switch (normalizedAction.type) {
-    case 'play.placeUnit':
+    case GAME_ACTION_TYPE.PlaceUnit:
       return placePlayUnit(state, normalizedAction.side, normalizedAction.unitIndex, normalizedAction.position);
 
-    case 'play.placeReinforcement':
+    case GAME_ACTION_TYPE.PlaceReinforcement:
       return placePlayReinforcement(state, normalizedAction.side, normalizedAction.armyUnitIndex, normalizedAction.position);
 
-    case 'play.placeStrategicReserveUnit':
+    case GAME_ACTION_TYPE.PlaceStrategicReserveUnit:
       return placePlayStrategicReserveUnit(state, normalizedAction.side, normalizedAction.unitId, normalizedAction.position);
 
-    case 'play.undeployUnit':
+    case GAME_ACTION_TYPE.UndeployUnit:
       return undeployPlayUnit(state, normalizedAction.unitId, normalizedAction.side);
 
-    case 'play.moveModels':
+    case GAME_ACTION_TYPE.MoveModels:
       return normalizedAction.parts.reduce(
         (next, part) => movePlayModels(next, part.unitId, part.side, part.modelIndices, normalizedAction.dx, normalizedAction.dy, normalizedAction.collide),
         state,
       );
 
-    case 'play.moveModelsVertically':
+    case GAME_ACTION_TYPE.MoveModelsVertically:
       return normalizedAction.parts.reduce(
         (next, part) => movePlayModelsVertically(next, part.unitId, part.side, part.modelIndices, normalizedAction.dz),
         state,
@@ -394,37 +421,37 @@ export function applyGameAction(
         normalizedAction.armyUnitIndex,
       );
 
-    case 'play.rotateModels':
+    case GAME_ACTION_TYPE.RotateModels:
       return normalizedAction.parts.reduce(
         (next, part) => rotatePlayModels(next, part.unitId, part.side, part.modelIndices, normalizedAction.degrees),
         state,
       );
 
-    case 'play.reorganizeModels':
+    case GAME_ACTION_TYPE.ReorganizeModels:
       return normalizedAction.parts.reduce(
         (next, part) => reorganizePlayModelsGrid(next, part.unitId, part.side, part.modelIndices, normalizedAction.rows),
         state,
       );
 
-    case 'play.removeModels':
+    case GAME_ACTION_TYPE.RemoveModels:
       return normalizedAction.parts.reduce(
         (next, part) => removePlayModels(next, part.unitId, part.side, part.modelIndices),
         state,
       );
 
-    case 'play.removeCasualties':
+    case GAME_ACTION_TYPE.RemoveCasualties:
       return normalizedAction.parts.reduce(
         (next, part) => removePlayCasualtyModels(next, part.unitId, part.side, part.modelIndices),
         state,
       );
 
-    case 'play.assignWoundedModel':
+    case GAME_ACTION_TYPE.AssignWoundedModel:
       return assignPlayWoundedModel(state, normalizedAction.unitId, normalizedAction.side, normalizedAction.modelIndex);
 
-    case 'play.allocateDamage':
+    case GAME_ACTION_TYPE.AllocateDamage:
       return allocatePlayDamageToModel(state, normalizedAction.unitId, normalizedAction.side, normalizedAction.modelIndex);
 
-    case 'play.shootUnitWeapon':
+    case GAME_ACTION_TYPE.ShootUnitWeapon:
       return shootPlayUnitWeapon(
         state,
         normalizedAction.unitId,
@@ -434,7 +461,7 @@ export function applyGameAction(
         context.rules,
       );
 
-    case 'play.snapShootUnitWeapon':
+    case GAME_ACTION_TYPE.SnapShootUnitWeapon:
       return snapShootPlayUnitWeapon(
         state,
         normalizedAction.unitId,
@@ -444,13 +471,13 @@ export function applyGameAction(
         context.rules,
       );
 
-    case 'play.lockUnitShooting':
+    case GAME_ACTION_TYPE.LockUnitShooting:
       return lockPlayUnitShooting(state, normalizedAction.unitId, normalizedAction.side);
 
-    case 'play.chargeUnitTarget':
+    case GAME_ACTION_TYPE.ChargeUnitTarget:
       return chargePlayUnitTarget(state, normalizedAction.unitId, normalizedAction.side, normalizedAction.targetUnitId, context.rules);
 
-    case 'play.fightUnitWeapon':
+    case GAME_ACTION_TYPE.FightUnitWeapon:
       return fightPlayUnitWeapon(
         state,
         normalizedAction.unitId,
@@ -460,28 +487,28 @@ export function applyGameAction(
         context.rules,
       );
 
-    case 'play.pileInUnit':
+    case GAME_ACTION_TYPE.PileInUnit:
       return pileInPlayUnit(state, normalizedAction.unitId, normalizedAction.side, context.rules);
 
-    case 'play.consolidateUnit':
+    case GAME_ACTION_TYPE.ConsolidateUnit:
       return consolidatePlayUnit(state, normalizedAction.unitId, normalizedAction.side, context.rules);
 
-    case 'play.beginBattle':
+    case GAME_ACTION_TYPE.BeginBattle:
       return beginPlayBattle(state);
 
-    case 'play.stepPhase':
+    case GAME_ACTION_TYPE.StepPhase:
       return stepPlayPhase(state, context.rules);
 
-    case 'play.useStratagem':
+    case GAME_ACTION_TYPE.UseStratagem:
       return useStratagem(state, normalizedAction.side, normalizedAction.stratagemId, context.rules, normalizedAction.targetUnitId);
 
-    case 'play.resolveCommandReroll':
+    case GAME_ACTION_TYPE.ResolveCommandReroll:
       return resolveCommandReroll(state, normalizedAction.side, normalizedAction.originalRolls, {
         sides: normalizedAction.sides,
         label: normalizedAction.label,
       });
 
-    case 'play.useUnitAbility':
+    case GAME_ACTION_TYPE.UseUnitAbility:
       return useUnitAbility(
         state,
         normalizedAction.unitId,
@@ -492,7 +519,7 @@ export function applyGameAction(
         normalizedAction.targetUnitId,
       );
 
-    case 'play.startAction':
+    case GAME_ACTION_TYPE.StartAction:
       return startPlayUnitAction(
         state,
         normalizedAction.unitId,
@@ -502,10 +529,10 @@ export function applyGameAction(
         context.rules,
       );
 
-    case 'simulation.placeNextUnit':
+    case GAME_ACTION_TYPE.SimulationPlaceNextUnit:
       return placeNextUnit(state);
 
-    case 'simulation.stepPhase':
+    case GAME_ACTION_TYPE.SimulationStepPhase:
       return simulateNextPhase(state, context.rules);
   }
 }
@@ -513,31 +540,31 @@ export function applyGameAction(
 export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
   const normalizedAction = normalizeGameAction(action);
   switch (normalizedAction.type) {
-    case 'play.undeployUnit':
-    case 'play.placeStrategicReserveUnit':
+    case GAME_ACTION_TYPE.UndeployUnit:
+    case GAME_ACTION_TYPE.PlaceStrategicReserveUnit:
     case GAME_ACTION_TYPE.FallBackUnit:
     case GAME_ACTION_TYPE.AdvanceUnit:
-    case 'play.startAction':
+    case GAME_ACTION_TYPE.StartAction:
     case GAME_ACTION_TYPE.CompleteUnitMovement:
     case GAME_ACTION_TYPE.EmbarkUnit:
-    case 'play.chargeUnitTarget':
-    case 'play.pileInUnit':
-    case 'play.consolidateUnit':
+    case GAME_ACTION_TYPE.ChargeUnitTarget:
+    case GAME_ACTION_TYPE.PileInUnit:
+    case GAME_ACTION_TYPE.ConsolidateUnit:
       return normalizedAction.unitId === unitId;
-    case 'play.fightUnitWeapon':
-    case 'play.snapShootUnitWeapon':
+    case GAME_ACTION_TYPE.FightUnitWeapon:
+    case GAME_ACTION_TYPE.SnapShootUnitWeapon:
       return normalizedAction.unitId === unitId || normalizedAction.targetUnitId === unitId;
-    case 'play.useStratagem':
+    case GAME_ACTION_TYPE.UseStratagem:
       return normalizedAction.targetUnitId === unitId;
-    case 'play.useUnitAbility':
+    case GAME_ACTION_TYPE.UseUnitAbility:
       return normalizedAction.unitId === unitId || normalizedAction.targetUnitId === unitId;
     case GAME_ACTION_TYPE.DisembarkUnit:
       return normalizedAction.passengerUnitId === unitId || normalizedAction.transportUnitId === unitId;
-    case 'play.moveModels':
-    case 'play.moveModelsVertically':
-    case 'play.rotateModels':
-    case 'play.reorganizeModels':
-    case 'play.removeModels':
+    case GAME_ACTION_TYPE.MoveModels:
+    case GAME_ACTION_TYPE.MoveModelsVertically:
+    case GAME_ACTION_TYPE.RotateModels:
+    case GAME_ACTION_TYPE.ReorganizeModels:
+    case GAME_ACTION_TYPE.RemoveModels:
       return normalizedAction.parts.some(part => part.unitId === unitId);
     default:
       return false;
