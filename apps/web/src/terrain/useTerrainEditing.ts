@@ -297,11 +297,13 @@ export function useTerrainEditing({
   }
 
   return {
-    combineSelectedTerrain,
-    moveEditSelection,
-    alignSelectedVertex,
-    rotateEditSelection,
-    mirrorTerrainLayout,
-    alignWallToMat,
+    actions: {
+      combineSelectedTerrain,
+      moveEditSelection,
+      alignSelectedVertex,
+      rotateEditSelection,
+      mirrorTerrainLayout,
+      alignWallToMat,
+    },
   };
 }

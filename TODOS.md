@@ -35,6 +35,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Completed sixteenth slice: extracted terrain editor state, terrain layout save/import/export actions, and terrain mat template actions into `useTerrainLayouts`.
   - Completed seventeenth slice: extracted pure terrain editing geometry helpers into `terrainEditing` for reuse by `App` and terrain hooks.
   - Completed eighteenth slice: extracted stateful terrain edit actions into `useTerrainEditing`.
+  - Completed nineteenth slice: grouped terrain hook return APIs into layout, editor, alignment, template, and action domains.
   - Verify with root `npm run build` and relevant simulator-core tests.
   - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.
 - [ ] Resume and finish the remaining 11th Edition rules work.
