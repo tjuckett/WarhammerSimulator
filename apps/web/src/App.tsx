@@ -24,7 +24,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SpeedIcon from '@mui/icons-material/Speed';
 import StopIcon from '@mui/icons-material/Stop';
-import type { BattleState, BattleUnit, LogEntry, Phase, Position, TerrainLayout } from '@warhammer-simulator/core/types/battle';
+import type { BattleState, BattleUnit, Phase, Position, TerrainLayout } from '@warhammer-simulator/core/types/battle';
 import type { ImportedArmy, UnitProfile } from '@warhammer-simulator/core/types/army';
 import type { AbilityTiming, UnitAbilityDefinition } from '@warhammer-simulator/core/types/ability';
 import type { StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
@@ -71,14 +71,10 @@ import { ModeChooserDialog } from './modes/ModeChooserDialog';
 import { GameSessionCheckpointDialogs } from './gameSession/GameSessionCheckpointDialogs';
 import { useTerrainLayouts } from './terrain/useTerrainLayouts';
 import { useTerrainEditing } from './terrain/useTerrainEditing';
+import { usePlayUiState, type PlayDeploySelection } from './play/usePlayUiState';
 
 const ARMY_COLORS: [string, string] = ['#4af26a', '#f24a4a'];
 const SAVED_ARMY_KEYS = ['warhammer-saved-army-1', 'warhammer-saved-army-2'] as const;
-
-type PlayDeploySelection =
-  | { kind: 'deployment'; side: 0 | 1; unitIndex: number }
-  | { kind: 'reinforcement'; side: 0 | 1; armyUnitIndex: number }
-  | { kind: 'strategicReserve'; side: 0 | 1; unitId: string };
 
 type PlayUndoEntry = {
   battleState: BattleState;
@@ -91,10 +87,6 @@ type PendingPlayTimelineAction = {
   action: GameAction;
   stateAfter: BattleState;
 };
-
-type InspectedSelection =
-  | { kind: 'battle'; side: 0 | 1; unitId: string }
-  | { kind: 'profile'; side: 0 | 1; unitIndex: number };
 
 const PLAY_TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight'];
 const PLAY_MODEL_EDIT_PHASES: Phase[] = ['deployment', 'movement'];
@@ -908,21 +900,54 @@ export default function App() {
   const [autoRunning, setAutoRunning] = useState(false);
   const [autoDeploying, setAutoDeploying] = useState(false);
   const [simSpeedMs, setSimSpeedMs] = useState(600);
-  const [playDeploySelection, setPlayDeploySelection] = useState<PlayDeploySelection | null>(null);
-  const [playModelSelection, setPlayModelSelection] = useState<PlayModelSelection | null>(null);
-  const [selectedShootingTargetId, setSelectedShootingTargetId] = useState('');
-  const [selectedShootingWeaponIndex, setSelectedShootingWeaponIndex] = useState<'all' | string>('all');
-  const [selectedChargeTargetId, setSelectedChargeTargetId] = useState('');
-  const [selectedFightTargetId, setSelectedFightTargetId] = useState('');
-  const [selectedFightWeaponIndex, setSelectedFightWeaponIndex] = useState<'all' | string>('all');
-  const [overwatchUnitId, setOverwatchUnitId] = useState('');
-  const [selectedStratagemId, setSelectedStratagemId] = useState('');
-  const [selectedAbilityKey, setSelectedAbilityKey] = useState('');
-  const [casualtyRemovalShooterId, setCasualtyRemovalShooterId] = useState<string | null>(null);
-  const [shootingResultEntries, setShootingResultEntries] = useState<LogEntry[]>([]);
-  const [targetErrorMsg, setTargetErrorMsg] = useState<string | null>(null);
-  const lastShooterIdRef = useRef<string | null>(null);
-  const [inspectedSelection, setInspectedSelection] = useState<InspectedSelection | null>(null);
+  const {
+    deployment: {
+      playDeploySelection,
+      setPlayDeploySelection,
+    },
+    models: {
+      playModelSelection,
+      setPlayModelSelection,
+    },
+    targeting: {
+      selectedShootingTargetId,
+      setSelectedShootingTargetId,
+      selectedShootingWeaponIndex,
+      setSelectedShootingWeaponIndex,
+      selectedChargeTargetId,
+      setSelectedChargeTargetId,
+      selectedFightTargetId,
+      setSelectedFightTargetId,
+      selectedFightWeaponIndex,
+      setSelectedFightWeaponIndex,
+      overwatchUnitId,
+      setOverwatchUnitId,
+      casualtyRemovalShooterId,
+      setCasualtyRemovalShooterId,
+    },
+    tactics: {
+      selectedStratagemId,
+      setSelectedStratagemId,
+      selectedAbilityKey,
+      setSelectedAbilityKey,
+    },
+    feedback: {
+      shootingResultEntries,
+      setShootingResultEntries,
+      targetErrorMsg,
+      setTargetErrorMsg,
+    },
+    inspection: {
+      inspectedSelection,
+      setInspectedSelection,
+    },
+    refs: {
+      lastShooterIdRef,
+    },
+    actions: {
+      clearPlayUiSelection,
+    },
+  } = usePlayUiState();
   const [playUndoStack, setPlayUndoStack] = useState<PlayUndoEntry[]>([]);
   const playUndoStackRef = useRef<PlayUndoEntry[]>([]);
   const pendingPlayModelMoveUndoRef = useRef<PlayUndoEntry | null>(null);
@@ -1703,9 +1728,7 @@ export default function App() {
   }
 
   function clearPlayUiState() {
-    setPlayDeploySelection(null);
-    setPlayModelSelection(null);
-    setInspectedSelection(null);
+    clearPlayUiSelection();
     clearPlayUndo();
   }
 
