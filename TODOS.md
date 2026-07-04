@@ -53,6 +53,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Completed thirty-fourth slice: added shared movement game action type constants and adopted them in movement action creation, replay, touched-unit checks, and timeline labels.
   - Completed thirty-fifth slice: expanded shared game action type constants across all current play/simulation actions and adopted them in core replay, action creation, pending-action checks, deployment/movement helpers, and timeline labels.
   - Completed thirty-sixth slice: renamed the save/load UI component boundary from practice wording to game-session wording while keeping core storage/API compatibility names for a later migration slice.
+  - Completed thirty-seventh slice: renamed app-facing game-session controller/timeline/storage aliases away from practice wording while keeping underlying core practice imports as compatibility aliases.
   - Before closing the refactor pass, audit untouched UI files for repeated hardcoded colors, spacing, labels, and panel styles; adopt shared tokens only where it improves consistency without making the code harder to read.
   - Verify with root `npm run build` and relevant simulator-core tests.
   - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.

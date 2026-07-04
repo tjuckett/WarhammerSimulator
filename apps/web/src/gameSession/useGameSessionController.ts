@@ -1,8 +1,8 @@
 import { useState, type MutableRefObject } from 'react';
-import type { PracticeTimeline, TimelineStateResult } from '@warhammer-simulator/core/practice/timeline';
+import type { PracticeTimeline as GameSessionTimeline, TimelineStateResult } from '@warhammer-simulator/core/practice/timeline';
 import { currentTimelineState } from '@warhammer-simulator/core/practice/timeline';
-import { scenarioFromTimeline, type PracticeCheckpointKind } from '@warhammer-simulator/core/practice/scenarios';
-import type { PracticeScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
+import { scenarioFromTimeline, type PracticeCheckpointKind as GameSessionCheckpointKind } from '@warhammer-simulator/core/practice/scenarios';
+import type { PracticeScenarioSummary as GameSessionScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
 import {
   CHECKPOINT_KIND_SAVED_LABELS,
   checkpointDescendantIds,
@@ -18,12 +18,12 @@ type LoadOptions = {
 };
 
 type UseGameSessionControllerParams = {
-  practiceTimelineRef: MutableRefObject<PracticeTimeline | null>;
+  gameSessionTimelineRef: MutableRefObject<GameSessionTimeline | null>;
   checkpointBranchIdRef: MutableRefObject<string>;
   activeCheckpointIdRef: MutableRefObject<string | null>;
   activeGameIdRef: MutableRefObject<string | null>;
-  savedScenarios: PracticeScenarioSummary[];
-  setSavedScenarios: (scenarios: PracticeScenarioSummary[]) => void;
+  savedScenarios: GameSessionScenarioSummary[];
+  setSavedScenarios: (scenarios: GameSessionScenarioSummary[]) => void;
   refreshSavedScenarios: () => Promise<void>;
   pendingCheckpointLoad: PendingCheckpointLoad | null;
   setPendingCheckpointLoad: (pendingLoad: PendingCheckpointLoad | null) => void;
@@ -36,7 +36,7 @@ type UseGameSessionControllerParams = {
 };
 
 export function useGameSessionController({
-  practiceTimelineRef,
+  gameSessionTimelineRef,
   checkpointBranchIdRef,
   activeCheckpointIdRef,
   activeGameIdRef,
@@ -56,8 +56,8 @@ export function useGameSessionController({
   const [loadModalOpen, setLoadModalOpen] = useState(false);
   const [saveStatus, setSaveStatus] = useState('');
 
-  async function saveCheckpoint(kind: PracticeCheckpointKind) {
-    const timeline = practiceTimelineRef.current;
+  async function saveCheckpoint(kind: GameSessionCheckpointKind) {
+    const timeline = gameSessionTimelineRef.current;
     if (!timeline) return null;
     const state = currentTimelineState(timeline);
     const label = checkpointLabelForState(state, kind);
@@ -73,7 +73,7 @@ export function useGameSessionController({
       timelineCursor: timeline.cursor,
     });
 
-    let summaries: PracticeScenarioSummary[];
+    let summaries: GameSessionScenarioSummary[];
     try {
       summaries = await gameSessionRepository.saveScenario(scenario);
     } catch {
@@ -116,7 +116,7 @@ export function useGameSessionController({
   }
 
   function requestLoadSavedScenario(scenarioId: string) {
-    if (!practiceTimelineRef.current) {
+    if (!gameSessionTimelineRef.current) {
       setLoadModalOpen(false);
       void loadSavedScenario(scenarioId, { branchOnNextSave: true });
       return;

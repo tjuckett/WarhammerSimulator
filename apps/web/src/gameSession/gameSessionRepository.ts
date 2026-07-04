@@ -1,10 +1,10 @@
 import {
-  apiPracticeScenarioRepository,
-  practiceStorageHealth,
+  apiPracticeScenarioRepository as apiGameSessionRepository,
+  practiceStorageHealth as gameSessionApiStorageHealth,
   type PracticeStorageHealth,
 } from '../practice/apiPracticeScenarioRepository';
 
 export type GameSessionStorageHealth = PracticeStorageHealth;
 
-export const gameSessionRepository = apiPracticeScenarioRepository;
-export const gameSessionStorageHealth = practiceStorageHealth;
+export const gameSessionRepository = apiGameSessionRepository;
+export const gameSessionStorageHealth = gameSessionApiStorageHealth;

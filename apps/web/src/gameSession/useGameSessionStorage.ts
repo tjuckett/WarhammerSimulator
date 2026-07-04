@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { PracticeScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
+import type { PracticeScenarioSummary as GameSessionScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
 import {
   gameSessionRepository,
   gameSessionStorageHealth,
@@ -7,7 +7,7 @@ import {
 } from './gameSessionRepository';
 
 export function useGameSessionStorage() {
-  const [savedScenarios, setSavedScenarios] = useState<PracticeScenarioSummary[]>([]);
+  const [savedScenarios, setSavedScenarios] = useState<GameSessionScenarioSummary[]>([]);
   const [storageStatus, setStorageStatus] = useState<GameSessionStorageHealth | null>(null);
 
   const refreshSavedScenarios = useCallback(async () => {

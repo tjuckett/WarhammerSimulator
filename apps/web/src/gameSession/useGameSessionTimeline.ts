@@ -3,11 +3,11 @@ import type { BattleState } from '@warhammer-simulator/core/types/battle';
 import type { GameAction } from '@warhammer-simulator/core/practice/actions';
 import {
   appendResolvedTimelineAction,
-  createPracticeTimeline,
+  createPracticeTimeline as createGameSessionTimeline,
   redoTimeline,
   seekTimeline,
   undoTimeline,
-  type PracticeTimeline,
+  type PracticeTimeline as GameSessionTimeline,
   type TimelineStateResult,
 } from '@warhammer-simulator/core/practice/timeline';
 
@@ -28,14 +28,14 @@ export function useGameSessionTimeline({
   setPendingCheckpointLoad,
   restoreTimelineResult,
 }: UseGameSessionTimelineParams) {
-  const [timeline, setTimeline] = useState<PracticeTimeline | null>(null);
-  const timelineRef = useRef<PracticeTimeline | null>(null);
+  const [timeline, setTimeline] = useState<GameSessionTimeline | null>(null);
+  const timelineRef = useRef<GameSessionTimeline | null>(null);
 
   useEffect(() => {
     timelineRef.current = timeline;
   }, [timeline]);
 
-  function setCurrentTimeline(nextTimeline: PracticeTimeline | null) {
+  function setCurrentTimeline(nextTimeline: GameSessionTimeline | null) {
     timelineRef.current = nextTimeline;
     setTimeline(nextTimeline);
   }
@@ -51,17 +51,17 @@ export function useGameSessionTimeline({
   function startTimeline(initialState: BattleState) {
     checkpointBranchIdRef.current = createBranchId();
     setActiveCheckpointId(null);
-    const nextTimeline = createPracticeTimeline(initialState, {
+    const nextTimeline = createGameSessionTimeline(initialState, {
       title: initialState.setup
         ? `${initialState.setup.missionCode}: ${initialState.setup.primaryMissions?.join(' vs ') ?? initialState.setup.primaryMission}`
-        : 'Practice battle',
+        : 'Game session',
     });
     setActiveGameId(nextTimeline.metadata.id);
     setCurrentTimeline(nextTimeline);
   }
 
   function recordAction(stateBefore: BattleState, stateAfter: BattleState, action: GameAction) {
-    const currentTimeline = timelineRef.current ?? createPracticeTimeline(stateBefore);
+    const currentTimeline = timelineRef.current ?? createGameSessionTimeline(stateBefore);
     const nextTimeline = appendResolvedTimelineAction(currentTimeline, action, { stateBefore, stateAfter });
     setCurrentTimeline(nextTimeline);
   }

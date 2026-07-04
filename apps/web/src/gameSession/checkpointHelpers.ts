@@ -1,8 +1,8 @@
 import { battleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { BATTLE_PHASE, type BattleState, type Phase } from '@warhammer-simulator/core/types/battle';
-import type { PracticeCheckpointKind } from '@warhammer-simulator/core/practice/scenarios';
-import type { PracticeScenarioRepository } from '@warhammer-simulator/core/practice/scenarioRepository';
-import type { PracticeScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
+import type { PracticeCheckpointKind as GameSessionCheckpointKind } from '@warhammer-simulator/core/practice/scenarios';
+import type { PracticeScenarioRepository as GameSessionRepository } from '@warhammer-simulator/core/practice/scenarioRepository';
+import type { PracticeScenarioSummary as GameSessionScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
 
 export const PHASE_LABELS: Partial<Record<Phase, string>> = {
   [BATTLE_PHASE.Setup]: 'Ready',
@@ -18,19 +18,19 @@ export const PHASE_LABELS: Partial<Record<Phase, string>> = {
 export const CHECKPOINT_KIND_SUFFIX_LABELS = {
   'auto-phase': 'checkpoint',
   play: 'play save',
-} satisfies Record<PracticeCheckpointKind, string>;
+} satisfies Record<GameSessionCheckpointKind, string>;
 
 export const CHECKPOINT_KIND_SAVED_LABELS = {
   'auto-phase': 'Auto-saved',
   play: 'Saved checkpoint',
-} satisfies Record<PracticeCheckpointKind, string>;
+} satisfies Record<GameSessionCheckpointKind, string>;
 
 export const CHECKPOINT_KIND_SHORT_LABELS = {
   'auto-phase': 'Auto',
   play: 'Play',
-} satisfies Record<PracticeCheckpointKind, string>;
+} satisfies Record<GameSessionCheckpointKind, string>;
 
-export function checkpointLabelForState(state: BattleState, kind: PracticeCheckpointKind): string {
+export function checkpointLabelForState(state: BattleState, kind: GameSessionCheckpointKind): string {
   const suffix = CHECKPOINT_KIND_SUFFIX_LABELS[kind];
   if (state.phase === BATTLE_PHASE.Deployment) return `Deployment ${suffix}`;
   if (state.phase === BATTLE_PHASE.End) return `Game end ${suffix}`;
@@ -40,7 +40,7 @@ export function checkpointLabelForState(state: BattleState, kind: PracticeCheckp
 }
 
 export async function nextCheckpointSequence(
-  repository: PracticeScenarioRepository,
+  repository: GameSessionRepository,
   gameId: string,
 ): Promise<number> {
   return (await repository.listSummaries())
@@ -49,7 +49,7 @@ export async function nextCheckpointSequence(
 }
 
 export function checkpointDescendantIds(
-  savedScenarios: PracticeScenarioSummary[],
+  savedScenarios: GameSessionScenarioSummary[],
   scenarioId: string,
 ): string[] {
   const childrenByParent = new Map<string, string[]>();

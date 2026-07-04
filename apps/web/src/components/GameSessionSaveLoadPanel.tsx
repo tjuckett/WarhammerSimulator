@@ -1,12 +1,15 @@
 import { useMemo } from 'react';
-import type { PracticeTimeline, PracticeTimelineEntry } from '@warhammer-simulator/core/practice/timeline';
+import type {
+  PracticeTimeline as GameSessionTimeline,
+  PracticeTimelineEntry as GameSessionTimelineEntry,
+} from '@warhammer-simulator/core/practice/timeline';
 import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
-import type { PracticeScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
+import type { PracticeScenarioSummary as GameSessionScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
 import { CHECKPOINT_KIND_SHORT_LABELS } from '../gameSession/checkpointHelpers';
 import type { GameSessionStorageHealth } from '../gameSession/gameSessionRepository';
 
 interface ControlsProps {
-  timeline: PracticeTimeline | null;
+  timeline: GameSessionTimeline | null;
   status: string;
   storageStatus: GameSessionStorageHealth | null;
   onUndo: () => void;
@@ -18,7 +21,7 @@ interface ControlsProps {
 
 interface SaveModalProps {
   open: boolean;
-  timeline: PracticeTimeline | null;
+  timeline: GameSessionTimeline | null;
   status: string;
   storageStatus: GameSessionStorageHealth | null;
   onUndo: () => void;
@@ -30,7 +33,7 @@ interface SaveModalProps {
 
 interface LoadModalProps {
   open: boolean;
-  savedScenarios: PracticeScenarioSummary[];
+  savedScenarios: GameSessionScenarioSummary[];
   activeCheckpointId: string | null;
   activeGameId: string | null;
   selectedGameId: string | null;
@@ -114,15 +117,15 @@ function actionLabel(action: GameAction): string {
   }
 }
 
-function visibleEntries(timeline: PracticeTimeline): PracticeTimelineEntry[] {
+function visibleEntries(timeline: GameSessionTimeline): GameSessionTimelineEntry[] {
   return timeline.entries.slice(Math.max(0, timeline.cursor - 8), timeline.cursor);
 }
 
-function checkpointKindLabel(scenario: PracticeScenarioSummary): string {
+function checkpointKindLabel(scenario: GameSessionScenarioSummary): string {
   return CHECKPOINT_KIND_SHORT_LABELS[scenario.checkpointKind ?? 'play'];
 }
 
-function phaseTitleLines(scenario: PracticeScenarioSummary): string[] {
+function phaseTitleLines(scenario: GameSessionScenarioSummary): string[] {
   if (!scenario.savedPhase) return [scenario.checkpointLabel ?? 'Checkpoint'];
   const phase = scenario.savedPhase === 'end'
     ? 'Game End'
@@ -135,7 +138,7 @@ function phaseTitleLines(scenario: PracticeScenarioSummary): string[] {
   ];
 }
 
-function phasePartLabel(scenario: PracticeScenarioSummary): string {
+function phasePartLabel(scenario: GameSessionScenarioSummary): string {
   if (scenario.savedPhase === 'deployment') return 'Deployment setup';
   if (scenario.savedPhase === 'command') return 'Command phase state';
   if (scenario.savedPhase === 'movement') return 'Movement actions';
@@ -146,7 +149,7 @@ function phasePartLabel(scenario: PracticeScenarioSummary): string {
   return '';
 }
 
-function scoreCpLabel(scenario: PracticeScenarioSummary): string {
+function scoreCpLabel(scenario: GameSessionScenarioSummary): string {
   const score = scenario.savedScores ? `VP ${scenario.savedScores[0]}-${scenario.savedScores[1]}` : null;
   const cp = scenario.savedCommandPoints ? `CP ${scenario.savedCommandPoints[0]}-${scenario.savedCommandPoints[1]}` : null;
   return [score, cp].filter(Boolean).join(' - ');
@@ -411,7 +414,7 @@ export function GameSessionLoadModal({
 }
 
 type TreeNode = {
-  scenario: PracticeScenarioSummary;
+  scenario: GameSessionScenarioSummary;
   x: number;
   y: number;
 };
@@ -425,7 +428,7 @@ type TreeEdge = {
   y2: number;
 };
 
-function buildSaveTree(scenarios: PracticeScenarioSummary[]): {
+function buildSaveTree(scenarios: GameSessionScenarioSummary[]): {
   nodes: TreeNode[];
   edges: TreeEdge[];
   width: number;
@@ -437,7 +440,7 @@ function buildSaveTree(scenarios: PracticeScenarioSummary[]): {
     return a.createdAt.localeCompare(b.createdAt);
   });
   const columnByBranch = new Map<string, number>();
-  const parentChildren = new Map<string, PracticeScenarioSummary[]>();
+  const parentChildren = new Map<string, GameSessionScenarioSummary[]>();
   for (const scenario of ordered) {
     if (!scenario.parentCheckpointId) continue;
     parentChildren.set(scenario.parentCheckpointId, [

@@ -416,7 +416,7 @@ export default function App() {
       confirmDeleteSavedScenario: confirmDeleteSavedGameSessionScenario,
     },
   } = useGameSessionController({
-    practiceTimelineRef: gameSessionTimelineRef,
+    gameSessionTimelineRef,
     checkpointBranchIdRef,
     activeCheckpointIdRef,
     activeGameIdRef,
