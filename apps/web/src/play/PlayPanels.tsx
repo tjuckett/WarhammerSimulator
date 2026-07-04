@@ -17,6 +17,40 @@ import {
   stratagemFollowUpLabels,
   type AbilityOption,
 } from './playUiHelpers';
+import { uiTokens } from '../theme/uiTokens';
+
+const PLAY_PANEL_LABELS = {
+  resolve: 'Resolve',
+  roll: 'Roll',
+  weapon: 'Weapon',
+  target: 'Target',
+  shooting: 'Shooting',
+  charge: 'Charge',
+  fight: 'Fight',
+  tactics: 'Tactics',
+  pendingDamage: 'Pending Damage',
+  stratagems: 'Stratagems',
+  ability: 'Ability',
+  useAbility: 'Use Ability',
+  startAction: 'Start Action',
+} as const;
+
+const PLAY_PANEL_MESSAGES = {
+  selectActiveUnit: "Select one of the active army's units on the battlefield.",
+  selectEligibleUnit: "Select one of the active army's eligible units.",
+  noRangedWeapons: 'No eligible ranged weapons for this unit.',
+  noMeleeWeapons: 'No eligible melee weapons for this unit.',
+  noValidTargets: 'No valid targets for the selected weapon.',
+  noChargeTargets: 'No eligible charge targets.',
+  noFightTargets: 'No enemy units in Engagement Range.',
+  noTactics: 'No available stratagems, actions, or selected-unit abilities.',
+  noStratagems: 'No available stratagems for the selected unit/timing.',
+} as const;
+
+const panelTitleSx = { fontWeight: 800, color: uiTokens.color.text.primary };
+const mutedTextSx = { color: uiTokens.color.text.muted };
+const disabledTextSx = { color: uiTokens.color.text.disabled };
+const warningTextSx = { color: uiTokens.color.status.warning };
 
 export function PendingDamageAllocationHud({ unit }: { unit: BattleUnit }) {
   const label = pendingDamageLabel(unit);
@@ -30,29 +64,29 @@ export function PendingDamageAllocationHud({ unit }: { unit: BattleUnit }) {
       minWidth: 210,
       maxWidth: 280,
       p: 1,
-      border: '1px solid rgba(255, 190, 85, 0.82)',
-      background: 'rgba(12, 10, 7, 0.94)',
-      boxShadow: '0 8px 24px rgba(0,0,0,0.34)',
+      border: `1px solid ${uiTokens.border.warning}`,
+      background: uiTokens.surface.pendingHud,
+      boxShadow: uiTokens.shadow.pendingHud,
       display: 'grid',
       gap: 0.35,
     }}>
-      <Typography variant="caption" sx={{ color: '#ffcf7a', fontWeight: 800, textTransform: 'uppercase', lineHeight: 1 }}>
-        Pending Damage
+      <Typography variant="caption" sx={{ color: uiTokens.color.status.pending, fontWeight: 800, textTransform: 'uppercase', lineHeight: 1 }}>
+        {PLAY_PANEL_LABELS.pendingDamage}
       </Typography>
-      <Typography variant="body2" sx={{ color: '#fff3d1', fontWeight: 800, lineHeight: 1.15 }}>
+      <Typography variant="body2" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 800, lineHeight: 1.15 }}>
         {label}
       </Typography>
-      <Typography variant="caption" sx={{ color: '#c7bda3', lineHeight: 1.2 }}>
+      <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingMuted, lineHeight: 1.2 }}>
         {forcedModel}
       </Typography>
     </Box>
   );
 }
 
-const shootingPanelSx = {
-  border: '1px solid rgba(255,255,255,0.12)',
-  borderRadius: '8px',
-  background: 'rgba(255,255,255,0.035)',
+const playPanelSx = {
+  border: `1px solid ${uiTokens.border.subtle}`,
+  borderRadius: uiTokens.radius.panel,
+  background: uiTokens.surface.panel,
   padding: 1.25,
   display: 'grid',
   gap: 1,
@@ -60,8 +94,8 @@ const shootingPanelSx = {
 
 export function PlayShootingPanel({
   shooter,
-  title = 'Shooting',
-  actionLabel = 'Resolve',
+  title = PLAY_PANEL_LABELS.shooting,
+  actionLabel = PLAY_PANEL_LABELS.resolve,
   targets,
   selectedTarget,
   targetIsValid,
@@ -93,9 +127,9 @@ export function PlayShootingPanel({
 }) {
   if (!shooter) {
     return (
-      <Box sx={shootingPanelSx}>
-        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>{title}</Typography>
-        <Typography variant="body2" sx={{ color: '#888' }}>Select one of the active army&apos;s units on the battlefield.</Typography>
+      <Box sx={playPanelSx}>
+        <Typography variant="subtitle2" sx={panelTitleSx}>{title}</Typography>
+        <Typography variant="body2" sx={mutedTextSx}>{PLAY_PANEL_MESSAGES.selectActiveUnit}</Typography>
       </Box>
     );
   }
@@ -119,15 +153,15 @@ export function PlayShootingPanel({
     : [];
 
   return (
-    <Box sx={shootingPanelSx}>
+    <Box sx={playPanelSx}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>{title}</Typography>
-          <Typography variant="caption" sx={{ display: 'block', color: '#888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <Typography variant="subtitle2" sx={panelTitleSx}>{title}</Typography>
+          <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {shooter.profile.name}{shooter.activated ? ' — done' : (shooter.firedWeaponIndices?.length ? ` — ${shooter.firedWeaponIndices.length} fired` : '')}
           </Typography>
           {(shooter.firedWeaponIndices?.length ?? 0) > 0 && !shooter.activated && (
-            <Typography variant="caption" sx={{ display: 'block', color: '#556', fontStyle: 'italic', fontSize: 10 }}>
+            <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.quiet, fontStyle: 'italic', fontSize: 10 }}>
               Already fired: {(shooter.firedWeaponIndices ?? []).map(i => shooter.profile.weapons[i]?.name).filter(Boolean).join(', ')}
             </Typography>
           )}
@@ -139,15 +173,15 @@ export function PlayShootingPanel({
           onClick={onResolve}
           disabled={!canResolve}
         >
-          Resolve
+          {actionLabel}
         </Button>
       </Box>
 
       <FormControl size="small" fullWidth disabled={shootingLocked || !weaponOptions.length || shooter.activated}>
-        <InputLabel id="play-shooting-weapon-label">Weapon</InputLabel>
+        <InputLabel id="play-shooting-weapon-label">{PLAY_PANEL_LABELS.weapon}</InputLabel>
         <Select
           labelId="play-shooting-weapon-label"
-          label="Weapon"
+          label={PLAY_PANEL_LABELS.weapon}
           value={selectedWeaponIndex}
           onChange={(event: SelectChangeEvent) => onWeaponChange(event.target.value as 'all' | string)}
         >
@@ -160,10 +194,10 @@ export function PlayShootingPanel({
       </FormControl>
 
       <FormControl size="small" fullWidth disabled={shootingLocked || noAttackSelected || !targets.length || shooter.activated}>
-        <InputLabel id="play-shooting-target-label">Target</InputLabel>
+        <InputLabel id="play-shooting-target-label">{PLAY_PANEL_LABELS.target}</InputLabel>
         <Select
           labelId="play-shooting-target-label"
-          label="Target"
+          label={PLAY_PANEL_LABELS.target}
           value={selectedTargetId}
           onChange={(event: SelectChangeEvent) => onTargetChange(event.target.value)}
         >
@@ -181,17 +215,17 @@ export function PlayShootingPanel({
       </FormControl>
 
       {shootingLocked ? (
-        <Typography variant="caption" sx={{ color: '#d8b35d' }}>
+        <Typography variant="caption" sx={warningTextSx}>
           {pendingDamageLabel
             ? `Allocate ${pendingDamageLabel} before selecting another shooter or target.`
             : 'Allocate pending damage to defender models before selecting another shooter or target.'}
         </Typography>
       ) : noAttackSelected ? (
-        <Typography variant="caption" sx={{ color: '#9a8f6a' }}>This unit can be selected to shoot, but will make no attacks.</Typography>
+        <Typography variant="caption" sx={disabledTextSx}>This unit can be selected to shoot, but will make no attacks.</Typography>
       ) : !weaponOptions.length ? (
-        <Typography variant="caption" sx={{ color: '#9a8f6a' }}>No eligible ranged weapons for this unit.</Typography>
+        <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noRangedWeapons}</Typography>
       ) : !targets.length ? (
-        <Typography variant="caption" sx={{ color: '#9a8f6a' }}>No valid targets for the selected weapon.</Typography>
+        <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noValidTargets}</Typography>
       ) : refWeapons.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {refWeapons.map((weapon, i) => {
@@ -204,57 +238,57 @@ export function PlayShootingPanel({
             const svWithCover = sv - coverBonus;
             const noSaveWithCover = svWithCover > 6;
             return (
-              <div key={i} style={{ background: '#080f18', border: '1px solid #1a3048', borderRadius: 6, overflow: 'hidden' }}>
+              <div key={i} style={{ background: uiTokens.surface.statCard, border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.statCard, overflow: 'hidden' }}>
                 {/* Weapon name */}
                 <div style={{
-                  padding: '5px 10px', borderBottom: '1px solid #1a3048',
+                  padding: '5px 10px', borderBottom: `1px solid ${uiTokens.border.statCard}`,
                 }}>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: '#aac8e8' }}>{weapon.name}</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: uiTokens.color.combat.weaponName }}>{weapon.name}</span>
                 </div>
                 {/* Threshold grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr' }}>
                   {/* Attacks */}
-                  <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: '1px solid #0e1e2e' }}>
-                    <div style={{ fontSize: 8, color: '#445', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Attacks</div>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: '#e2c16b', lineHeight: 1 }}>{weapon.attacks}</div>
-                    <div style={{ fontSize: 9, color: '#556', marginTop: 3 }}>per model</div>
+                  <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
+                    <div style={{ fontSize: 8, color: uiTokens.color.text.subtle, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Attacks</div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: uiTokens.color.combat.attacks, lineHeight: 1 }}>{weapon.attacks}</div>
+                    <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, marginTop: 3 }}>per model</div>
                   </div>
                   {/* Hit */}
-                  <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: '1px solid #0e1e2e' }}>
-                    <div style={{ fontSize: 8, color: '#445', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Hit</div>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: '#8ab4ff', lineHeight: 1 }}>{weapon.skill}+</div>
+                  <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
+                    <div style={{ fontSize: 8, color: uiTokens.color.text.subtle, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Hit</div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: uiTokens.color.combat.hit, lineHeight: 1 }}>{weapon.skill}+</div>
                   </div>
                   {/* Wound */}
-                  <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: '1px solid #0e1e2e' }}>
-                    <div style={{ fontSize: 8, color: '#445', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Wound</div>
+                  <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
+                    <div style={{ fontSize: 8, color: uiTokens.color.text.subtle, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Wound</div>
                     <div style={{ fontSize: 22, fontWeight: 800, color: wtColor, lineHeight: 1 }}>{wt}+</div>
-                    <div style={{ fontSize: 9, color: '#556', marginTop: 3 }}>S{weapon.strength} v T{selectedTarget!.profile.toughness}</div>
+                    <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, marginTop: 3 }}>S{weapon.strength} v T{selectedTarget!.profile.toughness}</div>
                   </div>
                   {/* Save */}
-                  <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: '1px solid #0e1e2e' }}>
-                    <div style={{ fontSize: 8, color: '#445', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Save</div>
+                  <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
+                    <div style={{ fontSize: 8, color: uiTokens.color.text.subtle, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Save</div>
                     {coverBonus > 0 ? (
                       <>
-                        <div style={{ fontSize: 22, fontWeight: 800, lineHeight: 1, color: '#00dcc3' }}>
+                        <div style={{ fontSize: 22, fontWeight: 800, lineHeight: 1, color: uiTokens.color.combat.cover }}>
                           {noSaveWithCover ? '—' : `${svWithCover}+`}
                         </div>
-                        <div style={{ fontSize: 9, marginTop: 3, color: '#00aaa0' }}>
+                        <div style={{ fontSize: 9, marginTop: 3, color: uiTokens.color.combat.coverMuted }}>
                           ⛨ cover (+{coverBonus} save)
                         </div>
-                        <div style={{ fontSize: 9, color: '#445' }}>
+                        <div style={{ fontSize: 9, color: uiTokens.color.text.subtle }}>
                           base {noSave ? 'no save' : `${sv}+`} · AP{weapon.ap}{usedInvuln ? ' ★inv' : ''}
                         </div>
                       </>
                     ) : (
                       <>
-                        <div style={{ fontSize: 22, fontWeight: 800, lineHeight: 1, color: noSave ? '#ff5722' : '#d07030' }}>
+                        <div style={{ fontSize: 22, fontWeight: 800, lineHeight: 1, color: noSave ? uiTokens.color.combat.noSave : uiTokens.color.combat.save }}>
                           {noSave ? '—' : `${sv}+`}
                         </div>
-                        <div style={{ fontSize: 9, marginTop: 3, color: weapon.ap < 0 ? '#ff9f43' : '#445' }}>
+                        <div style={{ fontSize: 9, marginTop: 3, color: weapon.ap < 0 ? uiTokens.color.combat.apWarning : uiTokens.color.text.subtle }}>
                           AP{weapon.ap}{usedInvuln ? ' ★inv' : ''}
                         </div>
                         {targetInCover && (
-                          <div style={{ fontSize: 9, color: '#558', marginTop: 2 }}>
+                          <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, marginTop: 2 }}>
                             ⛨ cover (no save to improve)
                           </div>
                         )}
@@ -263,8 +297,8 @@ export function PlayShootingPanel({
                   </div>
                   {/* Damage */}
                   <div style={{ padding: '8px 4px', textAlign: 'center' }}>
-                    <div style={{ fontSize: 8, color: '#445', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Dmg</div>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: '#9b8fd4', lineHeight: 1 }}>{weapon.damage}</div>
+                    <div style={{ fontSize: 8, color: uiTokens.color.text.subtle, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Dmg</div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: uiTokens.color.combat.damage, lineHeight: 1 }}>{weapon.damage}</div>
                   </div>
                 </div>
               </div>
@@ -293,32 +327,32 @@ export function PlayChargePanel({
 }) {
   if (!charger) {
     return (
-      <Box sx={shootingPanelSx}>
-        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>Charge</Typography>
-        <Typography variant="body2" sx={{ color: '#888' }}>Select one of the active army&apos;s units on the battlefield.</Typography>
+      <Box sx={playPanelSx}>
+        <Typography variant="subtitle2" sx={panelTitleSx}>{PLAY_PANEL_LABELS.charge}</Typography>
+        <Typography variant="body2" sx={mutedTextSx}>{PLAY_PANEL_MESSAGES.selectActiveUnit}</Typography>
       </Box>
     );
   }
   const selectedOption = options.find(option => option.targetId === selectedTargetId) ?? null;
   const canResolve = !!selectedOption && !charger.activated;
   return (
-    <Box sx={shootingPanelSx}>
+    <Box sx={playPanelSx}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>Charge</Typography>
-          <Typography variant="caption" sx={{ display: 'block', color: '#888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <Typography variant="subtitle2" sx={panelTitleSx}>{PLAY_PANEL_LABELS.charge}</Typography>
+          <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {charger.profile.name}{charger.activated ? ' - done' : ''}
           </Typography>
         </Box>
         <Button size="small" variant="contained" startIcon={<CasinoOutlinedIcon />} disabled={!canResolve} onClick={onResolve}>
-          Roll
+          {PLAY_PANEL_LABELS.roll}
         </Button>
       </Box>
       <FormControl size="small" fullWidth disabled={!targets.length || charger.activated}>
-        <InputLabel id="play-charge-target-label">Target</InputLabel>
+        <InputLabel id="play-charge-target-label">{PLAY_PANEL_LABELS.target}</InputLabel>
         <Select
           labelId="play-charge-target-label"
-          label="Target"
+          label={PLAY_PANEL_LABELS.target}
           value={selectedTargetId}
           onChange={(event: SelectChangeEvent) => onTargetChange(event.target.value)}
         >
@@ -333,7 +367,7 @@ export function PlayChargePanel({
         </Select>
       </FormControl>
       {!options.length && (
-        <Typography variant="caption" sx={{ color: '#9a8f6a' }}>No eligible charge targets.</Typography>
+        <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noChargeTargets}</Typography>
       )}
     </Box>
   );
@@ -341,7 +375,7 @@ export function PlayChargePanel({
 
 export function PlayFightPanel({
   fighter,
-  actionLabel = 'Resolve',
+  actionLabel = PLAY_PANEL_LABELS.resolve,
   targets,
   selectedTarget,
   selectedTargetId,
@@ -368,9 +402,9 @@ export function PlayFightPanel({
 }) {
   if (!fighter) {
     return (
-      <Box sx={shootingPanelSx}>
-        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>Fight</Typography>
-        <Typography variant="body2" sx={{ color: '#888' }}>Select one of the active army&apos;s eligible units.</Typography>
+      <Box sx={playPanelSx}>
+        <Typography variant="subtitle2" sx={panelTitleSx}>{PLAY_PANEL_LABELS.fight}</Typography>
+        <Typography variant="body2" sx={mutedTextSx}>{PLAY_PANEL_MESSAGES.selectEligibleUnit}</Typography>
       </Box>
     );
   }
@@ -382,11 +416,11 @@ export function PlayFightPanel({
     && !!selectedTarget
     && selectedOptions.some(option => option.targetIds.includes(selectedTargetId));
   return (
-    <Box sx={shootingPanelSx}>
+    <Box sx={playPanelSx}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>Fight</Typography>
-          <Typography variant="caption" sx={{ display: 'block', color: '#888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <Typography variant="subtitle2" sx={panelTitleSx}>{PLAY_PANEL_LABELS.fight}</Typography>
+          <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {fighter.profile.name}{fighter.activated ? ' - done' : ''}
           </Typography>
         </Box>
@@ -395,10 +429,10 @@ export function PlayFightPanel({
         </Button>
       </Box>
       <FormControl size="small" fullWidth disabled={damageAllocationLocked || !weaponOptions.length || fighter.activated}>
-        <InputLabel id="play-fight-weapon-label">Weapon</InputLabel>
+        <InputLabel id="play-fight-weapon-label">{PLAY_PANEL_LABELS.weapon}</InputLabel>
         <Select
           labelId="play-fight-weapon-label"
-          label="Weapon"
+          label={PLAY_PANEL_LABELS.weapon}
           value={selectedWeaponIndex}
           onChange={(event: SelectChangeEvent) => onWeaponChange(event.target.value as 'all' | string)}
         >
@@ -408,10 +442,10 @@ export function PlayFightPanel({
         </Select>
       </FormControl>
       <FormControl size="small" fullWidth disabled={damageAllocationLocked || !targets.length || fighter.activated}>
-        <InputLabel id="play-fight-target-label">Target</InputLabel>
+        <InputLabel id="play-fight-target-label">{PLAY_PANEL_LABELS.target}</InputLabel>
         <Select
           labelId="play-fight-target-label"
-          label="Target"
+          label={PLAY_PANEL_LABELS.target}
           value={selectedTargetId}
           onChange={(event: SelectChangeEvent) => onTargetChange(event.target.value)}
         >
@@ -423,13 +457,13 @@ export function PlayFightPanel({
         </Select>
       </FormControl>
       {damageAllocationLocked ? (
-        <Typography variant="caption" sx={{ color: '#d8b35d' }}>
+        <Typography variant="caption" sx={warningTextSx}>
           {pendingDamageLabel ? `Allocate ${pendingDamageLabel} before fighting again.` : 'Allocate pending damage before fighting again.'}
         </Typography>
       ) : !weaponOptions.length ? (
-        <Typography variant="caption" sx={{ color: '#9a8f6a' }}>No eligible melee weapons for this unit.</Typography>
+        <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noMeleeWeapons}</Typography>
       ) : !targets.length ? (
-        <Typography variant="caption" sx={{ color: '#9a8f6a' }}>No enemy units in Engagement Range.</Typography>
+        <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noFightTargets}</Typography>
       ) : null}
     </Box>
   );
@@ -471,20 +505,20 @@ export function PlayTacticsPanel({
   const commandRerollRolls = parseDiceInput(commandRerollInput);
 
   return (
-    <Box sx={shootingPanelSx}>
+    <Box sx={playPanelSx}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
         <Box sx={{ minWidth: 0 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ddd' }}>Tactics</Typography>
-          <Typography variant="caption" sx={{ display: 'block', color: '#888' }}>
+          <Typography variant="subtitle2" sx={panelTitleSx}>{PLAY_PANEL_LABELS.tactics}</Typography>
+          <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.muted }}>
             CP {cp[0]}-{cp[1]}
           </Typography>
         </Box>
       </Box>
 
       <Box sx={{ display: 'grid', gap: 0.75 }}>
-        <Typography variant="caption" sx={{ color: '#aaa', fontWeight: 800 }}>Stratagems</Typography>
+        <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 800 }}>{PLAY_PANEL_LABELS.stratagems}</Typography>
         {pendingFollowUps.map(label => (
-          <Typography key={label} variant="caption" sx={{ color: '#d8b35d' }}>
+          <Typography key={label} variant="caption" sx={warningTextSx}>
             {label}
           </Typography>
         ))}
@@ -508,7 +542,7 @@ export function PlayTacticsPanel({
                 setCommandRerollInput('');
               }}
             >
-              Resolve
+              {PLAY_PANEL_LABELS.resolve}
             </Button>
           </Box>
         )}
@@ -528,17 +562,17 @@ export function PlayTacticsPanel({
           </Button>
         ))}
         {!stratagems.length && (
-          <Typography variant="caption" sx={{ color: '#9a8f6a' }}>
-            No available stratagems for the selected unit/timing.
+          <Typography variant="caption" sx={disabledTextSx}>
+            {PLAY_PANEL_MESSAGES.noStratagems}
           </Typography>
         )}
       </Box>
 
       <FormControl size="small" fullWidth disabled={!selectedUnit || !abilities.length}>
-        <InputLabel id="play-ability-label">Ability</InputLabel>
+        <InputLabel id="play-ability-label">{PLAY_PANEL_LABELS.ability}</InputLabel>
         <Select
           labelId="play-ability-label"
-          label="Ability"
+          label={PLAY_PANEL_LABELS.ability}
           value={selectedAbilityKey}
           onChange={(event: SelectChangeEvent) => onAbilityChange(event.target.value)}
         >
@@ -550,21 +584,21 @@ export function PlayTacticsPanel({
         </Select>
       </FormControl>
       <Button size="small" variant="outlined" disabled={!selectedAbility} onClick={onUseAbility}>
-        Use Ability
+        {PLAY_PANEL_LABELS.useAbility}
       </Button>
 
       <Button size="small" variant="outlined" disabled={!canStartAction} onClick={onStartAction}>
-        Start Action
+        {PLAY_PANEL_LABELS.startAction}
       </Button>
       {selectedUnit?.performingAction && (
-        <Typography variant="caption" sx={{ color: '#b7d7c8' }}>
+        <Typography variant="caption" sx={{ color: uiTokens.color.status.success }}>
           Performing {selectedUnit.performingAction.name}
         </Typography>
       )}
 
       {!stratagems.length && !abilities.length && !canStartAction && !selectedUnit?.performingAction && (
-        <Typography variant="caption" sx={{ color: '#9a8f6a' }}>
-          No available stratagems, actions, or selected-unit abilities.
+        <Typography variant="caption" sx={disabledTextSx}>
+          {PLAY_PANEL_MESSAGES.noTactics}
         </Typography>
       )}
     </Box>
