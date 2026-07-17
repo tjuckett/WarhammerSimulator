@@ -8,8 +8,13 @@ import { DEFAULT_OBJECTIVES } from './missions';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
 import { advanceAllowance, normalMoveAllowance } from './movement';
 import { objectiveControlRadius } from './objectiveGeometry';
-import { formatPrimaryScoringResult, scorePrimaryMission } from './missionScoring';
+import { formatPrimaryScoringResult, objectiveIndexesWithinRange, scorePrimaryMission } from './missionScoring';
 import { battleRound, logWithBattleRound, maxBattleRounds, setBattleRound } from './battleRound';
+import {
+  completeMissionEventsForCurrentTurn,
+  recordDestroyedUnitMissionEvent,
+  startMissionEventsForNewTurn,
+} from './missionEvents';
 import { gainCommandPhaseCommandPoints } from './commandPoints';
 import { objectiveControlValue, resolveDesperateEscapeTests } from './battleshock';
 import { circleFullyInTerrain, findUnblockedLOSRay, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, pointInTerrain, terrainCorners } from './terrainGeometry';
@@ -65,52 +70,6 @@ function phaseLog(state: BattleState, side: Side, armyName: string, label: strin
 }
 
 // ─── Geometry helpers ────────────────────────────────────────────────────────
-
-function resetMissionEventsForNewTurn(state: BattleState): void {
-  state.missionEvents = {
-    ...(state.missionEvents ?? {}),
-    destroyedUnitsThisTurn: [],
-  };
-}
-
-function completeMissionEventsForCurrentTurn(state: BattleState): void {
-  const destroyedUnitCounts: [number, number] = [0, 0];
-  for (const event of state.missionEvents?.destroyedUnitsThisTurn ?? []) {
-    destroyedUnitCounts[event.side] += 1;
-  }
-
-  state.missionEvents = {
-    ...(state.missionEvents ?? {}),
-    lastCompletedTurn: {
-      activeSide: state.activeArmy,
-      battleRound: battleRound(state),
-      turn: state.turn,
-      destroyedUnitCounts,
-    },
-  };
-}
-
-function recordDestroyedUnitMissionEvent(state: BattleState, unit: BattleUnit, destroyedBySide: Side): void {
-  state.missionEvents = state.missionEvents ?? {};
-  const destroyedUnitsThisTurn = state.missionEvents.destroyedUnitsThisTurn ?? [];
-  if (destroyedUnitsThisTurn.some(event => event.unitId === unit.id)) {
-    state.missionEvents.destroyedUnitsThisTurn = destroyedUnitsThisTurn;
-    return;
-  }
-
-  state.missionEvents.destroyedUnitsThisTurn = [
-    ...destroyedUnitsThisTurn,
-    {
-      unitId: unit.id,
-      side: unit.side,
-      unitName: unit.profile.name,
-      destroyedBySide,
-      battleRound: battleRound(state),
-      turn: state.turn,
-      phase: state.phase,
-    },
-  ];
-}
 
 function moveToward(from: Position, to: Position, maxInches: number, stopGap = 1.05): Position {
   const d = dist(from, to);
@@ -1016,7 +975,13 @@ function resolveAttacks(
           'roll',
         ));
       }
-      logs.push(...applyDamage(defender, dmgResult.total + meltaBonus, state, attacker.side, { ...options, noCarryOver: true, source: weapon.name }));
+      logs.push(...applyDamage(defender, dmgResult.total + meltaBonus, state, attacker.side, {
+        ...options,
+        noCarryOver: true,
+        source: weapon.name,
+        sourceUnitId: attacker.id,
+        sourceObjectiveIndexesWithinRange: objectiveIndexesWithinRange(state, attacker, rules),
+      }));
     }
   }
 
@@ -1036,7 +1001,13 @@ function resolveAttacks(
           'roll',
         ));
       }
-      logs.push(...applyDamage(defender, dmgResult.total + meltaBonus, state, attacker.side, { ...options, noCarryOver: true, source: weapon.name }));
+      logs.push(...applyDamage(defender, dmgResult.total + meltaBonus, state, attacker.side, {
+        ...options,
+        noCarryOver: true,
+        source: weapon.name,
+        sourceUnitId: attacker.id,
+        sourceObjectiveIndexesWithinRange: objectiveIndexesWithinRange(state, attacker, rules),
+      }));
     }
   }
 
@@ -1046,7 +1017,12 @@ function resolveAttacks(
       `     +${totalMortals} mortal wound(s)`,
       'damage',
     ));
-    logs.push(...applyDamage(defender, totalMortals, state, attacker.side, { ...options, source: 'mortal wounds' }));
+    logs.push(...applyDamage(defender, totalMortals, state, attacker.side, {
+      ...options,
+      source: 'mortal wounds',
+      sourceUnitId: attacker.id,
+      sourceObjectiveIndexesWithinRange: objectiveIndexesWithinRange(state, attacker, rules),
+    }));
   }
 
   return logs;
@@ -1057,13 +1033,27 @@ export function applyDamage(
   totalDamage: number,
   state: BattleState,
   attackerSide: Side,
-  options: { deferCasualties?: boolean; noCarryOver?: boolean; source?: string } = {},
+  options: {
+    deferCasualties?: boolean;
+    noCarryOver?: boolean;
+    source?: string;
+    sourceUnitId?: string;
+    sourceObjectiveIndexesWithinRange?: number[];
+  } = {},
 ): LogEntry[] {
   const logs: LogEntry[] = [];
   if (options.deferCasualties) {
     unit.pendingDamageAllocations = [
       ...(unit.pendingDamageAllocations ?? []),
-      { damage: totalDamage, noCarryOver: options.noCarryOver, source: options.source },
+      {
+        damage: totalDamage,
+        noCarryOver: options.noCarryOver,
+        source: options.source,
+        ...(options.sourceUnitId ? { sourceUnitId: options.sourceUnitId } : {}),
+        ...(options.sourceObjectiveIndexesWithinRange
+          ? { sourceObjectiveIndexesWithinRange: options.sourceObjectiveIndexesWithinRange }
+          : {}),
+      },
     ];
     logs.push(log(state, attackerSide, unit.profile.name,
       `  ${unit.profile.name}: allocate ${totalDamage} damage${options.source ? ` from ${options.source}` : ''}`,
@@ -1141,7 +1131,10 @@ export function applyDamage(
     : unit.remainingModels;
   if (killed > 0 && effectiveRemaining <= 0 && !options.deferCasualties) {
     unit.destroyed = true;
-    recordDestroyedUnitMissionEvent(state, unit, attackerSide);
+    recordDestroyedUnitMissionEvent(state, unit, attackerSide, {
+      destroyedByUnitId: options.sourceUnitId,
+      destroyingUnitObjectiveIndexesWithinRange: options.sourceObjectiveIndexesWithinRange,
+    });
     logs.push(log(state, attackerSide, unit.profile.name,
       `  💀 ${unit.profile.name} DESTROYED`,
       'death',
@@ -2555,7 +2548,7 @@ export function markRemainingStationaryUnits(state: BattleState, side: Side = st
 function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
   const side = s.activeArmy;
   const armyName = s.armies[side].name;
-  resetMissionEventsForNewTurn(s);
+  startMissionEventsForNewTurn(s, rules);
   s.units.filter(u => u.side === side && !u.destroyed).forEach(u => { u.actionStartedThisTurn = undefined; });
   activeUnits(s, side).forEach(u => {
     u.activated = false;
@@ -4223,7 +4216,10 @@ export function allocatePlayDamageToModel(
       unit.modelPositions = [];
       unit.modelRotations = [];
       unit.pendingDamageAllocations = undefined;
-      recordDestroyedUnitMissionEvent(s, unit, state.activeArmy);
+      recordDestroyedUnitMissionEvent(s, unit, state.activeArmy, {
+        destroyedByUnitId: damage.sourceUnitId,
+        destroyingUnitObjectiveIndexesWithinRange: damage.sourceObjectiveIndexesWithinRange,
+      });
     } else {
       unit.position = centroid(unit.modelPositions);
       if (carryOverDamage > 0) {
@@ -4659,7 +4655,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   const newLogs: LogEntry[] = [];
 
   // Reset per-turn flags
-  resetMissionEventsForNewTurn(s);
+  startMissionEventsForNewTurn(s, rules);
   myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
 
   // Command

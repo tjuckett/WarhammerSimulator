@@ -47,7 +47,13 @@ export interface BattleUnit {
   woundedModelIndex?: number;
   pendingCasualties?: number;
   pendingWoundAssignment?: { woundsOnModel: number };
-  pendingDamageAllocations?: Array<{ damage: number; noCarryOver?: boolean; source?: string }>;
+  pendingDamageAllocations?: Array<{
+    damage: number;
+    noCarryOver?: boolean;
+    source?: string;
+    sourceUnitId?: string;
+    sourceObjectiveIndexesWithinRange?: number[];
+  }>;
   position: Position;          // centroid of modelPositions; display and coarse AI positioning
   modelPositions: Position[];  // one entry per remaining model
   modelRotations?: number[];   // facing for each model footprint in degrees
@@ -111,6 +117,8 @@ export interface DestroyedUnitMissionEvent {
   side: Side;
   unitName: string;
   destroyedBySide: Side;
+  destroyedByUnitId?: string;
+  destroyingUnitObjectiveIndexesWithinRange?: number[];
   battleRound: number;
   turn: number;
   phase: Phase;
@@ -123,9 +131,27 @@ export interface CompletedTurnMissionEventSummary {
   destroyedUnitCounts: [number, number];
 }
 
+export interface StartOfTurnUnitMissionSnapshot {
+  unitId: string;
+  side: Side;
+  unitName: string;
+  remainingModels: number;
+  modelPositions: Position[];
+  objectiveIndexesWithinRange?: number[];
+}
+
+export interface StartOfTurnMissionSnapshot {
+  activeSide: Side;
+  battleRound: number;
+  turn: number;
+  objectiveOwners: (Side | null)[];
+  units: StartOfTurnUnitMissionSnapshot[];
+}
+
 export interface MissionEvents {
   destroyedUnitsThisTurn?: DestroyedUnitMissionEvent[];
   lastCompletedTurn?: CompletedTurnMissionEventSummary;
+  startOfTurn?: StartOfTurnMissionSnapshot;
 }
 
 export interface Terrain {

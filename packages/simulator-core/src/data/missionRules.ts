@@ -5,6 +5,7 @@ export type MissionScoringTiming = 'end-command-phase' | 'end-turn' | 'end-battl
 export type MissionScoringClauseKind =
   | 'fixed-if'
   | 'per-objective'
+  | 'per-objective-if'
   | 'per-objective-with-bonus'
   | 'unsupported-event';
 
@@ -22,6 +23,7 @@ export type MissionCondition =
   | 'controls-opponent-home-objective'
   | 'controlled-objective-not-controlled-at-start-of-turn'
   | 'destroyed-enemy-near-objective'
+  | 'destroyed-enemy-started-near-objective'
   | 'destroyed-enemy-in-terrain'
   | 'destroyed-enemy-started-near-central-objective'
   | 'destroyed-enemy-this-turn'
@@ -162,11 +164,12 @@ const TAKE_AND_HOLD_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         id: 'newly-controlled-objectives',
         timing: 'end-turn',
         rounds: 'any',
-        kind: 'unsupported-event',
+        kind: 'per-objective-if',
         condition: 'controlled-objective-not-controlled-at-start-of-turn',
+        objectiveFilter: 'non-home',
         vp: 2,
         sourceText: 'Any battle round, end of your turn: For each objective you control that you did not control at the start of the turn (excluding your home objective). 2VP.',
-        notes: 'Requires storing objective owners at the start of the turn.',
+        notes: 'Uses the objective-control snapshot captured at the start of the current turn.',
       },
       {
         id: 'round-2-plus-objectives-and-opponent-territory-bonus',
@@ -298,17 +301,17 @@ const TAKE_AND_HOLD_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
     edition: '11e',
     status: 'implemented',
     source: `${TAKE_AND_HOLD_SOURCE}/purge-and-secure`,
-    notes: 'Scoring text transcribed from GDM 2026 Take and Hold card. Destroyed-near-objective and start-of-turn objective tracking are still required for two clauses.',
+    notes: 'Scoring text transcribed from GDM 2026 Take and Hold card. Destroyed-near-objective scoring is implemented from kill-source and start-of-turn proximity facts.',
     scoring: [
       {
         id: 'destroyed-enemy-near-objective',
         timing: 'end-turn',
         rounds: 'any',
-        kind: 'unsupported-event',
+        kind: 'fixed-if',
         condition: 'destroyed-enemy-near-objective',
         vp: 3,
         sourceText: 'Any battle round, end of your turn: One or more enemy units were destroyed this turn by a friendly unit that was within range of one or more objectives OR one or more enemy units that started the turn within range of one or more objectives were destroyed this turn. 3VP.',
-        notes: 'Requires destroyed-unit event tracking and objective proximity at turn start / kill source position.',
+        notes: 'Uses destroyed-unit events with victim start-of-turn and destroying-unit kill-time objective proximity.',
       },
       {
         id: 'round-2-plus-non-home-objectives',
@@ -332,11 +335,11 @@ const TAKE_AND_HOLD_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         id: 'round-2-plus-newly-controlled-objective',
         timing: 'end-turn',
         rounds: [2, 3, 4, 5],
-        kind: 'unsupported-event',
+        kind: 'fixed-if',
         condition: 'controlled-objective-not-controlled-at-start-of-turn',
         vp: 3,
         sourceText: 'Second battle round onwards, end of your turn: You control one or more objectives you did not control at the start of the turn (excluding your home objective). 3VP.',
-        notes: 'Requires storing objective owners at the start of the turn.',
+        notes: 'Uses the objective-control snapshot captured at the start of the current turn.',
       },
     ],
   },
@@ -981,7 +984,7 @@ const PRIORITY_ASSETS_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
     edition: '11e',
     status: 'implemented',
     source: `${PRIORITY_ASSETS_SOURCE}/extract-relic`,
-    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Sensor Sweep, operation marker, and destroyed-unit event tracking are still required for several clauses.',
+    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Start-of-turn objective proximity destruction scoring is implemented; Sensor Sweep and operation marker clauses remain.',
     scoring: [
       {
         id: 'sensor-sweep',
@@ -997,11 +1000,11 @@ const PRIORITY_ASSETS_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         id: 'enemy-started-near-objective-destroyed',
         timing: 'end-turn',
         rounds: 'any',
-        kind: 'unsupported-event',
-        condition: 'destroyed-enemy-near-objective',
+        kind: 'fixed-if',
+        condition: 'destroyed-enemy-started-near-objective',
         vp: 3,
         sourceText: 'Any battle round, end of your turn: One or more enemy units that started the turn within range of one or more objectives are destroyed. 3VP.',
-        notes: 'Requires storing enemy objective proximity at the start of the turn and destroyed-unit event tracking.',
+        notes: 'Uses start-of-turn objective proximity snapshots and current-turn destroyed-unit events.',
       },
       {
         id: 'only-one-opponent-marker-isolated',
@@ -1085,7 +1088,7 @@ const PRIORITY_ASSETS_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
     edition: '11e',
     status: 'implemented',
     source: `${PRIORITY_ASSETS_SOURCE}/secure-asset`,
-    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Secure Asset action and destroyed-unit start-of-turn tracking are still required for two clauses.',
+    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Central-objective proximity destruction scoring is implemented; the Secure Asset action remains.',
     scoring: [
       {
         id: 'secured-asset',
@@ -1101,11 +1104,11 @@ const PRIORITY_ASSETS_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         id: 'enemy-started-near-central-objective-destroyed',
         timing: 'end-turn',
         rounds: 'any',
-        kind: 'unsupported-event',
+        kind: 'fixed-if',
         condition: 'destroyed-enemy-started-near-central-objective',
         vp: 2,
         sourceText: 'Any battle round, end of your turn: One or more enemy units that started the turn within range of one or more central objectives are destroyed. 2VP.',
-        notes: 'Requires storing enemy central-objective proximity at the start of the turn and destroyed-unit event tracking.',
+        notes: 'Uses start-of-turn objective proximity snapshots and current-turn destroyed-unit events.',
       },
       {
         id: 'round-2-plus-one-non-home-objective',

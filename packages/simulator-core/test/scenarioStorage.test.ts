@@ -16,6 +16,11 @@ import { applyGameAction } from '../src/practice/actions';
 import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
 import { formatPrimaryScoringResult, scorePrimaryMission, updateObjectiveControl } from '../src/engine/missionScoring';
+import {
+  completeMissionEventsForCurrentTurn,
+  recordDestroyedUnitMissionEvent,
+  startMissionEventsForNewTurn,
+} from '../src/engine/missionEvents';
 import { availableStratagems, resolveCommandReroll, useStratagem } from '../src/engine/stratagems';
 import { availableUnitAbilities, useUnitAbility } from '../src/engine/unitAbilities';
 import { eleventhSetupLabel, TOURNAMENT_MISSIONS } from '../src/engine/missions';
@@ -1082,6 +1087,238 @@ test("11th destroyed-unit mission events score Destroyer's Wrath kill clause", (
   assert.match(formatPrimaryScoringResult(result), /One or more enemy units were destroyed this turn/);
 });
 
+test('mission event helpers record each destroyed unit once and preserve the completed turn summary', () => {
+  const battle = state('shooting', 2);
+  battle.activeArmy = 1;
+  const destroyedUnit = losTestUnit('blue-target', 0, { x: 20, y: 10 });
+  destroyedUnit.profile.name = 'Blue Target';
+
+  recordDestroyedUnitMissionEvent(battle, destroyedUnit, 1);
+  recordDestroyedUnitMissionEvent(battle, destroyedUnit, 1);
+
+  assert.deepEqual(battle.missionEvents?.destroyedUnitsThisTurn, [{
+    unitId: 'blue-target',
+    side: 0,
+    unitName: 'Blue Target',
+    destroyedBySide: 1,
+    battleRound: 2,
+    turn: 2,
+    phase: 'shooting',
+  }]);
+
+  completeMissionEventsForCurrentTurn(battle);
+
+  assert.deepEqual(battle.missionEvents?.lastCompletedTurn, {
+    activeSide: 1,
+    battleRound: 2,
+    turn: 2,
+    destroyedUnitCounts: [1, 0],
+  });
+
+  startMissionEventsForNewTurn(battle, rules40K11th);
+
+  assert.deepEqual(battle.missionEvents?.destroyedUnitsThisTurn, []);
+  assert.deepEqual(battle.missionEvents?.lastCompletedTurn?.destroyedUnitCounts, [1, 0]);
+});
+
+test('mission event turn start captures objective owners and stable battlefield unit positions', () => {
+  const battle = state('setup', 2);
+  battle.objectives = [{ x: 10, y: 10 }];
+  battle.objectiveOwners = [null];
+  const controller = losTestUnit('blue-controller', 0, { x: 10, y: 10 });
+  controller.profile.name = 'Blue Controller';
+  const reserve = losTestUnit('red-reserve', 1, { x: 20, y: 10 });
+  reserve.inStrategicReserves = true;
+  reserve.modelPositions = [];
+  battle.units = [controller, reserve];
+
+  startMissionEventsForNewTurn(battle, rules40K10th);
+  controller.modelPositions[0].x = 30;
+
+  assert.deepEqual(battle.missionEvents?.startOfTurn, {
+    activeSide: 0,
+    battleRound: 2,
+    turn: 2,
+    objectiveOwners: [0],
+    units: [{
+      unitId: 'blue-controller',
+      side: 0,
+      unitName: 'Blue Controller',
+      remainingModels: 1,
+      modelPositions: [{ x: 10, y: 10 }],
+      objectiveIndexesWithinRange: [0],
+    }],
+  });
+});
+
+test('11th Determined Acquisition scores newly controlled non-home objectives from the turn-start snapshot', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Determined Acquisition', 'Death Trap'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }];
+  battle.objectiveOwners = [null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  const blueHome = losTestUnit('blue-home', 0, { x: 10, y: 10 });
+  const blueAdvance = losTestUnit('blue-advance', 0, { x: 15, y: 10 });
+  battle.units = [blueHome, blueAdvance];
+
+  startMissionEventsForNewTurn(battle, rules40K11th);
+  blueAdvance.position = { x: 20, y: 10 };
+  blueAdvance.modelPositions = [{ x: 20, y: 10 }];
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.kind, 'scored');
+  assert.equal(result.vpGained, 2);
+  assert.deepEqual(result.unsupportedClauses, []);
+  assert.match(formatPrimaryScoringResult(result), /1 objective x 2VP/);
+});
+
+test('11th Determined Acquisition does not score objectives already controlled at turn start', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Determined Acquisition', 'Death Trap'],
+  };
+  battle.objectives = [{ x: 20, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  battle.units = [losTestUnit('blue-mid', 0, { x: 20, y: 10 })];
+
+  startMissionEventsForNewTurn(battle, rules40K11th);
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.vpGained, 0);
+  assert.deepEqual(result.unsupportedClauses, []);
+});
+
+test('11th Extract Relic scores an enemy destroyed after starting within objective range', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Extract Relic', 'Gather Intel'],
+  };
+  battle.objectives = [{ x: 20, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  const target = losTestUnit('red-target', 1, { x: 20, y: 10 });
+  battle.units = [target];
+
+  startMissionEventsForNewTurn(battle, rules40K11th);
+  applyDamage(target, 1, battle, 0);
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.vpGained, 3);
+  assert.deepEqual(result.unsupportedClauses?.length, 2);
+  assert.match(formatPrimaryScoringResult(result), /started the turn within range/);
+});
+
+test('11th Secure Asset only counts destroyed enemies that started near a central objective', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Secure Asset', 'Reconnaissance Sweep'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }];
+  battle.objectiveOwners = [null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  const homeTarget = losTestUnit('red-home-target', 1, { x: 10, y: 10 });
+  const centralTarget = losTestUnit('red-central-target', 1, { x: 20, y: 10 });
+  battle.units = [homeTarget, centralTarget];
+
+  startMissionEventsForNewTurn(battle, rules40K11th);
+  applyDamage(homeTarget, 1, battle, 0);
+  let result = scorePrimaryMission(battle, 0, rules40K11th);
+  assert.equal(result.vpGained, 0);
+
+  battle.scores = [0, 0];
+  applyDamage(centralTarget, 1, battle, 0);
+  result = scorePrimaryMission(battle, 0, rules40K11th);
+  assert.equal(result.vpGained, 2);
+  assert.match(formatPrimaryScoringResult(result), /central objectives/);
+});
+
+test('11th Purge and Secure scores when the destroying unit is within objective range', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Purge and Secure', 'Reconnaissance Sweep'],
+  };
+  battle.objectives = [{ x: 20, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  const attacker = losTestUnit('blue-attacker', 0, { x: 20, y: 10 });
+  const target = losTestUnit('red-target', 1, { x: 30, y: 10 });
+  battle.units = [attacker, target];
+
+  startMissionEventsForNewTurn(battle, rules40K11th);
+  applyDamage(target, 1, battle, 0, {
+    source: 'Test attack',
+    sourceUnitId: attacker.id,
+    sourceObjectiveIndexesWithinRange: [0],
+  });
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.vpGained, 3);
+  assert.deepEqual(result.unsupportedClauses, []);
+  assert.equal(battle.missionEvents?.destroyedUnitsThisTurn?.[0].destroyedByUnitId, attacker.id);
+  assert.deepEqual(battle.missionEvents?.destroyedUnitsThisTurn?.[0].destroyingUnitObjectiveIndexesWithinRange, [0]);
+  assert.match(formatPrimaryScoringResult(result), /friendly unit that was within range/);
+});
+
+test('11th Purge and Secure does not score a distant kill with no start-of-turn proximity', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Purge and Secure', 'Reconnaissance Sweep'],
+  };
+  battle.objectives = [{ x: 20, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  const attacker = losTestUnit('blue-attacker', 0, { x: 10, y: 10 });
+  const target = losTestUnit('red-target', 1, { x: 30, y: 10 });
+  battle.units = [attacker, target];
+
+  startMissionEventsForNewTurn(battle, rules40K11th);
+  applyDamage(target, 1, battle, 0, {
+    sourceUnitId: attacker.id,
+    sourceObjectiveIndexesWithinRange: [],
+  });
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.vpGained, 0);
+  assert.deepEqual(result.unsupportedClauses, []);
+});
+
 test('11th destroyed-unit mission events reset at the start of a new player turn', () => {
   const battle = state('setup', 1);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
@@ -1101,6 +1338,13 @@ test('11th destroyed-unit mission events reset at the start of a new player turn
 
   assert.equal(command.phase, 'command');
   assert.deepEqual(command.missionEvents?.destroyedUnitsThisTurn, []);
+  assert.deepEqual(command.missionEvents?.startOfTurn, {
+    activeSide: 0,
+    battleRound: 1,
+    turn: 1,
+    objectiveOwners: [],
+    units: [],
+  });
 });
 
 test("11th Destroyer's Wrath scores previous-turn destroyed-unit comparison", () => {
@@ -2819,7 +3063,13 @@ test('play Shooting resolves a selected weapon into a selected target', () => {
     const shot = shootPlayUnitWeapon(battle, 'shooter-1', 0, 'target-1', 0, rules40K10th);
     const shotTarget = shot.units.find(unit => unit.id === 'target-1')!;
     assert.equal(shot.units.find(unit => unit.id === 'shooter-1')?.activated, true);
-    assert.deepEqual(shotTarget.pendingDamageAllocations, [{ damage: 1, noCarryOver: true, source: 'Bolt Rifle' }]);
+    assert.deepEqual(shotTarget.pendingDamageAllocations, [{
+      damage: 1,
+      noCarryOver: true,
+      source: 'Bolt Rifle',
+      sourceUnitId: 'shooter-1',
+      sourceObjectiveIndexesWithinRange: [],
+    }]);
     const assigned = allocatePlayDamageToModel(shot, 'target-1', 1, 0);
     const assignedTarget = assigned.units.find(unit => unit.id === 'target-1')!;
     assert.equal(assignedTarget.woundedModelIndex, 0);
@@ -3143,7 +3393,13 @@ test('play Shooting lets the defender remove selected casualty models', () => {
   try {
     const shot = shootPlayUnitWeapon(battle, 'shooter-1', 0, 'target-1', 0, rules40K10th);
     const pendingTarget = shot.units.find(unit => unit.id === 'target-1')!;
-    assert.deepEqual(pendingTarget.pendingDamageAllocations, [{ damage: 1, noCarryOver: true, source: 'Bolt Rifle' }]);
+    assert.deepEqual(pendingTarget.pendingDamageAllocations, [{
+      damage: 1,
+      noCarryOver: true,
+      source: 'Bolt Rifle',
+      sourceUnitId: 'shooter-1',
+      sourceObjectiveIndexesWithinRange: [],
+    }]);
     assert.equal(pendingTarget.remainingModels, 2);
     assert.equal(pendingTarget.modelPositions.length, 2);
 
@@ -5191,7 +5447,13 @@ test('Anti weapons score critical wounds against matching target keywords', () =
     const shot = shootPlayUnitWeapon(battle, shooter.id, 0, target.id, 0, rules40K11th);
     const shotTarget = shot.units.find(unit => unit.id === target.id)!;
     const messages = shot.log.map(entry => entry.message).join(' ');
-    assert.deepEqual(shotTarget.pendingDamageAllocations, [{ damage: 1, noCarryOver: true, source: 'Poison Rifle' }]);
+    assert.deepEqual(shotTarget.pendingDamageAllocations, [{
+      damage: 1,
+      noCarryOver: true,
+      source: 'Poison Rifle',
+      sourceUnitId: 'poison-team',
+      sourceObjectiveIndexesWithinRange: [],
+    }]);
     assert.match(messages, /Anti 4\+ critical wounds/);
   } finally {
     Math.random = originalRandom;
@@ -5236,7 +5498,13 @@ test('Anti weapons use attached unit keywords while bodyguard is alive', () => {
     const shot = shootPlayUnitWeapon(battle, shooter.id, 0, bodyguard.id, 0, rules40K11th);
     const shotTarget = shot.units.find(unit => unit.id === bodyguard.id)!;
     const messages = shot.log.map(entry => entry.message).join(' ');
-    assert.deepEqual(shotTarget.pendingDamageAllocations, [{ damage: 1, noCarryOver: true, source: 'Judgement Rifle' }]);
+    assert.deepEqual(shotTarget.pendingDamageAllocations, [{
+      damage: 1,
+      noCarryOver: true,
+      source: 'Judgement Rifle',
+      sourceUnitId: 'witch-hunter',
+      sourceObjectiveIndexesWithinRange: [],
+    }]);
     assert.match(messages, /Anti 4\+ critical wounds/);
   } finally {
     Math.random = originalRandom;
@@ -5776,7 +6044,13 @@ test('play Fight resolves selected melee weapons into a selected target', () => 
     const foughtUnit = fought.units.find(unit => unit.id === 'fighter-1')!;
     const foughtTarget = fought.units.find(unit => unit.id === 'target-1')!;
     assert.equal(foughtUnit.activated, true);
-    assert.deepEqual(foughtTarget.pendingDamageAllocations, [{ damage: 2, noCarryOver: true, source: 'Power Blade' }]);
+    assert.deepEqual(foughtTarget.pendingDamageAllocations, [{
+      damage: 2,
+      noCarryOver: true,
+      source: 'Power Blade',
+      sourceUnitId: 'fighter-1',
+      sourceObjectiveIndexesWithinRange: [],
+    }]);
     assert.equal(fought.log.some(entry => entry.message.includes('Fighter fights Fight Target')), true);
   } finally {
     Math.random = originalRandom;
@@ -5946,12 +6220,12 @@ test('Melee weapons can split declared attacks between engaged targets', () => {
     const messages = next.log.map(entry => entry.message).join(' ');
     assert.equal(nextFighter.activated, true);
     assert.deepEqual(nextTargetA.pendingDamageAllocations, [
-      { damage: 1, noCarryOver: true, source: 'Chainblade' },
-      { damage: 1, noCarryOver: true, source: 'Chainblade' },
+      { damage: 1, noCarryOver: true, source: 'Chainblade', sourceUnitId: 'split-fighter', sourceObjectiveIndexesWithinRange: [] },
+      { damage: 1, noCarryOver: true, source: 'Chainblade', sourceUnitId: 'split-fighter', sourceObjectiveIndexesWithinRange: [] },
     ]);
     assert.deepEqual(nextTargetB.pendingDamageAllocations, [
-      { damage: 1, noCarryOver: true, source: 'Chainblade' },
-      { damage: 1, noCarryOver: true, source: 'Chainblade' },
+      { damage: 1, noCarryOver: true, source: 'Chainblade', sourceUnitId: 'split-fighter', sourceObjectiveIndexesWithinRange: [] },
+      { damage: 1, noCarryOver: true, source: 'Chainblade', sourceUnitId: 'split-fighter', sourceObjectiveIndexesWithinRange: [] },
     ]);
     assert.match(messages, /Split melee attacks: 2 attack\(s\) declared against Target A/);
     assert.match(messages, /Split melee attacks: 2 attack\(s\) declared against Target B/);

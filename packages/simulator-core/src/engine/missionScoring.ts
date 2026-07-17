@@ -161,6 +161,92 @@ function destroyedEnemyUnitsThisTurn(state: BattleState, side: Side): number {
   ).length;
 }
 
+export function objectiveIndexesWithinRange(
+  state: BattleState,
+  unit: BattleUnit,
+  rules: RulesEdition,
+): number[] {
+  const objectiveControl = state.objectiveControl ?? rules.objectiveControl;
+  const controlRadius = objectiveControlRadius(objectiveControl);
+
+  if (objectiveControl.kind === 'terrain-area') {
+    return state.objectives.flatMap((objective, objectiveIndex) => {
+      const terrain = terrainObjectiveForPoint(state, objective);
+      return terrain && unit.modelPositions.some((_model, modelIndex) => modelWithinTerrainObjective(unit, modelIndex, terrain))
+        ? [objectiveIndex]
+        : [];
+    });
+  }
+
+  if (controlRadius === null) return [];
+  return state.objectives.flatMap((objective, objectiveIndex) =>
+    unitControlsObjective(unit, objective, controlRadius) ? [objectiveIndex] : [],
+  );
+}
+
+function objectiveConditionMet(
+  state: BattleState,
+  objective: ObjectiveControlResult,
+  side: Side,
+  condition: MissionCondition,
+): boolean {
+  if (condition !== 'controlled-objective-not-controlled-at-start-of-turn') return false;
+
+  const snapshot = state.missionEvents?.startOfTurn;
+  return snapshot?.activeSide === side
+    && snapshot.battleRound === battleRound(state)
+    && snapshot.turn === state.turn
+    && snapshot.objectiveOwners[objective.objectiveIndex] !== side;
+}
+
+function controlsObjectiveNotControlledAtTurnStart(
+  state: BattleState,
+  objectives: ObjectiveControlResult[],
+  side: Side,
+): boolean {
+  const snapshot = state.missionEvents?.startOfTurn;
+  if (snapshot?.activeSide !== side || snapshot.battleRound !== battleRound(state) || snapshot.turn !== state.turn) {
+    return false;
+  }
+
+  return controlledObjectives(state, objectives, side).some(objective =>
+    objectiveMatchesFilter(state, objective, side, 'non-home')
+    && snapshot.objectiveOwners[objective.objectiveIndex] !== side,
+  );
+}
+
+function destroyedEnemyStartedWithinObjectiveRange(
+  state: BattleState,
+  objectives: ObjectiveControlResult[],
+  side: Side,
+  centralOnly: boolean,
+): boolean {
+  const snapshot = state.missionEvents?.startOfTurn;
+  if (snapshot?.activeSide !== side || snapshot.battleRound !== battleRound(state) || snapshot.turn !== state.turn) {
+    return false;
+  }
+
+  const destroyedEnemyIds = new Set((state.missionEvents?.destroyedUnitsThisTurn ?? [])
+    .filter(event => event.destroyedBySide === side && event.side !== side)
+    .map(event => event.unitId));
+
+  return snapshot.units.some(unit => unit.side !== side
+    && destroyedEnemyIds.has(unit.unitId)
+    && (unit.objectiveIndexesWithinRange ?? []).some(objectiveIndex => {
+      if (!centralOnly) return true;
+      const objective = objectives.find(candidate => candidate.objectiveIndex === objectiveIndex);
+      return objective ? objectiveMatchesFilter(state, objective, side, 'central') : false;
+    }));
+}
+
+function destroyedEnemyByUnitWithinObjectiveRange(state: BattleState, side: Side): boolean {
+  return (state.missionEvents?.destroyedUnitsThisTurn ?? []).some(event =>
+    event.destroyedBySide === side
+    && event.side !== side
+    && (event.destroyingUnitObjectiveIndexesWithinRange?.length ?? 0) > 0,
+  );
+}
+
 function conditionMet(
   state: BattleState,
   objectives: ObjectiveControlResult[],
@@ -190,11 +276,17 @@ function conditionMet(
       return destroyedEnemyUnitsThisTurn(state, side) > 0;
     case 'more-enemy-units-destroyed-than-friendly-previous-turn':
       return destroyedEnemyUnitsThisTurn(state, side) > (state.missionEvents?.lastCompletedTurn?.destroyedUnitCounts[side] ?? 0);
-    case 'controls-central-and-expansion-objectives':
-    case 'controlled-objective-not-controlled-at-start-of-turn':
     case 'destroyed-enemy-near-objective':
-    case 'destroyed-enemy-in-terrain':
+      return destroyedEnemyStartedWithinObjectiveRange(state, objectives, side, false)
+        || destroyedEnemyByUnitWithinObjectiveRange(state, side);
+    case 'destroyed-enemy-started-near-objective':
+      return destroyedEnemyStartedWithinObjectiveRange(state, objectives, side, false);
+    case 'controlled-objective-not-controlled-at-start-of-turn':
+      return controlsObjectiveNotControlledAtTurnStart(state, objectives, side);
     case 'destroyed-enemy-started-near-central-objective':
+      return destroyedEnemyStartedWithinObjectiveRange(state, objectives, side, true);
+    case 'controls-central-and-expansion-objectives':
+    case 'destroyed-enemy-in-terrain':
     case 'friendly-units-in-three-table-quarters':
     case 'friendly-units-in-four-table-quarters':
     case 'condemned-enemy-left-battlefield':
@@ -242,6 +334,18 @@ function evaluateMissionClause(
 
   const controlled = controlledObjectives(state, objectives, side)
     .filter(objective => objectiveMatchesFilter(state, objective, side, clause.objectiveFilter));
+  if (clause.kind === 'per-objective-if') {
+    const condition = clause.condition;
+    const matched = condition
+      ? controlled.filter(objective => objectiveConditionMet(state, objective, side, condition))
+      : [];
+    const vp = matched.length * clause.vp;
+    return {
+      vp,
+      detail: `${clause.sourceText} ${matched.length} objective${matched.length === 1 ? '' : 's'} x ${clause.vp}VP -> +${vp}VP`,
+    };
+  }
+
   let vp = controlled.length * clause.vp;
   let detail = `${clause.sourceText} ${controlled.length} objective${controlled.length === 1 ? '' : 's'} x ${clause.vp}VP`;
 
