@@ -1,6 +1,6 @@
 import type { BattleState, BattleUnit, Side } from '../types/battle';
 import { battleRound } from './battleRound';
-import { objectiveIndexesWithinRange, updateObjectiveControl } from './missionScoring';
+import { objectiveIndexesWithinRange, terrainAreaIdsContainingUnit, updateObjectiveControl } from './missionScoring';
 import type { RulesEdition } from './rulesEngine';
 
 export function startMissionEventsForNewTurn(state: BattleState, rules: RulesEdition): void {
@@ -22,6 +22,7 @@ export function startMissionEventsForNewTurn(state: BattleState, rules: RulesEdi
           remainingModels: unit.remainingModels,
           modelPositions: unit.modelPositions.map(position => ({ ...position })),
           objectiveIndexesWithinRange: objectiveIndexesWithinRange(state, unit, rules),
+          terrainAreaIds: terrainAreaIdsContainingUnit(state, unit),
         })),
     },
   };

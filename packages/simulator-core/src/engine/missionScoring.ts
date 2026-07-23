@@ -13,6 +13,7 @@ import {
 import { objectiveControlRadius } from './objectiveGeometry';
 import type { RulesEdition } from './rulesEngine';
 import { pointInTerrain } from './terrainGeometry';
+import { boardFormatForState } from '../data/boardFormats';
 
 export interface ObjectiveControlResult {
   objectiveIndex: number;
@@ -161,6 +162,47 @@ function destroyedEnemyUnitsThisTurn(state: BattleState, side: Side): number {
   ).length;
 }
 
+export function tableQuarterPresenceCount(state: BattleState, side: Side): number {
+  const board = boardFormatForState(state);
+  const centre = { x: board.width / 2, y: board.height / 2 };
+  const occupied = new Set<number>();
+
+  for (const unit of state.units) {
+    if (unit.side !== side || unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves || !unit.modelPositions.length) continue;
+    if (unit.modelPositions.some((model, modelIndex) =>
+      distance(model, centre) <= 6 + modelBaseRadiusInches(unit.profile, modelIndex),
+    )) continue;
+
+    const whollyLeft = unit.modelPositions.every((model, modelIndex) =>
+      model.x + modelBaseRadiusInches(unit.profile, modelIndex) <= centre.x,
+    );
+    const whollyRight = unit.modelPositions.every((model, modelIndex) =>
+      model.x - modelBaseRadiusInches(unit.profile, modelIndex) >= centre.x,
+    );
+    const whollyTop = unit.modelPositions.every((model, modelIndex) =>
+      model.y + modelBaseRadiusInches(unit.profile, modelIndex) <= centre.y,
+    );
+    const whollyBottom = unit.modelPositions.every((model, modelIndex) =>
+      model.y - modelBaseRadiusInches(unit.profile, modelIndex) >= centre.y,
+    );
+
+    if (whollyLeft && whollyTop) occupied.add(0);
+    else if (whollyRight && whollyTop) occupied.add(1);
+    else if (whollyLeft && whollyBottom) occupied.add(2);
+    else if (whollyRight && whollyBottom) occupied.add(3);
+  }
+
+  return occupied.size;
+}
+
+export function terrainAreaIdsContainingUnit(state: BattleState, unit: BattleUnit): string[] {
+  return state.terrain.flatMap(terrain =>
+    unit.modelPositions.some((_model, modelIndex) => modelWithinTerrainObjective(unit, modelIndex, terrain))
+      ? [terrain.id]
+      : [],
+  );
+}
+
 export function objectiveIndexesWithinRange(
   state: BattleState,
   unit: BattleUnit,
@@ -247,6 +289,23 @@ function destroyedEnemyByUnitWithinObjectiveRange(state: BattleState, side: Side
   );
 }
 
+function destroyedEnemyStartedWithinTerrainArea(state: BattleState, side: Side): boolean {
+  const snapshot = state.missionEvents?.startOfTurn;
+  if (snapshot?.activeSide !== side || snapshot.battleRound !== battleRound(state) || snapshot.turn !== state.turn) {
+    return false;
+  }
+
+  const destroyedEnemyIds = new Set((state.missionEvents?.destroyedUnitsThisTurn ?? [])
+    .filter(event => event.destroyedBySide === side && event.side !== side)
+    .map(event => event.unitId));
+
+  return snapshot.units.some(unit =>
+    unit.side !== side
+    && destroyedEnemyIds.has(unit.unitId)
+    && (unit.terrainAreaIds?.length ?? 0) > 0,
+  );
+}
+
 function conditionMet(
   state: BattleState,
   objectives: ObjectiveControlResult[],
@@ -285,10 +344,13 @@ function conditionMet(
       return controlsObjectiveNotControlledAtTurnStart(state, objectives, side);
     case 'destroyed-enemy-started-near-central-objective':
       return destroyedEnemyStartedWithinObjectiveRange(state, objectives, side, true);
-    case 'controls-central-and-expansion-objectives':
     case 'destroyed-enemy-in-terrain':
+      return destroyedEnemyStartedWithinTerrainArea(state, side);
     case 'friendly-units-in-three-table-quarters':
+      return tableQuarterPresenceCount(state, side) === 3;
     case 'friendly-units-in-four-table-quarters':
+      return tableQuarterPresenceCount(state, side) >= 4;
+    case 'controls-central-and-expansion-objectives':
     case 'condemned-enemy-left-battlefield':
     case 'consecrated-objectives':
     case 'enemy-home-objective-consecrated':
@@ -343,6 +405,15 @@ function evaluateMissionClause(
     return {
       vp,
       detail: `${clause.sourceText} ${matched.length} objective${matched.length === 1 ? '' : 's'} x ${clause.vp}VP -> +${vp}VP`,
+    };
+  }
+
+  if (clause.kind === 'per-destroyed-enemy-unit') {
+    const count = destroyedEnemyUnitsThisTurn(state, side);
+    const vp = count * clause.vp;
+    return {
+      vp,
+      detail: `${clause.sourceText} ${count} unit${count === 1 ? '' : 's'} x ${clause.vp}VP -> +${vp}VP`,
     };
   }
 

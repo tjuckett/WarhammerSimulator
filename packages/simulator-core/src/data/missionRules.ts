@@ -4,6 +4,7 @@ export type MissionScoringTiming = 'end-command-phase' | 'end-turn' | 'end-battl
 
 export type MissionScoringClauseKind =
   | 'fixed-if'
+  | 'per-destroyed-enemy-unit'
   | 'per-objective'
   | 'per-objective-if'
   | 'per-objective-with-bonus'
@@ -735,37 +736,37 @@ const RECONNAISSANCE_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
     edition: '11e',
     status: 'implemented',
     source: `${RECONNAISSANCE_SOURCE}/reconnaissance-sweep`,
-    notes: 'Scoring text transcribed from GDM 2026 Reconnaissance card. Table-quarter and destroyed-unit tracking are still required for two clauses.',
+    notes: 'Scoring text transcribed from GDM 2026 Reconnaissance card. Table-quarter presence and per-enemy-unit destruction scoring are implemented.',
     scoring: [
       {
         id: 'three-table-quarters',
         timing: 'end-turn',
         rounds: 'any',
-        kind: 'unsupported-event',
+        kind: 'fixed-if',
         condition: 'friendly-units-in-three-table-quarters',
         vp: 3,
         sourceText: 'Any battle round, end of your turn: Three or more friendly units are wholly within three different table quarters and not within 6" of the centre of the battlefield. 3VP.',
-        notes: 'Requires table-quarter occupancy checks against full unit footprints and centre exclusion.',
+        notes: 'Uses whole-unit table-quarter containment with a 6-inch battlefield-centre exclusion.',
       },
       {
         id: 'four-table-quarters',
         timing: 'end-turn',
         rounds: 'any',
-        kind: 'unsupported-event',
+        kind: 'fixed-if',
         condition: 'friendly-units-in-four-table-quarters',
         vp: 6,
         sourceText: 'Any battle round, end of your turn: Four or more friendly units are wholly within four different table quarters and not within 6" of the centre of the battlefield. 6VP.',
-        notes: 'Requires table-quarter occupancy checks against full unit footprints and centre exclusion.',
+        notes: 'Uses whole-unit table-quarter containment with a 6-inch battlefield-centre exclusion; this is the higher non-cumulative tier.',
       },
       {
         id: 'enemy-destroyed',
         timing: 'end-turn',
         rounds: 'any',
-        kind: 'unsupported-event',
+        kind: 'per-destroyed-enemy-unit',
         condition: 'destroyed-enemy-this-turn',
         vp: 1,
         sourceText: 'Any battle round, end of your turn: For each enemy unit destroyed this turn. 1VP.',
-        notes: 'Requires destroyed-unit event tracking for the current turn.',
+        notes: 'Uses current-turn destroyed-unit events.',
       },
       {
         id: 'round-2-plus-one-non-home-objective',
@@ -792,7 +793,7 @@ const RECONNAISSANCE_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
     edition: '11e',
     status: 'implemented',
     source: `${RECONNAISSANCE_SOURCE}/search-and-scour`,
-    notes: 'Scoring text transcribed from GDM 2026 Reconnaissance card. Terrain-start destruction and territory checks are still required for two clauses.',
+    notes: 'Scoring text transcribed from GDM 2026 Reconnaissance card. Terrain-start destruction scoring is implemented; the end-battle territory check remains.',
     scoring: [
       {
         id: 'central-objective',
@@ -807,11 +808,11 @@ const RECONNAISSANCE_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         id: 'enemy-started-in-terrain-destroyed',
         timing: 'end-turn',
         rounds: 'any',
-        kind: 'unsupported-event',
+        kind: 'fixed-if',
         condition: 'destroyed-enemy-in-terrain',
         vp: 2,
         sourceText: 'Any battle round, end of your turn: One or more enemy units that started the turn within a terrain area are destroyed. 2VP.',
-        notes: 'Requires storing unit terrain-area occupancy at the start of the turn and destroyed-unit event tracking.',
+        notes: 'Uses start-of-turn terrain-area membership and current-turn destroyed-unit events.',
       },
       {
         id: 'round-2-plus-non-home-objectives',

@@ -587,7 +587,7 @@ Verification:
 
 Next after this task: continue 11th Edition rules work with tests in the extracted modules.
 
-Current progress: destroyed-unit event recording, turn reset/completion lifecycle, start-of-turn objective/unit-position/proximity snapshots, and destroying-unit kill-time proximity now live behind `missionEvents.ts`. Determined Acquisition scores newly controlled non-home objectives; Extract Relic and Secure Asset combine destruction with start proximity; Purge and Secure also recognizes a destroying unit within objective range. Derive terrain occupancy and remaining scoring conditions from these stable facts in focused mission helpers instead of adding them to `simulator.ts`.
+Current progress: destroyed-unit event recording, turn reset/completion lifecycle, start-of-turn objective/unit-position/proximity/terrain snapshots, current table-quarter presence, and destroying-unit kill-time proximity now live in focused mission helpers. Determined Acquisition, Extract Relic, Secure Asset, Purge and Secure, Search and Scour, and Reconnaissance Sweep use these facts for event scoring. Derive remaining scoring conditions from these focused helpers instead of adding them to `simulator.ts`.
 
 ## Army Builder Target
 

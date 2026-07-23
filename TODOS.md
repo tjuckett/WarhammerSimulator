@@ -59,6 +59,8 @@ Use this section as the current high-level pickup order before starting large ne
   - Completed fortieth slice: used the start-of-turn objective snapshot to implement Determined Acquisition scoring for newly controlled non-home objectives.
   - Completed forty-first slice: captured per-unit start-of-turn objective proximity and used it for Extract Relic and Secure Asset destroyed-enemy scoring.
   - Completed forty-second slice: recorded destroying-unit identity and kill-time objective proximity, completing Purge and Secure event scoring.
+  - Completed forty-third slice: captured per-unit start-of-turn terrain-area membership and implemented Search and Scour destruction scoring.
+  - Completed forty-fourth slice: added whole-unit table-quarter presence with centre exclusion and completed Reconnaissance Sweep event scoring.
   - Before closing the refactor pass, audit untouched UI files for repeated hardcoded colors, spacing, labels, and panel styles; adopt shared tokens only where it improves consistency without making the code harder to read.
   - Verify with root `npm run build` and relevant simulator-core tests.
   - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.
@@ -153,7 +155,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
 - [x] Transcribe and add data-driven scoring for the five Reconnaissance 11th primary missions: Gather Intel, Reconnaissance Sweep, Search and Scour, Surveil the Foe, and Triangulation.
 - [x] Transcribe and add data-driven scoring for the five Priority Assets 11th primary missions: Extract Relic, Sabotage, Secure Asset, Vanguard Operation, and Vital Link.
 - [x] Transcribe and add data-driven scoring for the five Disruption 11th primary missions: Death Trap, Delaying Action, Locate and Deny, Outmanoeuvre, and Smoke and Mirrors.
-- [ ] Add state tracking for unsupported mission event clauses: terrain-area occupancy at turn start, table-quarter occupancy, operation markers, objective actions, consecrated/triangulated/surveilled/extracted/sensor sweep/sabotage/secure asset/vanguard/booby trap/decoy markers, territory geometry, expansion objective roles, and condemned enemy units leaving the battlefield. Objective owners, per-unit start proximity, and destroying-unit kill-time proximity are tracked and used by Determined Acquisition, Extract Relic, Secure Asset, and Purge and Secure.
+- [ ] Add state tracking for unsupported mission event clauses: operation markers, objective actions, consecrated/triangulated/surveilled/extracted/sensor sweep/sabotage/secure asset/vanguard/booby trap/decoy markers, territory geometry, expansion objective roles, and condemned enemy units leaving the battlefield. Objective owners, objective proximity, terrain-area membership, table-quarter presence, and destroying-unit kill-time proximity are tracked and used by Determined Acquisition, Extract Relic, Secure Asset, Purge and Secure, Search and Scour, and Reconnaissance Sweep.
 - [x] Find or transcribe source text for all 25 unique 11th primary missions.
 - [ ] Implement exact scoring for all 25 unique 11th primary missions once source text is available. All mission texts are transcribed; event clauses need the state tracking above.
 - [ ] Add tests for every implemented 11th primary mission scoring rule.

@@ -138,6 +138,7 @@ export interface StartOfTurnUnitMissionSnapshot {
   remainingModels: number;
   modelPositions: Position[];
   objectiveIndexesWithinRange?: number[];
+  terrainAreaIds?: string[];
 }
 
 export interface StartOfTurnMissionSnapshot {

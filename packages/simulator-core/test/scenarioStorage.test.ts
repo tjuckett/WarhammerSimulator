@@ -1147,6 +1147,7 @@ test('mission event turn start captures objective owners and stable battlefield 
       remainingModels: 1,
       modelPositions: [{ x: 10, y: 10 }],
       objectiveIndexesWithinRange: [0],
+      terrainAreaIds: [],
     }],
   });
 });
@@ -1317,6 +1318,114 @@ test('11th Purge and Secure does not score a distant kill with no start-of-turn 
 
   assert.equal(result.vpGained, 0);
   assert.deepEqual(result.unsupportedClauses, []);
+});
+
+test('11th Search and Scour scores an enemy destroyed after starting within a terrain area', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Search and Scour', 'Vanguard Operation'],
+  };
+  battle.objectives = [];
+  battle.objectiveOwners = [];
+  battle.terrain = [
+    terrainMat({ id: 'ruin-a', name: 'Ruin A', type: 'ruin', x: 18, y: 8, width: 4, height: 4 }),
+  ];
+  const target = losTestUnit('red-target', 1, { x: 20, y: 10 });
+  battle.units = [target];
+
+  startMissionEventsForNewTurn(battle, rules40K11th);
+  applyDamage(target, 1, battle, 0);
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.vpGained, 2);
+  assert.deepEqual(result.unsupportedClauses, []);
+  assert.deepEqual(battle.missionEvents?.startOfTurn?.units[0].terrainAreaIds, ['ruin-a']);
+  assert.match(formatPrimaryScoringResult(result), /started the turn within a terrain area/);
+});
+
+test('11th Search and Scour does not score an enemy that started outside terrain areas', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Search and Scour', 'Vanguard Operation'],
+  };
+  battle.objectives = [];
+  battle.objectiveOwners = [];
+  battle.terrain = [
+    terrainMat({ id: 'ruin-a', name: 'Ruin A', type: 'ruin', x: 18, y: 8, width: 4, height: 4 }),
+  ];
+  const target = losTestUnit('red-target', 1, { x: 30, y: 10 });
+  battle.units = [target];
+
+  startMissionEventsForNewTurn(battle, rules40K11th);
+  applyDamage(target, 1, battle, 0);
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.vpGained, 0);
+  assert.deepEqual(result.unsupportedClauses, []);
+});
+
+test('11th Reconnaissance Sweep scores three occupied table quarters and excludes centre-near units', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Reconnaissance Sweep', 'Purge and Secure'],
+  };
+  battle.objectives = [];
+  battle.objectiveOwners = [];
+  battle.terrain = [];
+  battle.units = [
+    losTestUnit('top-left', 0, { x: 5, y: 5 }),
+    losTestUnit('top-right', 0, { x: 55, y: 5 }),
+    losTestUnit('bottom-left', 0, { x: 5, y: 39 }),
+    losTestUnit('near-centre', 0, { x: 30, y: 16.5 }),
+  ];
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.vpGained, 3);
+  assert.deepEqual(result.unsupportedClauses, []);
+  assert.match(formatPrimaryScoringResult(result), /three different table quarters/);
+});
+
+test('11th Reconnaissance Sweep uses the non-cumulative four-quarter tier and per-unit kill scoring', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Reconnaissance Sweep', 'Purge and Secure'],
+  };
+  battle.objectives = [];
+  battle.objectiveOwners = [];
+  battle.terrain = [];
+  const targets = [
+    losTestUnit('red-target-a', 1, { x: 25, y: 5 }),
+    losTestUnit('red-target-b', 1, { x: 35, y: 39 }),
+  ];
+  battle.units = [
+    losTestUnit('top-left', 0, { x: 5, y: 5 }),
+    losTestUnit('top-right', 0, { x: 55, y: 5 }),
+    losTestUnit('bottom-left', 0, { x: 5, y: 39 }),
+    losTestUnit('bottom-right', 0, { x: 55, y: 39 }),
+    ...targets,
+  ];
+  applyDamage(targets[0], 1, battle, 0);
+  applyDamage(targets[1], 1, battle, 0);
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.vpGained, 8);
+  assert.deepEqual(result.unsupportedClauses, []);
+  assert.match(formatPrimaryScoringResult(result), /four different table quarters/);
+  assert.match(formatPrimaryScoringResult(result), /2 units x 1VP/);
 });
 
 test('11th destroyed-unit mission events reset at the start of a new player turn', () => {
