@@ -1484,6 +1484,15 @@ export function maintainControlObjectiveOptions(
   return missionObjectiveActionOptions(state, unitId, side, rules, 'Vital Link', 'maintain-control', 'central');
 }
 
+export function secureAssetObjectiveOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): number[] {
+  return missionObjectiveActionOptions(state, unitId, side, rules, 'Secure Asset', 'secure-asset');
+}
+
 export function startPlayUnitAction(
   state: BattleState,
   unitId: string,
@@ -1512,6 +1521,11 @@ export function startPlayUnitAction(
   if (actionId === 'maintain-control'
     && (targetObjectiveIndex === undefined
       || !maintainControlObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
+    return state;
+  }
+  if (actionId === 'secure-asset'
+    && (targetObjectiveIndex === undefined
+      || !secureAssetObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
     return state;
   }
   const next = clone(state);

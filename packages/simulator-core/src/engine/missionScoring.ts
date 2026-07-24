@@ -380,6 +380,8 @@ function conditionMet(
         const objective = state.objectives[marker.objectiveIndex] ?? marker.position;
         return terrainObjectiveRoleForPoint(state, objective) === opponentHomeRole(side);
       });
+    case 'secured-asset':
+      return completedMissionActionCount(state, side, 'secure-asset') > 0;
     case 'controls-central-and-expansion-objectives':
     case 'condemned-enemy-left-battlefield':
     case 'consecrated-objectives':
@@ -390,7 +392,6 @@ function conditionMet(
     case 'sensor-sweep':
     case 'opponent-operation-marker-isolated':
     case 'committed-sabotage':
-    case 'secured-asset':
     case 'vanguard-operation':
     case 'operation-markers-near-controlled-central-objectives':
     case 'booby-trapped-terrain':

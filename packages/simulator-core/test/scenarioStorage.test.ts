@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -1879,6 +1879,46 @@ test('11th Secure Asset scores objective control clauses from mission data', () 
   assert.equal(result.kind, 'scored');
   assert.equal(result.scoringModel, '11e-data:Secure Asset');
   assert.equal(result.vpGained, 8);
+});
+
+test('11th Secure Asset completes on a non-home objective and scores once without placing a marker', () => {
+  const battle = state('fight', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Secure Asset', 'Secure Asset'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }];
+  battle.objectiveOwners = [null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  const unit = losTestUnit('blue-mid', 0, { x: 20, y: 10 });
+  battle.units = [unit];
+
+  assert.deepEqual(secureAssetObjectiveOptions(battle, unit.id, 0, rules40K11th), [1]);
+  assert.equal(
+    startPlayUnitAction(battle, unit.id, 0, 'secure-asset', 'Secure Asset', rules40K11th, 0),
+    battle,
+  );
+  const started = startPlayUnitAction(
+    battle,
+    unit.id,
+    0,
+    'secure-asset',
+    'Secure Asset',
+    rules40K11th,
+    1,
+  );
+  completeEndOfTurnActions(started, 0);
+
+  assert.equal(started.missionEvents?.completedActionsThisTurn?.[0]?.actionId, 'secure-asset');
+  assert.equal(started.missionState?.operationMarkers, undefined);
+  const result = scorePrimaryMission(started, 0, rules40K11th);
+  assert.equal(result.vpGained, 4);
+  assert.deepEqual(result.unsupportedClauses, []);
 });
 
 test('11th Vital Link scores control clauses without unsupported operation-marker clauses', () => {

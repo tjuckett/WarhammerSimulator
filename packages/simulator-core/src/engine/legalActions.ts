@@ -24,6 +24,7 @@ import {
   playUnitCanFallBack,
   playUnitCanPileIn,
   playUnitCanStartAction,
+  secureAssetObjectiveOptions,
   triangulateObjectiveOptions,
 } from './simulator';
 import type { BattleState, BattleUnit } from '../types/battle';
@@ -138,10 +139,12 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
       const triangulateObjectiveIndex = triangulateObjectiveOptions(state, unit.id, side, rules)[0];
       const consecrateObjectiveIndex = consecrateObjectiveOptions(state, unit.id, side, rules)[0];
       const maintainControlObjectiveIndex = maintainControlObjectiveOptions(state, unit.id, side, rules)[0];
+      const secureAssetObjectiveIndex = secureAssetObjectiveOptions(state, unit.id, side, rules)[0];
       const extractsIntelligence = extractObjectiveIndex !== undefined;
       const triangulates = triangulateObjectiveIndex !== undefined;
       const consecrates = consecrateObjectiveIndex !== undefined;
       const maintainsControl = maintainControlObjectiveIndex !== undefined;
+      const securesAsset = secureAssetObjectiveIndex !== undefined;
       const missionAction = extractsIntelligence
         ? { id: 'extract-intelligence', name: 'Extract Intelligence', objectiveIndex: extractObjectiveIndex }
         : triangulates
@@ -150,7 +153,9 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
             ? { id: 'consecrate', name: 'Consecrate', objectiveIndex: consecrateObjectiveIndex }
             : maintainsControl
               ? { id: 'maintain-control', name: 'Maintain Control', objectiveIndex: maintainControlObjectiveIndex }
-              : null;
+              : securesAsset
+                ? { id: 'secure-asset', name: 'Secure Asset', objectiveIndex: secureAssetObjectiveIndex }
+                : null;
       actions.push({
         action: {
           type: 'play.startAction',

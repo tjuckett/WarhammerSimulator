@@ -1102,13 +1102,13 @@ const PRIORITY_ASSETS_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
     edition: '11e',
     status: 'implemented',
     source: `${PRIORITY_ASSETS_SOURCE}/secure-asset`,
-    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Central-objective proximity destruction scoring is implemented; the Secure Asset action remains.',
+    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Secure Asset action completion and central-objective proximity destruction scoring are implemented.',
     scoring: [
       {
         id: 'secured-asset',
         timing: 'end-turn',
         rounds: 'any',
-        kind: 'unsupported-event',
+        kind: 'fixed-if',
         condition: 'secured-asset',
         vp: 4,
         sourceText: 'Any battle round, end of your turn: A friendly unit secured the asset this turn. 4VP.',
