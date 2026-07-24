@@ -5,6 +5,7 @@ import { rules40K10th } from './rulesEngine';
 import { availableStratagems } from './stratagems';
 import { availableUnitAbilities } from './unitAbilities';
 import {
+  consecrateObjectiveOptions,
   extractIntelligenceObjectiveOptions,
   movementStep,
   playChargeTargetOptions,
@@ -134,13 +135,17 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
     if (playUnitCanStartAction(state, unit.id, side, rules)) {
       const extractObjectiveIndex = extractIntelligenceObjectiveOptions(state, unit.id, side, rules)[0];
       const triangulateObjectiveIndex = triangulateObjectiveOptions(state, unit.id, side, rules)[0];
+      const consecrateObjectiveIndex = consecrateObjectiveOptions(state, unit.id, side, rules)[0];
       const extractsIntelligence = extractObjectiveIndex !== undefined;
       const triangulates = triangulateObjectiveIndex !== undefined;
+      const consecrates = consecrateObjectiveIndex !== undefined;
       const missionAction = extractsIntelligence
         ? { id: 'extract-intelligence', name: 'Extract Intelligence', objectiveIndex: extractObjectiveIndex }
         : triangulates
           ? { id: 'triangulate', name: 'Triangulate', objectiveIndex: triangulateObjectiveIndex }
-          : null;
+          : consecrates
+            ? { id: 'consecrate', name: 'Consecrate', objectiveIndex: consecrateObjectiveIndex }
+            : null;
       actions.push({
         action: {
           type: 'play.startAction',

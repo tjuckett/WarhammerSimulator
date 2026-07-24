@@ -1423,6 +1423,7 @@ function missionObjectiveActionOptions(
   rules: RulesEdition,
   missionName: string,
   actionId: string,
+  excludeFriendlyHome = true,
 ): number[] {
   const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
   if (rules.metadata.edition !== '11e' || selectedMissionName !== missionName) return [];
@@ -1439,7 +1440,8 @@ function missionObjectiveActionOptions(
     if (markedObjectives.has(objectiveIndex)) return false;
     const objective = state.objectives[objectiveIndex];
     if (!objective) return false;
-    return !state.terrain.some(terrain => terrain.objectiveRole === homeRole && pointInTerrain(objective, terrain));
+    return !excludeFriendlyHome
+      || !state.terrain.some(terrain => terrain.objectiveRole === homeRole && pointInTerrain(objective, terrain));
   });
 }
 
@@ -1461,6 +1463,15 @@ export function triangulateObjectiveOptions(
   return missionObjectiveActionOptions(state, unitId, side, rules, 'Triangulation', 'triangulate');
 }
 
+export function consecrateObjectiveOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): number[] {
+  return missionObjectiveActionOptions(state, unitId, side, rules, 'Consecrate', 'consecrate', false);
+}
+
 export function startPlayUnitAction(
   state: BattleState,
   unitId: string,
@@ -1479,6 +1490,11 @@ export function startPlayUnitAction(
   if (actionId === 'triangulate'
     && (targetObjectiveIndex === undefined
       || !triangulateObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
+    return state;
+  }
+  if (actionId === 'consecrate'
+    && (targetObjectiveIndex === undefined
+      || !consecrateObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
     return state;
   }
   const next = clone(state);

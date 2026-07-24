@@ -51,7 +51,7 @@ export function recordCompletedMissionAction(
     },
   ];
 
-  if (!['extract-intelligence', 'triangulate'].includes(action.id) || action.targetObjectiveIndex === undefined) return;
+  if (!['extract-intelligence', 'triangulate', 'consecrate'].includes(action.id) || action.targetObjectiveIndex === undefined) return;
   const position = state.objectives[action.targetObjectiveIndex];
   if (!position) return;
 

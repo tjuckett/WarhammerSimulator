@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consolidatePlayUnit, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -1028,6 +1028,82 @@ test('11th Inescapable Dominion scores fixed objective conditions from mission d
   assert.equal(result.scoringModel, '11e-data:Inescapable Dominion');
   assert.equal(result.vpGained, 9);
   assert.deepEqual(battle.scores, [9, 0]);
+});
+
+test('11th Consecrate completes on an objective, places a marker, and scores the first tier', () => {
+  const battle = state('fight', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Consecrate', 'Triangulation'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }];
+  battle.objectiveOwners = [null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  const unit = losTestUnit('blue-home', 0, { x: 10, y: 10 });
+  battle.units = [unit];
+
+  assert.deepEqual(consecrateObjectiveOptions(battle, unit.id, 0, rules40K11th), [0]);
+  const started = startPlayUnitAction(
+    battle,
+    unit.id,
+    0,
+    'consecrate',
+    'Consecrate',
+    rules40K11th,
+    0,
+  );
+  completeEndOfTurnActions(started, 0);
+
+  assert.equal(started.missionState?.operationMarkers?.[0]?.sourceActionId, 'consecrate');
+  assert.deepEqual(consecrateObjectiveOptions(started, unit.id, 0, rules40K11th), []);
+  const result = scorePrimaryMission(started, 0, rules40K11th);
+  assert.equal(result.vpGained, 3);
+  assert.deepEqual(result.unsupportedClauses, []);
+});
+
+test('11th Consecrate marker tiers and enemy-home end-battle bonus score from persistent markers', () => {
+  const battle = state('fight', 3);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Consecrate', 'Triangulation'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }];
+  battle.objectiveOwners = [null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  battle.missionState = {
+    operationMarkers: battle.objectives.map((position, objectiveIndex) => ({
+      id: `consecrate-${objectiveIndex}`,
+      side: 0,
+      sourceActionId: 'consecrate',
+      placedByUnitId: `unit-${objectiveIndex}`,
+      objectiveIndex,
+      position,
+      battleRound: objectiveIndex + 1,
+      turn: objectiveIndex + 1,
+    })),
+  };
+
+  const tierResult = scorePrimaryMission(battle, 0, rules40K11th);
+  assert.equal(tierResult.vpGained, 6);
+  assert.deepEqual(tierResult.unsupportedClauses, []);
+
+  const endBattle: BattleState = JSON.parse(JSON.stringify(battle));
+  endBattle.phase = 'end';
+  endBattle.scores = [0, 0];
+  const finalResult = scorePrimaryMission(endBattle, 0, rules40K11th);
+  assert.equal(finalResult.vpGained, 5);
+  assert.deepEqual(finalResult.unsupportedClauses, []);
 });
 
 test("11th Destroyer's Wrath scores objective control clauses from mission data", () => {

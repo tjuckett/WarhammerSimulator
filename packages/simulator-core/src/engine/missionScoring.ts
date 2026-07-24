@@ -375,10 +375,14 @@ function conditionMet(
         const objective = state.objectives[marker.objectiveIndex] ?? marker.position;
         return terrainObjectiveRoleForPoint(state, objective) === opponentHomeRole(side);
       });
+    case 'enemy-home-objective-consecrated':
+      return operationMarkersForAction(state, side, 'consecrate').some(marker => {
+        const objective = state.objectives[marker.objectiveIndex] ?? marker.position;
+        return terrainObjectiveRoleForPoint(state, objective) === opponentHomeRole(side);
+      });
     case 'controls-central-and-expansion-objectives':
     case 'condemned-enemy-left-battlefield':
     case 'consecrated-objectives':
-    case 'enemy-home-objective-consecrated':
     case 'surveilled-enemy-units':
     case 'no-enemy-operation-markers':
     case 'triangulated-objectives':
@@ -442,9 +446,12 @@ function evaluateMissionClause(
   }
 
   if (clause.kind === 'operation-marker-count-tier') {
-    const count = clause.condition === 'triangulated-objectives'
-      ? operationMarkersForAction(state, side, 'triangulate').length
-      : 0;
+    const actionId = clause.condition === 'triangulated-objectives'
+      ? 'triangulate'
+      : clause.condition === 'consecrated-objectives'
+        ? 'consecrate'
+        : null;
+    const count = actionId ? operationMarkersForAction(state, side, actionId).length : 0;
     const minimum = clause.minimumCount ?? 0;
     const maximum = clause.maximumCount ?? Number.POSITIVE_INFINITY;
     const met = count >= minimum && count <= maximum;
