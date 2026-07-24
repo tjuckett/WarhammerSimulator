@@ -168,10 +168,14 @@ function completedMissionActionCount(state: BattleState, side: Side, actionId: s
   ).length;
 }
 
-function extractIntelligenceMarkers(state: BattleState, side: Side) {
+function operationMarkersForAction(state: BattleState, side: Side, actionId: string) {
   return (state.missionState?.operationMarkers ?? []).filter(marker =>
-    marker.side === side && marker.sourceActionId === 'extract-intelligence',
+    marker.side === side && marker.sourceActionId === actionId,
   );
+}
+
+function extractIntelligenceMarkers(state: BattleState, side: Side) {
+  return operationMarkersForAction(state, side, 'extract-intelligence');
 }
 
 export function tableQuarterPresenceCount(state: BattleState, side: Side): number {
@@ -434,6 +438,19 @@ function evaluateMissionClause(
     return {
       vp,
       detail: `${clause.sourceText} ${count} action${count === 1 ? '' : 's'} x ${clause.vp}VP -> +${vp}VP`,
+    };
+  }
+
+  if (clause.kind === 'operation-marker-count-tier') {
+    const count = clause.condition === 'triangulated-objectives'
+      ? operationMarkersForAction(state, side, 'triangulate').length
+      : 0;
+    const minimum = clause.minimumCount ?? 0;
+    const maximum = clause.maximumCount ?? Number.POSITIVE_INFINITY;
+    const met = count >= minimum && count <= maximum;
+    return {
+      vp: met ? clause.vp : 0,
+      detail: `${clause.sourceText} ${count} marker${count === 1 ? '' : 's'} -> ${met ? `+${clause.vp}VP` : '+0VP'}`,
     };
   }
 

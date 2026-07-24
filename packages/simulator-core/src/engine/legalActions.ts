@@ -22,6 +22,7 @@ import {
   playUnitCanFallBack,
   playUnitCanPileIn,
   playUnitCanStartAction,
+  triangulateObjectiveOptions,
 } from './simulator';
 import type { BattleState, BattleUnit } from '../types/battle';
 import type { AbilityTiming } from '../types/ability';
@@ -132,24 +133,31 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
     }
     if (playUnitCanStartAction(state, unit.id, side, rules)) {
       const extractObjectiveIndex = extractIntelligenceObjectiveOptions(state, unit.id, side, rules)[0];
+      const triangulateObjectiveIndex = triangulateObjectiveOptions(state, unit.id, side, rules)[0];
       const extractsIntelligence = extractObjectiveIndex !== undefined;
+      const triangulates = triangulateObjectiveIndex !== undefined;
+      const missionAction = extractsIntelligence
+        ? { id: 'extract-intelligence', name: 'Extract Intelligence', objectiveIndex: extractObjectiveIndex }
+        : triangulates
+          ? { id: 'triangulate', name: 'Triangulate', objectiveIndex: triangulateObjectiveIndex }
+          : null;
       actions.push({
         action: {
           type: 'play.startAction',
           side,
           unitId: unit.id,
-          ...(extractsIntelligence
+          ...(missionAction
             ? {
-                actionId: 'extract-intelligence',
-                actionName: 'Extract Intelligence',
-                targetObjectiveIndex: extractObjectiveIndex,
+                actionId: missionAction.id,
+                actionName: missionAction.name,
+                targetObjectiveIndex: missionAction.objectiveIndex,
               }
             : {}),
         },
         category: 'action',
         side,
         unitId: unit.id,
-        label: `${unit.profile.name}: Start ${extractsIntelligence ? 'Extract Intelligence' : 'action'}`,
+        label: `${unit.profile.name}: Start ${missionAction?.name ?? 'action'}`,
       });
     }
     const canComplete = unit.movementAction && !unit.movementComplete;

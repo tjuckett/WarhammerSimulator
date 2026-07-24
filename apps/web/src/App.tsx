@@ -24,7 +24,7 @@ import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simu
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
   battleModelIdsWithCoherencyIssues, beginPlayBattle, createDeploymentState, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels,
-  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consolidatePlayUnit, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, undeployPlayUnit, type DeploymentStrategy, type LOSRay,
+  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consolidatePlayUnit, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, triangulateObjectiveOptions, undeployPlayUnit, type DeploymentStrategy, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -709,14 +709,26 @@ export default function App() {
       && playUnitCanStartAction(battleState, selectedTacticsUnit.id, selectedTacticsUnit.side, activeRulesForBattle),
     [battleState, selectedTacticsUnit, activeRulesForBattle],
   );
-  const selectedExtractIntelligenceObjectiveIndex = useMemo(() => {
-    if (!battleState || !selectedTacticsUnit) return undefined;
-    return extractIntelligenceObjectiveOptions(
+  const selectedMissionAction = useMemo(() => {
+    if (!battleState || !selectedTacticsUnit) return null;
+    const extractObjectiveIndex = extractIntelligenceObjectiveOptions(
       battleState,
       selectedTacticsUnit.id,
       selectedTacticsUnit.side,
       activeRulesForBattle,
     )[0];
+    if (extractObjectiveIndex !== undefined) {
+      return { id: 'extract-intelligence', name: 'Extract Intelligence', targetObjectiveIndex: extractObjectiveIndex };
+    }
+    const triangulateObjectiveIndex = triangulateObjectiveOptions(
+      battleState,
+      selectedTacticsUnit.id,
+      selectedTacticsUnit.side,
+      activeRulesForBattle,
+    )[0];
+    return triangulateObjectiveIndex === undefined
+      ? null
+      : { id: 'triangulate', name: 'Triangulate', targetObjectiveIndex: triangulateObjectiveIndex };
   }, [battleState, selectedTacticsUnit, activeRulesForBattle]);
 
   const coverUnitIds = useMemo<Set<string>>(() => {
@@ -1976,9 +1988,8 @@ export default function App() {
   function startSelectedPlayAction() {
     const prev = battleStateRef.current;
     if (!prev || !isPlayMode || !selectedTacticsUnit) return;
-    const isExtractIntelligence = selectedExtractIntelligenceObjectiveIndex !== undefined;
-    const actionId = isExtractIntelligence ? 'extract-intelligence' : 'generic-action';
-    const actionName = isExtractIntelligence ? 'Extract Intelligence' : 'Action';
+    const actionId = selectedMissionAction?.id ?? 'generic-action';
+    const actionName = selectedMissionAction?.name ?? 'Action';
     const next = startPlayUnitAction(
       prev,
       selectedTacticsUnit.id,
@@ -1986,7 +1997,7 @@ export default function App() {
       actionId,
       actionName,
       activeRulesForBattle,
-      selectedExtractIntelligenceObjectiveIndex,
+      selectedMissionAction?.targetObjectiveIndex,
     );
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
@@ -1995,8 +2006,8 @@ export default function App() {
       unitId: selectedTacticsUnit.id,
       actionId,
       actionName,
-      ...(selectedExtractIntelligenceObjectiveIndex !== undefined
-        ? { targetObjectiveIndex: selectedExtractIntelligenceObjectiveIndex }
+      ...(selectedMissionAction
+        ? { targetObjectiveIndex: selectedMissionAction.targetObjectiveIndex }
         : {}),
     });
     setTargetErrorMsg(`${selectedTacticsUnit.profile.name} starts ${actionName}.`);
@@ -2588,7 +2599,7 @@ export default function App() {
                   selectedStratagemId={selectedStratagemId}
                   selectedAbilityKey={selectedAbilityKey}
                   canStartAction={canSelectedUnitStartAction}
-                  actionName={selectedExtractIntelligenceObjectiveIndex !== undefined ? 'Extract Intelligence' : 'Action'}
+                  actionName={selectedMissionAction?.name ?? 'Action'}
                   onStratagemChange={setSelectedStratagemId}
                   onAbilityChange={setSelectedAbilityKey}
                   onUseStratagem={useSelectedPlayStratagem}

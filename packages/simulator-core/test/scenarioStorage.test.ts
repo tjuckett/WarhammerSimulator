@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consolidatePlayUnit, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consolidatePlayUnit, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -1695,6 +1695,86 @@ test('11th Triangulation scores control clauses and records triangulated objecti
   const final = scorePrimaryMission(endBattle, 0, rules40K11th);
 
   assert.equal(final.vpGained, 10);
+});
+
+test('11th Triangulation completes actions on different non-home objectives and scores one marker', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Triangulation', 'Triangulation'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }];
+  battle.objectiveOwners = [null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  const unit = losTestUnit('blue-mid', 0, { x: 20, y: 10 });
+  battle.units = [unit];
+
+  assert.deepEqual(triangulateObjectiveOptions(battle, unit.id, 0, rules40K11th), [1]);
+  assert.equal(
+    startPlayUnitAction(battle, unit.id, 0, 'triangulate', 'Triangulate', rules40K11th, 0),
+    battle,
+  );
+
+  const started = startPlayUnitAction(
+    battle,
+    unit.id,
+    0,
+    'triangulate',
+    'Triangulate',
+    rules40K11th,
+    1,
+  );
+  completeEndOfTurnActions(started, 0);
+
+  assert.equal(started.missionState?.operationMarkers?.[0]?.sourceActionId, 'triangulate');
+  assert.deepEqual(triangulateObjectiveOptions(started, unit.id, 0, rules40K11th), []);
+  const result = scorePrimaryMission(started, 0, rules40K11th);
+  assert.equal(result.vpGained, 3);
+  assert.deepEqual(result.unsupportedClauses, []);
+});
+
+test('11th Triangulation marker scoring uses only the highest matching tier', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Triangulation', 'Triangulation'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }, { x: 40, y: 10 }];
+  battle.objectiveOwners = [null, null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid-a', name: 'Mid A', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'mid-b', name: 'Mid B', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 38, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+
+  const scoreForMarkerCount = (count: number) => {
+    const scoringState: BattleState = JSON.parse(JSON.stringify(battle));
+    scoringState.missionState = {
+      operationMarkers: scoringState.objectives.slice(1, count + 1).map((position, markerIndex) => ({
+        id: `triangulate-${markerIndex + 1}`,
+        side: 0,
+        sourceActionId: 'triangulate',
+        placedByUnitId: `unit-${markerIndex + 1}`,
+        objectiveIndex: markerIndex + 1,
+        position,
+        battleRound: 2,
+        turn: 2,
+      })),
+    };
+    return scorePrimaryMission(scoringState, 0, rules40K11th).vpGained;
+  };
+
+  assert.equal(scoreForMarkerCount(1), 3);
+  assert.equal(scoreForMarkerCount(2), 6);
+  assert.equal(scoreForMarkerCount(3), 10);
 });
 
 test('11th Secure Asset scores objective control clauses from mission data', () => {

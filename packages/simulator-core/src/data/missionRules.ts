@@ -6,6 +6,7 @@ export type MissionScoringClauseKind =
   | 'fixed-if'
   | 'per-completed-action'
   | 'per-destroyed-enemy-unit'
+  | 'operation-marker-count-tier'
   | 'per-objective'
   | 'per-objective-if'
   | 'per-objective-with-bonus'
@@ -64,6 +65,8 @@ export interface MissionScoringClause {
   objectiveFilter?: MissionObjectiveFilter;
   bonusVp?: number;
   bonusCondition?: MissionCondition;
+  minimumCount?: number;
+  maximumCount?: number;
   sourceText: string;
   notes?: string;
 }
@@ -915,7 +918,7 @@ const RECONNAISSANCE_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
     edition: '11e',
     status: 'implemented',
     source: `${RECONNAISSANCE_SOURCE}/triangulation`,
-    notes: 'Scoring text transcribed from GDM 2026 Reconnaissance card. Triangulate action marker tracking is still required for triangulated-objective clauses.',
+    notes: 'Scoring text transcribed from GDM 2026 Reconnaissance card. Triangulate action completion, operation markers, and tiered scoring are implemented.',
     scoring: [
       {
         id: 'round-2-plus-one-non-home-objective',
@@ -939,9 +942,11 @@ const RECONNAISSANCE_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         id: 'one-triangulated-objective',
         timing: 'end-turn',
         rounds: [2, 3, 4, 5],
-        kind: 'unsupported-event',
+        kind: 'operation-marker-count-tier',
         condition: 'triangulated-objectives',
         vp: 3,
+        minimumCount: 1,
+        maximumCount: 1,
         sourceText: 'Second battle round onwards, end of your turn: One objective is triangulated. 3VP.',
         notes: 'Requires resolving the Triangulate objective action and tracking operation markers on non-home objectives.',
       },
@@ -949,9 +954,11 @@ const RECONNAISSANCE_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         id: 'two-triangulated-objectives',
         timing: 'end-turn',
         rounds: [2, 3, 4, 5],
-        kind: 'unsupported-event',
+        kind: 'operation-marker-count-tier',
         condition: 'triangulated-objectives',
         vp: 6,
+        minimumCount: 2,
+        maximumCount: 2,
         sourceText: 'Second battle round onwards, end of your turn: Two objectives are triangulated. 6VP.',
         notes: 'Requires resolving the Triangulate objective action and tracking operation markers on non-home objectives.',
       },
@@ -959,9 +966,10 @@ const RECONNAISSANCE_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         id: 'three-triangulated-objectives',
         timing: 'end-turn',
         rounds: [2, 3, 4, 5],
-        kind: 'unsupported-event',
+        kind: 'operation-marker-count-tier',
         condition: 'triangulated-objectives',
         vp: 10,
+        minimumCount: 3,
         sourceText: 'Second battle round onwards, end of your turn: Three or more objectives are triangulated. 10VP.',
         notes: 'Requires resolving the Triangulate objective action and tracking operation markers on non-home objectives.',
       },

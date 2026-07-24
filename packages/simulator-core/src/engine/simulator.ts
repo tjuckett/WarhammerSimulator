@@ -1416,20 +1416,22 @@ export function playUnitCanStartAction(
   return !!unit && unitIsEligibleToStartAction(unit, state, rules);
 }
 
-export function extractIntelligenceObjectiveOptions(
+function missionObjectiveActionOptions(
   state: BattleState,
   unitId: string,
   side: Side,
   rules: RulesEdition,
+  missionName: string,
+  actionId: string,
 ): number[] {
-  const missionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
-  if (rules.metadata.edition !== '11e' || missionName !== 'Gather Intel') return [];
+  const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+  if (rules.metadata.edition !== '11e' || selectedMissionName !== missionName) return [];
   if (!playUnitCanStartAction(state, unitId, side, rules)) return [];
 
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
   if (!unit) return [];
   const markedObjectives = new Set((state.missionState?.operationMarkers ?? [])
-    .filter(marker => marker.side === side && marker.sourceActionId === 'extract-intelligence')
+    .filter(marker => marker.side === side && marker.sourceActionId === actionId)
     .map(marker => marker.objectiveIndex));
   const homeRole = side === 0 ? 'home-0' : 'home-1';
 
@@ -1439,6 +1441,24 @@ export function extractIntelligenceObjectiveOptions(
     if (!objective) return false;
     return !state.terrain.some(terrain => terrain.objectiveRole === homeRole && pointInTerrain(objective, terrain));
   });
+}
+
+export function extractIntelligenceObjectiveOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): number[] {
+  return missionObjectiveActionOptions(state, unitId, side, rules, 'Gather Intel', 'extract-intelligence');
+}
+
+export function triangulateObjectiveOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): number[] {
+  return missionObjectiveActionOptions(state, unitId, side, rules, 'Triangulation', 'triangulate');
 }
 
 export function startPlayUnitAction(
@@ -1454,6 +1474,11 @@ export function startPlayUnitAction(
   if (actionId === 'extract-intelligence'
     && (targetObjectiveIndex === undefined
       || !extractIntelligenceObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
+    return state;
+  }
+  if (actionId === 'triangulate'
+    && (targetObjectiveIndex === undefined
+      || !triangulateObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
     return state;
   }
   const next = clone(state);
