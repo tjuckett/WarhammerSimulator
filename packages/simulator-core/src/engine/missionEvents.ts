@@ -8,6 +8,7 @@ export function startMissionEventsForNewTurn(state: BattleState, rules: RulesEdi
   state.missionEvents = {
     ...(state.missionEvents ?? {}),
     destroyedUnitsThisTurn: [],
+    completedActionsThisTurn: [],
     startOfTurn: {
       activeSide: state.activeArmy,
       battleRound: battleRound(state),
@@ -26,6 +27,55 @@ export function startMissionEventsForNewTurn(state: BattleState, rules: RulesEdi
         })),
     },
   };
+}
+
+export function recordCompletedMissionAction(
+  state: BattleState,
+  unit: BattleUnit,
+  action: NonNullable<BattleUnit['performingAction']>,
+): void {
+  state.missionEvents = state.missionEvents ?? {};
+  state.missionEvents.completedActionsThisTurn = [
+    ...(state.missionEvents.completedActionsThisTurn ?? []),
+    {
+      actionId: action.id,
+      actionName: action.name,
+      side: unit.side,
+      unitId: unit.id,
+      unitName: unit.profile.name,
+      ...(action.targetObjectiveIndex !== undefined
+        ? { targetObjectiveIndex: action.targetObjectiveIndex }
+        : {}),
+      battleRound: battleRound(state),
+      turn: state.turn,
+    },
+  ];
+
+  if (action.id !== 'extract-intelligence' || action.targetObjectiveIndex === undefined) return;
+  const position = state.objectives[action.targetObjectiveIndex];
+  if (!position) return;
+
+  state.missionState = state.missionState ?? {};
+  const markers = state.missionState.operationMarkers ?? [];
+  if (markers.some(marker =>
+    marker.side === unit.side
+    && marker.sourceActionId === action.id
+    && marker.objectiveIndex === action.targetObjectiveIndex
+  )) return;
+
+  state.missionState.operationMarkers = [
+    ...markers,
+    {
+      id: `operation-marker-${unit.side}-${action.id}-${action.targetObjectiveIndex}`,
+      side: unit.side,
+      sourceActionId: action.id,
+      placedByUnitId: unit.id,
+      objectiveIndex: action.targetObjectiveIndex,
+      position: { ...position },
+      battleRound: battleRound(state),
+      turn: state.turn,
+    },
+  ];
 }
 
 export function completeMissionEventsForCurrentTurn(state: BattleState): void {

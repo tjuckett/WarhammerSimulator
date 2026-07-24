@@ -4,6 +4,7 @@ export type MissionScoringTiming = 'end-command-phase' | 'end-turn' | 'end-battl
 
 export type MissionScoringClauseKind =
   | 'fixed-if'
+  | 'per-completed-action'
   | 'per-destroyed-enemy-unit'
   | 'per-objective'
   | 'per-objective-if'
@@ -670,7 +671,7 @@ const RECONNAISSANCE_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
     edition: '11e',
     status: 'implemented',
     source: `${RECONNAISSANCE_SOURCE}/gather-intel`,
-    notes: 'Scoring text transcribed from GDM 2026 Reconnaissance card. Extract Intelligence action marker tracking is still required for operation-marker clauses.',
+    notes: 'Scoring text transcribed from GDM 2026 Reconnaissance card. Extract Intelligence completion and operation-marker scoring are implemented.',
     scoring: [
       {
         id: 'round-1-central-objective',
@@ -703,7 +704,7 @@ const RECONNAISSANCE_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         id: 'extracted-intelligence',
         timing: 'end-turn',
         rounds: [2, 3, 4, 5],
-        kind: 'unsupported-event',
+        kind: 'per-completed-action',
         condition: 'extracted-intelligence',
         vp: 7,
         sourceText: 'Second battle round onwards, end of your turn: For each friendly unit that extracted intelligence this turn. 7VP.',
@@ -713,7 +714,7 @@ const RECONNAISSANCE_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         id: 'end-battle-three-operation-markers',
         timing: 'end-battle',
         rounds: 'any',
-        kind: 'unsupported-event',
+        kind: 'fixed-if',
         condition: 'three-operation-markers',
         vp: 5,
         sourceText: 'End of battle: Three or more of your operation markers are on the battlefield. 5VP.',
@@ -723,7 +724,7 @@ const RECONNAISSANCE_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         id: 'end-battle-marker-near-opponent-home',
         timing: 'end-battle',
         rounds: 'any',
-        kind: 'unsupported-event',
+        kind: 'fixed-if',
         condition: 'operation-marker-near-opponent-home-objective',
         vp: 5,
         sourceText: "End of battle: One of your operation markers is within range of your opponent's home objective. 5VP.",

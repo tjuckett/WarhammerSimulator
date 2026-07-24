@@ -477,6 +477,7 @@ export function PlayTacticsPanel({
   selectedStratagemId,
   selectedAbilityKey,
   canStartAction,
+  actionName,
   onStratagemChange,
   onAbilityChange,
   onUseStratagem,
@@ -491,6 +492,7 @@ export function PlayTacticsPanel({
   selectedStratagemId: string;
   selectedAbilityKey: string;
   canStartAction: boolean;
+  actionName: string;
   onStratagemChange: (value: string) => void;
   onAbilityChange: (value: string) => void;
   onUseStratagem: (stratagemId: string) => void;
@@ -588,7 +590,7 @@ export function PlayTacticsPanel({
       </Button>
 
       <Button size="small" variant="outlined" disabled={!canStartAction} onClick={onStartAction}>
-        {PLAY_PANEL_LABELS.startAction}
+        {actionName === 'Action' ? PLAY_PANEL_LABELS.startAction : `Start ${actionName}`}
       </Button>
       {selectedUnit?.performingAction && (
         <Typography variant="caption" sx={{ color: uiTokens.color.status.success }}>

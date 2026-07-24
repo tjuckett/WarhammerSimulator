@@ -5,6 +5,7 @@ import { rules40K10th } from './rulesEngine';
 import { availableStratagems } from './stratagems';
 import { availableUnitAbilities } from './unitAbilities';
 import {
+  extractIntelligenceObjectiveOptions,
   movementStep,
   playChargeTargetOptions,
   playDeploymentIssues,
@@ -130,12 +131,25 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
         })));
     }
     if (playUnitCanStartAction(state, unit.id, side, rules)) {
+      const extractObjectiveIndex = extractIntelligenceObjectiveOptions(state, unit.id, side, rules)[0];
+      const extractsIntelligence = extractObjectiveIndex !== undefined;
       actions.push({
-        action: { type: 'play.startAction', side, unitId: unit.id },
+        action: {
+          type: 'play.startAction',
+          side,
+          unitId: unit.id,
+          ...(extractsIntelligence
+            ? {
+                actionId: 'extract-intelligence',
+                actionName: 'Extract Intelligence',
+                targetObjectiveIndex: extractObjectiveIndex,
+              }
+            : {}),
+        },
         category: 'action',
         side,
         unitId: unit.id,
-        label: `${unit.profile.name}: Start action`,
+        label: `${unit.profile.name}: Start ${extractsIntelligence ? 'Extract Intelligence' : 'action'}`,
       });
     }
     const canComplete = unit.movementAction && !unit.movementComplete;

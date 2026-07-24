@@ -77,6 +77,7 @@ export interface BattleUnit {
     name: string;
     startedPhase: Phase;
     completesAt: 'end-of-turn';
+    targetObjectiveIndex?: number;
   };
   actionStartedThisTurn?: boolean;
   fellBack?: boolean;
@@ -149,10 +150,37 @@ export interface StartOfTurnMissionSnapshot {
   units: StartOfTurnUnitMissionSnapshot[];
 }
 
+export interface CompletedMissionActionEvent {
+  actionId: string;
+  actionName: string;
+  side: Side;
+  unitId: string;
+  unitName: string;
+  targetObjectiveIndex?: number;
+  battleRound: number;
+  turn: number;
+}
+
+export interface OperationMarker {
+  id: string;
+  side: Side;
+  sourceActionId: string;
+  placedByUnitId: string;
+  objectiveIndex: number;
+  position: Position;
+  battleRound: number;
+  turn: number;
+}
+
 export interface MissionEvents {
   destroyedUnitsThisTurn?: DestroyedUnitMissionEvent[];
+  completedActionsThisTurn?: CompletedMissionActionEvent[];
   lastCompletedTurn?: CompletedTurnMissionEventSummary;
   startOfTurn?: StartOfTurnMissionSnapshot;
+}
+
+export interface MissionState {
+  operationMarkers?: OperationMarker[];
 }
 
 export interface Terrain {
@@ -247,6 +275,7 @@ export interface BattleState {
   };
   abilityUses?: UnitAbilityUse[];
   missionEvents?: MissionEvents;
+  missionState?: MissionState;
   // Deployment phase: units not yet placed on the board
   unplacedUnits: [UnitProfile[], UnitProfile[]];
   deployStrategies: [string, string]; // DeploymentStrategy labels for record-keeping

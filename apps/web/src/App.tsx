@@ -24,7 +24,7 @@ import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simu
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
   battleModelIdsWithCoherencyIssues, beginPlayBattle, createDeploymentState, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels,
-  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consolidatePlayUnit, fightPlayUnitWeapon, lockPlayUnitShooting, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, undeployPlayUnit, type DeploymentStrategy, type LOSRay,
+  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consolidatePlayUnit, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, undeployPlayUnit, type DeploymentStrategy, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -709,6 +709,15 @@ export default function App() {
       && playUnitCanStartAction(battleState, selectedTacticsUnit.id, selectedTacticsUnit.side, activeRulesForBattle),
     [battleState, selectedTacticsUnit, activeRulesForBattle],
   );
+  const selectedExtractIntelligenceObjectiveIndex = useMemo(() => {
+    if (!battleState || !selectedTacticsUnit) return undefined;
+    return extractIntelligenceObjectiveOptions(
+      battleState,
+      selectedTacticsUnit.id,
+      selectedTacticsUnit.side,
+      activeRulesForBattle,
+    )[0];
+  }, [battleState, selectedTacticsUnit, activeRulesForBattle]);
 
   const coverUnitIds = useMemo<Set<string>>(() => {
     if (!battleState || !selectedShootingUnit || battleState.phase !== 'shooting') return new Set();
@@ -1967,16 +1976,30 @@ export default function App() {
   function startSelectedPlayAction() {
     const prev = battleStateRef.current;
     if (!prev || !isPlayMode || !selectedTacticsUnit) return;
-    const next = startPlayUnitAction(prev, selectedTacticsUnit.id, selectedTacticsUnit.side, 'generic-action', 'Action', activeRulesForBattle);
+    const isExtractIntelligence = selectedExtractIntelligenceObjectiveIndex !== undefined;
+    const actionId = isExtractIntelligence ? 'extract-intelligence' : 'generic-action';
+    const actionName = isExtractIntelligence ? 'Extract Intelligence' : 'Action';
+    const next = startPlayUnitAction(
+      prev,
+      selectedTacticsUnit.id,
+      selectedTacticsUnit.side,
+      actionId,
+      actionName,
+      activeRulesForBattle,
+      selectedExtractIntelligenceObjectiveIndex,
+    );
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
       type: GAME_ACTION_TYPE.StartAction,
       side: selectedTacticsUnit.side,
       unitId: selectedTacticsUnit.id,
-      actionId: 'generic-action',
-      actionName: 'Action',
+      actionId,
+      actionName,
+      ...(selectedExtractIntelligenceObjectiveIndex !== undefined
+        ? { targetObjectiveIndex: selectedExtractIntelligenceObjectiveIndex }
+        : {}),
     });
-    setTargetErrorMsg(`${selectedTacticsUnit.profile.name} starts an action.`);
+    setTargetErrorMsg(`${selectedTacticsUnit.profile.name} starts ${actionName}.`);
     commitBattleState(next);
   }
 
@@ -2565,6 +2588,7 @@ export default function App() {
                   selectedStratagemId={selectedStratagemId}
                   selectedAbilityKey={selectedAbilityKey}
                   canStartAction={canSelectedUnitStartAction}
+                  actionName={selectedExtractIntelligenceObjectiveIndex !== undefined ? 'Extract Intelligence' : 'Action'}
                   onStratagemChange={setSelectedStratagemId}
                   onAbilityChange={setSelectedAbilityKey}
                   onUseStratagem={useSelectedPlayStratagem}

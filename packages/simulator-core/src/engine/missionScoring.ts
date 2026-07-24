@@ -162,6 +162,18 @@ function destroyedEnemyUnitsThisTurn(state: BattleState, side: Side): number {
   ).length;
 }
 
+function completedMissionActionCount(state: BattleState, side: Side, actionId: string): number {
+  return (state.missionEvents?.completedActionsThisTurn ?? []).filter(event =>
+    event.side === side && event.actionId === actionId,
+  ).length;
+}
+
+function extractIntelligenceMarkers(state: BattleState, side: Side) {
+  return (state.missionState?.operationMarkers ?? []).filter(marker =>
+    marker.side === side && marker.sourceActionId === 'extract-intelligence',
+  );
+}
+
 export function tableQuarterPresenceCount(state: BattleState, side: Side): number {
   const board = boardFormatForState(state);
   const centre = { x: board.width / 2, y: board.height / 2 };
@@ -350,13 +362,19 @@ function conditionMet(
       return tableQuarterPresenceCount(state, side) === 3;
     case 'friendly-units-in-four-table-quarters':
       return tableQuarterPresenceCount(state, side) >= 4;
+    case 'extracted-intelligence':
+      return completedMissionActionCount(state, side, 'extract-intelligence') > 0;
+    case 'three-operation-markers':
+      return extractIntelligenceMarkers(state, side).length >= 3;
+    case 'operation-marker-near-opponent-home-objective':
+      return extractIntelligenceMarkers(state, side).some(marker => {
+        const objective = state.objectives[marker.objectiveIndex] ?? marker.position;
+        return terrainObjectiveRoleForPoint(state, objective) === opponentHomeRole(side);
+      });
     case 'controls-central-and-expansion-objectives':
     case 'condemned-enemy-left-battlefield':
     case 'consecrated-objectives':
     case 'enemy-home-objective-consecrated':
-    case 'extracted-intelligence':
-    case 'three-operation-markers':
-    case 'operation-marker-near-opponent-home-objective':
     case 'surveilled-enemy-units':
     case 'no-enemy-operation-markers':
     case 'triangulated-objectives':
@@ -405,6 +423,17 @@ function evaluateMissionClause(
     return {
       vp,
       detail: `${clause.sourceText} ${matched.length} objective${matched.length === 1 ? '' : 's'} x ${clause.vp}VP -> +${vp}VP`,
+    };
+  }
+
+  if (clause.kind === 'per-completed-action') {
+    const count = clause.condition === 'extracted-intelligence'
+      ? completedMissionActionCount(state, side, 'extract-intelligence')
+      : 0;
+    const vp = count * clause.vp;
+    return {
+      vp,
+      detail: `${clause.sourceText} ${count} action${count === 1 ? '' : 's'} x ${clause.vp}VP -> +${vp}VP`,
     };
   }
 

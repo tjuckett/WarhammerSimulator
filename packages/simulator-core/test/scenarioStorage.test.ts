@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completePlayUnitMovement, consolidatePlayUnit, disembarkPlayUnit, embarkPlayUnit, fallBackPlayUnit, fightPlayUnitWeapon, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consolidatePlayUnit, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -1551,7 +1551,7 @@ test('11th Meatgrinder scores kill clauses and opponent home control', () => {
   assert.doesNotMatch(formatPrimaryScoringResult(result), /Unsupported clauses:/);
 });
 
-test('11th Gather Intel scores objective control and records action marker clauses', () => {
+test('11th Gather Intel scores objective control without unsupported marker clauses', () => {
   const battle = state('fight', 1);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.objectiveControl = rules40K11th.objectiveControl;
@@ -1577,8 +1577,89 @@ test('11th Gather Intel scores objective control and records action marker claus
   const endTurn = scorePrimaryMission(roundTwo, 0, rules40K11th);
 
   assert.equal(endTurn.vpGained, 0);
-  assert.equal(endTurn.unsupportedClauses?.length, 1);
-  assert.match(formatPrimaryScoringResult(endTurn), /Extract Intelligence/);
+  assert.deepEqual(endTurn.unsupportedClauses, []);
+  assert.match(formatPrimaryScoringResult(endTurn), /extracted intelligence/i);
+});
+
+test('11th Gather Intel completes Extract Intelligence, places a persistent marker, and scores the action', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Gather Intel', 'Gather Intel'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }];
+  battle.objectiveOwners = [null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  const unit = losTestUnit('blue-mid', 0, { x: 20, y: 10 });
+  battle.units = [unit];
+
+  assert.deepEqual(extractIntelligenceObjectiveOptions(battle, unit.id, 0, rules40K11th), [1]);
+  const started = startPlayUnitAction(
+    battle,
+    unit.id,
+    0,
+    'extract-intelligence',
+    'Extract Intelligence',
+    rules40K11th,
+    1,
+  );
+  completeEndOfTurnActions(started, 0);
+
+  assert.equal(started.missionEvents?.completedActionsThisTurn?.[0]?.actionId, 'extract-intelligence');
+  assert.deepEqual(started.missionState?.operationMarkers?.[0], {
+    id: 'operation-marker-0-extract-intelligence-1',
+    side: 0,
+    sourceActionId: 'extract-intelligence',
+    placedByUnitId: unit.id,
+    objectiveIndex: 1,
+    position: { x: 20, y: 10 },
+    battleRound: 2,
+    turn: 2,
+  });
+  assert.deepEqual(extractIntelligenceObjectiveOptions(started, unit.id, 0, rules40K11th), []);
+
+  const result = scorePrimaryMission(started, 0, rules40K11th);
+  assert.equal(result.vpGained, 7);
+  assert.deepEqual(result.unsupportedClauses, []);
+  assert.match(formatPrimaryScoringResult(result), /1 action x 7VP/);
+});
+
+test('11th Gather Intel end-of-battle scoring uses operation marker count and opponent home placement', () => {
+  const battle = state('end', 5);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Gather Intel', 'Gather Intel'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }];
+  battle.objectiveOwners = [null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  battle.missionState = {
+    operationMarkers: battle.objectives.map((position, objectiveIndex) => ({
+      id: `marker-${objectiveIndex}`,
+      side: 0,
+      sourceActionId: 'extract-intelligence',
+      placedByUnitId: `unit-${objectiveIndex}`,
+      objectiveIndex,
+      position,
+      battleRound: objectiveIndex + 1,
+      turn: objectiveIndex + 1,
+    })),
+  };
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+  assert.equal(result.vpGained, 10);
+  assert.deepEqual(result.unsupportedClauses, []);
 });
 
 test('11th Triangulation scores control clauses and records triangulated objective clauses', () => {

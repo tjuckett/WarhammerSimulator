@@ -12,6 +12,7 @@ import { formatPrimaryScoringResult, objectiveIndexesWithinRange, scorePrimaryMi
 import { battleRound, logWithBattleRound, maxBattleRounds, setBattleRound } from './battleRound';
 import {
   completeMissionEventsForCurrentTurn,
+  recordCompletedMissionAction,
   recordDestroyedUnitMissionEvent,
   startMissionEventsForNewTurn,
 } from './missionEvents';
@@ -1415,6 +1416,31 @@ export function playUnitCanStartAction(
   return !!unit && unitIsEligibleToStartAction(unit, state, rules);
 }
 
+export function extractIntelligenceObjectiveOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): number[] {
+  const missionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+  if (rules.metadata.edition !== '11e' || missionName !== 'Gather Intel') return [];
+  if (!playUnitCanStartAction(state, unitId, side, rules)) return [];
+
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  if (!unit) return [];
+  const markedObjectives = new Set((state.missionState?.operationMarkers ?? [])
+    .filter(marker => marker.side === side && marker.sourceActionId === 'extract-intelligence')
+    .map(marker => marker.objectiveIndex));
+  const homeRole = side === 0 ? 'home-0' : 'home-1';
+
+  return objectiveIndexesWithinRange(state, unit, rules).filter(objectiveIndex => {
+    if (markedObjectives.has(objectiveIndex)) return false;
+    const objective = state.objectives[objectiveIndex];
+    if (!objective) return false;
+    return !state.terrain.some(terrain => terrain.objectiveRole === homeRole && pointInTerrain(objective, terrain));
+  });
+}
+
 export function startPlayUnitAction(
   state: BattleState,
   unitId: string,
@@ -1422,8 +1448,14 @@ export function startPlayUnitAction(
   actionId = 'generic-action',
   actionName = 'Action',
   rules: RulesEdition = rules40K10th,
+  targetObjectiveIndex?: number,
 ): BattleState {
   if (!playUnitCanStartAction(state, unitId, side, rules)) return state;
+  if (actionId === 'extract-intelligence'
+    && (targetObjectiveIndex === undefined
+      || !extractIntelligenceObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
+    return state;
+  }
   const next = clone(state);
   const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
   unit.performingAction = {
@@ -1431,6 +1463,7 @@ export function startPlayUnitAction(
     name: actionName,
     startedPhase: next.phase,
     completesAt: 'end-of-turn',
+    ...(targetObjectiveIndex !== undefined ? { targetObjectiveIndex } : {}),
   };
   unit.actionStartedThisTurn = true;
   next.log = [...next.log, log(next, side, unit.profile.name, `${unit.profile.name} starts ${actionName}.`, 'info')];
@@ -1440,7 +1473,9 @@ export function startPlayUnitAction(
 export function completeEndOfTurnActions(state: BattleState, side: Side): void {
   for (const unit of state.units) {
     if (unit.side !== side || unit.destroyed || !unit.performingAction) continue;
-    const actionName = unit.performingAction.name;
+    const action = unit.performingAction;
+    const actionName = action.name;
+    recordCompletedMissionAction(state, unit, action);
     unit.performingAction = undefined;
     state.log = [...state.log, log(state, side, unit.profile.name, `${unit.profile.name} completes ${actionName}.`, 'info')];
   }
