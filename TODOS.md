@@ -162,6 +162,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - [x] Reused the mission-operation framework for Vital Link: eligible units can Maintain Control on different central objectives, manual play and legal actions expose the mission action, and markers add VP only while their central objective is controlled.
   - [x] Reused the mission-operation framework for Secure Asset: eligible units can secure a non-home objective, manual play and legal actions expose the mission action, and completed actions award the fixed end-turn VP without placing persistent markers.
   - [x] Reused the mission-operation framework for Smoke and Mirrors: eligible units can turn different non-home objectives into decoys, manual play and legal actions expose the mission action, persistent decoys score each turn, and four decoys award the end-battle bonus.
+  - [x] Reused the mission-operation framework for Sabotage: eligible units can sabotage different non-home objectives, concurrent actions reserve their targets, manual play and legal actions expose the mission action, and completed actions score with an opponent-home approximation for the territory bonus.
 - [x] Find or transcribe source text for all 25 unique 11th primary missions.
 - [ ] Implement exact scoring for all 25 unique 11th primary missions once source text is available. All mission texts are transcribed; event clauses need the state tracking above.
 - [ ] Add tests for every implemented 11th primary mission scoring rule.

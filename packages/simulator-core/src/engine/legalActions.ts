@@ -25,6 +25,7 @@ import {
   playUnitCanFallBack,
   playUnitCanPileIn,
   playUnitCanStartAction,
+  sabotageObjectiveOptions,
   secureAssetObjectiveOptions,
   triangulateObjectiveOptions,
 } from './simulator';
@@ -142,12 +143,14 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
       const maintainControlObjectiveIndex = maintainControlObjectiveOptions(state, unit.id, side, rules)[0];
       const secureAssetObjectiveIndex = secureAssetObjectiveOptions(state, unit.id, side, rules)[0];
       const decoyObjectiveIndex = decoyObjectiveOptions(state, unit.id, side, rules)[0];
+      const sabotageObjectiveIndex = sabotageObjectiveOptions(state, unit.id, side, rules)[0];
       const extractsIntelligence = extractObjectiveIndex !== undefined;
       const triangulates = triangulateObjectiveIndex !== undefined;
       const consecrates = consecrateObjectiveIndex !== undefined;
       const maintainsControl = maintainControlObjectiveIndex !== undefined;
       const securesAsset = secureAssetObjectiveIndex !== undefined;
       const createsDecoy = decoyObjectiveIndex !== undefined;
+      const commitsSabotage = sabotageObjectiveIndex !== undefined;
       const missionAction = extractsIntelligence
         ? { id: 'extract-intelligence', name: 'Extract Intelligence', objectiveIndex: extractObjectiveIndex }
         : triangulates
@@ -160,7 +163,9 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
                 ? { id: 'secure-asset', name: 'Secure Asset', objectiveIndex: secureAssetObjectiveIndex }
                 : createsDecoy
                   ? { id: 'decoy', name: 'Decoy', objectiveIndex: decoyObjectiveIndex }
-                  : null;
+                  : commitsSabotage
+                    ? { id: 'sabotage', name: 'Sabotage', objectiveIndex: sabotageObjectiveIndex }
+                    : null;
       actions.push({
         action: {
           type: 'play.startAction',

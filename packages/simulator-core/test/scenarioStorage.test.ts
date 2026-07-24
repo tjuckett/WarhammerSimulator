@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -1919,6 +1919,39 @@ test('11th Secure Asset completes on a non-home objective and scores once withou
   const result = scorePrimaryMission(started, 0, rules40K11th);
   assert.equal(result.vpGained, 4);
   assert.deepEqual(result.unsupportedClauses, []);
+});
+
+test('11th Sabotage completes on different non-home objectives and scores the opponent-home bonus', () => {
+  const battle = state('fight', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Sabotage', 'Sabotage'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }];
+  battle.objectiveOwners = [null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  const midUnit = losTestUnit('blue-mid', 0, { x: 20, y: 10 });
+  const forwardUnit = losTestUnit('blue-forward', 0, { x: 30, y: 10 });
+  battle.units = [midUnit, forwardUnit];
+
+  assert.deepEqual(sabotageObjectiveOptions(battle, midUnit.id, 0, rules40K11th), [1]);
+  const firstStarted = startPlayUnitAction(battle, midUnit.id, 0, 'sabotage', 'Sabotage', rules40K11th, 1);
+  assert.deepEqual(sabotageObjectiveOptions(firstStarted, forwardUnit.id, 0, rules40K11th), [2]);
+  const bothStarted = startPlayUnitAction(firstStarted, forwardUnit.id, 0, 'sabotage', 'Sabotage', rules40K11th, 2);
+  completeEndOfTurnActions(bothStarted, 0);
+
+  assert.equal(bothStarted.missionEvents?.completedActionsThisTurn?.length, 2);
+  assert.equal(bothStarted.missionState?.operationMarkers?.length, 2);
+  const result = scorePrimaryMission(bothStarted, 0, rules40K11th);
+  assert.equal(result.vpGained, 8);
+  assert.deepEqual(result.unsupportedClauses, []);
+  assert.match(formatPrimaryScoringResult(result), /territory bonus 1 x 2VP/);
 });
 
 test('11th Vital Link scores control clauses without unsupported operation-marker clauses', () => {

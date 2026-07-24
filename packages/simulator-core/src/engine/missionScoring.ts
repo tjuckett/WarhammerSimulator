@@ -168,6 +168,12 @@ function completedMissionActionCount(state: BattleState, side: Side, actionId: s
   ).length;
 }
 
+function completedMissionActions(state: BattleState, side: Side, actionId: string) {
+  return (state.missionEvents?.completedActionsThisTurn ?? []).filter(event =>
+    event.side === side && event.actionId === actionId,
+  );
+}
+
 function operationMarkersForAction(state: BattleState, side: Side, actionId: string) {
   return (state.missionState?.operationMarkers ?? []).filter(marker =>
     marker.side === side && marker.sourceActionId === actionId,
@@ -438,13 +444,25 @@ function evaluateMissionClause(
   }
 
   if (clause.kind === 'per-completed-action') {
-    const count = clause.condition === 'extracted-intelligence'
-      ? completedMissionActionCount(state, side, 'extract-intelligence')
+    const actionId = clause.condition === 'extracted-intelligence'
+      ? 'extract-intelligence'
+      : clause.condition === 'committed-sabotage'
+        ? 'sabotage'
+        : null;
+    const actions = actionId ? completedMissionActions(state, side, actionId) : [];
+    const count = actions.length;
+    const bonusCount = clause.condition === 'committed-sabotage' && clause.bonusVp
+      ? actions.filter(action => {
+          if (action.targetObjectiveIndex === undefined) return false;
+          const objective = state.objectives[action.targetObjectiveIndex];
+          return !!objective && terrainObjectiveRoleForPoint(state, objective) === opponentHomeRole(side);
+        }).length
       : 0;
-    const vp = count * clause.vp;
+    const bonusVp = bonusCount * (clause.bonusVp ?? 0);
+    const vp = count * clause.vp + bonusVp;
     return {
       vp,
-      detail: `${clause.sourceText} ${count} action${count === 1 ? '' : 's'} x ${clause.vp}VP -> +${vp}VP`,
+      detail: `${clause.sourceText} ${count} action${count === 1 ? '' : 's'} x ${clause.vp}VP${clause.bonusVp ? `; territory bonus ${bonusCount} x ${clause.bonusVp}VP` : ''} -> +${vp}VP`,
     };
   }
 

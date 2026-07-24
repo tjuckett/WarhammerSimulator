@@ -1065,17 +1065,19 @@ const PRIORITY_ASSETS_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
     edition: '11e',
     status: 'implemented',
     source: `${PRIORITY_ASSETS_SOURCE}/sabotage`,
-    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Sabotage action and opponent-territory geometry are still required for action clauses.',
+    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Sabotage action completion is implemented; the opponent-territory bonus uses the opponent home objective role until territory geometry is modeled.',
     scoring: [
       {
         id: 'committed-sabotage',
         timing: 'end-turn',
         rounds: 'any',
-        kind: 'unsupported-event',
+        kind: 'per-completed-action',
         condition: 'committed-sabotage',
         vp: 3,
+        bonusVp: 2,
+        bonusCondition: 'controls-opponent-home-objective',
         sourceText: 'Any battle round, end of your turn: For each friendly unit that committed sabotage this turn. 3VP, with a cumulative +2VP for each of those units within range of one or more objectives in your opponent\'s territory.',
-        notes: 'Requires resolving the Sabotage objective action on different non-home objectives and checking opponent territory.',
+        notes: 'Completed Sabotage actions score 3VP each; targeting the opponent home objective approximates the opponent-territory bonus.',
       },
       {
         id: 'round-2-plus-one-non-home-objective',

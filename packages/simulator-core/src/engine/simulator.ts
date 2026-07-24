@@ -1431,9 +1431,16 @@ function missionObjectiveActionOptions(
 
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
   if (!unit) return [];
-  const markedObjectives = new Set((state.missionState?.operationMarkers ?? [])
-    .filter(marker => marker.side === side && marker.sourceActionId === actionId)
-    .map(marker => marker.objectiveIndex));
+  const markedObjectives = new Set([
+    ...(state.missionState?.operationMarkers ?? [])
+      .filter(marker => marker.side === side && marker.sourceActionId === actionId)
+      .map(marker => marker.objectiveIndex),
+    ...state.units
+      .filter(candidate => candidate.side === side && candidate.performingAction?.id === actionId)
+      .flatMap(candidate => candidate.performingAction?.targetObjectiveIndex === undefined
+        ? []
+        : [candidate.performingAction.targetObjectiveIndex]),
+  ]);
   const homeRole = side === 0 ? 'home-0' : 'home-1';
   const opponentHomeRole = side === 0 ? 'home-1' : 'home-0';
 
@@ -1502,6 +1509,15 @@ export function decoyObjectiveOptions(
   return missionObjectiveActionOptions(state, unitId, side, rules, 'Smoke and Mirrors', 'decoy');
 }
 
+export function sabotageObjectiveOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): number[] {
+  return missionObjectiveActionOptions(state, unitId, side, rules, 'Sabotage', 'sabotage');
+}
+
 export function startPlayUnitAction(
   state: BattleState,
   unitId: string,
@@ -1540,6 +1556,11 @@ export function startPlayUnitAction(
   if (actionId === 'decoy'
     && (targetObjectiveIndex === undefined
       || !decoyObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
+    return state;
+  }
+  if (actionId === 'sabotage'
+    && (targetObjectiveIndex === undefined
+      || !sabotageObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
     return state;
   }
   const next = clone(state);
