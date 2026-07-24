@@ -6,6 +6,7 @@ export type MissionScoringClauseKind =
   | 'fixed-if'
   | 'per-completed-action'
   | 'per-destroyed-enemy-unit'
+  | 'per-operation-marker'
   | 'operation-marker-count-tier'
   | 'per-objective'
   | 'per-objective-if'
@@ -1221,7 +1222,7 @@ const PRIORITY_ASSETS_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
     edition: '11e',
     status: 'implemented',
     source: `${PRIORITY_ASSETS_SOURCE}/vital-link`,
-    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Maintain Control operation marker tracking is still required for one clause.',
+    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Maintain Control action completion, operation markers, and controlled-central-objective bonus scoring are implemented.',
     scoring: [
       {
         id: 'central-objective',
@@ -1236,7 +1237,7 @@ const PRIORITY_ASSETS_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         id: 'operation-markers-near-controlled-central-objectives',
         timing: 'end-turn',
         rounds: 'any',
-        kind: 'unsupported-event',
+        kind: 'per-operation-marker',
         condition: 'operation-markers-near-controlled-central-objectives',
         vp: 1,
         sourceText: 'Any battle round, end of your turn: For each of your operation markers within range of one of those central objectives. +1VP.',

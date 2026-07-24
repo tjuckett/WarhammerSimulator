@@ -159,6 +159,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - [x] Implemented the first mission-operation vertical slice: Gather Intel units can complete Extract Intelligence on different non-home objectives, completed actions place persistent operation markers, manual play and legal-action generation use the mission action, and end-turn/end-battle clauses score from that state.
   - [x] Reused the mission-operation framework for Triangulation: eligible units can Triangulate different non-home objectives, manual play and legal actions expose the mission action, and one/two/three-plus marker tiers score non-cumulatively.
   - [x] Reused the mission-operation framework for Consecrate: eligible units can consecrate objectives once, manual play and legal actions expose the mission action, one-to-two/three-plus marker tiers score correctly, and consecrating the enemy home objective awards its end-battle bonus.
+  - [x] Reused the mission-operation framework for Vital Link: eligible units can Maintain Control on different central objectives, manual play and legal actions expose the mission action, and markers add VP only while their central objective is controlled.
 - [x] Find or transcribe source text for all 25 unique 11th primary missions.
 - [ ] Implement exact scoring for all 25 unique 11th primary missions once source text is available. All mission texts are transcribed; event clauses need the state tracking above.
 - [ ] Add tests for every implemented 11th primary mission scoring rule.

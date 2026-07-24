@@ -7,6 +7,7 @@ import { availableUnitAbilities } from './unitAbilities';
 import {
   consecrateObjectiveOptions,
   extractIntelligenceObjectiveOptions,
+  maintainControlObjectiveOptions,
   movementStep,
   playChargeTargetOptions,
   playDeploymentIssues,
@@ -136,16 +137,20 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
       const extractObjectiveIndex = extractIntelligenceObjectiveOptions(state, unit.id, side, rules)[0];
       const triangulateObjectiveIndex = triangulateObjectiveOptions(state, unit.id, side, rules)[0];
       const consecrateObjectiveIndex = consecrateObjectiveOptions(state, unit.id, side, rules)[0];
+      const maintainControlObjectiveIndex = maintainControlObjectiveOptions(state, unit.id, side, rules)[0];
       const extractsIntelligence = extractObjectiveIndex !== undefined;
       const triangulates = triangulateObjectiveIndex !== undefined;
       const consecrates = consecrateObjectiveIndex !== undefined;
+      const maintainsControl = maintainControlObjectiveIndex !== undefined;
       const missionAction = extractsIntelligence
         ? { id: 'extract-intelligence', name: 'Extract Intelligence', objectiveIndex: extractObjectiveIndex }
         : triangulates
           ? { id: 'triangulate', name: 'Triangulate', objectiveIndex: triangulateObjectiveIndex }
           : consecrates
             ? { id: 'consecrate', name: 'Consecrate', objectiveIndex: consecrateObjectiveIndex }
-            : null;
+            : maintainsControl
+              ? { id: 'maintain-control', name: 'Maintain Control', objectiveIndex: maintainControlObjectiveIndex }
+              : null;
       actions.push({
         action: {
           type: 'play.startAction',

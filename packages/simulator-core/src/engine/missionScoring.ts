@@ -445,6 +445,24 @@ function evaluateMissionClause(
     };
   }
 
+  if (clause.kind === 'per-operation-marker') {
+    const controlledCentralObjectiveIndexes = new Set(
+      controlledObjectives(state, objectives, side)
+        .filter(objective => objectiveMatchesFilter(state, objective, side, 'central'))
+        .map(objective => objective.objectiveIndex),
+    );
+    const count = clause.condition === 'operation-markers-near-controlled-central-objectives'
+      ? operationMarkersForAction(state, side, 'maintain-control')
+          .filter(marker => controlledCentralObjectiveIndexes.has(marker.objectiveIndex))
+          .length
+      : 0;
+    const vp = count * clause.vp;
+    return {
+      vp,
+      detail: `${clause.sourceText} ${count} marker${count === 1 ? '' : 's'} x ${clause.vp}VP -> +${vp}VP`,
+    };
+  }
+
   if (clause.kind === 'operation-marker-count-tier') {
     const actionId = clause.condition === 'triangulated-objectives'
       ? 'triangulate'

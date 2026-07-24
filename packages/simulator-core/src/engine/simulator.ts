@@ -1423,7 +1423,7 @@ function missionObjectiveActionOptions(
   rules: RulesEdition,
   missionName: string,
   actionId: string,
-  excludeFriendlyHome = true,
+  objectiveFilter: 'any' | 'non-home' | 'central' = 'non-home',
 ): number[] {
   const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
   if (rules.metadata.edition !== '11e' || selectedMissionName !== missionName) return [];
@@ -1435,13 +1435,16 @@ function missionObjectiveActionOptions(
     .filter(marker => marker.side === side && marker.sourceActionId === actionId)
     .map(marker => marker.objectiveIndex));
   const homeRole = side === 0 ? 'home-0' : 'home-1';
+  const opponentHomeRole = side === 0 ? 'home-1' : 'home-0';
 
   return objectiveIndexesWithinRange(state, unit, rules).filter(objectiveIndex => {
     if (markedObjectives.has(objectiveIndex)) return false;
     const objective = state.objectives[objectiveIndex];
     if (!objective) return false;
-    return !excludeFriendlyHome
-      || !state.terrain.some(terrain => terrain.objectiveRole === homeRole && pointInTerrain(objective, terrain));
+    const objectiveRole = state.terrain.find(terrain => pointInTerrain(objective, terrain))?.objectiveRole;
+    if (objectiveFilter === 'any') return true;
+    if (objectiveFilter === 'central') return objectiveRole !== homeRole && objectiveRole !== opponentHomeRole;
+    return objectiveRole !== homeRole;
   });
 }
 
@@ -1469,7 +1472,16 @@ export function consecrateObjectiveOptions(
   side: Side,
   rules: RulesEdition,
 ): number[] {
-  return missionObjectiveActionOptions(state, unitId, side, rules, 'Consecrate', 'consecrate', false);
+  return missionObjectiveActionOptions(state, unitId, side, rules, 'Consecrate', 'consecrate', 'any');
+}
+
+export function maintainControlObjectiveOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): number[] {
+  return missionObjectiveActionOptions(state, unitId, side, rules, 'Vital Link', 'maintain-control', 'central');
 }
 
 export function startPlayUnitAction(
@@ -1495,6 +1507,11 @@ export function startPlayUnitAction(
   if (actionId === 'consecrate'
     && (targetObjectiveIndex === undefined
       || !consecrateObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
+    return state;
+  }
+  if (actionId === 'maintain-control'
+    && (targetObjectiveIndex === undefined
+      || !maintainControlObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
     return state;
   }
   const next = clone(state);
