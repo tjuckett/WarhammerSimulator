@@ -1493,6 +1493,15 @@ export function secureAssetObjectiveOptions(
   return missionObjectiveActionOptions(state, unitId, side, rules, 'Secure Asset', 'secure-asset');
 }
 
+export function decoyObjectiveOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): number[] {
+  return missionObjectiveActionOptions(state, unitId, side, rules, 'Smoke and Mirrors', 'decoy');
+}
+
 export function startPlayUnitAction(
   state: BattleState,
   unitId: string,
@@ -1526,6 +1535,11 @@ export function startPlayUnitAction(
   if (actionId === 'secure-asset'
     && (targetObjectiveIndex === undefined
       || !secureAssetObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
+    return state;
+  }
+  if (actionId === 'decoy'
+    && (targetObjectiveIndex === undefined
+      || !decoyObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
     return state;
   }
   const next = clone(state);

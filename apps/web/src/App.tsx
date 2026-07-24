@@ -24,7 +24,7 @@ import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simu
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
   battleModelIdsWithCoherencyIssues, beginPlayBattle, createDeploymentState, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels,
-  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consecrateObjectiveOptions, consolidatePlayUnit, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, secureAssetObjectiveOptions, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, triangulateObjectiveOptions, undeployPlayUnit, type DeploymentStrategy, type LOSRay,
+  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, secureAssetObjectiveOptions, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, triangulateObjectiveOptions, undeployPlayUnit, type DeploymentStrategy, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -753,9 +753,18 @@ export default function App() {
       selectedTacticsUnit.side,
       activeRulesForBattle,
     )[0];
-    return secureAssetObjectiveIndex === undefined
+    if (secureAssetObjectiveIndex !== undefined) {
+      return { id: 'secure-asset', name: 'Secure Asset', targetObjectiveIndex: secureAssetObjectiveIndex };
+    }
+    const decoyObjectiveIndex = decoyObjectiveOptions(
+      battleState,
+      selectedTacticsUnit.id,
+      selectedTacticsUnit.side,
+      activeRulesForBattle,
+    )[0];
+    return decoyObjectiveIndex === undefined
       ? null
-      : { id: 'secure-asset', name: 'Secure Asset', targetObjectiveIndex: secureAssetObjectiveIndex };
+      : { id: 'decoy', name: 'Decoy', targetObjectiveIndex: decoyObjectiveIndex };
   }, [battleState, selectedTacticsUnit, activeRulesForBattle]);
 
   const coverUnitIds = useMemo<Set<string>>(() => {

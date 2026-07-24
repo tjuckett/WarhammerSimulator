@@ -6,6 +6,7 @@ import { availableStratagems } from './stratagems';
 import { availableUnitAbilities } from './unitAbilities';
 import {
   consecrateObjectiveOptions,
+  decoyObjectiveOptions,
   extractIntelligenceObjectiveOptions,
   maintainControlObjectiveOptions,
   movementStep,
@@ -140,11 +141,13 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
       const consecrateObjectiveIndex = consecrateObjectiveOptions(state, unit.id, side, rules)[0];
       const maintainControlObjectiveIndex = maintainControlObjectiveOptions(state, unit.id, side, rules)[0];
       const secureAssetObjectiveIndex = secureAssetObjectiveOptions(state, unit.id, side, rules)[0];
+      const decoyObjectiveIndex = decoyObjectiveOptions(state, unit.id, side, rules)[0];
       const extractsIntelligence = extractObjectiveIndex !== undefined;
       const triangulates = triangulateObjectiveIndex !== undefined;
       const consecrates = consecrateObjectiveIndex !== undefined;
       const maintainsControl = maintainControlObjectiveIndex !== undefined;
       const securesAsset = secureAssetObjectiveIndex !== undefined;
+      const createsDecoy = decoyObjectiveIndex !== undefined;
       const missionAction = extractsIntelligence
         ? { id: 'extract-intelligence', name: 'Extract Intelligence', objectiveIndex: extractObjectiveIndex }
         : triangulates
@@ -155,7 +158,9 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
               ? { id: 'maintain-control', name: 'Maintain Control', objectiveIndex: maintainControlObjectiveIndex }
               : securesAsset
                 ? { id: 'secure-asset', name: 'Secure Asset', objectiveIndex: secureAssetObjectiveIndex }
-                : null;
+                : createsDecoy
+                  ? { id: 'decoy', name: 'Decoy', objectiveIndex: decoyObjectiveIndex }
+                  : null;
       actions.push({
         action: {
           type: 'play.startAction',

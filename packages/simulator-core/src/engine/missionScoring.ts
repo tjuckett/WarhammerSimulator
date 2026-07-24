@@ -382,6 +382,10 @@ function conditionMet(
       });
     case 'secured-asset':
       return completedMissionActionCount(state, side, 'secure-asset') > 0;
+    case 'decoy-objectives':
+      return operationMarkersForAction(state, side, 'decoy').length >= 1;
+    case 'four-decoy-objectives':
+      return operationMarkersForAction(state, side, 'decoy').length >= 4;
     case 'controls-central-and-expansion-objectives':
     case 'condemned-enemy-left-battlefield':
     case 'consecrated-objectives':
@@ -397,8 +401,6 @@ function conditionMet(
     case 'booby-trapped-terrain':
     case 'destroyed-enemy-started-in-trapped-terrain':
     case 'only-one-operation-marker-isolated':
-    case 'decoy-objectives':
-    case 'four-decoy-objectives':
       return false;
   }
 }

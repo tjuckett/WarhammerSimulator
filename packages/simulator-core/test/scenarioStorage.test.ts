@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -2043,7 +2043,7 @@ test('11th Delaying Action scores objective control clauses from mission data', 
   assert.equal(result.vpGained, 10);
 });
 
-test('11th Smoke and Mirrors records decoy clauses and scores non-home objective control', () => {
+test('11th Smoke and Mirrors scores non-home objective control without unsupported decoy clauses', () => {
   const battle = state('fight', 5);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.objectiveControl = rules40K11th.objectiveControl;
@@ -2064,8 +2064,57 @@ test('11th Smoke and Mirrors records decoy clauses and scores non-home objective
   assert.equal(result.kind, 'scored');
   assert.equal(result.scoringModel, '11e-data:Smoke and Mirrors');
   assert.equal(result.vpGained, 4);
-  assert.equal(result.unsupportedClauses?.length, 1);
-  assert.match(formatPrimaryScoringResult(result), /Decoy/);
+  assert.deepEqual(result.unsupportedClauses, []);
+  assert.match(formatPrimaryScoringResult(result), /decoys/i);
+});
+
+test('11th Smoke and Mirrors completes Decoy actions and scores persistent marker thresholds', () => {
+  const battle = state('fight', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Smoke and Mirrors', 'Smoke and Mirrors'],
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }, { x: 40, y: 10 }, { x: 50, y: 10 }];
+  battle.objectiveOwners = [null, null, null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'mid-a', name: 'Mid A', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'mid-b', name: 'Mid B', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'mid-c', name: 'Mid C', type: 'ruin', x: 38, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 48, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  const unit = losTestUnit('blue-mid', 0, { x: 20, y: 10 });
+  battle.units = [unit];
+
+  assert.deepEqual(decoyObjectiveOptions(battle, unit.id, 0, rules40K11th), [1]);
+  const started = startPlayUnitAction(battle, unit.id, 0, 'decoy', 'Decoy', rules40K11th, 1);
+  completeEndOfTurnActions(started, 0);
+  assert.equal(started.missionState?.operationMarkers?.[0]?.sourceActionId, 'decoy');
+
+  const turnResult = scorePrimaryMission(started, 0, rules40K11th);
+  assert.equal(turnResult.vpGained, 3);
+  assert.deepEqual(turnResult.unsupportedClauses, []);
+
+  const endBattle: BattleState = JSON.parse(JSON.stringify(started));
+  endBattle.phase = 'end';
+  endBattle.scores = [0, 0];
+  endBattle.missionState = {
+    operationMarkers: endBattle.objectives.slice(1).map((position, markerIndex) => ({
+      id: `decoy-${markerIndex + 1}`,
+      side: 0,
+      sourceActionId: 'decoy',
+      placedByUnitId: `unit-${markerIndex + 1}`,
+      objectiveIndex: markerIndex + 1,
+      position,
+      battleRound: markerIndex + 1,
+      turn: markerIndex + 1,
+    })),
+  };
+  const finalResult = scorePrimaryMission(endBattle, 0, rules40K11th);
+  assert.equal(finalResult.vpGained, 5);
+  assert.deepEqual(finalResult.unsupportedClauses, []);
 });
 
 test('11th Outmanoeuvre scores escalating objective control and opponent home clauses', () => {
