@@ -388,6 +388,8 @@ function conditionMet(
       });
     case 'secured-asset':
       return completedMissionActionCount(state, side, 'secure-asset') > 0;
+    case 'vanguard-operation':
+      return completedMissionActionCount(state, side, 'vanguard-operation') > 0;
     case 'decoy-objectives':
       return operationMarkersForAction(state, side, 'decoy').length >= 1;
     case 'four-decoy-objectives':
@@ -402,7 +404,6 @@ function conditionMet(
     case 'sensor-sweep':
     case 'opponent-operation-marker-isolated':
     case 'committed-sabotage':
-    case 'vanguard-operation':
     case 'operation-markers-near-controlled-central-objectives':
     case 'booby-trapped-terrain':
     case 'destroyed-enemy-started-in-trapped-terrain':

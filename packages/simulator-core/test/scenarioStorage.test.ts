@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -1627,6 +1627,66 @@ test('11th Meatgrinder scores kill clauses and opponent home control', () => {
   assert.doesNotMatch(formatPrimaryScoringResult(result), /Unsupported clauses:/);
 });
 
+test('11th Unstoppable Force scores an objective gained after the start of the turn', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Unstoppable Force', 'Unstoppable Force'],
+  };
+  battle.objectives = [{ x: 30, y: 22 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 28, y: 20, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  battle.units = [losTestUnit('blue-controller', 0, { x: 30, y: 22 })];
+  battle.missionEvents = {
+    startOfTurn: {
+      activeSide: 0,
+      battleRound: 2,
+      turn: battle.turn,
+      objectiveOwners: [null],
+      units: [],
+    },
+  };
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.vpGained, 3);
+  assert.deepEqual(result.unsupportedClauses, []);
+});
+
+test('11th Unstoppable Force does not award its gained-objective bonus for prior control', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Unstoppable Force', 'Unstoppable Force'],
+  };
+  battle.objectives = [{ x: 30, y: 22 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 28, y: 20, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  battle.units = [losTestUnit('blue-controller', 0, { x: 30, y: 22 })];
+  battle.missionEvents = {
+    startOfTurn: {
+      activeSide: 0,
+      battleRound: 2,
+      turn: battle.turn,
+      objectiveOwners: [0],
+      units: [],
+    },
+  };
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.vpGained, 0);
+  assert.deepEqual(result.unsupportedClauses, []);
+});
+
 test('11th Gather Intel scores objective control without unsupported marker clauses', () => {
   const battle = state('fight', 1);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
@@ -2047,6 +2107,45 @@ test('11th Vanguard Operation scores opponent home control at end of battle', ()
   assert.equal(result.kind, 'scored');
   assert.equal(result.scoringModel, '11e-data:Vanguard Operation');
   assert.equal(result.vpGained, 10);
+});
+
+test('11th Vanguard Operation completes in an enemy-free opponent-home terrain area', () => {
+  const battle = state('fight', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Vanguard Operation', 'Vanguard Operation'],
+  };
+  battle.objectives = [];
+  battle.objectiveOwners = [];
+  battle.terrain = [
+    terrainMat({ id: 'enemy-territory', name: 'Enemy Territory', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  const unit = losTestUnit('blue-vanguard', 0, { x: 30, y: 10 });
+  battle.units = [unit];
+
+  assert.deepEqual(vanguardOperationTerrainOptions(battle, unit.id, 0, rules40K11th), ['enemy-territory']);
+  const started = startPlayUnitAction(
+    battle,
+    unit.id,
+    0,
+    'vanguard-operation',
+    'Vanguard Operation',
+    rules40K11th,
+    undefined,
+    'enemy-territory',
+  );
+  completeEndOfTurnActions(started, 0);
+
+  assert.equal(started.missionEvents?.completedActionsThisTurn?.[0]?.targetTerrainId, 'enemy-territory');
+  const result = scorePrimaryMission(started, 0, rules40K11th);
+  assert.equal(result.vpGained, 4);
+  assert.deepEqual(result.unsupportedClauses, []);
+
+  const contested: BattleState = JSON.parse(JSON.stringify(battle));
+  contested.units.push(losTestUnit('red-defender', 1, { x: 30, y: 10 }));
+  assert.deepEqual(vanguardOperationTerrainOptions(contested, unit.id, 0, rules40K11th), []);
 });
 
 test('11th Delaying Action scores objective control clauses from mission data', () => {

@@ -8,7 +8,7 @@ import { DEFAULT_OBJECTIVES } from './missions';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
 import { advanceAllowance, normalMoveAllowance } from './movement';
 import { objectiveControlRadius } from './objectiveGeometry';
-import { formatPrimaryScoringResult, objectiveIndexesWithinRange, scorePrimaryMission } from './missionScoring';
+import { formatPrimaryScoringResult, objectiveIndexesWithinRange, scorePrimaryMission, terrainAreaIdsContainingUnit } from './missionScoring';
 import { battleRound, logWithBattleRound, maxBattleRounds, setBattleRound } from './battleRound';
 import {
   completeMissionEventsForCurrentTurn,
@@ -1518,6 +1518,41 @@ export function sabotageObjectiveOptions(
   return missionObjectiveActionOptions(state, unitId, side, rules, 'Sabotage', 'sabotage');
 }
 
+function vanguardOperationTerrainIsValid(
+  state: BattleState,
+  unit: BattleUnit,
+  side: Side,
+  terrainId: string,
+): boolean {
+  const opponentHomeRole = side === 0 ? 'home-1' : 'home-0';
+  const terrain = state.terrain.find(candidate => candidate.id === terrainId);
+  if (!terrain || terrain.objectiveRole !== opponentHomeRole) return false;
+  if (!terrainAreaIdsContainingUnit(state, unit).includes(terrainId)) return false;
+  return !state.units.some(candidate =>
+    candidate.side !== side
+    && !candidate.destroyed
+    && !candidate.embarkedInUnitId
+    && !candidate.inStrategicReserves
+    && terrainAreaIdsContainingUnit(state, candidate).includes(terrainId),
+  );
+}
+
+export function vanguardOperationTerrainOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): string[] {
+  const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+  if (rules.metadata.edition !== '11e' || selectedMissionName !== 'Vanguard Operation') return [];
+  if (!playUnitCanStartAction(state, unitId, side, rules)) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  if (!unit) return [];
+  return state.terrain
+    .filter(terrain => vanguardOperationTerrainIsValid(state, unit, side, terrain.id))
+    .map(terrain => terrain.id);
+}
+
 export function startPlayUnitAction(
   state: BattleState,
   unitId: string,
@@ -1526,6 +1561,7 @@ export function startPlayUnitAction(
   actionName = 'Action',
   rules: RulesEdition = rules40K10th,
   targetObjectiveIndex?: number,
+  targetTerrainId?: string,
 ): BattleState {
   if (!playUnitCanStartAction(state, unitId, side, rules)) return state;
   if (actionId === 'extract-intelligence'
@@ -1563,6 +1599,11 @@ export function startPlayUnitAction(
       || !sabotageObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
     return state;
   }
+  if (actionId === 'vanguard-operation'
+    && (targetTerrainId === undefined
+      || !vanguardOperationTerrainOptions(state, unitId, side, rules).includes(targetTerrainId))) {
+    return state;
+  }
   const next = clone(state);
   const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
   unit.performingAction = {
@@ -1571,6 +1612,7 @@ export function startPlayUnitAction(
     startedPhase: next.phase,
     completesAt: 'end-of-turn',
     ...(targetObjectiveIndex !== undefined ? { targetObjectiveIndex } : {}),
+    ...(targetTerrainId !== undefined ? { targetTerrainId } : {}),
   };
   unit.actionStartedThisTurn = true;
   next.log = [...next.log, log(next, side, unit.profile.name, `${unit.profile.name} starts ${actionName}.`, 'info')];
@@ -1582,6 +1624,12 @@ export function completeEndOfTurnActions(state: BattleState, side: Side): void {
     if (unit.side !== side || unit.destroyed || !unit.performingAction) continue;
     const action = unit.performingAction;
     const actionName = action.name;
+    if (action.id === 'vanguard-operation'
+      && (action.targetTerrainId === undefined
+        || !vanguardOperationTerrainIsValid(state, unit, side, action.targetTerrainId))) {
+      cancelUnitAction(state, unit, 'the target terrain area is no longer eligible');
+      continue;
+    }
     recordCompletedMissionAction(state, unit, action);
     unit.performingAction = undefined;
     state.log = [...state.log, log(state, side, unit.profile.name, `${unit.profile.name} completes ${actionName}.`, 'info')];

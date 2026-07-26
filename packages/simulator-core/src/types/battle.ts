@@ -78,6 +78,7 @@ export interface BattleUnit {
     startedPhase: Phase;
     completesAt: 'end-of-turn';
     targetObjectiveIndex?: number;
+    targetTerrainId?: string;
   };
   actionStartedThisTurn?: boolean;
   fellBack?: boolean;
@@ -157,6 +158,7 @@ export interface CompletedMissionActionEvent {
   unitId: string;
   unitName: string;
   targetObjectiveIndex?: number;
+  targetTerrainId?: string;
   battleRound: number;
   turn: number;
 }

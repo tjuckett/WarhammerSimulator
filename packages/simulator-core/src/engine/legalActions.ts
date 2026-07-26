@@ -28,6 +28,7 @@ import {
   sabotageObjectiveOptions,
   secureAssetObjectiveOptions,
   triangulateObjectiveOptions,
+  vanguardOperationTerrainOptions,
 } from './simulator';
 import type { BattleState, BattleUnit } from '../types/battle';
 import type { AbilityTiming } from '../types/ability';
@@ -144,6 +145,7 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
       const secureAssetObjectiveIndex = secureAssetObjectiveOptions(state, unit.id, side, rules)[0];
       const decoyObjectiveIndex = decoyObjectiveOptions(state, unit.id, side, rules)[0];
       const sabotageObjectiveIndex = sabotageObjectiveOptions(state, unit.id, side, rules)[0];
+      const vanguardTerrainId = vanguardOperationTerrainOptions(state, unit.id, side, rules)[0];
       const extractsIntelligence = extractObjectiveIndex !== undefined;
       const triangulates = triangulateObjectiveIndex !== undefined;
       const consecrates = consecrateObjectiveIndex !== undefined;
@@ -151,6 +153,7 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
       const securesAsset = secureAssetObjectiveIndex !== undefined;
       const createsDecoy = decoyObjectiveIndex !== undefined;
       const commitsSabotage = sabotageObjectiveIndex !== undefined;
+      const performsVanguardOperation = vanguardTerrainId !== undefined;
       const missionAction = extractsIntelligence
         ? { id: 'extract-intelligence', name: 'Extract Intelligence', objectiveIndex: extractObjectiveIndex }
         : triangulates
@@ -165,7 +168,9 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
                   ? { id: 'decoy', name: 'Decoy', objectiveIndex: decoyObjectiveIndex }
                   : commitsSabotage
                     ? { id: 'sabotage', name: 'Sabotage', objectiveIndex: sabotageObjectiveIndex }
-                    : null;
+                    : performsVanguardOperation
+                      ? { id: 'vanguard-operation', name: 'Vanguard Operation', terrainId: vanguardTerrainId }
+                      : null;
       actions.push({
         action: {
           type: 'play.startAction',
@@ -175,7 +180,9 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
             ? {
                 actionId: missionAction.id,
                 actionName: missionAction.name,
-                targetObjectiveIndex: missionAction.objectiveIndex,
+                ...('objectiveIndex' in missionAction
+                  ? { targetObjectiveIndex: missionAction.objectiveIndex }
+                  : { targetTerrainId: missionAction.terrainId }),
               }
             : {}),
         },

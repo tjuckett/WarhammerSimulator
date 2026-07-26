@@ -24,7 +24,7 @@ import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simu
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
   battleModelIdsWithCoherencyIssues, beginPlayBattle, createDeploymentState, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels,
-  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, sabotageObjectiveOptions, secureAssetObjectiveOptions, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, triangulateObjectiveOptions, undeployPlayUnit, type DeploymentStrategy, type LOSRay,
+  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, chargePlayUnitTarget, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, sabotageObjectiveOptions, secureAssetObjectiveOptions, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, triangulateObjectiveOptions, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -709,7 +709,12 @@ export default function App() {
       && playUnitCanStartAction(battleState, selectedTacticsUnit.id, selectedTacticsUnit.side, activeRulesForBattle),
     [battleState, selectedTacticsUnit, activeRulesForBattle],
   );
-  const selectedMissionAction = useMemo(() => {
+  const selectedMissionAction = useMemo<{
+    id: string;
+    name: string;
+    targetObjectiveIndex?: number;
+    targetTerrainId?: string;
+  } | null>(() => {
     if (!battleState || !selectedTacticsUnit) return null;
     const extractObjectiveIndex = extractIntelligenceObjectiveOptions(
       battleState,
@@ -771,9 +776,18 @@ export default function App() {
       selectedTacticsUnit.side,
       activeRulesForBattle,
     )[0];
-    return sabotageObjectiveIndex === undefined
+    if (sabotageObjectiveIndex !== undefined) {
+      return { id: 'sabotage', name: 'Sabotage', targetObjectiveIndex: sabotageObjectiveIndex };
+    }
+    const vanguardTerrainId = vanguardOperationTerrainOptions(
+      battleState,
+      selectedTacticsUnit.id,
+      selectedTacticsUnit.side,
+      activeRulesForBattle,
+    )[0];
+    return vanguardTerrainId === undefined
       ? null
-      : { id: 'sabotage', name: 'Sabotage', targetObjectiveIndex: sabotageObjectiveIndex };
+      : { id: 'vanguard-operation', name: 'Vanguard Operation', targetTerrainId: vanguardTerrainId };
   }, [battleState, selectedTacticsUnit, activeRulesForBattle]);
 
   const coverUnitIds = useMemo<Set<string>>(() => {
@@ -2043,6 +2057,7 @@ export default function App() {
       actionName,
       activeRulesForBattle,
       selectedMissionAction?.targetObjectiveIndex,
+      selectedMissionAction?.targetTerrainId,
     );
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
@@ -2051,8 +2066,11 @@ export default function App() {
       unitId: selectedTacticsUnit.id,
       actionId,
       actionName,
-      ...(selectedMissionAction
+      ...(selectedMissionAction?.targetObjectiveIndex !== undefined
         ? { targetObjectiveIndex: selectedMissionAction.targetObjectiveIndex }
+        : {}),
+      ...(selectedMissionAction?.targetTerrainId !== undefined
+        ? { targetTerrainId: selectedMissionAction.targetTerrainId }
         : {}),
     });
     setTargetErrorMsg(`${selectedTacticsUnit.profile.name} starts ${actionName}.`);

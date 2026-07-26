@@ -618,7 +618,7 @@ const PURGE_THE_FOE_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
     edition: '11e',
     status: 'implemented',
     source: `${PURGE_THE_FOE_SOURCE}/unstoppable-force`,
-    notes: 'Scoring text transcribed from GDM 2026 Purge the Foe card. Current-turn destroyed-unit tracking covers the basic kill clause; start-of-turn objective tracking is still required for one clause.',
+    notes: 'Scoring text transcribed from GDM 2026 Purge the Foe card. Current-turn destroyed-unit tracking and start-of-turn objective ownership snapshots cover both event clauses.',
     scoring: [
       {
         id: 'enemy-destroyed',
@@ -651,11 +651,10 @@ const PURGE_THE_FOE_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         id: 'round-2-plus-newly-controlled-objective',
         timing: 'end-turn',
         rounds: [2, 3, 4, 5],
-        kind: 'unsupported-event',
+        kind: 'fixed-if',
         condition: 'controlled-objective-not-controlled-at-start-of-turn',
         vp: 3,
         sourceText: 'Second battle round onwards, end of your turn: You control one or more objectives you did not control at the start of the turn (excluding your home objective). 3VP.',
-        notes: 'Requires storing objective owners at the start of the turn.',
       },
       {
         id: 'end-battle-central-objective',
@@ -1169,17 +1168,17 @@ const PRIORITY_ASSETS_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
     edition: '11e',
     status: 'implemented',
     source: `${PRIORITY_ASSETS_SOURCE}/vanguard-operation`,
-    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Vanguard Operation action tracking is still required for one clause; current-turn destroyed-unit tracking covers the basic kill clause.',
+    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Vanguard Operation action completion and current-turn destroyed-unit tracking are implemented; enemy territory uses the opponent home terrain-objective role until territory geometry is modeled.',
     scoring: [
       {
         id: 'vanguard-operation',
         timing: 'end-turn',
         rounds: 'any',
-        kind: 'unsupported-event',
+        kind: 'fixed-if',
         condition: 'vanguard-operation',
         vp: 4,
         sourceText: 'Any battle round, end of your turn: A friendly unit performed a vanguard operation this turn. 4VP.',
-        notes: 'Requires resolving the Vanguard Operation objective action from a terrain area in enemy territory with no enemy units in that terrain area at completion.',
+        notes: 'Resolves from an enemy-free opponent-home terrain area as the current enemy-territory approximation.',
       },
       {
         id: 'enemy-destroyed',

@@ -46,6 +46,9 @@ export function recordCompletedMissionAction(
       ...(action.targetObjectiveIndex !== undefined
         ? { targetObjectiveIndex: action.targetObjectiveIndex }
         : {}),
+      ...(action.targetTerrainId !== undefined
+        ? { targetTerrainId: action.targetTerrainId }
+        : {}),
       battleRound: battleRound(state),
       turn: state.turn,
     },
