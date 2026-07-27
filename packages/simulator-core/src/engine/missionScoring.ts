@@ -203,6 +203,39 @@ function opponentOperationMarkerIsolated(state: BattleState, side: Side): boolea
     && !unitsInTerrain.some(unit => unit.side !== side);
 }
 
+function unitWithinObjectiveRangeFromState(
+  state: BattleState,
+  unit: BattleUnit,
+  objectiveIndex: number,
+): boolean {
+  const objective = state.objectives[objectiveIndex];
+  const objectiveControl = state.objectiveControl;
+  if (!objective || !objectiveControl) return false;
+  if (objectiveControl.kind === 'terrain-area') {
+    const terrain = terrainObjectiveForPoint(state, objective);
+    return !!terrain && unit.modelPositions.some((_model, modelIndex) =>
+      modelWithinTerrainObjective(unit, modelIndex, terrain)
+    );
+  }
+  const controlRadius = objectiveControlRadius(objectiveControl);
+  return controlRadius !== null && unitControlsObjective(unit, objective, controlRadius);
+}
+
+function surveilledEnemyUnitsScore(state: BattleState, side: Side): boolean {
+  const markedObjectiveIndexes = new Set(
+    (state.missionState?.operationMarkers ?? []).map(marker => marker.objectiveIndex),
+  );
+  const surveilledUnitIds = (state.missionEvents?.completedActionsThisTurn ?? [])
+    .filter(event => event.side === side && event.actionId === 'surveil')
+    .flatMap(event => event.targetUnitId ? [event.targetUnitId] : []);
+  return surveilledUnitIds.some(unitId => {
+    const unit = state.units.find(candidate => candidate.id === unitId && candidate.side !== side);
+    return !unit || ![...markedObjectiveIndexes].some(objectiveIndex =>
+      unitWithinObjectiveRangeFromState(state, unit, objectiveIndex)
+    );
+  });
+}
+
 export function tableQuarterPresenceCount(state: BattleState, side: Side): number {
   const board = boardFormatForState(state);
   const centre = { x: board.width / 2, y: board.height / 2 };
@@ -415,6 +448,8 @@ function conditionMet(
       return noEnemyOperationMarkers(state, side);
     case 'opponent-operation-marker-isolated':
       return opponentOperationMarkerIsolated(state, side);
+    case 'surveilled-enemy-units':
+      return surveilledEnemyUnitsScore(state, side);
     case 'decoy-objectives':
       return operationMarkersForAction(state, side, 'decoy').length >= 1;
     case 'four-decoy-objectives':
@@ -422,7 +457,6 @@ function conditionMet(
     case 'controls-central-and-expansion-objectives':
     case 'condemned-enemy-left-battlefield':
     case 'consecrated-objectives':
-    case 'surveilled-enemy-units':
     case 'triangulated-objectives':
     case 'no-enemy-units-wholly-within-territory':
     case 'committed-sabotage':

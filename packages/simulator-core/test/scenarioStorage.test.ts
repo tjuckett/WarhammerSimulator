@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -1667,6 +1667,137 @@ test('11th Reconnaissance Sweep uses the non-cumulative four-quarter tier and pe
   assert.deepEqual(result.unsupportedClauses, []);
   assert.match(formatPrimaryScoringResult(result), /four different table quarters/);
   assert.match(formatPrimaryScoringResult(result), /2 units x 1VP/);
+});
+
+test('11th Surveil the Foe immediately surveils a visible enemy within 18 inches', () => {
+  const battle = state('shooting', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Surveil the Foe', 'Smoke and Mirrors'],
+  };
+  const observer = losTestUnit('blue-observer', 0, { x: 10, y: 10 });
+  const target = losTestUnit('red-target', 1, { x: 20, y: 10 });
+  const secondTarget = losTestUnit('red-second-target', 1, { x: 20, y: 14 });
+  const distant = losTestUnit('red-distant', 1, { x: 40, y: 10 });
+  battle.units = [observer, target, secondTarget, distant];
+
+  assert.deepEqual(surveilTargetOptions(battle, observer.id, 0, rules40K11th), [target.id, secondTarget.id]);
+  const replayed = applyGameAction(battle, {
+    type: 'play.startAction',
+    side: 0,
+    unitId: observer.id,
+    actionId: 'surveil',
+    actionName: 'Surveil the Foe',
+    targetUnitId: target.id,
+  }, { rules: rules40K11th });
+
+  assert.equal(replayed.units[0].performingAction, undefined);
+  assert.equal(replayed.missionEvents?.completedActionsThisTurn?.[0]?.targetUnitId, target.id);
+  assert.deepEqual(surveilTargetOptions(replayed, observer.id, 0, rules40K11th), [secondTarget.id]);
+  const result = scorePrimaryMission(replayed, 0, rules40K11th);
+  assert.equal(result.vpGained, 4);
+  assert.deepEqual(result.unsupportedClauses, []);
+});
+
+test('11th Surveil the Foe does not score when every surveilled unit is protected by a marked objective', () => {
+  const battle = state('shooting', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Surveil the Foe', 'Smoke and Mirrors'],
+  };
+  battle.objectives = [{ x: 20, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [
+    terrainMat({ id: 'marked-objective', name: 'Marked Objective', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  const observer = losTestUnit('blue-observer', 0, { x: 10, y: 10 });
+  const target = losTestUnit('red-target', 1, { x: 20, y: 10 });
+  battle.units = [observer, target];
+  battle.missionState = {
+    operationMarkers: [{
+      id: 'red-decoy',
+      side: 1,
+      sourceActionId: 'decoy',
+      placedByUnitId: 'red-marker-unit',
+      objectiveIndex: 0,
+      position: { x: 20, y: 10 },
+      battleRound: 1,
+      turn: 1,
+    }],
+  };
+
+  const surveilled = startPlayUnitAction(
+    battle,
+    observer.id,
+    0,
+    'surveil',
+    'Surveil the Foe',
+    rules40K11th,
+    undefined,
+    undefined,
+    undefined,
+    target.id,
+  );
+
+  assert.equal(scorePrimaryMission(surveilled, 0, rules40K11th).vpGained, 0);
+  const exposed: BattleState = JSON.parse(JSON.stringify(surveilled));
+  exposed.units.find(unit => unit.id === target.id)!.position = { x: 30, y: 10 };
+  exposed.units.find(unit => unit.id === target.id)!.modelPositions = [{ x: 30, y: 10 }];
+  assert.equal(scorePrimaryMission(exposed, 0, rules40K11th).vpGained, 4);
+});
+
+test('11th Surveil the Foe removes enemy operation markers when a friendly unit ends a move near their objective', () => {
+  const battle = state('movement', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Surveil the Foe', 'Smoke and Mirrors'],
+  };
+  battle.objectives = [{ x: 20, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [
+    terrainMat({ id: 'marked-objective', name: 'Marked Objective', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  const mover = losTestUnit('blue-mover', 0, { x: 15, y: 10 });
+  battle.units = [mover];
+  battle.missionState = {
+    operationMarkers: [
+      {
+        id: 'red-decoy-a',
+        side: 1,
+        sourceActionId: 'decoy',
+        placedByUnitId: 'red-a',
+        objectiveIndex: 0,
+        position: { x: 20, y: 10 },
+        battleRound: 1,
+        turn: 1,
+      },
+      {
+        id: 'red-decoy-b',
+        side: 1,
+        sourceActionId: 'decoy',
+        placedByUnitId: 'red-b',
+        objectiveIndex: 0,
+        position: { x: 20, y: 10 },
+        battleRound: 1,
+        turn: 1,
+      },
+    ],
+  };
+
+  const moved = movePlayModels(battle, mover.id, 0, [0], 5, 0);
+  const completed = completePlayUnitMovement(moved, mover.id, 0);
+
+  assert.deepEqual(completed.missionState?.operationMarkers, []);
+  assert.match(completed.log.at(-1)?.message ?? '', /removes 2 enemy operation markers/);
+  const result = scorePrimaryMission(completed, 0, rules40K11th);
+  assert.equal(result.vpGained, 5);
+  assert.deepEqual(result.unsupportedClauses, []);
 });
 
 test('11th destroyed-unit mission events reset at the start of a new player turn', () => {

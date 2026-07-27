@@ -1394,12 +1394,17 @@ function cancelUnitAction(state: BattleState, unit: BattleUnit, reason: string):
   )];
 }
 
-function unitIsEligibleToStartAction(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean {
+function unitIsEligibleToStartAction(
+  unit: BattleUnit,
+  state: BattleState,
+  rules: RulesEdition,
+  ignoreActionStartedThisTurn = false,
+): boolean {
   if (unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves) return false;
   if (isAircraft(unit) || isFortification(unit)) return false;
   if (unit.battleshocked) return false;
   if (unit.profile.oc <= 0) return false;
-  if (unit.actionStartedThisTurn || unit.performingAction) return false;
+  if ((!ignoreActionStartedThisTurn && unit.actionStartedThisTurn) || unit.performingAction) return false;
   if (unit.movementAction === 'advanced' || unit.movementAction === 'fellBack' || unit.fellBack) return false;
   if (!unitCanUseBigGunsNeverTire(unit) && inEngagement(unit, enemies(state, unit.side), rules.engagementRange())) return false;
   return true;
@@ -1561,6 +1566,64 @@ export function sensorSweepOptions(
   );
 }
 
+export function surveilTargetOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): string[] {
+  const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+  if (rules.metadata.edition !== '11e'
+    || selectedMissionName !== 'Surveil the Foe'
+    || state.phase !== 'shooting'
+    || state.activeArmy !== side) {
+    return [];
+  }
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  if (!unit || !unitIsEligibleToStartAction(unit, state, rules, true)) return [];
+  const alreadySurveilledUnitIds = new Set(
+    (state.missionEvents?.completedActionsThisTurn ?? [])
+      .filter(event => event.side === side && event.actionId === 'surveil')
+      .flatMap(event => event.targetUnitId ? [event.targetUnitId] : []),
+  );
+  return state.units
+    .filter(target =>
+      target.side !== side
+      && !target.destroyed
+      && !target.embarkedInUnitId
+      && !target.inStrategicReserves
+      && !alreadySurveilledUnitIds.has(target.id)
+      && battleUnitsWithinBaseEdgeRange(unit, target, 18)
+      && unit.modelPositions.some((model, modelIndex) =>
+        hasAnyModelLOS(model, modelBaseRadius(unit, modelIndex), target, state.terrain)
+      )
+    )
+    .map(target => target.id);
+}
+
+function removeOpponentOperationMarkersAfterMove(
+  state: BattleState,
+  unit: BattleUnit,
+): void {
+  const selectedMissionName = state.setup?.primaryMissions?.[unit.side] ?? state.setup?.primaryMission;
+  if (state.ruleset?.edition !== '11e' || selectedMissionName !== 'Surveil the Foe') return;
+  const objectiveIndexes = new Set(objectiveIndexesWithinRange(state, unit, rules40K11th));
+  if (!objectiveIndexes.size) return;
+  const markers = state.missionState?.operationMarkers ?? [];
+  const removed = markers.filter(marker =>
+    marker.side !== unit.side && objectiveIndexes.has(marker.objectiveIndex)
+  );
+  if (!removed.length) return;
+  state.missionState!.operationMarkers = markers.filter(marker => !removed.includes(marker));
+  state.log = [...state.log, log(
+    state,
+    unit.side,
+    unit.profile.name,
+    `${unit.profile.name} removes ${removed.length} enemy operation marker${removed.length === 1 ? '' : 's'} after ending a move within objective range.`,
+    'info',
+  )];
+}
+
 function vanguardOperationTerrainIsValid(
   state: BattleState,
   unit: BattleUnit,
@@ -1606,8 +1669,9 @@ export function startPlayUnitAction(
   targetObjectiveIndex?: number,
   targetTerrainId?: string,
   targetOperationMarkerId?: string,
+  targetUnitId?: string,
 ): BattleState {
-  if (!playUnitCanStartAction(state, unitId, side, rules)) return state;
+  if (actionId !== 'surveil' && !playUnitCanStartAction(state, unitId, side, rules)) return state;
   if (actionId === 'extract-intelligence'
     && (targetObjectiveIndex === undefined
       || !extractIntelligenceObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
@@ -1655,8 +1719,32 @@ export function startPlayUnitAction(
     )) {
     return state;
   }
+  if (actionId === 'surveil'
+    && (targetUnitId === undefined
+      || !surveilTargetOptions(state, unitId, side, rules).includes(targetUnitId))) {
+    return state;
+  }
   const next = clone(state);
   const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
+  if (actionId === 'surveil') {
+    const target = next.units.find(candidate => candidate.id === targetUnitId)!;
+    const action = {
+      id: actionId,
+      name: actionName,
+      startedPhase: next.phase,
+      completesAt: 'end-of-turn' as const,
+      targetUnitId,
+    };
+    recordCompletedMissionAction(next, unit, action);
+    next.log = [...next.log, log(
+      next,
+      side,
+      unit.profile.name,
+      `${unit.profile.name} surveils ${target.profile.name}.`,
+      'info',
+    )];
+    return next;
+  }
   unit.performingAction = {
     id: actionId,
     name: actionName,
@@ -1665,6 +1753,7 @@ export function startPlayUnitAction(
     ...(targetObjectiveIndex !== undefined ? { targetObjectiveIndex } : {}),
     ...(targetTerrainId !== undefined ? { targetTerrainId } : {}),
     ...(targetOperationMarkerId !== undefined ? { targetOperationMarkerId } : {}),
+    ...(targetUnitId !== undefined ? { targetUnitId } : {}),
   };
   unit.actionStartedThisTurn = true;
   next.log = [...next.log, log(next, side, unit.profile.name, `${unit.profile.name} starts ${actionName}.`, 'info')];
@@ -4121,6 +4210,7 @@ function lockOtherMovedPlayUnits(state: BattleState, currentUnit: BattleUnit): v
     ) continue;
     if (unit.movementAction === 'normalMove' || unit.movementAction === 'advanced') {
       unit.movementComplete = true;
+      removeOpponentOperationMarkersAfterMove(state, unit);
     }
   }
 }
@@ -4130,6 +4220,7 @@ function markPlayMovementGroupComplete(state: BattleState, currentUnit: BattleUn
   for (const unit of state.units) {
     if (unit.side === currentUnit.side && !unit.destroyed && playMovementGroupId(unit) === currentGroupId) {
       unit.movementComplete = true;
+      removeOpponentOperationMarkersAfterMove(state, unit);
     }
   }
 }
@@ -4622,6 +4713,7 @@ export function fallBackPlayUnit(
   unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
   unit.movementComplete = true;
   unit.fellBack = true;
+  removeOpponentOperationMarkersAfterMove(s, unit);
   for (const enemy of engaged) {
     enemy.inCombat = inEngagement(enemy, enemies(s, enemy.side), rules.engagementRange());
   }

@@ -52,6 +52,9 @@ export function recordCompletedMissionAction(
       ...(action.targetOperationMarkerId !== undefined
         ? { targetOperationMarkerId: action.targetOperationMarkerId }
         : {}),
+      ...(action.targetUnitId !== undefined
+        ? { targetUnitId: action.targetUnitId }
+        : {}),
       battleRound: battleRound(state),
       turn: state.turn,
     },
