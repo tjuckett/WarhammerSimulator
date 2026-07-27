@@ -951,6 +951,9 @@ function objectiveRoleLabel(role: BattleState['terrain'][number]['objectiveRole'
   if (role === 'home-0') return 'BH';
   if (role === 'home-1') return 'RH';
   if (role === 'no-mans-land') return 'NML';
+  if (role === 'central') return 'C';
+  if (role === 'expansion-0') return 'BE';
+  if (role === 'expansion-1') return 'RE';
   return '';
 }
 

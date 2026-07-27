@@ -143,7 +143,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Owner: Tim/manual editor work.
   - Replace any mirrored-half/template placeholder descriptions or coordinates with exact full-layout data where needed.
   - Keep walls in the saved terrain mat templates where needed.
-  - Use objective role tagging for home/no man's land objectives.
+  - Use objective role tagging for home, central, and player expansion objectives.
   - Use deployment zone polygons/triangles and center exclusions where required by the layout.
 
 ### Remaining 11th Rules TODOs
@@ -155,7 +155,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
 - [x] Transcribe and add data-driven scoring for the five Reconnaissance 11th primary missions: Gather Intel, Reconnaissance Sweep, Search and Scour, Surveil the Foe, and Triangulation.
 - [x] Transcribe and add data-driven scoring for the five Priority Assets 11th primary missions: Extract Relic, Sabotage, Secure Asset, Vanguard Operation, and Vital Link.
 - [x] Transcribe and add data-driven scoring for the five Disruption 11th primary missions: Death Trap, Delaying Action, Locate and Deny, Outmanoeuvre, and Smoke and Mirrors.
-- [ ] Add state tracking for unsupported mission event clauses: remaining objective actions, consecrated/triangulated/surveilled/sensor sweep/sabotage/secure asset/vanguard/booby trap/decoy markers, territory geometry, expansion objective roles, and condemned enemy units leaving the battlefield. Objective owners, objective proximity, terrain-area membership, table-quarter presence, destroying-unit kill-time proximity, completed mission actions, and persistent operation markers are tracked.
+- [ ] Add state tracking for unsupported mission event clauses: remaining objective actions, territory geometry, and condemned enemy units leaving the battlefield. Objective owners, objective proximity, terrain-area membership, table-quarter presence, destroying-unit kill-time proximity, completed mission actions, persistent objective/terrain operation markers, and central/expansion objective roles are tracked.
   - [x] Implemented the first mission-operation vertical slice: Gather Intel units can complete Extract Intelligence on different non-home objectives, completed actions place persistent operation markers, manual play and legal-action generation use the mission action, and end-turn/end-battle clauses score from that state.
   - [x] Reused the mission-operation framework for Triangulation: eligible units can Triangulate different non-home objectives, manual play and legal actions expose the mission action, and one/two/three-plus marker tiers score non-cumulatively.
   - [x] Reused the mission-operation framework for Consecrate: eligible units can consecrate objectives once, manual play and legal actions expose the mission action, one-to-two/three-plus marker tiers score correctly, and consecrating the enemy home objective awards its end-battle bonus.
@@ -167,6 +167,8 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - [x] Enabled Unstoppable Force's newly controlled objective clause using the existing start-of-turn objective ownership snapshot.
   - [x] Added Sensor Sweep for Extract Relic and Locate and Deny: eligible units start once per turn from a central objective while multiple operation markers remain, completion requires controlling that objective, the selected marker is removed, and replay/UI/legal-action paths preserve the target. Extract Relic's isolated-marker clauses and Locate and Deny's no-enemy-marker end-battle clause now score from persistent marker state.
   - [x] Added Surveil the Foe: eligible units can immediately surveil unsurveyed visible enemies within 18" during the Shooting phase, unlimited uses can select additional targets, marked objectives protect surveilled units from the scoring clause, and friendly units ending moves within objective range remove opposing operation markers there.
+  - [x] Added Death Trap's Booby Trap action: eligible units immediately trap different terrain areas during the Shooting phase, terrain operation markers persist, exact per-trap objective bonuses score, destroyed enemies are matched against their start-of-turn trapped-terrain occupancy, and isolated friendly markers score at battle end.
+  - [x] Added central and player expansion objective tags to terrain editing/rendering and used them to score Delaying Action's central-plus-expansion clause.
 - [x] Find or transcribe source text for all 25 unique 11th primary missions.
 - [ ] Implement exact scoring for all 25 unique 11th primary missions once source text is available. All mission texts are transcribed; event clauses need the state tracking above.
 - [ ] Add tests for every implemented 11th primary mission scoring rule.

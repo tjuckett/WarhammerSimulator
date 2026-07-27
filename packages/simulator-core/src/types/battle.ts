@@ -172,7 +172,8 @@ export interface OperationMarker {
   side: Side;
   sourceActionId: string;
   placedByUnitId: string;
-  objectiveIndex: number;
+  objectiveIndex?: number;
+  terrainId?: string;
   position: Position;
   battleRound: number;
   turn: number;
@@ -202,7 +203,7 @@ export interface Terrain {
   providesCover: boolean;
   difficult: boolean;
   color: string;
-  objectiveRole?: 'home-0' | 'home-1' | 'no-mans-land';
+  objectiveRole?: 'home-0' | 'home-1' | 'no-mans-land' | 'central' | 'expansion-0' | 'expansion-1';
   features: TerrainFeature[];
 }
 

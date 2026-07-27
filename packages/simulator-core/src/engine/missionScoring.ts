@@ -152,7 +152,7 @@ function objectiveMatchesFilter(
   const role = objectiveRole(state, objective);
   if (filter === 'all') return true;
   if (filter === 'non-home') return role !== homeRole(side);
-  if (filter === 'central') return role === 'no-mans-land' || (role !== homeRole(side) && role !== opponentHomeRole(side));
+  if (filter === 'central') return role === undefined || role === 'central' || role === 'no-mans-land';
   return true;
 }
 
@@ -203,6 +203,23 @@ function opponentOperationMarkerIsolated(state: BattleState, side: Side): boolea
     && !unitsInTerrain.some(unit => unit.side !== side);
 }
 
+function ownOperationMarkerIsolated(state: BattleState, side: Side): boolean {
+  const markers = (state.missionState?.operationMarkers ?? []).filter(marker => marker.side === side);
+  if (markers.length !== 1) return false;
+  const markerTerrain = state.terrain.find(terrain =>
+    terrain.id === markers[0].terrainId || pointInTerrain(markers[0].position, terrain)
+  );
+  if (!markerTerrain) return false;
+  const unitsInTerrain = state.units.filter(unit =>
+    !unit.destroyed
+    && !unit.embarkedInUnitId
+    && !unit.inStrategicReserves
+    && terrainAreaIdsContainingUnit(state, unit).includes(markerTerrain.id),
+  );
+  return unitsInTerrain.some(unit => unit.side === side)
+    && !unitsInTerrain.some(unit => unit.side !== side);
+}
+
 function unitWithinObjectiveRangeFromState(
   state: BattleState,
   unit: BattleUnit,
@@ -223,7 +240,8 @@ function unitWithinObjectiveRangeFromState(
 
 function surveilledEnemyUnitsScore(state: BattleState, side: Side): boolean {
   const markedObjectiveIndexes = new Set(
-    (state.missionState?.operationMarkers ?? []).map(marker => marker.objectiveIndex),
+    (state.missionState?.operationMarkers ?? [])
+      .flatMap(marker => marker.objectiveIndex === undefined ? [] : [marker.objectiveIndex]),
   );
   const surveilledUnitIds = (state.missionEvents?.completedActionsThisTurn ?? [])
     .filter(event => event.side === side && event.actionId === 'surveil')
@@ -331,6 +349,19 @@ function controlsObjectiveNotControlledAtTurnStart(
   );
 }
 
+function controlsCentralAndExpansionObjectives(
+  state: BattleState,
+  objectives: ObjectiveControlResult[],
+  side: Side,
+): boolean {
+  const controlled = controlledObjectives(state, objectives, side);
+  const expansionRole = side === 0 ? 'expansion-0' : 'expansion-1';
+  return controlled.some(objective => {
+    const role = objectiveRole(state, objective);
+    return role === 'central' || role === 'no-mans-land';
+  }) && controlled.some(objective => objectiveRole(state, objective) === expansionRole);
+}
+
 function destroyedEnemyStartedWithinObjectiveRange(
   state: BattleState,
   objectives: ObjectiveControlResult[],
@@ -363,7 +394,11 @@ function destroyedEnemyByUnitWithinObjectiveRange(state: BattleState, side: Side
   );
 }
 
-function destroyedEnemyStartedWithinTerrainArea(state: BattleState, side: Side): boolean {
+function destroyedEnemyStartedWithinTerrainArea(
+  state: BattleState,
+  side: Side,
+  terrainIds?: Set<string>,
+): boolean {
   const snapshot = state.missionEvents?.startOfTurn;
   if (snapshot?.activeSide !== side || snapshot.battleRound !== battleRound(state) || snapshot.turn !== state.turn) {
     return false;
@@ -376,8 +411,15 @@ function destroyedEnemyStartedWithinTerrainArea(state: BattleState, side: Side):
   return snapshot.units.some(unit =>
     unit.side !== side
     && destroyedEnemyIds.has(unit.unitId)
-    && (unit.terrainAreaIds?.length ?? 0) > 0,
+    && (unit.terrainAreaIds ?? []).some(terrainId => !terrainIds || terrainIds.has(terrainId)),
   );
+}
+
+function destroyedEnemyStartedWithinTrappedTerrain(state: BattleState, side: Side): boolean {
+  const trappedTerrainIds = new Set(operationMarkersForAction(state, side, 'booby-trap')
+    .flatMap(marker => marker.terrainId ? [marker.terrainId] : []));
+  return trappedTerrainIds.size > 0
+    && destroyedEnemyStartedWithinTerrainArea(state, side, trappedTerrainIds);
 }
 
 function conditionMet(
@@ -401,6 +443,8 @@ function conditionMet(
       return controlled.length >= 4;
     case 'controls-at-least-two-objectives':
       return controlled.length >= 2;
+    case 'controls-central-and-expansion-objectives':
+      return controlsCentralAndExpansionObjectives(state, objectives, side);
     case 'controls-home-objective':
       return controlled.some(objective => objectiveRole(state, objective) === homeRole(side));
     case 'controls-opponent-home-objective':
@@ -430,12 +474,16 @@ function conditionMet(
       return extractIntelligenceMarkers(state, side).length >= 3;
     case 'operation-marker-near-opponent-home-objective':
       return extractIntelligenceMarkers(state, side).some(marker => {
-        const objective = state.objectives[marker.objectiveIndex] ?? marker.position;
+        const objective = marker.objectiveIndex === undefined
+          ? marker.position
+          : state.objectives[marker.objectiveIndex] ?? marker.position;
         return terrainObjectiveRoleForPoint(state, objective) === opponentHomeRole(side);
       });
     case 'enemy-home-objective-consecrated':
       return operationMarkersForAction(state, side, 'consecrate').some(marker => {
-        const objective = state.objectives[marker.objectiveIndex] ?? marker.position;
+        const objective = marker.objectiveIndex === undefined
+          ? marker.position
+          : state.objectives[marker.objectiveIndex] ?? marker.position;
         return terrainObjectiveRoleForPoint(state, objective) === opponentHomeRole(side);
       });
     case 'secured-asset':
@@ -450,20 +498,22 @@ function conditionMet(
       return opponentOperationMarkerIsolated(state, side);
     case 'surveilled-enemy-units':
       return surveilledEnemyUnitsScore(state, side);
+    case 'booby-trapped-terrain':
+      return completedMissionActionCount(state, side, 'booby-trap') > 0;
+    case 'destroyed-enemy-started-in-trapped-terrain':
+      return destroyedEnemyStartedWithinTrappedTerrain(state, side);
+    case 'only-one-operation-marker-isolated':
+      return ownOperationMarkerIsolated(state, side);
     case 'decoy-objectives':
       return operationMarkersForAction(state, side, 'decoy').length >= 1;
     case 'four-decoy-objectives':
       return operationMarkersForAction(state, side, 'decoy').length >= 4;
-    case 'controls-central-and-expansion-objectives':
     case 'condemned-enemy-left-battlefield':
     case 'consecrated-objectives':
     case 'triangulated-objectives':
     case 'no-enemy-units-wholly-within-territory':
     case 'committed-sabotage':
     case 'operation-markers-near-controlled-central-objectives':
-    case 'booby-trapped-terrain':
-    case 'destroyed-enemy-started-in-trapped-terrain':
-    case 'only-one-operation-marker-isolated':
       return false;
   }
 }
@@ -505,6 +555,8 @@ function evaluateMissionClause(
       ? 'extract-intelligence'
       : clause.condition === 'committed-sabotage'
         ? 'sabotage'
+        : clause.condition === 'booby-trapped-terrain'
+          ? 'booby-trap'
         : null;
     const actions = actionId ? completedMissionActions(state, side, actionId) : [];
     const count = actions.length;
@@ -514,12 +566,17 @@ function evaluateMissionClause(
           const objective = state.objectives[action.targetObjectiveIndex];
           return !!objective && terrainObjectiveRoleForPoint(state, objective) === opponentHomeRole(side);
         }).length
-      : 0;
+      : clause.condition === 'booby-trapped-terrain' && clause.bonusVp
+        ? actions.filter(action => {
+            const terrain = state.terrain.find(candidate => candidate.id === action.targetTerrainId);
+            return !!terrain && state.objectives.some(objective => pointInTerrain(objective, terrain));
+          }).length
+        : 0;
     const bonusVp = bonusCount * (clause.bonusVp ?? 0);
     const vp = count * clause.vp + bonusVp;
     return {
       vp,
-      detail: `${clause.sourceText} ${count} action${count === 1 ? '' : 's'} x ${clause.vp}VP${clause.bonusVp ? `; territory bonus ${bonusCount} x ${clause.bonusVp}VP` : ''} -> +${vp}VP`,
+      detail: `${clause.sourceText} ${count} action${count === 1 ? '' : 's'} x ${clause.vp}VP${clause.bonusVp ? `; ${clause.condition === 'committed-sabotage' ? 'territory bonus' : 'objective bonus'} ${bonusCount} x ${clause.bonusVp}VP` : ''} -> +${vp}VP`,
     };
   }
 
@@ -531,7 +588,8 @@ function evaluateMissionClause(
     );
     const count = clause.condition === 'operation-markers-near-controlled-central-objectives'
       ? operationMarkersForAction(state, side, 'maintain-control')
-          .filter(marker => controlledCentralObjectiveIndexes.has(marker.objectiveIndex))
+          .filter(marker => marker.objectiveIndex !== undefined
+            && controlledCentralObjectiveIndexes.has(marker.objectiveIndex))
           .length
       : 0;
     const vp = count * clause.vp;

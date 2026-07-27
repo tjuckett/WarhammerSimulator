@@ -5,6 +5,7 @@ import { rules40K10th } from './rulesEngine';
 import { availableStratagems } from './stratagems';
 import { availableUnitAbilities } from './unitAbilities';
 import {
+  boobyTrapTerrainOptions,
   consecrateObjectiveOptions,
   decoyObjectiveOptions,
   extractIntelligenceObjectiveOptions,
@@ -150,6 +151,7 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
       const sensorSweepOption = sensorSweepOptions(state, unit.id, side, rules)[0];
       const surveilTargetUnitId = surveilTargetOptions(state, unit.id, side, rules)[0];
       const vanguardTerrainId = vanguardOperationTerrainOptions(state, unit.id, side, rules)[0];
+      const boobyTrapTerrainId = boobyTrapTerrainOptions(state, unit.id, side, rules)[0];
       const extractsIntelligence = extractObjectiveIndex !== undefined;
       const triangulates = triangulateObjectiveIndex !== undefined;
       const consecrates = consecrateObjectiveIndex !== undefined;
@@ -160,6 +162,7 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
       const performsSensorSweep = sensorSweepOption !== undefined;
       const surveils = surveilTargetUnitId !== undefined;
       const performsVanguardOperation = vanguardTerrainId !== undefined;
+      const laysBoobyTrap = boobyTrapTerrainId !== undefined;
       const missionAction = extractsIntelligence
         ? { id: 'extract-intelligence', name: 'Extract Intelligence', objectiveIndex: extractObjectiveIndex }
         : triangulates
@@ -185,6 +188,8 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
                       ? { id: 'surveil', name: 'Surveil the Foe', targetUnitId: surveilTargetUnitId }
                     : performsVanguardOperation
                       ? { id: 'vanguard-operation', name: 'Vanguard Operation', terrainId: vanguardTerrainId }
+                    : laysBoobyTrap
+                      ? { id: 'booby-trap', name: 'Booby Trap', terrainId: boobyTrapTerrainId }
                       : null;
       actions.push({
         action: {

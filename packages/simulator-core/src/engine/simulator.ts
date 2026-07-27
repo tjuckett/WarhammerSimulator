@@ -1439,7 +1439,7 @@ function missionObjectiveActionOptions(
   const markedObjectives = new Set([
     ...(state.missionState?.operationMarkers ?? [])
       .filter(marker => marker.side === side && marker.sourceActionId === actionId)
-      .map(marker => marker.objectiveIndex),
+      .flatMap(marker => marker.objectiveIndex === undefined ? [] : [marker.objectiveIndex]),
     ...state.units
       .filter(candidate => candidate.side === side && candidate.performingAction?.id === actionId)
       .flatMap(candidate => candidate.performingAction?.targetObjectiveIndex === undefined
@@ -1455,7 +1455,9 @@ function missionObjectiveActionOptions(
     if (!objective) return false;
     const objectiveRole = state.terrain.find(terrain => pointInTerrain(objective, terrain))?.objectiveRole;
     if (objectiveFilter === 'any') return true;
-    if (objectiveFilter === 'central') return objectiveRole !== homeRole && objectiveRole !== opponentHomeRole;
+    if (objectiveFilter === 'central') {
+      return objectiveRole === undefined || objectiveRole === 'central' || objectiveRole === 'no-mans-land';
+    }
     return objectiveRole !== homeRole;
   });
 }
@@ -1528,13 +1530,11 @@ export interface SensorSweepOption {
   operationMarkerId: string;
 }
 
-function objectiveIsCentral(state: BattleState, objectiveIndex: number, side: Side): boolean {
+function objectiveIsCentral(state: BattleState, objectiveIndex: number): boolean {
   const objective = state.objectives[objectiveIndex];
   if (!objective) return false;
   const role = state.terrain.find(terrain => pointInTerrain(objective, terrain))?.objectiveRole;
-  const homeRole = side === 0 ? 'home-0' : 'home-1';
-  const opponentHomeRole = side === 0 ? 'home-1' : 'home-0';
-  return role !== homeRole && role !== opponentHomeRole;
+  return role === undefined || role === 'central' || role === 'no-mans-land';
 }
 
 export function sensorSweepOptions(
@@ -1560,7 +1560,7 @@ export function sensorSweepOptions(
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
   if (!unit) return [];
   const centralObjectiveIndexes = objectiveIndexesWithinRange(state, unit, rules)
-    .filter(objectiveIndex => objectiveIsCentral(state, objectiveIndex, side));
+    .filter(objectiveIndex => objectiveIsCentral(state, objectiveIndex));
   return centralObjectiveIndexes.flatMap(objectiveIndex =>
     markers.map(marker => ({ objectiveIndex, operationMarkerId: marker.id })),
   );
@@ -1611,7 +1611,9 @@ function removeOpponentOperationMarkersAfterMove(
   if (!objectiveIndexes.size) return;
   const markers = state.missionState?.operationMarkers ?? [];
   const removed = markers.filter(marker =>
-    marker.side !== unit.side && objectiveIndexes.has(marker.objectiveIndex)
+    marker.side !== unit.side
+    && marker.objectiveIndex !== undefined
+    && objectiveIndexes.has(marker.objectiveIndex)
   );
   if (!removed.length) return;
   state.missionState!.operationMarkers = markers.filter(marker => !removed.includes(marker));
@@ -1656,6 +1658,63 @@ export function vanguardOperationTerrainOptions(
   if (!unit) return [];
   return state.terrain
     .filter(terrain => vanguardOperationTerrainIsValid(state, unit, side, terrain.id))
+    .map(terrain => terrain.id);
+}
+
+function boobyTrapTerrainIsValid(
+  state: BattleState,
+  unit: BattleUnit,
+  side: Side,
+  terrainId: string,
+): boolean {
+  const terrain = state.terrain.find(candidate => candidate.id === terrainId);
+  if (!terrain || !terrainAreaIdsContainingUnit(state, unit).includes(terrainId)) return false;
+
+  const homeRole = side === 0 ? 'home-0' : 'home-1';
+  const objectiveIndexes = objectiveIndexesWithinRange(state, unit, rules40K11th);
+  const isEligibleObjectiveTerrain = objectiveIndexes.some(objectiveIndex => {
+    const objective = state.objectives[objectiveIndex];
+    return objective
+      && pointInTerrain(objective, terrain)
+      && terrain.objectiveRole !== homeRole;
+  });
+  const deployment = setupDeploymentZoneSource(state.setup);
+  const zone = zoneFor(side, deployment, boardFormatForState(state));
+  const isOutsideDeploymentZone = !pointInDeploymentZone(
+    { x: terrain.x + terrain.width / 2, y: terrain.y + terrain.height / 2 },
+    zone,
+  );
+  return isEligibleObjectiveTerrain || isOutsideDeploymentZone;
+}
+
+export function boobyTrapTerrainOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): string[] {
+  const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+  if (rules.metadata.edition !== '11e'
+    || selectedMissionName !== 'Death Trap'
+    || state.phase !== 'shooting'
+    || !playUnitCanStartAction(state, unitId, side, rules)) {
+    return [];
+  }
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  if (!unit) return [];
+  const alreadyTrappedTerrainIds = new Set([
+    ...(state.missionState?.operationMarkers ?? [])
+      .filter(marker => marker.side === side && marker.sourceActionId === 'booby-trap')
+      .flatMap(marker => marker.terrainId ? [marker.terrainId] : []),
+    ...(state.missionEvents?.completedActionsThisTurn ?? [])
+      .filter(event => event.side === side && event.actionId === 'booby-trap')
+      .flatMap(event => event.targetTerrainId ? [event.targetTerrainId] : []),
+  ]);
+  return state.terrain
+    .filter(terrain =>
+      !alreadyTrappedTerrainIds.has(terrain.id)
+      && boobyTrapTerrainIsValid(state, unit, side, terrain.id)
+    )
     .map(terrain => terrain.id);
 }
 
@@ -1712,6 +1771,11 @@ export function startPlayUnitAction(
       || !vanguardOperationTerrainOptions(state, unitId, side, rules).includes(targetTerrainId))) {
     return state;
   }
+  if (actionId === 'booby-trap'
+    && (targetTerrainId === undefined
+      || !boobyTrapTerrainOptions(state, unitId, side, rules).includes(targetTerrainId))) {
+    return state;
+  }
   if (actionId === 'sensor-sweep'
     && !sensorSweepOptions(state, unitId, side, rules).some(option =>
       option.objectiveIndex === targetObjectiveIndex
@@ -1726,23 +1790,32 @@ export function startPlayUnitAction(
   }
   const next = clone(state);
   const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
-  if (actionId === 'surveil') {
-    const target = next.units.find(candidate => candidate.id === targetUnitId)!;
+  if (actionId === 'surveil' || actionId === 'booby-trap') {
     const action = {
       id: actionId,
       name: actionName,
       startedPhase: next.phase,
       completesAt: 'end-of-turn' as const,
-      targetUnitId,
+      ...(targetUnitId !== undefined ? { targetUnitId } : {}),
+      ...(targetTerrainId !== undefined ? { targetTerrainId } : {}),
     };
     recordCompletedMissionAction(next, unit, action);
+    const target = targetUnitId === undefined
+      ? undefined
+      : next.units.find(candidate => candidate.id === targetUnitId);
+    const targetTerrain = targetTerrainId === undefined
+      ? undefined
+      : next.terrain.find(terrain => terrain.id === targetTerrainId);
     next.log = [...next.log, log(
       next,
       side,
       unit.profile.name,
-      `${unit.profile.name} surveils ${target.profile.name}.`,
+      actionId === 'surveil'
+        ? `${unit.profile.name} surveils ${target!.profile.name}.`
+        : `${unit.profile.name} traps ${targetTerrain!.name}.`,
       'info',
     )];
+    if (actionId === 'booby-trap') unit.actionStartedThisTurn = true;
     return next;
   }
   unit.performingAction = {
@@ -1777,7 +1850,7 @@ export function completeEndOfTurnActions(state: BattleState, side: Side): void {
       ) ?? -1;
       const controlsTargetObjective = action.targetObjectiveIndex !== undefined
         && objectiveIndexesWithinRange(state, unit, rules40K11th).includes(action.targetObjectiveIndex)
-        && objectiveIsCentral(state, action.targetObjectiveIndex, side)
+        && objectiveIsCentral(state, action.targetObjectiveIndex)
         && updateObjectiveControl(state, rules40K11th)?.some(objective =>
           objective.objectiveIndex === action.targetObjectiveIndex && objective.owner === side
         );

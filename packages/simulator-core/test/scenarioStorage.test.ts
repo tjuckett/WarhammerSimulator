@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -2444,6 +2444,90 @@ test('11th Vanguard Operation completes in an enemy-free opponent-home terrain a
   assert.deepEqual(vanguardOperationTerrainOptions(contested, unit.id, 0, rules40K11th), []);
 });
 
+test('11th Death Trap immediately traps a different eligible terrain area and scores its objective bonus', () => {
+  const battle = state('shooting', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Death Trap', 'Death Trap'],
+  };
+  battle.objectives = [{ x: 20, y: 30 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [
+    terrainMat({ id: 'central-trap', name: 'Central Trap', type: 'ruin', x: 18, y: 28, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  const unit = losTestUnit('blue-sapper', 0, { x: 20, y: 30 });
+  battle.units = [unit];
+
+  assert.deepEqual(boobyTrapTerrainOptions(battle, unit.id, 0, rules40K11th), ['central-trap']);
+  const trapped = applyGameAction(battle, {
+    type: 'play.startAction',
+    side: 0,
+    unitId: unit.id,
+    actionId: 'booby-trap',
+    actionName: 'Booby Trap',
+    targetTerrainId: 'central-trap',
+  }, { rules: rules40K11th });
+
+  assert.equal(trapped.units[0].performingAction, undefined);
+  assert.equal(trapped.units[0].actionStartedThisTurn, true);
+  assert.equal(trapped.missionEvents?.completedActionsThisTurn?.[0]?.targetTerrainId, 'central-trap');
+  assert.equal(trapped.missionState?.operationMarkers?.[0]?.terrainId, 'central-trap');
+  assert.deepEqual(boobyTrapTerrainOptions(trapped, unit.id, 0, rules40K11th), []);
+
+  const result = scorePrimaryMission(trapped, 0, rules40K11th);
+  assert.equal(result.vpGained, 5);
+  assert.deepEqual(result.unsupportedClauses, []);
+  assert.match(formatPrimaryScoringResult(result), /objective bonus 1 x 3VP/);
+});
+
+test('11th Death Trap scores a kill from trapped terrain and its isolated marker at battle end', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Death Trap', 'Death Trap'],
+  };
+  battle.objectives = [];
+  battle.objectiveOwners = [];
+  battle.terrain = [
+    terrainMat({ id: 'kill-zone', name: 'Kill Zone', type: 'ruin', x: 18, y: 28, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  const friendly = losTestUnit('blue-holder', 0, { x: 20, y: 30 });
+  const enemy = losTestUnit('red-target', 1, { x: 20, y: 30 });
+  battle.units = [friendly, enemy];
+  battle.missionState = {
+    operationMarkers: [{
+      id: 'booby-marker',
+      side: 0,
+      sourceActionId: 'booby-trap',
+      placedByUnitId: friendly.id,
+      terrainId: 'kill-zone',
+      position: { x: 20, y: 30 },
+      battleRound: 1,
+      turn: 1,
+    }],
+  };
+
+  startMissionEventsForNewTurn(battle, rules40K11th);
+  enemy.destroyed = true;
+  enemy.remainingModels = 0;
+  enemy.modelPositions = [];
+  recordDestroyedUnitMissionEvent(battle, enemy, 0, { destroyedByUnitId: friendly.id });
+
+  const turnResult = scorePrimaryMission(battle, 0, rules40K11th);
+  assert.equal(turnResult.vpGained, 3);
+  assert.deepEqual(turnResult.unsupportedClauses, []);
+
+  battle.phase = 'end';
+  battle.scores = [0, 0];
+  const finalResult = scorePrimaryMission(battle, 0, rules40K11th);
+  assert.equal(finalResult.vpGained, 5);
+  assert.deepEqual(finalResult.unsupportedClauses, []);
+});
+
 test('11th Delaying Action scores objective control clauses from mission data', () => {
   const battle = state('command', 2);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
@@ -2469,6 +2553,32 @@ test('11th Delaying Action scores objective control clauses from mission data', 
   assert.equal(result.kind, 'scored');
   assert.equal(result.scoringModel, '11e-data:Delaying Action');
   assert.equal(result.vpGained, 10);
+});
+
+test('11th Delaying Action scores control of central and friendly expansion objectives', () => {
+  const battle = state('fight', 1);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Delaying Action', 'Delaying Action'],
+  };
+  battle.objectives = [{ x: 20, y: 30 }, { x: 12, y: 20 }, { x: 32, y: 40 }];
+  battle.objectiveOwners = [null, null, null];
+  battle.terrain = [
+    terrainMat({ id: 'central', name: 'Central', type: 'ruin', x: 18, y: 28, width: 4, height: 4, objectiveRole: 'central' }),
+    terrainMat({ id: 'blue-expansion', name: 'Blue Expansion', type: 'ruin', x: 10, y: 18, width: 4, height: 4, objectiveRole: 'expansion-0' }),
+    terrainMat({ id: 'red-expansion', name: 'Red Expansion', type: 'ruin', x: 30, y: 38, width: 4, height: 4, objectiveRole: 'expansion-1' }),
+  ];
+  battle.units = [
+    losTestUnit('blue-central', 0, { x: 20, y: 30 }),
+    losTestUnit('blue-expansion', 0, { x: 12, y: 20 }),
+  ];
+
+  const result = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(result.vpGained, 2);
+  assert.deepEqual(result.unsupportedClauses, []);
 });
 
 test('11th Smoke and Mirrors scores non-home objective control without unsupported decoy clauses', () => {

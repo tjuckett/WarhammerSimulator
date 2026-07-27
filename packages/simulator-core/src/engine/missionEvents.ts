@@ -2,6 +2,7 @@ import type { BattleState, BattleUnit, Side } from '../types/battle';
 import { battleRound } from './battleRound';
 import { objectiveIndexesWithinRange, terrainAreaIdsContainingUnit, updateObjectiveControl } from './missionScoring';
 import type { RulesEdition } from './rulesEngine';
+import { terrainCenter } from './terrainGeometry';
 
 export function startMissionEventsForNewTurn(state: BattleState, rules: RulesEdition): void {
   const objectives = updateObjectiveControl(state, rules);
@@ -60,8 +61,16 @@ export function recordCompletedMissionAction(
     },
   ];
 
-  if (!['extract-intelligence', 'triangulate', 'consecrate', 'maintain-control', 'decoy', 'sabotage'].includes(action.id) || action.targetObjectiveIndex === undefined) return;
-  const position = state.objectives[action.targetObjectiveIndex];
+  const objectiveMarkerAction = ['extract-intelligence', 'triangulate', 'consecrate', 'maintain-control', 'decoy', 'sabotage'].includes(action.id)
+    && action.targetObjectiveIndex !== undefined;
+  const terrainMarkerAction = action.id === 'booby-trap' && action.targetTerrainId !== undefined;
+  if (!objectiveMarkerAction && !terrainMarkerAction) return;
+  const targetTerrain = action.targetTerrainId === undefined
+    ? undefined
+    : state.terrain.find(terrain => terrain.id === action.targetTerrainId);
+  const position = action.targetObjectiveIndex === undefined
+    ? (targetTerrain ? terrainCenter(targetTerrain) : undefined)
+    : state.objectives[action.targetObjectiveIndex];
   if (!position) return;
 
   state.missionState = state.missionState ?? {};
@@ -69,17 +78,21 @@ export function recordCompletedMissionAction(
   if (markers.some(marker =>
     marker.side === unit.side
     && marker.sourceActionId === action.id
-    && marker.objectiveIndex === action.targetObjectiveIndex
+    && (action.targetObjectiveIndex !== undefined
+      ? marker.objectiveIndex === action.targetObjectiveIndex
+      : marker.terrainId === action.targetTerrainId)
   )) return;
 
+  const targetKey = action.targetObjectiveIndex ?? action.targetTerrainId;
   state.missionState.operationMarkers = [
     ...markers,
     {
-      id: `operation-marker-${unit.side}-${action.id}-${action.targetObjectiveIndex}`,
+      id: `operation-marker-${unit.side}-${action.id}-${targetKey}`,
       side: unit.side,
       sourceActionId: action.id,
       placedByUnitId: unit.id,
-      objectiveIndex: action.targetObjectiveIndex,
+      ...(action.targetObjectiveIndex !== undefined ? { objectiveIndex: action.targetObjectiveIndex } : {}),
+      ...(action.targetTerrainId !== undefined ? { terrainId: action.targetTerrainId } : {}),
       position: { ...position },
       battleRound: battleRound(state),
       turn: state.turn,

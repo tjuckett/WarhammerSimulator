@@ -67,6 +67,9 @@ const objectiveRoles: Array<{ value: Terrain['objectiveRole'] | ''; label: strin
   { value: 'home-0', label: 'blue home' },
   { value: 'home-1', label: 'red home' },
   { value: 'no-mans-land', label: 'no mans land' },
+  { value: 'central', label: 'central' },
+  { value: 'expansion-0', label: 'blue expansion' },
+  { value: 'expansion-1', label: 'red expansion' },
 ];
 
 function cleanNumber(value: number): number {
