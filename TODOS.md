@@ -165,6 +165,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - [x] Reused the mission-operation framework for Sabotage: eligible units can sabotage different non-home objectives, concurrent actions reserve their targets, manual play and legal actions expose the mission action, and completed actions score with an opponent-home approximation for the territory bonus.
   - [x] Added terrain-target mission actions for Vanguard Operation: eligible units can operate from enemy-free opponent-home terrain areas, completion revalidates the area, manual play and legal actions expose the mission action, and completed operations score automatically.
   - [x] Enabled Unstoppable Force's newly controlled objective clause using the existing start-of-turn objective ownership snapshot.
+  - [x] Added Sensor Sweep for Extract Relic and Locate and Deny: eligible units start once per turn from a central objective while multiple operation markers remain, completion requires controlling that objective, the selected marker is removed, and replay/UI/legal-action paths preserve the target. Extract Relic's isolated-marker clauses and Locate and Deny's no-enemy-marker end-battle clause now score from persistent marker state.
 - [x] Find or transcribe source text for all 25 unique 11th primary missions.
 - [ ] Implement exact scoring for all 25 unique 11th primary missions once source text is available. All mission texts are transcribed; event clauses need the state tracking above.
 - [ ] Add tests for every implemented 11th primary mission scoring rule.

@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -1302,8 +1302,173 @@ test('11th Extract Relic scores an enemy destroyed after starting within objecti
   const result = scorePrimaryMission(battle, 0, rules40K11th);
 
   assert.equal(result.vpGained, 3);
-  assert.deepEqual(result.unsupportedClauses?.length, 2);
+  assert.deepEqual(result.unsupportedClauses, []);
   assert.match(formatPrimaryScoringResult(result), /started the turn within range/);
+});
+
+test('11th Sensor Sweep removes a selected operation marker while controlling a central objective', () => {
+  const battle = state('shooting', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Extract Relic', 'Locate and Deny'],
+  };
+  battle.objectives = [{ x: 20, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [
+    terrainMat({ id: 'central', name: 'Central', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'remote', name: 'Remote', type: 'ruin', x: 38, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  const unit = losTestUnit('blue-sweeper', 0, { x: 20, y: 10 });
+  battle.units = [unit];
+  battle.missionState = {
+    operationMarkers: [
+      {
+        id: 'marker-central',
+        side: 1,
+        sourceActionId: 'decoy',
+        placedByUnitId: 'red-a',
+        objectiveIndex: 0,
+        position: { x: 20, y: 10 },
+        battleRound: 1,
+        turn: 1,
+      },
+      {
+        id: 'marker-remote',
+        side: 1,
+        sourceActionId: 'decoy',
+        placedByUnitId: 'red-b',
+        objectiveIndex: 0,
+        position: { x: 40, y: 10 },
+        battleRound: 1,
+        turn: 1,
+      },
+    ],
+  };
+
+  assert.deepEqual(sensorSweepOptions(battle, unit.id, 0, rules40K11th), [
+    { objectiveIndex: 0, operationMarkerId: 'marker-central' },
+    { objectiveIndex: 0, operationMarkerId: 'marker-remote' },
+  ]);
+  const beforeShooting: BattleState = { ...battle, phase: 'movement' };
+  assert.deepEqual(sensorSweepOptions(beforeShooting, unit.id, 0, rules40K11th), []);
+  const replayed = applyGameAction(battle, {
+    type: 'play.startAction',
+    side: 0,
+    unitId: unit.id,
+    actionId: 'sensor-sweep',
+    actionName: 'Sensor Sweep',
+    targetObjectiveIndex: 0,
+    targetOperationMarkerId: 'marker-central',
+  }, { rules: rules40K11th });
+  assert.equal(replayed.units[0].performingAction?.targetOperationMarkerId, 'marker-central');
+
+  const started = startPlayUnitAction(
+    battle,
+    unit.id,
+    0,
+    'sensor-sweep',
+    'Sensor Sweep',
+    rules40K11th,
+    0,
+    undefined,
+    'marker-central',
+  );
+  completeEndOfTurnActions(started, 0);
+
+  assert.deepEqual(started.missionState?.operationMarkers?.map(marker => marker.id), ['marker-remote']);
+  assert.equal(started.missionEvents?.completedActionsThisTurn?.[0]?.targetOperationMarkerId, 'marker-central');
+  const result = scorePrimaryMission(started, 0, rules40K11th);
+  assert.equal(result.vpGained, 4);
+  assert.deepEqual(result.unsupportedClauses, []);
+  assert.deepEqual(sensorSweepOptions(started, unit.id, 0, rules40K11th), []);
+});
+
+test('11th Sensor Sweep requires more than one marker and central objective control at completion', () => {
+  const battle = state('shooting', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Locate and Deny', 'Extract Relic'],
+  };
+  battle.objectives = [{ x: 20, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [
+    terrainMat({ id: 'central', name: 'Central', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  const unit = losTestUnit('blue-sweeper', 0, { x: 20, y: 10 });
+  const marker = {
+    id: 'marker-a',
+    side: 1 as const,
+    sourceActionId: 'decoy',
+    placedByUnitId: 'red-a',
+    objectiveIndex: 0,
+    position: { x: 20, y: 10 },
+    battleRound: 1,
+    turn: 1,
+  };
+  battle.units = [unit];
+  battle.missionState = { operationMarkers: [marker] };
+  assert.deepEqual(sensorSweepOptions(battle, unit.id, 0, rules40K11th), []);
+
+  battle.missionState.operationMarkers = [
+    marker,
+    { ...marker, id: 'marker-b', placedByUnitId: 'red-b' },
+  ];
+  const started = startPlayUnitAction(
+    battle,
+    unit.id,
+    0,
+    'sensor-sweep',
+    'Sensor Sweep',
+    rules40K11th,
+    0,
+    undefined,
+    'marker-a',
+  );
+  started.units.push(losTestUnit('red-controller', 1, { x: 20, y: 10 }));
+  completeEndOfTurnActions(started, 0);
+
+  assert.equal(started.missionState?.operationMarkers?.length, 2);
+  assert.equal(started.missionEvents?.completedActionsThisTurn?.length ?? 0, 0);
+});
+
+test('11th Extract Relic and Locate and Deny score remaining operation marker state', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Extract Relic', 'Locate and Deny'],
+  };
+  battle.objectives = [];
+  battle.objectiveOwners = [];
+  battle.terrain = [
+    terrainMat({ id: 'relic-area', name: 'Relic Area', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  battle.units = [losTestUnit('blue-searcher', 0, { x: 20, y: 10 })];
+  battle.missionState = {
+    operationMarkers: [{
+      id: 'last-red-marker',
+      side: 1,
+      sourceActionId: 'decoy',
+      placedByUnitId: 'red-unit',
+      objectiveIndex: 0,
+      position: { x: 20, y: 10 },
+      battleRound: 1,
+      turn: 1,
+    }],
+  };
+
+  assert.equal(scorePrimaryMission(battle, 0, rules40K11th).vpGained, 4);
+  battle.phase = 'end';
+  assert.equal(scorePrimaryMission(battle, 0, rules40K11th).vpGained, 5);
+
+  battle.setup.primaryMissions = ['Extract Relic', 'Locate and Deny'];
+  battle.missionState.operationMarkers = [];
+  assert.equal(scorePrimaryMission(battle, 1, rules40K11th).vpGained, 5);
 });
 
 test('11th Secure Asset only counts destroyed enemies that started near a central objective', () => {

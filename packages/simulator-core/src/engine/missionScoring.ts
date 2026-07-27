@@ -184,6 +184,25 @@ function extractIntelligenceMarkers(state: BattleState, side: Side) {
   return operationMarkersForAction(state, side, 'extract-intelligence');
 }
 
+function noEnemyOperationMarkers(state: BattleState, side: Side): boolean {
+  return !(state.missionState?.operationMarkers ?? []).some(marker => marker.side !== side);
+}
+
+function opponentOperationMarkerIsolated(state: BattleState, side: Side): boolean {
+  const opponentMarkers = (state.missionState?.operationMarkers ?? []).filter(marker => marker.side !== side);
+  if (opponentMarkers.length !== 1) return false;
+  const markerTerrain = state.terrain.find(terrain => pointInTerrain(opponentMarkers[0].position, terrain));
+  if (!markerTerrain) return false;
+  const unitsInTerrain = state.units.filter(unit =>
+    !unit.destroyed
+    && !unit.embarkedInUnitId
+    && !unit.inStrategicReserves
+    && terrainAreaIdsContainingUnit(state, unit).includes(markerTerrain.id),
+  );
+  return unitsInTerrain.some(unit => unit.side === side)
+    && !unitsInTerrain.some(unit => unit.side !== side);
+}
+
 export function tableQuarterPresenceCount(state: BattleState, side: Side): number {
   const board = boardFormatForState(state);
   const centre = { x: board.width / 2, y: board.height / 2 };
@@ -390,6 +409,12 @@ function conditionMet(
       return completedMissionActionCount(state, side, 'secure-asset') > 0;
     case 'vanguard-operation':
       return completedMissionActionCount(state, side, 'vanguard-operation') > 0;
+    case 'sensor-sweep':
+      return completedMissionActionCount(state, side, 'sensor-sweep') > 0;
+    case 'no-enemy-operation-markers':
+      return noEnemyOperationMarkers(state, side);
+    case 'opponent-operation-marker-isolated':
+      return opponentOperationMarkerIsolated(state, side);
     case 'decoy-objectives':
       return operationMarkersForAction(state, side, 'decoy').length >= 1;
     case 'four-decoy-objectives':
@@ -398,11 +423,8 @@ function conditionMet(
     case 'condemned-enemy-left-battlefield':
     case 'consecrated-objectives':
     case 'surveilled-enemy-units':
-    case 'no-enemy-operation-markers':
     case 'triangulated-objectives':
     case 'no-enemy-units-wholly-within-territory':
-    case 'sensor-sweep':
-    case 'opponent-operation-marker-isolated':
     case 'committed-sabotage':
     case 'operation-markers-near-controlled-central-objectives':
     case 'booby-trapped-terrain':

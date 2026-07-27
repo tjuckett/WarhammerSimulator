@@ -1,6 +1,6 @@
 import type { BattleSetup, BattleState, BattleUnit, LogEntry, MovementStep, Phase, Position, Side, Terrain, TerrainFeature } from '../types/battle';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile, type WeaponProfile } from '../types/army';
-import { rules40K10th, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
+import { rules40K10th, rules40K11th, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
 import { deployArmy, distanceToDeploymentZone, fp, pointInDeploymentZone, zoneFor, unitRole, type DeploymentStrategy, type DeploymentZoneSource } from './deployment';
 import { selectUnitToDrop, reactivePosition, deployModelFormation } from './deploymentBrain';
@@ -8,7 +8,7 @@ import { DEFAULT_OBJECTIVES } from './missions';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
 import { advanceAllowance, normalMoveAllowance } from './movement';
 import { objectiveControlRadius } from './objectiveGeometry';
-import { formatPrimaryScoringResult, objectiveIndexesWithinRange, scorePrimaryMission, terrainAreaIdsContainingUnit } from './missionScoring';
+import { formatPrimaryScoringResult, objectiveIndexesWithinRange, scorePrimaryMission, terrainAreaIdsContainingUnit, updateObjectiveControl } from './missionScoring';
 import { battleRound, logWithBattleRound, maxBattleRounds, setBattleRound } from './battleRound';
 import {
   completeMissionEventsForCurrentTurn,
@@ -1518,6 +1518,49 @@ export function sabotageObjectiveOptions(
   return missionObjectiveActionOptions(state, unitId, side, rules, 'Sabotage', 'sabotage');
 }
 
+export interface SensorSweepOption {
+  objectiveIndex: number;
+  operationMarkerId: string;
+}
+
+function objectiveIsCentral(state: BattleState, objectiveIndex: number, side: Side): boolean {
+  const objective = state.objectives[objectiveIndex];
+  if (!objective) return false;
+  const role = state.terrain.find(terrain => pointInTerrain(objective, terrain))?.objectiveRole;
+  const homeRole = side === 0 ? 'home-0' : 'home-1';
+  const opponentHomeRole = side === 0 ? 'home-1' : 'home-0';
+  return role !== homeRole && role !== opponentHomeRole;
+}
+
+export function sensorSweepOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): SensorSweepOption[] {
+  const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+  if (rules.metadata.edition !== '11e'
+    || (selectedMissionName !== 'Extract Relic' && selectedMissionName !== 'Locate and Deny')
+    || state.phase !== 'shooting'
+    || !playUnitCanStartAction(state, unitId, side, rules)) {
+    return [];
+  }
+  const markers = state.missionState?.operationMarkers ?? [];
+  if (markers.length <= 1) return [];
+  if ((state.missionEvents?.completedActionsThisTurn ?? []).some(event =>
+    event.side === side && event.actionId === 'sensor-sweep'
+  )) return [];
+  if (state.units.some(unit => unit.side === side && unit.performingAction?.id === 'sensor-sweep')) return [];
+
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  if (!unit) return [];
+  const centralObjectiveIndexes = objectiveIndexesWithinRange(state, unit, rules)
+    .filter(objectiveIndex => objectiveIsCentral(state, objectiveIndex, side));
+  return centralObjectiveIndexes.flatMap(objectiveIndex =>
+    markers.map(marker => ({ objectiveIndex, operationMarkerId: marker.id })),
+  );
+}
+
 function vanguardOperationTerrainIsValid(
   state: BattleState,
   unit: BattleUnit,
@@ -1562,6 +1605,7 @@ export function startPlayUnitAction(
   rules: RulesEdition = rules40K10th,
   targetObjectiveIndex?: number,
   targetTerrainId?: string,
+  targetOperationMarkerId?: string,
 ): BattleState {
   if (!playUnitCanStartAction(state, unitId, side, rules)) return state;
   if (actionId === 'extract-intelligence'
@@ -1604,6 +1648,13 @@ export function startPlayUnitAction(
       || !vanguardOperationTerrainOptions(state, unitId, side, rules).includes(targetTerrainId))) {
     return state;
   }
+  if (actionId === 'sensor-sweep'
+    && !sensorSweepOptions(state, unitId, side, rules).some(option =>
+      option.objectiveIndex === targetObjectiveIndex
+      && option.operationMarkerId === targetOperationMarkerId
+    )) {
+    return state;
+  }
   const next = clone(state);
   const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
   unit.performingAction = {
@@ -1613,6 +1664,7 @@ export function startPlayUnitAction(
     completesAt: 'end-of-turn',
     ...(targetObjectiveIndex !== undefined ? { targetObjectiveIndex } : {}),
     ...(targetTerrainId !== undefined ? { targetTerrainId } : {}),
+    ...(targetOperationMarkerId !== undefined ? { targetOperationMarkerId } : {}),
   };
   unit.actionStartedThisTurn = true;
   next.log = [...next.log, log(next, side, unit.profile.name, `${unit.profile.name} starts ${actionName}.`, 'info')];
@@ -1629,6 +1681,26 @@ export function completeEndOfTurnActions(state: BattleState, side: Side): void {
         || !vanguardOperationTerrainIsValid(state, unit, side, action.targetTerrainId))) {
       cancelUnitAction(state, unit, 'the target terrain area is no longer eligible');
       continue;
+    }
+    if (action.id === 'sensor-sweep') {
+      const markerIndex = state.missionState?.operationMarkers?.findIndex(marker =>
+        marker.id === action.targetOperationMarkerId
+      ) ?? -1;
+      const controlsTargetObjective = action.targetObjectiveIndex !== undefined
+        && objectiveIndexesWithinRange(state, unit, rules40K11th).includes(action.targetObjectiveIndex)
+        && objectiveIsCentral(state, action.targetObjectiveIndex, side)
+        && updateObjectiveControl(state, rules40K11th)?.some(objective =>
+          objective.objectiveIndex === action.targetObjectiveIndex && objective.owner === side
+        );
+      if (markerIndex < 0 || !controlsTargetObjective) {
+        cancelUnitAction(state, unit, markerIndex < 0
+          ? 'the selected operation marker is no longer on the battlefield'
+          : 'the unit does not control the selected central objective');
+        continue;
+      }
+      state.missionState!.operationMarkers = state.missionState!.operationMarkers!.filter(
+        marker => marker.id !== action.targetOperationMarkerId,
+      );
     }
     recordCompletedMissionAction(state, unit, action);
     unit.performingAction = undefined;

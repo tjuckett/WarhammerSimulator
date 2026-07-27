@@ -259,6 +259,7 @@ export type GameAction =
       actionName?: string;
       targetObjectiveIndex?: number;
       targetTerrainId?: string;
+      targetOperationMarkerId?: string;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.SimulationPlaceNextUnit;
@@ -531,6 +532,7 @@ export function applyGameAction(
         context.rules,
         normalizedAction.targetObjectiveIndex,
         normalizedAction.targetTerrainId,
+        normalizedAction.targetOperationMarkerId,
       );
 
     case GAME_ACTION_TYPE.SimulationPlaceNextUnit:
