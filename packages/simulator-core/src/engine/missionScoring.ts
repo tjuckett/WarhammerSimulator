@@ -422,6 +422,11 @@ function destroyedEnemyStartedWithinTrappedTerrain(state: BattleState, side: Sid
     && destroyedEnemyStartedWithinTerrainArea(state, side, trappedTerrainIds);
 }
 
+function condemnedEnemyLeftBattlefield(state: BattleState, side: Side): boolean {
+  const condemned = new Set(state.missionState?.condemnedUnitIds?.[side] ?? []);
+  return (state.missionEvents?.unitsLeftBattlefieldThisTurn ?? []).some(unitId => condemned.has(unitId));
+}
+
 function conditionMet(
   state: BattleState,
   objectives: ObjectiveControlResult[],
@@ -504,11 +509,12 @@ function conditionMet(
       return destroyedEnemyStartedWithinTrappedTerrain(state, side);
     case 'only-one-operation-marker-isolated':
       return ownOperationMarkerIsolated(state, side);
+    case 'condemned-enemy-left-battlefield':
+      return condemnedEnemyLeftBattlefield(state, side);
     case 'decoy-objectives':
       return operationMarkersForAction(state, side, 'decoy').length >= 1;
     case 'four-decoy-objectives':
       return operationMarkersForAction(state, side, 'decoy').length >= 4;
-    case 'condemned-enemy-left-battlefield':
     case 'consecrated-objectives':
     case 'triangulated-objectives':
     case 'no-enemy-units-wholly-within-territory':
@@ -650,6 +656,12 @@ function scoreDataDrivenPrimaryMission(
   const activeClauses = (mission.scoring ?? []).filter(clause =>
     clause.timing === timing
     && clauseAppliesToRound(clause, round)
+    && (
+      side === state.activeArmy
+      || mission.name !== 'Punishment'
+      || timing !== 'end-turn'
+      || clause.condition === 'condemned-enemy-left-battlefield'
+    )
   );
 
   const scored = activeClauses.map(clause => evaluateMissionClause(state, objectives, side, clause));
@@ -723,6 +735,18 @@ export function scorePrimaryMission(state: BattleState, side: Side, rules: Rules
     score: [...state.scores],
     objectives,
   };
+}
+
+export function scorePrimaryMissionsAtEndOfTurn(
+  state: BattleState,
+  activeSide: Side,
+  rules: RulesEdition,
+): PrimaryScoringResult[] {
+  const sides: Side[] = [activeSide];
+  const inactiveSide = (1 - activeSide) as Side;
+  const inactiveMission = state.setup?.primaryMissions?.[inactiveSide] ?? state.setup?.primaryMission;
+  if (inactiveMission === 'Punishment') sides.push(inactiveSide);
+  return sides.map(side => scorePrimaryMission(state, side, rules));
 }
 
 export function formatPrimaryScoringResult(result: PrimaryScoringResult): string {

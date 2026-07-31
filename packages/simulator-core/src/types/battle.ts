@@ -133,6 +133,7 @@ export interface CompletedTurnMissionEventSummary {
   battleRound: number;
   turn: number;
   destroyedUnitCounts: [number, number];
+  destroyingUnitIds?: string[];
 }
 
 export interface StartOfTurnUnitMissionSnapshot {
@@ -181,6 +182,7 @@ export interface OperationMarker {
 
 export interface MissionEvents {
   destroyedUnitsThisTurn?: DestroyedUnitMissionEvent[];
+  unitsLeftBattlefieldThisTurn?: string[];
   completedActionsThisTurn?: CompletedMissionActionEvent[];
   lastCompletedTurn?: CompletedTurnMissionEventSummary;
   startOfTurn?: StartOfTurnMissionSnapshot;
@@ -188,6 +190,7 @@ export interface MissionEvents {
 
 export interface MissionState {
   operationMarkers?: OperationMarker[];
+  condemnedUnitIds?: [string[], string[]];
 }
 
 export interface Terrain {

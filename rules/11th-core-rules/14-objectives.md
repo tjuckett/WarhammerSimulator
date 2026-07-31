@@ -12,12 +12,12 @@ Source: https://gdmissions.app/11th/rules/core-rules
 ## Implementation Notes
 
 - 11th terrain objective areas, objective roles, level of control by model OC in terrain, Battle-shock OC suppression, and 11th mission scoring over terrain objectives are implemented.
-- Objective marker roles can be tagged as home or no man's land in terrain layouts.
-- Primary and secondary mission definitions are transcribed in `packages/simulator-core/src/data/missionRules.ts`; simple current-turn destroyed-enemy-unit clauses are implemented, but many clauses still resolve as unsupported until broader event/action state tracking exists.
+- Objective marker roles can be tagged as home, no man's land, central, or either player's expansion objective in terrain layouts.
+- Primary and secondary mission definitions are transcribed in `packages/simulator-core/src/data/missionRules.ts`; objective control, mission actions and markers, destroyed-unit events, condemned-unit selection, and battlefield exits support the implemented primary mission clauses.
 
 ## TODO
 
 - Re-check exact Secured Objectives wording before adding sticky-control behavior.
-- Add expansion objective roles required by remaining primary and secondary mission state tracking.
-- Add state tracking/scoring for start-of-turn objective control/proximity, per-unit destroyed enemy scoring, table-quarter presence, territory/deployment-zone geometry, and mission markers.
+- Encode each layout's territory boundary geometry so territory-dependent mission clauses do not rely on deployment-zone approximations.
+- Complete the remaining mission action and secondary-mission state tracking.
 - Add tests for every implemented 11th primary and secondary mission scoring rule.

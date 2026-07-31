@@ -2,7 +2,7 @@ import { BATTLE_PHASE, MOVEMENT_STEP, type Phase, type Position, type Side, type
 import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
-import { scorePrimaryMission } from '../engine/missionScoring';
+import { scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn } from '../engine/missionScoring';
 import { resolveCommandReroll, useStratagem } from '../engine/stratagems';
 import { useUnitAbility } from '../engine/unitAbilities';
 import type { AbilityTiming } from '../types/ability';
@@ -38,8 +38,10 @@ import {
   simulateNextPhase,
   snapShootPlayUnitWeapon,
   startPlayUnitAction,
+  togglePunishmentCondemnedUnit,
   undeployPlayUnit,
 } from '../engine/simulator';
+import { completeMissionEventsForCurrentTurn, startMissionEventsForNewTurn } from '../engine/missionEvents';
 
 export interface GameActionBase {
   id?: string;
@@ -84,6 +86,7 @@ export const GAME_ACTION_TYPE = {
   ResolveCommandReroll: 'play.resolveCommandReroll',
   UseUnitAbility: 'play.useUnitAbility',
   StartAction: 'play.startAction',
+  ToggleCondemnedUnit: 'play.toggleCondemnedUnit',
   SimulationPlaceNextUnit: 'simulation.placeNextUnit',
   SimulationStepPhase: 'simulation.stepPhase',
 } as const;
@@ -263,6 +266,11 @@ export type GameAction =
       targetUnitId?: string;
     })
   | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.ToggleCondemnedUnit;
+      side: Side;
+      unitId: string;
+    })
+  | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.SimulationPlaceNextUnit;
     })
   | (GameActionBase & {
@@ -294,6 +302,7 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   const startCommand = (): void => {
     next.phase = BATTLE_PHASE.Command;
     next.movementStep = undefined;
+    startMissionEventsForNewTurn(next, rules);
     for (const unit of next.units) {
       if (unit.side !== next.activeArmy || unit.destroyed) continue;
       unit.activated = false;
@@ -326,7 +335,8 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   }
   if (phaseBeforeStep === BATTLE_PHASE.Fight) {
     completeEndOfTurnActions(next, scoringSide);
-    scorePrimaryMission(next, scoringSide, rules);
+    scorePrimaryMissionsAtEndOfTurn(next, scoringSide, rules);
+    completeMissionEventsForCurrentTurn(next);
   }
   if (currentIndex < 0) {
     startCommand();
@@ -535,6 +545,14 @@ export function applyGameAction(
         normalizedAction.targetTerrainId,
         normalizedAction.targetOperationMarkerId,
         normalizedAction.targetUnitId,
+      );
+
+    case GAME_ACTION_TYPE.ToggleCondemnedUnit:
+      return togglePunishmentCondemnedUnit(
+        state,
+        normalizedAction.unitId,
+        normalizedAction.side,
+        context.rules,
       );
 
     case GAME_ACTION_TYPE.SimulationPlaceNextUnit:

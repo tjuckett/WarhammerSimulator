@@ -8,12 +8,13 @@ import { DEFAULT_OBJECTIVES } from './missions';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
 import { advanceAllowance, normalMoveAllowance } from './movement';
 import { objectiveControlRadius } from './objectiveGeometry';
-import { formatPrimaryScoringResult, objectiveIndexesWithinRange, scorePrimaryMission, terrainAreaIdsContainingUnit, updateObjectiveControl } from './missionScoring';
+import { formatPrimaryScoringResult, objectiveIndexesWithinRange, scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn, terrainAreaIdsContainingUnit, updateObjectiveControl } from './missionScoring';
 import { battleRound, logWithBattleRound, maxBattleRounds, setBattleRound } from './battleRound';
 import {
   completeMissionEventsForCurrentTurn,
   recordCompletedMissionAction,
   recordDestroyedUnitMissionEvent,
+  recordUnitLeftBattlefieldMissionEvent,
   startMissionEventsForNewTurn,
 } from './missionEvents';
 import { gainCommandPhaseCommandPoints } from './commandPoints';
@@ -1718,6 +1719,85 @@ export function boobyTrapTerrainOptions(
     .map(terrain => terrain.id);
 }
 
+export function punishmentCondemnedUnitOptions(
+  state: BattleState,
+  side: Side,
+  rules: RulesEdition,
+): string[] {
+  const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+  if (rules.metadata.edition !== '11e'
+    || selectedMissionName !== 'Punishment'
+    || state.phase !== 'command'
+    || state.activeArmy !== side) {
+    return [];
+  }
+  const enemiesOnBattlefield = state.units.filter(unit =>
+    unit.side !== side
+    && !unit.destroyed
+    && !unit.embarkedInUnitId
+    && !unit.inStrategicReserves
+    && unit.modelPositions.length > 0
+  );
+  const previousTurnDestroyingUnitIds = new Set(state.missionEvents?.lastCompletedTurn?.destroyingUnitIds ?? []);
+  const eligible = enemiesOnBattlefield.filter(unit =>
+    objectiveIndexesWithinRange(state, unit, rules).length > 0
+    || previousTurnDestroyingUnitIds.has(unit.id)
+  );
+  return (eligible.length ? eligible : enemiesOnBattlefield).map(unit => unit.id);
+}
+
+export function togglePunishmentCondemnedUnit(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): BattleState {
+  const options = punishmentCondemnedUnitOptions(state, side, rules);
+  if (!options.includes(unitId)) return state;
+  const current = state.missionState?.condemnedUnitIds?.[side] ?? [];
+  const alreadySelected = current.includes(unitId);
+  if (!alreadySelected && current.length >= 3) return state;
+
+  const next = clone(state);
+  next.missionState = next.missionState ?? {};
+  const selections: [string[], string[]] = next.missionState.condemnedUnitIds ?? [[], []];
+  selections[side] = alreadySelected
+    ? selections[side].filter(id => id !== unitId)
+    : [...selections[side], unitId];
+  next.missionState.condemnedUnitIds = selections;
+  const unit = next.units.find(candidate => candidate.id === unitId)!;
+  next.log = [...next.log, log(
+    next,
+    side,
+    next.armies[side].name,
+    `${unit.profile.name} is ${alreadySelected ? 'no longer condemned' : 'condemned'} by ${next.armies[side].name}.`,
+    'info',
+  )];
+  return next;
+}
+
+function autoSelectPunishmentCondemnedUnits(
+  state: BattleState,
+  side: Side,
+  rules: RulesEdition,
+): void {
+  const unitIds = punishmentCondemnedUnitOptions(state, side, rules).slice(0, 3);
+  if (!unitIds.length) return;
+  state.missionState = state.missionState ?? {};
+  const selections: [string[], string[]] = state.missionState.condemnedUnitIds ?? [[], []];
+  selections[side] = unitIds;
+  state.missionState.condemnedUnitIds = selections;
+  state.log = [...state.log, log(
+    state,
+    side,
+    state.armies[side].name,
+    `${state.armies[side].name} condemns ${unitIds.map(unitId =>
+      state.units.find(unit => unit.id === unitId)?.profile.name ?? unitId
+    ).join(', ')}.`,
+    'info',
+  )];
+}
+
 export function startPlayUnitAction(
   state: BattleState,
   unitId: string,
@@ -2933,6 +3013,12 @@ function scorePrimaryMissionLogs(s: BattleState, side: Side, rules: RulesEdition
   )];
 }
 
+function scoreEndOfTurnPrimaryMissionLogs(s: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
+  return scorePrimaryMissionsAtEndOfTurn(s, side, rules).map(result =>
+    log(s, result.side, s.armies[result.side].name, `\n--- ${formatPrimaryScoringResult(result)} ---`, 'info')
+  );
+}
+
 function checkWinner(state: BattleState): void {
   const a0 = state.units.some(u => u.side === 0 && !u.destroyed);
   const a1 = state.units.some(u => u.side === 1 && !u.destroyed);
@@ -2996,6 +3082,7 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
   });
   s.phase = 'command';
   s.movementStep = undefined;
+  autoSelectPunishmentCondemnedUnits(s, side, rules);
   const nextCommandPoints = gainCommandPhaseCommandPoints(s);
   const logs = [
     phaseLog(s, side, armyName, `\n=== BATTLE ROUND ${battleRound(s)} - ${armyName.toUpperCase()} - ${rules.name.toUpperCase()} ===`),
@@ -3564,6 +3651,7 @@ export function embarkPlayUnit(
   const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
   const transport = s.units.find(candidate => candidate.id === existingTransport.id && candidate.side === side && !candidate.destroyed)!;
   cancelUnitAction(s, unit, 'it left the battlefield');
+  recordUnitLeftBattlefieldMissionEvent(s, unit.id);
   unit.embarkedInUnitId = transport.id;
   unit.position = { ...transport.position };
   unit.modelPositions = transport.modelPositions.map(position => ({ ...position })).slice(0, Math.max(1, unit.remainingModels));
@@ -3719,6 +3807,13 @@ export function battleCoherencyIssues(state: BattleState, side?: Side): string[]
 }
 
 export function playPhaseCoherencyIssues(state: BattleState): string[] {
+  if (state.phase === 'command') {
+    const options = punishmentCondemnedUnitOptions(state, state.activeArmy, rules40K11th);
+    const selected = state.missionState?.condemnedUnitIds?.[state.activeArmy] ?? [];
+    return options.length > 0 && selected.length === 0
+      ? ['Select at least one enemy unit to condemn before leaving the Command phase.']
+      : [];
+  }
   if (state.phase !== 'movement') return [];
   return [
     ...battleCoherencyIssues(state, state.activeArmy),
@@ -4027,6 +4122,7 @@ function aircraftPivotWithinLimit(unit: BattleUnit, modelIndices: number[]): boo
 
 function moveAircraftToStrategicReserves(state: BattleState, unit: BattleUnit): void {
   cancelUnitAction(state, unit, 'it left the battlefield');
+  recordUnitLeftBattlefieldMissionEvent(state, unit.id);
   unit.inStrategicReserves = true;
   unit.modelPositions = [];
   unit.modelRotations = [];
@@ -5065,7 +5161,7 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
       .forEach(u => newLogs.push(...runFight(u, s, rules)));
   } else if (s.phase === 'fight') {
     completeEndOfTurnActions(s, side);
-    newLogs.push(...scorePrimaryMissionLogs(s, side, rules));
+    newLogs.push(...scoreEndOfTurnPrimaryMissionLogs(s, side, rules));
     advanceTurnInPlace(s);
   }
 
@@ -5088,6 +5184,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   // Command
   s.phase = 'command';
   s.movementStep = undefined;
+  autoSelectPunishmentCondemnedUnits(s, side, rules);
   const nextCommandPoints = gainCommandPhaseCommandPoints(s);
   newLogs.push(phaseLog(s, side, armyName,
     `\n═══ BATTLE ROUND ${battleRound(s)} — ${armyName.toUpperCase()} — ${rules.name.toUpperCase()} ═══`));
@@ -5132,7 +5229,8 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }
 
   // Objective scoring after the turn's actions; shocked units have OC 0.
-  newLogs.push(...scorePrimaryMissionLogs(s, side, rules));
+  completeEndOfTurnActions(s, side);
+  newLogs.push(...scoreEndOfTurnPrimaryMissionLogs(s, side, rules));
 
   s.log = [...s.log, ...newLogs];
   return s;

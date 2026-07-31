@@ -478,11 +478,14 @@ export function PlayTacticsPanel({
   selectedAbilityKey,
   canStartAction,
   actionName,
+  canToggleCondemnedUnit,
+  selectedUnitIsCondemned,
   onStratagemChange,
   onAbilityChange,
   onUseStratagem,
   onUseAbility,
   onStartAction,
+  onToggleCondemnedUnit,
   onResolveCommandReroll,
 }: {
   state: BattleState;
@@ -493,11 +496,14 @@ export function PlayTacticsPanel({
   selectedAbilityKey: string;
   canStartAction: boolean;
   actionName: string;
+  canToggleCondemnedUnit: boolean;
+  selectedUnitIsCondemned: boolean;
   onStratagemChange: (value: string) => void;
   onAbilityChange: (value: string) => void;
   onUseStratagem: (stratagemId: string) => void;
   onUseAbility: () => void;
   onStartAction: () => void;
+  onToggleCondemnedUnit: () => void;
   onResolveCommandReroll: (originalRolls: number[], label: string) => void;
 }) {
   const cp = commandPoints(state);
@@ -592,6 +598,11 @@ export function PlayTacticsPanel({
       <Button size="small" variant="outlined" disabled={!canStartAction} onClick={onStartAction}>
         {actionName === 'Action' ? PLAY_PANEL_LABELS.startAction : `Start ${actionName}`}
       </Button>
+      {canToggleCondemnedUnit && (
+        <Button size="small" variant={selectedUnitIsCondemned ? 'contained' : 'outlined'} onClick={onToggleCondemnedUnit}>
+          {selectedUnitIsCondemned ? 'Remove Condemnation' : 'Condemn Selected Enemy'}
+        </Button>
+      )}
       {selectedUnit?.performingAction && (
         <Typography variant="caption" sx={{ color: uiTokens.color.status.success }}>
           Performing {selectedUnit.performingAction.name}

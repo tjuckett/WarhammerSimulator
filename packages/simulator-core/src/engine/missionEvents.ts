@@ -6,9 +6,14 @@ import { terrainCenter } from './terrainGeometry';
 
 export function startMissionEventsForNewTurn(state: BattleState, rules: RulesEdition): void {
   const objectives = updateObjectiveControl(state, rules);
+  state.missionState = state.missionState ?? {};
+  const condemnedUnitIds = state.missionState.condemnedUnitIds ?? [[], []];
+  condemnedUnitIds[state.activeArmy] = [];
+  state.missionState.condemnedUnitIds = condemnedUnitIds;
   state.missionEvents = {
     ...(state.missionEvents ?? {}),
     destroyedUnitsThisTurn: [],
+    unitsLeftBattlefieldThisTurn: [],
     completedActionsThisTurn: [],
     startOfTurn: {
       activeSide: state.activeArmy,
@@ -102,8 +107,10 @@ export function recordCompletedMissionAction(
 
 export function completeMissionEventsForCurrentTurn(state: BattleState): void {
   const destroyedUnitCounts: [number, number] = [0, 0];
+  const destroyingUnitIds = new Set<string>();
   for (const event of state.missionEvents?.destroyedUnitsThisTurn ?? []) {
     destroyedUnitCounts[event.side] += 1;
+    if (event.destroyedByUnitId) destroyingUnitIds.add(event.destroyedByUnitId);
   }
 
   state.missionEvents = {
@@ -113,8 +120,17 @@ export function completeMissionEventsForCurrentTurn(state: BattleState): void {
       battleRound: battleRound(state),
       turn: state.turn,
       destroyedUnitCounts,
+      ...(destroyingUnitIds.size ? { destroyingUnitIds: [...destroyingUnitIds] } : {}),
     },
   };
+}
+
+export function recordUnitLeftBattlefieldMissionEvent(state: BattleState, unitId: string): void {
+  state.missionEvents = state.missionEvents ?? {};
+  const unitIds = state.missionEvents.unitsLeftBattlefieldThisTurn ?? [];
+  if (!unitIds.includes(unitId)) {
+    state.missionEvents.unitsLeftBattlefieldThisTurn = [...unitIds, unitId];
+  }
 }
 
 export function recordDestroyedUnitMissionEvent(
@@ -149,4 +165,5 @@ export function recordDestroyedUnitMissionEvent(
       phase: state.phase,
     },
   ];
+  recordUnitLeftBattlefieldMissionEvent(state, unit.id);
 }

@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -15,7 +15,7 @@ import {
 import { applyGameAction } from '../src/practice/actions';
 import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
-import { formatPrimaryScoringResult, scorePrimaryMission, updateObjectiveControl } from '../src/engine/missionScoring';
+import { formatPrimaryScoringResult, scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn, updateObjectiveControl } from '../src/engine/missionScoring';
 import {
   completeMissionEventsForCurrentTurn,
   recordDestroyedUnitMissionEvent,
@@ -1921,6 +1921,95 @@ test('11th Meatgrinder scores kill clauses and opponent home control', () => {
   assert.equal(result.vpGained, 5);
   assert.deepEqual(result.unsupportedClauses, []);
   assert.doesNotMatch(formatPrimaryScoringResult(result), /Unsupported clauses:/);
+});
+
+test('11th Punishment selects up to three eligible condemned enemies and replays the selection', () => {
+  const battle = state('command', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Punishment', 'Delaying Action'],
+  };
+  battle.objectives = [{ x: 20, y: 30 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [
+    terrainMat({ id: 'central', name: 'Central', type: 'ruin', x: 18, y: 28, width: 4, height: 4, objectiveRole: 'central' }),
+  ];
+  const nearObjective = losTestUnit('red-near-objective', 1, { x: 20, y: 30 });
+  const previousDestroyer = losTestUnit('red-previous-destroyer', 1, { x: 35, y: 30 });
+  const ineligible = losTestUnit('red-ineligible', 1, { x: 40, y: 30 });
+  battle.units = [nearObjective, previousDestroyer, ineligible];
+  battle.missionEvents = {
+    lastCompletedTurn: {
+      activeSide: 1,
+      battleRound: 1,
+      turn: 1,
+      destroyedUnitCounts: [1, 0],
+      destroyingUnitIds: [previousDestroyer.id],
+    },
+  };
+
+  assert.deepEqual(
+    punishmentCondemnedUnitOptions(battle, 0, rules40K11th),
+    [nearObjective.id, previousDestroyer.id],
+  );
+  assert.match(playPhaseCoherencyIssues(battle)[0], /condemn/i);
+
+  const condemned = applyGameAction(battle, {
+    type: 'play.toggleCondemnedUnit',
+    side: 0,
+    unitId: nearObjective.id,
+  }, { rules: rules40K11th });
+  const twiceCondemned = togglePunishmentCondemnedUnit(
+    condemned,
+    previousDestroyer.id,
+    0,
+    rules40K11th,
+  );
+
+  assert.deepEqual(twiceCondemned.missionState?.condemnedUnitIds?.[0], [
+    nearObjective.id,
+    previousDestroyer.id,
+  ]);
+  assert.deepEqual(playPhaseCoherencyIssues(twiceCondemned), []);
+});
+
+test('11th Punishment scores only its condemned clause during the opponent turn', () => {
+  const battle = state('fight', 5);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.activeArmy = 1;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Punishment', 'Delaying Action'],
+  };
+  battle.objectives = [{ x: 18, y: 30 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 16, y: 28, width: 4, height: 4, objectiveRole: 'central' }),
+  ];
+  const condemned = losTestUnit('red-condemned', 1, { x: 20, y: 30 });
+  const blueAttacker = losTestUnit('blue-attacker', 0, { x: 18, y: 30 });
+  battle.units = [condemned, blueAttacker];
+  battle.missionState = { condemnedUnitIds: [[condemned.id], []] };
+  battle.missionEvents = { destroyedUnitsThisTurn: [], unitsLeftBattlefieldThisTurn: [] };
+
+  condemned.destroyed = true;
+  condemned.remainingModels = 0;
+  condemned.modelPositions = [];
+  recordDestroyedUnitMissionEvent(battle, condemned, 0, { destroyedByUnitId: blueAttacker.id });
+
+  const results = scorePrimaryMissionsAtEndOfTurn(battle, 1, rules40K11th);
+
+  assert.deepEqual(results.map(result => result.side), [1, 0]);
+  assert.equal(results[1].vpGained, 5);
+  assert.equal(battle.scores[0], 5);
+  assert.deepEqual(results[1].unsupportedClauses, []);
+
+  battle.activeArmy = 0;
+  startMissionEventsForNewTurn(battle, rules40K11th);
+  assert.deepEqual(battle.missionState?.condemnedUnitIds?.[0], []);
 });
 
 test('11th Unstoppable Force scores an objective gained after the start of the turn', () => {

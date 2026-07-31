@@ -23,12 +23,13 @@ import type { AbilityTiming } from '@warhammer-simulator/core/types/ability';
 import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simulator/core/engine/rulesEngine';
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
-  battleModelIdsWithCoherencyIssues, beginPlayBattle, createDeploymentState, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels,
-  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTarget, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, triangulateObjectiveOptions, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type LOSRay,
+  battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, createDeploymentState, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels,
+  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTarget, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
-import { formatPrimaryScoringResult, scorePrimaryMission } from '@warhammer-simulator/core/engine/missionScoring';
+import { formatPrimaryScoringResult, scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn } from '@warhammer-simulator/core/engine/missionScoring';
+import { completeMissionEventsForCurrentTurn, startMissionEventsForNewTurn } from '@warhammer-simulator/core/engine/missionEvents';
 import { availableStratagems, resolveCommandReroll, useStratagem } from '@warhammer-simulator/core/engine/stratagems';
 import { availableUnitAbilities, useUnitAbility } from '@warhammer-simulator/core/engine/unitAbilities';
 import {
@@ -685,6 +686,20 @@ export default function App() {
     ? selectedPlayBattleUnit
     : null;
   const selectedTacticsSide = selectedTacticsUnit?.side ?? battleState?.activeArmy ?? 0;
+  const punishmentCondemnedOptions = useMemo(
+    () => battleState
+      ? punishmentCondemnedUnitOptions(battleState, battleState.activeArmy, activeRulesForBattle)
+      : [],
+    [battleState, activeRulesForBattle],
+  );
+  const condemnedUnitIds = battleState?.missionState?.condemnedUnitIds?.[battleState.activeArmy] ?? [];
+  const selectedUnitIsCondemned = !!battleState
+    && !!selectedTacticsUnit
+    && condemnedUnitIds.includes(selectedTacticsUnit.id);
+  const canToggleSelectedCondemnedUnit = !!battleState
+    && !!selectedTacticsUnit
+    && punishmentCondemnedOptions.includes(selectedTacticsUnit.id)
+    && (selectedUnitIsCondemned || condemnedUnitIds.length < 3);
   const availablePlayStratagems = useMemo(
     () => {
       if (!isPlayMode || !battleState) return [];
@@ -2119,6 +2134,26 @@ export default function App() {
     commitBattleState(next);
   }
 
+  function toggleSelectedCondemnedUnit() {
+    const prev = battleStateRef.current;
+    if (!prev || !isPlayMode || !selectedTacticsUnit) return;
+    const side = prev.activeArmy;
+    const next = togglePunishmentCondemnedUnit(
+      prev,
+      selectedTacticsUnit.id,
+      side,
+      activeRulesForBattle,
+    );
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: GAME_ACTION_TYPE.ToggleCondemnedUnit,
+      side,
+      unitId: selectedTacticsUnit.id,
+    });
+    setTargetErrorMsg(`${selectedTacticsUnit.profile.name} ${selectedUnitIsCondemned ? 'is no longer condemned.' : 'is condemned.'}`);
+    commitBattleState(next);
+  }
+
   function embarkSelectedPlayUnit() {
     commitPendingPlayModelMove();
     const selection = primaryPlaySelectionPart(playModelSelection);
@@ -2267,7 +2302,7 @@ export default function App() {
     if (!prev || prev.winner !== null || prev.phase === BATTLE_PHASE.Deployment || prev.phase === BATTLE_PHASE.End) return;
     const coherencyIssues = playPhaseCoherencyIssues(prev);
     if (coherencyIssues.length > 0) {
-      setPlayPhaseWarning(`${coherencyIssues[0]} Restore coherency before advancing the phase.`);
+      setPlayPhaseWarning(coherencyIssues[0]);
       return;
     }
     setPlayPhaseWarning('');
@@ -2280,12 +2315,16 @@ export default function App() {
       if (scoringResult.kind === 'unsupported') setPlayPhaseWarning(formatPrimaryScoringResult(scoringResult));
     }
     if (phaseBeforeStep === BATTLE_PHASE.Fight) {
-      const scoringResult = scorePrimaryMission(next, scoringSide, activeRulesForBattle);
-      if (scoringResult.kind === 'unsupported') setPlayPhaseWarning(formatPrimaryScoringResult(scoringResult));
+      completeEndOfTurnActions(next, scoringSide);
+      const scoringResults = scorePrimaryMissionsAtEndOfTurn(next, scoringSide, activeRulesForBattle);
+      const unsupported = scoringResults.find(result => result.kind === 'unsupported');
+      if (unsupported) setPlayPhaseWarning(formatPrimaryScoringResult(unsupported));
+      completeMissionEventsForCurrentTurn(next);
     }
     const startCommand = () => {
       next.phase = BATTLE_PHASE.Command;
       next.movementStep = undefined;
+      startMissionEventsForNewTurn(next, activeRulesForBattle);
       for (const unit of next.units) {
         if (unit.side !== next.activeArmy || unit.destroyed) continue;
         unit.activated = false;
@@ -2705,11 +2744,14 @@ export default function App() {
                   selectedAbilityKey={selectedAbilityKey}
                   canStartAction={canSelectedUnitStartAction}
                   actionName={selectedMissionAction?.name ?? 'Action'}
+                  canToggleCondemnedUnit={canToggleSelectedCondemnedUnit}
+                  selectedUnitIsCondemned={selectedUnitIsCondemned}
                   onStratagemChange={setSelectedStratagemId}
                   onAbilityChange={setSelectedAbilityKey}
                   onUseStratagem={useSelectedPlayStratagem}
                   onUseAbility={useSelectedPlayAbility}
                   onStartAction={startSelectedPlayAction}
+                  onToggleCondemnedUnit={toggleSelectedCondemnedUnit}
                   onResolveCommandReroll={resolvePendingCommandReroll}
                 />
               )}

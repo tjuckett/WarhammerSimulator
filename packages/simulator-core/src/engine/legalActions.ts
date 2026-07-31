@@ -26,6 +26,7 @@ import {
   playUnitCanFallBack,
   playUnitCanPileIn,
   playUnitCanStartAction,
+  punishmentCondemnedUnitOptions,
   sabotageObjectiveOptions,
   sensorSweepOptions,
   secureAssetObjectiveOptions,
@@ -425,6 +426,24 @@ function addAbilityActions(actions: LegalAction[], state: BattleState, side: Sid
   }
 }
 
+function addPunishmentActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
+  const selected = new Set(state.missionState?.condemnedUnitIds?.[side] ?? []);
+  if (selected.size >= 3) return;
+  for (const unitId of punishmentCondemnedUnitOptions(state, side, rules)) {
+    if (selected.has(unitId)) continue;
+    const unit = state.units.find(candidate => candidate.id === unitId);
+    if (!unit) continue;
+    actions.push({
+      action: { type: 'play.toggleCondemnedUnit', side, unitId },
+      category: 'action',
+      side,
+      unitId,
+      targetUnitId: unitId,
+      label: `Condemn ${unit.profile.name}`,
+    });
+  }
+}
+
 export function getLegalActions(
   state: BattleState,
   side: Side = state.activeArmy,
@@ -445,6 +464,7 @@ export function getLegalActions(
   addSnapShootingActions(actions, state, side, rules);
   addChargeActions(actions, state, side, rules);
   addFightActions(actions, state, side, rules);
+  addPunishmentActions(actions, state, side, rules);
   if (includeStratagems) addStratagemActions(actions, state, side, rules);
   if (includeAbilities) addAbilityActions(actions, state, side, rules);
 
