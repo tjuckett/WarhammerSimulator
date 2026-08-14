@@ -19,6 +19,10 @@ import { objectiveIndexesWithinRange, updateObjectiveControl } from './missionSc
 import type { RulesEdition } from './rulesEngine';
 import { secondaryMissionStateFor } from './secondaryMissions';
 
+const SECONDARY_ROUND_CAP = 15;
+const SECONDARY_BATTLE_CAP = 45;
+const FIXED_SECONDARY_CARD_CAP = 20;
+
 function cardActivationId(card: SecondaryMissionCardState, side: Side): string {
   return card.activationId
     ?? `legacy-secondary-card-${side}-${card.missionName}-${card.activatedBattleRound}-${card.activatedTurn}`;
@@ -44,16 +48,44 @@ function recordScoring(
   const records = state.missionState.secondaryMissionScoringRecords ?? [];
   if (records.some(record => record.id === id)) return null;
 
-  if (status === 'awarded') state.scores[side] += vp;
+  const requestedVp = status === 'awarded' ? Math.max(0, vp) : 0;
+  const totalAwarded = records
+    .filter(record => record.side === side)
+    .reduce((total, record) => total + record.vp, 0);
+  const roundAwarded = records
+    .filter(record => record.side === side && record.battleRound === battleRound(state))
+    .reduce((total, record) => total + record.vp, 0);
+  const fixedCardAwarded = card.mode === 'fixed'
+    ? records.filter(record => record.side === side && record.activationId === activationId)
+      .reduce((total, record) => total + record.vp, 0)
+    : 0;
+  const roundRemaining = Math.max(0, SECONDARY_ROUND_CAP - roundAwarded);
+  const battleRemaining = Math.max(0, SECONDARY_BATTLE_CAP - totalAwarded);
+  const fixedCardRemaining = card.mode === 'fixed'
+    ? Math.max(0, FIXED_SECONDARY_CARD_CAP - fixedCardAwarded)
+    : Number.POSITIVE_INFINITY;
+  const awardedVp = Math.min(requestedVp, roundRemaining, battleRemaining, fixedCardRemaining);
+  const capReasons = requestedVp > awardedVp ? [
+    ...(roundRemaining < requestedVp ? [`${SECONDARY_ROUND_CAP}VP battle-round secondary limit`] : []),
+    ...(battleRemaining < requestedVp ? [`${SECONDARY_BATTLE_CAP}VP battle secondary limit`] : []),
+    ...(fixedCardRemaining < requestedVp ? [`${FIXED_SECONDARY_CARD_CAP}VP Fixed card limit`] : []),
+  ] : [];
+  const finalStatus = status === 'awarded' && requestedVp > 0 && awardedVp === 0 ? 'capped' : status;
+  const finalDetail = capReasons.length
+    ? `${detail} Requested ${requestedVp}VP; awarded ${awardedVp}VP due to the ${capReasons.join(', ')}.`
+    : detail;
+
+  if (awardedVp > 0) state.scores[side] += awardedVp;
   const record: SecondaryMissionScoringRecord = {
     id,
     activationId,
     side,
     missionName: card.missionName,
     clauseIds,
-    status,
-    vp: status === 'awarded' ? vp : 0,
-    detail,
+    status: finalStatus,
+    requestedVp,
+    vp: awardedVp,
+    detail: finalDetail,
     battleRound: battleRound(state),
     turn: state.turn,
     activeSide: state.activeArmy,
@@ -128,29 +160,20 @@ function scoreTacticalAssassination(
   const enemyCharacters = state.units.filter(unit => unit.side !== side && unitIsCharacter(unit));
   const allCharactersDestroyed = enemyCharacters.length > 0
     && enemyCharacters.every(unit => unit.destroyed || unit.remainingModels <= 0);
-  const opportunity = endTurnOpportunity(state);
-  return [
-    recordScoring(
-      state,
-      side,
-      card,
-      `${opportunity}:tactical-character-destroyed-this-turn`,
-      ['tactical-character-destroyed-this-turn'],
-      destroyedCharacter ? 'awarded' : 'not-met',
-      5,
-      destroyedCharacter ? 'An enemy Character model was destroyed this turn.' : 'No enemy Character model was destroyed this turn.',
-    ),
-    recordScoring(
-      state,
-      side,
-      card,
-      `${opportunity}:tactical-all-characters-destroyed`,
-      ['tactical-all-characters-destroyed'],
-      allCharactersDestroyed ? 'awarded' : 'not-met',
-      5,
-      allCharactersDestroyed ? 'All enemy Character models have been destroyed during the battle.' : 'Enemy Character models remain.',
-    ),
-  ].filter((record): record is SecondaryMissionScoringRecord => record !== null);
+  const met = destroyedCharacter || allCharactersDestroyed;
+  const record = recordScoring(
+    state,
+    side,
+    card,
+    endTurnOpportunity(state),
+    ['tactical-character-destroyed-or-all-characters-destroyed'],
+    met ? 'awarded' : 'not-met',
+    5,
+    met
+      ? `${destroyedCharacter ? 'An enemy Character model was destroyed this turn' : 'All enemy Character models have been destroyed during the battle'}; the OR condition awards 5VP.`
+      : 'Neither tactical Assassination condition was met.',
+  );
+  return record ? [record] : [];
 }
 
 function opponentTurnOrFinalRoundDeadlineReached(state: BattleState, side: Side): boolean {
@@ -247,17 +270,23 @@ function scoreCentreGround(
     unit.side !== side && !unit.destroyed && !unit.inStrategicReserves && !unit.embarkedInUnitId
     && unit.modelPositions.length > 0 && unitWithinBattlefieldCentre(state, unit, 6)
   );
-  const opportunity = endTurnOpportunity(state);
   const firstMet = friendlyNearThree && !enemyNearThree;
   const secondMet = friendlyNearThree && !enemyNearSix;
-  return [
-    recordScoring(state, side, card, `${opportunity}:friendly-near-centre-no-enemy-three`,
-      ['friendly-near-centre-no-enemy-three'], firstMet ? 'awarded' : 'not-met', 3,
-      firstMet ? 'An eligible friendly unit is within 3" of centre and no enemy unit is within 3".' : 'The 3" centre condition was not met.'),
-    recordScoring(state, side, card, `${opportunity}:friendly-near-centre-no-enemy-six`,
-      ['friendly-near-centre-no-enemy-six'], secondMet ? 'awarded' : 'not-met', 5,
-      secondMet ? 'An eligible friendly unit is within 3" of centre and no enemy unit is within 6".' : 'The 6" centre exclusion condition was not met.'),
-  ].filter((record): record is SecondaryMissionScoringRecord => record !== null);
+  const record = recordScoring(
+    state,
+    side,
+    card,
+    endTurnOpportunity(state),
+    [secondMet ? 'friendly-near-centre-no-enemy-six' : 'friendly-near-centre-no-enemy-three'],
+    firstMet ? 'awarded' : 'not-met',
+    secondMet ? 5 : 3,
+    secondMet
+      ? 'The exclusive 5VP condition is met: an eligible friendly unit is within 3" of centre and no enemy unit is within 6".'
+      : firstMet
+        ? 'An eligible friendly unit is within 3" of centre and no enemy unit is within 3".'
+        : 'Neither exclusive Centre Ground condition was met.',
+  );
+  return record ? [record] : [];
 }
 
 function scoreCleanse(
@@ -305,12 +334,12 @@ function scoreDefendStronghold(
     controlsHome ? 'awarded' : 'not-met', 3,
     controlsHome ? `Home objective ${homeObjectiveIndex + 1} is controlled.` : `Home objective ${homeObjectiveIndex + 1} is not controlled.`);
   const second = recordScoring(state, side, card, `${opportunity}:control-home-no-enemy-deployment-zone`,
-    ['control-home-no-enemy-deployment-zone'], !deploymentKnown ? 'unsupported' : controlsHome && !enemyInZone ? 'awarded' : 'not-met', 5,
+    ['no-enemy-deployment-zone-bonus'], !deploymentKnown ? 'unsupported' : !enemyInZone ? 'awarded' : 'not-met', 2,
     !deploymentKnown
       ? 'Friendly deployment-zone geometry is unavailable.'
-      : controlsHome && !enemyInZone
-        ? `Home objective ${homeObjectiveIndex + 1} is controlled and no enemy unit is within the deployment zone.`
-        : 'Home control or the enemy-free deployment-zone condition was not met.');
+      : !enemyInZone
+        ? 'No enemy unit is within the deployment zone; the cumulative bonus awards 2VP.'
+        : 'An enemy unit is within the deployment zone.');
   return [first, second].filter((record): record is SecondaryMissionScoringRecord => record !== null);
 }
 
@@ -334,36 +363,28 @@ function scoreBeacon(
 
   const withinTerritory = unitWithinFriendlyTerritory(state, unit, side);
   const withinDeploymentZone = unitWithinDeploymentZone(state, unit, side);
-  const deploymentRecord = recordScoring(
-    state,
-    side,
-    card,
-    'deadline:beacon-outside-deployment-zone',
-    ['beacon-outside-deployment-zone'],
-    withinDeploymentZone === undefined ? 'unsupported' : withinDeploymentZone ? 'not-met' : 'awarded',
-    3,
-    withinDeploymentZone === undefined
-      ? 'Beacon deployment-zone position cannot be classified from the available setup data.'
-      : withinDeploymentZone
-        ? `${unit.profile.name} is within its deployment zone.`
-        : `${unit.profile.name} is outside its deployment zone.`,
-  );
-  const territoryRecord = recordScoring(
-    state,
-    side,
-    card,
-    'deadline:beacon-outside-territory',
-    ['beacon-outside-territory'],
-    withinTerritory === undefined ? 'unsupported' : withinTerritory ? 'not-met' : 'awarded',
-    5,
-    withinTerritory === undefined
-      ? 'Beacon territory position cannot be classified because the layout does not classify this position.'
-      : withinTerritory
-        ? `${unit.profile.name} is within friendly territory.`
-        : `${unit.profile.name} is outside friendly territory.`,
-  );
-  return [deploymentRecord, territoryRecord]
-    .filter((record): record is SecondaryMissionScoringRecord => record !== null);
+  if (withinTerritory === false) {
+    const record = recordScoring(state, side, card, 'deadline', ['beacon-outside-territory'], 'awarded', 5,
+      `${unit.profile.name} is outside friendly territory; the exclusive 5VP tier applies.`);
+    return record ? [record] : [];
+  }
+  if (withinDeploymentZone === false) {
+    const records = [recordScoring(state, side, card, 'deadline', ['beacon-outside-deployment-zone'], 'awarded', 3,
+      `${unit.profile.name} is outside its deployment zone.`)];
+    if (withinTerritory === undefined) {
+      records.push(recordScoring(state, side, card, 'deadline:beacon-outside-territory', ['beacon-outside-territory'], 'unsupported', 0,
+        'The exclusive 5VP territory tier cannot be evaluated because the layout does not classify this position.'));
+    }
+    return records.filter((record): record is SecondaryMissionScoringRecord => record !== null);
+  }
+  if (withinTerritory === undefined || withinDeploymentZone === undefined) {
+    const record = recordScoring(state, side, card, 'deadline', ['beacon-outside-deployment-zone', 'beacon-outside-territory'], 'unsupported', 0,
+      'Beacon position cannot be classified from the available deployment-zone and territory data.');
+    return record ? [record] : [];
+  }
+  const record = recordScoring(state, side, card, 'deadline', ['beacon-outside-deployment-zone', 'beacon-outside-territory'], 'not-met', 0,
+    `${unit.profile.name} is within its deployment zone and friendly territory.`);
+  return record ? [record] : [];
 }
 
 function scoreBehindEnemyLines(
@@ -406,14 +427,16 @@ export function scoreSecondaryMissionsAtEndOfTurn(
     for (const card of activeCards(state, side)) {
       if (card.missionName === 'A Grievous Blow') add(scoreGrievousBlow(state, side, card));
       else if (card.missionName === 'A Tempting Target' && activeSide === side) add(scoreTemptingTarget(state, side, card, rules));
-      else if (card.missionName === 'Assassination' && card.mode === 'tactical') records.push(...scoreTacticalAssassination(state, side, card));
+      else if (card.missionName === 'Assassination' && card.mode === 'fixed') records.push(...scoreFixedAssassinationDestroyedModels(state, state.missionEvents?.destroyedModelsThisTurn ?? [], side, card));
+      else if (card.missionName === 'Assassination') records.push(...scoreTacticalAssassination(state, side, card));
       else if (card.missionName === 'Beacon' && opponentTurnOrFinalRoundDeadlineReached(state, side)) records.push(...scoreBeacon(state, side, card));
       else if (card.missionName === 'Behind Enemy Lines' && activeSide === side) add(scoreBehindEnemyLines(state, side, card));
-      else if (card.missionName === 'Bring It Down' && card.mode === 'tactical') add(scoreBringItDown(state, side, card));
+      else if (card.missionName === 'Bring It Down' && card.mode === 'fixed') records.push(...scoreFixedBringItDownDestroyedModels(state, state.missionEvents?.destroyedModelsThisTurn ?? [], side, card));
+      else if (card.missionName === 'Bring It Down') add(scoreBringItDown(state, side, card));
       else if (card.missionName === 'Burden of Trust' && opponentTurnOrFinalRoundDeadlineReached(state, side)) add(scoreBurdenOfTrust(state, side, card, rules));
       else if (card.missionName === 'Centre Ground' && activeSide === side) records.push(...scoreCentreGround(state, side, card));
       else if (card.missionName === 'Cleanse' && activeSide === side) records.push(...scoreCleanse(state, side, card));
-      else if (card.missionName === 'Defend Stronghold' && opponentTurnOrFinalRoundDeadlineReached(state, side)) records.push(...scoreDefendStronghold(state, side, card, rules));
+      else if (card.missionName === 'Defend Stronghold' && battleRound(state) >= 2 && opponentTurnOrFinalRoundDeadlineReached(state, side)) records.push(...scoreDefendStronghold(state, side, card, rules));
     }
   }
   return records;
@@ -422,11 +445,13 @@ export function scoreSecondaryMissionsAtEndOfTurn(
 export function scoreFixedAssassinationDestroyedModels(
   state: BattleState,
   events: DestroyedModelMissionEvent[],
+  onlySide?: Side,
+  activeCard?: SecondaryMissionCardState,
 ): SecondaryMissionScoringRecord[] {
   if (state.ruleset?.edition !== '11e') return [];
   const records: SecondaryMissionScoringRecord[] = [];
-  for (const side of [0, 1] as Side[]) {
-    const card = activeCards(state, side).find(candidate =>
+  for (const side of (onlySide === undefined ? [0, 1] : [onlySide]) as Side[]) {
+    const card = activeCard ?? activeCards(state, side).find(candidate =>
       candidate.missionName === 'Assassination' && candidate.mode === 'fixed'
     );
     if (!card) continue;
@@ -437,7 +462,9 @@ export function scoreFixedAssassinationDestroyedModels(
         side,
         card,
         `destroyed-model-${event.id}`,
-        [highWounds ? 'fixed-character-wounds-four-plus-destroyed' : 'fixed-character-wounds-less-than-four-destroyed'],
+        highWounds
+          ? ['fixed-character-destroyed', 'fixed-character-wounds-four-plus-bonus']
+          : ['fixed-character-destroyed'],
         'awarded',
         highWounds ? 4 : 3,
         `${event.modelName} was an enemy Character model with ${event.woundsCharacteristic} Wounds.`,
@@ -451,11 +478,13 @@ export function scoreFixedAssassinationDestroyedModels(
 export function scoreFixedBringItDownDestroyedModels(
   state: BattleState,
   events: DestroyedModelMissionEvent[],
+  onlySide?: Side,
+  activeCard?: SecondaryMissionCardState,
 ): SecondaryMissionScoringRecord[] {
   if (state.ruleset?.edition !== '11e') return [];
   const records: SecondaryMissionScoringRecord[] = [];
-  for (const side of [0, 1] as Side[]) {
-    const card = activeCards(state, side).find(candidate =>
+  for (const side of (onlySide === undefined ? [0, 1] : [onlySide]) as Side[]) {
+    const card = activeCard ?? activeCards(state, side).find(candidate =>
       candidate.missionName === 'Bring It Down' && candidate.mode === 'fixed'
     );
     if (!card) continue;
@@ -489,6 +518,8 @@ export function secondaryMissionScoringLogs(
     unitName: state.armies[record.side].name,
     message: record.status === 'awarded'
       ? `Secondary (${record.missionName}): ${record.detail} +${record.vp}VP -> ${record.scoreAfter}VP.`
+      : record.status === 'capped'
+        ? `Secondary (${record.missionName}) capped: ${record.detail} +0VP.`
       : record.status === 'unsupported'
         ? `Secondary (${record.missionName}) unsupported: ${record.detail} +0VP.`
         : `Secondary (${record.missionName}): ${record.detail} +0VP.`,

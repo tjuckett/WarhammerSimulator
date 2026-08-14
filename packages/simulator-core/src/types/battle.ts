@@ -260,7 +260,8 @@ export interface SecondaryMissionScoringRecord {
   side: Side;
   missionName: string;
   clauseIds: string[];
-  status: 'awarded' | 'not-met' | 'unsupported';
+  status: 'awarded' | 'capped' | 'not-met' | 'unsupported';
+  requestedVp: number;
   vp: number;
   detail: string;
   battleRound: number;
