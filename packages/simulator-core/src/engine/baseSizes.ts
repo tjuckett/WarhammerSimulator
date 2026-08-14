@@ -320,7 +320,7 @@ function rotatedRectCircleOverlap(rect: OrientedRect, circleCenter: { x: number;
   return Math.hypot(local.x - nearestX, local.y - nearestY) < radius - tolerance;
 }
 
-function footprintBoundaryPoints(
+export function footprintBoundaryPoints(
   center: { x: number; y: number },
   footprint: ModelBaseFootprint,
 ): Array<{ x: number; y: number }> {

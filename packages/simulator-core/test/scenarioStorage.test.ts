@@ -28,6 +28,24 @@ import { availableUnitAbilities, useUnitAbility } from '../src/engine/unitAbilit
 import { eleventhSetupLabel, TOURNAMENT_MISSIONS } from '../src/engine/missions';
 import { ELEVENTH_PRIMARY_MISSION_RULES, ELEVENTH_SECONDARY_MISSION_RULES, eleventhSecondaryMissionRuleForName } from '../src/data/missionRules';
 import { configureSecondaryMissions, discardSecondaryMission, drawSecondaryMission, selectBeaconUnit, selectBurdenOfTrustGuards, selectTemptingTargetObjective } from '../src/engine/secondaryMissions';
+import {
+  battlefieldCentre,
+  battlefieldEdgesAreOpposite,
+  battlefieldEdgesWithinRange,
+  expansionObjectiveIndexes,
+  missionDeploymentZone,
+  objectiveRoleForIndex,
+  terrainTerritoryRelation,
+  territoryRelationForPoint,
+  unitTableQuarter,
+  unitWhollyWithinDeploymentZone,
+  unitWhollyWithinEnemyTerritory,
+  unitWhollyWithinFriendlyTerritory,
+  unitWhollyWithinNoMansLand,
+  unitWhollyWithinTerrainArea,
+  unitWithinBattlefieldCentre,
+  unitWithinDeploymentZone,
+} from '../src/engine/missionGeometry';
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -395,7 +413,7 @@ test('11th secondary mission rules track transcribed scoring text', () => {
 
   const behindEnemyLines = eleventhSecondaryMissionRuleForName('Behind Enemy Lines');
   assert.equal(behindEnemyLines?.scoring[0].maxVp, 5);
-  assert.match(behindEnemyLines?.scoring[0].notes ?? '', /deployment-zone geometry/);
+  assert.match(behindEnemyLines?.scoring[0].notes ?? '', /deployment-zone.*available/);
 
   const burden = eleventhSecondaryMissionRuleForName('Burden of Trust');
   assert.equal(burden?.scoring[0].maxVp, 5);
@@ -1260,6 +1278,120 @@ test('Cleanse and Plunder validate active cards, unique targets, explicit territ
   assert.equal(movedAway.missionEvents?.completedActionsThisTurn?.length ?? 0, 0);
   assert.equal(movedAway.missionState?.completedSecondaryActionsDuringBattle?.length ?? 0, 0);
   assert.match(movedAway.log.at(-1)?.message ?? '', /no longer eligible/);
+});
+
+test('11th mission geometry uses model footprints at deployment, centre, edge, quarter, and terrain boundaries', () => {
+  const battle = state('shooting');
+  battle.setup = { ...battle.setup!, deployment: 'Dawn of War' };
+  const unit = losTestUnit('geometry-unit', 0, { x: 10, y: 11.5 });
+  unit.profile.modelBases = [{ shape: 'round', diameterMm: 25.4 }];
+  battle.units = [unit];
+  battle.terrain = [
+    terrainMat({ id: 'bounded-area', type: 'ruin', x: 9, y: 11, width: 2, height: 2, objectiveRole: 'no-mans-land' }),
+  ];
+
+  assert.equal(missionDeploymentZone(battle, 0)?.name, 'Top Deployment Zone');
+  assert.equal(unitWhollyWithinDeploymentZone(battle, unit, 0), true);
+  assert.equal(unitWithinDeploymentZone(battle, unit, 0), true);
+  assert.equal(unitWhollyWithinNoMansLand(battle, unit), false);
+  assert.equal(unitWhollyWithinTerrainArea(battle, unit, 'bounded-area'), true);
+
+  unit.position = { x: 10, y: 12.5 };
+  unit.modelPositions = [{ x: 10, y: 12.5 }];
+  assert.equal(unitWhollyWithinDeploymentZone(battle, unit, 0), false);
+  assert.equal(unitWithinDeploymentZone(battle, unit, 0), true);
+  assert.equal(unitWhollyWithinNoMansLand(battle, unit), false);
+
+  unit.position = { x: 10, y: 12.51 };
+  unit.modelPositions = [{ x: 10, y: 12.51 }];
+  assert.equal(unitWithinDeploymentZone(battle, unit, 0), false);
+  assert.equal(unitWhollyWithinNoMansLand(battle, unit), true);
+
+  unit.position = { x: 36.5, y: 22 };
+  unit.modelPositions = [{ x: 36.5, y: 22 }];
+  assert.deepEqual(battlefieldCentre(battle), { x: 30, y: 22 });
+  assert.equal(unitWithinBattlefieldCentre(battle, unit, 6), true);
+  unit.position = { x: 36.51, y: 22 };
+  unit.modelPositions = [{ x: 36.51, y: 22 }];
+  assert.equal(unitWithinBattlefieldCentre(battle, unit, 6), false);
+
+  unit.position = { x: 6.5, y: 8 };
+  unit.modelPositions = [{ x: 6.5, y: 8 }];
+  assert.deepEqual(battlefieldEdgesWithinRange(battle, unit, 6), ['left']);
+  unit.position = { x: 6.51, y: 8 };
+  unit.modelPositions = [{ x: 6.51, y: 8 }];
+  assert.deepEqual(battlefieldEdgesWithinRange(battle, unit, 6), []);
+  assert.equal(battlefieldEdgesAreOpposite('left', 'right'), true);
+  assert.equal(battlefieldEdgesAreOpposite('left', 'top'), false);
+
+  unit.position = { x: 29.5, y: 10 };
+  unit.modelPositions = [{ x: 29.5, y: 10 }];
+  assert.equal(unitTableQuarter(battle, unit), 0);
+  unit.remainingModels = 2;
+  unit.modelPositions = [{ x: 29.5, y: 10 }, { x: 30.5, y: 10 }];
+  assert.equal(unitTableQuarter(battle, unit), undefined);
+});
+
+test('11th mission geometry exposes explicit territory and expansion roles without inferring missing layout geometry', () => {
+  const battle = state('shooting');
+  battle.setup = { ...battle.setup!, deployment: 'Layout Defined' };
+  battle.objectives = [{ x: 5, y: 5 }, { x: 15, y: 5 }, { x: 25, y: 5 }];
+  battle.terrain = [
+    terrainMat({ id: 'friendly-expansion', type: 'ruin', x: 3, y: 3, width: 4, height: 4, objectiveRole: 'expansion-0' }),
+    terrainMat({ id: 'enemy-expansion', type: 'ruin', x: 13, y: 3, width: 4, height: 4, objectiveRole: 'expansion-1' }),
+    terrainMat({ id: 'neutral', type: 'ruin', x: 23, y: 3, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'unknown', type: 'ruin', x: 30, y: 3, width: 4, height: 4 }),
+  ];
+  const unit = losTestUnit('unknown-zone-unit', 0, { x: 20, y: 20 });
+
+  assert.equal(missionDeploymentZone(battle, 0), undefined);
+  assert.equal(unitWhollyWithinDeploymentZone(battle, unit, 0), undefined);
+  assert.equal(unitWhollyWithinNoMansLand(battle, unit), undefined);
+  assert.equal(terrainTerritoryRelation(battle.terrain[0], 0), 'friendly');
+  assert.equal(terrainTerritoryRelation(battle.terrain[1], 0), 'enemy');
+  assert.equal(terrainTerritoryRelation(battle.terrain[2], 0), 'no-mans-land');
+  assert.equal(terrainTerritoryRelation(battle.terrain[3], 0), 'unclassified');
+  assert.equal(territoryRelationForPoint(battle, { x: 5, y: 5 }, 0), 'friendly');
+  unit.profile.modelBases = [{ shape: 'round', diameterMm: 25.4 }];
+  unit.position = { x: 5, y: 5 };
+  unit.modelPositions = [{ x: 5, y: 5 }];
+  assert.equal(unitWhollyWithinFriendlyTerritory(battle, unit, 0), true);
+  assert.equal(unitWhollyWithinEnemyTerritory(battle, unit, 0), false);
+  unit.position = { x: 30, y: 5 };
+  unit.modelPositions = [{ x: 30, y: 5 }];
+  assert.equal(unitWhollyWithinFriendlyTerritory(battle, unit, 0), undefined);
+  assert.equal(objectiveRoleForIndex(battle, 1), 'expansion-1');
+  assert.deepEqual(expansionObjectiveIndexes(battle), [0, 1]);
+  assert.deepEqual(expansionObjectiveIndexes(battle, 0), [0]);
+  assert.deepEqual(expansionObjectiveIndexes(battle, 1), [1]);
+});
+
+test('mission geometry setup and start-of-turn source facts replay and persist through practice saves', async () => {
+  installStorage();
+  const initial = state('setup');
+  initial.ruleset = rulesetMetadataForState(rules40K11th);
+  initial.setup = { ...initial.setup!, deployment: 'Dawn of War' };
+  initial.objectives = [{ x: 20, y: 20 }];
+  initial.objectiveOwners = [null];
+  initial.terrain = [
+    terrainMat({ id: 'expansion', type: 'ruin', x: 18, y: 18, width: 4, height: 4, objectiveRole: 'expansion-0' }),
+  ];
+  initial.units = [losTestUnit('snapshot-unit', 0, { x: 20, y: 20 })];
+
+  let timeline = createPracticeTimeline(initial, { id: 'mission-geometry-game' });
+  const result = appendTimelineAction(timeline, initial, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+  timeline = result.timeline;
+  const replayed = replayTimeline(timeline, { rules: rules40K11th }, false);
+  assert.deepEqual(replayed.missionEvents?.startOfTurn, result.state.missionEvents?.startOfTurn);
+  assert.equal(objectiveRoleForIndex(replayed, 0), 'expansion-0');
+  assert.equal(unitWhollyWithinNoMansLand(replayed, replayed.units[0]), true);
+
+  await localPracticeScenarioRepository.saveScenario(scenarioFromTimeline(timeline, { id: 'mission-geometry-save' }));
+  const loaded = await localPracticeScenarioRepository.loadScenario('mission-geometry-save');
+  const loadedState = currentTimelineState(loaded!.timeline);
+  assert.deepEqual(loadedState.missionEvents?.startOfTurn, result.state.missionEvents?.startOfTurn);
+  assert.equal(objectiveRoleForIndex(loadedState, 0), 'expansion-0');
+  assert.equal(unitWhollyWithinNoMansLand(loadedState, loadedState.units[0]), true);
 });
 
 test('typed when-drawn secondary choices validate objectives and battlefield units', () => {

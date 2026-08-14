@@ -23,6 +23,7 @@ import { objectiveControlValue, resolveDesperateEscapeTests } from './battleshoc
 import { circleFullyInTerrain, findUnblockedLOSRay, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, pointInTerrain, terrainCorners } from './terrainGeometry';
 import { COHERENCY_VERTICAL_RANGE, distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, verticalDistance, type CoherencyModel } from './coherency';
 import { secondaryMissionStateFor } from './secondaryMissions';
+import { objectiveRoleForIndex, terrainTerritoryRelation } from './missionGeometry';
 import {
   attachedFollowersFor,
   attachedLeadersFor,
@@ -1480,7 +1481,7 @@ function missionObjectiveActionOptions(
     if (markedObjectives.has(objectiveIndex)) return false;
     const objective = state.objectives[objectiveIndex];
     if (!objective) return false;
-    const objectiveRole = state.terrain.find(terrain => pointInTerrain(objective, terrain))?.objectiveRole;
+    const objectiveRole = objectiveRoleForIndex(state, objectiveIndex);
     if (objectiveFilter === 'any') return true;
     if (objectiveFilter === 'central') {
       return objectiveRole === undefined || objectiveRole === 'central' || objectiveRole === 'no-mans-land';
@@ -1585,8 +1586,8 @@ export function cleanseObjectiveOptions(
 }
 
 function terrainIsExplicitlyOutsideTerritory(state: BattleState, side: Side, terrainId: string): boolean {
-  const role = state.terrain.find(terrain => terrain.id === terrainId)?.objectiveRole;
-  return role !== undefined && role !== `home-${side}` && role !== `expansion-${side}`;
+  const terrain = state.terrain.find(candidate => candidate.id === terrainId);
+  return !!terrain && ['enemy', 'no-mans-land'].includes(terrainTerritoryRelation(terrain, side));
 }
 
 function completedOrInProgressTerrainTargets(state: BattleState, side: Side, actionId: string): Set<string> {
@@ -1625,9 +1626,8 @@ export interface SensorSweepOption {
 }
 
 function objectiveIsCentral(state: BattleState, objectiveIndex: number): boolean {
-  const objective = state.objectives[objectiveIndex];
-  if (!objective) return false;
-  const role = state.terrain.find(terrain => pointInTerrain(objective, terrain))?.objectiveRole;
+  if (!state.objectives[objectiveIndex]) return false;
+  const role = objectiveRoleForIndex(state, objectiveIndex);
   return role === undefined || role === 'central' || role === 'no-mans-land';
 }
 

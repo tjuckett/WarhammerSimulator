@@ -1659,7 +1659,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/a-tempting-target-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Tempting target objective selection must be stored before this can score automatically.',
+    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Validated tempting-target selection and explicit No Man\'s Land objective roles are available; automatic secondary scoring remains unwired.',
     whenDrawn: "Your opponent selects one objective, excluding home objectives, within No Man's Land to be your tempting target.",
     scoring: [
       {
@@ -1668,7 +1668,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 5,
         sourceText: 'You control your tempting target. 5VP.',
-        notes: 'Requires storing the opponent-selected tempting target objective.',
+        notes: 'The validated opponent-selected tempting target objective is stored for automatic scoring.',
       },
     ],
   },
@@ -1724,7 +1724,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/beacon-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Beacon unit selection plus deployment-zone and territory geometry are required before this can score automatically.',
+    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Beacon selection and deployment-zone helpers are available; territory checks remain conservative where a layout has no explicit territory roles.',
     whenDrawn: 'Choose one friendly unit on the battlefield, or embarked within a Transport on the battlefield, to be your beacon unit.',
     scoring: [
       {
@@ -1733,7 +1733,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your opponent\'s turn or the end of the fifth battle round, whichever comes first',
         vp: 3,
         sourceText: 'Your beacon unit is on the battlefield and outside your deployment zone. 3VP.',
-        notes: 'Requires storing the beacon unit and deployment-zone geometry.',
+        notes: 'Beacon selection and footprint-aware deployment-zone geometry are available for automatic scoring.',
       },
       {
         id: 'beacon-outside-territory',
@@ -1741,7 +1741,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your opponent\'s turn or the end of the fifth battle round, whichever comes first',
         vp: 5,
         sourceText: 'Your beacon unit is on the battlefield and outside your territory. 5VP.',
-        notes: 'Requires storing the beacon unit and territory geometry.',
+        notes: 'Beacon selection is stored; full territory checks still require explicit layout territory data.',
       },
     ],
   },
@@ -1753,7 +1753,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/behind-enemy-lines-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Opponent deployment-zone geometry and battle-shocked unit filtering are required before this can score automatically.',
+    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Opponent deployment-zone and whole-unit footprint helpers are available; automatic secondary scoring remains unwired.',
     whenDrawn: 'During the first battle round, you may shuffle this card back into your Secondary Mission deck and then draw one new Secondary Mission card.',
     scoring: [
       {
@@ -1763,7 +1763,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         vp: 3,
         maxVp: 5,
         sourceText: 'For each friendly unit, excluding Aircraft and Battle-shocked units, wholly within your opponent\'s deployment zone. 3VP, max 5VP.',
-        notes: 'Requires opponent deployment-zone geometry, whole-unit containment checks, and filtering Aircraft/Battle-shocked units.',
+        notes: 'Footprint-aware opponent deployment-zone and whole-unit containment helpers are available; scoring must also filter Aircraft/Battle-shocked units.',
       },
     ],
   },
@@ -1826,7 +1826,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/centre-ground-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Battlefield centre proximity checks and battle-shocked/Aircraft filtering are required before this can score automatically.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Footprint-aware battlefield-centre proximity is available; automatic scoring must filter Battle-shocked/Aircraft units.',
     scoring: [
       {
         id: 'friendly-near-centre-no-enemy-three',
@@ -1834,7 +1834,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 3,
         sourceText: 'One or more friendly units, excluding Aircraft and Battle-shocked units, are within 3" of the centre of the battlefield, while no enemy units are within 3" of that centre. 3VP.',
-        notes: 'Requires battlefield-centre proximity checks and filtering Aircraft/Battle-shocked units.',
+        notes: 'Footprint-aware battlefield-centre proximity is available; scoring must filter Aircraft/Battle-shocked units.',
       },
       {
         id: 'friendly-near-centre-no-enemy-six',
@@ -1842,7 +1842,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 5,
         sourceText: 'One or more friendly units, excluding Aircraft and Battle-shocked units, are within 3" of the centre of the battlefield, while no enemy units are within 6" of that centre. 5VP.',
-        notes: 'Requires battlefield-centre proximity checks and filtering Aircraft/Battle-shocked units.',
+        notes: 'Footprint-aware battlefield-centre proximity is available; scoring must filter Aircraft/Battle-shocked units.',
       },
     ],
   },
@@ -1883,7 +1883,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/defend-stronghold-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Home objective control is available through primary objective state; the no-enemy deployment-zone clause needs deployment-zone geometry.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Home objective control and footprint-aware deployment-zone checks are available; automatic secondary scoring remains unwired.',
     whenDrawn: 'During the first battle round, shuffle this card back into your Secondary Mission deck and then draw one new Secondary Mission card.',
     scoring: [
       {
@@ -1900,7 +1900,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: "End of your opponent's turn or the end of the fifth battle round, whichever comes first",
         vp: 5,
         sourceText: 'You control your home objective and no enemy units are within your deployment zone. 5VP.',
-        notes: 'Requires objective role/control state and deployment-zone geometry.',
+        notes: 'Objective role/control state and footprint-aware deployment-zone geometry are available for automatic scoring.',
       },
     ],
   },
@@ -1912,7 +1912,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/display-of-might-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Whole-unit No Man\'s Land containment plus Aircraft/Battle-shocked filtering are required before this can score automatically.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Deployment-derived whole-unit No Man\'s Land containment is available when setup identifies both deployment zones; automatic scoring must filter Aircraft/Battle-shocked units.',
     scoring: [
       {
         id: 'more-friendly-than-enemy-no-mans-land-your-turn',
@@ -1920,7 +1920,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 2,
         sourceText: 'There are more friendly units than enemy units, excluding Aircraft and Battle-shocked units, wholly within No Man\'s Land. 2VP.',
-        notes: 'Requires No Man\'s Land geometry, whole-unit containment checks, and filtering Aircraft/Battle-shocked units.',
+        notes: 'Footprint-aware No Man\'s Land containment is available when setup identifies both deployment zones; scoring must filter Aircraft/Battle-shocked units.',
       },
       {
         id: 'more-friendly-than-enemy-no-mans-land-opponent-turn',
@@ -1928,7 +1928,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: "End of your opponent's turn",
         vp: 5,
         sourceText: 'There are more friendly units than enemy units, excluding Aircraft and Battle-shocked units, wholly within No Man\'s Land. 5VP.',
-        notes: 'Requires No Man\'s Land geometry, whole-unit containment checks, and filtering Aircraft/Battle-shocked units.',
+        notes: 'Footprint-aware No Man\'s Land containment is available when setup identifies both deployment zones; scoring must filter Aircraft/Battle-shocked units.',
       },
     ],
   },
@@ -1940,7 +1940,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'fixed-or-tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/engage-on-all-fronts-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Table-quarter presence and centre exclusion checks are required before this can score automatically.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Footprint-aware table-quarter containment and centre exclusion helpers are available; automatic secondary scoring remains unwired.',
     whenDrawn: 'You have a presence in a table quarter if one or more friendly units, excluding Aircraft and Battle-shocked units, are wholly within that table quarter and are not within 6" of the centre of the battlefield.',
     scoring: [
       {
@@ -1949,7 +1949,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 2,
         sourceText: 'You have a presence in three table quarters. 2VP.',
-        notes: 'Requires table-quarter whole-unit containment checks, centre exclusion, and filtering Aircraft/Battle-shocked units.',
+        notes: 'Table-quarter whole-unit containment and centre exclusion helpers are available; scoring must filter Aircraft/Battle-shocked units.',
       },
       {
         id: 'fixed-presence-four-quarters',
@@ -1957,7 +1957,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 4,
         sourceText: 'You have a presence in four table quarters. 4VP.',
-        notes: 'Requires table-quarter whole-unit containment checks, centre exclusion, and filtering Aircraft/Battle-shocked units.',
+        notes: 'Table-quarter whole-unit containment and centre exclusion helpers are available; scoring must filter Aircraft/Battle-shocked units.',
       },
       {
         id: 'tactical-presence-three-quarters',
@@ -1965,7 +1965,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 3,
         sourceText: 'You have a presence in three table quarters. 3VP.',
-        notes: 'Requires table-quarter whole-unit containment checks, centre exclusion, and filtering Aircraft/Battle-shocked units.',
+        notes: 'Table-quarter whole-unit containment and centre exclusion helpers are available; scoring must filter Aircraft/Battle-shocked units.',
       },
       {
         id: 'tactical-presence-four-quarters',
@@ -1973,7 +1973,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 5,
         sourceText: 'You have a presence in four table quarters. 5VP.',
-        notes: 'Requires table-quarter whole-unit containment checks, centre exclusion, and filtering Aircraft/Battle-shocked units.',
+        notes: 'Table-quarter whole-unit containment and centre exclusion helpers are available; scoring must filter Aircraft/Battle-shocked units.',
       },
     ],
   },
@@ -1985,7 +1985,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/forward-position-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Opponent home objective control can use objective role/control state; expansion objective roles are not represented yet.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Opponent home and explicit per-player expansion objective roles are available through objective-role helpers.',
     whenDrawn: 'During the first battle round, you may shuffle this card back into your Secondary Mission deck and then draw one new Secondary Mission card.',
     scoring: [
       {
@@ -1994,7 +1994,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 5,
         sourceText: 'You control your opponent\'s home objective and/or each expansion objective. 5VP.',
-        notes: 'Requires opponent home objective control and adding expansion objective role/tag support.',
+        notes: 'Opponent home and explicit per-player expansion objective roles are available for automatic scoring.',
       },
     ],
   },
@@ -2027,7 +2027,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/outflank-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Battlefield-edge proximity, opposite-edge pairing, territory geometry, and Aircraft/Battle-shocked filtering are required before this can score automatically.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Footprint-aware battlefield-edge and opposite-edge helpers are available; territory remains conservative without explicit layout roles.',
     scoring: [
       {
         id: 'one-unit-near-edge-outside-territory',
@@ -2035,7 +2035,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 3,
         sourceText: 'One or more friendly units, excluding Aircraft and Battle-shocked units, are within 6" of one or more battlefield edges and not within your territory. 3VP.',
-        notes: 'Requires battlefield-edge proximity, territory geometry, and filtering Aircraft/Battle-shocked units.',
+        notes: 'Battlefield-edge proximity is available; scoring must use explicit territory roles and filter Aircraft/Battle-shocked units.',
       },
       {
         id: 'two-units-near-opposite-edges-one-outside-territory',
@@ -2043,7 +2043,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 5,
         sourceText: 'Two or more friendly units, excluding Aircraft and Battle-shocked units, are within 6" of opposite battlefield edges, with at least one of those units not within your territory. 5VP.',
-        notes: 'Requires battlefield-edge proximity, opposite-edge pairing, territory geometry, and filtering Aircraft/Battle-shocked units. Opposite battlefield edges are the ones that run parallel to each other.',
+        notes: 'Battlefield-edge proximity and opposite parallel-edge pairing are available; scoring must use explicit territory roles and filter Aircraft/Battle-shocked units.',
       },
     ],
   },
@@ -2076,7 +2076,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/plunder-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Plunder action completion is tracked for terrain with explicit territory roles; complete territory geometry is still required before automatic scoring.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Plunder uses shared explicit territory-role helpers and retains conservative behavior for unclassified terrain; automatic secondary scoring remains unwired.',
     whenDrawn: 'If you have the Cleanse Secondary Mission active, you may shuffle this card back into your Secondary Mission deck and then draw one new Secondary Mission card.',
     scoring: [
       {
@@ -2085,7 +2085,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 5,
         sourceText: 'A terrain area was plundered this turn. 5VP.',
-        notes: 'Plunder action completion and per-turn terrain tracking are available when the terrain role explicitly establishes that it is outside the acting player territory; complete territory geometry remains required.',
+        notes: 'Plunder action completion and per-turn terrain tracking use the shared explicit territory-role helper; unclassified terrain remains ineligible.',
       },
     ],
   },
@@ -2105,7 +2105,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 5,
         sourceText: "You control two or more objectives within No Man's Land, excluding your home objective. 5VP.",
-        notes: 'Requires objective role/control state and No Man\'s Land objective identification.',
+        notes: 'Objective role/control state and explicit No Man\'s Land objective identification are available for automatic scoring.',
       },
     ],
   },

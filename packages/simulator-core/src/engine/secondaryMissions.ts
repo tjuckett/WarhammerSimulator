@@ -12,7 +12,7 @@ import type {
   Side,
   TemptingTargetWhenDrawnSelection,
 } from '../types/battle';
-import { pointInTerrain } from './terrainGeometry';
+import { objectiveRoleForIndex } from './missionGeometry';
 
 const MAX_ACTIVE_SECONDARY_MISSIONS = 2;
 
@@ -198,15 +198,6 @@ function unitIsBeaconEligible(state: BattleState, unitId: string, side: Side): b
     && candidate.modelPositions.length > 0,
   );
   return !!transport;
-}
-
-function objectiveRoleForIndex(state: BattleState, objectiveIndex: number) {
-  const objective = state.objectives[objectiveIndex];
-  if (!objective) return undefined;
-  return state.terrain
-    .filter(terrain => pointInTerrain(objective, terrain))
-    .sort((a, b) => (a.width * a.height) - (b.width * b.height))[0]
-    ?.objectiveRole;
 }
 
 export function selectTemptingTargetObjective(

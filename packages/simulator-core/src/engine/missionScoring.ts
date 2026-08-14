@@ -13,7 +13,7 @@ import {
 import { objectiveControlRadius } from './objectiveGeometry';
 import type { RulesEdition } from './rulesEngine';
 import { pointInTerrain } from './terrainGeometry';
-import { boardFormatForState } from '../data/boardFormats';
+import { objectiveRoleForIndex, unitTableQuarter, unitWithinBattlefieldCentre } from './missionGeometry';
 
 export interface ObjectiveControlResult {
   objectiveIndex: number;
@@ -136,7 +136,7 @@ function objectiveRole(
   state: BattleState,
   objective: ObjectiveControlResult,
 ): BattleState['terrain'][number]['objectiveRole'] {
-  return terrainObjectiveRoleForPoint(state, state.objectives[objective.objectiveIndex]);
+  return objectiveRoleForIndex(state, objective.objectiveIndex);
 }
 
 function controlledObjectives(state: BattleState, objectives: ObjectiveControlResult[], side: Side): ObjectiveControlResult[] {
@@ -255,33 +255,13 @@ function surveilledEnemyUnitsScore(state: BattleState, side: Side): boolean {
 }
 
 export function tableQuarterPresenceCount(state: BattleState, side: Side): number {
-  const board = boardFormatForState(state);
-  const centre = { x: board.width / 2, y: board.height / 2 };
   const occupied = new Set<number>();
 
   for (const unit of state.units) {
     if (unit.side !== side || unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves || !unit.modelPositions.length) continue;
-    if (unit.modelPositions.some((model, modelIndex) =>
-      distance(model, centre) <= 6 + modelBaseRadiusInches(unit.profile, modelIndex),
-    )) continue;
-
-    const whollyLeft = unit.modelPositions.every((model, modelIndex) =>
-      model.x + modelBaseRadiusInches(unit.profile, modelIndex) <= centre.x,
-    );
-    const whollyRight = unit.modelPositions.every((model, modelIndex) =>
-      model.x - modelBaseRadiusInches(unit.profile, modelIndex) >= centre.x,
-    );
-    const whollyTop = unit.modelPositions.every((model, modelIndex) =>
-      model.y + modelBaseRadiusInches(unit.profile, modelIndex) <= centre.y,
-    );
-    const whollyBottom = unit.modelPositions.every((model, modelIndex) =>
-      model.y - modelBaseRadiusInches(unit.profile, modelIndex) >= centre.y,
-    );
-
-    if (whollyLeft && whollyTop) occupied.add(0);
-    else if (whollyRight && whollyTop) occupied.add(1);
-    else if (whollyLeft && whollyBottom) occupied.add(2);
-    else if (whollyRight && whollyBottom) occupied.add(3);
+    if (unitWithinBattlefieldCentre(state, unit, 6)) continue;
+    const quarter = unitTableQuarter(state, unit);
+    if (quarter !== undefined) occupied.add(quarter);
   }
 
   return occupied.size;
