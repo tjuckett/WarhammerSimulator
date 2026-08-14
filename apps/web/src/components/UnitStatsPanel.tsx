@@ -2,6 +2,7 @@ import type { BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { ModelStatProfile, UnitProfile } from '@warhammer-simulator/core/types/army';
 import { Fragment, type CSSProperties, type ReactNode } from 'react';
 import { unitBaseSummary } from '@warhammer-simulator/core/engine/baseSizes';
+import { uiTokens } from '../theme/uiTokens';
 
 type InspectedUnit =
   | { kind: 'battle'; side: 0 | 1; armyName: string; color: string; unit: BattleUnit; attachedUnits?: AttachedStatsUnit[] }
@@ -75,7 +76,7 @@ export function UnitStatsPanel({ inspected, onClear }: Props) {
           <div style={{ color: inspected.color, fontWeight: 800, fontSize: 16, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {headerName}
           </div>
-          <div style={{ color: '#888', fontSize: 12 }}>{inspected.armyName} - {status}</div>
+          <div style={{ color: uiTokens.color.text.muted, fontSize: 12 }}>{inspected.armyName} - {status}</div>
         </div>
         {onClear && (
           <button type="button" onClick={onClear} title="Clear selection" style={clearButtonStyle}>
@@ -118,7 +119,7 @@ export function UnitStatsPanel({ inspected, onClear }: Props) {
             <span key={`${keyword}-${index}`} style={keywordStyle}>{keyword}</span>
           ))}
         </div>
-        <div style={{ color: '#666', fontSize: 11, marginTop: 5 }}>
+        <div style={{ color: uiTokens.color.text.faint, fontSize: 11, marginTop: 5 }}>
           {profileViews.map(view => `${view.profile.name}: ${unitBaseSummary(view.profile)}`).join(' | ')}
         </div>
       </div>
@@ -129,8 +130,8 @@ export function UnitStatsPanel({ inspected, onClear }: Props) {
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div style={statStyle}>
-      <div style={{ color: '#777', fontSize: 11 }}>{label}</div>
-      <div style={{ color: '#eee', fontWeight: 800, fontSize: 16 }}>{value}</div>
+      <div style={{ color: uiTokens.color.text.subdued, fontSize: 11 }}>{label}</div>
+      <div style={{ color: uiTokens.color.text.strong, fontWeight: 800, fontSize: 16 }}>{value}</div>
     </div>
   );
 }
@@ -153,10 +154,10 @@ function RulesSection({
         <div style={{ display: 'grid', gap: 4 }}>
           {entries.map((entry, index) => (
             <details key={`${entry.name}-${index}`} open={defaultOpen} style={detailsStyle}>
-              <summary style={{ cursor: 'pointer', color: '#ddd', fontWeight: 700, fontSize: 12 }}>
+              <summary style={{ cursor: 'pointer', color: uiTokens.color.text.primary, fontWeight: 700, fontSize: 12 }}>
                 {entry.name}{entry.source ? ` (${entry.source})` : ''}
               </summary>
-              <div style={{ color: '#aaa', fontSize: 12, lineHeight: 1.4, marginTop: 4 }}>
+              <div style={{ color: uiTokens.color.text.secondary, fontSize: 12, lineHeight: 1.4, marginTop: 4 }}>
                 {cleanRulesText(entry.description)}
               </div>
             </details>
@@ -451,7 +452,7 @@ function WeaponCell({ children, strong = false, nowrap = false }: { children: Re
       style={{
         ...weaponCellStyle,
         fontWeight: strong ? 700 : 500,
-        color: strong ? '#eee' : '#bbb',
+        color: strong ? uiTokens.color.text.strong : '#bbb',
         whiteSpace: nowrap ? 'nowrap' : undefined,
       }}
     >
@@ -469,8 +470,8 @@ function cleanRulesText(value: string): string {
 }
 
 const panelStyle = {
-  borderBottom: '1px solid #272727',
-  background: '#101014',
+  borderBottom: `1px solid ${uiTokens.border.divider}`,
+  background: uiTokens.surface.panelDark,
   flex: '3 1 0',
   minHeight: 0,
   overflowY: 'auto',
@@ -488,23 +489,23 @@ const headerStyle = {
 const clearButtonStyle = {
   width: 22,
   height: 22,
-  borderRadius: 3,
-  border: '1px solid #444',
-  background: '#15151f',
-  color: '#aaa',
+  borderRadius: uiTokens.radius.control,
+  border: `1px solid ${uiTokens.border.control}`,
+  background: uiTokens.surface.inset,
+  color: uiTokens.color.text.secondary,
   cursor: 'pointer',
   flexShrink: 0,
 } satisfies CSSProperties;
 
 const emptyStyle = {
   padding: 10,
-  color: '#666',
+  color: uiTokens.color.text.faint,
   fontSize: 12,
   textAlign: 'center',
 } satisfies CSSProperties;
 
 const emptySmallStyle = {
-  color: '#666',
+  color: uiTokens.color.text.faint,
   fontSize: 12,
 } satisfies CSSProperties;
 
@@ -526,7 +527,7 @@ const modelStatlineStyle = {
 } satisfies CSSProperties;
 
 const modelNameStyle = {
-  color: '#ddd',
+  color: uiTokens.color.text.primary,
   fontSize: 12,
   fontWeight: 800,
   overflow: 'hidden',
@@ -535,9 +536,9 @@ const modelNameStyle = {
 } satisfies CSSProperties;
 
 const statStyle = {
-  background: '#181820',
+  background: uiTokens.surface.raised,
   border: '1px solid #292938',
-  borderRadius: 4,
+  borderRadius: uiTokens.radius.card,
   padding: '4px 2px',
   textAlign: 'center',
   minWidth: 0,
@@ -545,7 +546,7 @@ const statStyle = {
 
 const noteStyle = {
   margin: '0 8px 5px',
-  color: '#9ab7ff',
+  color: uiTokens.color.status.info,
   fontSize: 12,
 } satisfies CSSProperties;
 
@@ -555,7 +556,7 @@ const sectionStyle = {
 } satisfies CSSProperties;
 
 const sectionTitleStyle = {
-  color: '#777',
+  color: uiTokens.color.text.subdued,
   fontSize: 12,
   fontWeight: 800,
   textTransform: 'uppercase',
@@ -563,9 +564,9 @@ const sectionTitleStyle = {
 } satisfies CSSProperties;
 
 const tableWrapStyle = {
-  background: '#15151b',
-  border: '1px solid #242432',
-  borderRadius: 4,
+  background: uiTokens.surface.inset,
+  border: `1px solid ${uiTokens.border.inset}`,
+  borderRadius: uiTokens.radius.card,
   overflow: 'hidden',
 } satisfies CSSProperties;
 
@@ -577,7 +578,7 @@ const weaponTableStyle = {
 
 const weaponHeaderStyle = {
   padding: '5px 6px',
-  color: '#888',
+  color: uiTokens.color.text.muted,
   fontSize: 11,
   textAlign: 'left',
   borderBottom: '1px solid #2f2f3d',
@@ -609,7 +610,7 @@ const weaponKeywordTooltipStyle = {
 } satisfies CSSProperties;
 
 const weaponSourceStyle = {
-  color: '#777',
+  color: uiTokens.color.text.subdued,
   fontSize: 10,
   fontWeight: 500,
   marginTop: 1,
@@ -620,9 +621,9 @@ const weaponAltRowStyle = {
 } satisfies CSSProperties;
 
 const detailsStyle = {
-  background: '#15151b',
-  border: '1px solid #242432',
-  borderRadius: 4,
+  background: uiTokens.surface.inset,
+  border: `1px solid ${uiTokens.border.inset}`,
+  borderRadius: uiTokens.radius.card,
   padding: '5px 6px',
 } satisfies CSSProperties;
 
@@ -632,5 +633,5 @@ const keywordStyle = {
   borderRadius: 2,
   background: '#20202a',
   border: '1px solid #333344',
-  color: '#aaa',
+  color: uiTokens.color.text.secondary,
 } satisfies CSSProperties;

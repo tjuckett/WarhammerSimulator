@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { LogEntry, LogType } from '@warhammer-simulator/core/types/battle';
+import { uiTokens } from '../theme/uiTokens';
 
 interface Props {
   entries: LogEntry[];
@@ -50,7 +51,7 @@ export function BattleLog({ entries, army0Color, army1Color }: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
       {/* Filter bar */}
-      <div style={{ display: 'flex', gap: 4, padding: '4px 6px', background: '#111', flexShrink: 0, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 4, padding: '4px 6px', background: uiTokens.surface.chrome, flexShrink: 0, flexWrap: 'wrap' }}>
         {(Object.keys(FILTER_LABELS) as Filter[]).map(f => (
           <button
             key={f}
@@ -59,10 +60,10 @@ export function BattleLog({ entries, army0Color, army1Color }: Props) {
               padding: '2px 8px',
               fontSize: 11,
               cursor: 'pointer',
-              background: filter === f ? '#334' : '#222',
-              color: filter === f ? '#aaf' : '#888',
-              border: `1px solid ${filter === f ? '#66f' : '#333'}`,
-              borderRadius: 3,
+              background: filter === f ? uiTokens.surface.controlSelected : uiTokens.surface.control,
+              color: filter === f ? '#aaf' : uiTokens.color.text.muted,
+              border: `1px solid ${filter === f ? '#66f' : uiTokens.border.control}`,
+              borderRadius: uiTokens.radius.control,
             }}
           >
             {FILTER_LABELS[f]}
@@ -75,10 +76,10 @@ export function BattleLog({ entries, army0Color, army1Color }: Props) {
             fontSize: 11,
             cursor: 'pointer',
             marginLeft: 'auto',
-            background: paused ? '#432' : '#222',
-            color: paused ? '#fa8' : '#888',
-            border: `1px solid ${paused ? '#f84' : '#333'}`,
-            borderRadius: 3,
+            background: paused ? '#432' : uiTokens.surface.control,
+            color: paused ? '#fa8' : uiTokens.color.text.muted,
+            border: `1px solid ${paused ? '#f84' : uiTokens.border.control}`,
+            borderRadius: uiTokens.radius.control,
           }}
         >
           {paused ? '▶ Live' : '⏸ Pause'}
@@ -95,7 +96,7 @@ export function BattleLog({ entries, army0Color, army1Color }: Props) {
         }}
       >
         {visible.length === 0 && (
-          <div style={{ color: '#555', textAlign: 'center', marginTop: 20 }}>No entries yet</div>
+          <div style={{ color: uiTokens.color.text.dim, textAlign: 'center', marginTop: 20 }}>No entries yet</div>
         )}
         {visible.map((entry, index) => {
           const isPhase = entry.type === 'phase';
@@ -122,7 +123,7 @@ export function BattleLog({ entries, army0Color, army1Color }: Props) {
       </div>
 
       {/* Entry count */}
-      <div style={{ padding: '2px 6px', background: '#111', color: '#555', fontSize: 10, flexShrink: 0 }}>
+      <div style={{ padding: '2px 6px', background: uiTokens.surface.chrome, color: uiTokens.color.text.dim, fontSize: 10, flexShrink: 0 }}>
         {visible.length} / {entries.length} entries
       </div>
     </div>

@@ -1,6 +1,10 @@
 export const uiTokens = {
   border: {
     subtle: 'rgba(255,255,255,0.12)',
+    control: '#333',
+    divider: '#272727',
+    inset: '#242432',
+    accent: '#1e3048',
     warning: 'rgba(255, 190, 85, 0.82)',
     statCard: '#1a3048',
     statDivider: '#0e1e2e',
@@ -8,7 +12,12 @@ export const uiTokens = {
   color: {
     text: {
       primary: '#ddd',
+      strong: '#eee',
+      secondary: '#aaa',
       muted: '#888',
+      subdued: '#777',
+      faint: '#666',
+      dim: '#555',
       quiet: '#556',
       subtle: '#445',
       disabled: '#9a8f6a',
@@ -19,6 +28,9 @@ export const uiTokens = {
       pendingText: '#fff3d1',
       pendingMuted: '#c7bda3',
       success: '#b7d7c8',
+      danger: '#ff6f6f',
+      info: '#9ab7ff',
+      note: '#c9a84c',
     },
     combat: {
       weaponName: '#aac8e8',
@@ -34,11 +46,21 @@ export const uiTokens = {
   },
   surface: {
     panel: 'rgba(255,255,255,0.035)',
+    panelDark: '#101014',
+    chrome: '#111',
+    control: '#222',
+    controlSelected: '#334',
+    inset: '#15151b',
+    raised: '#181820',
+    attackCard: '#0d1b26',
+    attackCardHeader: '#0a1520',
     pendingHud: 'rgba(12, 10, 7, 0.94)',
     statCard: '#080f18',
   },
   radius: {
     panel: '8px',
+    control: 3,
+    card: 4,
     statCard: 6,
   },
   shadow: {

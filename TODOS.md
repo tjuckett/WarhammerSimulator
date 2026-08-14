@@ -10,7 +10,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Identify oversized modules, mixed responsibilities, duplicated army editing logic, and React UI code that should call focused core helpers instead.
   - Produced checked-in architecture notes in `docs/architecture.md` with current boundaries, target boundaries, diagrams, and a prioritized refactor list.
   - Next after this task: do the smallest refactor pass that unlocks the next rules/UI work without changing behavior.
-- [ ] Do a small refactor pass from the architecture notes.
+- [x] Do a small refactor pass from the architecture notes.
   - Prefer extracting stable boundaries over redesigning everything at once.
   - Likely candidates: app mode shell/layout, army editing helpers, game session save/load state, battle phase controls, and rules-event tracking helpers.
   - Rename new target APIs away from "practice" language; use game/session wording for user-facing concepts and new controllers.
@@ -61,7 +61,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Completed forty-second slice: recorded destroying-unit identity and kill-time objective proximity, completing Purge and Secure event scoring.
   - Completed forty-third slice: captured per-unit start-of-turn terrain-area membership and implemented Search and Scour destruction scoring.
   - Completed forty-fourth slice: added whole-unit table-quarter presence with centre exclusion and completed Reconnaissance Sweep event scoring.
-  - Before closing the refactor pass, audit untouched UI files for repeated hardcoded colors, spacing, labels, and panel styles; adopt shared tokens only where it improves consistency without making the code harder to read.
+  - Completed forty-fifth slice: audited the remaining UI-heavy components and adopted shared tokens for repeated panel chrome, text hierarchy, selection, status, and combat colors while keeping canvas and one-off semantic colors local.
   - Verify with root `npm run build` and relevant simulator-core tests.
   - Next after this task: resume 11th Edition rules implementation on cleaner core/UI boundaries.
 - [ ] Resume and finish the remaining 11th Edition rules work.

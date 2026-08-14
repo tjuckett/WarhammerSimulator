@@ -4,6 +4,7 @@ import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitDeploymentMode, type 
 import { DEPLOYMENT_STRATEGIES, type DeploymentStrategy } from '@warhammer-simulator/core/engine/deployment';
 import { applyBaseSizesToArmy } from '@warhammer-simulator/core/data/unitBaseSizes';
 import { canDeployOutsideDeploymentZone, isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
+import { uiTokens } from '../theme/uiTokens';
 
 interface Props {
   side: 0 | 1;
@@ -174,21 +175,21 @@ export function ArmyPanel({
             </div>
           )}
         </div>
-        <div style={{ color: '#aaa', fontSize: 12 }}>
+        <div style={{ color: uiTokens.color.text.secondary, fontSize: 12 }}>
           {army ? `${army.name} (${army.faction})` : 'No army loaded'}
         </div>
       </div>
 
       {!playDeployment && (
         <div style={{ padding: '5px 8px', flexShrink: 0, borderBottom: '1px solid #222', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ color: '#888', fontSize: 11, whiteSpace: 'nowrap' }}>Deploy:</span>
+          <span style={{ color: uiTokens.color.text.muted, fontSize: 11, whiteSpace: 'nowrap' }}>Deploy:</span>
           <select
             value={strategy}
             onChange={e => onStrategyChange(e.target.value as DeploymentStrategy)}
             disabled={!!battleState}
             style={{
               flex: 1, background: '#1a1a1a', border: `1px solid ${color}44`,
-              color: '#ccc', fontSize: 11, padding: '3px 5px', borderRadius: 3, cursor: 'pointer',
+              color: '#ccc', fontSize: 11, padding: '3px 5px', borderRadius: uiTokens.radius.control, cursor: 'pointer',
             }}
           >
             {DEPLOYMENT_STRATEGIES.map(s => (
@@ -215,7 +216,7 @@ export function ArmyPanel({
           )}
         </div>
         {army && !battleState && (
-          <div style={{ marginTop: 4, color: '#666', fontSize: 11 }}>
+          <div style={{ marginTop: 4, color: uiTokens.color.text.faint, fontSize: 11 }}>
             {army.units.length} units loaded, {battlefieldUnits} deploying{stagedUnits ? `, ${stagedUnits} staged` : ''}
           </div>
         )}
@@ -253,7 +254,7 @@ export function ArmyPanel({
             onSplitUnit={splitUnit}
           />
         ) : (
-          <div style={{ color: '#444', fontSize: 11, padding: '8px', textAlign: 'center' }}>
+          <div style={{ color: uiTokens.color.text.subtle, fontSize: 11, padding: '8px', textAlign: 'center' }}>
             Load an army or use the sample armies
           </div>
         )}
@@ -545,7 +546,7 @@ function ModelWeaponLoadoutEditor({
         }}
       >
         {expanded ? '-' : '+'} Model weapon loadouts
-        <span style={{ color: '#777', marginLeft: 6 }}>
+        <span style={{ color: uiTokens.color.text.subdued, marginLeft: 6 }}>
           {unit.weapons.map((weapon, weaponIndex) => `${weapon.name}: ${weaponCountForLoadouts(unit, weaponIndex)}`).join(' | ')}
         </span>
       </button>
@@ -554,10 +555,10 @@ function ModelWeaponLoadoutEditor({
           {Array.from({ length: unit.baseModelCount }, (_, modelIndex) => {
             return (
               <div key={modelIndex} style={{ borderTop: '1px solid #222236', paddingTop: 4 }}>
-                <div style={{ color: '#888', fontSize: 10, marginBottom: 3 }}>Model {modelIndex + 1}</div>
+                <div style={{ color: uiTokens.color.text.muted, fontSize: 10, marginBottom: 3 }}>Model {modelIndex + 1}</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 3 }}>
                   {unit.weapons.map((weapon, weaponIndex) => (
-                    <label key={`${weapon.name}-${weaponIndex}`} style={{ display: 'grid', gridTemplateColumns: '44px minmax(0, 1fr)', alignItems: 'center', gap: 4, color: '#aaa', fontSize: 10 }}>
+                    <label key={`${weapon.name}-${weaponIndex}`} style={{ display: 'grid', gridTemplateColumns: '44px minmax(0, 1fr)', alignItems: 'center', gap: 4, color: uiTokens.color.text.secondary, fontSize: 10 }}>
                       <input
                         type="number"
                         min={0}
@@ -672,13 +673,13 @@ function PlayDeploymentList({
             border: `1px solid ${selectedIndex === deployIndex ? color : groupRole !== 'solo' ? '#9ab7ff4d' : '#292940'}`,
             borderLeft: groupRole !== 'solo' ? '4px solid #9ab7ff99' : `4px solid ${selectedIndex === deployIndex ? color : '#292940'}`,
             borderRadius: 5,
-            color: '#ddd',
+            color: uiTokens.color.text.primary,
             font: 'inherit',
             cursor: 'pointer',
           }}
         >
           {groupRole === 'leader' && groupIndex === 0 && (
-            <div style={{ color: '#9ab7ff', fontSize: 9, fontWeight: 800, textTransform: 'uppercase', marginBottom: 4, letterSpacing: 0.4 }}>
+            <div style={{ color: uiTokens.color.status.info, fontSize: 9, fontWeight: 800, textTransform: 'uppercase', marginBottom: 4, letterSpacing: 0.4 }}>
               Attached group
             </div>
           )}
@@ -687,8 +688,8 @@ function PlayDeploymentList({
             <span style={{ color: '#8f8fa8', fontSize: 10, whiteSpace: 'nowrap' }}>{u.baseModelCount} models</span>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 4 }}>
-            {groupRole === 'leader' && <Badge label="Leader" color="#9ab7ff" />}
-            {groupRole === 'bodyguard' && <Badge label="Bodyguard" color="#9ab7ff" />}
+            {groupRole === 'leader' && <Badge label="Leader" color={uiTokens.color.status.info} />}
+            {groupRole === 'bodyguard' && <Badge label="Bodyguard" color={uiTokens.color.status.info} />}
             {canDeployOutsideDeploymentZone(u) && <Badge label="Infiltrators" color="#66d7aa" />}
           </div>
         </button>
@@ -738,7 +739,7 @@ function PlayDeploymentList({
             </div>
           )}
           {groupRole === 'leader' && groupIndex === 0 && (
-            <div style={{ color: '#9ab7ff', fontSize: 9, fontWeight: 800, textTransform: 'uppercase', marginBottom: 2 }}>
+            <div style={{ color: uiTokens.color.status.info, fontSize: 9, fontWeight: 800, textTransform: 'uppercase', marginBottom: 2 }}>
               Attached group
             </div>
           )}
@@ -755,8 +756,8 @@ function PlayDeploymentList({
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 4 }}>
             {kind === 'reserve' && <Badge label="Aircraft" color="#66d7ff" />}
             {kind === 'transport' && <Badge label="Transport" color="#ffe066" />}
-            {groupRole === 'leader' && <Badge label="Leader" color="#9ab7ff" />}
-            {groupRole === 'bodyguard' && <Badge label="Bodyguard" color="#9ab7ff" />}
+            {groupRole === 'leader' && <Badge label="Leader" color={uiTokens.color.status.info} />}
+            {groupRole === 'bodyguard' && <Badge label="Bodyguard" color={uiTokens.color.status.info} />}
           </div>
         </button>
       )) : (
@@ -940,7 +941,7 @@ function UnitList({
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 6, paddingRight: 44 }}>
-              <span style={{ color: u.destroyed ? '#555' : '#ddd', fontSize: 12, fontWeight: 'bold' }}>
+              <span style={{ color: u.destroyed ? uiTokens.color.text.dim : uiTokens.color.text.primary, fontSize: 12, fontWeight: 'bold' }}>
                 {u.destroyed && 'x '}{u.profile.name}
               </span>
             </div>
@@ -1064,7 +1065,7 @@ function StaticUnitList({
           }}
         >
           {groupRole === 'leader' && groupIndex === 0 && (
-            <div style={{ color: '#9ab7ff', fontSize: 9, fontWeight: 800, textTransform: 'uppercase', margin: '0 0 4px 4px', letterSpacing: 0.4 }}>
+            <div style={{ color: uiTokens.color.status.info, fontSize: 9, fontWeight: 800, textTransform: 'uppercase', margin: '0 0 4px 4px', letterSpacing: 0.4 }}>
               Attached group
             </div>
           )}
@@ -1078,7 +1079,7 @@ function StaticUnitList({
               width: '100%',
               border: 0,
               background: expanded ? `${color}14` : 'transparent',
-              color: '#ddd',
+              color: uiTokens.color.text.primary,
               cursor: editable ? 'pointer' : 'default',
               font: 'inherit',
               padding: '4px',
@@ -1096,8 +1097,8 @@ function StaticUnitList({
               <span style={{ color: '#777', fontSize: 10, whiteSpace: 'nowrap' }}>{u.baseModelCount}x</span>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 3 }}>
-              {groupRole === 'leader' && <Badge label="Leader" color="#9ab7ff" />}
-              {groupRole === 'bodyguard' && <Badge label="Bodyguard" color="#9ab7ff" />}
+              {groupRole === 'leader' && <Badge label="Leader" color={uiTokens.color.status.info} />}
+              {groupRole === 'bodyguard' && <Badge label="Bodyguard" color={uiTokens.color.status.info} />}
               {canDeployOutsideDeploymentZone(u) && <Badge label="Infiltrators" color="#66d7aa" />}
             </div>
             <UnitSummaryBadges
@@ -1124,7 +1125,7 @@ function StaticUnitList({
                   background: '#111118',
                   border: `1px solid ${color}33`,
                   borderRadius: 3,
-                  color: '#ddd',
+                  color: uiTokens.color.text.primary,
                   font: 'inherit',
                   fontSize: 12,
                   fontWeight: 'bold',
@@ -1132,7 +1133,7 @@ function StaticUnitList({
                 }}
               />
             ) : (
-              <div style={{ color: '#ddd', fontSize: 12, fontWeight: 'bold' }}>{u.name}</div>
+              <div style={{ color: uiTokens.color.text.primary, fontSize: 12, fontWeight: 'bold' }}>{u.name}</div>
             )}
             {editable && (
               <button
@@ -1275,7 +1276,7 @@ function StaticUnitList({
             </label>
           )}
           {ownLeaderEntry?.leaders.length ? (
-            <div style={{ color: '#9ab7ff', fontSize: 10, marginTop: 2 }}>
+            <div style={{ color: uiTokens.color.status.info, fontSize: 10, marginTop: 2 }}>
               Leaders: {ownLeaderEntry.leaders.map(leader => leader.name).join(', ')}
             </div>
           ) : null}
@@ -1344,7 +1345,7 @@ function StaticUnitList({
             </div>
           )}
           {u.leaderAttachment && (
-            <div style={{ color: '#9ab7ff', fontSize: 10, marginTop: 1 }}>
+            <div style={{ color: uiTokens.color.status.info, fontSize: 10, marginTop: 1 }}>
               Attached to {leaderManifest.find(entry => entry.id === u.leaderAttachment?.attachedToUnitId)?.unit.name ?? u.leaderAttachment.attachedToName ?? 'unit'}
             </div>
           )}
@@ -1440,10 +1441,10 @@ function UnitSummaryBadges({
     const target = leaderManifest.find(entry => entry.id === unit.leaderAttachment?.attachedToUnitId)?.unit.name
       ?? unit.leaderAttachment.attachedToName
       ?? 'unit';
-    badges.push({ label: `Attached: ${target}`, color: '#9ab7ff' });
+    badges.push({ label: `Attached: ${target}`, color: uiTokens.color.status.info });
   }
   if (leaderEntry?.leaders.length) {
-    badges.push({ label: `Leaders: ${leaderEntry.leaders.length}`, color: '#9ab7ff' });
+    badges.push({ label: `Leaders: ${leaderEntry.leaders.length}`, color: uiTokens.color.status.info });
   }
   if (transportEntry) {
     const over = !!transportEntry.capacity && transportEntry.used > transportEntry.capacity;
@@ -1482,7 +1483,7 @@ const numberInputStyle: React.CSSProperties = {
   background: '#111118',
   border: '1px solid #33334a',
   borderRadius: 3,
-  color: '#ddd',
+  color: uiTokens.color.text.primary,
   font: 'inherit',
   fontSize: 11,
   padding: '2px 4px',
@@ -1496,7 +1497,7 @@ function selectInputStyle(color: string): React.CSSProperties {
     background: '#111118',
     border: `1px solid ${color}33`,
     borderRadius: 3,
-    color: '#ddd',
+    color: uiTokens.color.text.primary,
     font: 'inherit',
     fontSize: 11,
     padding: '2px 4px',

@@ -1,5 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 import type { LogEntry } from '@warhammer-simulator/core/types/battle';
+import { uiTokens } from '../theme/uiTokens';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -272,22 +273,22 @@ function RollRow({ group }: { group: DiceGroup }) {
   return (
     <div style={{ marginBottom: 10 }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 5 }}>
-        <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: '#666', textTransform: 'uppercase' }}>
+        <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: uiTokens.color.text.faint, textTransform: 'uppercase' }}>
           {group.label}
         </span>
         {group.sublabel && (
-          <span style={{ fontSize: 11, color: '#888' }}>{group.sublabel}</span>
+          <span style={{ fontSize: 11, color: uiTokens.color.text.muted }}>{group.sublabel}</span>
         )}
         {group.target > 0 && (
           <span style={{
-            fontSize: 11, fontWeight: 700, color: '#aaa',
+            fontSize: 11, fontWeight: 700, color: uiTokens.color.text.secondary,
             background: '#1e2a36', borderRadius: 3, padding: '1px 6px', border: '1px solid #2a3d52',
           }}>
             {group.target}+
           </span>
         )}
         {group.note && (
-          <span style={{ fontSize: 10, color: '#c9a84c', fontStyle: 'italic' }}>{group.note}</span>
+          <span style={{ fontSize: 10, color: uiTokens.color.status.note, fontStyle: 'italic' }}>{group.note}</span>
         )}
       </div>
       {isAutoHit ? (
@@ -313,7 +314,7 @@ function DamageDie({ value }: { value: number }) {
     <span style={{
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
       width: 26, height: 26, borderRadius: 5,
-      background: '#1a1040', border: '1px solid #4a3a80', color: '#9b8fd4',
+      background: '#1a1040', border: '1px solid #4a3a80', color: uiTokens.color.combat.damage,
       fontSize: 13, fontWeight: 700, flexShrink: 0,
     }}>
       {value}
@@ -334,11 +335,11 @@ function AttackCard({ block }: { block: AttackBlock }) {
 
   return (
     <div style={{
-      background: '#0d1b26', border: '1px solid #1e3048', borderRadius: 8,
+      background: uiTokens.surface.attackCard, border: `1px solid ${uiTokens.border.accent}`, borderRadius: uiTokens.radius.panel,
       overflow: 'hidden', marginBottom: 12,
     }}>
       {/* Header */}
-      <div style={{ padding: '10px 14px', background: '#0a1520', borderBottom: '1px solid #1e3048' }}>
+      <div style={{ padding: '10px 14px', background: uiTokens.surface.attackCardHeader, borderBottom: `1px solid ${uiTokens.border.accent}` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: 18 }}>{block.emoji}</span>
           <span style={{ fontWeight: 700, fontSize: 15, color: '#e0e8f0' }}>{block.weaponName}</span>
@@ -352,24 +353,24 @@ function AttackCard({ block }: { block: AttackBlock }) {
       {stats && (
         <div style={{
           display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr',
-          borderBottom: '1px solid #1e3048',
+          borderBottom: `1px solid ${uiTokens.border.accent}`,
         }}>
           {/* BS */}
-          <div style={{ padding: '8px 12px', borderRight: '1px solid #1e3048', textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: '#556', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>
+          <div style={{ padding: '8px 12px', borderRight: `1px solid ${uiTokens.border.accent}`, textAlign: 'center' }}>
+            <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>
               BS / WS
             </div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: '#8ab4ff' }}>{stats.bs}+</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: uiTokens.color.combat.hit }}>{stats.bs}+</div>
           </div>
           {/* S vs T */}
-          <div style={{ padding: '8px 12px', borderRight: '1px solid #1e3048', textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: '#556', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>
+          <div style={{ padding: '8px 12px', borderRight: `1px solid ${uiTokens.border.accent}`, textAlign: 'center' }}>
+            <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>
               S vs T
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-              <span style={{ fontSize: 15, fontWeight: 700, color: '#aac8e8' }}>S{stats.strength}</span>
-              <span style={{ fontSize: 11, color: '#445' }}>vs</span>
-              <span style={{ fontSize: 15, fontWeight: 700, color: '#aac8e8' }}>T{toughness ?? '?'}</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: uiTokens.color.combat.weaponName }}>S{stats.strength}</span>
+              <span style={{ fontSize: 11, color: uiTokens.color.text.subtle }}>vs</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: uiTokens.color.combat.weaponName }}>T{toughness ?? '?'}</span>
             </div>
             {woundTarget && (
               <div style={{
@@ -381,25 +382,25 @@ function AttackCard({ block }: { block: AttackBlock }) {
             )}
           </div>
           {/* AP + Cover */}
-          <div style={{ padding: '8px 12px', borderRight: '1px solid #1e3048', textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: '#556', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>
+          <div style={{ padding: '8px 12px', borderRight: `1px solid ${uiTokens.border.accent}`, textAlign: 'center' }}>
+            <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>
               AP
             </div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: stats.ap < 0 ? '#ff9f43' : '#667' }}>
+            <div style={{ fontSize: 18, fontWeight: 700, color: stats.ap < 0 ? uiTokens.color.combat.apWarning : '#667' }}>
               {stats.ap === 0 ? '0' : stats.ap}
             </div>
             {stats.hasCover && (
-              <div style={{ marginTop: 4, fontSize: 10, fontWeight: 700, color: stats.coverBonus > 0 ? '#00dcc3' : '#558' }}>
+              <div style={{ marginTop: 4, fontSize: 10, fontWeight: 700, color: stats.coverBonus > 0 ? uiTokens.color.combat.cover : '#558' }}>
                 ⛨ {stats.coverBonus > 0 ? `+${stats.coverBonus} save` : 'cover (no bonus)'}
               </div>
             )}
           </div>
           {/* Damage */}
           <div style={{ padding: '8px 12px', textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: '#556', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>
+            <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>
               Damage
             </div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: '#9b8fd4' }}>{stats.damage}</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: uiTokens.color.combat.damage }}>{stats.damage}</div>
           </div>
         </div>
       )}
@@ -409,8 +410,8 @@ function AttackCard({ block }: { block: AttackBlock }) {
         {/* Attacks (if variable) */}
         {block.attackRoll && (
           <div style={{ marginBottom: 10 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: '#666', textTransform: 'uppercase', marginBottom: 5 }}>
-              Attack Roll  <span style={{ color: '#888', fontWeight: 400, fontSize: 10 }}>({block.attackRoll.expr})</span>
+            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: uiTokens.color.text.faint, textTransform: 'uppercase', marginBottom: 5 }}>
+              Attack Roll  <span style={{ color: uiTokens.color.text.muted, fontWeight: 400, fontSize: 10 }}>({block.attackRoll.expr})</span>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 3 }}>
               {block.attackRoll.rolls.map((v, i) => <DamageDie key={i} value={v} />)}
@@ -423,7 +424,7 @@ function AttackCard({ block }: { block: AttackBlock }) {
 
         {/* Notes */}
         {block.notes.map((n, i) => (
-          <div key={i} style={{ fontSize: 11, color: '#c9a84c', marginBottom: 6, fontStyle: 'italic' }}>{n}</div>
+          <div key={i} style={{ fontSize: 11, color: uiTokens.color.status.note, marginBottom: 6, fontStyle: 'italic' }}>{n}</div>
         ))}
 
         {block.hitGroup && <RollRow group={block.hitGroup} />}
@@ -442,17 +443,17 @@ function AttackCard({ block }: { block: AttackBlock }) {
         {block.damageRolls.length > 0 && (
           <div style={{ marginBottom: 10 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 5 }}>
-              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: '#666', textTransform: 'uppercase' }}>
+              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: uiTokens.color.text.faint, textTransform: 'uppercase' }}>
                 Damage Rolls
               </span>
-              <span style={{ fontSize: 10, color: '#888' }}>({block.damageRolls[0].expr})</span>
+              <span style={{ fontSize: 10, color: uiTokens.color.text.muted }}>({block.damageRolls[0].expr})</span>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
               {block.damageRolls.map((dr, i) => (
                 <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
                   {dr.rolls.map((v, j) => <DamageDie key={j} value={v} />)}
                   <span style={{ fontSize: 11, color: '#667', marginRight: 4 }}>=</span>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: '#9b8fd4' }}>{dr.total}</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: uiTokens.color.combat.damage }}>{dr.total}</span>
                   {i < block.damageRolls.length - 1 && (
                     <span style={{ color: '#445', marginLeft: 4 }}>·</span>
                   )}
@@ -464,7 +465,7 @@ function AttackCard({ block }: { block: AttackBlock }) {
 
         {/* Mortal wounds */}
         {block.mortals > 0 && (
-          <div style={{ marginBottom: 8, fontSize: 12, color: '#ff6f6f' }}>
+          <div style={{ marginBottom: 8, fontSize: 12, color: uiTokens.color.status.danger }}>
             +{block.mortals} mortal wound{block.mortals !== 1 ? 's' : ''}
           </div>
         )}
@@ -472,7 +473,7 @@ function AttackCard({ block }: { block: AttackBlock }) {
         {/* Outcomes */}
         {block.outcomes.length > 0 && (
           <div style={{
-            marginTop: 8, paddingTop: 10, borderTop: '1px solid #1e3048',
+            marginTop: 8, paddingTop: 10, borderTop: `1px solid ${uiTokens.border.accent}`,
             display: 'flex', flexDirection: 'column', gap: 4,
           }}>
             {block.outcomes.map((o, i) => {
@@ -480,7 +481,7 @@ function AttackCard({ block }: { block: AttackBlock }) {
                 return (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <span style={{ fontSize: 16 }}>💀</span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: '#ff6f6f' }}>{o.text} DESTROYED</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: uiTokens.color.status.danger }}>{o.text} DESTROYED</span>
                   </div>
                 );
               }
