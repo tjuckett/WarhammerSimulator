@@ -2,7 +2,7 @@ import { BATTLE_PHASE, MOVEMENT_STEP, type BeaconWhenDrawnSelection, type Burden
 import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
-import { scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn } from '../engine/missionScoring';
+import { scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn } from '../engine/missionScoring';
 import { resolveCommandReroll, useStratagem } from '../engine/stratagems';
 import { useUnitAbility } from '../engine/unitAbilities';
 import type { AbilityTiming } from '../types/ability';
@@ -14,6 +14,7 @@ import {
   chargePlayUnitTarget,
   completePlayUnitMovement,
   completeEndOfTurnActions,
+  consecrateObjective,
   consolidatePlayUnit,
   disembarkPlayUnit,
   embarkPlayUnit,
@@ -88,6 +89,7 @@ export const GAME_ACTION_TYPE = {
   ResolveCommandReroll: 'play.resolveCommandReroll',
   UseUnitAbility: 'play.useUnitAbility',
   StartAction: 'play.startAction',
+  ConsecrateObjective: 'mission.consecrateObjective',
   ToggleCondemnedUnit: 'play.toggleCondemnedUnit',
   ConfigureSecondaryMissions: 'mission.configureSecondaryMissions',
   DrawSecondaryMission: 'mission.drawSecondaryMission',
@@ -280,6 +282,12 @@ export type GameAction =
       unitId: string;
     })
   | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.ConsecrateObjective;
+      side: Side;
+      unitId: string;
+      objectiveIndex: number;
+    })
+  | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.ConfigureSecondaryMissions;
       side: Side;
       mode: SecondaryMissionMode;
@@ -414,6 +422,7 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
 
   if (next.phase === BATTLE_PHASE.End) {
     next.movementStep = undefined;
+    scorePrimaryMissionsAtEndOfBattle(next, rules);
     if (next.scores[0] > next.scores[1]) next.winner = 0;
     else if (next.scores[1] > next.scores[0]) next.winner = 1;
     else next.winner = 'draw';
@@ -593,6 +602,15 @@ export function applyGameAction(
         normalizedAction.targetTerrainId,
         normalizedAction.targetOperationMarkerId,
         normalizedAction.targetUnitId,
+      );
+
+    case GAME_ACTION_TYPE.ConsecrateObjective:
+      return consecrateObjective(
+        state,
+        normalizedAction.unitId,
+        normalizedAction.side,
+        normalizedAction.objectiveIndex,
+        context.rules,
       );
 
     case GAME_ACTION_TYPE.ToggleCondemnedUnit:

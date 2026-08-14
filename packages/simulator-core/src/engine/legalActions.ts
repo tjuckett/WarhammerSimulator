@@ -146,7 +146,6 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
     if (playUnitCanStartAction(state, unit.id, side, rules)) {
       const extractObjectiveIndex = extractIntelligenceObjectiveOptions(state, unit.id, side, rules)[0];
       const triangulateObjectiveIndex = triangulateObjectiveOptions(state, unit.id, side, rules)[0];
-      const consecrateObjectiveIndex = consecrateObjectiveOptions(state, unit.id, side, rules)[0];
       const maintainControlObjectiveIndex = maintainControlObjectiveOptions(state, unit.id, side, rules)[0];
       const secureAssetObjectiveIndex = secureAssetObjectiveOptions(state, unit.id, side, rules)[0];
       const decoyObjectiveIndex = decoyObjectiveOptions(state, unit.id, side, rules)[0];
@@ -159,7 +158,6 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
       const plunderTerrainId = plunderTerrainOptions(state, unit.id, side, rules)[0];
       const extractsIntelligence = extractObjectiveIndex !== undefined;
       const triangulates = triangulateObjectiveIndex !== undefined;
-      const consecrates = consecrateObjectiveIndex !== undefined;
       const maintainsControl = maintainControlObjectiveIndex !== undefined;
       const securesAsset = secureAssetObjectiveIndex !== undefined;
       const createsDecoy = decoyObjectiveIndex !== undefined;
@@ -174,9 +172,7 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
         ? { id: 'extract-intelligence', name: 'Extract Intelligence', objectiveIndex: extractObjectiveIndex }
         : triangulates
           ? { id: 'triangulate', name: 'Triangulate', objectiveIndex: triangulateObjectiveIndex }
-          : consecrates
-            ? { id: 'consecrate', name: 'Consecrate', objectiveIndex: consecrateObjectiveIndex }
-            : maintainsControl
+          : maintainsControl
               ? { id: 'maintain-control', name: 'Maintain Control', objectiveIndex: maintainControlObjectiveIndex }
               : securesAsset
                 ? { id: 'secure-asset', name: 'Secure Asset', objectiveIndex: secureAssetObjectiveIndex }
@@ -454,6 +450,21 @@ function addPunishmentActions(actions: LegalAction[], state: BattleState, side: 
   }
 }
 
+function addConsecrateActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
+  if (state.activeArmy !== side || state.phase !== 'fight') return;
+  for (const unit of activeUnits(state, side)) {
+    for (const objectiveIndex of consecrateObjectiveOptions(state, unit.id, side, rules)) {
+      actions.push({
+        action: { type: 'mission.consecrateObjective', side, unitId: unit.id, objectiveIndex },
+        category: 'action',
+        side,
+        unitId: unit.id,
+        label: `${unit.profile.name}: Consecrate objective ${objectiveIndex + 1}`,
+      });
+    }
+  }
+}
+
 export function getLegalActions(
   state: BattleState,
   side: Side = state.activeArmy,
@@ -475,6 +486,7 @@ export function getLegalActions(
   addChargeActions(actions, state, side, rules);
   addFightActions(actions, state, side, rules);
   addPunishmentActions(actions, state, side, rules);
+  addConsecrateActions(actions, state, side, rules);
   if (includeStratagems) addStratagemActions(actions, state, side, rules);
   if (includeAbilities) addAbilityActions(actions, state, side, rules);
 

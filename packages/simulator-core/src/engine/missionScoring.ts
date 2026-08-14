@@ -1,7 +1,7 @@
 import type { BattleState, BattleUnit, Side } from '../types/battle';
 import { modelBaseRadiusInches } from './baseSizes';
 import { objectiveControlValue } from './battleshock';
-import { battleRound } from './battleRound';
+import { battleRound, maxBattleRounds } from './battleRound';
 import { distance } from './coherency';
 import {
   eleventhPrimaryMissionRuleForName,
@@ -157,8 +157,8 @@ function objectiveMatchesFilter(
 ): boolean {
   const role = objectiveRole(state, objective);
   if (filter === 'all') return true;
-  if (filter === 'non-home') return role !== homeRole(side);
-  if (filter === 'central') return role === undefined || role === 'central' || role === 'no-mans-land';
+  if (filter === 'non-home') return role !== undefined && role !== homeRole(side);
+  if (filter === 'central') return role === 'central';
   return true;
 }
 
@@ -341,11 +341,57 @@ function controlsCentralAndExpansionObjectives(
   side: Side,
 ): boolean {
   const controlled = controlledObjectives(state, objectives, side);
-  const expansionRole = side === 0 ? 'expansion-0' : 'expansion-1';
-  return controlled.some(objective => {
-    const role = objectiveRole(state, objective);
-    return role === 'central' || role === 'no-mans-land';
-  }) && controlled.some(objective => objectiveRole(state, objective) === expansionRole);
+  return controlled.some(objective => objectiveRole(state, objective) === 'central')
+    && controlled.some(objective => {
+      const role = objectiveRole(state, objective);
+      return role === 'expansion-0' || role === 'expansion-1';
+    });
+}
+
+function clauseHasUnknownObjectiveRoles(
+  state: BattleState,
+  objectives: ObjectiveControlResult[],
+  side: Side,
+  clause: MissionScoringClause,
+): boolean {
+  const roleDependentConditions: MissionCondition[] = [
+    'controls-at-least-one-central-objective',
+    'controls-at-least-one-non-home-objective',
+    'controls-central-and-expansion-objectives',
+    'controls-home-objective',
+    'controls-opponent-home-objective',
+    'controlled-objective-not-controlled-at-start-of-turn',
+    'destroyed-enemy-started-near-central-objective',
+    'operation-marker-near-opponent-home-objective',
+    'enemy-home-objective-consecrated',
+    'operation-markers-near-controlled-central-objectives',
+  ];
+  const controlled = controlledObjectives(state, objectives, side);
+  if (clause.objectiveFilter === 'central' || clause.objectiveFilter === 'non-home') {
+    return controlled.some(objective => objectiveRole(state, objective) === undefined);
+  }
+  if (clause.bonusCondition === 'controls-home-objective'
+    && controlled.some(objective => objectiveRole(state, objective) === undefined)) return true;
+  if (!clause.condition || !roleDependentConditions.includes(clause.condition)) return false;
+  if (clause.condition === 'destroyed-enemy-started-near-central-objective') {
+    const snapshot = state.missionEvents?.startOfTurn;
+    const destroyed = new Set((state.missionEvents?.destroyedUnitsThisTurn ?? [])
+      .filter(event => event.destroyedBySide === side && event.side !== side)
+      .map(event => event.unitId));
+    return (snapshot?.units ?? []).some(unit => unit.side !== side
+      && destroyed.has(unit.unitId)
+      && (unit.objectiveIndexesWithinRange ?? []).some(index => objectiveRoleForIndex(state, index) === undefined));
+  }
+  if (clause.condition === 'operation-marker-near-opponent-home-objective'
+    || clause.condition === 'enemy-home-objective-consecrated') {
+    const actionId = clause.condition === 'operation-marker-near-opponent-home-objective'
+      ? 'extract-intelligence'
+      : 'consecrate';
+    return operationMarkersForAction(state, side, actionId).some(marker =>
+      marker.objectiveIndex !== undefined && objectiveRoleForIndex(state, marker.objectiveIndex) === undefined
+    );
+  }
+  return controlled.some(objective => objectiveRole(state, objective) === undefined);
 }
 
 function destroyedEnemyStartedWithinObjectiveRange(
@@ -539,11 +585,17 @@ function evaluateMissionClause(
     return {
       vp: met ? clause.vp : 0,
       detail: `${clause.sourceText} ${met ? `+${clause.vp}VP` : '+0VP'}`,
+      ...(clauseHasUnknownObjectiveRoles(state, objectives, side, clause) && !met
+        ? { unsupported: `${clause.sourceText} (Required objective roles are not available.)` }
+        : {}),
     };
   }
 
   const controlled = controlledObjectives(state, objectives, side)
     .filter(objective => objectiveMatchesFilter(state, objective, side, clause.objectiveFilter));
+  const roleUnsupported = clauseHasUnknownObjectiveRoles(state, objectives, side, clause)
+    ? `${clause.sourceText} (One or more controlled objective roles are not available.)`
+    : undefined;
   if (clause.kind === 'per-objective-if') {
     const condition = clause.condition;
     const matched = condition
@@ -553,6 +605,7 @@ function evaluateMissionClause(
     return {
       vp,
       detail: `${clause.sourceText} ${matched.length} objective${matched.length === 1 ? '' : 's'} x ${clause.vp}VP -> +${vp}VP`,
+      ...(roleUnsupported ? { unsupported: roleUnsupported } : {}),
     };
   }
 
@@ -648,11 +701,18 @@ function evaluateMissionClause(
   if (clause.kind === 'per-objective-with-bonus' && clause.bonusVp) {
     if (clause.bonusCondition) {
       const bonusMet = conditionMet(state, objectives, side, clause.bonusCondition);
-      const bonusObjectives = controlled.filter(objective => objectiveRole(state, objective) !== homeRole(side));
+      const bonusObjectives = controlled.filter(objective => {
+        const role = objectiveRole(state, objective);
+        return role !== undefined && role !== homeRole(side);
+      });
       const bonusVp = bonusMet ? bonusObjectives.length * clause.bonusVp : 0;
       vp += bonusVp;
       detail += `; bonus ${bonusMet ? `${bonusObjectives.length} x ${clause.bonusVp}VP` : '+0VP'}`;
-      return { vp, detail: `${detail} -> +${vp}VP` };
+      return {
+        vp,
+        detail: `${detail} -> +${vp}VP`,
+        ...(roleUnsupported ? { unsupported: roleUnsupported } : {}),
+      };
     }
     const territoryMembership = controlled.map(objective => {
       const point = state.objectives[objective.objectiveIndex];
@@ -671,7 +731,22 @@ function evaluateMissionClause(
     }
   }
 
-  return { vp, detail: `${detail} -> +${vp}VP` };
+  return { vp, detail: `${detail} -> +${vp}VP`, ...(roleUnsupported ? { unsupported: roleUnsupported } : {}) };
+}
+
+const PRIMARY_ROUND_CAP = 15;
+const PRIMARY_BATTLE_CAP = 45;
+
+function primaryEvaluationId(
+  state: BattleState,
+  side: Side,
+  missionName: string,
+  timing: MissionScoringTiming,
+): string {
+  const round = timing === 'end-battle'
+    ? Math.min(battleRound(state), maxBattleRounds(state))
+    : battleRound(state);
+  return [side, missionName, round, state.turn, state.activeArmy, timing].join(':');
 }
 
 function scoreDataDrivenPrimaryMission(
@@ -682,12 +757,15 @@ function scoreDataDrivenPrimaryMission(
   objectives: ObjectiveControlResult[],
 ): PrimaryScoringResult {
   const timing = currentScoringTiming(state);
-  const round = battleRound(state);
+  const round = timing === 'end-battle'
+    ? Math.min(battleRound(state), maxBattleRounds(state))
+    : battleRound(state);
   const activeClauses = (mission.scoring ?? []).filter(clause =>
     clause.timing === timing
     && clauseAppliesToRound(clause, round)
     && (
-      side === state.activeArmy
+      timing === 'end-battle'
+      || side === state.activeArmy
       || mission.name !== 'Punishment'
       || timing !== 'end-turn'
       || clause.condition === 'condemned-enemy-left-battlefield'
@@ -695,8 +773,56 @@ function scoreDataDrivenPrimaryMission(
   );
 
   const scored = activeClauses.map(clause => evaluateMissionClause(state, objectives, side, clause));
-  const vpGained = scored.reduce((total, clause) => total + clause.vp, 0);
+  const id = primaryEvaluationId(state, side, mission.name, timing);
+  const records = state.missionState?.primaryMissionScoringRecords ?? [];
+  if (records.some(record => record.id === id)) {
+    return {
+      kind: 'scored',
+      missionName: mission.name,
+      scoringModel: `11e-data:${mission.name}`,
+      objectiveControlLabel: (state.objectiveControl ?? rules.objectiveControl).label,
+      side,
+      vpGained: 0,
+      score: [...state.scores],
+      objectives,
+      scoringDetails: [`${mission.name} was already evaluated for this scoring window. +0VP`],
+    };
+  }
+  const requestedVp = scored.reduce((total, clause) => total + clause.vp, 0);
+  const roundVp = records.filter(record => record.side === side && record.battleRound === round)
+    .reduce((total, record) => total + record.vp, 0);
+  const battleVp = records.filter(record => record.side === side)
+    .reduce((total, record) => total + record.vp, 0);
+  const vpGained = Math.min(requestedVp, Math.max(0, PRIMARY_ROUND_CAP - roundVp), Math.max(0, PRIMARY_BATTLE_CAP - battleVp));
   state.scores[side] += vpGained;
+  state.missionState ??= {};
+  state.missionState.primaryMissionScoringRecords ??= [];
+  const unsupportedClauses = scored.flatMap(clause => clause.unsupported ? [clause.unsupported] : []);
+  const capped = vpGained < requestedVp;
+  const status = capped ? 'capped' : requestedVp > 0 ? 'awarded' : unsupportedClauses.length ? 'unsupported' : 'not-met';
+  const capDetail = capped
+    ? `Requested ${requestedVp}VP; awarded ${vpGained}VP after the ${PRIMARY_ROUND_CAP}VP battle-round and ${PRIMARY_BATTLE_CAP}VP battle caps.`
+    : `Requested and awarded ${vpGained}VP.`;
+  const recordDetail = [
+    ...scored.flatMap(clause => clause.detail ? [clause.detail] : []),
+    capDetail,
+    ...unsupportedClauses.map(clause => `Unsupported: ${clause}`),
+  ].join(' ');
+  state.missionState.primaryMissionScoringRecords.push({
+    id,
+    side,
+    missionName: mission.name,
+    clauseIds: activeClauses.map(clause => clause.id),
+    status,
+    requestedVp,
+    vp: vpGained,
+    detail: recordDetail,
+    battleRound: round,
+    turn: state.turn,
+    activeSide: state.activeArmy,
+    phase: state.phase,
+    scoreAfter: state.scores[side],
+  });
 
   return {
     kind: 'scored',
@@ -707,8 +833,8 @@ function scoreDataDrivenPrimaryMission(
     vpGained,
     score: [...state.scores],
     objectives,
-    scoringDetails: scored.flatMap(clause => clause.detail ? [clause.detail] : []),
-    unsupportedClauses: scored.flatMap(clause => clause.unsupported ? [clause.unsupported] : []),
+    scoringDetails: [...scored.flatMap(clause => clause.detail ? [clause.detail] : []), capDetail],
+    unsupportedClauses,
   };
 }
 
@@ -777,6 +903,20 @@ export function scorePrimaryMissionsAtEndOfTurn(
   const inactiveMission = state.setup?.primaryMissions?.[inactiveSide] ?? state.setup?.primaryMission;
   if (inactiveMission === 'Punishment') sides.push(inactiveSide);
   return sides.map(side => scorePrimaryMission(state, side, rules));
+}
+
+export function scorePrimaryMissionsAtEndOfBattle(
+  state: BattleState,
+  rules: RulesEdition,
+): PrimaryScoringResult[] {
+  if (rules.metadata.edition !== '11e') return [];
+  return ([0, 1] as Side[]).flatMap(side => {
+    const missionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+    const mission = missionName ? eleventhPrimaryMissionRuleForName(missionName) : null;
+    return mission?.scoring?.some(clause => clause.timing === 'end-battle')
+      ? [scorePrimaryMission(state, side, rules)]
+      : [];
+  });
 }
 
 export function formatPrimaryScoringResult(result: PrimaryScoringResult): string {

@@ -272,12 +272,29 @@ export interface SecondaryMissionScoringRecord {
   scoreAfter: number;
 }
 
+export interface PrimaryMissionScoringRecord {
+  id: string;
+  side: Side;
+  missionName: string;
+  clauseIds: string[];
+  status: 'awarded' | 'capped' | 'not-met' | 'unsupported';
+  requestedVp: number;
+  vp: number;
+  detail: string;
+  battleRound: number;
+  turn: number;
+  activeSide: Side;
+  phase: Phase;
+  scoreAfter: number;
+}
+
 export interface MissionState {
   operationMarkers?: OperationMarker[];
   condemnedUnitIds?: [string[], string[]];
   secondaryMissions?: [SecondaryMissionPlayerState, SecondaryMissionPlayerState];
   secondaryMissionNextActivationIds?: [number, number];
   secondaryMissionScoringRecords?: SecondaryMissionScoringRecord[];
+  primaryMissionScoringRecords?: PrimaryMissionScoringRecord[];
   completedSecondaryActionsDuringBattle?: CompletedMissionActionEvent[];
   destroyedUnitsDuringBattle?: DestroyedUnitMissionEvent[];
   destroyedModelsDuringBattle?: DestroyedModelMissionEvent[];

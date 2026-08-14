@@ -8,7 +8,7 @@ import { DEFAULT_OBJECTIVES } from './missions';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
 import { advanceAllowance, normalMoveAllowance } from './movement';
 import { objectiveControlRadius } from './objectiveGeometry';
-import { formatPrimaryScoringResult, objectiveIndexesWithinRange, scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn, terrainAreaIdsContainingUnit, updateObjectiveControl } from './missionScoring';
+import { formatPrimaryScoringResult, objectiveIndexesWithinRange, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, terrainAreaIdsContainingUnit, updateObjectiveControl } from './missionScoring';
 import { battleRound, logWithBattleRound, maxBattleRounds, setBattleRound } from './battleRound';
 import {
   completeMissionEventsForCurrentTurn,
@@ -1485,9 +1485,9 @@ function missionObjectiveActionOptions(
     const objectiveRole = objectiveRoleForIndex(state, objectiveIndex);
     if (objectiveFilter === 'any') return true;
     if (objectiveFilter === 'central') {
-      return objectiveRole === undefined || objectiveRole === 'central' || objectiveRole === 'no-mans-land';
+      return objectiveRole === 'central';
     }
-    return objectiveRole !== homeRole;
+    return objectiveRole !== undefined && objectiveRole !== homeRole;
   });
 }
 
@@ -1514,8 +1514,78 @@ export function consecrateObjectiveOptions(
   unitId: string,
   side: Side,
   rules: RulesEdition,
+  resolvingEndOfTurn = false,
 ): number[] {
-  return missionObjectiveActionOptions(state, unitId, side, rules, 'Consecrate', 'consecrate', 'any');
+  const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+  if (rules.metadata.edition !== '11e'
+    || selectedMissionName !== 'Consecrate'
+    || state.activeArmy !== side
+    || state.phase !== 'fight') return [];
+  const unresolvedFightMove = activeUnits(state, side).some(candidate =>
+    playUnitCanPileIn(state, candidate.id, side, rules)
+    || playUnitCanConsolidate(state, candidate.id, side)
+  );
+  if (!resolvingEndOfTurn
+    && (playFightActivationUnitIds(state, side, rules).length > 0 || unresolvedFightMove)) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
+  if (!unit) return [];
+  const becameConsecrationUnit = (state.missionEvents?.destroyedUnitsThisTurn ?? []).some(event =>
+    event.destroyedBySide === side && event.side !== side && event.destroyedByUnitId === unitId
+  );
+  if (!becameConsecrationUnit) return [];
+  const alreadyUsed = (state.missionState?.operationMarkers ?? []).some(marker =>
+    marker.side === side
+    && marker.sourceActionId === 'consecrate'
+    && marker.placedByUnitId === unitId
+    && marker.battleRound === battleRound(state)
+    && marker.turn === state.turn
+  );
+  if (alreadyUsed) return [];
+  const markedObjectives = new Set((state.missionState?.operationMarkers ?? [])
+    .filter(marker => marker.side === side && marker.sourceActionId === 'consecrate')
+    .flatMap(marker => marker.objectiveIndex === undefined ? [] : [marker.objectiveIndex]));
+  const ownHomeRole = side === 0 ? 'home-0' : 'home-1';
+  return objectiveIndexesWithinRange(state, unit, rules).filter(objectiveIndex =>
+    !markedObjectives.has(objectiveIndex)
+    && objectiveRoleForIndex(state, objectiveIndex) !== undefined
+    && objectiveRoleForIndex(state, objectiveIndex) !== ownHomeRole
+  );
+}
+
+export function consecrateObjective(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  objectiveIndex: number,
+  rules: RulesEdition,
+  resolvingEndOfTurn = false,
+): BattleState {
+  if (!consecrateObjectiveOptions(state, unitId, side, rules, resolvingEndOfTurn).includes(objectiveIndex)) return state;
+  const next = clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId)!;
+  const position = next.objectives[objectiveIndex];
+  next.missionState ??= {};
+  next.missionState.operationMarkers = [
+    ...(next.missionState.operationMarkers ?? []),
+    {
+      id: `operation-marker-${side}-consecrate-${objectiveIndex}`,
+      side,
+      sourceActionId: 'consecrate',
+      placedByUnitId: unitId,
+      objectiveIndex,
+      position: { ...position },
+      battleRound: battleRound(next),
+      turn: next.turn,
+    },
+  ];
+  next.log = [...next.log, log(
+    next,
+    side,
+    unit.profile.name,
+    `${unit.profile.name} consecrates objective ${objectiveIndex + 1}.`,
+    'info',
+  )];
+  return next;
 }
 
 export function maintainControlObjectiveOptions(
@@ -1629,7 +1699,7 @@ export interface SensorSweepOption {
 function objectiveIsCentral(state: BattleState, objectiveIndex: number): boolean {
   if (!state.objectives[objectiveIndex]) return false;
   const role = objectiveRoleForIndex(state, objectiveIndex);
-  return role === undefined || role === 'central' || role === 'no-mans-land';
+  return role === 'central';
 }
 
 export function sensorSweepOptions(
@@ -1914,9 +1984,7 @@ export function startPlayUnitAction(
       || !triangulateObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
     return state;
   }
-  if (actionId === 'consecrate'
-    && (targetObjectiveIndex === undefined
-      || !consecrateObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
+  if (actionId === 'consecrate') {
     return state;
   }
   if (actionId === 'maintain-control'
@@ -3133,6 +3201,12 @@ function scorePrimaryMissionLogs(s: BattleState, side: Side, rules: RulesEdition
 
 function scoreEndOfTurnPrimaryMissionLogs(s: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
   return scorePrimaryMissionsAtEndOfTurn(s, side, rules).map(result =>
+    log(s, result.side, s.armies[result.side].name, `\n--- ${formatPrimaryScoringResult(result)} ---`, 'info')
+  );
+}
+
+function scoreEndOfBattlePrimaryMissionLogs(s: BattleState, rules: RulesEdition): LogEntry[] {
+  return scorePrimaryMissionsAtEndOfBattle(s, rules).map(result =>
     log(s, result.side, s.armies[result.side].name, `\n--- ${formatPrimaryScoringResult(result)} ---`, 'info')
   );
 }
@@ -5239,7 +5313,7 @@ export function beginPlayBattle(state: BattleState): BattleState {
 }
 
 export function simulateNextPhase(state: BattleState, rules: RulesEdition): BattleState {
-  const s = clone(state);
+  let s = clone(state);
   const side = s.activeArmy;
   const armyName = s.armies[side].name;
   const newLogs: LogEntry[] = [];
@@ -5293,10 +5367,15 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
     s.units.filter(u => u.side !== side && !u.destroyed && u.inCombat)
       .forEach(u => newLogs.push(...runFight(u, s, rules)));
   } else if (s.phase === 'fight') {
+    for (const unit of activeUnits(s, side)) {
+      const objectiveIndex = consecrateObjectiveOptions(s, unit.id, side, rules, true)[0];
+      if (objectiveIndex !== undefined) s = consecrateObjective(s, unit.id, side, objectiveIndex, rules, true);
+    }
     completeEndOfTurnActions(s, side);
     newLogs.push(...scoreEndOfTurnSecondaryMissionLogs(s, side, rules));
     newLogs.push(...scoreEndOfTurnPrimaryMissionLogs(s, side, rules));
     advanceTurnInPlace(s);
+    if ((s.phase as Phase) === 'end') newLogs.push(...scoreEndOfBattlePrimaryMissionLogs(s, rules));
   }
 
   checkWinner(s);

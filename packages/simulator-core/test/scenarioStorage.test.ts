@@ -15,6 +15,7 @@ import {
   type PracticeTimeline,
 } from '../src/practice/timeline';
 import { applyGameAction, GAME_ACTION_TYPE } from '../src/practice/actions';
+import { getLegalActions } from '../src/engine/legalActions';
 import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
 import { formatPrimaryScoringResult, scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn, updateObjectiveControl } from '../src/engine/missionScoring';
@@ -2237,7 +2238,7 @@ test('model destruction facts replay and persist after the selected model is rem
   );
 });
 
-test('11th Consecrate completes on an objective, places a marker, and scores the first tier', () => {
+test('11th Consecrate lets a unit that destroyed an enemy consecrate one non-home objective and replays the choice', () => {
   const battle = state('fight', 1);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.objectiveControl = rules40K11th.objectiveControl;
@@ -2251,22 +2252,30 @@ test('11th Consecrate completes on an objective, places a marker, and scores the
     terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
     terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
   ];
-  const unit = losTestUnit('blue-home', 0, { x: 10, y: 10 });
-  battle.units = [unit];
+  const unit = losTestUnit('blue-killer', 0, { x: 20, y: 10 });
+  const target = losTestUnit('red-target', 1, { x: 30, y: 10 });
+  target.destroyed = true;
+  target.remainingModels = 0;
+  target.modelPositions = [];
+  battle.units = [unit, target];
+  recordDestroyedUnitMissionEvent(battle, target, 0, { destroyedByUnitId: unit.id });
 
-  assert.deepEqual(consecrateObjectiveOptions(battle, unit.id, 0, rules40K11th), [0]);
-  const started = startPlayUnitAction(
+  assert.deepEqual(consecrateObjectiveOptions(battle, unit.id, 0, rules40K11th), [1]);
+  assert.equal(getLegalActions(battle, 0, rules40K11th).some(option => option.action.type === GAME_ACTION_TYPE.ConsecrateObjective), true);
+  const simulated = simulateNextPhase(battle, rules40K11th);
+  assert.equal(simulated.missionState?.operationMarkers?.[0]?.sourceActionId, 'consecrate');
+  assert.equal(simulated.scores[0], 3);
+  const action = { type: GAME_ACTION_TYPE.ConsecrateObjective, side: 0 as const, unitId: unit.id, objectiveIndex: 1 };
+  const started = applyGameAction(battle, action, { rules: rules40K11th });
+  const replayed = replayTimeline(appendTimelineAction(
+    createPracticeTimeline(battle, { id: 'consecrate-replay' }),
     battle,
-    unit.id,
-    0,
-    'consecrate',
-    'Consecrate',
-    rules40K11th,
-    0,
-  );
-  completeEndOfTurnActions(started, 0);
+    action,
+    { rules: rules40K11th },
+  ).timeline, { rules: rules40K11th }, false);
 
   assert.equal(started.missionState?.operationMarkers?.[0]?.sourceActionId, 'consecrate');
+  assert.deepEqual(replayed.missionState?.operationMarkers, started.missionState?.operationMarkers);
   assert.deepEqual(consecrateObjectiveOptions(started, unit.id, 0, rules40K11th), []);
   const result = scorePrimaryMission(started, 0, rules40K11th);
   assert.equal(result.vpGained, 3);
@@ -2311,6 +2320,42 @@ test('11th Consecrate marker tiers and enemy-home end-battle bonus score from pe
   const finalResult = scorePrimaryMission(endBattle, 0, rules40K11th);
   assert.equal(finalResult.vpGained, 5);
   assert.deepEqual(finalResult.unsupportedClauses, []);
+});
+
+test('11th Consecrate waits for the end-turn choice window and uses final objective proximity', () => {
+  const battle = state('fight', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = { ...battle.setup!, primaryMissions: ['Consecrate', 'Triangulation'] };
+  battle.objectives = [{ x: 20, y: 10 }, { x: 30, y: 10 }];
+  battle.objectiveOwners = [null, null];
+  battle.terrain = [
+    terrainMat({ id: 'central', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'central' }),
+    terrainMat({ id: 'expansion', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'expansion-0' }),
+  ];
+  const killer = losTestUnit('blue-killer', 0, { x: 20, y: 10 });
+  const survivor = losTestUnit('red-survivor', 1, { x: 21, y: 10 });
+  const destroyed = losTestUnit('red-destroyed', 1, { x: 40, y: 10 });
+  destroyed.destroyed = true;
+  destroyed.remainingModels = 0;
+  destroyed.modelPositions = [];
+  battle.units = [killer, survivor, destroyed];
+  recordDestroyedUnitMissionEvent(battle, destroyed, 0, { destroyedByUnitId: killer.id });
+
+  assert.deepEqual(consecrateObjectiveOptions(battle, killer.id, 0, rules40K11th), []);
+  assert.equal(applyGameAction(battle, {
+    type: GAME_ACTION_TYPE.ConsecrateObjective,
+    side: 0,
+    unitId: killer.id,
+    objectiveIndex: 0,
+  }, { rules: rules40K11th }), battle);
+
+  killer.activated = true;
+  killer.piledIn = true;
+  killer.consolidated = true;
+  killer.position = { x: 30, y: 10 };
+  killer.modelPositions = [{ x: 30, y: 10 }];
+  assert.deepEqual(consecrateObjectiveOptions(battle, killer.id, 0, rules40K11th), [1]);
 });
 
 test("11th Destroyer's Wrath scores objective control clauses from mission data", () => {
@@ -2524,6 +2569,7 @@ test('11th Determined Acquisition scores each controlled objective in opponent t
 
   const unknown: BattleState = JSON.parse(JSON.stringify(battle));
   unknown.scores = [0, 0];
+  unknown.missionState!.primaryMissionScoringRecords = [];
   delete unknown.setup!.territoryZones;
   const baseOnly = scorePrimaryMission(unknown, 0, rules40K11th);
   assert.equal(baseOnly.vpGained, 9);
@@ -2541,7 +2587,7 @@ test('11th Extract Relic scores an enemy destroyed after starting within objecti
   battle.objectives = [{ x: 20, y: 10 }];
   battle.objectiveOwners = [null];
   battle.terrain = [
-    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'central' }),
   ];
   const target = losTestUnit('red-target', 1, { x: 20, y: 10 });
   battle.units = [target];
@@ -2566,7 +2612,7 @@ test('11th Sensor Sweep removes a selected operation marker while controlling a 
   battle.objectives = [{ x: 20, y: 10 }];
   battle.objectiveOwners = [null];
   battle.terrain = [
-    terrainMat({ id: 'central', name: 'Central', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'central', name: 'Central', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'central' }),
     terrainMat({ id: 'remote', name: 'Remote', type: 'ruin', x: 38, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
   ];
   const unit = losTestUnit('blue-sweeper', 0, { x: 20, y: 10 });
@@ -2732,7 +2778,7 @@ test('11th Secure Asset only counts destroyed enemies that started near a centra
   battle.objectiveOwners = [null, null];
   battle.terrain = [
     terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
-    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'central' }),
   ];
   const homeTarget = losTestUnit('red-home-target', 1, { x: 10, y: 10 });
   const centralTarget = losTestUnit('red-central-target', 1, { x: 20, y: 10 });
@@ -2744,6 +2790,7 @@ test('11th Secure Asset only counts destroyed enemies that started near a centra
   assert.equal(result.vpGained, 0);
 
   battle.scores = [0, 0];
+  battle.missionState!.primaryMissionScoringRecords = [];
   applyDamage(centralTarget, 1, battle, 0);
   result = scorePrimaryMission(battle, 0, rules40K11th);
   assert.equal(result.vpGained, 2);
@@ -2879,12 +2926,14 @@ test('11th Search and Scour end-battle territory clause uses whole-unit footprin
 
   const occupied: BattleState = JSON.parse(JSON.stringify(battle));
   occupied.scores = [0, 0];
+  occupied.missionState!.primaryMissionScoringRecords = [];
   occupied.units[0].position = { x: 10, y: 10 };
   occupied.units[0].modelPositions = [{ x: 10, y: 10 }];
   assert.equal(scorePrimaryMission(occupied, 0, rules40K11th).vpGained, 0);
 
   const unknown: BattleState = JSON.parse(JSON.stringify(battle));
   unknown.scores = [0, 0];
+  unknown.missionState!.primaryMissionScoringRecords = [];
   delete unknown.setup!.territoryZones;
   const unsupported = scorePrimaryMission(unknown, 0, rules40K11th);
   assert.equal(unsupported.vpGained, 0);
@@ -3025,6 +3074,7 @@ test('11th Surveil the Foe does not score when every surveilled unit is protecte
 
   assert.equal(scorePrimaryMission(surveilled, 0, rules40K11th).vpGained, 0);
   const exposed: BattleState = JSON.parse(JSON.stringify(surveilled));
+  exposed.missionState!.primaryMissionScoringRecords = [];
   exposed.units.find(unit => unit.id === target.id)!.position = { x: 30, y: 10 };
   exposed.units.find(unit => unit.id === target.id)!.modelPositions = [{ x: 30, y: 10 }];
   assert.equal(scorePrimaryMission(exposed, 0, rules40K11th).vpGained, 4);
@@ -3364,7 +3414,7 @@ test('11th Gather Intel scores objective control without unsupported marker clau
   battle.objectiveOwners = [null, null];
   battle.terrain = [
     terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
-    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'central' }),
   ];
   battle.units = [losTestUnit('blue-mid', 0, { x: 20, y: 10 })];
 
@@ -3394,7 +3444,7 @@ test('11th Gather Intel completes Extract Intelligence, places a persistent mark
   battle.objectiveOwners = [null, null];
   battle.terrain = [
     terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
-    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'central' }),
   ];
   const unit = losTestUnit('blue-mid', 0, { x: 20, y: 10 });
   battle.units = [unit];
@@ -3442,7 +3492,7 @@ test('11th Gather Intel end-of-battle scoring uses operation marker count and op
   battle.objectiveOwners = [null, null, null];
   battle.terrain = [
     terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
-    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'central' }),
     terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
   ];
   battle.missionState = {
@@ -3510,7 +3560,7 @@ test('11th Triangulation completes actions on different non-home objectives and 
   battle.objectiveOwners = [null, null];
   battle.terrain = [
     terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
-    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'central' }),
   ];
   const unit = losTestUnit('blue-mid', 0, { x: 20, y: 10 });
   battle.units = [unit];
@@ -3618,7 +3668,7 @@ test('11th Secure Asset completes on a non-home objective and scores once withou
   battle.objectiveOwners = [null, null];
   battle.terrain = [
     terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
-    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'central' }),
   ];
   const unit = losTestUnit('blue-mid', 0, { x: 20, y: 10 });
   battle.units = [unit];
@@ -3687,6 +3737,7 @@ test('11th Sabotage snapshots completion-time objective proximity and scores exa
 
   const unknown: BattleState = JSON.parse(JSON.stringify(bothStarted));
   unknown.scores = [0, 0];
+  unknown.missionState!.primaryMissionScoringRecords = [];
   delete unknown.setup!.territoryZones;
   const baseOnly = scorePrimaryMission(unknown, 0, rules40K11th);
   assert.equal(baseOnly.vpGained, 6);
@@ -3719,7 +3770,7 @@ test('11th Vital Link scores control clauses without unsupported operation-marke
   battle.objectiveOwners = [null, null, null];
   battle.terrain = [
     terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
-    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'central' }),
     terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
   ];
   battle.units = [
@@ -3753,7 +3804,7 @@ test('11th Vital Link completes Maintain Control on a central objective and scor
   battle.objectiveOwners = [null, null, null];
   battle.terrain = [
     terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
-    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'central' }),
     terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
   ];
   const unit = losTestUnit('blue-mid', 0, { x: 20, y: 10 });
@@ -3956,7 +4007,7 @@ test('11th Delaying Action scores objective control clauses from mission data', 
   battle.objectiveOwners = [null, null, null];
   battle.terrain = [
     terrainMat({ id: 'home-blue', name: 'Blue Home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
-    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'mid', name: 'Mid', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'central' }),
     terrainMat({ id: 'home-red', name: 'Red Home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
   ];
   battle.units = [
@@ -3968,11 +4019,11 @@ test('11th Delaying Action scores objective control clauses from mission data', 
 
   assert.equal(result.kind, 'scored');
   assert.equal(result.scoringModel, '11e-data:Delaying Action');
-  assert.equal(result.vpGained, 10);
+  assert.equal(result.vpGained, 4);
 });
 
 test('11th Delaying Action scores control of central and friendly expansion objectives', () => {
-  const battle = state('fight', 1);
+  const battle = state('fight', 2);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.objectiveControl = rules40K11th.objectiveControl;
   battle.setup = {
@@ -3993,8 +4044,137 @@ test('11th Delaying Action scores control of central and friendly expansion obje
 
   const result = scorePrimaryMission(battle, 0, rules40K11th);
 
-  assert.equal(result.vpGained, 2);
+  assert.equal(result.vpGained, 3);
   assert.deepEqual(result.unsupportedClauses, []);
+});
+
+test('11th primary scoring applies the 15VP round cap across command and turn-end windows idempotently', () => {
+  const battle = state('command', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = { ...battle.setup!, primaryMissions: ['Delaying Action', 'Delaying Action'] };
+  battle.objectives = [{ x: 20, y: 20 }, { x: 30, y: 20 }];
+  battle.objectiveOwners = [null, null];
+  battle.terrain = [
+    terrainMat({ id: 'central', type: 'ruin', x: 18, y: 18, width: 4, height: 4, objectiveRole: 'central' }),
+    terrainMat({ id: 'expansion', type: 'ruin', x: 28, y: 18, width: 4, height: 4, objectiveRole: 'expansion-0' }),
+  ];
+  battle.units = [
+    losTestUnit('central-holder', 0, { x: 20, y: 20 }),
+    losTestUnit('expansion-holder', 0, { x: 30, y: 20 }),
+  ];
+
+  assert.equal(scorePrimaryMission(battle, 0, rules40K11th).vpGained, 4);
+  battle.phase = 'fight';
+  battle.missionEvents = {
+    destroyedUnitsThisTurn: Array.from({ length: 6 }, (_, index) => ({
+      unitId: `enemy-${index}`,
+      side: 1 as const,
+      unitName: `Enemy ${index}`,
+      destroyedBySide: 0 as const,
+      battleRound: 2,
+      turn: battle.turn,
+      phase: 'fight' as const,
+    })),
+  };
+  const capped = scorePrimaryMission(battle, 0, rules40K11th);
+
+  assert.equal(capped.vpGained, 11);
+  assert.equal(battle.scores[0], 15);
+  assert.deepEqual(
+    battle.missionState?.primaryMissionScoringRecords?.map(record => [record.requestedVp, record.vp, record.status]),
+    [[4, 4, 'awarded'], [15, 11, 'capped']],
+  );
+  assert.equal(scorePrimaryMission(battle, 0, rules40K11th).vpGained, 0);
+  assert.equal(battle.missionState?.primaryMissionScoringRecords?.length, 2);
+});
+
+test('11th primary scoring applies a partial 45VP battle cap and persists its ledger through replay and saves', async () => {
+  installStorage();
+  const battle = state('command', 4);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = { ...battle.setup!, primaryMissions: ['Delaying Action', 'Delaying Action'] };
+  battle.objectives = [{ x: 20, y: 20 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [terrainMat({ id: 'non-home', type: 'ruin', x: 18, y: 18, width: 4, height: 4, objectiveRole: 'central' })];
+  battle.units = [losTestUnit('holder', 0, { x: 20, y: 20 })];
+  battle.missionState = {
+    primaryMissionScoringRecords: [15, 15, 14].map((vp, index) => ({
+      id: `prior-${index}`,
+      side: 0,
+      missionName: 'Delaying Action',
+      clauseIds: ['prior'],
+      status: 'awarded',
+      requestedVp: vp,
+      vp,
+      detail: 'Prior primary VP.',
+      battleRound: index + 1,
+      turn: index + 1,
+      activeSide: 0,
+      phase: 'command',
+      scoreAfter: [15, 30, 44][index],
+    })),
+  };
+  battle.scores = [44, 0];
+
+  const awarded = scorePrimaryMission(battle, 0, rules40K11th);
+  assert.equal(awarded.vpGained, 1);
+  assert.equal(battle.missionState.primaryMissionScoringRecords?.at(-1)?.requestedVp, 4);
+  assert.equal(battle.missionState.primaryMissionScoringRecords?.at(-1)?.vp, 1);
+  assert.equal(battle.missionState.primaryMissionScoringRecords?.at(-1)?.status, 'capped');
+
+  const replayStart = state('command', 2);
+  replayStart.ruleset = rulesetMetadataForState(rules40K11th);
+  replayStart.objectiveControl = rules40K11th.objectiveControl;
+  replayStart.setup = { ...replayStart.setup!, primaryMissions: ['Delaying Action', 'Delaying Action'] };
+  replayStart.objectives = [{ x: 20, y: 20 }];
+  replayStart.objectiveOwners = [null];
+  replayStart.terrain = [terrainMat({ id: 'non-home', type: 'ruin', x: 18, y: 18, width: 4, height: 4, objectiveRole: 'central' })];
+  replayStart.units = [losTestUnit('holder', 0, { x: 20, y: 20 })];
+  const appended = appendTimelineAction(
+    createPracticeTimeline(replayStart, { id: 'primary-ledger-replay' }),
+    replayStart,
+    { type: GAME_ACTION_TYPE.StepPhase },
+    { rules: rules40K11th },
+  );
+  const replayed = replayTimeline(appended.timeline, { rules: rules40K11th }, false);
+  assert.deepEqual(replayed.missionState?.primaryMissionScoringRecords, appended.state.missionState?.primaryMissionScoringRecords);
+
+  await localPracticeScenarioRepository.saveScenario(scenarioFromTimeline(appended.timeline, { id: 'primary-ledger-save' }));
+  const loaded = await localPracticeScenarioRepository.loadScenario('primary-ledger-save');
+  assert.deepEqual(
+    currentTimelineState(loaded!.timeline).missionState?.primaryMissionScoringRecords,
+    appended.state.missionState?.primaryMissionScoringRecords,
+  );
+});
+
+test('11th end-of-battle primary clauses score for both players in manual and simulation lifecycles', () => {
+  const finalTurn = state('fight', 5);
+  finalTurn.ruleset = rulesetMetadataForState(rules40K11th);
+  finalTurn.objectiveControl = rules40K11th.objectiveControl;
+  finalTurn.activeArmy = 1;
+  finalTurn.setup = { ...finalTurn.setup!, primaryMissions: ['Inescapable Dominion', 'Locate and Deny'] };
+  finalTurn.objectives = [{ x: 10, y: 10 }, { x: 30, y: 10 }];
+  finalTurn.objectiveOwners = [null, null];
+  finalTurn.terrain = [
+    terrainMat({ id: 'blue-home', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'red-home', type: 'ruin', x: 28, y: 8, width: 4, height: 4, objectiveRole: 'home-1' }),
+  ];
+  finalTurn.units = [
+    losTestUnit('blue-controller', 0, { x: 30, y: 10 }),
+    losTestUnit('red-survivor', 1, { x: 50, y: 30 }),
+  ];
+
+  const manual = applyGameAction(finalTurn, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+  const simulated = simulateNextPhase(finalTurn, rules40K11th);
+
+  assert.equal(manual.phase, 'end');
+  assert.equal(manual.scores[0], 5);
+  assert.equal(manual.missionState?.primaryMissionScoringRecords?.at(-1)?.battleRound, 5);
+  assert.equal(simulated.phase, 'end');
+  assert.equal(simulated.scores[0], 5);
+  assert.match(simulated.log.map(entry => entry.message).join('\n'), /End of battle/);
 });
 
 test('11th Smoke and Mirrors scores non-home objective control without unsupported decoy clauses', () => {
