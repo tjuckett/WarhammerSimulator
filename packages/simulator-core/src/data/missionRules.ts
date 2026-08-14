@@ -1911,7 +1911,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/display-of-might-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Deployment-derived whole-unit No Man\'s Land containment is available when setup identifies both deployment zones; automatic scoring must filter Aircraft/Battle-shocked units.',
+    notes: 'Automatically scored at the end of either player\'s turn using deployment-derived whole-unit No Man\'s Land containment; unknown setup geometry fails closed.',
     scoring: [
       {
         id: 'more-friendly-than-enemy-no-mans-land-your-turn',
@@ -1939,7 +1939,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'fixed-or-tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/engage-on-all-fronts-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Footprint-aware table-quarter containment and centre exclusion helpers are available; automatic secondary scoring remains unwired.',
+    notes: 'Automatically scored at the end of the owner\'s turn using footprint-aware table-quarter containment and centre exclusion.',
     whenDrawn: 'You have a presence in a table quarter if one or more friendly units, excluding Aircraft and Battle-shocked units, are wholly within that table quarter and are not within 6" of the centre of the battlefield.',
     scoring: [
       {
@@ -1956,6 +1956,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 4,
         sourceText: 'You have a presence in four table quarters. 4VP.',
+        relationship: 'exclusive',
         notes: 'Table-quarter whole-unit containment and centre exclusion helpers are available; scoring must filter Aircraft/Battle-shocked units.',
       },
       {
@@ -1972,6 +1973,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 5,
         sourceText: 'You have a presence in four table quarters. 5VP.',
+        relationship: 'exclusive',
         notes: 'Table-quarter whole-unit containment and centre exclusion helpers are available; scoring must filter Aircraft/Battle-shocked units.',
       },
     ],
@@ -1984,7 +1986,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/forward-position-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Opponent home and explicit per-player expansion objective roles are available through objective-role helpers.',
+    notes: 'Automatically scored at the end of the owner\'s turn from explicit objective roles and objective control; incomplete role data fails closed.',
     whenDrawn: 'During the first battle round, you may shuffle this card back into your Secondary Mission deck and then draw one new Secondary Mission card.',
     scoring: [
       {
@@ -2005,7 +2007,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/no-prisoners-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Per-turn destroyed-unit events are available; automatic secondary scoring is not wired yet.',
+    notes: 'Automatically scored at the end of either player\'s turn from per-turn destroyed-unit events.',
     scoring: [
       {
         id: 'enemy-units-destroyed',
@@ -2026,7 +2028,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/outflank-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Footprint-aware battlefield-edge and opposite-edge helpers are available; territory remains conservative without explicit layout roles.',
+    notes: 'Automatically scored at the end of the owner\'s turn using footprint-aware battlefield-edge and explicit territory geometry; unknown territory fails closed.',
     scoring: [
       {
         id: 'one-unit-near-edge-outside-territory',
@@ -2041,7 +2043,8 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         mode: 'tactical',
         timing: 'End of your turn',
         vp: 5,
-        sourceText: 'Two or more friendly units, excluding Aircraft and Battle-shocked units, are within 6" of opposite battlefield edges, with at least one of those units not within your territory. 5VP.',
+        sourceText: 'Two or more friendly units, excluding Aircraft and Battle-shocked units, are within 6" of opposite battlefield edges and one or more of those units is not within your territory. 5VP.',
+        relationship: 'exclusive',
         notes: 'Battlefield-edge proximity and opposite parallel-edge pairing are available; scoring must use explicit territory roles and filter Aircraft/Battle-shocked units.',
       },
     ],
@@ -2054,7 +2057,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/overwhelming-force-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Destroyed-unit events and start-of-turn objective proximity are required before this can score automatically.',
+    notes: 'Automatically scored at the end of either player\'s turn from destroyed-unit events and the serialized start-of-turn objective-proximity snapshot.',
     scoring: [
       {
         id: 'enemy-started-near-objective-destroyed',
@@ -2075,7 +2078,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/plunder-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Plunder uses shared explicit territory-role helpers and retains conservative behavior for unclassified terrain; automatic secondary scoring remains unwired.',
+    notes: 'Automatically scored at the end of the owner\'s turn from completed Plunder action events; action eligibility remains conservative for unclassified terrain.',
     whenDrawn: 'If you have the Cleanse Secondary Mission active, you may shuffle this card back into your Secondary Mission deck and then draw one new Secondary Mission card.',
     scoring: [
       {
@@ -2096,7 +2099,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/secure-no-man-s-land-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Can use objective role/control state once secondary scoring is wired.',
+    notes: 'Automatically scored at the end of the owner\'s turn from explicit No Man\'s Land objective roles and objective control; incomplete role data fails closed.',
     scoring: [
       {
         id: 'control-two-no-mans-land-objectives',

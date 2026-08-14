@@ -8,9 +8,14 @@ import type {
 } from '../types/battle';
 import { battleRound, maxBattleRounds } from './battleRound';
 import {
+  battlefieldEdgesAreOpposite,
+  battlefieldEdgesWithinRange,
+  expansionObjectiveIndexes,
   missionDeploymentZone,
   objectiveRoleForIndex,
+  unitTableQuarter,
   unitWhollyWithinDeploymentZone,
+  unitWhollyWithinNoMansLand,
   unitWithinBattlefieldCentre,
   unitWithinDeploymentZone,
   unitWithinFriendlyTerritory,
@@ -414,6 +419,195 @@ function scoreBehindEnemyLines(
       : 'No eligible friendly unit is wholly within the opponent deployment zone.');
 }
 
+function eligibleMissionUnit(unit: BattleState['units'][number]): boolean {
+  return !unit.destroyed
+    && !unit.inStrategicReserves
+    && !unit.embarkedInUnitId
+    && !unit.battleshocked
+    && !unit.profile.keywords.some(keyword => keyword.toLowerCase() === 'aircraft')
+    && unit.modelPositions.length > 0;
+}
+
+function scoreDisplayOfMight(
+  state: BattleState,
+  side: Side,
+  card: SecondaryMissionCardState,
+  activeSide: Side,
+): SecondaryMissionScoringRecord | null {
+  if (!missionDeploymentZone(state, 0) || !missionDeploymentZone(state, 1)) {
+    return recordScoring(state, side, card, endTurnOpportunity(state),
+      [activeSide === side ? 'more-friendly-than-enemy-no-mans-land-your-turn' : 'more-friendly-than-enemy-no-mans-land-opponent-turn'],
+      'unsupported', 0, 'No Man\'s Land cannot be established without both deployment zones.');
+  }
+  const contained = state.units
+    .filter(eligibleMissionUnit)
+    .filter(unit => unitWhollyWithinNoMansLand(state, unit) === true);
+  const friendly = contained.filter(unit => unit.side === side).length;
+  const enemy = contained.filter(unit => unit.side !== side).length;
+  const ownTurn = activeSide === side;
+  const vp = ownTurn ? 2 : 5;
+  return recordScoring(state, side, card, endTurnOpportunity(state),
+    [ownTurn ? 'more-friendly-than-enemy-no-mans-land-your-turn' : 'more-friendly-than-enemy-no-mans-land-opponent-turn'],
+    friendly > enemy ? 'awarded' : 'not-met', vp,
+    `${friendly} eligible friendly and ${enemy} eligible enemy units are wholly within No Man's Land${friendly > enemy ? `; the ${ownTurn ? 'owner' : 'opponent'}-turn condition is met` : ''}.`);
+}
+
+function tableQuarterPresence(state: BattleState, side: Side): number {
+  return new Set(state.units
+    .filter(unit => unit.side === side && eligibleMissionUnit(unit) && !unitWithinBattlefieldCentre(state, unit, 6))
+    .map(unit => unitTableQuarter(state, unit))
+    .filter((quarter): quarter is 0 | 1 | 2 | 3 => quarter !== undefined)).size;
+}
+
+function scoreEngageOnAllFronts(
+  state: BattleState,
+  side: Side,
+  card: SecondaryMissionCardState,
+): SecondaryMissionScoringRecord | null {
+  const quarters = tableQuarterPresence(state, side);
+  const four = quarters >= 4;
+  const fixed = card.mode === 'fixed';
+  const vp = quarters >= 3 ? (four ? (fixed ? 4 : 5) : (fixed ? 2 : 3)) : 0;
+  return recordScoring(state, side, card, endTurnOpportunity(state), [
+    fixed
+      ? (four ? 'fixed-presence-four-quarters' : 'fixed-presence-three-quarters')
+      : (four ? 'tactical-presence-four-quarters' : 'tactical-presence-three-quarters'),
+  ], vp ? 'awarded' : 'not-met', vp,
+  `${quarters} table quarter${quarters === 1 ? '' : 's'} have an eligible friendly presence${vp ? `; the exclusive ${vp}VP tier applies` : ''}.`);
+}
+
+function scoreForwardPosition(
+  state: BattleState,
+  side: Side,
+  card: SecondaryMissionCardState,
+  rules: RulesEdition,
+): SecondaryMissionScoringRecord | null {
+  const control = updateObjectiveControl(state, rules);
+  if (!control) {
+    return recordScoring(state, side, card, endTurnOpportunity(state), ['control-opponent-home-or-expansion-objective'],
+      'unsupported', 0, 'Objective control cannot be evaluated with the current objective geometry.');
+  }
+  const controlled = new Set(control.filter(objective => objective.owner === side).map(objective => objective.objectiveIndex));
+  const opponentHome = state.objectives.findIndex((_objective, index) => objectiveRoleForIndex(state, index) === `home-${1 - side}`);
+  const expansions = expansionObjectiveIndexes(state);
+  const homeMet = opponentHome >= 0 && controlled.has(opponentHome);
+  const expansionsMet = expansions.length > 0 && expansions.every(index => controlled.has(index));
+  if (!homeMet && !expansionsMet && (opponentHome < 0 || expansions.length === 0)) {
+    return recordScoring(state, side, card, endTurnOpportunity(state), ['control-opponent-home-or-expansion-objective'],
+      'unsupported', 0, 'Opponent home and expansion objective roles are incomplete, so the alternative condition cannot be fully evaluated.');
+  }
+  return recordScoring(state, side, card, endTurnOpportunity(state), ['control-opponent-home-or-expansion-objective'],
+    homeMet || expansionsMet ? 'awarded' : 'not-met', 5,
+    homeMet
+      ? `Opponent home objective ${opponentHome + 1} is controlled.`
+      : expansionsMet
+        ? `All ${expansions.length} expansion objectives are controlled.`
+        : 'Neither the opponent home objective nor every expansion objective is controlled.');
+}
+
+function scoreNoPrisoners(
+  state: BattleState,
+  side: Side,
+  card: SecondaryMissionCardState,
+): SecondaryMissionScoringRecord | null {
+  const destroyed = (state.missionEvents?.destroyedUnitsThisTurn ?? []).filter(event => event.side !== side);
+  const vp = Math.min(5, destroyed.length * 2);
+  return recordScoring(state, side, card, endTurnOpportunity(state), ['enemy-units-destroyed'], vp ? 'awarded' : 'not-met', vp,
+    destroyed.length
+      ? `${destroyed.length} enemy unit${destroyed.length === 1 ? '' : 's'} destroyed; ${destroyed.length} x 2VP, capped at 5VP.`
+      : 'No enemy units were destroyed this turn.');
+}
+
+function scoreOutflank(
+  state: BattleState,
+  side: Side,
+  card: SecondaryMissionCardState,
+): SecondaryMissionScoringRecord | null {
+  const nearEdges = state.units
+    .filter(unit => unit.side === side && eligibleMissionUnit(unit))
+    .map(unit => ({ unit, edges: battlefieldEdgesWithinRange(state, unit, 6), inTerritory: unitWithinFriendlyTerritory(state, unit, side) }))
+    .filter(candidate => candidate.edges.length > 0);
+  const oppositePair = nearEdges.some((first, firstIndex) => nearEdges.some((second, secondIndex) =>
+    secondIndex > firstIndex
+    && first.edges.some(firstEdge => second.edges.some(secondEdge => battlefieldEdgesAreOpposite(firstEdge, secondEdge)))
+    && (first.inTerritory === false || second.inTerritory === false)
+  ));
+  const oneOutside = nearEdges.some(candidate => candidate.inTerritory === false);
+  if (!oppositePair && nearEdges.some(candidate => candidate.inTerritory === undefined)) {
+    return recordScoring(state, side, card, endTurnOpportunity(state),
+      ['one-unit-near-edge-outside-territory', 'two-units-near-opposite-edges-one-outside-territory'],
+      'unsupported', 0, 'Territory geometry is unavailable for one or more eligible edge units.');
+  }
+  const vp = oppositePair ? 5 : oneOutside ? 3 : 0;
+  return recordScoring(state, side, card, endTurnOpportunity(state), [
+    oppositePair ? 'two-units-near-opposite-edges-one-outside-territory' : 'one-unit-near-edge-outside-territory',
+  ], vp ? 'awarded' : 'not-met', vp,
+  oppositePair
+    ? 'Eligible friendly units are within 6" of opposite battlefield edges and one or more are outside friendly territory; the exclusive 5VP tier applies.'
+    : oneOutside
+      ? 'An eligible friendly unit is within 6" of a battlefield edge and outside friendly territory.'
+      : 'No eligible friendly edge unit satisfies either Outflank condition.');
+}
+
+function scoreOverwhelmingForce(
+  state: BattleState,
+  side: Side,
+  card: SecondaryMissionCardState,
+): SecondaryMissionScoringRecord | null {
+  const snapshot = state.missionEvents?.startOfTurn;
+  if (!snapshot || snapshot.battleRound !== battleRound(state) || snapshot.turn !== state.turn) {
+    return recordScoring(state, side, card, endTurnOpportunity(state), ['enemy-started-near-objective-destroyed'],
+      'unsupported', 0, 'The current start-of-turn objective-proximity snapshot is unavailable.');
+  }
+  const startedNear = new Set(snapshot.units
+    .filter(unit => unit.side !== side && (unit.objectiveIndexesWithinRange?.length ?? 0) > 0)
+    .map(unit => unit.unitId));
+  const destroyed = (state.missionEvents?.destroyedUnitsThisTurn ?? [])
+    .filter(event => event.side !== side && startedNear.has(event.unitId));
+  const vp = Math.min(5, destroyed.length * 3);
+  return recordScoring(state, side, card, endTurnOpportunity(state), ['enemy-started-near-objective-destroyed'],
+    vp ? 'awarded' : 'not-met', vp,
+    destroyed.length
+      ? `${destroyed.length} enemy unit${destroyed.length === 1 ? '' : 's'} that started within objective range were destroyed; ${destroyed.length} x 3VP, capped at 5VP.`
+      : 'No enemy unit that started the turn within objective range was destroyed.');
+}
+
+function scorePlunder(
+  state: BattleState,
+  side: Side,
+  card: SecondaryMissionCardState,
+): SecondaryMissionScoringRecord | null {
+  const completed = (state.missionEvents?.completedActionsThisTurn ?? []).some(event =>
+    event.side === side && event.actionId === 'plunder' && typeof event.targetTerrainId === 'string'
+  );
+  return recordScoring(state, side, card, endTurnOpportunity(state), ['terrain-area-plundered'],
+    completed ? 'awarded' : 'not-met', 5,
+    completed ? 'A terrain area was plundered this turn.' : 'No terrain area was plundered this turn.');
+}
+
+function scoreSecureNoMansLand(
+  state: BattleState,
+  side: Side,
+  card: SecondaryMissionCardState,
+  rules: RulesEdition,
+): SecondaryMissionScoringRecord | null {
+  const control = updateObjectiveControl(state, rules);
+  if (!control) {
+    return recordScoring(state, side, card, endTurnOpportunity(state), ['control-two-no-mans-land-objectives'],
+      'unsupported', 0, 'Objective control cannot be evaluated with the current objective geometry.');
+  }
+  const classified = state.objectives.map((_objective, index) => objectiveRoleForIndex(state, index));
+  const controlled = control.filter(objective => objective.owner === side
+    && ['no-mans-land', 'central'].includes(classified[objective.objectiveIndex] ?? '')).length;
+  if (controlled < 2 && classified.some(role => role === undefined)) {
+    return recordScoring(state, side, card, endTurnOpportunity(state), ['control-two-no-mans-land-objectives'],
+      'unsupported', 0, 'One or more objective roles are unavailable, so No Man\'s Land objective control cannot be fully evaluated.');
+  }
+  return recordScoring(state, side, card, endTurnOpportunity(state), ['control-two-no-mans-land-objectives'],
+    controlled >= 2 ? 'awarded' : 'not-met', 5,
+    `${controlled} No Man's Land objective${controlled === 1 ? '' : 's'} ${controlled === 1 ? 'is' : 'are'} controlled.`);
+}
+
 export function scoreSecondaryMissionsAtEndOfTurn(
   state: BattleState,
   activeSide: Side,
@@ -437,6 +631,14 @@ export function scoreSecondaryMissionsAtEndOfTurn(
       else if (card.missionName === 'Centre Ground' && activeSide === side) records.push(...scoreCentreGround(state, side, card));
       else if (card.missionName === 'Cleanse' && activeSide === side) records.push(...scoreCleanse(state, side, card));
       else if (card.missionName === 'Defend Stronghold' && battleRound(state) >= 2 && opponentTurnOrFinalRoundDeadlineReached(state, side)) records.push(...scoreDefendStronghold(state, side, card, rules));
+      else if (card.missionName === 'Display of Might') add(scoreDisplayOfMight(state, side, card, activeSide));
+      else if (card.missionName === 'Engage on All Fronts' && activeSide === side) add(scoreEngageOnAllFronts(state, side, card));
+      else if (card.missionName === 'Forward Position' && activeSide === side) add(scoreForwardPosition(state, side, card, rules));
+      else if (card.missionName === 'No Prisoners') add(scoreNoPrisoners(state, side, card));
+      else if (card.missionName === 'Outflank' && activeSide === side) add(scoreOutflank(state, side, card));
+      else if (card.missionName === 'Overwhelming Force') add(scoreOverwhelmingForce(state, side, card));
+      else if (card.missionName === 'Plunder' && activeSide === side) add(scorePlunder(state, side, card));
+      else if (card.missionName === "Secure No Man's Land" && activeSide === side) add(scoreSecureNoMansLand(state, side, card, rules));
     }
   }
   return records;
