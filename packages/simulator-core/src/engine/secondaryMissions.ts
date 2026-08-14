@@ -33,8 +33,15 @@ function uniqueMissionNames(missionNames: string[]): boolean {
   return new Set(missionNames).size === missionNames.length;
 }
 
-function cardFor(state: BattleState, missionName: string, mode: SecondaryMissionMode): SecondaryMissionCardState {
+function cardFor(
+  state: BattleState,
+  side: Side,
+  sequence: number,
+  missionName: string,
+  mode: SecondaryMissionMode,
+): SecondaryMissionCardState {
   return {
+    activationId: `secondary-card-${side}-${sequence}`,
     missionName,
     mode,
     activatedBattleRound: battleRound(state),
@@ -79,13 +86,18 @@ export function configureSecondaryMissions(
     || (mode === 'fixed' && missionNames.length > MAX_ACTIVE_SECONDARY_MISSIONS)
   ) return state;
 
+  const nextActivationIds = [...(state.missionState?.secondaryMissionNextActivationIds ?? [0, 0])] as [number, number];
   const playerState = emptyPlayerState(mode);
   if (mode === 'fixed') {
-    playerState.activeCards = missionNames.map(name => cardFor(state, name, mode));
+    playerState.activeCards = missionNames.map(name =>
+      cardFor(state, side, nextActivationIds[side]++, name, mode)
+    );
   } else {
     playerState.drawPile = [...missionNames];
   }
-  return updatePlayerState(state, side, playerState);
+  const next = updatePlayerState(state, side, playerState);
+  next.missionState!.secondaryMissionNextActivationIds = nextActivationIds;
+  return next;
 }
 
 export function drawSecondaryMission(
@@ -100,8 +112,11 @@ export function drawSecondaryMission(
 
   const playerState = clone(current);
   playerState.drawPile.splice(drawIndex, 1);
-  playerState.activeCards.push(cardFor(state, missionName, 'tactical'));
-  return updatePlayerState(state, side, playerState);
+  const nextActivationIds = [...(state.missionState?.secondaryMissionNextActivationIds ?? [0, 0])] as [number, number];
+  playerState.activeCards.push(cardFor(state, side, nextActivationIds[side]++, missionName, 'tactical'));
+  const next = updatePlayerState(state, side, playerState);
+  next.missionState!.secondaryMissionNextActivationIds = nextActivationIds;
+  return next;
 }
 
 export function discardSecondaryMission(

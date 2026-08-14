@@ -1630,7 +1630,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'fixed-or-tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/a-grievous-blow-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Destroyed-unit events now preserve starting strength; automatic secondary scoring is not wired yet.',
+    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Fixed and tactical scoring are wired to preserved destroyed-unit starting-strength events.',
     whenDrawn: 'If no enemy units with a Starting Strength of 13 or more are on the battlefield, you may discard this card and draw one new Secondary Mission card.',
     scoring: [
       {
@@ -1639,7 +1639,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of a turn',
         vp: 4,
         sourceText: 'For each enemy unit with a Starting Strength of 13 or more that is destroyed this turn. 4VP.',
-        notes: 'Destroyed-unit events preserve starting-strength data for this clause.',
+        notes: 'Automatically scored from destroyed-unit starting-strength events at the end of each turn.',
       },
       {
         id: 'tactical-large-unit-destroyed',
@@ -1647,7 +1647,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of a turn',
         vp: 5,
         sourceText: 'One or more enemy units with a Starting Strength of 13 or more were destroyed this turn. 5VP.',
-        notes: 'Destroyed-unit events preserve starting-strength data for this clause.',
+        notes: 'Automatically scored from destroyed-unit starting-strength events at the end of each turn.',
       },
     ],
   },
@@ -1659,7 +1659,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/a-tempting-target-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Validated tempting-target selection and explicit No Man\'s Land objective roles are available; automatic secondary scoring remains unwired.',
+    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Validated tempting-target selection and end-of-owner-turn scoring are wired.',
     whenDrawn: "Your opponent selects one objective, excluding home objectives, within No Man's Land to be your tempting target.",
     scoring: [
       {
@@ -1668,7 +1668,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 5,
         sourceText: 'You control your tempting target. 5VP.',
-        notes: 'The validated opponent-selected tempting target objective is stored for automatic scoring.',
+        notes: 'Automatically scored from the validated opponent-selected objective and current objective control.',
       },
     ],
   },
@@ -1680,7 +1680,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'fixed-or-tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/assassination-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Per-model events now preserve Character and Wounds facts; automatic secondary scoring is not wired yet.',
+    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Fixed event-time and tactical end-of-turn scoring are wired from preserved Character and Wounds facts.',
     scoring: [
       {
         id: 'fixed-character-wounds-four-plus-destroyed',
@@ -1688,7 +1688,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'While this card is active',
         vp: 4,
         sourceText: 'Each time an enemy Character model with a Wounds characteristic of 4 or higher is destroyed. 4VP.',
-        notes: 'Per-model destruction events preserve Character and Wounds facts for this clause.',
+        notes: 'Automatically scored when the qualifying per-model destruction event is recorded.',
       },
       {
         id: 'fixed-character-wounds-less-than-four-destroyed',
@@ -1696,7 +1696,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'While this card is active',
         vp: 3,
         sourceText: 'Each time an enemy Character model with a Wounds characteristic of less than 4 is destroyed. 3VP.',
-        notes: 'Per-model destruction events preserve Character and Wounds facts for this clause.',
+        notes: 'Automatically scored when the qualifying per-model destruction event is recorded.',
       },
       {
         id: 'tactical-character-destroyed-this-turn',
@@ -1704,7 +1704,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: "End of either player's turn",
         vp: 5,
         sourceText: 'One or more enemy Character models were destroyed this turn. 5VP.',
-        notes: 'Per-turn model destruction events preserve Character status for this clause.',
+        notes: 'Automatically scored from per-turn Character model destruction events.',
       },
       {
         id: 'tactical-all-characters-destroyed',
@@ -1712,7 +1712,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: "End of either player's turn",
         vp: 5,
         sourceText: 'All enemy Character models have been destroyed during the battle. 5VP.',
-        notes: 'Requires tracking enemy Character models and whether each has been destroyed during the battle.',
+        notes: 'Automatically scored when no enemy Character models remain on the battlefield.',
       },
     ],
   },
@@ -1724,7 +1724,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/beacon-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Beacon selection and deployment-zone helpers are available; territory checks remain conservative where a layout has no explicit territory roles.',
+    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Deadline scoring is wired; territory-dependent scoring fails closed where a layout has no explicit territory roles.',
     whenDrawn: 'Choose one friendly unit on the battlefield, or embarked within a Transport on the battlefield, to be your beacon unit.',
     scoring: [
       {
@@ -1733,7 +1733,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your opponent\'s turn or the end of the fifth battle round, whichever comes first',
         vp: 3,
         sourceText: 'Your beacon unit is on the battlefield and outside your deployment zone. 3VP.',
-        notes: 'Beacon selection and footprint-aware deployment-zone geometry are available for automatic scoring.',
+        notes: 'Automatically scored using the selected beacon unit and footprint-aware deployment-zone geometry.',
       },
       {
         id: 'beacon-outside-territory',
@@ -1741,7 +1741,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your opponent\'s turn or the end of the fifth battle round, whichever comes first',
         vp: 5,
         sourceText: 'Your beacon unit is on the battlefield and outside your territory. 5VP.',
-        notes: 'Beacon selection is stored; full territory checks still require explicit layout territory data.',
+        notes: 'Automatically scored only when explicit layout roles establish whether the whole beacon unit is outside friendly territory; otherwise recorded as unsupported.',
       },
     ],
   },
@@ -1753,7 +1753,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/behind-enemy-lines-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Opponent deployment-zone and whole-unit footprint helpers are available; automatic secondary scoring remains unwired.',
+    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. End-of-owner-turn scoring is wired with whole-unit containment and eligibility filters.',
     whenDrawn: 'During the first battle round, you may shuffle this card back into your Secondary Mission deck and then draw one new Secondary Mission card.',
     scoring: [
       {
@@ -1763,7 +1763,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         vp: 3,
         maxVp: 5,
         sourceText: 'For each friendly unit, excluding Aircraft and Battle-shocked units, wholly within your opponent\'s deployment zone. 3VP, max 5VP.',
-        notes: 'Footprint-aware opponent deployment-zone and whole-unit containment helpers are available; scoring must also filter Aircraft/Battle-shocked units.',
+        notes: 'Automatically scored with footprint-aware opponent deployment-zone containment and Aircraft/Battle-shock exclusions.',
       },
     ],
   },

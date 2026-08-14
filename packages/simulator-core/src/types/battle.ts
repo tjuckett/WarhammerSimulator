@@ -221,6 +221,7 @@ export type SecondaryMissionSelectionValue =
   | { [key: string]: SecondaryMissionSelectionValue };
 
 export interface SecondaryMissionCardState {
+  activationId: string;
   missionName: string;
   mode: SecondaryMissionMode;
   activatedBattleRound: number;
@@ -253,10 +254,28 @@ export interface SecondaryMissionPlayerState {
   discardedCards: SecondaryMissionCardState[];
 }
 
+export interface SecondaryMissionScoringRecord {
+  id: string;
+  activationId: string;
+  side: Side;
+  missionName: string;
+  clauseIds: string[];
+  status: 'awarded' | 'not-met' | 'unsupported';
+  vp: number;
+  detail: string;
+  battleRound: number;
+  turn: number;
+  activeSide: Side;
+  phase: Phase;
+  scoreAfter: number;
+}
+
 export interface MissionState {
   operationMarkers?: OperationMarker[];
   condemnedUnitIds?: [string[], string[]];
   secondaryMissions?: [SecondaryMissionPlayerState, SecondaryMissionPlayerState];
+  secondaryMissionNextActivationIds?: [number, number];
+  secondaryMissionScoringRecords?: SecondaryMissionScoringRecord[];
   completedSecondaryActionsDuringBattle?: CompletedMissionActionEvent[];
   destroyedUnitsDuringBattle?: DestroyedUnitMissionEvent[];
   destroyedModelsDuringBattle?: DestroyedModelMissionEvent[];

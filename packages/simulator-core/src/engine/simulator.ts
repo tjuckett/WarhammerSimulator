@@ -24,6 +24,7 @@ import { circleFullyInTerrain, findUnblockedLOSRay, hasLOSEdgeToEdge, lineInters
 import { COHERENCY_VERTICAL_RANGE, distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, verticalDistance, type CoherencyModel } from './coherency';
 import { secondaryMissionStateFor } from './secondaryMissions';
 import { objectiveRoleForIndex, terrainTerritoryRelation } from './missionGeometry';
+import { scoreSecondaryMissionsAtEndOfTurn, secondaryMissionScoringLogs } from './secondaryMissionScoring';
 import {
   attachedFollowersFor,
   attachedLeadersFor,
@@ -3137,6 +3138,10 @@ function scoreEndOfTurnPrimaryMissionLogs(s: BattleState, side: Side, rules: Rul
   );
 }
 
+function scoreEndOfTurnSecondaryMissionLogs(s: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
+  return secondaryMissionScoringLogs(s, scoreSecondaryMissionsAtEndOfTurn(s, side, rules));
+}
+
 function checkWinner(state: BattleState): void {
   const a0 = state.units.some(u => u.side === 0 && !u.destroyed);
   const a1 = state.units.some(u => u.side === 1 && !u.destroyed);
@@ -5290,6 +5295,7 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
       .forEach(u => newLogs.push(...runFight(u, s, rules)));
   } else if (s.phase === 'fight') {
     completeEndOfTurnActions(s, side);
+    newLogs.push(...scoreEndOfTurnSecondaryMissionLogs(s, side, rules));
     newLogs.push(...scoreEndOfTurnPrimaryMissionLogs(s, side, rules));
     advanceTurnInPlace(s);
   }
@@ -5359,6 +5365,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
 
   // Objective scoring after the turn's actions; shocked units have OC 0.
   completeEndOfTurnActions(s, side);
+  newLogs.push(...scoreEndOfTurnSecondaryMissionLogs(s, side, rules));
   newLogs.push(...scoreEndOfTurnPrimaryMissionLogs(s, side, rules));
 
   s.log = [...s.log, ...newLogs];

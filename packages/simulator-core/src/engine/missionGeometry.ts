@@ -186,6 +186,19 @@ export function unitWhollyWithinFriendlyTerritory(
   return unitWhollyWithinTerritoryRelation(state, unit, side, 'friendly');
 }
 
+export function unitWithinFriendlyTerritory(
+  state: BattleState,
+  unit: BattleUnit,
+  side: Side,
+): boolean | undefined {
+  if (!unit.modelPositions.length) return false;
+  const relations = unit.modelPositions.flatMap((_position, modelIndex) =>
+    modelTestPoints(unit, modelIndex).map(point => territoryRelationForPoint(state, point, side))
+  );
+  if (relations.some(relation => relation === 'friendly')) return true;
+  return relations.some(relation => relation === 'unclassified') ? undefined : false;
+}
+
 export function unitWhollyWithinEnemyTerritory(
   state: BattleState,
   unit: BattleUnit,

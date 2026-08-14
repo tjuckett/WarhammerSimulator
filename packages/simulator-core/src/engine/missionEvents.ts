@@ -4,6 +4,7 @@ import { battleRound } from './battleRound';
 import { objectiveIndexesWithinRange, terrainAreaIdsContainingUnit, updateObjectiveControl } from './missionScoring';
 import type { RulesEdition } from './rulesEngine';
 import { terrainCenter } from './terrainGeometry';
+import { scoreFixedAssassinationDestroyedModels, secondaryMissionScoringLogs } from './secondaryMissionScoring';
 
 export function startMissionEventsForNewTurn(state: BattleState, rules: RulesEdition): void {
   const objectives = updateObjectiveControl(state, rules);
@@ -230,4 +231,6 @@ export function recordDestroyedModelMissionEvents(
   });
   state.missionEvents.destroyedModelsThisTurn = [...destroyedModelsThisTurn, ...events];
   state.missionState.destroyedModelsDuringBattle = [...destroyedModelsDuringBattle, ...events];
+  const scoringRecords = scoreFixedAssassinationDestroyedModels(state, events);
+  if (scoringRecords.length) state.log = [...state.log, ...secondaryMissionScoringLogs(state, scoringRecords)];
 }
