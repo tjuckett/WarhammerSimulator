@@ -56,6 +56,7 @@ export interface BattleUnit {
   }>;
   position: Position;          // centroid of modelPositions; display and coarse AI positioning
   modelPositions: Position[];  // one entry per remaining model
+  modelRosterIndexes?: number[]; // original roster-model index for each current model position
   modelRotations?: number[];   // facing for each model footprint in degrees
   facingDeg: number;
   charged: boolean;
@@ -120,6 +121,8 @@ export interface DestroyedUnitMissionEvent {
   unitId: string;
   side: Side;
   unitName: string;
+  startingStrength?: number;
+  isCharacter?: boolean;
   destroyedBySide: Side;
   destroyedByUnitId?: string;
   destroyingUnitObjectiveIndexesWithinRange?: number[];
@@ -144,6 +147,24 @@ export interface StartOfTurnUnitMissionSnapshot {
   modelPositions: Position[];
   objectiveIndexesWithinRange?: number[];
   terrainAreaIds?: string[];
+}
+
+export interface DestroyedModelMissionEvent {
+  id: string;
+  unitId: string;
+  side: Side;
+  unitName: string;
+  modelName: string;
+  modelIndexAtDestruction?: number;
+  rosterModelIndex?: number;
+  woundsCharacteristic: number;
+  unitStartingStrength: number;
+  isCharacter: boolean;
+  destroyedBySide: Side;
+  destroyedByUnitId?: string;
+  battleRound: number;
+  turn: number;
+  phase: Phase;
 }
 
 export interface StartOfTurnMissionSnapshot {
@@ -182,6 +203,7 @@ export interface OperationMarker {
 
 export interface MissionEvents {
   destroyedUnitsThisTurn?: DestroyedUnitMissionEvent[];
+  destroyedModelsThisTurn?: DestroyedModelMissionEvent[];
   unitsLeftBattlefieldThisTurn?: string[];
   completedActionsThisTurn?: CompletedMissionActionEvent[];
   lastCompletedTurn?: CompletedTurnMissionEventSummary;
@@ -235,6 +257,8 @@ export interface MissionState {
   operationMarkers?: OperationMarker[];
   condemnedUnitIds?: [string[], string[]];
   secondaryMissions?: [SecondaryMissionPlayerState, SecondaryMissionPlayerState];
+  destroyedUnitsDuringBattle?: DestroyedUnitMissionEvent[];
+  destroyedModelsDuringBattle?: DestroyedModelMissionEvent[];
 }
 
 export interface Terrain {

@@ -13,6 +13,7 @@ import { battleRound, logWithBattleRound, maxBattleRounds, setBattleRound } from
 import {
   completeMissionEventsForCurrentTurn,
   recordCompletedMissionAction,
+  recordDestroyedModelMissionEvents,
   recordDestroyedUnitMissionEvent,
   recordUnitLeftBattlefieldMissionEvent,
   startMissionEventsForNewTurn,
@@ -411,10 +412,11 @@ function translateFormation(unit: { position: Position; modelPositions: Position
 }
 
 // After model loss, trim positions array and refresh centroid
-function trimFormation(unit: { position: Position; modelPositions: Position[]; modelRotations?: number[]; remainingModels: number }): void {
+function trimFormation(unit: { position: Position; modelPositions: Position[]; modelRosterIndexes?: number[]; modelRotations?: number[]; remainingModels: number }): void {
   if (unit.modelPositions.length > unit.remainingModels) {
     unit.modelPositions = unit.modelPositions.slice(0, unit.remainingModels);
     unit.modelRotations = unit.modelRotations?.slice(0, unit.remainingModels);
+    unit.modelRosterIndexes = unit.modelRosterIndexes?.slice(0, unit.remainingModels);
   }
   if (unit.modelPositions.length > 0) {
     unit.position = centroid(unit.modelPositions);
@@ -445,6 +447,7 @@ function spliceModelIndices(unit: BattleUnit, sortedDescIndices: number[]): void
       }
     }
     unit.modelPositions.splice(i, 1);
+    unit.modelRosterIndexes?.splice(i, 1);
     unit.modelRotations?.splice(i, 1);
     unit.movementAllowanceRemainingByModel?.splice(i, 1);
     unit.movementAllowanceTotalByModel?.splice(i, 1);
@@ -1121,6 +1124,15 @@ export function applyDamage(
       unit.woundsOnLeadModel = unit.profile.wounds;
     }
   } else {
+    if (killed > 0) {
+      recordDestroyedModelMissionEvents(
+        state,
+        unit,
+        Array.from({ length: killed }, (_, index) => simulatedModels + index),
+        attackerSide,
+        { destroyedByUnitId: options.sourceUnitId },
+      );
+    }
     unit.remainingModels = simulatedModels;
     unit.woundsOnLeadModel = simulatedModels > 0 ? simulatedLeadWounds : 0;
     unit.woundedModelIndex = unit.woundsOnLeadModel > 0 && unit.woundsOnLeadModel < unit.profile.wounds ? 0 : undefined;
@@ -1165,6 +1177,7 @@ function destroyPassengerModels(unit: BattleUnit, destroyedModels: number): void
   if (destroyedModels <= 0) return;
   unit.remainingModels = Math.max(0, unit.remainingModels - destroyedModels);
   unit.modelPositions = unit.modelPositions.slice(0, unit.remainingModels);
+  unit.modelRosterIndexes = unit.modelRosterIndexes?.slice(0, unit.remainingModels);
   unit.modelRotations = unit.modelRotations?.slice(0, unit.remainingModels);
   unit.movementAllowanceRemainingByModel = unit.movementAllowanceRemainingByModel?.slice(0, unit.remainingModels);
   unit.movementAllowanceTotalByModel = unit.movementAllowanceTotalByModel?.slice(0, unit.remainingModels);
@@ -1210,6 +1223,12 @@ function emergencyDisembarkDestroyedTransport(
     const unit = existingPassenger ?? passenger;
     const positions = disembarkPositions(state, transport, unit.profile);
     if (!positions) {
+      recordDestroyedModelMissionEvents(
+        state,
+        unit,
+        Array.from({ length: unit.remainingModels }, (_, modelIndex) => modelIndex),
+        attackerSide,
+      );
       unit.embarkedInUnitId = undefined;
       unit.destroyed = true;
       unit.remainingModels = 0;
@@ -1243,6 +1262,12 @@ function emergencyDisembarkDestroyedTransport(
     const rolls = unit.modelPositions.map(() => d6());
     const destroyedModels = rolls.filter(roll => roll === 1).length;
     const wasDestroyed = unit.destroyed;
+    recordDestroyedModelMissionEvents(
+      state,
+      unit,
+      Array.from({ length: destroyedModels }, (_, index) => unit.remainingModels - destroyedModels + index),
+      attackerSide,
+    );
     destroyPassengerModels(unit, destroyedModels);
     if (!wasDestroyed && unit.destroyed) recordDestroyedUnitMissionEvent(state, unit, attackerSide);
     logs.push(log(state, attackerSide, unit.profile.name,
@@ -3136,6 +3161,7 @@ function makeBattleUnit(
     woundsOnLeadModel: profile.wounds,
     position: centroid(modelPositions),
     modelPositions,
+    modelRosterIndexes: Array.from({ length: profile.baseModelCount }, (_, modelIndex) => modelIndex),
     modelRotations: modelPositions.map(() => side === 0 ? 0 : 180),
     facingDeg: side === 0 ? 0 : 180,
     charged: false,
@@ -4591,6 +4617,7 @@ export function removePlayModels(
     .sort((a, b) => b - a);
   if (!uniqueIndices.length) return s;
 
+  recordDestroyedModelMissionEvents(s, unit, uniqueIndices, side);
   spliceModelIndices(unit, uniqueIndices);
 
   unit.remainingModels = Math.max(0, unit.remainingModels - uniqueIndices.length);
@@ -4639,6 +4666,7 @@ export function removePlayCasualtyModels(
     .slice(0, pendingCasualties);
   if (!uniqueIndices.length) return state;
 
+  recordDestroyedModelMissionEvents(s, unit, uniqueIndices, state.activeArmy);
   spliceModelIndices(unit, uniqueIndices);
 
   unit.remainingModels = Math.max(0, unit.remainingModels - uniqueIndices.length);
@@ -4728,6 +4756,10 @@ export function allocatePlayDamageToModel(
   const currentWounds = unit.woundedModelIndex === modelIndex ? unit.woundsOnLeadModel : unit.profile.wounds;
   if (appliedDamage >= currentWounds) {
     const carryOverDamage = damage.noCarryOver ? 0 : appliedDamage - currentWounds;
+    const destroyedBySide = s.units.find(candidate => candidate.id === damage.sourceUnitId)?.side ?? state.activeArmy;
+    recordDestroyedModelMissionEvents(s, unit, [modelIndex], destroyedBySide, {
+      destroyedByUnitId: damage.sourceUnitId,
+    });
     spliceModelIndices(unit, [modelIndex]);
     unit.remainingModels = Math.max(0, unit.remainingModels - 1);
     unit.woundedModelIndex = undefined;
@@ -4738,7 +4770,7 @@ export function allocatePlayDamageToModel(
       unit.modelPositions = [];
       unit.modelRotations = [];
       unit.pendingDamageAllocations = undefined;
-      recordDestroyedUnitMissionEvent(s, unit, state.activeArmy, {
+      recordDestroyedUnitMissionEvent(s, unit, destroyedBySide, {
         destroyedByUnitId: damage.sourceUnitId,
         destroyingUnitObjectiveIndexesWithinRange: damage.sourceObjectiveIndexesWithinRange,
       });
@@ -4888,14 +4920,18 @@ export function fallBackPlayUnit(
   }
 
   const moved = Math.hypot(move.dx, move.dy);
+  const destroyedBySide = (side === 0 ? 1 : 0) as Side;
+  const desperateEscapeLogs = resolveDesperateEscapeTests(
+    s,
+    unit,
+    (testedUnit, message) => log(s, testedUnit.side, testedUnit.profile.name, message, 'roll'),
+    desperateEscapeModelIndices,
+    (testedUnit, modelIndices) => recordDestroyedModelMissionEvents(s, testedUnit, modelIndices, destroyedBySide),
+  );
+  if (unit.destroyed) recordDestroyedUnitMissionEvent(s, unit, destroyedBySide);
   const newLogs: LogEntry[] = [
     log(s, side, unit.profile.name, `${unit.profile.name} Falls Back ${moved.toFixed(1)}".`, 'move'),
-    ...resolveDesperateEscapeTests(
-      s,
-      unit,
-      (testedUnit, message) => log(s, testedUnit.side, testedUnit.profile.name, message, 'roll'),
-      desperateEscapeModelIndices,
-    ),
+    ...desperateEscapeLogs,
   ];
   if (!unit.destroyed) unit.position = centroid(unit.modelPositions);
   s.log = [...s.log, ...newLogs];

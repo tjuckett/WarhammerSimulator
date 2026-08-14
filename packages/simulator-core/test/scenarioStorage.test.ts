@@ -1192,6 +1192,77 @@ test('typed when-drawn secondary choices validate objectives and battlefield uni
   );
 });
 
+test('model destruction facts replay and persist after the selected model is removed', async () => {
+  installStorage();
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.activeArmy = 0;
+  const attacker = losTestUnit('attacker-unit', 0, { x: 10, y: 10 });
+  const target = losTestUnit('character-pair', 1, { x: 20, y: 10 });
+  target.profile = {
+    ...target.profile,
+    name: 'Character Pair',
+    wounds: 5,
+    baseModelCount: 2,
+    keywords: ['Character', 'Infantry'],
+    modelProfiles: [
+      { name: 'Companion', count: 1, move: 6, toughness: 4, save: 4, wounds: 3, leadership: 7, oc: 1 },
+      { name: 'Commander', count: 1, move: 6, toughness: 4, save: 4, wounds: 5, leadership: 7, oc: 1 },
+    ],
+  };
+  target.remainingModels = 2;
+  target.modelPositions = [{ x: 20, y: 10 }, { x: 21, y: 10 }];
+  target.modelRosterIndexes = [0, 1];
+  target.pendingDamageAllocations = [{ damage: 5, source: 'Test weapon', sourceUnitId: attacker.id }];
+  battle.units = [attacker, target];
+
+  const action = {
+    type: GAME_ACTION_TYPE.AllocateDamage,
+    side: 1 as const,
+    unitId: target.id,
+    modelIndex: 1,
+  };
+  const result = appendTimelineAction(
+    createPracticeTimeline(battle, { id: 'model-destruction-game' }),
+    battle,
+    action,
+    { rules: rules40K11th },
+  );
+  const event = result.state.missionEvents?.destroyedModelsThisTurn?.[0];
+
+  assert.deepEqual(event, {
+    id: 'character-pair:destroyed-model:0',
+    unitId: 'character-pair',
+    side: 1,
+    unitName: 'Character Pair',
+    modelName: 'Commander',
+    modelIndexAtDestruction: 1,
+    rosterModelIndex: 1,
+    woundsCharacteristic: 5,
+    unitStartingStrength: 2,
+    isCharacter: true,
+    destroyedBySide: 0,
+    destroyedByUnitId: 'attacker-unit',
+    battleRound: 1,
+    turn: 1,
+    phase: 'shooting',
+  });
+  assert.deepEqual(result.state.missionState?.destroyedModelsDuringBattle, [event]);
+  assert.deepEqual(result.state.units.find(unit => unit.id === target.id)?.modelRosterIndexes, [0]);
+
+  const replayed = replayTimeline(result.timeline, { rules: rules40K11th }, false);
+  assert.deepEqual(replayed.missionState?.destroyedModelsDuringBattle, [event]);
+
+  await localPracticeScenarioRepository.saveScenario(scenarioFromTimeline(result.timeline, {
+    id: 'model-destruction-save',
+  }));
+  const loaded = await localPracticeScenarioRepository.loadScenario('model-destruction-save');
+  assert.deepEqual(
+    currentTimelineState(loaded!.timeline).missionState?.destroyedModelsDuringBattle,
+    [event],
+  );
+});
+
 test('11th Consecrate completes on an objective, places a marker, and scores the first tier', () => {
   const battle = state('fight', 1);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
@@ -1316,6 +1387,10 @@ test("11th destroyed-unit mission events score Destroyer's Wrath kill clause", (
   assert.equal(target.destroyed, true);
   assert.equal(battle.missionEvents?.destroyedUnitsThisTurn?.length, 1);
   assert.equal(battle.missionEvents?.destroyedUnitsThisTurn?.[0].destroyedBySide, 0);
+  assert.equal(battle.missionEvents?.destroyedUnitsThisTurn?.[0].startingStrength, 1);
+  assert.equal(battle.missionEvents?.destroyedModelsThisTurn?.[0].woundsCharacteristic, 1);
+  assert.equal(battle.missionState?.destroyedUnitsDuringBattle?.length, 1);
+  assert.equal(battle.missionState?.destroyedModelsDuringBattle?.length, 1);
 
   const result = scorePrimaryMission(battle, 0, rules40K11th);
 
@@ -1338,6 +1413,8 @@ test('mission event helpers record each destroyed unit once and preserve the com
     unitId: 'blue-target',
     side: 0,
     unitName: 'Blue Target',
+    startingStrength: 1,
+    isCharacter: false,
     destroyedBySide: 1,
     battleRound: 2,
     turn: 2,
@@ -1356,7 +1433,9 @@ test('mission event helpers record each destroyed unit once and preserve the com
   startMissionEventsForNewTurn(battle, rules40K11th);
 
   assert.deepEqual(battle.missionEvents?.destroyedUnitsThisTurn, []);
+  assert.deepEqual(battle.missionEvents?.destroyedModelsThisTurn, []);
   assert.deepEqual(battle.missionEvents?.lastCompletedTurn?.destroyedUnitCounts, [1, 0]);
+  assert.equal(battle.missionState?.destroyedUnitsDuringBattle?.length, 1);
 });
 
 test('mission event turn start captures objective owners and stable battlefield unit positions', () => {

@@ -1,4 +1,5 @@
-import type { BattleState, BattleUnit, Side } from '../types/battle';
+import type { BattleState, BattleUnit, DestroyedModelMissionEvent, Side } from '../types/battle';
+import type { ModelStatProfile } from '../types/army';
 import { battleRound } from './battleRound';
 import { objectiveIndexesWithinRange, terrainAreaIdsContainingUnit, updateObjectiveControl } from './missionScoring';
 import type { RulesEdition } from './rulesEngine';
@@ -13,6 +14,7 @@ export function startMissionEventsForNewTurn(state: BattleState, rules: RulesEdi
   state.missionEvents = {
     ...(state.missionEvents ?? {}),
     destroyedUnitsThisTurn: [],
+    destroyedModelsThisTurn: [],
     unitsLeftBattlefieldThisTurn: [],
     completedActionsThisTurn: [],
     startOfTurn: {
@@ -143,18 +145,19 @@ export function recordDestroyedUnitMissionEvent(
   } = {},
 ): void {
   state.missionEvents = state.missionEvents ?? {};
+  state.missionState = state.missionState ?? {};
   const destroyedUnitsThisTurn = state.missionEvents.destroyedUnitsThisTurn ?? [];
   if (destroyedUnitsThisTurn.some(event => event.unitId === unit.id)) {
     state.missionEvents.destroyedUnitsThisTurn = destroyedUnitsThisTurn;
     return;
   }
 
-  state.missionEvents.destroyedUnitsThisTurn = [
-    ...destroyedUnitsThisTurn,
-    {
+  const event = {
       unitId: unit.id,
       side: unit.side,
       unitName: unit.profile.name,
+      startingStrength: unit.profile.baseModelCount,
+      isCharacter: unit.profile.keywords.some(keyword => keyword.toLowerCase() === 'character'),
       destroyedBySide,
       ...(options.destroyedByUnitId ? { destroyedByUnitId: options.destroyedByUnitId } : {}),
       ...(options.destroyingUnitObjectiveIndexesWithinRange
@@ -163,7 +166,59 @@ export function recordDestroyedUnitMissionEvent(
       battleRound: battleRound(state),
       turn: state.turn,
       phase: state.phase,
-    },
-  ];
+    };
+  state.missionEvents.destroyedUnitsThisTurn = [...destroyedUnitsThisTurn, event];
+  const destroyedUnitsDuringBattle = state.missionState.destroyedUnitsDuringBattle ?? [];
+  if (!destroyedUnitsDuringBattle.some(existing => existing.unitId === unit.id)) {
+    state.missionState.destroyedUnitsDuringBattle = [...destroyedUnitsDuringBattle, event];
+  }
   recordUnitLeftBattlefieldMissionEvent(state, unit.id);
+}
+
+function modelProfileAtRosterIndex(unit: BattleUnit, rosterModelIndex: number): ModelStatProfile | null {
+  let offset = 0;
+  for (const profile of unit.profile.modelProfiles ?? []) {
+    if (rosterModelIndex < offset + profile.count) return profile;
+    offset += profile.count;
+  }
+  return null;
+}
+
+export function recordDestroyedModelMissionEvents(
+  state: BattleState,
+  unit: BattleUnit,
+  modelIndices: number[],
+  destroyedBySide: Side,
+  options: { destroyedByUnitId?: string } = {},
+): void {
+  if (!modelIndices.length) return;
+  state.missionEvents = state.missionEvents ?? {};
+  state.missionState = state.missionState ?? {};
+  const destroyedModelsThisTurn = state.missionEvents.destroyedModelsThisTurn ?? [];
+  const destroyedModelsDuringBattle = state.missionState.destroyedModelsDuringBattle ?? [];
+  const isCharacter = unit.profile.keywords.some(keyword => keyword.toLowerCase() === 'character');
+  const events: DestroyedModelMissionEvent[] = modelIndices.map((modelIndex, eventIndex) => {
+    const rosterModelIndex = unit.modelRosterIndexes?.[modelIndex] ?? modelIndex;
+    const modelProfile = modelProfileAtRosterIndex(unit, rosterModelIndex);
+    const sequence = destroyedModelsDuringBattle.filter(event => event.unitId === unit.id).length + eventIndex;
+    return {
+      id: `${unit.id}:destroyed-model:${sequence}`,
+      unitId: unit.id,
+      side: unit.side,
+      unitName: unit.profile.name,
+      modelName: modelProfile?.name ?? unit.profile.name,
+      modelIndexAtDestruction: modelIndex,
+      rosterModelIndex,
+      woundsCharacteristic: modelProfile?.wounds ?? unit.profile.wounds,
+      unitStartingStrength: unit.profile.baseModelCount,
+      isCharacter,
+      destroyedBySide,
+      ...(options.destroyedByUnitId ? { destroyedByUnitId: options.destroyedByUnitId } : {}),
+      battleRound: battleRound(state),
+      turn: state.turn,
+      phase: state.phase,
+    };
+  });
+  state.missionEvents.destroyedModelsThisTurn = [...destroyedModelsThisTurn, ...events];
+  state.missionState.destroyedModelsDuringBattle = [...destroyedModelsDuringBattle, ...events];
 }

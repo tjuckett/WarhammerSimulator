@@ -1630,7 +1630,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'fixed-or-tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/a-grievous-blow-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Destroyed-unit event tracking and starting-strength data are required before this can score automatically.',
+    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Destroyed-unit events now preserve starting strength; automatic secondary scoring is not wired yet.',
     whenDrawn: 'If no enemy units with a Starting Strength of 13 or more are on the battlefield, you may discard this card and draw one new Secondary Mission card.',
     scoring: [
       {
@@ -1639,7 +1639,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of a turn',
         vp: 4,
         sourceText: 'For each enemy unit with a Starting Strength of 13 or more that is destroyed this turn. 4VP.',
-        notes: 'Requires destroyed-unit event tracking and starting-strength data.',
+        notes: 'Destroyed-unit events preserve starting-strength data for this clause.',
       },
       {
         id: 'tactical-large-unit-destroyed',
@@ -1647,7 +1647,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of a turn',
         vp: 5,
         sourceText: 'One or more enemy units with a Starting Strength of 13 or more were destroyed this turn. 5VP.',
-        notes: 'Requires destroyed-unit event tracking and starting-strength data.',
+        notes: 'Destroyed-unit events preserve starting-strength data for this clause.',
       },
     ],
   },
@@ -1680,7 +1680,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'fixed-or-tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/assassination-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Character model destruction event tracking is required before this can score automatically.',
+    notes: 'Scoring text transcribed from GDM 2026 Defender secondary card. Per-model events now preserve Character and Wounds facts; automatic secondary scoring is not wired yet.',
     scoring: [
       {
         id: 'fixed-character-wounds-four-plus-destroyed',
@@ -1688,7 +1688,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'While this card is active',
         vp: 4,
         sourceText: 'Each time an enemy Character model with a Wounds characteristic of 4 or higher is destroyed. 4VP.',
-        notes: 'Requires per-model character destruction events and model wounds characteristic data.',
+        notes: 'Per-model destruction events preserve Character and Wounds facts for this clause.',
       },
       {
         id: 'fixed-character-wounds-less-than-four-destroyed',
@@ -1696,7 +1696,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'While this card is active',
         vp: 3,
         sourceText: 'Each time an enemy Character model with a Wounds characteristic of less than 4 is destroyed. 3VP.',
-        notes: 'Requires per-model character destruction events and model wounds characteristic data.',
+        notes: 'Per-model destruction events preserve Character and Wounds facts for this clause.',
       },
       {
         id: 'tactical-character-destroyed-this-turn',
@@ -1704,7 +1704,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: "End of either player's turn",
         vp: 5,
         sourceText: 'One or more enemy Character models were destroyed this turn. 5VP.',
-        notes: 'Requires per-turn character destruction event tracking.',
+        notes: 'Per-turn model destruction events preserve Character status for this clause.',
       },
       {
         id: 'tactical-all-characters-destroyed',
@@ -1775,7 +1775,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'fixed-or-tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/bring-it-down-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Per-model destruction events and wounds characteristic data are required before this can score automatically.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Per-model events now preserve Wounds facts; automatic secondary scoring is not wired yet.',
     whenDrawn: 'If there are no enemy models on the battlefield with a Wounds characteristic of 10 or more, you may discard this card and draw one new Secondary Mission card.',
     scoring: [
       {
@@ -1784,7 +1784,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of a turn',
         vp: 4,
         sourceText: 'For each enemy model with a Wounds characteristic of 10 or more that is destroyed this turn. 4VP.',
-        notes: 'Requires per-model destruction events and model wounds characteristic data.',
+        notes: 'Per-model destruction events preserve Wounds facts for this clause.',
       },
       {
         id: 'tactical-high-wounds-model-destroyed',
@@ -1792,7 +1792,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of a turn',
         vp: 5,
         sourceText: 'One or more enemy models with a Wounds characteristic of 10 or more were destroyed this turn. 5VP.',
-        notes: 'Requires per-turn model destruction event tracking and model wounds characteristic data.',
+        notes: 'Per-turn model destruction events preserve Wounds facts for this clause.',
       },
     ],
   },
@@ -2006,7 +2006,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/no-prisoners-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Destroyed-unit event tracking is required before this can score automatically.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Per-turn destroyed-unit events are available; automatic secondary scoring is not wired yet.',
     scoring: [
       {
         id: 'enemy-units-destroyed',
@@ -2015,7 +2015,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         vp: 2,
         maxVp: 5,
         sourceText: 'For each enemy unit destroyed this turn. 2VP, max 5VP.',
-        notes: 'Requires destroyed-unit event tracking for the current turn.',
+        notes: 'Per-turn destroyed-unit events are available for this clause.',
       },
     ],
   },

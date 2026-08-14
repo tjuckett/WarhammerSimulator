@@ -14,6 +14,7 @@ export function resolveDesperateEscapeTests(
   unit: BattleUnit,
   log: (unit: BattleUnit, message: string) => LogEntry,
   modelIndices?: number[],
+  onModelsDestroyed?: (unit: BattleUnit, modelIndices: number[]) => void,
 ): LogEntry[] {
   if (unit.destroyed) return [];
 
@@ -35,8 +36,11 @@ export function resolveDesperateEscapeTests(
   }
 
   if (failedModelIndices.length > 0) {
-    for (const modelIndex of failedModelIndices.sort((a, b) => b - a)) {
+    const sortedFailedModelIndices = failedModelIndices.sort((a, b) => b - a);
+    onModelsDestroyed?.(unit, sortedFailedModelIndices);
+    for (const modelIndex of sortedFailedModelIndices) {
       unit.modelPositions.splice(modelIndex, 1);
+      unit.modelRosterIndexes?.splice(modelIndex, 1);
       unit.modelRotations?.splice(modelIndex, 1);
       unit.movementAllowanceRemainingByModel?.splice(modelIndex, 1);
       unit.movementAllowanceTotalByModel?.splice(modelIndex, 1);
