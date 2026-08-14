@@ -9177,6 +9177,10 @@ test('Melee weapons can split declared attacks between engaged targets', () => {
     { targetUnitId: targetA.id, attacks: 1 },
     { targetUnitId: targetB.id, attacks: 2 },
   ]), battle);
+  assert.equal(fightPlayUnitWeapon(battle, fighter.id, fighter.side, targetA.id, 0, rules40K11th, [
+    { targetUnitId: targetA.id, attacks: -1 },
+    { targetUnitId: targetB.id, attacks: 5 },
+  ]), battle);
 
   const originalRandom = Math.random;
   Math.random = () => 0.99;

@@ -69,6 +69,10 @@ export function parseDiceInput(value: string): number[] {
   return rolls;
 }
 
+export function sanitizeMeleeAttackAllocation(value: number): number {
+  return Number.isFinite(value) && value >= 0 ? value : 0;
+}
+
 export function stratagemFollowUpLabels(state: BattleState): string[] {
   const labels: string[] = [];
   if (state.pendingCommandReroll) {

@@ -76,6 +76,7 @@ import {
 import {
   abilityOptionKey,
   pendingDamageLabel,
+  sanitizeMeleeAttackAllocation,
   type AbilityOption,
 } from './play/playUiHelpers';
 import {
@@ -2000,7 +2001,7 @@ export default function App() {
     const weaponIndex = selectedFightWeaponIndex === 'all' ? 'all' : Number(selectedFightWeaponIndex);
     if (weaponIndex !== 'all' && !Number.isFinite(weaponIndex)) return;
     const targetSplits = selectedPlayFightTargets.flatMap(target => {
-      const attacks = fightAttackSplits[target.id] ?? 0;
+      const attacks = sanitizeMeleeAttackAllocation(fightAttackSplits[target.id] ?? 0);
       return attacks > 0 ? [{ targetUnitId: target.id, attacks }] : [];
     });
     const splitTotal = targetSplits.reduce((total, split) => total + split.attacks, 0);

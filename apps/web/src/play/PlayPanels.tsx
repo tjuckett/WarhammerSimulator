@@ -14,6 +14,7 @@ import {
   calcWoundTargetColor,
   parseDiceInput,
   pendingDamageLabel,
+  sanitizeMeleeAttackAllocation,
   stratagemFollowUpLabels,
   type AbilityOption,
 } from './playUiHelpers';
@@ -419,11 +420,12 @@ export function PlayFightPanel({
   const selectedOptions = selectedWeaponIndex === 'all'
     ? weaponOptions
     : weaponOptions.filter(option => String(option.weaponIndex) === selectedWeaponIndex);
-  const allocatedAttacks = targets.reduce((total, target) => total + (attackSplits[target.id] ?? 0), 0);
+  const allocationFor = (targetId: string) => sanitizeMeleeAttackAllocation(attackSplits[targetId] ?? 0);
+  const allocatedAttacks = targets.reduce((total, target) => total + allocationFor(target.id), 0);
   const hasAttackSplits = allocatedAttacks > 0;
   const splitAllocationValid = fixedAttackCount !== null
     && allocatedAttacks === fixedAttackCount
-    && targets.every(target => Number.isInteger(attackSplits[target.id] ?? 0) && (attackSplits[target.id] ?? 0) >= 0);
+    && targets.every(target => Number.isInteger(allocationFor(target.id)));
   const canResolve = !damageAllocationLocked
     && !fighter.activated
     && (hasAttackSplits
@@ -474,7 +476,7 @@ export function PlayFightPanel({
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75, p: 1, border: `1px solid ${uiTokens.border.control}`, borderRadius: uiTokens.radius.control }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
             <Typography variant="caption" sx={{ color: uiTokens.color.text.muted }}>
-              Split attacks: {allocatedAttacks}/{fixedAttackCount} allocated
+              Split {selectedOptions[0]?.name ?? 'this profile'} attacks: {allocatedAttacks}/{fixedAttackCount} allocated
             </Typography>
             <Button size="small" disabled={!hasAttackSplits} onClick={onClearAttackSplits}>Clear</Button>
           </Box>
@@ -484,12 +486,12 @@ export function PlayFightPanel({
               size="small"
               type="number"
               label={target.profile.name}
-              value={attackSplits[target.id] ?? 0}
+              value={allocationFor(target.id)}
               disabled={damageAllocationLocked || fighter.activated}
               slotProps={{ htmlInput: { min: 0, max: fixedAttackCount, step: 1 } }}
               onChange={event => {
                 const attacks = Number(event.target.value);
-                onAttackSplitChange(target.id, Number.isFinite(attacks) ? attacks : 0);
+                onAttackSplitChange(target.id, sanitizeMeleeAttackAllocation(attacks));
               }}
             />
           ))}
