@@ -206,6 +206,24 @@ export interface SecondaryMissionCardState {
   whenDrawnSelections?: Record<string, SecondaryMissionSelectionValue>;
 }
 
+export interface TemptingTargetWhenDrawnSelection {
+  objectiveIndex: number;
+  selectedBySide: Side;
+}
+
+export interface BeaconWhenDrawnSelection {
+  unitId: string;
+}
+
+export interface BurdenOfTrustGuardSelection {
+  objectiveIndex: number;
+  unitId: string;
+}
+
+export interface BurdenOfTrustWhenDrawnSelection {
+  guards: BurdenOfTrustGuardSelection[];
+}
+
 export interface SecondaryMissionPlayerState {
   mode: SecondaryMissionMode;
   activeCards: SecondaryMissionCardState[];

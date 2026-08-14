@@ -27,7 +27,7 @@ import { availableStratagems, resolveCommandReroll, useStratagem } from '../src/
 import { availableUnitAbilities, useUnitAbility } from '../src/engine/unitAbilities';
 import { eleventhSetupLabel, TOURNAMENT_MISSIONS } from '../src/engine/missions';
 import { ELEVENTH_PRIMARY_MISSION_RULES, ELEVENTH_SECONDARY_MISSION_RULES, eleventhSecondaryMissionRuleForName } from '../src/data/missionRules';
-import { configureSecondaryMissions, discardSecondaryMission, drawSecondaryMission, selectSecondaryMissionWhenDrawn } from '../src/engine/secondaryMissions';
+import { configureSecondaryMissions, discardSecondaryMission, drawSecondaryMission, selectBeaconUnit, selectBurdenOfTrustGuards, selectTemptingTargetObjective } from '../src/engine/secondaryMissions';
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -1033,7 +1033,7 @@ test('11th Inescapable Dominion scores fixed objective conditions from mission d
   assert.deepEqual(battle.scores, [9, 0]);
 });
 
-test('11th secondary mission state tracks fixed, tactical, draw, discard, and when-drawn choices', () => {
+test('11th secondary mission state tracks fixed, tactical, draw, and discard state', () => {
   const initial = {
     ...state('command'),
     ruleset: rulesetMetadataForState(rules40K11th),
@@ -1046,21 +1046,14 @@ test('11th secondary mission state tracks fixed, tactical, draw, discard, and wh
   assert.equal(fixed.missionState?.secondaryMissions?.[0].mode, 'fixed');
   assert.deepEqual(fixed.missionState?.secondaryMissions?.[0].drawPile, []);
 
-  const configured = configureSecondaryMissions(fixed, 1, 'tactical', ['Beacon', 'Bring It Down', 'No Prisoners']);
-  const drawn = drawSecondaryMission(configured, 1, 'Beacon');
-  const selected = selectSecondaryMissionWhenDrawn(drawn, 1, 'Beacon', {
-    unitId: 'beacon-unit',
-    context: { embarked: true, transportUnitId: 'transport-unit' },
-  });
-  const discarded = discardSecondaryMission(selected, 1, 'Beacon');
+  const configured = configureSecondaryMissions(fixed, 1, 'tactical', ['A Grievous Blow', 'Bring It Down', 'No Prisoners']);
+  const drawn = drawSecondaryMission(configured, 1, 'A Grievous Blow');
+  const discarded = discardSecondaryMission(drawn, 1, 'A Grievous Blow');
   const tactical = discarded.missionState?.secondaryMissions?.[1];
 
   assert.deepEqual(tactical?.drawPile, ['Bring It Down', 'No Prisoners']);
   assert.deepEqual(tactical?.activeCards, []);
-  assert.deepEqual(tactical?.discardedCards[0].whenDrawnSelections, {
-    unitId: 'beacon-unit',
-    context: { embarked: true, transportUnitId: 'transport-unit' },
-  });
+  assert.equal(tactical?.discardedCards[0].whenDrawnSelections, undefined);
   assert.deepEqual(JSON.parse(JSON.stringify(discarded)).missionState?.secondaryMissions, discarded.missionState?.secondaryMissions);
   assert.equal(configureSecondaryMissions(initial, 0, 'fixed', ['Beacon']), initial);
 });
@@ -1071,6 +1064,11 @@ test('secondary mission game actions replay and persist through practice saves',
     ...state('command'),
     ruleset: rulesetMetadataForState(rules40K11th),
   };
+  initial.units = [losTestUnit('beacon-unit', 0, { x: 12, y: 12 })];
+  initial.objectives = [{ x: 12, y: 12 }];
+  initial.terrain = [
+    terrainMat({ id: 'no-mans-land', type: 'ruin', x: 10, y: 10, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
   let timeline = createPracticeTimeline(initial, { id: 'secondary-state-game' });
   let current = initial;
   const actions = [
@@ -1078,7 +1076,17 @@ test('secondary mission game actions replay and persist through practice saves',
       type: GAME_ACTION_TYPE.ConfigureSecondaryMissions,
       side: 0 as const,
       mode: 'tactical' as const,
-      missionNames: ['Beacon', 'No Prisoners'],
+      missionNames: ['A Tempting Target', 'Beacon', 'Burden of Trust'],
+    },
+    {
+      type: GAME_ACTION_TYPE.DrawSecondaryMission,
+      side: 0 as const,
+      missionName: 'A Tempting Target',
+    },
+    {
+      type: GAME_ACTION_TYPE.SelectTemptingTargetObjective,
+      side: 0 as const,
+      selection: { objectiveIndex: 0, selectedBySide: 1 as const },
     },
     {
       type: GAME_ACTION_TYPE.DrawSecondaryMission,
@@ -1086,10 +1094,24 @@ test('secondary mission game actions replay and persist through practice saves',
       missionName: 'Beacon',
     },
     {
-      type: GAME_ACTION_TYPE.SelectSecondaryMissionWhenDrawn,
+      type: GAME_ACTION_TYPE.SelectBeaconUnit,
       side: 0 as const,
-      missionName: 'Beacon',
-      selections: { unitId: 'beacon-unit' },
+      selection: { unitId: 'beacon-unit' },
+    },
+    {
+      type: GAME_ACTION_TYPE.DiscardSecondaryMission,
+      side: 0 as const,
+      missionName: 'A Tempting Target',
+    },
+    {
+      type: GAME_ACTION_TYPE.DrawSecondaryMission,
+      side: 0 as const,
+      missionName: 'Burden of Trust',
+    },
+    {
+      type: GAME_ACTION_TYPE.SelectBurdenOfTrustGuards,
+      side: 0 as const,
+      selection: { guards: [{ objectiveIndex: 0, unitId: 'beacon-unit' }] },
     },
   ];
 
@@ -1108,6 +1130,65 @@ test('secondary mission game actions replay and persist through practice saves',
   assert.deepEqual(
     currentTimelineState(loaded!.timeline).missionState?.secondaryMissions,
     current.missionState?.secondaryMissions,
+  );
+});
+
+test('typed when-drawn secondary choices validate objectives and battlefield units', () => {
+  const initial = {
+    ...state('command'),
+    ruleset: rulesetMetadataForState(rules40K11th),
+  };
+  initial.objectives = [{ x: 5, y: 5 }, { x: 15, y: 15 }, { x: 25, y: 15 }];
+  initial.terrain = [
+    terrainMat({ id: 'blue-home', type: 'ruin', x: 3, y: 3, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'tempting-area', type: 'ruin', x: 13, y: 13, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'central-area', type: 'ruin', x: 23, y: 13, width: 4, height: 4, objectiveRole: 'central' }),
+  ];
+  const guard = losTestUnit('guard-unit', 0, { x: 15, y: 15 });
+  const transport = losTestUnit('transport-unit', 0, { x: 20, y: 15 });
+  transport.profile.transportCapacity = 10;
+  const passenger = losTestUnit('passenger-unit', 0, { x: 20, y: 15 });
+  passenger.embarkedInUnitId = transport.id;
+  const enemy = losTestUnit('enemy-unit', 1, { x: 25, y: 15 });
+  initial.units = [guard, transport, passenger, enemy];
+
+  let next = configureSecondaryMissions(initial, 0, 'tactical', [
+    'A Tempting Target',
+    'Beacon',
+    'Burden of Trust',
+  ]);
+  next = drawSecondaryMission(next, 0, 'A Tempting Target');
+  next = drawSecondaryMission(next, 0, 'Beacon');
+
+  assert.equal(selectTemptingTargetObjective(next, 0, { objectiveIndex: 0, selectedBySide: 1 }), next);
+  assert.equal(selectTemptingTargetObjective(next, 0, { objectiveIndex: 1, selectedBySide: 0 }), next);
+  const temptingSelected = selectTemptingTargetObjective(next, 0, { objectiveIndex: 1, selectedBySide: 1 });
+  assert.deepEqual(
+    temptingSelected.missionState?.secondaryMissions?.[0].activeCards[0].whenDrawnSelections,
+    { objectiveIndex: 1, selectedBySide: 1 },
+  );
+
+  assert.equal(selectBeaconUnit(temptingSelected, 0, { unitId: enemy.id }), temptingSelected);
+  const beaconSelected = selectBeaconUnit(temptingSelected, 0, { unitId: passenger.id });
+  assert.deepEqual(
+    beaconSelected.missionState?.secondaryMissions?.[0].activeCards[1].whenDrawnSelections,
+    { unitId: passenger.id },
+  );
+
+  const withoutTempting = discardSecondaryMission(beaconSelected, 0, 'A Tempting Target');
+  const burdenDrawn = drawSecondaryMission(withoutTempting, 0, 'Burden of Trust');
+  assert.equal(selectBurdenOfTrustGuards(burdenDrawn, 0, {
+    guards: [{ objectiveIndex: 0, unitId: guard.id }, { objectiveIndex: 0, unitId: transport.id }],
+  }), burdenDrawn);
+  assert.equal(selectBurdenOfTrustGuards(burdenDrawn, 0, {
+    guards: [{ objectiveIndex: 1, unitId: passenger.id }],
+  }), burdenDrawn);
+  const guarded = selectBurdenOfTrustGuards(burdenDrawn, 0, {
+    guards: [{ objectiveIndex: 0, unitId: guard.id }, { objectiveIndex: 2, unitId: transport.id }],
+  });
+  assert.deepEqual(
+    guarded.missionState?.secondaryMissions?.[0].activeCards.find(card => card.missionName === 'Burden of Trust')?.whenDrawnSelections,
+    { guards: [{ objectiveIndex: 0, unitId: guard.id }, { objectiveIndex: 2, unitId: transport.id }] },
   );
 });
 

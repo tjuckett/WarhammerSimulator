@@ -2,12 +2,17 @@ import { eleventhSecondaryMissionRuleForName } from '../data/missionRules';
 import { battleRound } from './battleRound';
 import type {
   BattleState,
+  BeaconWhenDrawnSelection,
+  BurdenOfTrustGuardSelection,
+  BurdenOfTrustWhenDrawnSelection,
   SecondaryMissionCardState,
   SecondaryMissionMode,
   SecondaryMissionPlayerState,
   SecondaryMissionSelectionValue,
   Side,
+  TemptingTargetWhenDrawnSelection,
 } from '../types/battle';
+import { pointInTerrain } from './terrainGeometry';
 
 const MAX_ACTIVE_SECONDARY_MISSIONS = 2;
 
@@ -125,7 +130,129 @@ export function selectSecondaryMissionWhenDrawn(
   const activeIndex = current?.activeCards.findIndex(card => card.missionName === missionName) ?? -1;
   if (activeIndex < 0 || !eleventhSecondaryMissionRuleForName(missionName)?.whenDrawn) return state;
 
-  const playerState = clone(current!);
+  if (missionName === 'A Tempting Target') {
+    const objectiveIndex = selections.objectiveIndex;
+    const selectedBySide = selections.selectedBySide;
+    if (typeof objectiveIndex !== 'number' || (selectedBySide !== 0 && selectedBySide !== 1)) return state;
+    return selectTemptingTargetObjective(state, side, { objectiveIndex, selectedBySide });
+  }
+  if (missionName === 'Beacon') {
+    return typeof selections.unitId === 'string'
+      ? selectBeaconUnit(state, side, { unitId: selections.unitId })
+      : state;
+  }
+  if (missionName === 'Burden of Trust') {
+    const guards = selections.guards;
+    if (!Array.isArray(guards) || !guards.every(guard =>
+      !!guard
+      && !Array.isArray(guard)
+      && typeof guard === 'object'
+      && typeof guard.objectiveIndex === 'number'
+      && typeof guard.unitId === 'string',
+    )) return state;
+    return selectBurdenOfTrustGuards(state, side, {
+      guards: guards.map(guard => ({
+        objectiveIndex: (guard as { objectiveIndex: number }).objectiveIndex,
+        unitId: (guard as { unitId: string }).unitId,
+      })),
+    });
+  }
+
+  return setWhenDrawnSelections(state, side, activeIndex, selections);
+}
+
+function setWhenDrawnSelections(
+  state: BattleState,
+  side: Side,
+  activeIndex: number,
+  selections: Record<string, SecondaryMissionSelectionValue>,
+): BattleState {
+  const current = secondaryMissionStateFor(state, side);
+  if (!current?.activeCards[activeIndex]) return state;
+
+  const playerState = clone(current);
   playerState.activeCards[activeIndex].whenDrawnSelections = clone(selections);
   return updatePlayerState(state, side, playerState);
+}
+
+function activeCardIndex(state: BattleState, side: Side, missionName: string): number {
+  return secondaryMissionStateFor(state, side)?.activeCards.findIndex(card => card.missionName === missionName) ?? -1;
+}
+
+function unitIsDeployedOnBattlefield(state: BattleState, unitId: string, side: Side): boolean {
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
+  return !!unit && !unit.inStrategicReserves && !unit.embarkedInUnitId && unit.modelPositions.length > 0;
+}
+
+function unitIsBeaconEligible(state: BattleState, unitId: string, side: Side): boolean {
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
+  if (!unit || unit.inStrategicReserves) return false;
+  if (!unit.embarkedInUnitId) return unit.modelPositions.length > 0;
+
+  const transport = state.units.find(candidate =>
+    candidate.id === unit.embarkedInUnitId
+    && candidate.side === side
+    && !candidate.destroyed
+    && !candidate.embarkedInUnitId
+    && !candidate.inStrategicReserves
+    && candidate.modelPositions.length > 0,
+  );
+  return !!transport;
+}
+
+function objectiveRoleForIndex(state: BattleState, objectiveIndex: number) {
+  const objective = state.objectives[objectiveIndex];
+  if (!objective) return undefined;
+  return state.terrain
+    .filter(terrain => pointInTerrain(objective, terrain))
+    .sort((a, b) => (a.width * a.height) - (b.width * b.height))[0]
+    ?.objectiveRole;
+}
+
+export function selectTemptingTargetObjective(
+  state: BattleState,
+  side: Side,
+  selection: TemptingTargetWhenDrawnSelection,
+): BattleState {
+  const activeIndex = activeCardIndex(state, side, 'A Tempting Target');
+  const objectiveRole = objectiveRoleForIndex(state, selection.objectiveIndex);
+  if (
+    activeIndex < 0
+    || selection.selectedBySide !== (side === 0 ? 1 : 0)
+    || !Number.isInteger(selection.objectiveIndex)
+    || !['no-mans-land', 'central', 'expansion-0', 'expansion-1'].includes(objectiveRole ?? '')
+  ) return state;
+  return setWhenDrawnSelections(state, side, activeIndex, {
+    objectiveIndex: selection.objectiveIndex,
+    selectedBySide: selection.selectedBySide,
+  });
+}
+
+export function selectBeaconUnit(
+  state: BattleState,
+  side: Side,
+  selection: BeaconWhenDrawnSelection,
+): BattleState {
+  const activeIndex = activeCardIndex(state, side, 'Beacon');
+  if (activeIndex < 0 || !unitIsBeaconEligible(state, selection.unitId, side)) return state;
+  return setWhenDrawnSelections(state, side, activeIndex, { unitId: selection.unitId });
+}
+
+export function selectBurdenOfTrustGuards(
+  state: BattleState,
+  side: Side,
+  selection: BurdenOfTrustWhenDrawnSelection,
+): BattleState {
+  const activeIndex = activeCardIndex(state, side, 'Burden of Trust');
+  const objectiveIndexes = selection.guards.map(guard => guard.objectiveIndex);
+  const guardsAreValid = selection.guards.every((guard: BurdenOfTrustGuardSelection) =>
+    Number.isInteger(guard.objectiveIndex)
+    && guard.objectiveIndex >= 0
+    && guard.objectiveIndex < state.objectives.length
+    && unitIsDeployedOnBattlefield(state, guard.unitId, side),
+  );
+  if (activeIndex < 0 || new Set(objectiveIndexes).size !== objectiveIndexes.length || !guardsAreValid) return state;
+  return setWhenDrawnSelections(state, side, activeIndex, {
+    guards: selection.guards.map(guard => ({ objectiveIndex: guard.objectiveIndex, unitId: guard.unitId })),
+  });
 }

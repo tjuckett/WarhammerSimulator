@@ -1,4 +1,4 @@
-import { BATTLE_PHASE, MOVEMENT_STEP, type Phase, type Position, type SecondaryMissionMode, type SecondaryMissionSelectionValue, type Side, type BattleState } from '../types/battle';
+import { BATTLE_PHASE, MOVEMENT_STEP, type BeaconWhenDrawnSelection, type BurdenOfTrustWhenDrawnSelection, type Phase, type Position, type SecondaryMissionMode, type SecondaryMissionSelectionValue, type Side, type BattleState, type TemptingTargetWhenDrawnSelection } from '../types/battle';
 import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
@@ -42,7 +42,7 @@ import {
   undeployPlayUnit,
 } from '../engine/simulator';
 import { completeMissionEventsForCurrentTurn, startMissionEventsForNewTurn } from '../engine/missionEvents';
-import { configureSecondaryMissions, discardSecondaryMission, drawSecondaryMission, selectSecondaryMissionWhenDrawn } from '../engine/secondaryMissions';
+import { configureSecondaryMissions, discardSecondaryMission, drawSecondaryMission, selectBeaconUnit, selectBurdenOfTrustGuards, selectSecondaryMissionWhenDrawn, selectTemptingTargetObjective } from '../engine/secondaryMissions';
 
 export interface GameActionBase {
   id?: string;
@@ -92,6 +92,9 @@ export const GAME_ACTION_TYPE = {
   DrawSecondaryMission: 'mission.drawSecondaryMission',
   DiscardSecondaryMission: 'mission.discardSecondaryMission',
   SelectSecondaryMissionWhenDrawn: 'mission.selectSecondaryMissionWhenDrawn',
+  SelectTemptingTargetObjective: 'mission.selectTemptingTargetObjective',
+  SelectBeaconUnit: 'mission.selectBeaconUnit',
+  SelectBurdenOfTrustGuards: 'mission.selectBurdenOfTrustGuards',
   SimulationPlaceNextUnit: 'simulation.placeNextUnit',
   SimulationStepPhase: 'simulation.stepPhase',
 } as const;
@@ -296,6 +299,21 @@ export type GameAction =
       side: Side;
       missionName: string;
       selections: Record<string, SecondaryMissionSelectionValue>;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.SelectTemptingTargetObjective;
+      side: Side;
+      selection: TemptingTargetWhenDrawnSelection;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.SelectBeaconUnit;
+      side: Side;
+      selection: BeaconWhenDrawnSelection;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.SelectBurdenOfTrustGuards;
+      side: Side;
+      selection: BurdenOfTrustWhenDrawnSelection;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.SimulationPlaceNextUnit;
@@ -603,6 +621,15 @@ export function applyGameAction(
         normalizedAction.missionName,
         normalizedAction.selections,
       );
+
+    case GAME_ACTION_TYPE.SelectTemptingTargetObjective:
+      return selectTemptingTargetObjective(state, normalizedAction.side, normalizedAction.selection);
+
+    case GAME_ACTION_TYPE.SelectBeaconUnit:
+      return selectBeaconUnit(state, normalizedAction.side, normalizedAction.selection);
+
+    case GAME_ACTION_TYPE.SelectBurdenOfTrustGuards:
+      return selectBurdenOfTrustGuards(state, normalizedAction.side, normalizedAction.selection);
 
     case GAME_ACTION_TYPE.SimulationPlaceNextUnit:
       return placeNextUnit(state);
