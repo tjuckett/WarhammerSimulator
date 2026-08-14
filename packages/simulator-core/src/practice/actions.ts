@@ -1,4 +1,4 @@
-import { BATTLE_PHASE, MOVEMENT_STEP, type Phase, type Position, type Side, type BattleState } from '../types/battle';
+import { BATTLE_PHASE, MOVEMENT_STEP, type Phase, type Position, type SecondaryMissionMode, type SecondaryMissionSelectionValue, type Side, type BattleState } from '../types/battle';
 import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
@@ -42,6 +42,7 @@ import {
   undeployPlayUnit,
 } from '../engine/simulator';
 import { completeMissionEventsForCurrentTurn, startMissionEventsForNewTurn } from '../engine/missionEvents';
+import { configureSecondaryMissions, discardSecondaryMission, drawSecondaryMission, selectSecondaryMissionWhenDrawn } from '../engine/secondaryMissions';
 
 export interface GameActionBase {
   id?: string;
@@ -87,6 +88,10 @@ export const GAME_ACTION_TYPE = {
   UseUnitAbility: 'play.useUnitAbility',
   StartAction: 'play.startAction',
   ToggleCondemnedUnit: 'play.toggleCondemnedUnit',
+  ConfigureSecondaryMissions: 'mission.configureSecondaryMissions',
+  DrawSecondaryMission: 'mission.drawSecondaryMission',
+  DiscardSecondaryMission: 'mission.discardSecondaryMission',
+  SelectSecondaryMissionWhenDrawn: 'mission.selectSecondaryMissionWhenDrawn',
   SimulationPlaceNextUnit: 'simulation.placeNextUnit',
   SimulationStepPhase: 'simulation.stepPhase',
 } as const;
@@ -269,6 +274,28 @@ export type GameAction =
       type: typeof GAME_ACTION_TYPE.ToggleCondemnedUnit;
       side: Side;
       unitId: string;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.ConfigureSecondaryMissions;
+      side: Side;
+      mode: SecondaryMissionMode;
+      missionNames: string[];
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.DrawSecondaryMission;
+      side: Side;
+      missionName: string;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.DiscardSecondaryMission;
+      side: Side;
+      missionName: string;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.SelectSecondaryMissionWhenDrawn;
+      side: Side;
+      missionName: string;
+      selections: Record<string, SecondaryMissionSelectionValue>;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.SimulationPlaceNextUnit;
@@ -553,6 +580,28 @@ export function applyGameAction(
         normalizedAction.unitId,
         normalizedAction.side,
         context.rules,
+      );
+
+    case GAME_ACTION_TYPE.ConfigureSecondaryMissions:
+      return configureSecondaryMissions(
+        state,
+        normalizedAction.side,
+        normalizedAction.mode,
+        normalizedAction.missionNames,
+      );
+
+    case GAME_ACTION_TYPE.DrawSecondaryMission:
+      return drawSecondaryMission(state, normalizedAction.side, normalizedAction.missionName);
+
+    case GAME_ACTION_TYPE.DiscardSecondaryMission:
+      return discardSecondaryMission(state, normalizedAction.side, normalizedAction.missionName);
+
+    case GAME_ACTION_TYPE.SelectSecondaryMissionWhenDrawn:
+      return selectSecondaryMissionWhenDrawn(
+        state,
+        normalizedAction.side,
+        normalizedAction.missionName,
+        normalizedAction.selections,
       );
 
     case GAME_ACTION_TYPE.SimulationPlaceNextUnit:

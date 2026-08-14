@@ -188,9 +188,35 @@ export interface MissionEvents {
   startOfTurn?: StartOfTurnMissionSnapshot;
 }
 
+export type SecondaryMissionMode = 'fixed' | 'tactical';
+
+export type SecondaryMissionSelectionValue =
+  | string
+  | number
+  | boolean
+  | null
+  | SecondaryMissionSelectionValue[]
+  | { [key: string]: SecondaryMissionSelectionValue };
+
+export interface SecondaryMissionCardState {
+  missionName: string;
+  mode: SecondaryMissionMode;
+  activatedBattleRound: number;
+  activatedTurn: number;
+  whenDrawnSelections?: Record<string, SecondaryMissionSelectionValue>;
+}
+
+export interface SecondaryMissionPlayerState {
+  mode: SecondaryMissionMode;
+  activeCards: SecondaryMissionCardState[];
+  drawPile: string[];
+  discardedCards: SecondaryMissionCardState[];
+}
+
 export interface MissionState {
   operationMarkers?: OperationMarker[];
   condemnedUnitIds?: [string[], string[]];
+  secondaryMissions?: [SecondaryMissionPlayerState, SecondaryMissionPlayerState];
 }
 
 export interface Terrain {

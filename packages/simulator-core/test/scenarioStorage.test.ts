@@ -7,12 +7,14 @@ import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIds
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
+  appendTimelineAction,
   appendResolvedTimelineAction,
   createPracticeTimeline,
   currentTimelineState,
+  replayTimeline,
   type PracticeTimeline,
 } from '../src/practice/timeline';
-import { applyGameAction } from '../src/practice/actions';
+import { applyGameAction, GAME_ACTION_TYPE } from '../src/practice/actions';
 import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
 import { formatPrimaryScoringResult, scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn, updateObjectiveControl } from '../src/engine/missionScoring';
@@ -25,6 +27,7 @@ import { availableStratagems, resolveCommandReroll, useStratagem } from '../src/
 import { availableUnitAbilities, useUnitAbility } from '../src/engine/unitAbilities';
 import { eleventhSetupLabel, TOURNAMENT_MISSIONS } from '../src/engine/missions';
 import { ELEVENTH_PRIMARY_MISSION_RULES, ELEVENTH_SECONDARY_MISSION_RULES, eleventhSecondaryMissionRuleForName } from '../src/data/missionRules';
+import { configureSecondaryMissions, discardSecondaryMission, drawSecondaryMission, selectSecondaryMissionWhenDrawn } from '../src/engine/secondaryMissions';
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -1028,6 +1031,84 @@ test('11th Inescapable Dominion scores fixed objective conditions from mission d
   assert.equal(result.scoringModel, '11e-data:Inescapable Dominion');
   assert.equal(result.vpGained, 9);
   assert.deepEqual(battle.scores, [9, 0]);
+});
+
+test('11th secondary mission state tracks fixed, tactical, draw, discard, and when-drawn choices', () => {
+  const initial = {
+    ...state('command'),
+    ruleset: rulesetMetadataForState(rules40K11th),
+  };
+  const fixed = configureSecondaryMissions(initial, 0, 'fixed', ['Assassination', 'Engage on All Fronts']);
+  assert.deepEqual(fixed.missionState?.secondaryMissions?.[0].activeCards.map(card => card.missionName), [
+    'Assassination',
+    'Engage on All Fronts',
+  ]);
+  assert.equal(fixed.missionState?.secondaryMissions?.[0].mode, 'fixed');
+  assert.deepEqual(fixed.missionState?.secondaryMissions?.[0].drawPile, []);
+
+  const configured = configureSecondaryMissions(fixed, 1, 'tactical', ['Beacon', 'Bring It Down', 'No Prisoners']);
+  const drawn = drawSecondaryMission(configured, 1, 'Beacon');
+  const selected = selectSecondaryMissionWhenDrawn(drawn, 1, 'Beacon', {
+    unitId: 'beacon-unit',
+    context: { embarked: true, transportUnitId: 'transport-unit' },
+  });
+  const discarded = discardSecondaryMission(selected, 1, 'Beacon');
+  const tactical = discarded.missionState?.secondaryMissions?.[1];
+
+  assert.deepEqual(tactical?.drawPile, ['Bring It Down', 'No Prisoners']);
+  assert.deepEqual(tactical?.activeCards, []);
+  assert.deepEqual(tactical?.discardedCards[0].whenDrawnSelections, {
+    unitId: 'beacon-unit',
+    context: { embarked: true, transportUnitId: 'transport-unit' },
+  });
+  assert.deepEqual(JSON.parse(JSON.stringify(discarded)).missionState?.secondaryMissions, discarded.missionState?.secondaryMissions);
+  assert.equal(configureSecondaryMissions(initial, 0, 'fixed', ['Beacon']), initial);
+});
+
+test('secondary mission game actions replay and persist through practice saves', async () => {
+  installStorage();
+  const initial = {
+    ...state('command'),
+    ruleset: rulesetMetadataForState(rules40K11th),
+  };
+  let timeline = createPracticeTimeline(initial, { id: 'secondary-state-game' });
+  let current = initial;
+  const actions = [
+    {
+      type: GAME_ACTION_TYPE.ConfigureSecondaryMissions,
+      side: 0 as const,
+      mode: 'tactical' as const,
+      missionNames: ['Beacon', 'No Prisoners'],
+    },
+    {
+      type: GAME_ACTION_TYPE.DrawSecondaryMission,
+      side: 0 as const,
+      missionName: 'Beacon',
+    },
+    {
+      type: GAME_ACTION_TYPE.SelectSecondaryMissionWhenDrawn,
+      side: 0 as const,
+      missionName: 'Beacon',
+      selections: { unitId: 'beacon-unit' },
+    },
+  ];
+
+  for (const action of actions) {
+    const result = appendTimelineAction(timeline, current, action, { rules: rules40K11th });
+    timeline = result.timeline;
+    current = result.state;
+  }
+
+  const replayed = replayTimeline(timeline, { rules: rules40K11th }, false);
+  assert.deepEqual(replayed.missionState?.secondaryMissions, current.missionState?.secondaryMissions);
+
+  const scenario = scenarioFromTimeline(timeline, { id: 'secondary-state-save' });
+  await localPracticeScenarioRepository.saveScenario(scenario);
+  const loaded = await localPracticeScenarioRepository.loadScenario('secondary-state-save');
+  assert.deepEqual(
+    currentTimelineState(loaded!.timeline).missionState?.secondaryMissions,
+    current.missionState?.secondaryMissions,
+  );
 });
 
 test('11th Consecrate completes on an objective, places a marker, and scores the first tier', () => {
