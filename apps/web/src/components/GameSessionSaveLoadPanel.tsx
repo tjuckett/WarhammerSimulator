@@ -62,6 +62,12 @@ function actionLabel(action: GameAction): string {
       return `Move ${action.parts.reduce((sum, part) => sum + part.modelIndices.length, 0)} model${action.parts.length === 1 ? '' : 's'}`;
     case GAME_ACTION_TYPE.MoveModelsVertically:
       return `Move height ${action.dz > 0 ? '+' : ''}${action.dz}"`;
+    case GAME_ACTION_TYPE.DeclareTakeToSkies:
+      return 'Take to the Skies';
+    case GAME_ACTION_TYPE.GrantSurgeMove:
+      return `Trigger Surge (${action.maximumDistance}")`;
+    case GAME_ACTION_TYPE.ResolveSurgeMove:
+      return 'Resolve Surge Move';
     case GAME_ACTION_TYPE.FallBackUnit:
       return 'Fall Back';
     case GAME_ACTION_TYPE.AdvanceUnit:

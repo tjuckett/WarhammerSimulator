@@ -3,12 +3,15 @@ import type { RulesEdition } from '@warhammer-simulator/core/engine/rulesEngine'
 import {
   advancePlayUnit,
   completePlayUnitMovement,
+  declarePlayUnitTakeToSkies,
   disembarkPlayUnit,
   embarkPlayUnit,
   fallBackPlayUnit,
   playUnitCanAdvance,
   playUnitCanEmbark,
   playUnitCanFallBack,
+  playUnitCanTakeToSkies,
+  resolvePlaySurgeMove,
 } from '@warhammer-simulator/core/engine/simulator';
 import { unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
 import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
@@ -28,8 +31,32 @@ type MovementUnitAction = Extract<
   | { type: typeof GAME_ACTION_TYPE.AdvanceUnit }
   | { type: typeof GAME_ACTION_TYPE.FallBackUnit }
   | { type: typeof GAME_ACTION_TYPE.CompleteUnitMovement }
+  | { type: typeof GAME_ACTION_TYPE.DeclareTakeToSkies }
+  | { type: typeof GAME_ACTION_TYPE.ResolveSurgeMove }
   | { type: typeof GAME_ACTION_TYPE.EmbarkUnit }
 >;
+
+export function resolveTakeToSkiesPlayUnitAction(
+  state: BattleState,
+  selection: PlayUnitSelection,
+  rules: RulesEdition,
+): { next: BattleState; action: MovementUnitAction } | null {
+  if (!playUnitCanTakeToSkies(state, selection.unitId, selection.side, rules)) return null;
+  const next = declarePlayUnitTakeToSkies(state, selection.unitId, selection.side, rules);
+  if (next === state) return null;
+  return { next, action: { type: GAME_ACTION_TYPE.DeclareTakeToSkies, ...selection } };
+}
+
+export function resolveSurgePlayUnitAction(
+  state: BattleState,
+  selection: PlayUnitSelection,
+  targetUnitId: string,
+  rules: RulesEdition,
+): { next: BattleState; action: MovementUnitAction } | null {
+  const next = resolvePlaySurgeMove(state, selection.unitId, selection.side, targetUnitId, rules);
+  if (next === state) return null;
+  return { next, action: { type: GAME_ACTION_TYPE.ResolveSurgeMove, ...selection, targetUnitId } };
+}
 
 type DisembarkAction = Extract<GameAction, { type: typeof GAME_ACTION_TYPE.DisembarkUnit }>;
 

@@ -16,10 +16,12 @@ import {
   completeEndOfTurnActions,
   consecrateObjective,
   consolidatePlayUnit,
+  declarePlayUnitTakeToSkies,
   disembarkPlayUnit,
   embarkPlayUnit,
   fallBackPlayUnit,
   fightPlayUnitWeapon,
+  grantPlaySurgeMove,
   type PlayMeleeAttackSplit,
   lockPlayUnitShooting,
   markRemainingStationaryUnits,
@@ -35,6 +37,7 @@ import {
   playPhaseCoherencyIssues,
   removePlayCasualtyModels,
   removePlayModels,
+  resolvePlaySurgeMove,
   reorganizePlayModelsGrid,
   rotatePlayModels,
   shootPlayUnitWeapon,
@@ -69,6 +72,9 @@ export const GAME_ACTION_TYPE = {
   UndeployUnit: 'play.undeployUnit',
   MoveModels: 'play.moveModels',
   MoveModelsVertically: 'play.moveModelsVertically',
+  DeclareTakeToSkies: 'play.declareTakeToSkies',
+  GrantSurgeMove: 'play.grantSurgeMove',
+  ResolveSurgeMove: 'play.resolveSurgeMove',
   AdvanceUnit: 'play.advanceUnit',
   FallBackUnit: 'play.fallBackUnit',
   CompleteUnitMovement: 'play.completeUnitMovement',
@@ -144,6 +150,24 @@ export type GameAction =
       type: typeof GAME_ACTION_TYPE.MoveModelsVertically;
       parts: ModelSelectionPart[];
       dz: number;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.DeclareTakeToSkies;
+      side: Side;
+      unitId: string;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.GrantSurgeMove;
+      side: Side;
+      unitId: string;
+      maximumDistance: number;
+      source: string;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.ResolveSurgeMove;
+      side: Side;
+      unitId: string;
+      targetUnitId: string;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.FallBackUnit;
@@ -404,6 +428,7 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
       unit.movementAllowanceTotalByModel = undefined;
       unit.movementStartPositionsByModel = undefined;
       unit.movementComplete = undefined;
+      unit.takingToSkies = undefined;
       unit.arrivedFromReinforcements = undefined;
       unit.rapidIngressThisPhase = undefined;
       unit.heroicInterventionThisPhase = undefined;
@@ -466,6 +491,10 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
     else startCommand();
   }
 
+  if (phaseBeforeStep === BATTLE_PHASE.Movement || phaseBeforeStep === BATTLE_PHASE.Charge) {
+    next.units.forEach(unit => { unit.takingToSkies = undefined; });
+  }
+
   if (next.phase === BATTLE_PHASE.End) {
     next.movementStep = undefined;
     const recordCount = next.missionState?.primaryMissionScoringRecords?.length ?? 0;
@@ -518,6 +547,28 @@ export function applyGameAction(
       return normalizedAction.parts.reduce(
         (next, part) => movePlayModelsVertically(next, part.unitId, part.side, part.modelIndices, normalizedAction.dz),
         state,
+      );
+
+    case GAME_ACTION_TYPE.DeclareTakeToSkies:
+      return declarePlayUnitTakeToSkies(state, normalizedAction.unitId, normalizedAction.side, context.rules);
+
+    case GAME_ACTION_TYPE.GrantSurgeMove:
+      return grantPlaySurgeMove(
+        state,
+        normalizedAction.unitId,
+        normalizedAction.side,
+        normalizedAction.maximumDistance,
+        normalizedAction.source,
+        context.rules,
+      );
+
+    case GAME_ACTION_TYPE.ResolveSurgeMove:
+      return resolvePlaySurgeMove(
+        state,
+        normalizedAction.unitId,
+        normalizedAction.side,
+        normalizedAction.targetUnitId,
+        context.rules,
       );
 
     case GAME_ACTION_TYPE.FallBackUnit:

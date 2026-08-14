@@ -23,7 +23,7 @@ import type { AbilityTiming } from '@warhammer-simulator/core/types/ability';
 import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simulator/core/engine/rulesEngine';
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
-  battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, createDeploymentState, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels,
+  battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, createDeploymentState, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels,
   allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTarget, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, sabotageObjectiveOptions, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
@@ -90,6 +90,8 @@ import {
   resolveDisembarkPlayUnitAction,
   resolveEmbarkPlayUnitAction,
   resolveFallBackPlayUnitAction,
+  resolveSurgePlayUnitAction,
+  resolveTakeToSkiesPlayUnitAction,
   type PlayDisembarkOption,
 } from './play/playMovementActions';
 import {
@@ -968,6 +970,15 @@ export default function App() {
     && (primaryPlaySelection.side === battleState.activeArmy || activeRulesForBattle.metadata.edition === '11e')
     && playUnitCanPileIn(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side, activeRulesForBattle)
   );
+  const selectedPlayCanTakeToSkies = !!(
+    isPlayMode
+    && battleState
+    && primaryPlaySelection
+    && playUnitCanTakeToSkies(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side, activeRulesForBattle)
+  );
+  const selectedPlaySurgeTargetIds = battleState && primaryPlaySelection
+    ? playSurgeTargetUnitIds(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side)
+    : [];
   const selectedPlayCanSelectOverrun = !!(
     isPlayMode
     && battleState
@@ -2183,6 +2194,27 @@ export default function App() {
     commitBattleState(next);
   }
 
+  function takeSelectedPlayUnitToSkies() {
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || !selection) return;
+    const result = resolveTakeToSkiesPlayUnitAction(prev, selection, rulesEditionForRuleset(prev.ruleset));
+    if (!result) return;
+    pushPlayUndo(playUndoEntry(prev), result.next, result.action);
+    commitBattleState(result.next);
+  }
+
+  function surgeSelectedPlayUnit(targetUnitId: string) {
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || !selection) return;
+    const result = resolveSurgePlayUnitAction(prev, selection, targetUnitId, rulesEditionForRuleset(prev.ruleset));
+    if (!result) return;
+    pushPlayUndo(playUndoEntry(prev), result.next, result.action);
+    setPlayModelSelection(normalizePlaySelectionForState(result.next, playModelSelection));
+    commitBattleState(result.next);
+  }
+
   function selectOverrunForSelectedPlayUnit() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
@@ -2677,7 +2709,7 @@ export default function App() {
               onRotateModel: canEditPlayModelsNow
                 ? (_selection, degrees, batched) => rotateSelectedPlayModels(degrees, batched)
                 : undefined,
-              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayCanAdvance || selectedPlayCanFallBack || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
+              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayCanAdvance || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
                 <>
                   {pendingDamageAllocationUnit && (
                     <PendingDamageAllocationHud unit={pendingDamageAllocationUnit} />
@@ -2702,6 +2734,16 @@ export default function App() {
                       Fall Back
                     </Button>
                   )}
+                  {selectedPlayCanTakeToSkies && (
+                    <Button size="small" color="info" variant="contained" onClick={takeSelectedPlayUnitToSkies}>
+                      Take to the Skies
+                    </Button>
+                  )}
+                  {selectedPlaySurgeTargetIds.map(targetUnitId => (
+                    <Button key={targetUnitId} size="small" color="warning" variant="contained" onClick={() => surgeSelectedPlayUnit(targetUnitId)}>
+                      Surge toward {battleState.units.find(unit => unit.id === targetUnitId)?.profile.name ?? 'target'}
+                    </Button>
+                  ))}
                   {selectedPlayCanMoveVertically && (
                     <>
                       <Button size="small" color="info" variant="outlined" startIcon={<KeyboardArrowUpIcon />} onClick={() => moveSelectedPlayModelsVertically(1)}>

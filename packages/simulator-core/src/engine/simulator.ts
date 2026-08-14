@@ -316,17 +316,29 @@ function avoidDeploymentOverlap(unit: BattleUnit, state: BattleState, zone: Retu
 }
 
 function featureBlocksMovementForUnit(feature: TerrainFeature, parent: Terrain, unit: BattleUnit): boolean {
-  if (!feature.blocksMovement || hasKeyword(unit, 'fly')) return false;
+  if (!feature.blocksMovement) return false;
   if (hasKeyword(unit, 'infantry') && parent.type === 'ruin') return false;
   if (hasKeyword(unit, 'infantry') && feature.featureHeight === 'low') return false;
   return true;
 }
 
 function terrainMatBlocksMovementForUnit(t: Terrain, unit: BattleUnit): boolean {
-  if (hasKeyword(unit, 'fly')) return false;
   if (hasKeyword(unit, 'titanic')) return true;
   if (t.type === 'ruin' && hasAnyKeyword(unit, ['vehicle', 'monster'])) return true;
   return t.type === 'impassable';
+}
+
+function unitTakesToSkiesForState(state: BattleState, unit: BattleUnit): boolean {
+  return hasKeyword(unit, 'fly')
+    && (state.ruleset.edition !== '11e' || unit.takingToSkies === true);
+}
+
+function unitMovedThisPhase(state: BattleState, unit: BattleUnit): boolean {
+  return unit.lastMovePhase === state.phase && unit.lastMoveTurn === state.turn;
+}
+
+function unitSurgedThisPhase(state: BattleState, unit: BattleUnit): boolean {
+  return unit.surgeMovePhase === state.phase && unit.surgeMoveTurn === state.turn;
 }
 
 function lineBlockedByMovement(from: Position, to: Position, terrain: Terrain[], unit: BattleUnit): boolean {
@@ -356,9 +368,10 @@ function findReachablePosition(
   maxInches: number,
   terrain: Terrain[],
   stopGap = 1.05,
+  ignoreTerrain = false,
 ): Position {
   const direct = moveToward(unit.position, to, maxInches, stopGap);
-  if (!lineBlockedByMovement(unit.position, direct, terrain, unit)) return direct;
+  if (ignoreTerrain || !lineBlockedByMovement(unit.position, direct, terrain, unit)) return direct;
 
   const dToTarget = dist(unit.position, to);
   const corners = terrainBlockerCorners(terrain, unit);
@@ -1249,7 +1262,7 @@ function emergencyDisembarkDestroyedTransport(
 }
 
 function runMovement(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
-  if (unit.destroyed || unit.embarkedInUnitId) return [];
+  if (unit.destroyed || unit.embarkedInUnitId || unitSurgedThisPhase(state, unit)) return [];
   const eng = rules.engagementRange();
   const foes = enemies(state, unit.side);
   if (inEngagement(unit, foes, eng)) {
@@ -1281,19 +1294,30 @@ function runMovement(unit: BattleUnit, state: BattleState, rules: RulesEdition):
   const tgtExtent  = formationExtent(target.modelPositions, target.position, { x: -dirX, y: -dirY });
   const stopGap = eng + myExtent + tgtExtent + 0.05;
 
-  const reachablePos = findReachablePosition(unit, target.position, unit.profile.move, state.terrain, stopGap);
+  if (rules.metadata.edition === '11e' && hasKeyword(unit, 'fly')) unit.takingToSkies = true;
+  const maximumDistance = Math.max(0, unit.profile.move - (unit.takingToSkies ? 2 : 0));
+  const reachablePos = findReachablePosition(
+    unit, target.position, maximumDistance, state.terrain, stopGap,
+    unitTakesToSkiesForState(state, unit),
+  );
   const newPos = avoidModelOverlap(unit, reachablePos, state);
   const moved = dist(unit.position, newPos);
-  if (moved < 0.01) return [log(state, unit.side, unit.profile.name,
-    `  📍 ${unit.profile.name} holds (already in engagement range)`,
-    'move',
-  )];
+  if (moved < 0.01) {
+    unit.takingToSkies = undefined;
+    return [log(state, unit.side, unit.profile.name,
+      `  📍 ${unit.profile.name} holds (already in engagement range)`,
+      'move',
+    )];
+  }
 
   translateFormation(unit, newPos.x - unit.position.x, newPos.y - unit.position.y);
   cancelUnitAction(state, unit, 'it made a move');
 
   resolveInternalModelOverlaps(unit);
   unit.position = centroid(unit.modelPositions);
+  unit.lastMovePhase = state.phase;
+  unit.lastMoveTurn = state.turn;
+  unit.takingToSkies = undefined;
 
   return [log(state, unit.side, unit.profile.name,
     `  🚶 ${unit.profile.name} moves ${moved.toFixed(1)}" toward ${target.profile.name} (${dist(unit.position, target.position).toFixed(1)}" away)`,
@@ -2692,7 +2716,7 @@ export function lockPlayUnitShooting(state: BattleState, unitId: string, side: S
 
 function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
   if (unit.performingAction) return [];
-  if (unit.destroyed || unit.embarkedInUnitId || isAircraft(unit) || unit.inCombat || unit.fellBack || unit.arrivedFromReinforcements || unit.emergencyDisembarkedThisTurn || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return [];
+  if (unit.destroyed || unit.embarkedInUnitId || unitSurgedThisPhase(state, unit) || isAircraft(unit) || unit.inCombat || unit.fellBack || unit.arrivedFromReinforcements || unit.emergencyDisembarkedThisTurn || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return [];
   const foes = enemies(state, unit.side).filter(
     e => unitCanChargeTarget(unit, e) && dist(unit.position, e.position) <= rules.chargeRange(),
   );
@@ -2712,6 +2736,8 @@ function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): L
   const needed = Math.max(0, d - stopGap);
   const r1 = d6(), r2 = d6();
   const roll = r1 + r2;
+  if (rules.metadata.edition === '11e' && hasKeyword(unit, 'fly')) unit.takingToSkies = true;
+  const maximumDistance = Math.max(0, roll - (unit.takingToSkies ? 2 : 0));
 
   const logs: LogEntry[] = [
     log(state, unit.side, unit.profile.name,
@@ -2720,10 +2746,14 @@ function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): L
     ),
   ];
 
-  if (roll >= needed) {
-    const reachablePos = findReachablePosition(unit, target.position, roll, state.terrain, stopGap);
+  if (maximumDistance >= needed) {
+    const reachablePos = findReachablePosition(
+      unit, target.position, maximumDistance, state.terrain, stopGap,
+      unitTakesToSkiesForState(state, unit),
+    );
     const newPos = avoidModelOverlap(unit, reachablePos, state);
     if (dist(unit.position, newPos) + 0.01 < needed) {
+      unit.takingToSkies = undefined;
       logs.push(log(state, unit.side, unit.profile.name,
         `  ❌ Charge path blocked by terrain`,
         'charge',
@@ -2733,6 +2763,9 @@ function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): L
     translateFormation(unit, newPos.x - unit.position.x, newPos.y - unit.position.y);
     resolveInternalModelOverlaps(unit);
     unit.charged = true;
+    unit.lastMovePhase = state.phase;
+    unit.lastMoveTurn = state.turn;
+    unit.takingToSkies = undefined;
     unit.inCombat = true;
     target.inCombat = true;
     logs.push(log(state, unit.side, unit.profile.name,
@@ -2740,6 +2773,7 @@ function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): L
       'charge',
     ));
   } else {
+    unit.takingToSkies = undefined;
     logs.push(log(state, unit.side, unit.profile.name,
       `  ❌ Charge failed (needed ${Math.ceil(needed)}, rolled ${roll})`,
       'charge',
@@ -2786,6 +2820,7 @@ export function playChargeTargetOptions(
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit
     || attachedUnitComponents(state, unit).some(component => component.activated)
+    || attachedUnitComponents(state, unit).some(component => unitSurgedThisPhase(state, component))
     || !sideCanDeclareCharge(state, side, unit)
     || !unitCanDeclareCharge(unit)) return [];
   return enemies(state, side)
@@ -2806,6 +2841,7 @@ export function chargePlayUnitTarget(
   const target = state.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit
     || attachedUnitComponents(state, unit).some(component => component.activated)
+    || attachedUnitComponents(state, unit).some(component => unitSurgedThisPhase(state, component))
     || !target
     || !sideCanDeclareCharge(state, side, unit)
     || !unitCanDeclareCharge(unit)
@@ -2821,6 +2857,7 @@ export function chargePlayUnitTarget(
   const r1 = d6();
   const r2 = d6();
   const roll = r1 + r2;
+  const maximumDistance = Math.max(0, roll - (chargingUnit.takingToSkies ? 2 : 0));
   const logs: LogEntry[] = [
     log(s, side, chargingUnit.profile.name,
       `${chargingUnit.profile.name} declares a charge against ${chargeTarget.profile.name} (${needed.toFixed(1)}" needed, rolled ${r1}+${r2}=${roll}).`,
@@ -2828,10 +2865,11 @@ export function chargePlayUnitTarget(
     ),
   ];
 
-  if (roll + 0.001 < needed) {
+  if (maximumDistance + 0.001 < needed) {
     for (const component of attachedUnitComponents(s, chargingUnit)) {
       component.activated = true;
       component.heroicInterventionThisPhase = undefined;
+      component.takingToSkies = undefined;
     }
     logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} fails the charge.`, 'charge'));
     s.log = [...s.log, ...logs];
@@ -2844,16 +2882,30 @@ export function chargePlayUnitTarget(
   const myExtent = formationExtent(chargingUnit.modelPositions, chargingUnit.position, { x: dirX, y: dirY });
   const tgtExtent = formationExtent(chargeTarget.modelPositions, chargeTarget.position, { x: -dirX, y: -dirY });
   const stopGap = rules.engagementRange() + myExtent + tgtExtent + 0.05;
-  const reachablePos = findReachablePosition(chargingUnit, chargeTarget.position, roll, s.terrain, stopGap);
+  const reachablePos = findReachablePosition(
+    chargingUnit,
+    chargeTarget.position,
+    maximumDistance,
+    s.terrain,
+    stopGap,
+    unitTakesToSkiesForState(s, chargingUnit),
+  );
   const newPos = avoidModelOverlap(chargingUnit, reachablePos, s);
   translateFormation(chargingUnit, newPos.x - chargingUnit.position.x, newPos.y - chargingUnit.position.y);
   resolveInternalModelOverlaps(chargingUnit);
   chargingUnit.position = centroid(chargingUnit.modelPositions);
 
   if (!inEngagement(chargingUnit, [chargeTarget], rules.engagementRange())) {
-    logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} cannot reach engagement range.`, 'charge'));
-    s.log = [...s.log, ...logs];
-    return s;
+    const failed = clone(state);
+    const failedUnit = failed.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
+    for (const component of attachedUnitComponents(failed, failedUnit)) {
+      component.activated = true;
+      component.heroicInterventionThisPhase = undefined;
+      component.takingToSkies = undefined;
+    }
+    logs.push(log(failed, side, failedUnit.profile.name, `${failedUnit.profile.name} cannot reach engagement range.`, 'charge'));
+    failed.log = [...failed.log, ...logs];
+    return failed;
   }
 
   for (const component of attachedUnitComponents(s, chargingUnit)) {
@@ -2861,6 +2913,9 @@ export function chargePlayUnitTarget(
     component.charged = true;
     component.heroicInterventionThisPhase = undefined;
     component.inCombat = true;
+    component.lastMovePhase = s.phase;
+    component.lastMoveTurn = s.turn;
+    component.takingToSkies = undefined;
   }
   chargeTarget.inCombat = true;
   logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} makes a successful${state.activeArmy !== side ? ' Heroic Intervention' : ''} charge.`, 'charge'));
@@ -3090,6 +3145,7 @@ function applyFightPhaseMove(
   if (state.activeArmy !== side && rules.metadata.edition !== '11e') return state;
   const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
   if (!existing) return state;
+  if (attachedUnitComponents(state, existing).some(component => unitSurgedThisPhase(state, component))) return state;
   const isOverrunPileIn = kind === 'pileIn' && rules.metadata.edition === '11e' && state.fightStepStarted && existing.overrunFightSelected;
   if (kind === 'pileIn' && (isOverrunPileIn ? existing.overrunPiledIn : existing.piledIn)) return state;
   if (kind === 'consolidate' && existing.consolidated) return state;
@@ -3126,6 +3182,8 @@ function applyFightPhaseMove(
   if (kind === 'pileIn' && isOverrunPileIn) unit.overrunPiledIn = true;
   else if (kind === 'pileIn') unit.piledIn = true;
   else unit.consolidated = true;
+  unit.lastMovePhase = s.phase;
+  unit.lastMoveTurn = s.turn;
   unit.inCombat = inEngagement(unit, enemies(s, side), rules.engagementRange());
 
   s.log = [...s.log, log(
@@ -4306,6 +4364,10 @@ export function battleCoherencyIssues(state: BattleState, side?: Side): string[]
 }
 
 export function playPhaseCoherencyIssues(state: BattleState): string[] {
+  if (state.pendingSurgeMove) {
+    const unitName = state.units.find(unit => unit.id === state.pendingSurgeMove?.unitId)?.profile.name ?? 'Unit';
+    return [`Resolve ${unitName}'s triggered Surge Move before leaving the phase.`];
+  }
   if (state.phase === 'command') {
     const options = punishmentCondemnedUnitOptions(state, state.activeArmy, rules40K11th);
     const selected = state.missionState?.condemnedUnitIds?.[state.activeArmy] ?? [];
@@ -4414,6 +4476,8 @@ function playMoveHasNoWallOverlap(state: BattleState, movingUnit: BattleUnit, mo
     const model = movingUnit.modelPositions[modelIndex];
     const footprint = modelFootprint(movingUnit, modelIndex);
     for (const terrain of state.terrain) {
+      if (terrainMatBlocksMovementForUnit(terrain, movingUnit)
+        && baseFootprintIntersectsRect(model, footprint, terrain)) return false;
       for (const feature of terrain.features) {
         if (!featureBlocksMovementForUnit(feature, terrain, movingUnit)) continue;
         if (baseFootprintIntersectsRect(model, footprint, feature)) return false;
@@ -4458,7 +4522,7 @@ function playMovePathCrossesEnemyModels(
   dy: number,
   includeFriendly = false,
 ): boolean {
-  if (hasKeyword(movingUnit, 'fly')) return false;
+  if (unitTakesToSkiesForState(state, movingUnit)) return false;
 
   for (const modelIndex of movingIndices) {
     const from = movingUnit.modelPositions[modelIndex];
@@ -4515,12 +4579,13 @@ function playMovePathCrossesBlockingTerrain(
   dx: number,
   dy: number,
 ): boolean {
-  if (hasKeyword(movingUnit, 'fly')) return false;
+  if (unitTakesToSkiesForState(state, movingUnit)) return false;
 
   for (const modelIndex of movingIndices) {
     const from = movingUnit.modelPositions[modelIndex];
     const to = { x: from.x + dx, y: from.y + dy };
     for (const terrain of state.terrain) {
+      if (terrainMatBlocksMovementForUnit(terrain, movingUnit) && lineIntersectsTerrain(from, to, terrain)) return true;
       for (const feature of terrain.features) {
         if (featureBlocksMovementForUnit(feature, terrain, movingUnit) && lineIntersectsTerrain(from, to, feature)) return true;
       }
@@ -4661,7 +4726,7 @@ function movedModelDeltasFromStart(unit: BattleUnit): Array<{ modelIndex: number
 
 function unitMoveCrossedEnemyModels(state: BattleState, unit: BattleUnit): boolean {
   if (unit.movementAction !== 'normalMove' && unit.movementAction !== 'advanced') return false;
-  if (hasKeyword(unit, 'fly')) return false;
+  if (unitTakesToSkiesForState(state, unit)) return false;
   const starts = unit.movementStartPositionsByModel;
   if (!starts?.length) return false;
   return movedModelDeltasFromStart(unit).some(({ modelIndex }) => {
@@ -4682,14 +4747,15 @@ function unitMoveCrossedEnemyModels(state: BattleState, unit: BattleUnit): boole
 }
 
 function unitMoveCrossedBlockingTerrain(state: BattleState, unit: BattleUnit): boolean {
-  if (hasKeyword(unit, 'fly')) return false;
+  if (unitTakesToSkiesForState(state, unit)) return false;
   const starts = unit.movementStartPositionsByModel;
   if (!starts?.length) return false;
   return movedModelDeltasFromStart(unit).some(({ modelIndex }) => {
     const from = starts[modelIndex] ?? unit.modelPositions[modelIndex];
     const to = unit.modelPositions[modelIndex];
     return state.terrain.some(terrain =>
-      terrain.features.some(feature =>
+      (terrainMatBlocksMovementForUnit(terrain, unit) && lineIntersectsTerrain(from, to, terrain))
+      || terrain.features.some(feature =>
         featureBlocksMovementForUnit(feature, terrain, unit) && lineIntersectsTerrain(from, to, feature),
       ),
     );
@@ -4697,7 +4763,7 @@ function unitMoveCrossedBlockingTerrain(state: BattleState, unit: BattleUnit): b
 }
 
 function monsterVehicleMovedOverFriendlyMonsterVehicle(state: BattleState, unit: BattleUnit): boolean {
-  if (!hasAnyKeyword(unit, ['monster', 'vehicle']) || hasKeyword(unit, 'fly')) return false;
+  if (!hasAnyKeyword(unit, ['monster', 'vehicle']) || unitTakesToSkiesForState(state, unit)) return false;
   const starts = unit.movementStartPositionsByModel;
   if (!starts?.length) return false;
   return movedModelDeltasFromStart(unit).some(({ modelIndex }) => {
@@ -4806,7 +4872,161 @@ function movementAllowanceForPlayMove(unit: BattleUnit): number {
   if (unit.movementAction === 'advanced') {
     return unit.movementAllowanceRemaining ?? normalMoveAllowance(unit);
   }
-  return normalMoveAllowance(unit);
+  return Math.max(0, normalMoveAllowance(unit) - (unit.takingToSkies ? 2 : 0));
+}
+
+function unitHasStartedCurrentMove(unit: BattleUnit): boolean {
+  return !!unit.movementStartPositionsByModel?.some((start, modelIndex) => {
+    const current = unit.modelPositions[modelIndex];
+    return current && (dist(start, current) > 0.001 || verticalDistance(start, current) > 0.001);
+  });
+}
+
+export function playUnitCanTakeToSkies(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rules40K10th,
+): boolean {
+  if (rules.metadata.edition !== '11e') return false;
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit
+    || unit.inStrategicReserves
+    || isAircraft(unit)
+    || attachedUnitComponents(state, unit).some(component => component.takingToSkies || unitSurgedThisPhase(state, component))) return false;
+  if (!attachedUnitKeywordSet(state, unit).has('fly')) return false;
+  if (state.phase === 'movement') {
+    return state.activeArmy === side
+      && movementStep(state) === 'moveUnits'
+      && attachedUnitComponents(state, unit).every(component => !component.movementComplete && !unitHasStartedCurrentMove(component));
+  }
+  return state.phase === 'charge'
+    && sideCanDeclareCharge(state, side, unit)
+    && unitCanDeclareCharge(unit)
+    && attachedUnitComponents(state, unit).every(component => !component.activated && !component.charged);
+}
+
+export function declarePlayUnitTakeToSkies(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rules40K10th,
+): BattleState {
+  if (!playUnitCanTakeToSkies(state, unitId, side, rules)) return state;
+  const s = clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
+  for (const component of attachedUnitComponents(s, unit)) {
+    component.takingToSkies = true;
+    if (component.movementAllowanceTotalByModel?.length) {
+      component.movementAllowanceTotalByModel = component.movementAllowanceTotalByModel.map(total => Math.max(0, total - 2));
+      updateModelMovementAllowances(component);
+    }
+  }
+  s.log = [...s.log, log(s, side, unit.profile.name, `${unit.profile.name} declares Take to the Skies (-2" maximum distance).`, 'move')];
+  return s;
+}
+
+export function playSurgeTargetUnitIds(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+): string[] {
+  const pending = state.pendingSurgeMove;
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!pending || pending.unitId !== unitId || pending.side !== side || !unit) return [];
+  const candidates = enemies(state, side).filter(candidate =>
+    !candidate.destroyed
+    && !candidate.embarkedInUnitId
+    && (!isAircraft(candidate) || attachedUnitKeywordSet(state, unit).has('fly'))
+  );
+  if (!candidates.length) return [];
+  const distances = candidates.map(candidate => ({ candidate, distance: battleUnitToAttachedUnitDistance(state, unit, candidate) }));
+  const closest = Math.min(...distances.map(entry => entry.distance));
+  return distances.filter(entry => entry.distance <= closest + 0.001).map(entry => entry.candidate.id);
+}
+
+export function grantPlaySurgeMove(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  maximumDistance: number,
+  source: string,
+  rules: RulesEdition = rules40K10th,
+): BattleState {
+  if (rules.metadata.edition !== '11e'
+    || state.pendingSurgeMove
+    || !Number.isFinite(maximumDistance)
+    || maximumDistance <= 0
+    || !source.trim()) return state;
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit) return state;
+  const components = attachedUnitComponents(state, unit);
+  if (components.some(component =>
+    component.battleshocked
+    || unitMovedThisPhase(state, component)
+    || unitHasStartedCurrentMove(component)
+  )) return state;
+  if (components.some(component => inEngagement(component, enemies(state, side), rules.engagementRange()))) return state;
+  const s = clone(state);
+  s.pendingSurgeMove = { unitId, side, maximumDistance, source: source.trim(), triggeredPhase: state.phase };
+  s.log = [...s.log, log(s, side, unit.profile.name,
+    `${source.trim()} triggers a Surge Move of up to ${maximumDistance}" for ${unit.profile.name}.`, 'move')];
+  return s;
+}
+
+export function resolvePlaySurgeMove(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  targetUnitId: string,
+  rules: RulesEdition = rules40K10th,
+): BattleState {
+  const pending = state.pendingSurgeMove;
+  if (rules.metadata.edition !== '11e'
+    || !pending
+    || pending.unitId !== unitId
+    || pending.side !== side
+    || pending.triggeredPhase !== state.phase
+    || !playSurgeTargetUnitIds(state, unitId, side).includes(targetUnitId)) return state;
+  const s = clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const target = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || !target) return state;
+
+  const components = attachedUnitComponents(s, unit);
+  for (const component of components) {
+    const distance = dist(component.position, target.position);
+    const direction = distance > 0.001
+      ? { x: (target.position.x - component.position.x) / distance, y: (target.position.y - component.position.y) / distance }
+      : { x: 1, y: 0 };
+    const myExtent = formationExtent(component.modelPositions, component.position, direction);
+    const targetExtent = formationExtent(target.modelPositions, target.position, { x: -direction.x, y: -direction.y });
+    const stopGap = rules.engagementRange() + myExtent + targetExtent + 0.02;
+    const reachable = findReachablePosition(component, target.position, pending.maximumDistance, s.terrain, stopGap);
+    const candidate = avoidModelOverlap(component, reachable, s);
+    translateFormation(component, candidate.x - component.position.x, candidate.y - component.position.y);
+    resolveInternalModelOverlaps(component);
+    component.position = centroid(component.modelPositions);
+  }
+  if (components.some(component => unitHasBaseOverlap(s, component) || unitHasWallOverlap(s, component))) return state;
+  const otherEnemies = enemies(s, side).filter(enemy => attachedUnitId(enemy) !== attachedUnitId(target));
+  if (components.some(component => inEngagement(component, otherEnemies, rules.engagementRange()))) return state;
+  if (battleCoherencyIssues(s, side).length) return state;
+
+  for (const component of components) {
+    cancelUnitAction(s, component, 'it made a Surge Move');
+    component.lastMovePhase = s.phase;
+    component.lastMoveTurn = s.turn;
+    component.surgeMovePhase = s.phase;
+    component.surgeMoveTurn = s.turn;
+    component.movementComplete = s.phase === 'movement' ? true : component.movementComplete;
+    component.inCombat = inEngagement(component, [target], rules.engagementRange());
+  }
+  target.inCombat = inEngagement(target, components, rules.engagementRange());
+  s.pendingSurgeMove = undefined;
+  s.log = [...s.log, log(s, side, unit.profile.name,
+    `${unit.profile.name} makes a Surge Move toward ${target.profile.name}.`, 'move')];
+  return s;
 }
 
 function ensureModelMovementStartPositions(unit: BattleUnit): Position[] {
@@ -4842,7 +5062,7 @@ function modelMovementDistanceFromStart(unit: BattleUnit, modelIndex: number): n
     position,
     modelFootprint(unit, modelIndex, currentRotation),
   );
-  return horizontal + verticalDistance(start, position);
+  return horizontal + (unit.takingToSkies && hasKeyword(unit, 'fly') ? 0 : verticalDistance(start, position));
 }
 
 function refreshModelMovementAllowances(unit: BattleUnit): number[] {
@@ -4888,6 +5108,9 @@ function markPlayMovementGroupComplete(state: BattleState, currentUnit: BattleUn
   for (const unit of state.units) {
     if (unit.side === currentUnit.side && !unit.destroyed && playMovementGroupId(unit) === currentGroupId) {
       unit.movementComplete = true;
+      unit.lastMovePhase = state.phase;
+      unit.lastMoveTurn = state.turn;
+      unit.takingToSkies = undefined;
       removeOpponentOperationMarkersAfterMove(state, unit);
     }
   }
@@ -4970,6 +5193,7 @@ export function movePlayModels(
     if (state.activeArmy !== side) return state;
     if (
       existingUnit.movementComplete
+      || unitSurgedThisPhase(state, existingUnit)
       || existingUnit.fellBack
       || existingUnit.movementAction === 'fellBack'
       || existingUnit.movementAction === 'remainedStationary'
@@ -5324,7 +5548,11 @@ export function advancePlayUnit(
 
   const advance = advanceAllowance(unit, rules);
   for (const component of attachedUnitComponents(s, unit)) {
-    const total = Math.max(0, normalMoveAllowance(component) + advance.advanceRoll + (component.profile.movementOverrides?.advanceModifier ?? 0));
+    const total = Math.max(0,
+      normalMoveAllowance(component)
+      + advance.advanceRoll
+      + (component.profile.movementOverrides?.advanceModifier ?? 0)
+      - (component.takingToSkies ? 2 : 0));
     component.movementAction = 'advanced';
     component.movementAllowanceRemaining = total;
     component.movementAllowanceRemainingByModel = component.modelPositions.map(() => total);
@@ -5369,8 +5597,9 @@ export function fallBackPlayUnit(
       }
     : { x: side === 0 ? -1 : 1, y: 0 };
   const modelIndices = unit.modelPositions.map((_, modelIndex) => modelIndex);
-  const requestedDx = direction.x * unit.profile.move;
-  const requestedDy = direction.y * unit.profile.move;
+  const maximumDistance = Math.max(0, unit.profile.move - (unit.takingToSkies ? 2 : 0));
+  const requestedDx = direction.x * maximumDistance;
+  const requestedDy = direction.y * maximumDistance;
   const move = collisionAdjustedPlayMove(s, unitId, side, modelIndices, requestedDx, requestedDy, { ignoreEnemyModelPath: true });
   if (Math.hypot(move.dx, move.dy) < 0.01) return state;
   const desperateEscapeModelIndices = unit.battleshocked
@@ -5390,6 +5619,11 @@ export function fallBackPlayUnit(
   unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
   unit.movementComplete = true;
   unit.fellBack = true;
+  for (const component of attachedUnitComponents(s, unit)) {
+    component.lastMovePhase = s.phase;
+    component.lastMoveTurn = s.turn;
+    component.takingToSkies = undefined;
+  }
   removeOpponentOperationMarkersAfterMove(s, unit);
   for (const enemy of engaged) {
     enemy.inCombat = inEngagement(enemy, enemies(s, enemy.side), rules.engagementRange());

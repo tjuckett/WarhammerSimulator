@@ -67,6 +67,13 @@ export interface BattleUnit {
   movementStartPositionsByModel?: Position[];
   movementStartRotationsByModel?: number[];
   movementComplete?: boolean;
+  /** 11e Core 21.03 declaration for the move currently being resolved. */
+  takingToSkies?: boolean;
+  /** Last phase in which this component completed a move of any type. */
+  lastMovePhase?: Phase;
+  lastMoveTurn?: number;
+  surgeMovePhase?: Phase;
+  surgeMoveTurn?: number;
   arrivedFromReinforcements?: boolean;
   inStrategicReserves?: boolean;
   rapidIngressThisPhase?: boolean;
@@ -391,6 +398,14 @@ export interface BattleState {
   activeAttachedFightUnitId?: string;
   activeAttachedShootingUnitId?: string;
   attachedShootingTargetUnitId?: string;
+  /** Trigger supplied by an external rule; Core 21 only defines how the move resolves. */
+  pendingSurgeMove?: {
+    unitId: string;
+    side: Side;
+    maximumDistance: number;
+    source: string;
+    triggeredPhase: Phase;
+  };
   winner: null | Side | 'draw';
   log: LogEntry[];
   units: BattleUnit[];

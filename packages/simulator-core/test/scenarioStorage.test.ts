@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, PrimaryMissionScoringRecord, SecondaryMissionScoringRecord, Terrain, TerritoryZoneSet } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, decoyObjectiveOptions, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, resolvePlaySurgeMove, rotatePlayModels, sabotageObjectiveOptions, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -5726,6 +5726,146 @@ test('play Movement with Fly can move over enemy models and blocking terrain', (
 
   const illegalEnd = movePlayModels(battle, 'unit-1', 0, [0], 3, 0);
   assert.ok((illegalEnd.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x ?? 0) < 13);
+});
+
+test('11th Fly only bypasses paths and vertical distance after Take to the Skies at -2"', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const flyer = losTestUnit('flyer', 0, { x: 10, y: 10 });
+  flyer.profile = { ...flyer.profile, name: 'Flyer', move: 6, keywords: ['Infantry', 'Fly'] };
+  battle.units = [flyer];
+  battle.terrain = [{
+    id: 'wall', name: 'Wall', x: 12, y: 8, width: 0.5, height: 4, type: 'obstacle',
+    providesCover: true, difficult: false, color: '#555',
+    features: [{ id: 'wall-feature', name: 'Wall', x: 12, y: 8, width: 0.5, height: 4, featureHeight: 'tall', blocksLOS: true, blocksMovement: true, difficult: false }],
+  }];
+
+  const ordinary = movePlayModels(battle, flyer.id, 0, [0], 6, 0);
+  assert.notEqual(ordinary, battle);
+  assert.equal(completePlayUnitMovement(ordinary, flyer.id, 0), ordinary);
+
+  assert.equal(playUnitCanTakeToSkies(battle, flyer.id, 0, rules40K11th), true);
+  const declared = declarePlayUnitTakeToSkies(battle, flyer.id, 0, rules40K11th);
+  const flown = movePlayModels(declared, flyer.id, 0, [0], 6, 0);
+  assert.equal(flown.units[0].modelPositions[0].x, 14);
+  const completed = completePlayUnitMovement(flown, flyer.id, 0);
+  assert.notEqual(completed, flown);
+  assert.equal(completed.units[0].takingToSkies, undefined);
+
+  const verticalBattle = structuredClone(battle);
+  verticalBattle.terrain = [];
+  const verticalDeclared = declarePlayUnitTakeToSkies(verticalBattle, flyer.id, 0, rules40K11th);
+  const climbed = movePlayModelsVertically(verticalDeclared, flyer.id, 0, [0], 10);
+  assert.equal(climbed.units[0].modelPositions[0].z, 10);
+
+  const modelPathBattle = structuredClone(battle);
+  modelPathBattle.terrain = [];
+  modelPathBattle.units.push(losTestUnit('path-enemy', 1, { x: 12, y: 10.9 }));
+  const crossedNormally = movePlayModels(modelPathBattle, flyer.id, 0, [0], 6, 0);
+  assert.equal(completePlayUnitMovement(crossedNormally, flyer.id, 0), crossedNormally);
+  const crossedFromSkies = movePlayModels(
+    declarePlayUnitTakeToSkies(modelPathBattle, flyer.id, 0, rules40K11th),
+    flyer.id, 0, [0], 6, 0,
+  );
+  assert.notEqual(completePlayUnitMovement(crossedFromSkies, flyer.id, 0), crossedFromSkies);
+
+  const advanceBattle = structuredClone(battle);
+  advanceBattle.terrain = [];
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const advanced = advancePlayUnit(
+      declarePlayUnitTakeToSkies(advanceBattle, flyer.id, 0, rules40K11th),
+      flyer.id, 0, rules40K11th,
+    );
+    assert.equal(advanced.units[0].movementAllowanceTotalByModel?.[0], 8);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('11th Take to the Skies reduces charge maximum distance and replays the declaration', () => {
+  const battle = state('charge');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const flyer = losTestUnit('flyer', 0, { x: 10, y: 10 });
+  flyer.profile = { ...flyer.profile, keywords: ['Infantry', 'Fly'] };
+  const target = losTestUnit('target', 1, { x: 18.5, y: 10 });
+  battle.units = [flyer, target];
+  const action: GameAction = { type: GAME_ACTION_TYPE.DeclareTakeToSkies, side: 0, unitId: flyer.id };
+  const declared = applyGameAction(battle, action, { rules: rules40K11th });
+  assert.equal(declared.units[0].takingToSkies, true);
+  const replayed = replayTimeline(appendTimelineAction(createPracticeTimeline(battle), battle, action, { rules: rules40K11th }).timeline, { rules: rules40K11th }, false);
+  assert.equal(replayed.units[0].takingToSkies, true);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const failed = chargePlayUnitTarget(declared, flyer.id, 0, target.id, rules40K11th);
+    assert.equal(failed.units[0].charged, false);
+    assert.equal(failed.units[0].takingToSkies, undefined);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('11th Surge Move validates trigger state, closest target, movement lock, replay and save', async () => {
+  installStorage();
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const unit = losTestUnit('surger', 0, { x: 10, y: 10 });
+  const closest = losTestUnit('closest', 1, { x: 20, y: 10 });
+  const farther = losTestUnit('farther', 1, { x: 22, y: 10 });
+  battle.units = [unit, closest, farther];
+
+  const grant: GameAction = {
+    type: GAME_ACTION_TYPE.GrantSurgeMove, side: 0, unitId: unit.id,
+    maximumDistance: 4, source: 'Reactive Surge',
+  };
+  const granted = applyGameAction(battle, grant, { rules: rules40K11th });
+  assert.deepEqual(playSurgeTargetUnitIds(granted, unit.id, 0), [closest.id]);
+  assert.equal(resolvePlaySurgeMove(granted, unit.id, 0, farther.id, rules40K11th), granted);
+  assert.match(playPhaseCoherencyIssues(granted)[0], /Resolve surger's triggered Surge Move/);
+
+  const resolve: GameAction = { type: GAME_ACTION_TYPE.ResolveSurgeMove, side: 0, unitId: unit.id, targetUnitId: closest.id };
+  const resolved = applyGameAction(granted, resolve, { rules: rules40K11th });
+  assert.equal(resolved.units[0].position.x, 14);
+  assert.equal(resolved.units[0].lastMovePhase, 'shooting');
+  assert.equal(resolved.units[0].lastMoveTurn, battle.turn);
+  assert.equal(resolved.pendingSurgeMove, undefined);
+  assert.equal(grantPlaySurgeMove(resolved, unit.id, 0, 4, 'Again', rules40K11th), resolved);
+  const laterTurn = structuredClone(resolved);
+  laterTurn.turn += 1;
+  assert.notEqual(grantPlaySurgeMove(laterTurn, unit.id, 0, 4, 'Later Surge', rules40K11th), laterTurn);
+
+  let timeline = createPracticeTimeline(battle, { id: 'surge-replay' });
+  const grantAppended = appendTimelineAction(timeline, battle, grant, { rules: rules40K11th });
+  timeline = grantAppended.timeline;
+  await localPracticeScenarioRepository.saveScenario(scenarioFromTimeline(timeline, { id: 'surge-pending-save' }));
+  const pendingLoaded = await localPracticeScenarioRepository.loadScenario('surge-pending-save');
+  assert.equal(currentTimelineState(pendingLoaded!.timeline).pendingSurgeMove?.source, 'Reactive Surge');
+  const resolveAppended = appendTimelineAction(timeline, grantAppended.state, resolve, { rules: rules40K11th });
+  timeline = resolveAppended.timeline;
+  const current = resolveAppended.state;
+  const replayed = replayTimeline(timeline, { rules: rules40K11th }, false);
+  assert.deepEqual(replayed.units[0].modelPositions, resolved.units[0].modelPositions);
+  await localPracticeScenarioRepository.saveScenario(scenarioFromTimeline(timeline, { id: 'surge-save' }));
+  const loaded = await localPracticeScenarioRepository.loadScenario('surge-save');
+  assert.equal(currentTimelineState(loaded!.timeline).units[0].lastMovePhase, 'shooting');
+
+  const shocked = structuredClone(battle);
+  shocked.units[0].battleshocked = true;
+  assert.equal(grantPlaySurgeMove(shocked, unit.id, 0, 4, 'Reactive Surge', rules40K11th), shocked);
+  const engaged = structuredClone(battle);
+  engaged.units[1].position.x = 11;
+  engaged.units[1].modelPositions[0].x = 11;
+  assert.equal(grantPlaySurgeMove(engaged, unit.id, 0, 4, 'Reactive Surge', rules40K11th), engaged);
+
+  const canReach = structuredClone(battle);
+  canReach.units = [structuredClone(unit), losTestUnit('reachable', 1, { x: 15, y: 10 })];
+  const reachGrant = grantPlaySurgeMove(canReach, unit.id, 0, 10, 'Reactive Surge', rules40K11th);
+  const reached = resolvePlaySurgeMove(reachGrant, unit.id, 0, 'reachable', rules40K11th);
+  assert.equal(reached.units[0].inCombat, true);
+  assert.equal(reached.units[1].inCombat, true);
 });
 
 test('play Movement ignores blocking terrain unless collision mode is enabled', () => {
