@@ -39,6 +39,7 @@ export interface BattleObservation {
   scores: [number, number];
   commandPoints: [number, number];
   objectiveOwners: (Side | null)[];
+  securedObjectiveOwners: (Side | null)[];
   objectives: Position[];
   sides: [SideObservation, SideObservation];
   units: UnitObservation[];
@@ -111,6 +112,7 @@ export function observeBattleState(state: BattleState, perspective: Side = state
     scores: [...state.scores],
     commandPoints: state.commandPoints ? [...state.commandPoints] : [0, 0],
     objectiveOwners: [...state.objectiveOwners],
+    securedObjectiveOwners: state.objectives.map((_, index) => state.securedObjectiveOwners?.[index] ?? null),
     objectives: state.objectives.map(objective => ({ ...objective })),
     sides: [observeSide(state, 0), observeSide(state, 1)],
     units: state.units.map(unit => observeUnit(state, unit)),

@@ -400,6 +400,8 @@ export interface BattleState {
   objectives: Position[];
   objectiveControl: ObjectiveControlProfile;
   objectiveOwners: (Side | null)[];
+  /** Objectives currently secured under 11e Core 14.03, indexed like objectives. */
+  securedObjectiveOwners?: (Side | null)[];
   scores: [number, number];
   commandPoints?: [number, number];
   stratagemUses?: StratagemUse[];

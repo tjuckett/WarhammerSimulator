@@ -2384,6 +2384,9 @@ export default function App() {
     }
     setPlayPhaseWarning('');
     const next = clone(prev);
+    if (next.phase !== BATTLE_PHASE.Movement || movementStep(next) === MOVEMENT_STEP.Reinforcements) {
+      updateObjectiveControl(next, activeRulesForBattle);
+    }
     const phaseBeforeStep = next.phase;
     const scoringSide = next.activeArmy;
     const currentIndex = PLAY_TURN_PHASES.indexOf(next.phase);

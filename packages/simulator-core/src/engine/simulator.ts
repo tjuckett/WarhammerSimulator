@@ -5482,6 +5482,9 @@ export function beginPlayBattle(state: BattleState): BattleState {
 
 export function simulateNextPhase(state: BattleState, rules: RulesEdition): BattleState {
   let s = clone(state);
+  if (s.phase !== 'movement' || movementStep(s) === 'reinforcements') {
+    updateObjectiveControl(s, rules);
+  }
   const side = s.activeArmy;
   const armyName = s.armies[side].name;
   const newLogs: LogEntry[] = [];
@@ -5591,6 +5594,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   myUnits().forEach(u => newLogs.push(...runMovement(u, s, rules)));
   markRemainingStationaryUnits(s, side);
   s.movementStep = 'reinforcements';
+  updateObjectiveControl(s, rules);
 
   checkWinner(s);
   if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }
@@ -5600,6 +5604,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   s.movementStep = undefined;
   newLogs.push(phaseLog(s, side, armyName, `\n─── Shooting Phase ───`));
   myUnits().forEach(u => newLogs.push(...runShooting(u, s, rules)));
+  updateObjectiveControl(s, rules);
 
   checkWinner(s);
   if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }
@@ -5608,6 +5613,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   s.phase = 'charge';
   newLogs.push(phaseLog(s, side, armyName, `\n─── Charge Phase ───`));
   myUnits().filter(u => !u.inCombat).forEach(u => newLogs.push(...runCharge(u, s, rules)));
+  updateObjectiveControl(s, rules);
 
   // Fight — charged first, then others in melee, then defender counterattacks
   s.phase = 'fight';
@@ -5623,6 +5629,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
     s.units.filter(u => u.side !== side && !u.destroyed && u.inCombat)
       .forEach(u => newLogs.push(...runFight(u, s, rules)));
   }
+  updateObjectiveControl(s, rules);
 
   checkWinner(s);
   if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }

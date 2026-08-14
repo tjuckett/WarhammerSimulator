@@ -807,6 +807,7 @@ function draw(
   for (let i = 0; i < state.objectives.length; i++) {
     const obj = state.objectives[i];
     const owner = state.objectiveOwners[i];
+    const securedOwner = state.securedObjectiveOwners?.[i] ?? null;
 
     if (objectiveControl.kind === 'terrain-area') {
       const terrainObjective = state.terrain
@@ -850,7 +851,8 @@ function draw(
       ctx.font = `bold ${Math.max(6, scale * 0.48)}px monospace`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(objectiveRoleLabel(terrainObjective.objectiveRole) || String(i + 1), center.x * scale, center.y * scale);
+      const label = objectiveRoleLabel(terrainObjective.objectiveRole) || String(i + 1);
+      ctx.fillText(`${label}${securedOwner !== null ? ' S' : ''}`, center.x * scale, center.y * scale);
       continue;
     }
 
@@ -886,7 +888,7 @@ function draw(
     ctx.font = `bold ${Math.max(6, scale * 0.55)}px monospace`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(String(i + 1), cx, cy);
+    ctx.fillText(`${i + 1}${securedOwner !== null ? ' S' : ''}`, cx, cy);
   }
 
   if (selected) drawEdgeGuides(ctx, state, selected, scale, W, H);

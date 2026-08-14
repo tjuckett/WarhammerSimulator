@@ -18,7 +18,7 @@ import { applyGameAction, GAME_ACTION_TYPE, type GameAction } from '../src/pract
 import { getLegalActions } from '../src/engine/legalActions';
 import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
-import { formatPrimaryMissionScoringRecord, formatPrimaryScoringResult, primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn, updateObjectiveControl } from '../src/engine/missionScoring';
+import { formatPrimaryMissionScoringRecord, formatPrimaryScoringResult, primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn, securePlayObjective, updateObjectiveControl } from '../src/engine/missionScoring';
 import {
   completeMissionEventsForCurrentTurn,
   recordDestroyedModelMissionEvents,
@@ -4666,6 +4666,97 @@ test('11th terrain objective control counts models inside the terrain area', () 
   assert.deepEqual(objectives?.[0].oc, [2, 1]);
   assert.deepEqual(battle.objectiveOwners, [0]);
   assert.deepEqual(battle.scores, [0, 0]);
+});
+
+test('11th Secured Objectives retains ties and empty control until the opponent has greater OC', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.objectives = [{ x: 10, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [terrainMat({ id: 'secured-objective', type: 'ruin', x: 8, y: 8, width: 6, height: 6 })];
+  const blue = losTestUnit('securing-unit', 0, { x: 10, y: 10 });
+  blue.profile.oc = 1;
+  battle.units = [blue];
+
+  const secured = securePlayObjective(battle, 0, 0, rules40K11th);
+  assert.notEqual(secured, battle);
+  assert.deepEqual(secured.securedObjectiveOwners, [0]);
+  assert.equal(securePlayObjective(battle, 1, 0, rules40K11th), battle);
+  assert.equal(securePlayObjective(battle, 0, 0, rules40K10th), battle);
+
+  const empty = structuredClone(secured);
+  empty.units[0].position = { x: 20, y: 20 };
+  empty.units[0].modelPositions = [{ x: 20, y: 20 }];
+  assert.equal(updateObjectiveControl(empty, rules40K11th)?.[0].owner, 0);
+  assert.deepEqual(empty.securedObjectiveOwners, [0]);
+
+  const tied = structuredClone(secured);
+  const red = losTestUnit('tying-unit', 1, { x: 11, y: 11 });
+  red.profile.oc = 1;
+  tied.units.push(red);
+  assert.deepEqual(updateObjectiveControl(tied, rules40K11th)?.[0], { objectiveIndex: 0, owner: 0, oc: [1, 1] });
+
+  const captured = structuredClone(tied);
+  captured.units[0].battleshocked = true;
+  assert.deepEqual(updateObjectiveControl(captured, rules40K11th)?.[0], { objectiveIndex: 0, owner: 1, oc: [0, 1] });
+  assert.deepEqual(captured.securedObjectiveOwners, [null]);
+  captured.units[1].position = { x: 20, y: 20 };
+  captured.units[1].modelPositions = [{ x: 20, y: 20 }];
+  assert.equal(updateObjectiveControl(captured, rules40K11th)?.[0].owner, null);
+});
+
+test('11th Secured Objectives resolves at phase boundaries and feeds mission ownership snapshots', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.objectives = [{ x: 10, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [terrainMat({ id: 'secured-lifecycle', type: 'ruin', x: 8, y: 8, width: 6, height: 6 })];
+  const blue = losTestUnit('blue-secured', 0, { x: 10, y: 10 });
+  blue.profile.oc = 1;
+  battle.units = [blue];
+  const secured = securePlayObjective(battle, 0, 0, rules40K11th);
+
+  const snapshotState = structuredClone(secured);
+  snapshotState.units[0].position = { x: 20, y: 20 };
+  snapshotState.units[0].modelPositions = [{ x: 20, y: 20 }];
+  startMissionEventsForNewTurn(snapshotState, rules40K11th);
+  assert.deepEqual(snapshotState.missionEvents?.startOfTurn?.objectiveOwners, [0]);
+
+  const contested = structuredClone(snapshotState);
+  const red = losTestUnit('red-captures', 1, { x: 10, y: 10 });
+  red.profile.oc = 1;
+  contested.units.push(red);
+  contested.movementStep = 'moveUnits';
+  const reinforcements = applyGameAction(contested, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+  assert.deepEqual(reinforcements.objectiveOwners, [0]);
+  assert.deepEqual(reinforcements.securedObjectiveOwners, [0]);
+  const nextPhase = applyGameAction(reinforcements, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+  assert.deepEqual(nextPhase.objectiveOwners, [1]);
+  assert.deepEqual(nextPhase.securedObjectiveOwners, [null]);
+});
+
+test('11th Secured Objective actions replay and persist', async () => {
+  installStorage();
+  const battle = state('command');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.objectives = [{ x: 10, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [terrainMat({ id: 'secured-save', type: 'ruin', x: 8, y: 8, width: 6, height: 6 })];
+  battle.units = [losTestUnit('securing-save-unit', 0, { x: 10, y: 10 })];
+  const action = { type: GAME_ACTION_TYPE.SecureObjective, side: 0 as const, objectiveIndex: 0 } satisfies GameAction;
+  const appended = appendTimelineAction(createPracticeTimeline(battle), battle, action, { rules: rules40K11th });
+  const replayed = replayTimeline(appended.timeline, { rules: rules40K11th }, false);
+  assert.deepEqual(replayed.securedObjectiveOwners, [0]);
+  assert.deepEqual(replayed.objectiveOwners, [0]);
+
+  await localPracticeScenarioRepository.saveScenario(scenarioFromTimeline(appended.timeline, { id: 'secured-objective-save' }));
+  const loaded = await localPracticeScenarioRepository.loadScenario('secured-objective-save');
+  const loadedState = currentTimelineState(loaded!.timeline);
+  assert.deepEqual(loadedState.securedObjectiveOwners, [0]);
+  assert.deepEqual(loadedState.objectiveOwners, [0]);
 });
 
 test('11th actions block shooting and charging until completed or cancelled', () => {

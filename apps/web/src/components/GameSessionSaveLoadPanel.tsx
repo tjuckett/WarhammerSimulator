@@ -102,6 +102,8 @@ function actionLabel(action: GameAction): string {
       return 'Pile in';
     case GAME_ACTION_TYPE.ConsolidateUnit:
       return 'Consolidate';
+    case GAME_ACTION_TYPE.SecureObjective:
+      return `Secure objective ${action.objectiveIndex + 1}`;
     case GAME_ACTION_TYPE.BeginBattle:
       return 'Start game';
     case GAME_ACTION_TYPE.StepPhase:

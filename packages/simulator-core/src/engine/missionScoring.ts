@@ -93,9 +93,7 @@ export function updateObjectiveControl(state: BattleState, rules: RulesEdition):
         oc[unit.side] += terrainObjectiveControlValue(unit, terrain);
       }
 
-      let owner: Side | null = null;
-      if (oc[0] > oc[1]) owner = 0;
-      else if (oc[1] > oc[0]) owner = 1;
+      const owner = objectiveOwnerFromControlLevels(state, objectiveIndex, oc, rules);
       state.objectiveOwners[objectiveIndex] = owner;
       return { objectiveIndex, owner, oc };
     });
@@ -112,9 +110,7 @@ export function updateObjectiveControl(state: BattleState, rules: RulesEdition):
       }
     }
 
-    let owner: Side | null = null;
-    if (oc[0] > oc[1]) owner = 0;
-    else if (oc[1] > oc[0]) owner = 1;
+    const owner = objectiveOwnerFromControlLevels(state, objectiveIndex, oc, rules);
     state.objectiveOwners[objectiveIndex] = owner;
     return { objectiveIndex, owner, oc };
   });
@@ -166,6 +162,41 @@ function destroyedEnemyUnitsThisTurn(state: BattleState, side: Side): number {
   return (state.missionEvents?.destroyedUnitsThisTurn ?? []).filter(event =>
     event.destroyedBySide === side && event.side !== side,
   ).length;
+}
+
+function objectiveOwnerFromControlLevels(
+  state: BattleState,
+  objectiveIndex: number,
+  oc: [number, number],
+  rules: RulesEdition,
+): Side | null {
+  const securedOwner = rules.metadata.edition === '11e'
+    ? state.securedObjectiveOwners?.[objectiveIndex] ?? null
+    : null;
+  if (securedOwner !== null) {
+    const opponent = (securedOwner === 0 ? 1 : 0) as Side;
+    if (oc[opponent] <= oc[securedOwner]) return securedOwner;
+    if (state.securedObjectiveOwners) state.securedObjectiveOwners[objectiveIndex] = null;
+    return opponent;
+  }
+  if (oc[0] > oc[1]) return 0;
+  if (oc[1] > oc[0]) return 1;
+  return null;
+}
+
+export function securePlayObjective(
+  state: BattleState,
+  objectiveIndex: number,
+  side: Side,
+  rules: RulesEdition,
+): BattleState {
+  if (rules.metadata.edition !== '11e' || !state.objectives[objectiveIndex]) return state;
+  const next = structuredClone(state);
+  next.securedObjectiveOwners = next.objectives.map((_, index) => next.securedObjectiveOwners?.[index] ?? null);
+  if (next.securedObjectiveOwners[objectiveIndex] === side) return state;
+  next.securedObjectiveOwners[objectiveIndex] = side;
+  next.objectiveOwners[objectiveIndex] = side;
+  return next;
 }
 
 function completedMissionActionCount(state: BattleState, side: Side, actionId: string): number {

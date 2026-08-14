@@ -2,7 +2,7 @@ import { BATTLE_PHASE, MOVEMENT_STEP, type BeaconWhenDrawnSelection, type Burden
 import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
-import { primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, unsupportedPrimaryMissionScoringLogs } from '../engine/missionScoring';
+import { primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, securePlayObjective, unsupportedPrimaryMissionScoringLogs, updateObjectiveControl } from '../engine/missionScoring';
 import { resolveCommandReroll, useStratagem } from '../engine/stratagems';
 import { useUnitAbility } from '../engine/unitAbilities';
 import type { AbilityTiming } from '../types/ability';
@@ -96,6 +96,7 @@ export const GAME_ACTION_TYPE = {
   UseUnitAbility: 'play.useUnitAbility',
   StartAction: 'play.startAction',
   ConsecrateObjective: 'mission.consecrateObjective',
+  SecureObjective: 'play.secureObjective',
   ToggleCondemnedUnit: 'play.toggleCondemnedUnit',
   ConfigureSecondaryMissions: 'mission.configureSecondaryMissions',
   DrawSecondaryMission: 'mission.drawSecondaryMission',
@@ -303,6 +304,11 @@ export type GameAction =
       objectiveIndex: number;
     })
   | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.SecureObjective;
+      side: Side;
+      objectiveIndex: number;
+    })
+  | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.ConfigureSecondaryMissions;
       side: Side;
       mode: SecondaryMissionMode;
@@ -371,6 +377,9 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   const next = clone(state);
   if (next.winner !== null || next.phase === BATTLE_PHASE.Deployment || next.phase === BATTLE_PHASE.End) return next;
   if (playPhaseCoherencyIssues(next).length > 0) return next;
+  if (next.phase !== BATTLE_PHASE.Movement || movementStep(next) === MOVEMENT_STEP.Reinforcements) {
+    updateObjectiveControl(next, rules);
+  }
 
   const startCommand = (): void => {
     next.phase = BATTLE_PHASE.Command;
@@ -659,6 +668,9 @@ export function applyGameAction(
         normalizedAction.objectiveIndex,
         context.rules,
       );
+
+    case GAME_ACTION_TYPE.SecureObjective:
+      return securePlayObjective(state, normalizedAction.objectiveIndex, normalizedAction.side, context.rules);
 
     case GAME_ACTION_TYPE.ToggleCondemnedUnit:
       return togglePunishmentCondemnedUnit(
