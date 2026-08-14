@@ -1,4 +1,4 @@
-import type { Terrain, TerrainFeature, TerrainLayout } from '../types/battle';
+import type { Terrain, TerrainFeature, TerrainLayout, TerritoryZoneSet } from '../types/battle';
 import type { DeploymentZoneSet } from './deploymentZoneTypes';
 
 export interface TerrainFeatureSpec {
@@ -39,6 +39,7 @@ export interface TerrainLayoutSpec {
   name: string;
   description: string;
   deploymentZones?: DeploymentZoneSet;
+  territoryZones?: TerritoryZoneSet;
   terrain: TerrainSpec[];
 }
 

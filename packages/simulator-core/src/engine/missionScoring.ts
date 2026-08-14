@@ -13,7 +13,13 @@ import {
 import { objectiveControlRadius } from './objectiveGeometry';
 import type { RulesEdition } from './rulesEngine';
 import { pointInTerrain } from './terrainGeometry';
-import { objectiveRoleForIndex, unitTableQuarter, unitWithinBattlefieldCentre } from './missionGeometry';
+import {
+  objectiveRoleForIndex,
+  pointWithinMissionTerritory,
+  unitTableQuarter,
+  unitWhollyWithinMissionTerritory,
+  unitWithinBattlefieldCentre,
+} from './missionGeometry';
 
 export interface ObjectiveControlResult {
   objectiveIndex: number;
@@ -510,10 +516,24 @@ function evaluateMissionClause(
   side: Side,
   clause: MissionScoringClause,
 ): { vp: number; detail?: string; unsupported?: string } {
-  if (clause.kind === 'unsupported-event') {
-    return { vp: 0, unsupported: `${clause.sourceText}${clause.notes ? ` (${clause.notes})` : ''}` };
+  if (clause.condition === 'no-enemy-units-wholly-within-territory') {
+    const enemyUnits = state.units.filter(unit =>
+      unit.side !== side
+      && !unit.destroyed
+      && !unit.embarkedInUnitId
+      && !unit.inStrategicReserves
+      && unit.modelPositions.length > 0
+    );
+    const containment = enemyUnits.map(unit => unitWhollyWithinMissionTerritory(state, unit, side));
+    if (containment.some(value => value === undefined)) {
+      return { vp: 0, unsupported: `${clause.sourceText} (Territory geometry is not available.)` };
+    }
+    const met = !containment.some(Boolean);
+    return {
+      vp: met ? clause.vp : 0,
+      detail: `${clause.sourceText} ${met ? `+${clause.vp}VP` : '+0VP'}`,
+    };
   }
-
   if (clause.kind === 'fixed-if') {
     const met = clause.condition ? conditionMet(state, objectives, side, clause.condition) : false;
     return {
@@ -546,12 +566,21 @@ function evaluateMissionClause(
         : null;
     const actions = actionId ? completedMissionActions(state, side, actionId) : [];
     const count = actions.length;
+    const sabotageBonusFacts = clause.condition === 'committed-sabotage' && clause.bonusVp
+      ? actions.map(action => {
+          if (!action.objectiveIndexesWithinRange) return undefined;
+          const memberships = action.objectiveIndexesWithinRange.map(objectiveIndex => {
+            const objective = state.objectives[objectiveIndex];
+            return objective
+              ? pointWithinMissionTerritory(state, objective, (1 - side) as Side)
+              : false;
+          });
+          if (memberships.some(value => value === undefined)) return undefined;
+          return memberships.some(Boolean);
+        })
+      : [];
     const bonusCount = clause.condition === 'committed-sabotage' && clause.bonusVp
-      ? actions.filter(action => {
-          if (action.targetObjectiveIndex === undefined) return false;
-          const objective = state.objectives[action.targetObjectiveIndex];
-          return !!objective && terrainObjectiveRoleForPoint(state, objective) === opponentHomeRole(side);
-        }).length
+      ? sabotageBonusFacts.filter(value => value === true).length
       : clause.condition === 'booby-trapped-terrain' && clause.bonusVp
         ? actions.filter(action => {
             const terrain = state.terrain.find(candidate => candidate.id === action.targetTerrainId);
@@ -563,6 +592,9 @@ function evaluateMissionClause(
     return {
       vp,
       detail: `${clause.sourceText} ${count} action${count === 1 ? '' : 's'} x ${clause.vp}VP${clause.bonusVp ? `; ${clause.condition === 'committed-sabotage' ? 'territory bonus' : 'objective bonus'} ${bonusCount} x ${clause.bonusVp}VP` : ''} -> +${vp}VP`,
+      ...(sabotageBonusFacts.some(value => value === undefined)
+        ? { unsupported: 'Sabotage territory bonus could not be evaluated because completion-time objective proximity or territory geometry is unavailable.' }
+        : {}),
     };
   }
 
@@ -613,12 +645,30 @@ function evaluateMissionClause(
   let vp = controlled.length * clause.vp;
   let detail = `${clause.sourceText} ${controlled.length} objective${controlled.length === 1 ? '' : 's'} x ${clause.vp}VP`;
 
-  if (clause.kind === 'per-objective-with-bonus' && clause.bonusVp && clause.bonusCondition) {
-    const bonusMet = conditionMet(state, objectives, side, clause.bonusCondition);
-    const bonusObjectives = controlled.filter(objective => objectiveRole(state, objective) !== homeRole(side));
-    const bonusVp = bonusMet ? bonusObjectives.length * clause.bonusVp : 0;
+  if (clause.kind === 'per-objective-with-bonus' && clause.bonusVp) {
+    if (clause.bonusCondition) {
+      const bonusMet = conditionMet(state, objectives, side, clause.bonusCondition);
+      const bonusObjectives = controlled.filter(objective => objectiveRole(state, objective) !== homeRole(side));
+      const bonusVp = bonusMet ? bonusObjectives.length * clause.bonusVp : 0;
+      vp += bonusVp;
+      detail += `; bonus ${bonusMet ? `${bonusObjectives.length} x ${clause.bonusVp}VP` : '+0VP'}`;
+      return { vp, detail: `${detail} -> +${vp}VP` };
+    }
+    const territoryMembership = controlled.map(objective => {
+      const point = state.objectives[objective.objectiveIndex];
+      return point ? pointWithinMissionTerritory(state, point, (1 - side) as Side) : false;
+    });
+    const bonusObjectives = territoryMembership.filter(value => value === true);
+    const bonusVp = bonusObjectives.length * clause.bonusVp;
     vp += bonusVp;
-    detail += `; bonus ${bonusMet ? `${bonusObjectives.length} x ${clause.bonusVp}VP` : '+0VP'}`;
+    detail += `; opponent-territory bonus ${bonusObjectives.length} x ${clause.bonusVp}VP`;
+    if (territoryMembership.some(value => value === undefined)) {
+      return {
+        vp,
+        detail: `${detail} -> +${vp}VP`,
+        unsupported: 'Opponent-territory objective bonus could not be evaluated because territory geometry is unavailable.',
+      };
+    }
   }
 
   return { vp, detail: `${detail} -> +${vp}VP` };

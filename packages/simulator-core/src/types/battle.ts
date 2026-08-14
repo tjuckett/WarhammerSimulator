@@ -185,6 +185,7 @@ export interface CompletedMissionActionEvent {
   targetTerrainId?: string;
   targetOperationMarkerId?: string;
   targetUnitId?: string;
+  objectiveIndexesWithinRange?: number[];
   battleRound: number;
   turn: number;
 }
@@ -319,6 +320,7 @@ export interface TerrainLayout {
   name: string;
   description: string;
   deploymentZones?: DeploymentZoneSet;
+  territoryZones?: TerritoryZoneSet;
   terrain: Terrain[];
 }
 
@@ -337,8 +339,17 @@ export interface BattleSetup {
   forceDispositions?: [EleventhForceDispositionId, EleventhForceDispositionId];
   deployment: string;
   deploymentZones?: DeploymentZoneSet;
+  territoryZones?: TerritoryZoneSet;
   terrainLayout: string;
   boardFormat?: BoardFormat['id'];
+}
+
+export interface TerritoryRegion {
+  polygons: Position[][];
+}
+
+export interface TerritoryZoneSet {
+  sides: [TerritoryRegion, TerritoryRegion];
 }
 
 export interface BattleState {

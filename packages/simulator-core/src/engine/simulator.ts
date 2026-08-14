@@ -23,7 +23,7 @@ import { objectiveControlValue, resolveDesperateEscapeTests } from './battleshoc
 import { circleFullyInTerrain, findUnblockedLOSRay, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, pointInTerrain, terrainCorners } from './terrainGeometry';
 import { COHERENCY_VERTICAL_RANGE, distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, verticalDistance, type CoherencyModel } from './coherency';
 import { secondaryMissionStateFor } from './secondaryMissions';
-import { objectiveRoleForIndex, terrainTerritoryRelation } from './missionGeometry';
+import { objectiveRoleForIndex, terrainTerritoryRelation, terrainWithinMissionTerritory } from './missionGeometry';
 import { scoreSecondaryMissionsAtEndOfTurn, secondaryMissionScoringLogs } from './secondaryMissionScoring';
 import {
   attachedFollowersFor,
@@ -1727,9 +1727,8 @@ function vanguardOperationTerrainIsValid(
   side: Side,
   terrainId: string,
 ): boolean {
-  const opponentHomeRole = side === 0 ? 'home-1' : 'home-0';
   const terrain = state.terrain.find(candidate => candidate.id === terrainId);
-  if (!terrain || terrain.objectiveRole !== opponentHomeRole) return false;
+  if (!terrain || terrainWithinMissionTerritory(state, terrain, (1 - side) as Side) !== true) return false;
   if (!terrainAreaIdsContainingUnit(state, unit).includes(terrainId)) return false;
   return !state.units.some(candidate =>
     candidate.side !== side
@@ -1983,7 +1982,7 @@ export function startPlayUnitAction(
       ...(targetUnitId !== undefined ? { targetUnitId } : {}),
       ...(targetTerrainId !== undefined ? { targetTerrainId } : {}),
     };
-    recordCompletedMissionAction(next, unit, action);
+    recordCompletedMissionAction(next, unit, action, objectiveIndexesWithinRange(next, unit, rules));
     const target = targetUnitId === undefined
       ? undefined
       : next.units.find(candidate => candidate.id === targetUnitId);
@@ -2063,7 +2062,7 @@ export function completeEndOfTurnActions(state: BattleState, side: Side): void {
         marker => marker.id !== action.targetOperationMarkerId,
       );
     }
-    recordCompletedMissionAction(state, unit, action);
+    recordCompletedMissionAction(state, unit, action, objectiveIndexesWithinRange(state, unit, rules40K11th));
     unit.performingAction = undefined;
     state.log = [...state.log, log(state, side, unit.profile.name, `${unit.profile.name} completes ${actionName}.`, 'info')];
   }

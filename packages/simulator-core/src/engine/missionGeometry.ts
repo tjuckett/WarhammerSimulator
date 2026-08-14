@@ -8,11 +8,59 @@ import {
   modelBaseFootprintInches,
 } from './baseSizes';
 import { pointInDeploymentZone, zoneFor, type DeploymentZone } from './deployment';
-import { pointInTerrain } from './terrainGeometry';
+import { pointInTerrain, terrainCenter, terrainCorners } from './terrainGeometry';
 
 export type BattlefieldEdge = 'top' | 'right' | 'bottom' | 'left';
 export type TableQuarter = 0 | 1 | 2 | 3;
-export type TerritoryRelation = 'friendly' | 'enemy' | 'no-mans-land' | 'unclassified';
+export type TerritoryRelation = 'friendly' | 'enemy' | 'both' | 'no-mans-land' | 'unclassified';
+
+function pointOnSegment(point: Position, start: Position, end: Position): boolean {
+  const cross = (point.y - start.y) * (end.x - start.x)
+    - (point.x - start.x) * (end.y - start.y);
+  if (Math.abs(cross) > 0.0001) return false;
+  const dot = (point.x - start.x) * (end.x - start.x)
+    + (point.y - start.y) * (end.y - start.y);
+  if (dot < 0) return false;
+  const lengthSquared = (end.x - start.x) ** 2 + (end.y - start.y) ** 2;
+  return dot <= lengthSquared;
+}
+
+function pointInPolygon(point: Position, polygon: Position[]): boolean {
+  if (polygon.length < 3) return false;
+  if (polygon.some((start, index) => pointOnSegment(point, start, polygon[(index + 1) % polygon.length]))) {
+    return true;
+  }
+  let inside = false;
+  for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index++) {
+    const a = polygon[index];
+    const b = polygon[previous];
+    if (((a.y > point.y) !== (b.y > point.y))
+      && point.x < ((b.x - a.x) * (point.y - a.y)) / (b.y - a.y) + a.x) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+
+export function pointWithinMissionTerritory(
+  state: BattleState,
+  point: Position,
+  territorySide: Side,
+): boolean | undefined {
+  const territory = state.setup?.territoryZones?.sides[territorySide];
+  if (!territory) return undefined;
+  return territory.polygons.some(polygon => pointInPolygon(point, polygon));
+}
+
+export function terrainWithinMissionTerritory(
+  state: BattleState,
+  terrain: Terrain,
+  territorySide: Side,
+): boolean | undefined {
+  if (!state.setup?.territoryZones) return undefined;
+  const samples = [terrainCenter(terrain), ...terrainCorners(terrain)];
+  return samples.some(point => pointWithinMissionTerritory(state, point, territorySide));
+}
 
 function modelFootprint(unit: BattleUnit, modelIndex: number) {
   return modelBaseFootprintInches(
@@ -157,6 +205,14 @@ export function territoryRelationForPoint(
   point: Position,
   side: Side,
 ): TerritoryRelation {
+  const friendly = pointWithinMissionTerritory(state, point, side);
+  const enemy = pointWithinMissionTerritory(state, point, (1 - side) as Side);
+  if (friendly !== undefined && enemy !== undefined) {
+    if (friendly && !enemy) return 'friendly';
+    if (enemy && !friendly) return 'enemy';
+    if (!friendly && !enemy) return 'unclassified';
+    return 'both';
+  }
   const terrain = state.terrain
     .filter(candidate => pointInTerrain(point, candidate))
     .sort((a, b) => (a.width * a.height) - (b.width * b.height))
@@ -175,7 +231,16 @@ function unitWhollyWithinTerritoryRelation(
     modelTestPoints(unit, modelIndex).map(point => territoryRelationForPoint(state, point, side))
   );
   if (relations.some(relation => relation === 'unclassified')) return undefined;
-  return relations.every(relation => relation === expected);
+  return relations.every(relation => relation === expected || relation === 'both');
+}
+
+export function unitWhollyWithinMissionTerritory(
+  state: BattleState,
+  unit: BattleUnit,
+  territorySide: Side,
+): boolean | undefined {
+  if (!state.setup?.territoryZones) return undefined;
+  return unitWhollyWithinRegion(unit, point => pointWithinMissionTerritory(state, point, territorySide) === true);
 }
 
 export function unitWhollyWithinFriendlyTerritory(
@@ -195,7 +260,7 @@ export function unitWithinFriendlyTerritory(
   const relations = unit.modelPositions.flatMap((_position, modelIndex) =>
     modelTestPoints(unit, modelIndex).map(point => territoryRelationForPoint(state, point, side))
   );
-  if (relations.some(relation => relation === 'friendly')) return true;
+  if (relations.some(relation => relation === 'friendly' || relation === 'both')) return true;
   return relations.some(relation => relation === 'unclassified') ? undefined : false;
 }
 

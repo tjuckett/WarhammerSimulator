@@ -41,6 +41,7 @@ export function recordCompletedMissionAction(
   state: BattleState,
   unit: BattleUnit,
   action: NonNullable<BattleUnit['performingAction']>,
+  objectiveIndexesWithinRangeAtCompletion?: number[],
 ): void {
   const completedAction = {
     actionId: action.id,
@@ -59,6 +60,9 @@ export function recordCompletedMissionAction(
       : {}),
     ...(action.targetUnitId !== undefined
       ? { targetUnitId: action.targetUnitId }
+      : {}),
+    ...(objectiveIndexesWithinRangeAtCompletion !== undefined
+      ? { objectiveIndexesWithinRange: [...objectiveIndexesWithinRangeAtCompletion] }
       : {}),
     battleRound: battleRound(state),
     turn: state.turn,

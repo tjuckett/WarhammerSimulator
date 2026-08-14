@@ -61,6 +61,7 @@ export function terrainLayoutToData(layout: TerrainLayout): TerrainLayoutData {
     name: layout.name,
     description: layout.description,
     deploymentZones: layout.deploymentZones,
+    territoryZones: layout.territoryZones,
     terrain: layout.terrain.map((terrain): TerrainSpec => ({
       kind: terrain.type,
       x: terrain.x,

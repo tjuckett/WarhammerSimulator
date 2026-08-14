@@ -47,6 +47,7 @@ export function terrainLayoutFromData(layout: TerrainLayoutData | TerrainLayout)
     name: layout.name,
     description: layout.description,
     deploymentZones: layout.deploymentZones,
+    territoryZones: layout.territoryZones,
     terrain: layout.terrain.map(terrainFromSpec),
   };
 }

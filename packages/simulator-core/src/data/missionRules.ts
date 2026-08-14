@@ -10,8 +10,7 @@ export type MissionScoringClauseKind =
   | 'operation-marker-count-tier'
   | 'per-objective'
   | 'per-objective-if'
-  | 'per-objective-with-bonus'
-  | 'unsupported-event';
+  | 'per-objective-with-bonus';
 
 export type MissionObjectiveFilter = 'all' | 'non-home' | 'central';
 
@@ -186,9 +185,8 @@ const TAKE_AND_HOLD_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         objectiveFilter: 'all',
         vp: 3,
         bonusVp: 3,
-        bonusCondition: 'controls-opponent-home-objective',
         sourceText: 'Second battle round onwards, end of your Command phase: For each objective you control. 3VP. Cumulative: For each of those objectives that is within your opponent’s territory. +3VP.',
-        notes: 'Temporary approximation: opponent-territory objective detection uses the opponent home objective role until territory geometry is modeled.',
+        notes: 'Uses explicit mission territory geometry; the base award remains scoreable when geometry is unavailable and the bonus fails closed.',
       },
       {
         id: 'round-5-objectives-and-opponent-territory-bonus',
@@ -198,9 +196,8 @@ const TAKE_AND_HOLD_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         objectiveFilter: 'all',
         vp: 3,
         bonusVp: 3,
-        bonusCondition: 'controls-opponent-home-objective',
         sourceText: 'Second battle round onwards, end of your turn in the fifth battle round: For each objective you control. 3VP. Cumulative opponent-territory objective bonus. +3VP.',
-        notes: 'Temporary approximation: opponent-territory objective detection uses the opponent home objective role until territory geometry is modeled.',
+        notes: 'Uses explicit mission territory geometry; the base award remains scoreable when geometry is unavailable and the bonus fails closed.',
       },
     ],
   },
@@ -843,11 +840,11 @@ const RECONNAISSANCE_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         id: 'end-battle-no-enemy-in-territory',
         timing: 'end-battle',
         rounds: 'any',
-        kind: 'unsupported-event',
+        kind: 'fixed-if',
         condition: 'no-enemy-units-wholly-within-territory',
         vp: 5,
         sourceText: 'End of battle: No enemy units are wholly within your territory. 5VP.',
-        notes: 'Requires territory geometry from the mission layout.',
+        notes: 'Uses explicit mission territory geometry and fails closed when it is unavailable.',
       },
     ],
   },
@@ -1064,7 +1061,7 @@ const PRIORITY_ASSETS_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
     edition: '11e',
     status: 'implemented',
     source: `${PRIORITY_ASSETS_SOURCE}/sabotage`,
-    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Sabotage action completion is implemented; the opponent-territory bonus uses the opponent home objective role until territory geometry is modeled.',
+    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Sabotage completion snapshots objective proximity so the opponent-territory bonus remains exact after units move or are removed.',
     scoring: [
       {
         id: 'committed-sabotage',
@@ -1074,9 +1071,8 @@ const PRIORITY_ASSETS_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         condition: 'committed-sabotage',
         vp: 3,
         bonusVp: 2,
-        bonusCondition: 'controls-opponent-home-objective',
         sourceText: 'Any battle round, end of your turn: For each friendly unit that committed sabotage this turn. 3VP, with a cumulative +2VP for each of those units within range of one or more objectives in your opponent\'s territory.',
-        notes: 'Completed Sabotage actions score 3VP each; targeting the opponent home objective approximates the opponent-territory bonus.',
+        notes: 'Completed Sabotage actions score 3VP each; explicit territory geometry and completion-time objective proximity determine the cumulative bonus.',
       },
       {
         id: 'round-2-plus-one-non-home-objective',
@@ -1168,7 +1164,7 @@ const PRIORITY_ASSETS_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
     edition: '11e',
     status: 'implemented',
     source: `${PRIORITY_ASSETS_SOURCE}/vanguard-operation`,
-    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Vanguard Operation action completion and current-turn destroyed-unit tracking are implemented; enemy territory uses the opponent home terrain-objective role until territory geometry is modeled.',
+    notes: 'Scoring text transcribed from GDM 2026 Priority Assets card. Vanguard Operation action completion and current-turn destroyed-unit tracking are implemented with explicit territory geometry.',
     scoring: [
       {
         id: 'vanguard-operation',
@@ -1178,7 +1174,7 @@ const PRIORITY_ASSETS_PRIMARY_MISSIONS: PrimaryMissionRuleSpec[] = [
         condition: 'vanguard-operation',
         vp: 4,
         sourceText: 'Any battle round, end of your turn: A friendly unit performed a vanguard operation this turn. 4VP.',
-        notes: 'Resolves from an enemy-free opponent-home terrain area as the current enemy-territory approximation.',
+        notes: 'Resolves from an enemy-free terrain area that overlaps the opponent territory defined by setup geometry.',
       },
       {
         id: 'enemy-destroyed',

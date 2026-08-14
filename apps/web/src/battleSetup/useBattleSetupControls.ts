@@ -88,8 +88,10 @@ export function useBattleSetupControls({
       : setupLabel(selectedMission, editorLayout.name)),
     boardFormat: selectedBoardFormat.id,
     ...(editorLayout.deploymentZones ? { deploymentZones: editorLayout.deploymentZones } : {}),
+    ...(editorLayout.territoryZones ? { territoryZones: editorLayout.territoryZones } : {}),
   }), [
     editorLayout.deploymentZones,
+    editorLayout.territoryZones,
     editorLayout.name,
     forceDisposition0,
     forceDisposition1,

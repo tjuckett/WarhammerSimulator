@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import type { BattleState, BattleUnit, Phase, Position, SecondaryMissionScoringRecord, Terrain } from '../src/types/battle';
+import type { BattleState, BattleUnit, Phase, Position, SecondaryMissionScoringRecord, Terrain, TerritoryZoneSet } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
 import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
@@ -36,6 +36,8 @@ import {
   expansionObjectiveIndexes,
   missionDeploymentZone,
   objectiveRoleForIndex,
+  pointWithinMissionTerritory,
+  terrainWithinMissionTerritory,
   terrainTerritoryRelation,
   territoryRelationForPoint,
   unitTableQuarter,
@@ -166,6 +168,15 @@ function terrainMat(partial: Partial<Terrain> & Pick<Terrain, 'type' | 'x' | 'y'
     color: partial.color ?? '#555',
     features: partial.features ?? [],
     ...partial,
+  };
+}
+
+function verticalTerritories(splitX = 30): TerritoryZoneSet {
+  return {
+    sides: [
+      { polygons: [[{ x: 0, y: 0 }, { x: splitX, y: 0 }, { x: splitX, y: 44 }, { x: 0, y: 44 }]] },
+      { polygons: [[{ x: splitX, y: 0 }, { x: 60, y: 0 }, { x: 60, y: 44 }, { x: splitX, y: 44 }]] },
+    ],
   };
 }
 
@@ -1389,11 +1400,37 @@ test('11th mission geometry exposes explicit territory and expansion roles witho
   assert.deepEqual(expansionObjectiveIndexes(battle, 1), [1]);
 });
 
+test('11th mission territory geometry supports shared boundaries and diagonal polygons', () => {
+  const battle = state('fight');
+  battle.setup = {
+    ...battle.setup!,
+    territoryZones: {
+      sides: [
+        { polygons: [[{ x: 0, y: 0 }, { x: 60, y: 44 }, { x: 0, y: 44 }]] },
+        { polygons: [[{ x: 0, y: 0 }, { x: 60, y: 0 }, { x: 60, y: 44 }]] },
+      ],
+    },
+  };
+  const crossingTerrain = terrainMat({ type: 'ruin', x: 28, y: 20, width: 4, height: 4 });
+
+  assert.equal(pointWithinMissionTerritory(battle, { x: 10, y: 30 }, 0), true);
+  assert.equal(pointWithinMissionTerritory(battle, { x: 50, y: 10 }, 0), false);
+  assert.equal(pointWithinMissionTerritory(battle, { x: 30, y: 22 }, 0), true);
+  assert.equal(pointWithinMissionTerritory(battle, { x: 30, y: 22 }, 1), true);
+  assert.equal(territoryRelationForPoint(battle, { x: 30, y: 22 }, 0), 'both');
+  assert.equal(terrainWithinMissionTerritory(battle, crossingTerrain, 0), true);
+  assert.equal(terrainWithinMissionTerritory(battle, crossingTerrain, 1), true);
+
+  delete battle.setup!.territoryZones;
+  assert.equal(pointWithinMissionTerritory(battle, { x: 10, y: 30 }, 0), undefined);
+  assert.equal(terrainWithinMissionTerritory(battle, crossingTerrain, 1), undefined);
+});
+
 test('mission geometry setup and start-of-turn source facts replay and persist through practice saves', async () => {
   installStorage();
   const initial = state('setup');
   initial.ruleset = rulesetMetadataForState(rules40K11th);
-  initial.setup = { ...initial.setup!, deployment: 'Dawn of War' };
+  initial.setup = { ...initial.setup!, deployment: 'Dawn of War', territoryZones: verticalTerritories() };
   initial.objectives = [{ x: 20, y: 20 }];
   initial.objectiveOwners = [null];
   initial.terrain = [
@@ -1407,11 +1444,13 @@ test('mission geometry setup and start-of-turn source facts replay and persist t
   const replayed = replayTimeline(timeline, { rules: rules40K11th }, false);
   assert.deepEqual(replayed.missionEvents?.startOfTurn, result.state.missionEvents?.startOfTurn);
   assert.equal(objectiveRoleForIndex(replayed, 0), 'expansion-0');
+  assert.equal(pointWithinMissionTerritory(replayed, { x: 20, y: 20 }, 0), true);
   assert.equal(unitWhollyWithinNoMansLand(replayed, replayed.units[0]), true);
 
   await localPracticeScenarioRepository.saveScenario(scenarioFromTimeline(timeline, { id: 'mission-geometry-save' }));
   const loaded = await localPracticeScenarioRepository.loadScenario('mission-geometry-save');
   const loadedState = currentTimelineState(loaded!.timeline);
+  assert.deepEqual(loadedState.setup?.territoryZones, verticalTerritories());
   assert.deepEqual(loadedState.missionEvents?.startOfTurn, result.state.missionEvents?.startOfTurn);
   assert.equal(objectiveRoleForIndex(loadedState, 0), 'expansion-0');
   assert.equal(unitWhollyWithinNoMansLand(loadedState, loadedState.units[0]), true);
@@ -2457,6 +2496,40 @@ test('11th Determined Acquisition does not score objectives already controlled a
   assert.deepEqual(result.unsupportedClauses, []);
 });
 
+test('11th Determined Acquisition scores each controlled objective in opponent territory and preserves base VP without geometry', () => {
+  const battle = state('command', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Determined Acquisition', 'Death Trap'],
+    territoryZones: verticalTerritories(30),
+  };
+  battle.objectives = [{ x: 10, y: 10 }, { x: 30, y: 10 }, { x: 40, y: 10 }];
+  battle.objectiveOwners = [null, null, null];
+  battle.terrain = battle.objectives.map((objective, index) => terrainMat({
+    id: `objective-${index}`,
+    type: 'ruin',
+    x: objective.x - 1,
+    y: objective.y - 1,
+    width: 2,
+    height: 2,
+  }));
+  battle.units = battle.objectives.map((objective, index) => losTestUnit(`blue-${index}`, 0, objective));
+
+  const exact = scorePrimaryMission(battle, 0, rules40K11th);
+  assert.equal(exact.vpGained, 15);
+  assert.deepEqual(exact.unsupportedClauses, []);
+  assert.match(formatPrimaryScoringResult(exact), /opponent-territory bonus 2 x 3VP/);
+
+  const unknown: BattleState = JSON.parse(JSON.stringify(battle));
+  unknown.scores = [0, 0];
+  delete unknown.setup!.territoryZones;
+  const baseOnly = scorePrimaryMission(unknown, 0, rules40K11th);
+  assert.equal(baseOnly.vpGained, 9);
+  assert.match(baseOnly.unsupportedClauses?.[0] ?? '', /territory geometry/);
+});
+
 test('11th Extract Relic scores an enemy destroyed after starting within objective range', () => {
   const battle = state('fight', 2);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
@@ -2785,6 +2858,37 @@ test('11th Search and Scour does not score an enemy that started outside terrain
 
   assert.equal(result.vpGained, 0);
   assert.deepEqual(result.unsupportedClauses, []);
+});
+
+test('11th Search and Scour end-battle territory clause uses whole-unit footprints and fails closed without geometry', () => {
+  const battle = state('end', 5);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: ['Search and Scour', 'Vanguard Operation'],
+    territoryZones: verticalTerritories(),
+  };
+  battle.objectives = [];
+  battle.objectiveOwners = [];
+  battle.units = [losTestUnit('red-crossing', 1, { x: 30, y: 10 })];
+
+  const clear = scorePrimaryMission(battle, 0, rules40K11th);
+  assert.equal(clear.vpGained, 5);
+  assert.deepEqual(clear.unsupportedClauses, []);
+
+  const occupied: BattleState = JSON.parse(JSON.stringify(battle));
+  occupied.scores = [0, 0];
+  occupied.units[0].position = { x: 10, y: 10 };
+  occupied.units[0].modelPositions = [{ x: 10, y: 10 }];
+  assert.equal(scorePrimaryMission(occupied, 0, rules40K11th).vpGained, 0);
+
+  const unknown: BattleState = JSON.parse(JSON.stringify(battle));
+  unknown.scores = [0, 0];
+  delete unknown.setup!.territoryZones;
+  const unsupported = scorePrimaryMission(unknown, 0, rules40K11th);
+  assert.equal(unsupported.vpGained, 0);
+  assert.match(unsupported.unsupportedClauses?.[0] ?? '', /Territory geometry/);
 });
 
 test('11th Reconnaissance Sweep scores three occupied table quarters and excludes centre-near units', () => {
@@ -3542,13 +3646,14 @@ test('11th Secure Asset completes on a non-home objective and scores once withou
   assert.deepEqual(result.unsupportedClauses, []);
 });
 
-test('11th Sabotage completes on different non-home objectives and scores the opponent-home bonus', () => {
+test('11th Sabotage snapshots completion-time objective proximity and scores exact territory bonuses', () => {
   const battle = state('fight', 1);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.objectiveControl = rules40K11th.objectiveControl;
   battle.setup = {
     ...battle.setup!,
     primaryMissions: ['Sabotage', 'Sabotage'],
+    territoryZones: verticalTerritories(25),
   };
   battle.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }];
   battle.objectiveOwners = [null, null, null];
@@ -3568,11 +3673,38 @@ test('11th Sabotage completes on different non-home objectives and scores the op
   completeEndOfTurnActions(bothStarted, 0);
 
   assert.equal(bothStarted.missionEvents?.completedActionsThisTurn?.length, 2);
+  assert.deepEqual(bothStarted.missionEvents?.completedActionsThisTurn?.map(event => event.objectiveIndexesWithinRange), [[1], [2]]);
+  const persistedCompletion: BattleState = JSON.parse(JSON.stringify(bothStarted));
+  assert.deepEqual(persistedCompletion.missionEvents?.completedActionsThisTurn?.map(event => event.objectiveIndexesWithinRange), [[1], [2]]);
   assert.equal(bothStarted.missionState?.operationMarkers?.length, 2);
+  const completedForwardUnit = bothStarted.units.find(candidate => candidate.id === forwardUnit.id)!;
+  completedForwardUnit.position = { x: 10, y: 10 };
+  completedForwardUnit.modelPositions = [{ x: 10, y: 10 }];
   const result = scorePrimaryMission(bothStarted, 0, rules40K11th);
   assert.equal(result.vpGained, 8);
   assert.deepEqual(result.unsupportedClauses, []);
   assert.match(formatPrimaryScoringResult(result), /territory bonus 1 x 2VP/);
+
+  const unknown: BattleState = JSON.parse(JSON.stringify(bothStarted));
+  unknown.scores = [0, 0];
+  delete unknown.setup!.territoryZones;
+  const baseOnly = scorePrimaryMission(unknown, 0, rules40K11th);
+  assert.equal(baseOnly.vpGained, 6);
+  assert.match(baseOnly.unsupportedClauses?.[0] ?? '', /territory bonus/);
+
+  let timeline = createPracticeTimeline(battle, { id: 'sabotage-territory-replay' });
+  let current = battle;
+  for (const action of [
+    { type: GAME_ACTION_TYPE.StartAction, side: 0 as const, unitId: midUnit.id, actionId: 'sabotage', actionName: 'Sabotage', targetObjectiveIndex: 1 },
+    { type: GAME_ACTION_TYPE.StartAction, side: 0 as const, unitId: forwardUnit.id, actionId: 'sabotage', actionName: 'Sabotage', targetObjectiveIndex: 2 },
+    { type: GAME_ACTION_TYPE.StepPhase },
+  ]) {
+    const appended = appendTimelineAction(timeline, current, action, { rules: rules40K11th });
+    timeline = appended.timeline;
+    current = appended.state;
+  }
+  const replayed = replayTimeline(timeline, { rules: rules40K11th }, false);
+  assert.equal(replayed.scores[0], 8);
 });
 
 test('11th Vital Link scores control clauses without unsupported operation-marker clauses', () => {
@@ -3670,13 +3802,14 @@ test('11th Vanguard Operation scores opponent home control at end of battle', ()
   assert.equal(result.vpGained, 10);
 });
 
-test('11th Vanguard Operation completes in an enemy-free opponent-home terrain area', () => {
+test('11th Vanguard Operation completes in an enemy-free terrain area overlapping opponent territory', () => {
   const battle = state('fight', 1);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.objectiveControl = rules40K11th.objectiveControl;
   battle.setup = {
     ...battle.setup!,
     primaryMissions: ['Vanguard Operation', 'Vanguard Operation'],
+    territoryZones: verticalTerritories(),
   };
   battle.objectives = [];
   battle.objectiveOwners = [];
@@ -3686,7 +3819,21 @@ test('11th Vanguard Operation completes in an enemy-free opponent-home terrain a
   const unit = losTestUnit('blue-vanguard', 0, { x: 30, y: 10 });
   battle.units = [unit];
 
+  assert.equal(terrainWithinMissionTerritory(battle, battle.terrain[0], 1), true);
   assert.deepEqual(vanguardOperationTerrainOptions(battle, unit.id, 0, rules40K11th), ['enemy-territory']);
+  const simulationStarted = startPlayUnitAction(
+    battle,
+    unit.id,
+    0,
+    'vanguard-operation',
+    'Vanguard Operation',
+    rules40K11th,
+    undefined,
+    'enemy-territory',
+  );
+  const simulated = simulateNextPhase(simulationStarted, rules40K11th);
+  assert.equal(simulated.scores[0], 4);
+  assert.match(simulated.log.map(entry => entry.message).join('\n'), /completes Vanguard Operation/);
   const started = startPlayUnitAction(
     battle,
     unit.id,
@@ -3707,6 +3854,10 @@ test('11th Vanguard Operation completes in an enemy-free opponent-home terrain a
   const contested: BattleState = JSON.parse(JSON.stringify(battle));
   contested.units.push(losTestUnit('red-defender', 1, { x: 30, y: 10 }));
   assert.deepEqual(vanguardOperationTerrainOptions(contested, unit.id, 0, rules40K11th), []);
+
+  const unknown: BattleState = JSON.parse(JSON.stringify(battle));
+  delete unknown.setup!.territoryZones;
+  assert.deepEqual(vanguardOperationTerrainOptions(unknown, unit.id, 0, rules40K11th), []);
 });
 
 test('11th Death Trap immediately traps a different eligible terrain area and scores its objective bonus', () => {

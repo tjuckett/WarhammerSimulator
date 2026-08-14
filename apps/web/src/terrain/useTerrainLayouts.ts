@@ -144,6 +144,7 @@ export function useTerrainLayouts({
       ...prev,
       terrain: clone(source.terrain),
       deploymentZones: source.deploymentZones ? clone(source.deploymentZones) : undefined,
+      territoryZones: source.territoryZones ? clone(source.territoryZones) : undefined,
     }));
     setSelectedEdit(null);
     setAlignVertexLock(null);
