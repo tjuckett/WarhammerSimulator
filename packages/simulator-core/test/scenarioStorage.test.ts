@@ -28,7 +28,7 @@ import {
 import { availableStratagems, resolveCommandReroll, useStratagem } from '../src/engine/stratagems';
 import { availableUnitAbilities, useUnitAbility } from '../src/engine/unitAbilities';
 import { eleventhSetupLabel, TOURNAMENT_MISSIONS } from '../src/engine/missions';
-import { ELEVENTH_PRIMARY_MISSION_RULES, ELEVENTH_SECONDARY_MISSION_RULES, eleventhSecondaryMissionRuleForName } from '../src/data/missionRules';
+import { ELEVENTH_PRIMARY_MISSION_RULES, ELEVENTH_SECONDARY_MISSION_RULES, eleventhSecondaryMissionRuleForName, type MissionScoringClause } from '../src/data/missionRules';
 import { configureSecondaryMissions, discardSecondaryMission, drawSecondaryMission, selectBeaconUnit, selectBurdenOfTrustGuards, selectTemptingTargetObjective } from '../src/engine/secondaryMissions';
 import {
   battlefieldCentre,
@@ -179,6 +179,205 @@ function verticalTerritories(splitX = 30): TerritoryZoneSet {
       { polygons: [[{ x: splitX, y: 0 }, { x: 60, y: 0 }, { x: 60, y: 44 }, { x: splitX, y: 44 }]] },
     ],
   };
+}
+
+type PrimaryClauseCoverage = {
+  missionName: string;
+  clause: MissionScoringClause;
+};
+
+const PRIMARY_CLAUSE_COVERAGE: PrimaryClauseCoverage[] = ELEVENTH_PRIMARY_MISSION_RULES.flatMap(mission =>
+  (mission.scoring ?? []).map(clause => ({ missionName: mission.name, clause })),
+);
+
+const PRIMARY_GLOBAL_SCORING_COVERAGE = [
+  {
+    id: 'round-cap-and-idempotence',
+    assertion: '11th primary scoring applies the 15VP round cap across command and turn-end windows idempotently',
+  },
+  {
+    id: 'battle-cap-replay-and-save',
+    assertion: '11th primary scoring applies a partial 45VP battle cap and persists its ledger through replay and saves',
+  },
+  {
+    id: 'end-battle-manual-and-simulation-lifecycle',
+    assertion: '11th end-of-battle primary clauses score for both players in manual and simulation lifecycles',
+  },
+] as const;
+
+function scoringPhaseForClause(clause: MissionScoringClause): Phase {
+  return clause.timing === 'end-command-phase' ? 'command' : clause.timing === 'end-battle' ? 'end' : 'fight';
+}
+
+function scoringRoundForClause(clause: MissionScoringClause): number {
+  return clause.rounds === 'any' ? (clause.timing === 'end-battle' ? 5 : 2) : clause.rounds[0];
+}
+
+function primaryClauseCoverageState(
+  missionName: string,
+  clause: MissionScoringClause,
+  positive: boolean,
+): BattleState {
+  const round = scoringRoundForClause(clause);
+  const battle = state(scoringPhaseForClause(clause), round);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.setup = {
+    ...battle.setup!,
+    primaryMissions: [missionName, 'Battlefield Dominance'],
+    territoryZones: verticalTerritories(),
+  };
+  battle.objectives = [
+    { x: 10, y: 10 },
+    { x: 20, y: 22 },
+    { x: 28, y: 12 },
+    { x: 36, y: 32 },
+    { x: 50, y: 34 },
+  ];
+  battle.objectiveOwners = battle.objectives.map(() => null);
+  battle.terrain = [
+    terrainMat({ id: 'home-0', type: 'ruin', x: 8, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'central', type: 'ruin', x: 18, y: 20, width: 4, height: 4, objectiveRole: 'central' }),
+    terrainMat({ id: 'expansion-0', type: 'ruin', x: 26, y: 10, width: 4, height: 4, objectiveRole: 'expansion-0' }),
+    terrainMat({ id: 'expansion-1', type: 'ruin', x: 34, y: 30, width: 4, height: 4, objectiveRole: 'expansion-1' }),
+    terrainMat({ id: 'home-1', type: 'ruin', x: 48, y: 32, width: 4, height: 4, objectiveRole: 'home-1' }),
+    terrainMat({ id: 'trap', type: 'ruin', x: 23, y: 18, width: 4, height: 4 }),
+  ];
+
+  if (!positive) {
+    if (clause.condition === 'no-enemy-operation-markers') {
+      battle.missionState = {
+        operationMarkers: [{
+          id: 'enemy-marker', side: 1, sourceActionId: 'decoy', placedByUnitId: 'enemy',
+          objectiveIndex: 1, position: battle.objectives[1], battleRound: round, turn: round,
+        }],
+      };
+    }
+    if (clause.condition === 'no-enemy-units-wholly-within-territory') {
+      battle.units = [losTestUnit('enemy-in-territory', 1, { x: 10, y: 10 })];
+    }
+    const negativeTierCount = clause.kind === 'operation-marker-count-tier'
+      ? clause.maximumCount !== undefined ? clause.maximumCount + 1 : Math.max(0, (clause.minimumCount ?? 1) - 1)
+      : 0;
+    if (negativeTierCount > 0) {
+      const sourceActionId = clause.condition === 'consecrated-objectives' ? 'consecrate' : 'triangulate';
+      battle.missionState = {
+        operationMarkers: Array.from({ length: negativeTierCount }, (_, index) => ({
+          id: `negative-tier-${index}`, side: 0, sourceActionId, placedByUnitId: `unit-${index}`,
+          objectiveIndex: index, position: battle.objectives[index], battleRound: round, turn: round,
+        })),
+      };
+    }
+    if (clause.condition === 'friendly-units-in-three-table-quarters') {
+      battle.units = [
+        losTestUnit('q1', 0, { x: 5, y: 5 }), losTestUnit('q2', 0, { x: 55, y: 5 }),
+        losTestUnit('q3', 0, { x: 5, y: 39 }), losTestUnit('q4', 0, { x: 55, y: 39 }),
+      ];
+    }
+    if (clause.condition === 'friendly-units-in-four-table-quarters') {
+      battle.units = [
+        losTestUnit('q1', 0, { x: 5, y: 5 }), losTestUnit('q2', 0, { x: 55, y: 5 }),
+        losTestUnit('q3', 0, { x: 5, y: 39 }),
+      ];
+    }
+    return battle;
+  }
+
+  battle.units = battle.objectives.map((position, index) => losTestUnit(`controller-${index}`, 0, position));
+  battle.missionEvents = {
+    startOfTurn: {
+      activeSide: 0,
+      battleRound: round,
+      turn: round,
+      objectiveOwners: battle.objectives.map(() => null),
+      units: [
+        {
+          unitId: 'enemy-destroyed-0', side: 1, unitName: 'Enemy', remainingModels: 1,
+          modelPositions: [{ x: 20, y: 22 }], objectiveIndexesWithinRange: [1], terrainAreaIds: ['trap'],
+        },
+      ],
+    },
+    destroyedUnitsThisTurn: Array.from({ length: 3 }, (_, index) => ({
+      unitId: `enemy-destroyed-${index}`,
+      side: 1,
+      unitName: `Enemy ${index}`,
+      destroyedBySide: 0,
+      destroyedByUnitId: 'controller-1',
+      destroyingUnitObjectiveIndexesWithinRange: [1],
+      battleRound: round,
+      turn: round,
+      phase: scoringPhaseForClause(clause),
+    })),
+    completedActionsThisTurn: [
+      { side: 0, unitId: 'controller-1', unitName: 'Controller', actionId: 'extract-intelligence', actionName: 'Extract Intelligence', targetObjectiveIndex: 1, battleRound: round, turn: round },
+      { side: 0, unitId: 'controller-1', unitName: 'Controller', actionId: 'secure-asset', actionName: 'Secure Asset', targetObjectiveIndex: 1, battleRound: round, turn: round },
+      { side: 0, unitId: 'controller-1', unitName: 'Controller', actionId: 'vanguard-operation', actionName: 'Vanguard Operation', targetTerrainId: 'trap', battleRound: round, turn: round },
+      { side: 0, unitId: 'controller-1', unitName: 'Controller', actionId: 'sensor-sweep', actionName: 'Sensor Sweep', targetObjectiveIndex: 1, battleRound: round, turn: round },
+      { side: 0, unitId: 'controller-1', unitName: 'Controller', actionId: 'surveil', actionName: 'Surveil', targetUnitId: 'removed-enemy', battleRound: round, turn: round },
+      { side: 0, unitId: 'controller-1', unitName: 'Controller', actionId: 'booby-trap', actionName: 'Booby Trap', targetTerrainId: 'trap', battleRound: round, turn: round },
+      { side: 0, unitId: 'controller-1', unitName: 'Controller', actionId: 'sabotage', actionName: 'Sabotage', targetObjectiveIndex: 4, objectiveIndexesWithinRange: [4], battleRound: round, turn: round },
+    ],
+    unitsLeftBattlefieldThisTurn: ['condemned-enemy'],
+    lastCompletedTurn: {
+      activeSide: 1,
+      battleRound: Math.max(1, round - 1),
+      turn: Math.max(1, round - 1),
+      destroyedUnitCounts: [0, 0],
+    },
+  };
+  battle.missionState = { condemnedUnitIds: [['condemned-enemy'], []] };
+
+  const addMarkers = (sourceActionId: string, count: number, side: 0 | 1 = 0, objectiveIndex = 1) => {
+    battle.missionState!.operationMarkers = [
+      ...(battle.missionState!.operationMarkers ?? []),
+      ...Array.from({ length: count }, (_, index) => ({
+        id: `${sourceActionId}-${side}-${index}`,
+        side,
+        sourceActionId,
+        placedByUnitId: `marker-unit-${index}`,
+        objectiveIndex: Math.min(objectiveIndex + index, battle.objectives.length - 1),
+        position: battle.objectives[Math.min(objectiveIndex + index, battle.objectives.length - 1)],
+        battleRound: round,
+        turn: round,
+      })),
+    ];
+  };
+
+  if (clause.condition === 'consecrated-objectives') addMarkers('consecrate', clause.minimumCount ?? 1);
+  if (clause.condition === 'triangulated-objectives') addMarkers('triangulate', clause.minimumCount ?? 1);
+  if (clause.condition === 'enemy-home-objective-consecrated') addMarkers('consecrate', 1, 0, 4);
+  if (clause.condition === 'three-operation-markers') addMarkers('extract-intelligence', 3);
+  if (clause.condition === 'operation-marker-near-opponent-home-objective') addMarkers('extract-intelligence', 1, 0, 4);
+  if (clause.condition === 'operation-markers-near-controlled-central-objectives') addMarkers('maintain-control', 1);
+  if (clause.condition === 'decoy-objectives') addMarkers('decoy', 1);
+  if (clause.condition === 'four-decoy-objectives') addMarkers('decoy', 4);
+  if (clause.condition === 'destroyed-enemy-started-in-trapped-terrain') {
+    battle.missionState.operationMarkers = [{
+      id: 'trap-marker', side: 0, sourceActionId: 'booby-trap', placedByUnitId: 'controller-1',
+      terrainId: 'trap', position: { x: 25, y: 20 }, battleRound: round, turn: round,
+    }];
+  }
+  if (clause.condition === 'only-one-operation-marker-isolated') {
+    battle.missionState.operationMarkers = [{
+      id: 'own-isolated', side: 0, sourceActionId: 'booby-trap', placedByUnitId: 'controller-1',
+      terrainId: 'trap', position: { x: 25, y: 20 }, battleRound: round, turn: round,
+    }];
+    battle.units.push(losTestUnit('friendly-in-trap', 0, { x: 25, y: 20 }));
+  }
+  if (clause.condition === 'opponent-operation-marker-isolated') {
+    battle.missionState.operationMarkers = [{
+      id: 'enemy-isolated', side: 1, sourceActionId: 'decoy', placedByUnitId: 'enemy',
+      position: { x: 25, y: 20 }, battleRound: round, turn: round,
+    }];
+    battle.units.push(losTestUnit('friendly-in-trap', 0, { x: 25, y: 20 }));
+  }
+  if (clause.condition === 'friendly-units-in-three-table-quarters'
+    || clause.condition === 'friendly-units-in-four-table-quarters') {
+    const count = clause.condition === 'friendly-units-in-three-table-quarters' ? 3 : 4;
+    const positions = [{ x: 5, y: 5 }, { x: 55, y: 5 }, { x: 5, y: 39 }, { x: 55, y: 39 }];
+    battle.units = positions.slice(0, count).map((position, index) => losTestUnit(`quarter-${index}`, 0, position));
+  }
+  return battle;
 }
 
 function addStep(timeline: PracticeTimeline, phase: Phase): PracticeTimeline {
@@ -1084,6 +1283,54 @@ test('11th Inescapable Dominion scores fixed objective conditions from mission d
   assert.equal(result.scoringModel, '11e-data:Inescapable Dominion');
   assert.equal(result.vpGained, 9);
   assert.deepEqual(battle.scores, [9, 0]);
+});
+
+test('11th primary scoring coverage matrix exercises every clause positively and at a negative boundary', () => {
+  assert.equal(ELEVENTH_PRIMARY_MISSION_RULES.length, 25);
+  assert.equal(PRIMARY_CLAUSE_COVERAGE.length, 127);
+  assert.equal(new Set(PRIMARY_CLAUSE_COVERAGE.map(({ missionName, clause }) => `${missionName}:${clause.id}`)).size, 127);
+  assert.deepEqual(
+    PRIMARY_GLOBAL_SCORING_COVERAGE.map(entry => entry.id),
+    ['round-cap-and-idempotence', 'battle-cap-replay-and-save', 'end-battle-manual-and-simulation-lifecycle'],
+  );
+  assert.equal(new Set(PRIMARY_GLOBAL_SCORING_COVERAGE.map(entry => entry.assertion)).size, 3);
+
+  for (const { missionName, clause } of PRIMARY_CLAUSE_COVERAGE) {
+    const label = `${missionName}:${clause.id}`;
+    const positive = scorePrimaryMission(primaryClauseCoverageState(missionName, clause, true), 0, rules40K11th);
+    const positiveDetail = positive.scoringDetails?.find(detail => detail.startsWith(clause.sourceText));
+    assert.ok(positiveDetail, `${label} must be evaluated in its published scoring window`);
+    assert.doesNotMatch(positiveDetail, /(?:\+0VP|-> \+0VP)$/, `${label} needs a positive scoring assertion`);
+
+    const negative = scorePrimaryMission(primaryClauseCoverageState(missionName, clause, false), 0, rules40K11th);
+    const negativeDetail = negative.scoringDetails?.find(detail => detail.startsWith(clause.sourceText));
+    assert.ok(negativeDetail, `${label} negative case must reach the clause evaluator`);
+    assert.match(negativeDetail, /(?:\+0VP|-> \+0VP)$/, `${label} needs a condition or exclusive-tier negative assertion`);
+
+    const wrongTimingState = primaryClauseCoverageState(missionName, clause, true);
+    wrongTimingState.phase = clause.timing === 'end-command-phase' ? 'fight' : 'command';
+    const wrongTiming = scorePrimaryMission(wrongTimingState, 0, rules40K11th);
+    assert.equal(
+      wrongTiming.scoringDetails?.some(detail => detail.startsWith(clause.sourceText)) ?? false,
+      false,
+      `${label} must not evaluate at the wrong timing`,
+    );
+
+    if (clause.rounds !== 'any') {
+      const applicableRounds: readonly number[] = clause.rounds;
+      const wrongRound = [1, 2, 3, 4, 5].find(round => !applicableRounds.includes(round));
+      assert.notEqual(wrongRound, undefined, `${label} needs an out-of-round boundary`);
+      const wrongRoundState = primaryClauseCoverageState(missionName, clause, true);
+      wrongRoundState.battleRound = wrongRound!;
+      wrongRoundState.turn = wrongRound!;
+      const wrongRoundResult = scorePrimaryMission(wrongRoundState, 0, rules40K11th);
+      assert.equal(
+        wrongRoundResult.scoringDetails?.some(detail => detail.startsWith(clause.sourceText)) ?? false,
+        false,
+        `${label} must not evaluate outside its published rounds`,
+      );
+    }
+  }
 });
 
 test('11th secondary mission state tracks fixed, tactical, draw, and discard state', () => {
@@ -4048,7 +4295,7 @@ test('11th Delaying Action scores control of central and friendly expansion obje
   assert.deepEqual(result.unsupportedClauses, []);
 });
 
-test('11th primary scoring applies the 15VP round cap across command and turn-end windows idempotently', () => {
+test(PRIMARY_GLOBAL_SCORING_COVERAGE[0].assertion, () => {
   const battle = state('command', 2);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.objectiveControl = rules40K11th.objectiveControl;
@@ -4089,7 +4336,7 @@ test('11th primary scoring applies the 15VP round cap across command and turn-en
   assert.equal(battle.missionState?.primaryMissionScoringRecords?.length, 2);
 });
 
-test('11th primary scoring applies a partial 45VP battle cap and persists its ledger through replay and saves', async () => {
+test(PRIMARY_GLOBAL_SCORING_COVERAGE[1].assertion, async () => {
   installStorage();
   const battle = state('command', 4);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
@@ -4149,7 +4396,7 @@ test('11th primary scoring applies a partial 45VP battle cap and persists its le
   );
 });
 
-test('11th end-of-battle primary clauses score for both players in manual and simulation lifecycles', () => {
+test(PRIMARY_GLOBAL_SCORING_COVERAGE[2].assertion, () => {
   const finalTurn = state('fight', 5);
   finalTurn.ruleset = rulesetMetadataForState(rules40K11th);
   finalTurn.objectiveControl = rules40K11th.objectiveControl;
