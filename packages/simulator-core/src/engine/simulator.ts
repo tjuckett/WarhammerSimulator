@@ -8,7 +8,7 @@ import { DEFAULT_OBJECTIVES } from './missions';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
 import { advanceAllowance, normalMoveAllowance } from './movement';
 import { objectiveControlRadius } from './objectiveGeometry';
-import { formatPrimaryScoringResult, objectiveIndexesWithinRange, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, terrainAreaIdsContainingUnit, updateObjectiveControl } from './missionScoring';
+import { objectiveIndexesWithinRange, primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, terrainAreaIdsContainingUnit, unsupportedPrimaryMissionScoringLogs, updateObjectiveControl } from './missionScoring';
 import { battleRound, logWithBattleRound, maxBattleRounds, setBattleRound } from './battleRound';
 import {
   completeMissionEventsForCurrentTurn,
@@ -3192,23 +3192,26 @@ function scoreObjectives(s: BattleState, side: Side, rules: RulesEdition): LogEn
 // ─── Victory check ────────────────────────────────────────────────────────────
 
 function scorePrimaryMissionLogs(s: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
+  const recordCount = s.missionState?.primaryMissionScoringRecords?.length ?? 0;
   const result = scorePrimaryMission(s, side, rules);
-  return [log(s, side, s.armies[side].name,
-    `\n--- ${formatPrimaryScoringResult(result)} ---`,
-    'info',
-  )];
+  const records = s.missionState?.primaryMissionScoringRecords?.slice(recordCount) ?? [];
+  return [...primaryMissionScoringLogs(s, records), ...unsupportedPrimaryMissionScoringLogs(s, [result])];
 }
 
 function scoreEndOfTurnPrimaryMissionLogs(s: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
-  return scorePrimaryMissionsAtEndOfTurn(s, side, rules).map(result =>
-    log(s, result.side, s.armies[result.side].name, `\n--- ${formatPrimaryScoringResult(result)} ---`, 'info')
-  );
+  const recordCount = s.missionState?.primaryMissionScoringRecords?.length ?? 0;
+  const results = scorePrimaryMissionsAtEndOfTurn(s, side, rules);
+  const records = s.missionState?.primaryMissionScoringRecords?.slice(recordCount) ?? [];
+  const logs = primaryMissionScoringLogs(s, records);
+  return [...logs, ...unsupportedPrimaryMissionScoringLogs(s, results)];
 }
 
 function scoreEndOfBattlePrimaryMissionLogs(s: BattleState, rules: RulesEdition): LogEntry[] {
-  return scorePrimaryMissionsAtEndOfBattle(s, rules).map(result =>
-    log(s, result.side, s.armies[result.side].name, `\n--- ${formatPrimaryScoringResult(result)} ---`, 'info')
-  );
+  const recordCount = s.missionState?.primaryMissionScoringRecords?.length ?? 0;
+  const results = scorePrimaryMissionsAtEndOfBattle(s, rules);
+  const records = s.missionState?.primaryMissionScoringRecords?.slice(recordCount) ?? [];
+  const logs = primaryMissionScoringLogs(s, records);
+  return [...logs, ...unsupportedPrimaryMissionScoringLogs(s, results)];
 }
 
 function scoreEndOfTurnSecondaryMissionLogs(s: BattleState, side: Side, rules: RulesEdition): LogEntry[] {

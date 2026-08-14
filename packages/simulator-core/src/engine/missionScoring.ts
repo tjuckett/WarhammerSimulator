@@ -1,4 +1,4 @@
-import type { BattleState, BattleUnit, Side } from '../types/battle';
+import type { BattleState, BattleUnit, LogEntry, PrimaryMissionScoringRecord, Side } from '../types/battle';
 import { modelBaseRadiusInches } from './baseSizes';
 import { objectiveControlValue } from './battleshock';
 import { battleRound, maxBattleRounds } from './battleRound';
@@ -772,6 +772,20 @@ function scoreDataDrivenPrimaryMission(
     )
   );
 
+  if (activeClauses.length === 0) {
+    return {
+      kind: 'scored',
+      missionName: mission.name,
+      scoringModel: `11e-data:${mission.name}`,
+      objectiveControlLabel: (state.objectiveControl ?? rules.objectiveControl).label,
+      side,
+      vpGained: 0,
+      score: [...state.scores],
+      objectives,
+      scoringDetails: [],
+    };
+  }
+
   const scored = activeClauses.map(clause => evaluateMissionClause(state, objectives, side, clause));
   const id = primaryEvaluationId(state, side, mission.name, timing);
   const records = state.missionState?.primaryMissionScoringRecords ?? [];
@@ -803,8 +817,9 @@ function scoreDataDrivenPrimaryMission(
   const capDetail = capped
     ? `Requested ${requestedVp}VP; awarded ${vpGained}VP after the ${PRIMARY_ROUND_CAP}VP battle-round and ${PRIMARY_BATTLE_CAP}VP battle caps.`
     : `Requested and awarded ${vpGained}VP.`;
+  const clauseDetails = scored.flatMap(clause => clause.detail ? [clause.detail] : []);
   const recordDetail = [
-    ...scored.flatMap(clause => clause.detail ? [clause.detail] : []),
+    ...clauseDetails,
     capDetail,
     ...unsupportedClauses.map(clause => `Unsupported: ${clause}`),
   ].join(' ');
@@ -822,6 +837,10 @@ function scoreDataDrivenPrimaryMission(
     activeSide: state.activeArmy,
     phase: state.phase,
     scoreAfter: state.scores[side],
+    timing,
+    clauseDetails,
+    capDetail,
+    unsupportedReasons: unsupportedClauses,
   });
 
   return {
@@ -943,4 +962,85 @@ export function formatPrimaryScoringResult(result: PrimaryScoringResult): string
   });
   const scoreStr = parts.join(', ') || 'no objectives scored';
   return `Primary (${result.missionName}, fallback): ${scoreStr} -> ${result.score[0]}VP / ${result.score[1]}VP`;
+}
+
+function primaryTimingLabel(record: PrimaryMissionScoringRecord): string {
+  const timing = record.timing
+    ?? (record.phase === 'command' ? 'end-command-phase' : record.phase === 'end' ? 'end-battle' : 'end-turn');
+  if (timing === 'end-command-phase') return 'End of Command phase';
+  if (timing === 'end-battle') return 'End of battle';
+  return 'End of turn';
+}
+
+export function formatPrimaryMissionScoringRecord(
+  record: PrimaryMissionScoringRecord,
+  playerName = `Player ${record.side + 1}`,
+): string {
+  const identity = `${playerName} (Player ${record.side + 1})`;
+  const status = record.status === 'capped'
+    ? 'capped'
+    : record.status === 'unsupported'
+      ? 'unsupported'
+      : record.status === 'not-met'
+        ? 'conditions not met'
+        : 'awarded';
+  const details = record.clauseDetails?.length
+    ? record.clauseDetails
+    : record.detail ? [record.detail] : [];
+  const unsupported = record.unsupportedReasons?.length
+    ? ` Unsupported: ${record.unsupportedReasons.join(' ')}`
+    : '';
+  const cap = record.status === 'capped' && record.capDetail ? ` ${record.capDetail}` : '';
+  const reasons = details.length ? ` ${details.join(' ')}` : '';
+  return `Primary — ${identity} — ${record.missionName} — ${primaryTimingLabel(record)}, battle round ${record.battleRound}: requested ${record.requestedVp}VP, awarded ${record.vp}VP (${status}); score ${record.scoreAfter}VP.${reasons}${cap}${unsupported}`;
+}
+
+export function primaryMissionScoringLogs(
+  state: BattleState,
+  records: PrimaryMissionScoringRecord[],
+): LogEntry[] {
+  return records.map(record => ({
+    id: `primary-score-log:${record.id}`,
+    battleRound: record.battleRound,
+    turn: record.turn,
+    phase: record.phase,
+    side: record.side,
+    unitName: state.armies[record.side]?.name ?? `Player ${record.side + 1}`,
+    message: formatPrimaryMissionScoringRecord(
+      record,
+      state.armies[record.side]?.name ?? `Player ${record.side + 1}`,
+    ),
+    type: 'info',
+  }));
+}
+
+export function unsupportedPrimaryMissionScoringLogs(
+  state: BattleState,
+  results: PrimaryScoringResult[],
+): LogEntry[] {
+  const existingIds = new Set(state.log.map(entry => entry.id));
+  return results.flatMap(result => {
+    if (result.kind !== 'unsupported') return [];
+    const id = [
+      'primary-score-unsupported',
+      result.side,
+      result.missionName,
+      battleRound(state),
+      state.turn,
+      state.activeArmy,
+      state.phase,
+    ].join(':');
+    if (existingIds.has(id)) return [];
+    const playerName = state.armies[result.side]?.name ?? `Player ${result.side + 1}`;
+    return [{
+      id,
+      battleRound: battleRound(state),
+      turn: state.turn,
+      phase: state.phase,
+      side: result.side,
+      unitName: playerName,
+      message: `Primary — ${playerName} (Player ${result.side + 1}) — ${result.missionName}: requested 0VP, awarded 0VP (unsupported). ${formatPrimaryScoringResult(result)}`,
+      type: 'info' as const,
+    }];
+  });
 }

@@ -286,6 +286,10 @@ export interface PrimaryMissionScoringRecord {
   activeSide: Side;
   phase: Phase;
   scoreAfter: number;
+  timing?: 'end-command-phase' | 'end-turn' | 'end-battle';
+  clauseDetails?: string[];
+  capDetail?: string;
+  unsupportedReasons?: string[];
 }
 
 export interface MissionState {

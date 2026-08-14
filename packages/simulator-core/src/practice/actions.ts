@@ -2,7 +2,7 @@ import { BATTLE_PHASE, MOVEMENT_STEP, type BeaconWhenDrawnSelection, type Burden
 import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
-import { scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn } from '../engine/missionScoring';
+import { primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, unsupportedPrimaryMissionScoringLogs } from '../engine/missionScoring';
 import { resolveCommandReroll, useStratagem } from '../engine/stratagems';
 import { useUnitAbility } from '../engine/unitAbilities';
 import type { AbilityTiming } from '../types/ability';
@@ -385,13 +385,19 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   const scoringSide = next.activeArmy;
   const currentIndex = PLAY_TURN_PHASES.indexOf(next.phase);
   if (phaseBeforeStep === BATTLE_PHASE.Command) {
-    scorePrimaryMission(next, scoringSide, rules);
+    const recordCount = next.missionState?.primaryMissionScoringRecords?.length ?? 0;
+    const result = scorePrimaryMission(next, scoringSide, rules);
+    const records = next.missionState?.primaryMissionScoringRecords?.slice(recordCount) ?? [];
+    next.log = [...next.log, ...primaryMissionScoringLogs(next, records), ...unsupportedPrimaryMissionScoringLogs(next, [result])];
   }
   if (phaseBeforeStep === BATTLE_PHASE.Fight) {
     completeEndOfTurnActions(next, scoringSide);
     const secondaryRecords = scoreSecondaryMissionsAtEndOfTurn(next, scoringSide, rules);
     next.log = [...next.log, ...secondaryMissionScoringLogs(next, secondaryRecords)];
-    scorePrimaryMissionsAtEndOfTurn(next, scoringSide, rules);
+    const recordCount = next.missionState?.primaryMissionScoringRecords?.length ?? 0;
+    const results = scorePrimaryMissionsAtEndOfTurn(next, scoringSide, rules);
+    const records = next.missionState?.primaryMissionScoringRecords?.slice(recordCount) ?? [];
+    next.log = [...next.log, ...primaryMissionScoringLogs(next, records), ...unsupportedPrimaryMissionScoringLogs(next, results)];
     completeMissionEventsForCurrentTurn(next);
   }
   if (currentIndex < 0) {
@@ -422,7 +428,10 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
 
   if (next.phase === BATTLE_PHASE.End) {
     next.movementStep = undefined;
-    scorePrimaryMissionsAtEndOfBattle(next, rules);
+    const recordCount = next.missionState?.primaryMissionScoringRecords?.length ?? 0;
+    const results = scorePrimaryMissionsAtEndOfBattle(next, rules);
+    const records = next.missionState?.primaryMissionScoringRecords?.slice(recordCount) ?? [];
+    next.log = [...next.log, ...primaryMissionScoringLogs(next, records), ...unsupportedPrimaryMissionScoringLogs(next, results)];
     if (next.scores[0] > next.scores[1]) next.winner = 0;
     else if (next.scores[1] > next.scores[0]) next.winner = 1;
     else next.winner = 'draw';

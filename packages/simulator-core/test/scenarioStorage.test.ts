@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import type { BattleState, BattleUnit, Phase, Position, SecondaryMissionScoringRecord, Terrain, TerritoryZoneSet } from '../src/types/battle';
+import type { BattleState, BattleUnit, Phase, Position, PrimaryMissionScoringRecord, SecondaryMissionScoringRecord, Terrain, TerritoryZoneSet } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
 import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
@@ -18,7 +18,7 @@ import { applyGameAction, GAME_ACTION_TYPE } from '../src/practice/actions';
 import { getLegalActions } from '../src/engine/legalActions';
 import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
-import { formatPrimaryScoringResult, scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn, updateObjectiveControl } from '../src/engine/missionScoring';
+import { formatPrimaryMissionScoringRecord, formatPrimaryScoringResult, primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn, updateObjectiveControl } from '../src/engine/missionScoring';
 import {
   completeMissionEventsForCurrentTurn,
   recordDestroyedModelMissionEvents,
@@ -1331,6 +1331,109 @@ test('11th primary scoring coverage matrix exercises every clause positively and
       );
     }
   }
+});
+
+test('primary scoring logs format serialized player, timing, award, cap, and unsupported details', () => {
+  const battle = state('fight', 3);
+  const baseRecord: PrimaryMissionScoringRecord = {
+    id: '0:Mission:3:3:0:end-turn',
+    side: 0,
+    missionName: 'Mission',
+    clauseIds: ['control'],
+    status: 'awarded',
+    requestedVp: 5,
+    vp: 5,
+    detail: 'Controlled the central objective. Requested and awarded 5VP.',
+    battleRound: 3,
+    turn: 3,
+    activeSide: 0,
+    phase: 'fight',
+    scoreAfter: 17,
+    timing: 'end-turn',
+    clauseDetails: ['Controlled the central objective. -> +5VP'],
+    capDetail: 'Requested and awarded 5VP.',
+    unsupportedReasons: [],
+  };
+  const capped: PrimaryMissionScoringRecord = {
+    ...baseRecord,
+    id: '0:Mission:4:4:0:end-command-phase',
+    status: 'capped',
+    requestedVp: 8,
+    vp: 2,
+    battleRound: 4,
+    turn: 4,
+    phase: 'command',
+    scoreAfter: 45,
+    timing: 'end-command-phase',
+    capDetail: 'Requested 8VP; awarded 2VP after the 15VP battle-round and 45VP battle caps.',
+  };
+  const unsupported: PrimaryMissionScoringRecord = {
+    ...baseRecord,
+    id: '1:Mission:5:5:1:end-battle',
+    side: 1,
+    status: 'unsupported',
+    requestedVp: 0,
+    vp: 0,
+    battleRound: 5,
+    turn: 5,
+    activeSide: 1,
+    phase: 'end',
+    scoreAfter: 21,
+    timing: 'end-battle',
+    clauseDetails: ['Territory condition could not be evaluated. -> +0VP'],
+    unsupportedReasons: ['Territory geometry is unavailable.'],
+  };
+
+  const logs = primaryMissionScoringLogs(battle, [baseRecord, capped, unsupported]);
+
+  assert.deepEqual(logs.map(entry => entry.id), [
+    `primary-score-log:${baseRecord.id}`,
+    `primary-score-log:${capped.id}`,
+    `primary-score-log:${unsupported.id}`,
+  ]);
+  assert.match(logs[0].message, /Blue \(Player 1\).*Mission.*End of turn, battle round 3.*requested 5VP, awarded 5VP \(awarded\).*score 17VP.*Controlled the central objective/);
+  assert.doesNotMatch(logs[0].message, /Side [01]/);
+  assert.match(logs[1].message, /End of Command phase, battle round 4.*requested 8VP, awarded 2VP \(capped\).*45VP battle caps/);
+  assert.match(logs[2].message, /Red \(Player 2\).*End of battle.*requested 0VP, awarded 0VP \(unsupported\).*Territory geometry is unavailable/);
+  assert.equal(formatPrimaryMissionScoringRecord(baseRecord, 'Blue'), logs[0].message);
+});
+
+test('primary scoring lifecycle omits empty windows and logs each serialized evaluation once', () => {
+  const roundOne = state('command', 1);
+  roundOne.ruleset = rulesetMetadataForState(rules40K11th);
+  roundOne.objectiveControl = rules40K11th.objectiveControl;
+  roundOne.setup = { ...roundOne.setup!, primaryMissions: ['Battlefield Dominance', 'Battlefield Dominance'] };
+
+  const noScoringWindow = applyGameAction(roundOne, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+  assert.equal(noScoringWindow.missionState?.primaryMissionScoringRecords?.length ?? 0, 0);
+  assert.equal(noScoringWindow.log.some(entry => entry.id.startsWith('primary-score-log:')), false);
+
+  const roundTwo = state('command', 2);
+  roundTwo.ruleset = rulesetMetadataForState(rules40K11th);
+  roundTwo.objectiveControl = rules40K11th.objectiveControl;
+  roundTwo.setup = { ...roundTwo.setup!, primaryMissions: ['Delaying Action', 'Delaying Action'] };
+  roundTwo.objectives = [{ x: 20, y: 20 }];
+  roundTwo.objectiveOwners = [null];
+  roundTwo.terrain = [terrainMat({ id: 'central', type: 'ruin', x: 18, y: 18, width: 4, height: 4, objectiveRole: 'central' })];
+  roundTwo.units = [losTestUnit('holder', 0, { x: 20, y: 20 })];
+
+  const scored = applyGameAction(roundTwo, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+  const primaryLogs = scored.log.filter(entry => entry.id.startsWith('primary-score-log:'));
+  assert.equal(scored.missionState?.primaryMissionScoringRecords?.length, 1);
+  assert.equal(primaryLogs.length, 1);
+  assert.match(primaryLogs[0].message, /Blue \(Player 1\).*Delaying Action.*End of Command phase.*requested 4VP, awarded 4VP/);
+
+  const unsupportedStart = state('command', 1);
+  unsupportedStart.ruleset = rulesetMetadataForState(rules40K11th);
+  unsupportedStart.objectiveControl = rules40K11th.objectiveControl;
+  unsupportedStart.objectives = [{ x: 10, y: 10 }];
+  unsupportedStart.objectiveOwners = [null];
+  unsupportedStart.units = [losTestUnit('holder', 0, { x: 10, y: 10 })];
+  const unsupported = applyGameAction(unsupportedStart, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+  const unsupportedLogs = unsupported.log.filter(entry => entry.id.startsWith('primary-score-unsupported:'));
+  assert.equal(unsupportedLogs.length, 1);
+  assert.match(unsupportedLogs[0].message, /Blue \(Player 1\).*Practice.*requested 0VP, awarded 0VP \(unsupported\).*unavailable/i);
+  assert.doesNotMatch(unsupportedLogs[0].message, /Side [01]/);
 });
 
 test('11th secondary mission state tracks fixed, tactical, draw, and discard state', () => {
@@ -4387,12 +4490,20 @@ test(PRIMARY_GLOBAL_SCORING_COVERAGE[1].assertion, async () => {
   );
   const replayed = replayTimeline(appended.timeline, { rules: rules40K11th }, false);
   assert.deepEqual(replayed.missionState?.primaryMissionScoringRecords, appended.state.missionState?.primaryMissionScoringRecords);
+  assert.deepEqual(
+    replayed.log.filter(entry => entry.id.startsWith('primary-score-log:')),
+    appended.state.log.filter(entry => entry.id.startsWith('primary-score-log:')),
+  );
 
   await localPracticeScenarioRepository.saveScenario(scenarioFromTimeline(appended.timeline, { id: 'primary-ledger-save' }));
   const loaded = await localPracticeScenarioRepository.loadScenario('primary-ledger-save');
   assert.deepEqual(
     currentTimelineState(loaded!.timeline).missionState?.primaryMissionScoringRecords,
     appended.state.missionState?.primaryMissionScoringRecords,
+  );
+  assert.deepEqual(
+    currentTimelineState(loaded!.timeline).log.filter(entry => entry.id.startsWith('primary-score-log:')),
+    appended.state.log.filter(entry => entry.id.startsWith('primary-score-log:')),
   );
 });
 
@@ -4419,9 +4530,10 @@ test(PRIMARY_GLOBAL_SCORING_COVERAGE[2].assertion, () => {
   assert.equal(manual.phase, 'end');
   assert.equal(manual.scores[0], 5);
   assert.equal(manual.missionState?.primaryMissionScoringRecords?.at(-1)?.battleRound, 5);
+  assert.match(manual.log.map(entry => entry.message).join('\n'), /Blue \(Player 1\).*End of battle/);
   assert.equal(simulated.phase, 'end');
   assert.equal(simulated.scores[0], 5);
-  assert.match(simulated.log.map(entry => entry.message).join('\n'), /End of battle/);
+  assert.match(simulated.log.map(entry => entry.message).join('\n'), /Blue \(Player 1\).*End of battle/);
 });
 
 test('11th Smoke and Mirrors scores non-home objective control without unsupported decoy clauses', () => {

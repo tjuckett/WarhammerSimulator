@@ -28,7 +28,7 @@ import {
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
-import { formatPrimaryScoringResult, scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn } from '@warhammer-simulator/core/engine/missionScoring';
+import { formatPrimaryScoringResult, primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, unsupportedPrimaryMissionScoringLogs } from '@warhammer-simulator/core/engine/missionScoring';
 import { completeMissionEventsForCurrentTurn, startMissionEventsForNewTurn } from '@warhammer-simulator/core/engine/missionEvents';
 import { availableStratagems, resolveCommandReroll, useStratagem } from '@warhammer-simulator/core/engine/stratagems';
 import { availableUnitAbilities, useUnitAbility } from '@warhammer-simulator/core/engine/unitAbilities';
@@ -2311,12 +2311,18 @@ export default function App() {
     const scoringSide = next.activeArmy;
     const currentIndex = PLAY_TURN_PHASES.indexOf(next.phase);
     if (phaseBeforeStep === BATTLE_PHASE.Command) {
+      const recordCount = next.missionState?.primaryMissionScoringRecords?.length ?? 0;
       const scoringResult = scorePrimaryMission(next, scoringSide, activeRulesForBattle);
+      const records = next.missionState?.primaryMissionScoringRecords?.slice(recordCount) ?? [];
+      next.log = [...next.log, ...primaryMissionScoringLogs(next, records), ...unsupportedPrimaryMissionScoringLogs(next, [scoringResult])];
       if (scoringResult.kind === 'unsupported') setPlayPhaseWarning(formatPrimaryScoringResult(scoringResult));
     }
     if (phaseBeforeStep === BATTLE_PHASE.Fight) {
       completeEndOfTurnActions(next, scoringSide);
+      const recordCount = next.missionState?.primaryMissionScoringRecords?.length ?? 0;
       const scoringResults = scorePrimaryMissionsAtEndOfTurn(next, scoringSide, activeRulesForBattle);
+      const records = next.missionState?.primaryMissionScoringRecords?.slice(recordCount) ?? [];
+      next.log = [...next.log, ...primaryMissionScoringLogs(next, records), ...unsupportedPrimaryMissionScoringLogs(next, scoringResults)];
       const unsupported = scoringResults.find(result => result.kind === 'unsupported');
       if (unsupported) setPlayPhaseWarning(formatPrimaryScoringResult(unsupported));
       completeMissionEventsForCurrentTurn(next);
@@ -2377,6 +2383,10 @@ export default function App() {
 
     if (next.phase === BATTLE_PHASE.End) {
       next.movementStep = undefined;
+      const recordCount = next.missionState?.primaryMissionScoringRecords?.length ?? 0;
+      const scoringResults = scorePrimaryMissionsAtEndOfBattle(next, activeRulesForBattle);
+      const records = next.missionState?.primaryMissionScoringRecords?.slice(recordCount) ?? [];
+      next.log = [...next.log, ...primaryMissionScoringLogs(next, records), ...unsupportedPrimaryMissionScoringLogs(next, scoringResults)];
       if (next.scores[0] > next.scores[1]) next.winner = 0;
       else if (next.scores[1] > next.scores[0]) next.winner = 1;
       else next.winner = 'draw';
