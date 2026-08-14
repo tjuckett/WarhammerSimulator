@@ -40,6 +40,7 @@ import {
   attachedUnitComponents,
   attachedUnitHasRule,
   attachedUnitId,
+  attachedUnitIsFormed,
   attachedUnitKeywordSet,
   attachedUnitLiveBodyguard,
   attachedUnitRemainingModels,
@@ -1319,12 +1320,13 @@ function datasheetRuleText(unit: BattleUnit): string[] {
   ].filter(Boolean);
 }
 
-function feelNoPainTarget(unit: BattleUnit): number | null {
-  for (const text of datasheetRuleText(unit)) {
+function feelNoPainTargets(unit: BattleUnit): Array<{ target: number; sharesWithAttachedUnit: boolean }> {
+  return datasheetRuleText(unit).flatMap(text => {
     const match = text.match(/feel\s+no\s+pain(?:\s*\(?\s*)?([2-6])\+/i);
-    if (match) return Number(match[1]);
-  }
-  return null;
+    if (!match) return [];
+    const unitScoped = /\b(this unit|that unit|models? in (?:this|that|the bearer'?s) unit)\b/i.test(text);
+    return [{ target: Number(match[1]), sharesWithAttachedUnit: unitScoped }];
+  });
 }
 
 function applyFeelNoPain(
@@ -1333,7 +1335,9 @@ function applyFeelNoPain(
   state: BattleState,
 ): { damage: number; logs: LogEntry[] } {
   const target = attachedUnitComponents(state, unit)
-    .map(feelNoPainTarget)
+    .flatMap(component => feelNoPainTargets(component)
+      .filter(rule => component.id === unit.id || rule.sharesWithAttachedUnit)
+      .map(rule => rule.target))
     .filter((value): value is number => value !== null)
     .sort((a, b) => a - b)[0] ?? null;
   if (!target || damage <= 0) return { damage, logs: [] };
@@ -1379,9 +1383,11 @@ function resolveHazardousTests(unit: BattleUnit, weapon: WeaponProfile, weaponIn
 }
 
 function cancelUnitAction(state: BattleState, unit: BattleUnit, reason: string): void {
-  if (!unit.performingAction) return;
-  const actionName = unit.performingAction.name;
-  unit.performingAction = undefined;
+  const components = attachedUnitComponents(state, unit);
+  const action = components.map(component => component.performingAction).find(Boolean);
+  if (!action) return;
+  const actionName = action.name;
+  for (const component of components) component.performingAction = undefined;
   state.log = [...state.log, log(
     state,
     unit.side,
@@ -1391,19 +1397,34 @@ function cancelUnitAction(state: BattleState, unit: BattleUnit, reason: string):
   )];
 }
 
+function attachedObjectiveIndexesWithinRange(state: BattleState, unit: BattleUnit, rules: RulesEdition): number[] {
+  return [...new Set(attachedUnitComponents(state, unit)
+    .flatMap(component => objectiveIndexesWithinRange(state, component, rules)))];
+}
+
+function attachedTerrainAreaIdsContainingUnit(state: BattleState, unit: BattleUnit): string[] {
+  const components = attachedUnitComponents(state, unit);
+  if (!components.length) return [];
+  return terrainAreaIdsContainingUnit(state, components[0]).filter(terrainId =>
+    components.every(component => terrainAreaIdsContainingUnit(state, component).includes(terrainId)),
+  );
+}
+
 function unitIsEligibleToStartAction(
   unit: BattleUnit,
   state: BattleState,
   rules: RulesEdition,
   ignoreActionStartedThisTurn = false,
 ): boolean {
-  if (unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves) return false;
-  if (isAircraft(unit) || isFortification(unit)) return false;
-  if (unit.battleshocked) return false;
-  if (unit.profile.oc <= 0) return false;
-  if ((!ignoreActionStartedThisTurn && unit.actionStartedThisTurn) || unit.performingAction) return false;
-  if (unit.movementAction === 'advanced' || unit.movementAction === 'fellBack' || unit.fellBack) return false;
-  if (!unitCanUseBigGunsNeverTire(unit) && inEngagement(unit, enemies(state, unit.side), rules.engagementRange())) return false;
+  const components = attachedUnitComponents(state, unit);
+  if (!components.length || components.some(component => component.embarkedInUnitId || component.inStrategicReserves)) return false;
+  if (components.some(component => isAircraft(component) || isFortification(component))) return false;
+  if (components.some(component => component.battleshocked)) return false;
+  if (components.reduce((total, component) => total + component.profile.oc, 0) <= 0) return false;
+  if (components.some(component => (!ignoreActionStartedThisTurn && component.actionStartedThisTurn) || component.performingAction)) return false;
+  if (components.some(component => component.movementAction === 'advanced' || component.movementAction === 'fellBack' || component.fellBack)) return false;
+  const canActWhileEngaged = attachedUnitKeywordSet(state, unit).has('vehicle') || attachedUnitKeywordSet(state, unit).has('monster');
+  if (!canActWhileEngaged && components.some(component => inEngagement(component, enemies(state, unit.side), rules.engagementRange()))) return false;
   return true;
 }
 
@@ -1446,7 +1467,7 @@ function missionObjectiveActionOptions(
   const homeRole = side === 0 ? 'home-0' : 'home-1';
   const opponentHomeRole = side === 0 ? 'home-1' : 'home-0';
 
-  return objectiveIndexesWithinRange(state, unit, rules).filter(objectiveIndex => {
+  return attachedObjectiveIndexesWithinRange(state, unit, rules).filter(objectiveIndex => {
     if (markedObjectives.has(objectiveIndex)) return false;
     const objective = state.objectives[objectiveIndex];
     if (!objective) return false;
@@ -1513,7 +1534,7 @@ export function consecrateObjectiveOptions(
     .filter(marker => marker.side === side && marker.sourceActionId === 'consecrate')
     .flatMap(marker => marker.objectiveIndex === undefined ? [] : [marker.objectiveIndex]));
   const ownHomeRole = side === 0 ? 'home-0' : 'home-1';
-  return objectiveIndexesWithinRange(state, unit, rules).filter(objectiveIndex =>
+  return attachedObjectiveIndexesWithinRange(state, unit, rules).filter(objectiveIndex =>
     !markedObjectives.has(objectiveIndex)
     && objectiveRoleForIndex(state, objectiveIndex) !== undefined
     && objectiveRoleForIndex(state, objectiveIndex) !== ownHomeRole
@@ -1621,7 +1642,7 @@ export function cleanseObjectiveOptions(
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
   if (!unit) return [];
   const usedObjectives = completedOrInProgressObjectiveTargets(state, side, 'cleanse');
-  return objectiveIndexesWithinRange(state, unit, rules).filter(index => !usedObjectives.has(index));
+  return attachedObjectiveIndexesWithinRange(state, unit, rules).filter(index => !usedObjectives.has(index));
 }
 
 function terrainIsExplicitlyOutsideTerritory(state: BattleState, side: Side, terrainId: string): boolean {
@@ -1654,7 +1675,7 @@ export function plunderTerrainOptions(
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
   if (!unit) return [];
   const usedTerrain = completedOrInProgressTerrainTargets(state, side, 'plunder');
-  return terrainAreaIdsContainingUnit(state, unit).filter(terrainId =>
+  return attachedTerrainAreaIdsContainingUnit(state, unit).filter(terrainId =>
     !usedTerrain.has(terrainId) && terrainIsExplicitlyOutsideTerritory(state, side, terrainId)
   );
 }
@@ -1692,7 +1713,7 @@ export function sensorSweepOptions(
 
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
   if (!unit) return [];
-  const centralObjectiveIndexes = objectiveIndexesWithinRange(state, unit, rules)
+  const centralObjectiveIndexes = attachedObjectiveIndexesWithinRange(state, unit, rules)
     .filter(objectiveIndex => objectiveIsCentral(state, objectiveIndex));
   return centralObjectiveIndexes.flatMap(objectiveIndex =>
     markers.map(marker => ({ objectiveIndex, operationMarkerId: marker.id })),
@@ -1740,7 +1761,7 @@ function removeOpponentOperationMarkersAfterMove(
 ): void {
   const selectedMissionName = state.setup?.primaryMissions?.[unit.side] ?? state.setup?.primaryMission;
   if (state.ruleset?.edition !== '11e' || selectedMissionName !== 'Surveil the Foe') return;
-  const objectiveIndexes = new Set(objectiveIndexesWithinRange(state, unit, rules40K11th));
+  const objectiveIndexes = new Set(attachedObjectiveIndexesWithinRange(state, unit, rules40K11th));
   if (!objectiveIndexes.size) return;
   const markers = state.missionState?.operationMarkers ?? [];
   const removed = markers.filter(marker =>
@@ -1767,7 +1788,7 @@ function vanguardOperationTerrainIsValid(
 ): boolean {
   const terrain = state.terrain.find(candidate => candidate.id === terrainId);
   if (!terrain || terrainWithinMissionTerritory(state, terrain, (1 - side) as Side) !== true) return false;
-  if (!terrainAreaIdsContainingUnit(state, unit).includes(terrainId)) return false;
+  if (!attachedTerrainAreaIdsContainingUnit(state, unit).includes(terrainId)) return false;
   return !state.units.some(candidate =>
     candidate.side !== side
     && !candidate.destroyed
@@ -1800,10 +1821,10 @@ function boobyTrapTerrainIsValid(
   terrainId: string,
 ): boolean {
   const terrain = state.terrain.find(candidate => candidate.id === terrainId);
-  if (!terrain || !terrainAreaIdsContainingUnit(state, unit).includes(terrainId)) return false;
+  if (!terrain || !attachedTerrainAreaIdsContainingUnit(state, unit).includes(terrainId)) return false;
 
   const homeRole = side === 0 ? 'home-0' : 'home-1';
-  const objectiveIndexes = objectiveIndexesWithinRange(state, unit, rules40K11th);
+  const objectiveIndexes = attachedObjectiveIndexesWithinRange(state, unit, rules40K11th);
   const isEligibleObjectiveTerrain = objectiveIndexes.some(objectiveIndex => {
     const objective = state.objectives[objectiveIndex];
     return objective
@@ -1871,7 +1892,7 @@ export function punishmentCondemnedUnitOptions(
   );
   const previousTurnDestroyingUnitIds = new Set(state.missionEvents?.lastCompletedTurn?.destroyingUnitIds ?? []);
   const eligible = enemiesOnBattlefield.filter(unit =>
-    objectiveIndexesWithinRange(state, unit, rules).length > 0
+    attachedObjectiveIndexesWithinRange(state, unit, rules).length > 0
     || previousTurnDestroyingUnitIds.has(unit.id)
   );
   return (eligible.length ? eligible : enemiesOnBattlefield).map(unit => unit.id);
@@ -2018,7 +2039,7 @@ export function startPlayUnitAction(
       ...(targetUnitId !== undefined ? { targetUnitId } : {}),
       ...(targetTerrainId !== undefined ? { targetTerrainId } : {}),
     };
-    recordCompletedMissionAction(next, unit, action, objectiveIndexesWithinRange(next, unit, rules));
+    recordCompletedMissionAction(next, unit, action, attachedObjectiveIndexesWithinRange(next, unit, rules));
     const target = targetUnitId === undefined
       ? undefined
       : next.units.find(candidate => candidate.id === targetUnitId);
@@ -2034,27 +2055,36 @@ export function startPlayUnitAction(
         : `${unit.profile.name} traps ${targetTerrain!.name}.`,
       'info',
     )];
-    if (actionId === 'booby-trap') unit.actionStartedThisTurn = true;
+    if (actionId === 'booby-trap') {
+      for (const component of attachedUnitComponents(next, unit)) component.actionStartedThisTurn = true;
+    }
     return next;
   }
-  unit.performingAction = {
+  const performingAction = {
     id: actionId,
     name: actionName,
     startedPhase: next.phase,
-    completesAt: 'end-of-turn',
+    completesAt: 'end-of-turn' as const,
     ...(targetObjectiveIndex !== undefined ? { targetObjectiveIndex } : {}),
     ...(targetTerrainId !== undefined ? { targetTerrainId } : {}),
     ...(targetOperationMarkerId !== undefined ? { targetOperationMarkerId } : {}),
     ...(targetUnitId !== undefined ? { targetUnitId } : {}),
   };
-  unit.actionStartedThisTurn = true;
+  for (const component of attachedUnitComponents(next, unit)) {
+    component.performingAction = { ...performingAction };
+    component.actionStartedThisTurn = true;
+  }
   next.log = [...next.log, log(next, side, unit.profile.name, `${unit.profile.name} starts ${actionName}.`, 'info')];
   return next;
 }
 
 export function completeEndOfTurnActions(state: BattleState, side: Side): void {
+  const handled = new Set<string>();
   for (const unit of state.units) {
     if (unit.side !== side || unit.destroyed || !unit.performingAction) continue;
+    const groupId = attachedUnitId(unit);
+    if (handled.has(groupId)) continue;
+    handled.add(groupId);
     const action = unit.performingAction;
     const actionName = action.name;
     if (action.id === 'vanguard-operation'
@@ -2066,14 +2096,14 @@ export function completeEndOfTurnActions(state: BattleState, side: Side): void {
     if (action.id === 'cleanse'
       && (action.targetObjectiveIndex === undefined
         || !hasActiveSecondaryMission(state, side, 'Cleanse')
-        || !objectiveIndexesWithinRange(state, unit, rules40K11th).includes(action.targetObjectiveIndex))) {
+        || !attachedObjectiveIndexesWithinRange(state, unit, rules40K11th).includes(action.targetObjectiveIndex))) {
       cancelUnitAction(state, unit, 'the selected objective is no longer eligible');
       continue;
     }
     if (action.id === 'plunder'
       && (action.targetTerrainId === undefined
         || !hasActiveSecondaryMission(state, side, 'Plunder')
-        || !terrainAreaIdsContainingUnit(state, unit).includes(action.targetTerrainId)
+        || !attachedTerrainAreaIdsContainingUnit(state, unit).includes(action.targetTerrainId)
         || !terrainIsExplicitlyOutsideTerritory(state, side, action.targetTerrainId))) {
       cancelUnitAction(state, unit, 'the selected terrain area is no longer eligible');
       continue;
@@ -2083,7 +2113,7 @@ export function completeEndOfTurnActions(state: BattleState, side: Side): void {
         marker.id === action.targetOperationMarkerId
       ) ?? -1;
       const controlsTargetObjective = action.targetObjectiveIndex !== undefined
-        && objectiveIndexesWithinRange(state, unit, rules40K11th).includes(action.targetObjectiveIndex)
+        && attachedObjectiveIndexesWithinRange(state, unit, rules40K11th).includes(action.targetObjectiveIndex)
         && objectiveIsCentral(state, action.targetObjectiveIndex)
         && updateObjectiveControl(state, rules40K11th)?.some(objective =>
           objective.objectiveIndex === action.targetObjectiveIndex && objective.owner === side
@@ -2098,8 +2128,8 @@ export function completeEndOfTurnActions(state: BattleState, side: Side): void {
         marker => marker.id !== action.targetOperationMarkerId,
       );
     }
-    recordCompletedMissionAction(state, unit, action, objectiveIndexesWithinRange(state, unit, rules40K11th));
-    unit.performingAction = undefined;
+    recordCompletedMissionAction(state, unit, action, attachedObjectiveIndexesWithinRange(state, unit, rules40K11th));
+    for (const component of attachedUnitComponents(state, unit)) component.performingAction = undefined;
     state.log = [...state.log, log(state, side, unit.profile.name, `${unit.profile.name} completes ${actionName}.`, 'info')];
   }
 }
@@ -2366,6 +2396,10 @@ export function playShootingWeaponOptions(
   if (state.phase !== 'shooting' || state.activeArmy !== side) return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit) return [];
+  if (state.activeAttachedShootingUnitId && attachedUnitId(unit) !== state.activeAttachedShootingUnitId) return [];
+  const lockedTargetId = state.activeAttachedShootingUnitId === attachedUnitId(unit)
+    ? state.attachedShootingTargetUnitId
+    : undefined;
   const options = eligibleShootingWeapons(unit, state, rules)
     .map(weapon => {
       const weaponIndex = unit.profile.weapons.indexOf(weapon);
@@ -2374,6 +2408,7 @@ export function playShootingWeaponOptions(
         name: weapon.name,
         targetIds: enemies(state, side)
           .filter(target => shootingWeaponCanTarget(state, unit, target, weapon, rules))
+          .filter(target => !lockedTargetId || target.id === lockedTargetId)
           .map(target => target.id),
       };
     })
@@ -2382,6 +2417,75 @@ export function playShootingWeaponOptions(
     return [{ weaponIndex: -1, name: 'No ranged weapons', targetIds: [] }];
   }
   return options;
+}
+
+function runShootingPhaseUnits(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
+  if (rules.metadata.edition !== '11e') {
+    return activeUnits(state, side).flatMap(unit => runShooting(unit, state, rules));
+  }
+  const logs: LogEntry[] = [];
+  const handled = new Set<string>();
+  for (const selected of activeUnits(state, side)) {
+    const groupId = attachedUnitId(selected);
+    if (handled.has(groupId)) continue;
+    handled.add(groupId);
+    if (!attachedUnitIsFormed(state, selected)) {
+      logs.push(...runShooting(selected, state, rules));
+      continue;
+    }
+    const components = attachedUnitComponents(state, selected);
+    const declarations: Array<{ componentId: string; targetId: string; weapon: WeaponProfile; weaponIndex: number }> = [];
+    for (const component of components) {
+      const weapons = shootingWeaponSelectionForAll(eligibleShootingWeapons(component, state, rules)
+        .map(weapon => ({ weapon, weaponIndex: component.profile.weapons.indexOf(weapon) }))
+        .filter(option => option.weaponIndex >= 0));
+      if (weapons.length) {
+        logs.push(log(state, component.side, component.profile.name, `${component.profile.name} shoots:`, 'shoot'));
+      }
+      for (const option of weapons) {
+        const targets = enemies(state, side).filter(target =>
+          shootingWeaponCanTarget(state, component, target, option.weapon, rules),
+        );
+        const target = nearest(component, targets);
+        if (target) {
+          declarations.push({ componentId: component.id, targetId: target.id, ...option });
+        } else {
+          logs.push(log(state, component.side, component.profile.name,
+            `  ${option.weapon.name}: no valid targets in range/LOS`, 'info'));
+        }
+      }
+    }
+    for (const declaration of declarations) {
+      const component = state.units.find(unit => unit.id === declaration.componentId && !unit.destroyed);
+      const target = state.units.find(unit => unit.id === declaration.targetId && !unit.destroyed);
+      if (!component || !target) continue;
+      logs.push(...resolveShootingWeaponIntoTarget(
+        state, component, target, declaration.weapon, declaration.weaponIndex, rules,
+      ));
+    }
+    for (const component of components) component.activated = true;
+  }
+  return logs;
+}
+
+function updateAttachedShootingActivation(
+  state: BattleState,
+  unit: BattleUnit,
+  rules: RulesEdition,
+  targetUnitId?: string,
+): void {
+  if (rules.metadata.edition !== '11e' || !attachedUnitIsFormed(state, unit)) return;
+  state.activeAttachedShootingUnitId = attachedUnitId(unit);
+  state.attachedShootingTargetUnitId ??= targetUnitId;
+  const remaining = attachedUnitComponents(state, unit).filter(component =>
+    !component.activated
+    && (eligibleShootingWeapons(component, state, rules).length > 0
+      || unitCanBeSelectedToShootWithoutAttacks(component, state, rules)),
+  );
+  if (remaining.length) return;
+  for (const component of attachedUnitComponents(state, unit)) component.activated = true;
+  state.activeAttachedShootingUnitId = undefined;
+  state.attachedShootingTargetUnitId = undefined;
 }
 
 export function playSnapShootingWeaponOptions(
@@ -2419,10 +2523,13 @@ export function shootPlayUnitWeapon(
   const s = clone(state);
   const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit || unit.activated) return state;
+  if (s.activeAttachedShootingUnitId && attachedUnitId(unit) !== s.activeAttachedShootingUnitId) return state;
+  if (s.attachedShootingTargetUnitId && targetUnitId !== s.attachedShootingTargetUnitId) return state;
 
   if (weaponIndex === -1 || (weaponIndex === 'all' && !eligibleShootingWeapons(unit, s, rules).length)) {
     if (!unitCanBeSelectedToShootWithoutAttacks(unit, s, rules) || eligibleShootingWeapons(unit, s, rules).length > 0) return state;
     unit.activated = true;
+    updateAttachedShootingActivation(s, unit, rules);
     s.log = [...s.log, log(s, side, unit.profile.name, `${unit.profile.name} is selected to shoot but has no ranged weapons, so it makes no attacks.`, 'shoot')];
     return s;
   }
@@ -2466,6 +2573,7 @@ export function shootPlayUnitWeapon(
       unit.activated = true;
     }
   }
+  updateAttachedShootingActivation(s, unit, rules, target.id);
   s.log = [...s.log, ...logs];
   return s;
 }
@@ -2575,7 +2683,10 @@ export function lockPlayUnitShooting(state: BattleState, unitId: string, side: S
   const existing = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
   if (!existing || existing.activated) return state;
   const s = clone(state);
-  s.units.find(u => u.id === unitId && u.side === side)!.activated = true;
+  const unit = s.units.find(u => u.id === unitId && u.side === side)!;
+  for (const component of attachedUnitComponents(s, unit)) component.activated = true;
+  s.activeAttachedShootingUnitId = undefined;
+  s.attachedShootingTargetUnitId = undefined;
   return s;
 }
 
@@ -2673,7 +2784,10 @@ export function playChargeTargetOptions(
 ): PlayChargeTargetOption[] {
   if (state.phase !== 'charge') return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || !sideCanDeclareCharge(state, side, unit) || !unitCanDeclareCharge(unit)) return [];
+  if (!unit
+    || attachedUnitComponents(state, unit).some(component => component.activated)
+    || !sideCanDeclareCharge(state, side, unit)
+    || !unitCanDeclareCharge(unit)) return [];
   return enemies(state, side)
     .filter(target => unitCanChargeTarget(unit, target))
     .map(target => ({ targetId: target.id, needed: chargeNeededDistance(unit, target, rules) }))
@@ -2690,7 +2804,12 @@ export function chargePlayUnitTarget(
   if (state.phase !== 'charge') return state;
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   const target = state.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || !target || !sideCanDeclareCharge(state, side, unit) || !unitCanDeclareCharge(unit) || !unitCanChargeTarget(unit, target)) return state;
+  if (!unit
+    || attachedUnitComponents(state, unit).some(component => component.activated)
+    || !target
+    || !sideCanDeclareCharge(state, side, unit)
+    || !unitCanDeclareCharge(unit)
+    || !unitCanChargeTarget(unit, target)) return state;
   const needed = chargeNeededDistance(unit, target, rules);
   if (needed > rules.chargeRange()) return state;
 
@@ -2710,8 +2829,10 @@ export function chargePlayUnitTarget(
   ];
 
   if (roll + 0.001 < needed) {
-    chargingUnit.activated = true;
-    chargingUnit.heroicInterventionThisPhase = undefined;
+    for (const component of attachedUnitComponents(s, chargingUnit)) {
+      component.activated = true;
+      component.heroicInterventionThisPhase = undefined;
+    }
     logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} fails the charge.`, 'charge'));
     s.log = [...s.log, ...logs];
     return s;
@@ -2735,10 +2856,12 @@ export function chargePlayUnitTarget(
     return s;
   }
 
-  chargingUnit.activated = true;
-  chargingUnit.charged = true;
-  chargingUnit.heroicInterventionThisPhase = undefined;
-  chargingUnit.inCombat = true;
+  for (const component of attachedUnitComponents(s, chargingUnit)) {
+    component.activated = true;
+    component.charged = true;
+    component.heroicInterventionThisPhase = undefined;
+    component.inCombat = true;
+  }
   chargeTarget.inCombat = true;
   logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} makes a successful${state.activeArmy !== side ? ' Heroic Intervention' : ''} charge.`, 'charge'));
   s.log = [...s.log, ...logs];
@@ -2795,6 +2918,8 @@ function startFightStepInPlace(s: BattleState, rules: RulesEdition): void {
   s.fightStepStarted = true;
   s.lastFightSelectionSide = undefined;
   s.activeAttachedFightUnitId = undefined;
+  s.activeAttachedShootingUnitId = undefined;
+  s.attachedShootingTargetUnitId = undefined;
   s.engagedUnitIdsAtFightStepStart = s.units
     .filter(unit => !unit.destroyed && !unit.embarkedInUnitId
       && enemies(s, unit.side).some(enemy => unitCanFightTarget(unit, enemy) && inEngagement(unit, [enemy], rules.engagementRange())))
@@ -5198,14 +5323,17 @@ export function advancePlayUnit(
   cancelUnitAction(s, unit, 'it made an Advance move');
 
   const advance = advanceAllowance(unit, rules);
-  unit.movementAction = 'advanced';
-  unit.movementAllowanceRemaining = advance.total;
-  unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => advance.total);
-  unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => advance.total);
-  unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
-  unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
-  unit.movementComplete = advance.total <= 0.001;
-  unit.fellBack = false;
+  for (const component of attachedUnitComponents(s, unit)) {
+    const total = Math.max(0, normalMoveAllowance(component) + advance.advanceRoll + (component.profile.movementOverrides?.advanceModifier ?? 0));
+    component.movementAction = 'advanced';
+    component.movementAllowanceRemaining = total;
+    component.movementAllowanceRemainingByModel = component.modelPositions.map(() => total);
+    component.movementAllowanceTotalByModel = component.modelPositions.map(() => total);
+    component.movementStartPositionsByModel = component.modelPositions.map(position => ({ ...position }));
+    component.movementStartRotationsByModel = component.modelPositions.map((_, modelIndex) => modelRotation(component, modelIndex));
+    component.movementComplete = total <= 0.001;
+    component.fellBack = false;
+  }
   s.log = [...s.log, log(
     s,
     side,
@@ -5532,7 +5660,7 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
       s.movementStep = undefined;
       s.phase = 'shooting';
       newLogs.push(phaseLog(s, side, armyName, `\n--- Shooting Phase ---`));
-      activeUnits(s, side).forEach(u => newLogs.push(...runShooting(u, s, rules)));
+      newLogs.push(...runShootingPhaseUnits(s, side, rules));
     }
   } else if (s.phase === 'shooting') {
     s.movementStep = undefined;
@@ -5545,6 +5673,8 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
     s.engagedUnitIdsAtFightStepStart = undefined;
     s.lastFightSelectionSide = undefined;
     s.activeAttachedFightUnitId = undefined;
+    s.activeAttachedShootingUnitId = undefined;
+    s.attachedShootingTargetUnitId = undefined;
     newLogs.push(phaseLog(s, side, armyName, `\n--- Fight Phase ---`));
     if (rules.metadata.edition === '11e') {
       s = runAutomaticEleventhFightPhase(s, side, rules);
@@ -5584,6 +5714,8 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   s.engagedUnitIdsAtFightStepStart = undefined;
   s.lastFightSelectionSide = undefined;
   s.activeAttachedFightUnitId = undefined;
+  s.activeAttachedShootingUnitId = undefined;
+  s.attachedShootingTargetUnitId = undefined;
   s.units.forEach(u => { u.overrunFightSelected = undefined; u.overrunPiledIn = undefined; });
   myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
 
@@ -5614,7 +5746,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   s.phase = 'shooting';
   s.movementStep = undefined;
   newLogs.push(phaseLog(s, side, armyName, `\n─── Shooting Phase ───`));
-  myUnits().forEach(u => newLogs.push(...runShooting(u, s, rules)));
+  newLogs.push(...runShootingPhaseUnits(s, side, rules));
   updateObjectiveControl(s, rules);
 
   checkWinner(s);
@@ -5632,6 +5764,8 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   s.engagedUnitIdsAtFightStepStart = undefined;
   s.lastFightSelectionSide = undefined;
   s.activeAttachedFightUnitId = undefined;
+  s.activeAttachedShootingUnitId = undefined;
+  s.attachedShootingTargetUnitId = undefined;
   newLogs.push(phaseLog(s, side, armyName, `\n─── Fight Phase ───`));
   if (rules.metadata.edition === '11e') {
     s = runAutomaticEleventhFightPhase(s, side, rules);

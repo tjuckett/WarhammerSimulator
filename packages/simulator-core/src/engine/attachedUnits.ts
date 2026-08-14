@@ -55,7 +55,17 @@ export function attachedUnitKeywordSet(
 }
 
 export function attachedUnitHasRule(state: BattleState, unit: BattleUnit, ruleName: string): boolean {
-  return attachedUnitComponents(state, unit).some(component => unitHasRule(component.profile, ruleName));
+  const needle = ruleName.trim().toLowerCase();
+  return attachedUnitComponents(state, unit).some(component => {
+    if (component.id === unit.id) return unitHasRule(component.profile, ruleName);
+    return [...component.profile.abilities, ...(component.profile.rules ?? [])].some(rule => {
+      const matches = rule.name.trim().toLowerCase() === needle
+        || rule.description.trim().toLowerCase().includes(needle);
+      if (!matches) return false;
+      const unitScoped = /\b(this unit|that unit|models? in (?:this|that|the bearer'?s) unit)\b/i.test(rule.description);
+      return unitScoped;
+    });
+  });
 }
 
 function componentToughness(unit: BattleUnit): number {

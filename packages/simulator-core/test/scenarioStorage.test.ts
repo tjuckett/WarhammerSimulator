@@ -9518,6 +9518,160 @@ test('11th attached formations keep a stable combined rules-unit identity and so
   assert.equal(attachedUnitTargetRepresentative(battle, leaderUnit)?.id, bodyguardUnit.id);
 });
 
+test('11th attached Feel No Pain only shares unit-scoped sources and expires with its source', () => {
+  const makeBattle = (description: string) => {
+    const battle = state('shooting');
+    battle.ruleset = rulesetMetadataForState(rules40K11th);
+    const bodyguard = losTestUnit('bodyguard', 1, { x: 12, y: 10 });
+    bodyguard.tabletopUnitId = bodyguard.id;
+    bodyguard.profile = { ...bodyguard.profile, name: 'Bodyguard', wounds: 3 };
+    bodyguard.woundsOnLeadModel = 3;
+    bodyguard.pendingDamageAllocations = [{ damage: 1, noCarryOver: true, source: 'Test Damage' }];
+    const leader = losTestUnit('leader', 1, { x: 12.5, y: 10 });
+    leader.tabletopUnitId = bodyguard.id;
+    leader.attachedToUnitId = bodyguard.id;
+    leader.profile = {
+      ...leader.profile,
+      name: 'Leader',
+      keywords: ['Infantry', 'Character'],
+      abilities: [{ name: 'Feel No Pain 2+', description }],
+    };
+    battle.units = [bodyguard, leader];
+    return battle;
+  };
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const selfOnly = allocatePlayDamageToModel(
+      makeBattle('While this model is leading a unit, this model has Feel No Pain 2+.'),
+      'bodyguard', 1, 0,
+    );
+    assert.equal(selfOnly.units[0].woundsOnLeadModel, 2);
+    assert.doesNotMatch(selfOnly.log.map(entry => entry.message).join(' '), /Feel No Pain/);
+
+    const sharedStart = makeBattle('While this model is leading a unit, models in that unit have Feel No Pain 2+.');
+    assert.equal(attachedUnitHasRule(sharedStart, sharedStart.units[0], 'Feel No Pain'), true);
+    const shared = allocatePlayDamageToModel(sharedStart, 'bodyguard', 1, 0);
+    assert.equal(shared.units[0].woundsOnLeadModel, 3);
+    assert.match(shared.log.map(entry => entry.message).join(' '), /Feel No Pain \(2\+\)/);
+
+    const expired = makeBattle('While this model is leading a unit, models in that unit have Feel No Pain 2+.');
+    expired.units[1].destroyed = true;
+    expired.units[1].remainingModels = 0;
+    expired.units[1].modelPositions = [];
+    const afterExpiration = allocatePlayDamageToModel(expired, 'bodyguard', 1, 0);
+    assert.equal(afterExpiration.units[0].woundsOnLeadModel, 2);
+    assert.equal(attachedUnitHasRule(afterExpiration, afterExpiration.units[0], 'Feel No Pain'), false);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('11th attached components share one serialized shooting activation and locked target', async () => {
+  installStorage();
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const rifle = { name: 'Rifle', range: 24, attacks: '1', skill: 3, strength: 20, ap: -6, damage: '1', keywords: ['Torrent'], isMelee: false };
+  const bodyguard = losTestUnit('bodyguard', 0, { x: 10, y: 10 });
+  bodyguard.tabletopUnitId = bodyguard.id;
+  bodyguard.profile = { ...bodyguard.profile, name: 'Bodyguard', weapons: [rifle] };
+  const leader = losTestUnit('leader', 0, { x: 10.5, y: 10 });
+  leader.tabletopUnitId = bodyguard.id;
+  leader.attachedToUnitId = bodyguard.id;
+  leader.profile = { ...leader.profile, name: 'Leader', keywords: ['Infantry', 'Character'], weapons: [rifle] };
+  const outsider = losTestUnit('outsider', 0, { x: 9, y: 10 });
+  outsider.profile = { ...outsider.profile, weapons: [rifle] };
+  const firstTarget = losTestUnit('target-a', 1, { x: 16, y: 10 });
+  const secondTarget = losTestUnit('target-b', 1, { x: 17, y: 10 });
+  battle.units = [bodyguard, leader, outsider, firstTarget, secondTarget];
+
+  const firstAction: GameAction = {
+    type: GAME_ACTION_TYPE.ShootUnitWeapon, side: 0, unitId: bodyguard.id,
+    targetUnitId: firstTarget.id, weaponIndex: 0,
+  };
+  const afterFirst = applyGameAction(battle, firstAction, { rules: rules40K11th });
+  assert.equal(afterFirst.activeAttachedShootingUnitId, bodyguard.id);
+  assert.equal(afterFirst.attachedShootingTargetUnitId, firstTarget.id);
+  assert.deepEqual(playShootingWeaponOptions(afterFirst, outsider.id, 0, rules40K11th), []);
+  assert.deepEqual(playShootingWeaponOptions(afterFirst, leader.id, 0, rules40K11th)[0]?.targetIds, [firstTarget.id]);
+  assert.equal(shootPlayUnitWeapon(afterFirst, leader.id, 0, secondTarget.id, 0, rules40K11th), afterFirst);
+
+  const persisted = JSON.parse(JSON.stringify(afterFirst)) as BattleState;
+  assert.equal(persisted.activeAttachedShootingUnitId, bodyguard.id);
+  assert.equal(persisted.attachedShootingTargetUnitId, firstTarget.id);
+  const secondAction: GameAction = {
+    type: GAME_ACTION_TYPE.ShootUnitWeapon, side: 0, unitId: leader.id,
+    targetUnitId: firstTarget.id, weaponIndex: 0,
+  };
+  const completed = applyGameAction(persisted, secondAction, { rules: rules40K11th });
+  assert.equal(completed.activeAttachedShootingUnitId, undefined);
+  assert.equal(completed.attachedShootingTargetUnitId, undefined);
+  assert.equal(completed.units[0].activated, true);
+  assert.equal(completed.units[1].activated, true);
+
+  const timeline = createPracticeTimeline(battle);
+  const appended = appendTimelineAction(timeline, battle, firstAction, { rules: rules40K11th });
+  const replayed = replayTimeline(appended.timeline, { rules: rules40K11th }, false);
+  assert.equal(replayed.activeAttachedShootingUnitId, bodyguard.id);
+  assert.equal(replayed.attachedShootingTargetUnitId, firstTarget.id);
+  await localPracticeScenarioRepository.saveScenario(scenarioFromTimeline(appended.timeline, { id: 'attached-shooting-save' }));
+  const loaded = await localPracticeScenarioRepository.loadScenario('attached-shooting-save');
+  const loadedState = currentTimelineState(loaded!.timeline);
+  assert.equal(loadedState.activeAttachedShootingUnitId, bodyguard.id);
+  assert.equal(loadedState.attachedShootingTargetUnitId, firstTarget.id);
+});
+
+test('11th attached components start, cancel, and complete one shared action', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const bodyguard = losTestUnit('bodyguard', 0, { x: 10, y: 10 });
+  bodyguard.tabletopUnitId = bodyguard.id;
+  const leader = losTestUnit('leader', 0, { x: 10.5, y: 10 });
+  leader.tabletopUnitId = bodyguard.id;
+  leader.attachedToUnitId = bodyguard.id;
+  leader.profile = { ...leader.profile, keywords: ['Infantry', 'Character'] };
+  battle.units = [bodyguard, leader];
+
+  const startAction: GameAction = {
+    type: GAME_ACTION_TYPE.StartAction, side: 0, unitId: leader.id,
+    actionId: 'generic-action', actionName: 'Generic Action',
+  };
+  const started = applyGameAction(battle, startAction, { rules: rules40K11th });
+  assert.equal(started.units.every(unit => unit.performingAction?.id === 'generic-action'), true);
+  assert.equal(started.units.every(unit => unit.actionStartedThisTurn), true);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const cancelled = advancePlayUnit(started, bodyguard.id, 0, rules40K11th);
+    assert.equal(cancelled.units.every(unit => unit.performingAction === undefined), true);
+    assert.equal(cancelled.units.every(unit => unit.movementAction === 'advanced'), true);
+    assert.equal(cancelled.log.filter(entry => /does not complete Generic Action/.test(entry.message)).length, 1);
+  } finally {
+    Math.random = originalRandom;
+  }
+
+  const replayed = applyGameAction(JSON.parse(JSON.stringify(battle)) as BattleState, startAction, { rules: rules40K11th });
+  completeEndOfTurnActions(replayed, 0);
+  assert.equal(replayed.units.every(unit => unit.performingAction === undefined), true);
+  assert.equal(replayed.missionEvents?.completedActionsThisTurn?.length, 1);
+  assert.equal(replayed.missionEvents?.completedActionsThisTurn?.[0]?.unitId, bodyguard.id);
+
+  const chargeBattle = JSON.parse(JSON.stringify(battle)) as BattleState;
+  chargeBattle.phase = 'charge';
+  chargeBattle.units.push(losTestUnit('charge-target', 1, { x: 13, y: 10 }));
+  const originalChargeRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const charged = chargePlayUnitTarget(chargeBattle, bodyguard.id, 0, 'charge-target', rules40K11th);
+    assert.equal(charged.units.slice(0, 2).every(unit => unit.activated && unit.charged), true);
+    assert.deepEqual(playChargeTargetOptions(charged, leader.id, 0, rules40K11th), []);
+  } finally {
+    Math.random = originalChargeRandom;
+  }
+});
+
 test('11th attached units persist after Bodyguard loss and emit one aggregate unit-destruction fact', () => {
   const battle = state('shooting');
   const bodyguard = losTestUnit('bodyguard', 1, { x: 12, y: 10 });
