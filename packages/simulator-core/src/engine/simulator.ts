@@ -2792,6 +2792,39 @@ function unitCanFight(unit: BattleUnit, state: BattleState, rules: RulesEdition)
     && enemies(state, unit.side).some(enemy => unitCanFightTarget(unit, enemy) && inEngagement(unit, [enemy], rules.engagementRange()));
 }
 
+function unitWasEngagedAtFightStepStart(state: BattleState, unit: BattleUnit): boolean {
+  return state.engagedUnitIdsAtFightStepStart?.includes(unit.id) ?? false;
+}
+
+function unitEligibleToFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean {
+  if (unit.destroyed || unit.embarkedInUnitId || unit.activated) return false;
+  if (rules.metadata.edition !== '11e') return unitCanFight(unit, state, rules);
+  if (state.fightStepStarted === false) return false;
+  return unit.charged
+    || unitWasEngagedAtFightStepStart(state, unit)
+    || enemies(state, unit.side).some(enemy => unitCanFightTarget(unit, enemy) && inEngagement(unit, [enemy], rules.engagementRange()));
+}
+
+function startFightStepInPlace(s: BattleState, rules: RulesEdition): void {
+  s.fightStepStarted = true;
+  s.lastFightSelectionSide = undefined;
+  s.engagedUnitIdsAtFightStepStart = s.units
+    .filter(unit => !unit.destroyed && !unit.embarkedInUnitId
+      && enemies(s, unit.side).some(enemy => unitCanFightTarget(unit, enemy) && inEngagement(unit, [enemy], rules.engagementRange())))
+    .map(unit => unit.id);
+  s.log = [...s.log, log(s, s.activeArmy, s.armies[s.activeArmy].name, 'Fight step begins; engagement eligibility is recorded.', 'phase')];
+}
+
+export function startPlayFightStep(
+  state: BattleState,
+  rules: RulesEdition = rules40K10th,
+): BattleState {
+  if (rules.metadata.edition !== '11e' || state.phase !== 'fight' || state.fightStepStarted) return state;
+  const s = clone(state);
+  startFightStepInPlace(s, rules);
+  return s;
+}
+
 function unitHasCounteroffensive(state: BattleState, unit: BattleUnit): boolean {
   return unitHasActiveStratagem(state, unit, 'counteroffensive', 'fight');
 }
@@ -2800,9 +2833,11 @@ function unitHasFightsFirst(state: BattleState, unit: BattleUnit): boolean {
   return unit.charged || unitHasCounteroffensive(state, unit) || unitHasDatasheetRule(unit, 'Fights First');
 }
 
-function sideCanSelectFightUnit(state: BattleState, side: Side): boolean {
+function sideCanSelectFightUnit(state: BattleState, side: Side, rules: RulesEdition): boolean {
   return state.phase === 'fight'
-    && (state.activeArmy === side || activeUnits(state, side).some(unit => unitHasCounteroffensive(state, unit)));
+    && (rules.metadata.edition === '11e'
+      || state.activeArmy === side
+      || activeUnits(state, side).some(unit => unitHasCounteroffensive(state, unit)));
 }
 
 export function playFightActivationUnitIds(
@@ -2810,15 +2845,61 @@ export function playFightActivationUnitIds(
   side: Side,
   rules: RulesEdition = rules40K10th,
 ): string[] {
-  if (!sideCanSelectFightUnit(state, side)) return [];
-  const eligible = activeUnits(state, side).filter(unit => unitCanFight(unit, state, rules));
-  if (state.activeArmy !== side) {
+  if (!sideCanSelectFightUnit(state, side, rules)) return [];
+  const eligible = activeUnits(state, side).filter(unit => unitEligibleToFight(unit, state, rules));
+  if (rules.metadata.edition !== '11e' && state.activeArmy !== side) {
     return eligible.filter(unit => unitHasCounteroffensive(state, unit)).map(unit => unit.id);
+  }
+  if (rules.metadata.edition === '11e') {
+    const allEligible = state.units.filter(unit => unitEligibleToFight(unit, state, rules));
+    const counteroffensive = allEligible.filter(unit => unitHasCounteroffensive(state, unit));
+    const priorityEligible = counteroffensive.length
+      ? counteroffensive
+      : allEligible.some(unit => unitHasFightsFirst(state, unit))
+        ? allEligible.filter(unit => unitHasFightsFirst(state, unit))
+        : allEligible;
+    const preferredSide = state.lastFightSelectionSide === undefined
+      ? state.activeArmy
+      : (state.lastFightSelectionSide === 0 ? 1 : 0) as Side;
+    const selectingSide = priorityEligible.some(unit => unit.side === preferredSide)
+      ? preferredSide
+      : (preferredSide === 0 ? 1 : 0) as Side;
+    return side === selectingSide
+      ? priorityEligible.filter(unit => unit.side === side).map(unit => unit.id)
+      : [];
   }
   const counteroffensive = eligible.filter(unit => unitHasCounteroffensive(state, unit));
   if (counteroffensive.length) return counteroffensive.map(unit => unit.id);
   const fightsFirst = eligible.filter(unit => unitHasFightsFirst(state, unit));
   return (fightsFirst.length ? fightsFirst : eligible).map(unit => unit.id);
+}
+
+export function playOverrunFightUnitIds(
+  state: BattleState,
+  side: Side,
+  rules: RulesEdition = rules40K10th,
+): string[] {
+  if (rules.metadata.edition !== '11e' || state.fightStepStarted !== true) return [];
+  return playFightActivationUnitIds(state, side, rules).filter(unitId => {
+    const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+    if (!unit || unit.overrunFightSelected) return false;
+    const engaged = enemies(state, side).some(enemy => unitCanFightTarget(unit, enemy) && inEngagement(unit, [enemy], rules.engagementRange()));
+    return !engaged || (!unitWasEngagedAtFightStepStart(state, unit) && engaged);
+  });
+}
+
+export function selectPlayOverrunFight(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rules40K10th,
+): BattleState {
+  if (!playOverrunFightUnitIds(state, side, rules).includes(unitId)) return state;
+  const s = clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
+  unit.overrunFightSelected = true;
+  s.log = [...s.log, log(s, side, unit.profile.name, `${unit.profile.name} is selected to make an Overrun Fight.`, 'fight')];
+  return s;
 }
 
 function closestEnemyModelFor(
@@ -2876,13 +2957,17 @@ function applyFightPhaseMove(
   kind: 'pileIn' | 'consolidate',
   rules: RulesEdition,
 ): BattleState {
-  if (state.phase !== 'fight' || state.activeArmy !== side) return state;
+  if (state.phase !== 'fight') return state;
+  if (state.activeArmy !== side && rules.metadata.edition !== '11e') return state;
   const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
   if (!existing) return state;
-  if (kind === 'pileIn' && existing.piledIn) return state;
+  const isOverrunPileIn = kind === 'pileIn' && rules.metadata.edition === '11e' && state.fightStepStarted && existing.overrunFightSelected;
+  if (kind === 'pileIn' && (isOverrunPileIn ? existing.overrunPiledIn : existing.piledIn)) return state;
   if (kind === 'consolidate' && existing.consolidated) return state;
-  if (kind === 'pileIn' && !unitCanFight(existing, state, rules) && !(existing.charged && enemies(state, side).length > 0)) return state;
-  if (kind === 'consolidate' && !existing.activated) return state;
+  if (kind === 'pileIn' && isOverrunPileIn && !unitEligibleToFight(existing, state, rules)) return state;
+  if (kind === 'pileIn' && !isOverrunPileIn && rules.metadata.edition === '11e' && state.fightStepStarted) return state;
+  if (kind === 'pileIn' && !isOverrunPileIn && !unitCanFight(existing, state, rules) && !(existing.charged && enemies(state, side).length > 0)) return state;
+  if (kind === 'consolidate' && !playUnitCanConsolidate(state, unitId, side, rules)) return state;
 
   const s = clone(state);
   const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
@@ -2908,7 +2993,9 @@ function applyFightPhaseMove(
     movedModels++;
   }
 
-  if (kind === 'pileIn') unit.piledIn = true;
+  if (kind === 'pileIn' && !inEngagement(unit, enemies(s, side), rules.engagementRange())) return state;
+  if (kind === 'pileIn' && isOverrunPileIn) unit.overrunPiledIn = true;
+  else if (kind === 'pileIn') unit.piledIn = true;
   else unit.consolidated = true;
   unit.inCombat = inEngagement(unit, enemies(s, side), rules.engagementRange());
 
@@ -2916,7 +3003,7 @@ function applyFightPhaseMove(
     s,
     side,
     unit.profile.name,
-    `${unit.profile.name} ${kind === 'pileIn' ? 'piles in' : 'consolidates'}${movedModels ? ` with ${movedModels} model${movedModels === 1 ? '' : 's'}` : ''}.`,
+    `${unit.profile.name} ${isOverrunPileIn ? 'makes its Overrun pile-in' : kind === 'pileIn' ? 'piles in' : 'consolidates'}${movedModels ? ` with ${movedModels} model${movedModels === 1 ? '' : 's'}` : ''}.`,
     'move',
   )];
   return s;
@@ -2931,18 +3018,21 @@ export function playUnitCanPileIn(
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   return !!unit
     && state.phase === 'fight'
-    && state.activeArmy === side
-    && !unit.piledIn
-    && (unitCanFight(unit, state, rules) || (unit.charged && enemies(state, side).length > 0));
+    && (state.activeArmy === side || rules.metadata.edition === '11e')
+    && (rules.metadata.edition === '11e' && state.fightStepStarted
+      ? !!unit.overrunFightSelected && !unit.overrunPiledIn && unitEligibleToFight(unit, state, rules)
+      : !unit.piledIn && (unitCanFight(unit, state, rules) || (unit.charged && enemies(state, side).length > 0)));
 }
 
 export function playUnitCanConsolidate(
   state: BattleState,
   unitId: string,
   side: Side,
+  rules: RulesEdition = rules40K10th,
 ): boolean {
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  return !!unit && state.phase === 'fight' && state.activeArmy === side && unit.activated && !unit.consolidated;
+  return !!unit && state.phase === 'fight' && (state.activeArmy === side || rules.metadata.edition === '11e') && unit.activated && !unit.consolidated
+    && (rules.metadata.edition !== '11e' || !state.units.some(candidate => unitEligibleToFight(candidate, state, rules)));
 }
 
 export function pileInPlayUnit(
@@ -2969,7 +3059,7 @@ export function playFightWeaponOptions(
   side: Side,
   rules: RulesEdition = rules40K10th,
 ): PlayFightWeaponOption[] {
-  if (!sideCanSelectFightUnit(state, side)) return [];
+  if (!sideCanSelectFightUnit(state, side, rules)) return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit || !unitCanFight(unit, state, rules)) return [];
   if (!playFightActivationUnitIds(state, side, rules).includes(unit.id)) return [];
@@ -2993,7 +3083,7 @@ export function fightPlayUnitWeapon(
   rules: RulesEdition = rules40K10th,
   targetSplits?: PlayMeleeAttackSplit[],
 ): BattleState {
-  if (!sideCanSelectFightUnit(state, side)) return state;
+  if (!sideCanSelectFightUnit(state, side, rules)) return state;
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   const target = state.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
   const splitTargetIds = targetSplits?.map(split => split.targetUnitId) ?? [];
@@ -3014,6 +3104,7 @@ export function fightPlayUnitWeapon(
   if (weaponIndex === -1 || (weaponIndex === 'all' && !fightingUnit.profile.weapons.some(weapon => weapon.isMelee))) {
     if (fightingUnit.profile.weapons.some(weapon => weapon.isMelee)) return state;
     fightingUnit.activated = true;
+    if (rules.metadata.edition === '11e') s.lastFightSelectionSide = side;
     s.log = [...s.log, log(s, side, fightingUnit.profile.name, `${fightingUnit.profile.name} is selected to fight ${fightTarget.profile.name} but has no melee weapons, so it makes no attacks.`, 'fight')];
     return s;
   }
@@ -3027,7 +3118,9 @@ export function fightPlayUnitWeapon(
   if (targetSplits?.length && (weaponIndex === 'all' || selectedMeleeWeapons.length !== 1)) return state;
 
   const logs: LogEntry[] = [
-    log(s, side, fightingUnit.profile.name, `${fightingUnit.profile.name} fights ${fightTarget.profile.name}:`, 'fight'),
+    log(s, side, fightingUnit.profile.name, fightingUnit.overrunFightSelected
+      ? `${fightingUnit.profile.name} makes an Overrun Fight against ${fightTarget.profile.name}:`
+      : `${fightingUnit.profile.name} fights ${fightTarget.profile.name}:`, 'fight'),
   ];
   let madeAttacks = false;
   if (targetSplits?.length) {
@@ -3068,6 +3161,7 @@ export function fightPlayUnitWeapon(
   }
   if (!madeAttacks) return state;
   fightingUnit.activated = true;
+  if (rules.metadata.edition === '11e') s.lastFightSelectionSide = side;
   s.log = [...s.log, ...logs];
   return s;
 }
@@ -3077,13 +3171,15 @@ function runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): Lo
   const eng = rules.engagementRange();
   const foes = enemies(state, unit.side).filter(e => unitCanFightTarget(unit, e) && inEngagement(unit, [e], eng));
   if (!foes.length) return [];
+  unit.activated = true;
+  if (rules.metadata.edition === '11e') state.lastFightSelectionSide = unit.side;
 
   const meleeWeapons = chooseOneProfilePerGroup(
     unit.profile.weapons
       .map((weapon, weaponIndex) => ({ weapon, weaponIndex }))
       .filter(option => option.weapon.isMelee),
   );
-  if (!meleeWeapons.length) return [];
+  if (!meleeWeapons.length) return [log(state, unit.side, unit.profile.name, `${unit.profile.name} is selected to fight but has no melee weapons.`, 'fight')];
 
   const target = nearest(unit, foes)!;
   const logs: LogEntry[] = [
@@ -3097,6 +3193,52 @@ function runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): Lo
   }
 
   return logs;
+}
+
+function runAutomaticFightForUnit(state: BattleState, unitId: string, rules: RulesEdition): BattleState {
+  let s = state;
+  const unit = s.units.find(candidate => candidate.id === unitId && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || unit.activated) return s;
+  if (playOverrunFightUnitIds(s, unit.side, rules).includes(unit.id)) {
+    s = selectPlayOverrunFight(s, unit.id, unit.side, rules);
+    const piled = pileInPlayUnit(s, unit.id, unit.side, rules);
+    if (piled !== s) s = piled;
+  }
+  const selected = s.units.find(candidate => candidate.id === unitId && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!selected) return s;
+  const fightLogs = runFight(selected, s, rules);
+  if (fightLogs.length) s.log = [...s.log, ...fightLogs];
+  return s;
+}
+
+function runAutomaticEleventhFightPhase(state: BattleState, startingSide: Side, rules: RulesEdition): BattleState {
+  let s = state;
+  for (const pileSide of [startingSide, (startingSide === 0 ? 1 : 0) as Side]) {
+    for (const unit of activeUnits(s, pileSide)) {
+      const piled = pileInPlayUnit(s, unit.id, pileSide, rules);
+      if (piled !== s) s = piled;
+    }
+  }
+  startFightStepInPlace(s, rules);
+
+  let nextSide = startingSide;
+  while (true) {
+    const otherSide = (nextSide === 0 ? 1 : 0) as Side;
+    const nextIds = playFightActivationUnitIds(s, nextSide, rules);
+    const otherIds = playFightActivationUnitIds(s, otherSide, rules);
+    const unitId = nextIds[0] ?? otherIds[0];
+    if (!unitId) break;
+    const selectedSide = nextIds.length ? nextSide : otherSide;
+    s = runAutomaticFightForUnit(s, unitId, rules);
+    if (!s.units.find(unit => unit.id === unitId)?.activated) break;
+    nextSide = (selectedSide === 0 ? 1 : 0) as Side;
+  }
+
+  for (const unit of s.units.filter(candidate => candidate.activated && !candidate.destroyed)) {
+    const consolidated = consolidatePlayUnit(s, unit.id, unit.side, rules);
+    if (consolidated !== s) s = consolidated;
+  }
+  return s;
 }
 
 function bestLeadership(unit: BattleUnit): number {
@@ -3274,6 +3416,13 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
   const side = s.activeArmy;
   const armyName = s.armies[side].name;
   startMissionEventsForNewTurn(s, rules);
+  s.fightStepStarted = undefined;
+  s.engagedUnitIdsAtFightStepStart = undefined;
+  s.lastFightSelectionSide = undefined;
+  s.units.forEach(unit => {
+    unit.overrunFightSelected = undefined;
+    unit.overrunPiledIn = undefined;
+  });
   s.units.filter(u => u.side === side && !u.destroyed).forEach(u => { u.actionStartedThisTurn = undefined; });
   activeUnits(s, side).forEach(u => {
     u.activated = false;
@@ -5380,11 +5529,18 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
     activeUnits(s, side).filter(u => !u.inCombat).forEach(u => newLogs.push(...runCharge(u, s, rules)));
   } else if (s.phase === 'charge') {
     s.phase = 'fight';
+    s.fightStepStarted = false;
+    s.engagedUnitIdsAtFightStepStart = undefined;
+    s.lastFightSelectionSide = undefined;
     newLogs.push(phaseLog(s, side, armyName, `\n--- Fight Phase ---`));
-    activeUnits(s, side).filter(u => u.charged).forEach(u => newLogs.push(...runFight(u, s, rules)));
-    activeUnits(s, side).filter(u => !u.charged && u.inCombat).forEach(u => newLogs.push(...runFight(u, s, rules)));
-    s.units.filter(u => u.side !== side && !u.destroyed && u.inCombat)
-      .forEach(u => newLogs.push(...runFight(u, s, rules)));
+    if (rules.metadata.edition === '11e') {
+      s = runAutomaticEleventhFightPhase(s, side, rules);
+    } else {
+      activeUnits(s, side).filter(u => u.charged).forEach(u => newLogs.push(...runFight(u, s, rules)));
+      activeUnits(s, side).filter(u => !u.charged && u.inCombat).forEach(u => newLogs.push(...runFight(u, s, rules)));
+      s.units.filter(u => u.side !== side && !u.destroyed && u.inCombat)
+        .forEach(u => newLogs.push(...runFight(u, s, rules)));
+    }
   } else if (s.phase === 'fight') {
     for (const unit of activeUnits(s, side)) {
       const objectiveIndex = consecrateObjectiveOptions(s, unit.id, side, rules, true)[0];
@@ -5403,7 +5559,7 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
 }
 
 export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): BattleState {
-  const s = clone(state);
+  let s = clone(state);
   const side = s.activeArmy;
   const armyName = s.armies[side].name;
   const myUnits = () => s.units.filter(u => u.side === side && !u.destroyed);
@@ -5411,6 +5567,10 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
 
   // Reset per-turn flags
   startMissionEventsForNewTurn(s, rules);
+  s.fightStepStarted = undefined;
+  s.engagedUnitIdsAtFightStepStart = undefined;
+  s.lastFightSelectionSide = undefined;
+  s.units.forEach(u => { u.overrunFightSelected = undefined; u.overrunPiledIn = undefined; });
   myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
 
   // Command
@@ -5451,11 +5611,18 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
 
   // Fight — charged first, then others in melee, then defender counterattacks
   s.phase = 'fight';
+  s.fightStepStarted = false;
+  s.engagedUnitIdsAtFightStepStart = undefined;
+  s.lastFightSelectionSide = undefined;
   newLogs.push(phaseLog(s, side, armyName, `\n─── Fight Phase ───`));
-  myUnits().filter(u => u.charged).forEach(u => newLogs.push(...runFight(u, s, rules)));
-  myUnits().filter(u => !u.charged && u.inCombat).forEach(u => newLogs.push(...runFight(u, s, rules)));
-  s.units.filter(u => u.side !== side && !u.destroyed && u.inCombat)
-    .forEach(u => newLogs.push(...runFight(u, s, rules)));
+  if (rules.metadata.edition === '11e') {
+    s = runAutomaticEleventhFightPhase(s, side, rules);
+  } else {
+    myUnits().filter(u => u.charged).forEach(u => newLogs.push(...runFight(u, s, rules)));
+    myUnits().filter(u => !u.charged && u.inCombat).forEach(u => newLogs.push(...runFight(u, s, rules)));
+    s.units.filter(u => u.side !== side && !u.destroyed && u.inCombat)
+      .forEach(u => newLogs.push(...runFight(u, s, rules)));
+  }
 
   checkWinner(s);
   if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }

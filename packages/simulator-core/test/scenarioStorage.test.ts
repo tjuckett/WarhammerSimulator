@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, PrimaryMissionScoringRecord, SecondaryMissionScoringRecord, Terrain, TerritoryZoneSet } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playMeleeFixedAttackCount, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -2440,7 +2440,7 @@ test('secondary scoring lifecycle logs and fixed Assassination replay and persis
     { rules: rules40K11th },
   );
   assert.equal(result.state.scores[0], 0);
-  for (let step = 0; step < 3; step += 1) {
+  for (let step = 0; step < 4; step += 1) {
     result = appendTimelineAction(result.timeline, result.state, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
   }
   assert.equal(result.state.scores[0], 4);
@@ -9385,6 +9385,129 @@ test('11th Fight phase lets a charged unit pile in before selecting melee attack
   assert.deepEqual(playFightWeaponOptions(piled, fighter.id, 0, rules40K11th), [
     { weaponIndex: 0, name: 'Blade', targetIds: [target.id] },
   ]);
+});
+
+test('11th Overrun uses the Fight-step engagement snapshot and current eligibility', () => {
+  const profile = {
+    name: 'Overrun Unit', move: 6, toughness: 4, save: 3, wounds: 2, leadership: 7, oc: 1,
+    baseModelCount: 1, keywords: ['Infantry'], factionKeywords: [],
+    weapons: [{ name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true }],
+    abilities: [],
+  };
+  const makeBattle = (fighterX: number, targetX: number, charged = false) => {
+    const battle = state('fight');
+    battle.ruleset = rulesetMetadataForState(rules40K11th);
+    battle.fightStepStarted = false;
+    const fighter = losTestUnit('overrunner', 0, { x: fighterX, y: 10 });
+    fighter.profile = profile;
+    fighter.charged = charged;
+    const target = losTestUnit('new-foe', 1, { x: targetX, y: 10 });
+    target.profile = { ...profile, name: 'New Foe', weapons: [], abilities: [{ name: 'Fights First', description: 'This unit fights first.' }] };
+    battle.units = [fighter, target];
+    return battle;
+  };
+
+  const chargedUnengaged = makeBattle(0, 3.5, true);
+  assert.deepEqual(playFightActivationUnitIds(chargedUnengaged, 0, rules40K11th), []);
+  const chargedStarted = startPlayFightStep(chargedUnengaged, rules40K11th);
+  assert.deepEqual(chargedStarted.engagedUnitIdsAtFightStepStart, []);
+  assert.deepEqual(playOverrunFightUnitIds(chargedStarted, 0, rules40K11th), ['overrunner']);
+  const selected = selectPlayOverrunFight(chargedStarted, 'overrunner', 0, rules40K11th);
+  const piled = pileInPlayUnit(selected, 'overrunner', 0, rules40K11th);
+  assert.equal(piled.units[0].overrunPiledIn, true);
+  assert.equal(pileInPlayUnit(piled, 'overrunner', 0, rules40K11th), piled);
+  assert.deepEqual(playFightActivationUnitIds(piled, 1, rules40K11th), []);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.01;
+  try {
+    const fought = fightPlayUnitWeapon(piled, 'overrunner', 0, 'new-foe', 0, rules40K11th);
+    assert.equal(fought.units[0].activated, true);
+    assert.deepEqual(playFightActivationUnitIds(fought, 1, rules40K11th), ['new-foe']);
+    assert.equal(playUnitCanConsolidate(fought, 'overrunner', 0, rules40K11th), false);
+    const foeFought = fightPlayUnitWeapon(fought, 'new-foe', 1, 'overrunner', -1, rules40K11th);
+    assert.equal(foeFought.units[1].activated, true);
+    assert.equal(playUnitCanConsolidate(foeFought, 'overrunner', 0, rules40K11th), true);
+    const nextTurn = applyGameAction(foeFought, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+    assert.equal(nextTurn.phase, 'command');
+    assert.equal(nextTurn.fightStepStarted, undefined);
+    assert.equal(nextTurn.engagedUnitIdsAtFightStepStart, undefined);
+    assert.equal(nextTurn.lastFightSelectionSide, undefined);
+    assert.equal(nextTurn.units.every(unit => unit.overrunFightSelected === undefined && unit.overrunPiledIn === undefined), true);
+  } finally {
+    Math.random = originalRandom;
+  }
+
+  const newlyEngagedStart = startPlayFightStep(makeBattle(0, 3.5), rules40K11th);
+  const newlyEngaged = structuredClone(newlyEngagedStart);
+  newlyEngaged.units[1].position.x = 0.9;
+  newlyEngaged.units[1].modelPositions[0].x = 0.9;
+  newlyEngaged.units[1].activated = true;
+  assert.deepEqual(playOverrunFightUnitIds(newlyEngaged, 0, rules40K11th), ['overrunner']);
+
+  const formerlyEngagedStart = startPlayFightStep(makeBattle(0, 0.9), rules40K11th);
+  const nowUnengaged = structuredClone(formerlyEngagedStart);
+  nowUnengaged.units[1].position.x = 10;
+  nowUnengaged.units[1].modelPositions[0].x = 10;
+  nowUnengaged.units[1].activated = true;
+  assert.deepEqual(playOverrunFightUnitIds(nowUnengaged, 0, rules40K11th), ['overrunner']);
+
+  const neverEligible = startPlayFightStep(makeBattle(0, 10), rules40K11th);
+  assert.deepEqual(playOverrunFightUnitIds(neverEligible, 0, rules40K11th), []);
+  const alreadyActivated = structuredClone(chargedStarted);
+  alreadyActivated.units[0].activated = true;
+  assert.deepEqual(playOverrunFightUnitIds(alreadyActivated, 0, rules40K11th), []);
+});
+
+test('11th Overrun actions replay and save the named selection and additional pile-in', async () => {
+  installStorage();
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = false;
+  const fighter = losTestUnit('replay-overrunner', 0, { x: 0, y: 10 });
+  fighter.charged = true;
+  const target = losTestUnit('replay-target', 1, { x: 3.5, y: 10 });
+  battle.units = [fighter, target];
+  let timeline = createPracticeTimeline(battle, { id: 'overrun-replay' });
+  let current = battle;
+  for (const action of [
+    { type: GAME_ACTION_TYPE.StartFightStep },
+    { type: GAME_ACTION_TYPE.SelectOverrunFight, side: 0 as const, unitId: fighter.id },
+    { type: GAME_ACTION_TYPE.PileInUnit, side: 0 as const, unitId: fighter.id },
+  ] satisfies GameAction[]) {
+    const appended = appendTimelineAction(timeline, current, action, { rules: rules40K11th });
+    timeline = appended.timeline;
+    current = appended.state;
+  }
+  const replayed = replayTimeline(timeline, { rules: rules40K11th }, false);
+  assert.equal(replayed.fightStepStarted, true);
+  assert.equal(replayed.units[0].overrunFightSelected, true);
+  assert.equal(replayed.units[0].overrunPiledIn, true);
+  assert.deepEqual(replayed.units[0].modelPositions, current.units[0].modelPositions);
+
+  await localPracticeScenarioRepository.saveScenario(scenarioFromTimeline(timeline, { id: 'overrun-save' }));
+  const loaded = await localPracticeScenarioRepository.loadScenario('overrun-save');
+  const loadedState = currentTimelineState(loaded!.timeline);
+  assert.equal(loadedState.fightStepStarted, true);
+  assert.equal(loadedState.units[0].overrunFightSelected, true);
+  assert.equal(loadedState.units[0].overrunPiledIn, true);
+});
+
+test('11th simulation records the Fight-step snapshot before resolving fights and consolidation', () => {
+  const battle = state('charge');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const fighter = losTestUnit('simulation-fighter', 0, { x: 0, y: 10 });
+  fighter.charged = true;
+  fighter.profile.weapons = [];
+  const target = losTestUnit('simulation-target', 1, { x: 3.5, y: 10 });
+  target.profile.weapons = [];
+  battle.units = [fighter, target];
+  const simulated = simulateNextPhase(battle, rules40K11th);
+  assert.equal(simulated.phase, 'fight');
+  assert.equal(simulated.fightStepStarted, true);
+  assert.deepEqual(new Set(simulated.engagedUnitIdsAtFightStepStart), new Set([fighter.id, target.id]));
+  assert.deepEqual(simulated.units.map(unit => unit.activated), [true, true]);
+  assert.deepEqual(simulated.units.map(unit => unit.consolidated), [true, true]);
 });
 
 test('play Movement can embark a nearby unit into a transport', () => {

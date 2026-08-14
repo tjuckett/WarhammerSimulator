@@ -24,7 +24,7 @@ import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simu
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
   battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, createDeploymentState, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels,
-  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTarget, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playMeleeFixedAttackCount, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type LOSRay,
+  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTarget, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, sabotageObjectiveOptions, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -965,16 +965,22 @@ export default function App() {
     isPlayMode
     && battleState
     && primaryPlaySelection
-    && primaryPlaySelection.side === battleState.activeArmy
-    && fightActivationUnitIds.has(primaryPlaySelection.unitId)
+    && (primaryPlaySelection.side === battleState.activeArmy || activeRulesForBattle.metadata.edition === '11e')
     && playUnitCanPileIn(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side, activeRulesForBattle)
+  );
+  const selectedPlayCanSelectOverrun = !!(
+    isPlayMode
+    && battleState
+    && primaryPlaySelection
+    && playOverrunFightUnitIds(battleState, primaryPlaySelection.side, activeRulesForBattle)
+      .includes(primaryPlaySelection.unitId)
   );
   const selectedPlayCanConsolidate = !!(
     isPlayMode
     && battleState
     && primaryPlaySelection
-    && primaryPlaySelection.side === battleState.activeArmy
-    && playUnitCanConsolidate(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side)
+    && (primaryPlaySelection.side === battleState.activeArmy || activeRulesForBattle.metadata.edition === '11e')
+    && playUnitCanConsolidate(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side, activeRulesForBattle)
   );
   const selectedPlayCanEmbark = !!(
     isPlayMode
@@ -2177,6 +2183,21 @@ export default function App() {
     commitBattleState(next);
   }
 
+  function selectOverrunForSelectedPlayUnit() {
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || prev.phase !== 'fight' || !selection) return;
+    const next = selectPlayOverrunFight(prev, selection.unitId, selection.side, activeRulesForBattle);
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: GAME_ACTION_TYPE.SelectOverrunFight,
+      unitId: selection.unitId,
+      side: selection.side,
+    });
+    setTargetErrorMsg(null);
+    commitBattleState(next);
+  }
+
   function toggleSelectedCondemnedUnit() {
     const prev = battleStateRef.current;
     if (!prev || !isPlayMode || !selectedTacticsUnit) return;
@@ -2343,6 +2364,19 @@ export default function App() {
   const stepPlayPhase = useCallback(() => {
     const prev = battleStateRef.current;
     if (!prev || prev.winner !== null || prev.phase === BATTLE_PHASE.Deployment || prev.phase === BATTLE_PHASE.End) return;
+    if (prev.phase === BATTLE_PHASE.Fight && activeRulesForBattle.metadata.edition === '11e' && prev.fightStepStarted === false) {
+      const next = startPlayFightStep(prev, activeRulesForBattle);
+      if (next === prev) return;
+      recordGameSessionAction(prev, next, { type: GAME_ACTION_TYPE.StartFightStep });
+      commitBattleState(next);
+      return;
+    }
+    if (prev.phase === BATTLE_PHASE.Fight && activeRulesForBattle.metadata.edition === '11e'
+      && (playFightActivationUnitIds(prev, 0, activeRulesForBattle).length
+        || playFightActivationUnitIds(prev, 1, activeRulesForBattle).length)) {
+      setPlayPhaseWarning('Resolve every eligible fight before ending the Fight phase.');
+      return;
+    }
     const coherencyIssues = playPhaseCoherencyIssues(prev);
     if (coherencyIssues.length > 0) {
       setPlayPhaseWarning(coherencyIssues[0]);
@@ -2373,6 +2407,13 @@ export default function App() {
     const startCommand = () => {
       next.phase = BATTLE_PHASE.Command;
       next.movementStep = undefined;
+      next.fightStepStarted = undefined;
+      next.engagedUnitIdsAtFightStepStart = undefined;
+      next.lastFightSelectionSide = undefined;
+      next.units.forEach(unit => {
+        unit.overrunFightSelected = undefined;
+        unit.overrunPiledIn = undefined;
+      });
       startMissionEventsForNewTurn(next, activeRulesForBattle);
       for (const unit of next.units) {
         if (unit.side !== next.activeArmy || unit.destroyed) continue;
@@ -2411,6 +2452,11 @@ export default function App() {
         }
       } else {
         next.phase = PLAY_TURN_PHASES[currentIndex + 1];
+        if (next.phase === BATTLE_PHASE.Fight) {
+          next.fightStepStarted = false;
+          next.engagedUnitIdsAtFightStepStart = undefined;
+          next.lastFightSelectionSide = undefined;
+        }
         if (next.phase === BATTLE_PHASE.Movement) next.movementStep = MOVEMENT_STEP.MoveUnits;
         else next.movementStep = undefined;
       }
@@ -2628,7 +2674,7 @@ export default function App() {
               onRotateModel: canEditPlayModelsNow
                 ? (_selection, degrees, batched) => rotateSelectedPlayModels(degrees, batched)
                 : undefined,
-              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayCanAdvance || selectedPlayCanFallBack || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
+              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayCanAdvance || selectedPlayCanFallBack || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
                 <>
                   {pendingDamageAllocationUnit && (
                     <PendingDamageAllocationHud unit={pendingDamageAllocationUnit} />
@@ -2636,6 +2682,11 @@ export default function App() {
                   {selectedPlayCanPileIn && (
                     <Button size="small" color="secondary" variant="contained" onClick={pileInSelectedPlayUnit}>
                       Pile In
+                    </Button>
+                  )}
+                  {selectedPlayCanSelectOverrun && (
+                    <Button size="small" color="warning" variant="contained" onClick={selectOverrunForSelectedPlayUnit}>
+                      Select Overrun Fight
                     </Button>
                   )}
                   {selectedPlayCanAdvance && (
@@ -3043,7 +3094,9 @@ export default function App() {
               disabled={playCoherencyIssues.length > 0}
               title={playCoherencyIssues.join('\n')}
             >
-              {battleState.phase === 'movement'
+              {battleState.phase === 'fight' && activeRulesForBattle.metadata.edition === '11e' && battleState.fightStepStarted === false
+                ? 'Start Fight Step'
+                : battleState.phase === 'movement'
                 ? isPlayReinforcementsStep ? 'Start Shooting' : 'Start Reinforcements'
                 : 'Next Phase'}
             </Button>

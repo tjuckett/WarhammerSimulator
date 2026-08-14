@@ -16,6 +16,7 @@ import {
   playDeploymentIssues,
   playFightActivationUnitIds,
   playFightWeaponOptions,
+  playOverrunFightUnitIds,
   playPhaseCoherencyIssues,
   playShootingWeaponOptions,
   playSnapShootingWeaponOptions,
@@ -75,7 +76,7 @@ function activeUnits(state: BattleState, side: Side): BattleUnit[] {
   );
 }
 
-function addPhaseActions(actions: LegalAction[], state: BattleState, side: Side, includePhaseStep: boolean) {
+function addPhaseActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition, includePhaseStep: boolean) {
   if (!includePhaseStep || state.activeArmy !== side) return;
   if (state.phase === 'deployment') {
     if (state.unplacedUnits[side]?.length && playDeploymentIssues(state).length === 0) {
@@ -88,6 +89,17 @@ function addPhaseActions(actions: LegalAction[], state: BattleState, side: Side,
     }
     return;
   }
+  if (state.phase === 'fight' && rules.metadata.edition === '11e' && state.fightStepStarted === false) {
+    actions.push({
+      action: { type: 'play.startFightStep' },
+      category: 'phase',
+      side,
+      label: 'Start Fight step',
+    });
+    return;
+  }
+  if (state.phase === 'fight' && rules.metadata.edition === '11e'
+    && (playFightActivationUnitIds(state, 0, rules).length || playFightActivationUnitIds(state, 1, rules).length)) return;
   if (state.phase !== 'end' && playPhaseCoherencyIssues(state).length === 0) {
     actions.push({
       action: { type: 'play.stepPhase' },
@@ -303,9 +315,22 @@ function addChargeActions(actions: LegalAction[], state: BattleState, side: Side
 
 function addFightActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
   if (state.phase !== 'fight') return;
-  for (const unitId of playFightActivationUnitIds(state, side, rules)) {
+  const overrunUnitIds = new Set(playOverrunFightUnitIds(state, side, rules));
+  const unitIds = rules.metadata.edition === '11e' && state.fightStepStarted === false
+    ? activeUnits(state, side).map(unit => unit.id)
+    : playFightActivationUnitIds(state, side, rules);
+  for (const unitId of unitIds) {
     const unit = state.units.find(candidate => candidate.id === unitId);
     if (!unit) continue;
+    if (overrunUnitIds.has(unit.id)) {
+      actions.push({
+        action: { type: 'play.selectOverrunFight', side, unitId: unit.id },
+        category: 'fight',
+        side,
+        unitId: unit.id,
+        label: `${unit.profile.name}: Select Overrun Fight`,
+      });
+    }
     if (playUnitCanPileIn(state, unit.id, side, rules)) {
       actions.push({
         action: { type: 'play.pileInUnit', side, unitId: unit.id },
@@ -327,7 +352,7 @@ function addFightActions(actions: LegalAction[], state: BattleState, side: Side,
         });
       }
     }
-    if (playUnitCanConsolidate(state, unit.id, side)) {
+    if (playUnitCanConsolidate(state, unit.id, side, rules)) {
       actions.push({
         action: { type: 'play.consolidateUnit', side, unitId: unit.id },
         category: 'fight',
@@ -479,7 +504,7 @@ export function getLegalActions(
   addDamageActions(actions, state, side);
   if (actions.length) return actions;
 
-  addPhaseActions(actions, state, side, includePhaseStep);
+  addPhaseActions(actions, state, side, rules, includePhaseStep);
   addMovementActions(actions, state, side, rules);
   addShootingActions(actions, state, side, rules);
   addSnapShootingActions(actions, state, side, rules);

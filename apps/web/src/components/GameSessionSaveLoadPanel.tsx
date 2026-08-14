@@ -94,6 +94,10 @@ function actionLabel(action: GameAction): string {
       return 'Charge';
     case GAME_ACTION_TYPE.FightUnitWeapon:
       return 'Fight';
+    case GAME_ACTION_TYPE.StartFightStep:
+      return 'Start fight step';
+    case GAME_ACTION_TYPE.SelectOverrunFight:
+      return 'Select Overrun Fight';
     case GAME_ACTION_TYPE.PileInUnit:
       return 'Pile in';
     case GAME_ACTION_TYPE.ConsolidateUnit:

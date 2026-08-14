@@ -31,6 +31,7 @@ import {
   placePlayStrategicReserveUnit,
   placePlayUnit,
   placeNextUnit,
+  playFightActivationUnitIds,
   playPhaseCoherencyIssues,
   removePlayCasualtyModels,
   removePlayModels,
@@ -38,6 +39,8 @@ import {
   rotatePlayModels,
   shootPlayUnitWeapon,
   simulateNextPhase,
+  selectPlayOverrunFight,
+  startPlayFightStep,
   snapShootPlayUnitWeapon,
   startPlayUnitAction,
   togglePunishmentCondemnedUnit,
@@ -82,6 +85,8 @@ export const GAME_ACTION_TYPE = {
   LockUnitShooting: 'play.lockUnitShooting',
   ChargeUnitTarget: 'play.chargeUnitTarget',
   FightUnitWeapon: 'play.fightUnitWeapon',
+  StartFightStep: 'play.startFightStep',
+  SelectOverrunFight: 'play.selectOverrunFight',
   PileInUnit: 'play.pileInUnit',
   ConsolidateUnit: 'play.consolidateUnit',
   BeginBattle: 'play.beginBattle',
@@ -231,6 +236,14 @@ export type GameAction =
       targetSplits?: PlayMeleeAttackSplit[];
     })
   | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.StartFightStep;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.SelectOverrunFight;
+      side: Side;
+      unitId: string;
+    })
+  | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.PileInUnit;
       side: Side;
       unitId: string;
@@ -351,6 +364,10 @@ function clone<T>(value: T): T {
 }
 
 function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
+  if (state.phase === BATTLE_PHASE.Fight && rules.metadata.edition === '11e') {
+    if (state.fightStepStarted === false) return startPlayFightStep(state, rules);
+    if (playFightActivationUnitIds(state, 0, rules).length || playFightActivationUnitIds(state, 1, rules).length) return state;
+  }
   const next = clone(state);
   if (next.winner !== null || next.phase === BATTLE_PHASE.Deployment || next.phase === BATTLE_PHASE.End) return next;
   if (playPhaseCoherencyIssues(next).length > 0) return next;
@@ -358,6 +375,13 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   const startCommand = (): void => {
     next.phase = BATTLE_PHASE.Command;
     next.movementStep = undefined;
+    next.fightStepStarted = undefined;
+    next.engagedUnitIdsAtFightStepStart = undefined;
+    next.lastFightSelectionSide = undefined;
+    next.units.forEach(unit => {
+      unit.overrunFightSelected = undefined;
+      unit.overrunPiledIn = undefined;
+    });
     startMissionEventsForNewTurn(next, rules);
     for (const unit of next.units) {
       if (unit.side !== next.activeArmy || unit.destroyed) continue;
@@ -415,6 +439,11 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
       }
     } else {
       next.phase = PLAY_TURN_PHASES[currentIndex + 1];
+      if (next.phase === BATTLE_PHASE.Fight) {
+        next.fightStepStarted = false;
+        next.engagedUnitIdsAtFightStepStart = undefined;
+        next.lastFightSelectionSide = undefined;
+      }
       if (next.phase === BATTLE_PHASE.Movement) next.movementStep = MOVEMENT_STEP.MoveUnits;
       else next.movementStep = undefined;
     }
@@ -569,6 +598,12 @@ export function applyGameAction(
         context.rules,
         normalizedAction.targetSplits,
       );
+
+    case GAME_ACTION_TYPE.StartFightStep:
+      return startPlayFightStep(state, context.rules);
+
+    case GAME_ACTION_TYPE.SelectOverrunFight:
+      return selectPlayOverrunFight(state, normalizedAction.unitId, normalizedAction.side, context.rules);
 
     case GAME_ACTION_TYPE.PileInUnit:
       return pileInPlayUnit(state, normalizedAction.unitId, normalizedAction.side, context.rules);

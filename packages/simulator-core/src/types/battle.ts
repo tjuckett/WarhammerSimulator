@@ -88,6 +88,8 @@ export interface BattleUnit {
   firedWeaponIndices?: number[];
   oneShotSpentWeaponIndices?: number[];
   piledIn?: boolean;
+  overrunFightSelected?: boolean;
+  overrunPiledIn?: boolean;
   consolidated?: boolean;
   inCombat: boolean;
   battleshocked: boolean;
@@ -382,6 +384,10 @@ export interface BattleState {
   activeArmy: Side;
   phase: Phase;
   movementStep?: MovementStep;
+  /** 11e Core 12.04 snapshot, captured after the phase's ordinary pile-in step. */
+  fightStepStarted?: boolean;
+  engagedUnitIdsAtFightStepStart?: string[];
+  lastFightSelectionSide?: Side;
   winner: null | Side | 'draw';
   log: LogEntry[];
   units: BattleUnit[];
