@@ -195,6 +195,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Completed first slice: added serializable per-player fixed/tactical secondary state, ordered draw piles, active/discarded cards, generic when-drawn selections, and deterministic configure/draw/discard/select game actions for save and replay paths.
   - Completed second slice: added typed replayable selections and battlefield/objective validation for A Tempting Target, Beacon, and Burden of Trust.
   - Completed third slice: destruction events now retain per-model Character/Wounds facts and unit starting strength in per-turn and battle-long state across combat, casualty allocation, coherency removal, emergency disembarkation, and Desperate Escape paths.
+  - Completed fourth slice: Cleanse and Plunder now use replayable unit actions with objective/terrain targets, end-of-turn eligibility cancellation, per-turn completion events, and battle-long serialized completion facts. Plunder currently accepts only terrain whose explicit role proves it is outside the acting player's territory; full territory geometry remains outstanding.
 - [ ] Implement automatic scoring for 11th secondary missions once the required state tracking exists.
 - [ ] Audit each 11th core stratagem against final wording once the final 11th rules are available.
 - [x] Implement Command Re-roll pending reroll/resolution support. UI can now wire a prompt to `resolveCommandReroll`; current support records the pending token, rerolls matching dice, logs the result, and supports practice replay.

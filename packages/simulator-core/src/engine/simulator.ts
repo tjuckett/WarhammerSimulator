@@ -22,6 +22,7 @@ import { gainCommandPhaseCommandPoints } from './commandPoints';
 import { objectiveControlValue, resolveDesperateEscapeTests } from './battleshock';
 import { circleFullyInTerrain, findUnblockedLOSRay, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, pointInTerrain, terrainCorners } from './terrainGeometry';
 import { COHERENCY_VERTICAL_RANGE, distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, verticalDistance, type CoherencyModel } from './coherency';
+import { secondaryMissionStateFor } from './secondaryMissions';
 import {
   attachedFollowersFor,
   attachedLeadersFor,
@@ -1551,6 +1552,73 @@ export function sabotageObjectiveOptions(
   return missionObjectiveActionOptions(state, unitId, side, rules, 'Sabotage', 'sabotage');
 }
 
+function hasActiveSecondaryMission(state: BattleState, side: Side, missionName: string): boolean {
+  return secondaryMissionStateFor(state, side)?.activeCards.some(card => card.missionName === missionName) ?? false;
+}
+
+function completedOrInProgressObjectiveTargets(state: BattleState, side: Side, actionId: string): Set<number> {
+  return new Set([
+    ...(state.missionEvents?.completedActionsThisTurn ?? [])
+      .filter(event => event.side === side && event.actionId === actionId)
+      .flatMap(event => event.targetObjectiveIndex === undefined ? [] : [event.targetObjectiveIndex]),
+    ...state.units
+      .filter(unit => unit.side === side && unit.performingAction?.id === actionId)
+      .flatMap(unit => unit.performingAction?.targetObjectiveIndex === undefined
+        ? []
+        : [unit.performingAction.targetObjectiveIndex]),
+  ]);
+}
+
+export function cleanseObjectiveOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): number[] {
+  if (rules.metadata.edition !== '11e'
+    || !hasActiveSecondaryMission(state, side, 'Cleanse')
+    || !playUnitCanStartAction(state, unitId, side, rules)) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  if (!unit) return [];
+  const usedObjectives = completedOrInProgressObjectiveTargets(state, side, 'cleanse');
+  return objectiveIndexesWithinRange(state, unit, rules).filter(index => !usedObjectives.has(index));
+}
+
+function terrainIsExplicitlyOutsideTerritory(state: BattleState, side: Side, terrainId: string): boolean {
+  const role = state.terrain.find(terrain => terrain.id === terrainId)?.objectiveRole;
+  return role !== undefined && role !== `home-${side}` && role !== `expansion-${side}`;
+}
+
+function completedOrInProgressTerrainTargets(state: BattleState, side: Side, actionId: string): Set<string> {
+  return new Set([
+    ...(state.missionEvents?.completedActionsThisTurn ?? [])
+      .filter(event => event.side === side && event.actionId === actionId)
+      .flatMap(event => event.targetTerrainId === undefined ? [] : [event.targetTerrainId]),
+    ...state.units
+      .filter(unit => unit.side === side && unit.performingAction?.id === actionId)
+      .flatMap(unit => unit.performingAction?.targetTerrainId === undefined
+        ? []
+        : [unit.performingAction.targetTerrainId]),
+  ]);
+}
+
+export function plunderTerrainOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+): string[] {
+  if (rules.metadata.edition !== '11e'
+    || !hasActiveSecondaryMission(state, side, 'Plunder')
+    || !playUnitCanStartAction(state, unitId, side, rules)) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  if (!unit) return [];
+  const usedTerrain = completedOrInProgressTerrainTargets(state, side, 'plunder');
+  return terrainAreaIdsContainingUnit(state, unit).filter(terrainId =>
+    !usedTerrain.has(terrainId) && terrainIsExplicitlyOutsideTerritory(state, side, terrainId)
+  );
+}
+
 export interface SensorSweepOption {
   objectiveIndex: number;
   operationMarkerId: string;
@@ -1871,6 +1939,16 @@ export function startPlayUnitAction(
       || !sabotageObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
     return state;
   }
+  if (actionId === 'cleanse'
+    && (targetObjectiveIndex === undefined
+      || !cleanseObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
+    return state;
+  }
+  if (actionId === 'plunder'
+    && (targetTerrainId === undefined
+      || !plunderTerrainOptions(state, unitId, side, rules).includes(targetTerrainId))) {
+    return state;
+  }
   if (actionId === 'vanguard-operation'
     && (targetTerrainId === undefined
       || !vanguardOperationTerrainOptions(state, unitId, side, rules).includes(targetTerrainId))) {
@@ -1947,6 +2025,21 @@ export function completeEndOfTurnActions(state: BattleState, side: Side): void {
       && (action.targetTerrainId === undefined
         || !vanguardOperationTerrainIsValid(state, unit, side, action.targetTerrainId))) {
       cancelUnitAction(state, unit, 'the target terrain area is no longer eligible');
+      continue;
+    }
+    if (action.id === 'cleanse'
+      && (action.targetObjectiveIndex === undefined
+        || !hasActiveSecondaryMission(state, side, 'Cleanse')
+        || !objectiveIndexesWithinRange(state, unit, rules40K11th).includes(action.targetObjectiveIndex))) {
+      cancelUnitAction(state, unit, 'the selected objective is no longer eligible');
+      continue;
+    }
+    if (action.id === 'plunder'
+      && (action.targetTerrainId === undefined
+        || !hasActiveSecondaryMission(state, side, 'Plunder')
+        || !terrainAreaIdsContainingUnit(state, unit).includes(action.targetTerrainId)
+        || !terrainIsExplicitlyOutsideTerritory(state, side, action.targetTerrainId))) {
+      cancelUnitAction(state, unit, 'the selected terrain area is no longer eligible');
       continue;
     }
     if (action.id === 'sensor-sweep') {

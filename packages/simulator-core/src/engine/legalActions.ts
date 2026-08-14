@@ -6,6 +6,7 @@ import { availableStratagems } from './stratagems';
 import { availableUnitAbilities } from './unitAbilities';
 import {
   boobyTrapTerrainOptions,
+  cleanseObjectiveOptions,
   consecrateObjectiveOptions,
   decoyObjectiveOptions,
   extractIntelligenceObjectiveOptions,
@@ -26,6 +27,7 @@ import {
   playUnitCanFallBack,
   playUnitCanPileIn,
   playUnitCanStartAction,
+  plunderTerrainOptions,
   punishmentCondemnedUnitOptions,
   sabotageObjectiveOptions,
   sensorSweepOptions,
@@ -153,6 +155,8 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
       const surveilTargetUnitId = surveilTargetOptions(state, unit.id, side, rules)[0];
       const vanguardTerrainId = vanguardOperationTerrainOptions(state, unit.id, side, rules)[0];
       const boobyTrapTerrainId = boobyTrapTerrainOptions(state, unit.id, side, rules)[0];
+      const cleanseObjectiveIndex = cleanseObjectiveOptions(state, unit.id, side, rules)[0];
+      const plunderTerrainId = plunderTerrainOptions(state, unit.id, side, rules)[0];
       const extractsIntelligence = extractObjectiveIndex !== undefined;
       const triangulates = triangulateObjectiveIndex !== undefined;
       const consecrates = consecrateObjectiveIndex !== undefined;
@@ -164,6 +168,8 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
       const surveils = surveilTargetUnitId !== undefined;
       const performsVanguardOperation = vanguardTerrainId !== undefined;
       const laysBoobyTrap = boobyTrapTerrainId !== undefined;
+      const cleanses = cleanseObjectiveIndex !== undefined;
+      const plunders = plunderTerrainId !== undefined;
       const missionAction = extractsIntelligence
         ? { id: 'extract-intelligence', name: 'Extract Intelligence', objectiveIndex: extractObjectiveIndex }
         : triangulates
@@ -191,6 +197,10 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
                       ? { id: 'vanguard-operation', name: 'Vanguard Operation', terrainId: vanguardTerrainId }
                     : laysBoobyTrap
                       ? { id: 'booby-trap', name: 'Booby Trap', terrainId: boobyTrapTerrainId }
+                    : cleanses
+                      ? { id: 'cleanse', name: 'Cleanse', objectiveIndex: cleanseObjectiveIndex }
+                    : plunders
+                      ? { id: 'plunder', name: 'Plunder', terrainId: plunderTerrainId }
                       : null;
       actions.push({
         action: {

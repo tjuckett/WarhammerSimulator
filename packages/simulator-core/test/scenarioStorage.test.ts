@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, Terrain } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -1131,6 +1131,135 @@ test('secondary mission game actions replay and persist through practice saves',
     currentTimelineState(loaded!.timeline).missionState?.secondaryMissions,
     current.missionState?.secondaryMissions,
   );
+});
+
+test('Cleanse and Plunder actions replay, complete at end of turn, and persist their targets', async () => {
+  installStorage();
+  const initial = state('fight');
+  initial.ruleset = rulesetMetadataForState(rules40K11th);
+  initial.objectiveControl = rules40K11th.objectiveControl;
+  initial.objectives = [{ x: 12, y: 12 }];
+  initial.objectiveOwners = [null];
+  initial.terrain = [
+    terrainMat({ id: 'cleanse-area', type: 'ruin', x: 10, y: 10, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'blue-territory', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'neutral-area', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+  ];
+  const cleanser = losTestUnit('cleanser', 0, { x: 12, y: 12 });
+  const plunderer = losTestUnit('plunderer', 0, { x: 20, y: 10 });
+  initial.units = [cleanser, plunderer];
+
+  let timeline = createPracticeTimeline(initial, { id: 'cleanse-plunder-game' });
+  let current = initial;
+  const actions = [
+    {
+      type: GAME_ACTION_TYPE.ConfigureSecondaryMissions,
+      side: 0 as const,
+      mode: 'tactical' as const,
+      missionNames: ['Cleanse', 'Plunder'],
+    },
+    { type: GAME_ACTION_TYPE.DrawSecondaryMission, side: 0 as const, missionName: 'Cleanse' },
+    { type: GAME_ACTION_TYPE.DrawSecondaryMission, side: 0 as const, missionName: 'Plunder' },
+    {
+      type: GAME_ACTION_TYPE.StartAction,
+      side: 0 as const,
+      unitId: cleanser.id,
+      actionId: 'cleanse',
+      actionName: 'Cleanse',
+      targetObjectiveIndex: 0,
+    },
+    {
+      type: GAME_ACTION_TYPE.StartAction,
+      side: 0 as const,
+      unitId: plunderer.id,
+      actionId: 'plunder',
+      actionName: 'Plunder',
+      targetTerrainId: 'neutral-area',
+    },
+    { type: GAME_ACTION_TYPE.StepPhase },
+  ];
+
+  for (const action of actions) {
+    const result = appendTimelineAction(timeline, current, action, { rules: rules40K11th });
+    timeline = result.timeline;
+    current = result.state;
+  }
+
+  assert.deepEqual(
+    current.missionState?.completedSecondaryActionsDuringBattle?.map(event =>
+      [event.actionId, event.targetObjectiveIndex, event.targetTerrainId]
+    ),
+    [['cleanse', 0, undefined], ['plunder', undefined, 'neutral-area']],
+  );
+  assert.equal(current.units.some(unit => unit.performingAction), false);
+
+  const replayed = replayTimeline(timeline, { rules: rules40K11th }, false);
+  assert.deepEqual(
+    replayed.missionState?.completedSecondaryActionsDuringBattle,
+    current.missionState?.completedSecondaryActionsDuringBattle,
+  );
+
+  await localPracticeScenarioRepository.saveScenario(scenarioFromTimeline(timeline, { id: 'cleanse-plunder-save' }));
+  const loaded = await localPracticeScenarioRepository.loadScenario('cleanse-plunder-save');
+  assert.deepEqual(
+    currentTimelineState(loaded!.timeline).missionState?.completedSecondaryActionsDuringBattle,
+    current.missionState?.completedSecondaryActionsDuringBattle,
+  );
+});
+
+test('Cleanse and Plunder validate active cards, unique targets, explicit territory, and completion eligibility', () => {
+  const initial = state('shooting');
+  initial.ruleset = rulesetMetadataForState(rules40K11th);
+  initial.objectiveControl = rules40K11th.objectiveControl;
+  initial.objectives = [{ x: 12, y: 12 }];
+  initial.objectiveOwners = [null];
+  initial.terrain = [
+    terrainMat({ id: 'cleanse-area', type: 'ruin', x: 10, y: 10, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'friendly-home', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'home-0' }),
+    terrainMat({ id: 'friendly-expansion', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'expansion-0' }),
+    terrainMat({ id: 'neutral', type: 'ruin', x: 18, y: 8, width: 4, height: 4, objectiveRole: 'no-mans-land' }),
+    terrainMat({ id: 'unclassified', type: 'ruin', x: 18, y: 8, width: 4, height: 4 }),
+  ];
+  const cleanser = losTestUnit('cleanser', 0, { x: 12, y: 12 });
+  const secondCleanser = losTestUnit('second-cleanser', 0, { x: 12, y: 12 });
+  const plunderer = losTestUnit('plunderer', 0, { x: 20, y: 10 });
+  initial.units = [cleanser, secondCleanser, plunderer];
+
+  assert.deepEqual(cleanseObjectiveOptions(initial, cleanser.id, 0, rules40K11th), []);
+  assert.deepEqual(plunderTerrainOptions(initial, plunderer.id, 0, rules40K11th), []);
+  let battle = configureSecondaryMissions(initial, 0, 'tactical', ['Cleanse', 'Plunder']);
+  battle = drawSecondaryMission(battle, 0, 'Cleanse');
+  battle = drawSecondaryMission(battle, 0, 'Plunder');
+
+  assert.deepEqual(cleanseObjectiveOptions(battle, cleanser.id, 0, rules40K11th), [0]);
+  assert.deepEqual(plunderTerrainOptions(battle, plunderer.id, 0, rules40K11th), ['neutral']);
+
+  const plundered = startPlayUnitAction(
+    battle,
+    plunderer.id,
+    0,
+    'plunder',
+    'Plunder',
+    rules40K11th,
+    undefined,
+    'neutral',
+  );
+  completeEndOfTurnActions(plundered, 0);
+  assert.equal(plundered.missionEvents?.completedActionsThisTurn?.[0]?.targetTerrainId, 'neutral');
+  assert.equal(plundered.missionState?.completedSecondaryActionsDuringBattle?.[0]?.actionId, 'plunder');
+
+  const started = startPlayUnitAction(battle, cleanser.id, 0, 'cleanse', 'Cleanse', rules40K11th, 0);
+  assert.deepEqual(cleanseObjectiveOptions(started, secondCleanser.id, 0, rules40K11th), []);
+  const movedAway: BattleState = JSON.parse(JSON.stringify(started));
+  const actingUnit = movedAway.units.find(unit => unit.id === cleanser.id)!;
+  actingUnit.position = { x: 30, y: 30 };
+  actingUnit.modelPositions = [{ x: 30, y: 30 }];
+  completeEndOfTurnActions(movedAway, 0);
+
+  assert.equal(actingUnit.performingAction, undefined);
+  assert.equal(movedAway.missionEvents?.completedActionsThisTurn?.length ?? 0, 0);
+  assert.equal(movedAway.missionState?.completedSecondaryActionsDuringBattle?.length ?? 0, 0);
+  assert.match(movedAway.log.at(-1)?.message ?? '', /no longer eligible/);
 });
 
 test('typed when-drawn secondary choices validate objectives and battlefield units', () => {

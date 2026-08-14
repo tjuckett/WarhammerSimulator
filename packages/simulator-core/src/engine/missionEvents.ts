@@ -42,31 +42,40 @@ export function recordCompletedMissionAction(
   unit: BattleUnit,
   action: NonNullable<BattleUnit['performingAction']>,
 ): void {
+  const completedAction = {
+    actionId: action.id,
+    actionName: action.name,
+    side: unit.side,
+    unitId: unit.id,
+    unitName: unit.profile.name,
+    ...(action.targetObjectiveIndex !== undefined
+      ? { targetObjectiveIndex: action.targetObjectiveIndex }
+      : {}),
+    ...(action.targetTerrainId !== undefined
+      ? { targetTerrainId: action.targetTerrainId }
+      : {}),
+    ...(action.targetOperationMarkerId !== undefined
+      ? { targetOperationMarkerId: action.targetOperationMarkerId }
+      : {}),
+    ...(action.targetUnitId !== undefined
+      ? { targetUnitId: action.targetUnitId }
+      : {}),
+    battleRound: battleRound(state),
+    turn: state.turn,
+  };
   state.missionEvents = state.missionEvents ?? {};
   state.missionEvents.completedActionsThisTurn = [
     ...(state.missionEvents.completedActionsThisTurn ?? []),
-    {
-      actionId: action.id,
-      actionName: action.name,
-      side: unit.side,
-      unitId: unit.id,
-      unitName: unit.profile.name,
-      ...(action.targetObjectiveIndex !== undefined
-        ? { targetObjectiveIndex: action.targetObjectiveIndex }
-        : {}),
-      ...(action.targetTerrainId !== undefined
-        ? { targetTerrainId: action.targetTerrainId }
-        : {}),
-      ...(action.targetOperationMarkerId !== undefined
-        ? { targetOperationMarkerId: action.targetOperationMarkerId }
-        : {}),
-      ...(action.targetUnitId !== undefined
-        ? { targetUnitId: action.targetUnitId }
-        : {}),
-      battleRound: battleRound(state),
-      turn: state.turn,
-    },
+    completedAction,
   ];
+
+  if (action.id === 'cleanse' || action.id === 'plunder') {
+    state.missionState = state.missionState ?? {};
+    state.missionState.completedSecondaryActionsDuringBattle = [
+      ...(state.missionState.completedSecondaryActionsDuringBattle ?? []),
+      completedAction,
+    ];
+  }
 
   const objectiveMarkerAction = ['extract-intelligence', 'triangulate', 'consecrate', 'maintain-control', 'decoy', 'sabotage'].includes(action.id)
     && action.targetObjectiveIndex !== undefined;

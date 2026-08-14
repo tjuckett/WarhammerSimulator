@@ -257,6 +257,7 @@ export interface MissionState {
   operationMarkers?: OperationMarker[];
   condemnedUnitIds?: [string[], string[]];
   secondaryMissions?: [SecondaryMissionPlayerState, SecondaryMissionPlayerState];
+  completedSecondaryActionsDuringBattle?: CompletedMissionActionEvent[];
   destroyedUnitsDuringBattle?: DestroyedUnitMissionEvent[];
   destroyedModelsDuringBattle?: DestroyedModelMissionEvent[];
 }

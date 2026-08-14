@@ -1854,7 +1854,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/cleanse-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Cleanse action completion and cleansed objective tracking are required before this can score automatically.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Cleanse action completion and cleansed-objective tracking are implemented; automatic secondary scoring remains unwired.',
     whenDrawn: 'If you have the Plunder Secondary Mission active, you may shuffle this card back into your Secondary Mission deck and then draw one new Secondary Mission card.',
     scoring: [
       {
@@ -1863,7 +1863,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 2,
         sourceText: 'One objective was cleansed by your army this turn. 2VP.',
-        notes: 'Requires resolving the Cleanse objective action and tracking objectives cleansed this turn.',
+        notes: 'Cleanse objective action completion and per-turn target tracking are available for automatic scoring.',
       },
       {
         id: 'two-objectives-cleansed',
@@ -1871,7 +1871,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 5,
         sourceText: 'Two or more objectives were cleansed by your army this turn. 5VP.',
-        notes: 'Requires resolving the Cleanse objective action and tracking objectives cleansed this turn.',
+        notes: 'Cleanse objective action completion and per-turn target tracking are available for automatic scoring.',
       },
     ],
   },
@@ -2076,7 +2076,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/plunder-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Plunder action completion and territory geometry are required before this can score automatically.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Plunder action completion is tracked for terrain with explicit territory roles; complete territory geometry is still required before automatic scoring.',
     whenDrawn: 'If you have the Cleanse Secondary Mission active, you may shuffle this card back into your Secondary Mission deck and then draw one new Secondary Mission card.',
     scoring: [
       {
@@ -2085,7 +2085,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 5,
         sourceText: 'A terrain area was plundered this turn. 5VP.',
-        notes: 'Requires resolving the Plunder objective action for a unit within a terrain area that is not within your territory and tracking terrain areas plundered this turn.',
+        notes: 'Plunder action completion and per-turn terrain tracking are available when the terrain role explicitly establishes that it is outside the acting player territory; complete territory geometry remains required.',
       },
     ],
   },
