@@ -388,6 +388,7 @@ export interface BattleState {
   fightStepStarted?: boolean;
   engagedUnitIdsAtFightStepStart?: string[];
   lastFightSelectionSide?: Side;
+  activeAttachedFightUnitId?: string;
   winner: null | Side | 'draw';
   log: LogEntry[];
   units: BattleUnit[];

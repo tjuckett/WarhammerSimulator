@@ -4,6 +4,12 @@ import { battleRound } from './battleRound';
 import { objectiveIndexesWithinRange, terrainAreaIdsContainingUnit, updateObjectiveControl } from './missionScoring';
 import type { RulesEdition } from './rulesEngine';
 import { terrainCenter } from './terrainGeometry';
+import {
+  attachedUnitComponents,
+  attachedUnitId,
+  attachedUnitKeywordSet,
+  attachedUnitStartingStrength,
+} from './attachedUnits';
 
 export function startMissionEventsForNewTurn(state: BattleState, rules: RulesEdition): void {
   const objectives = updateObjectiveControl(state, rules);
@@ -159,18 +165,21 @@ export function recordDestroyedUnitMissionEvent(
 ): void {
   state.missionEvents = state.missionEvents ?? {};
   state.missionState = state.missionState ?? {};
+  const attachmentId = attachedUnitId(unit);
+  const components = attachedUnitComponents(state, unit, true);
+  if (components.length > 1 && components.some(component => !component.destroyed && component.remainingModels > 0)) return;
   const destroyedUnitsThisTurn = state.missionEvents.destroyedUnitsThisTurn ?? [];
-  if (destroyedUnitsThisTurn.some(event => event.unitId === unit.id)) {
+  if (destroyedUnitsThisTurn.some(event => event.unitId === attachmentId)) {
     state.missionEvents.destroyedUnitsThisTurn = destroyedUnitsThisTurn;
     return;
   }
 
   const event = {
-      unitId: unit.id,
+      unitId: attachmentId,
       side: unit.side,
-      unitName: unit.profile.name,
-      startingStrength: unit.profile.baseModelCount,
-      isCharacter: unit.profile.keywords.some(keyword => keyword.toLowerCase() === 'character'),
+      unitName: components.map(component => component.profile.name).join(' + '),
+      startingStrength: attachedUnitStartingStrength(state, unit),
+      isCharacter: attachedUnitKeywordSet(state, unit, true).has('character'),
       destroyedBySide,
       ...(options.destroyedByUnitId ? { destroyedByUnitId: options.destroyedByUnitId } : {}),
       ...(options.destroyingUnitObjectiveIndexesWithinRange
@@ -182,10 +191,10 @@ export function recordDestroyedUnitMissionEvent(
     };
   state.missionEvents.destroyedUnitsThisTurn = [...destroyedUnitsThisTurn, event];
   const destroyedUnitsDuringBattle = state.missionState.destroyedUnitsDuringBattle ?? [];
-  if (!destroyedUnitsDuringBattle.some(existing => existing.unitId === unit.id)) {
+  if (!destroyedUnitsDuringBattle.some(existing => existing.unitId === attachmentId)) {
     state.missionState.destroyedUnitsDuringBattle = [...destroyedUnitsDuringBattle, event];
   }
-  recordUnitLeftBattlefieldMissionEvent(state, unit.id);
+  recordUnitLeftBattlefieldMissionEvent(state, attachmentId);
 }
 
 function modelProfileAtRosterIndex(unit: BattleUnit, rosterModelIndex: number): ModelStatProfile | null {
@@ -223,7 +232,7 @@ export function recordDestroyedModelMissionEvents(
       modelIndexAtDestruction: modelIndex,
       rosterModelIndex,
       woundsCharacteristic: modelProfile?.wounds ?? unit.profile.wounds,
-      unitStartingStrength: unit.profile.baseModelCount,
+      unitStartingStrength: attachedUnitStartingStrength(state, unit),
       isCharacter,
       destroyedBySide,
       ...(options.destroyedByUnitId ? { destroyedByUnitId: options.destroyedByUnitId } : {}),

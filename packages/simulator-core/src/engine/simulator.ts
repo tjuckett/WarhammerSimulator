@@ -37,6 +37,16 @@ import {
   unitRosterId,
 } from './armyUnits';
 import {
+  attachedUnitComponents,
+  attachedUnitHasRule,
+  attachedUnitId,
+  attachedUnitKeywordSet,
+  attachedUnitLiveBodyguard,
+  attachedUnitRemainingModels,
+  attachedUnitTargetRepresentative,
+  attachedUnitToughness,
+} from './attachedUnits';
+import {
   baseFootprintDistance,
   baseFootprintMaxPointDistance,
   baseFootprintIntersectsRect,
@@ -715,52 +725,7 @@ function unitCanFightTarget(unit: BattleUnit, target: BattleUnit): boolean {
   return true;
 }
 
-function attachedBodyguardAlive(state: BattleState, unit: BattleUnit): boolean {
-  if (!unit.attachedToUnitId) return false;
-  return state.units.some(candidate =>
-    candidate.id === unit.attachedToUnitId
-    && candidate.side === unit.side
-    && !candidate.destroyed
-    && candidate.remainingModels > 0,
-  );
-}
-
-function attachedUnitGroup(state: BattleState, unit: BattleUnit): BattleUnit[] {
-  const bodyguardId = unit.attachedToUnitId ?? unit.id;
-  const bodyguard = state.units.find(candidate =>
-    candidate.id === bodyguardId
-    && candidate.side === unit.side
-    && !candidate.destroyed
-    && candidate.remainingModels > 0,
-  );
-  if (!bodyguard) return [unit];
-
-  return state.units.filter(candidate =>
-    candidate.side === unit.side
-    && !candidate.destroyed
-    && candidate.remainingModels > 0
-    && (candidate.id === bodyguard.id || candidate.attachedToUnitId === bodyguard.id),
-  );
-}
-
-function attachedUnitKeywordSet(state: BattleState, unit: BattleUnit): Set<string> {
-  const keywords = new Set<string>();
-  for (const groupUnit of attachedUnitGroup(state, unit)) {
-    for (const keyword of [...groupUnit.profile.keywords, ...groupUnit.profile.factionKeywords]) {
-      keywords.add(keyword.toLowerCase());
-    }
-  }
-  return keywords;
-}
-
 // ─── Combat resolution ────────────────────────────────────────────────────────
-
-function defensiveToughness(unit: BattleUnit): number {
-  return Math.max(
-    unit.profile.toughness,
-    ...(unit.profile.modelProfiles?.map(profile => profile.toughness) ?? []),
-  );
-}
 
 function antiKeywordThreshold(weapon: WeaponProfile, defender: BattleUnit, state: BattleState): number | null {
   for (const keyword of weapon.keywords) {
@@ -820,7 +785,7 @@ function resolveAttacks(
   const logs: LogEntry[] = [];
   const rangeDistance = weapon.isMelee
     ? dist(attacker.position, defender.position)
-    : battleUnitsBaseEdgeDistance(attacker, defender);
+    : battleUnitToAttachedUnitDistance(state, attacker, defender);
 
   const weaponModelCount = participatingWeaponModelCount(attacker, defender, weapon, weaponIndex, state.terrain);
   if (weaponModelCount <= 0) return logs;
@@ -831,7 +796,7 @@ function resolveAttacks(
   }
   let numAttacks = options.attackCountOverride ?? perModelRolls.reduce((a, b) => a + b, 0);
   if (options.attackCountOverride === undefined) {
-    numAttacks = rules.modifyAttackCount(numAttacks, attacker, weapon, rangeDistance, defender.remainingModels);
+    numAttacks = rules.modifyAttackCount(numAttacks, attacker, weapon, rangeDistance, attachedUnitRemainingModels(state, defender));
   }
 
   if (numAttacks <= 0) return logs;
@@ -841,7 +806,7 @@ function resolveAttacks(
     weapon.isMelee ? 'fight' : 'shoot',
   ));
   logs.push(log(state, attacker.side, attacker.profile.name,
-    `[combat-stats] skill=${weapon.skill} s=${weapon.strength} ap=${weapon.ap} d=${weapon.damage} t=${defensiveToughness(defender)}${hasCover ? ' cover=1' : ''}`,
+    `[combat-stats] skill=${weapon.skill} s=${weapon.strength} ap=${weapon.ap} d=${weapon.damage} t=${attachedUnitToughness(state, defender)}${hasCover ? ' cover=1' : ''}`,
     'info',
   ));
   if (options.attackCountOverride !== undefined) {
@@ -894,7 +859,7 @@ function resolveAttacks(
   if (hitResult.hits === 0 && totalMortals === 0) return logs;
 
   // ── Wound rolls ───────────────────────────────────────────────────────────
-  const targetToughness = defensiveToughness(defender);
+  const targetToughness = attachedUnitToughness(state, defender);
   const wt = rules.woundTarget(weapon.strength, targetToughness);
   let woundCount = 0;
   if (lethalAutoWounds > 0) {
@@ -1367,7 +1332,10 @@ function applyFeelNoPain(
   damage: number,
   state: BattleState,
 ): { damage: number; logs: LogEntry[] } {
-  const target = feelNoPainTarget(unit);
+  const target = attachedUnitComponents(state, unit)
+    .map(feelNoPainTarget)
+    .filter((value): value is number => value !== null)
+    .sort((a, b) => a - b)[0] ?? null;
   if (!target || damage <= 0) return { damage, logs: [] };
 
   const rolls = rollMultiple(damage);
@@ -2200,10 +2168,15 @@ function shootingWeaponCanTarget(
   const targetPool = engaged && !bigGunsNeverTire ? engagedEnemies(state, unit, rules) : foes;
   if (!targetPool.some(candidate => candidate.id === target.id && candidate.side === target.side)) return false;
 
+  const representative = attachedUnitTargetRepresentative(state, target);
+  const precisionCharacter = weaponHasKeyword(weapon, 'Precision')
+    && unitHasKeyword(target, 'Character')
+    && unit.modelPositions.some((from, modelIndex) => hasAnyModelLOS(from, modelBaseRadius(unit, modelIndex), target, state.terrain));
+  if (representative?.id !== target.id && !precisionCharacter) return false;
+
   const targetEngagedWithFriendly = targetWithinFriendlyEngagement(state, target, unit.side, rules);
   const targetEngagedWithShooter = inEngagement(unit, [target], eng);
   if (unitHasDatasheetRule(target, 'Lone Operative') && battleUnitsBaseEdgeDistance(unit, target) > 12) return false;
-  if (attachedBodyguardAlive(state, target) && !weaponHasKeyword(weapon, 'Precision')) return false;
   if (weaponHasKeyword(weapon, 'Blast') && targetEngagedWithFriendly) return false;
   if (
     targetEngagedWithFriendly
@@ -2211,8 +2184,9 @@ function shootingWeaponCanTarget(
     && !(bigGunsNeverTire && targetEngagedWithShooter)
     && !unitCanUseBigGunsNeverTire(target)
   ) return false;
-  const targetVisible = unit.modelPositions.some((from, i) => hasAnyModelLOS(from, modelBaseRadius(unit, i), target, state.terrain));
-  return battleUnitsWithinBaseEdgeRange(unit, target, weapon.range)
+  const targetVisible = precisionCharacter
+    || battleUnitHasLosToAttachedUnit(state, unit, target);
+  return battleUnitToAttachedUnitDistance(state, unit, target) <= weapon.range
     && (targetVisible || weaponHasKeyword(weapon, 'Indirect Fire'));
 }
 
@@ -2268,6 +2242,18 @@ export function battleUnitsWithinBaseEdgeRange(a: BattleUnit, b: BattleUnit, ran
   return battleUnitsBaseEdgeDistance(a, b) <= range;
 }
 
+function battleUnitToAttachedUnitDistance(state: BattleState, source: BattleUnit, target: BattleUnit): number {
+  return Math.min(...attachedUnitComponents(state, target).map(component => battleUnitsBaseEdgeDistance(source, component)));
+}
+
+function battleUnitHasLosToAttachedUnit(state: BattleState, source: BattleUnit, target: BattleUnit): boolean {
+  return attachedUnitComponents(state, target).some(component =>
+    source.modelPositions.some((from, modelIndex) =>
+      hasAnyModelLOS(from, modelBaseRadius(source, modelIndex), component, state.terrain),
+    ),
+  );
+}
+
 function shootingWeaponModifiers(
   state: BattleState,
   unit: BattleUnit,
@@ -2284,7 +2270,7 @@ function shootingWeaponModifiers(
   const usesBigGunsPenalty = (bigGunsNeverTire || targetWithinFriendlyEngagement(state, target, unit.side, rules))
     && !weaponIsSidearm(weapon);
   const usesHeavyBonus = weaponHasKeyword(weapon, 'Heavy') && unit.movementAction === 'remainedStationary';
-  const usesStealth = unitHasDatasheetRule(target, 'Stealth');
+  const usesStealth = attachedUnitHasRule(state, target, 'Stealth');
   const hitModifier = (usesBigGunsPenalty ? 1 : 0) + (usesHeavyBonus ? -1 : 0) + (usesIndirectFirePenalty ? 1 : 0) + (usesSmokescreen ? 1 : 0) + (usesStealth ? 1 : 0);
   const hitModifierNotes = [
     usesBigGunsPenalty ? 'Big Guns Never Tire -1 to Hit' : '',
@@ -2808,6 +2794,7 @@ function unitEligibleToFight(unit: BattleUnit, state: BattleState, rules: RulesE
 function startFightStepInPlace(s: BattleState, rules: RulesEdition): void {
   s.fightStepStarted = true;
   s.lastFightSelectionSide = undefined;
+  s.activeAttachedFightUnitId = undefined;
   s.engagedUnitIdsAtFightStepStart = s.units
     .filter(unit => !unit.destroyed && !unit.embarkedInUnitId
       && enemies(s, unit.side).some(enemy => unitCanFightTarget(unit, enemy) && inEngagement(unit, [enemy], rules.engagementRange())))
@@ -2830,7 +2817,19 @@ function unitHasCounteroffensive(state: BattleState, unit: BattleUnit): boolean 
 }
 
 function unitHasFightsFirst(state: BattleState, unit: BattleUnit): boolean {
-  return unit.charged || unitHasCounteroffensive(state, unit) || unitHasDatasheetRule(unit, 'Fights First');
+  return unit.charged || unitHasCounteroffensive(state, unit) || attachedUnitHasRule(state, unit, 'Fights First');
+}
+
+function finishAttachedFightComponent(state: BattleState, unit: BattleUnit, rules: RulesEdition): void {
+  if (rules.metadata.edition !== '11e') return;
+  const remaining = attachedUnitComponents(state, unit)
+    .filter(component => !component.activated && unitEligibleToFight(component, state, rules));
+  if (remaining.length) {
+    state.activeAttachedFightUnitId = attachedUnitId(unit);
+    return;
+  }
+  state.activeAttachedFightUnitId = undefined;
+  state.lastFightSelectionSide = unit.side;
 }
 
 function sideCanSelectFightUnit(state: BattleState, side: Side, rules: RulesEdition): boolean {
@@ -2847,6 +2846,11 @@ export function playFightActivationUnitIds(
 ): string[] {
   if (!sideCanSelectFightUnit(state, side, rules)) return [];
   const eligible = activeUnits(state, side).filter(unit => unitEligibleToFight(unit, state, rules));
+  if (rules.metadata.edition === '11e' && state.activeAttachedFightUnitId) {
+    return eligible
+      .filter(unit => attachedUnitId(unit) === state.activeAttachedFightUnitId)
+      .map(unit => unit.id);
+  }
   if (rules.metadata.edition !== '11e' && state.activeArmy !== side) {
     return eligible.filter(unit => unitHasCounteroffensive(state, unit)).map(unit => unit.id);
   }
@@ -3104,7 +3108,7 @@ export function fightPlayUnitWeapon(
   if (weaponIndex === -1 || (weaponIndex === 'all' && !fightingUnit.profile.weapons.some(weapon => weapon.isMelee))) {
     if (fightingUnit.profile.weapons.some(weapon => weapon.isMelee)) return state;
     fightingUnit.activated = true;
-    if (rules.metadata.edition === '11e') s.lastFightSelectionSide = side;
+    finishAttachedFightComponent(s, fightingUnit, rules);
     s.log = [...s.log, log(s, side, fightingUnit.profile.name, `${fightingUnit.profile.name} is selected to fight ${fightTarget.profile.name} but has no melee weapons, so it makes no attacks.`, 'fight')];
     return s;
   }
@@ -3161,7 +3165,7 @@ export function fightPlayUnitWeapon(
   }
   if (!madeAttacks) return state;
   fightingUnit.activated = true;
-  if (rules.metadata.edition === '11e') s.lastFightSelectionSide = side;
+  finishAttachedFightComponent(s, fightingUnit, rules);
   s.log = [...s.log, ...logs];
   return s;
 }
@@ -3172,7 +3176,7 @@ function runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): Lo
   const foes = enemies(state, unit.side).filter(e => unitCanFightTarget(unit, e) && inEngagement(unit, [e], eng));
   if (!foes.length) return [];
   unit.activated = true;
-  if (rules.metadata.edition === '11e') state.lastFightSelectionSide = unit.side;
+  finishAttachedFightComponent(state, unit, rules);
 
   const meleeWeapons = chooseOneProfilePerGroup(
     unit.profile.weapons
@@ -3241,19 +3245,21 @@ function runAutomaticEleventhFightPhase(state: BattleState, startingSide: Side, 
   return s;
 }
 
-function bestLeadership(unit: BattleUnit): number {
-  return Math.min(
-    unit.profile.leadership,
-    ...(unit.profile.modelProfiles?.map(profile => profile.leadership) ?? []),
-  );
+function bestLeadership(state: BattleState, unit: BattleUnit): number {
+  return Math.min(...attachedUnitComponents(state, unit).flatMap(component => [
+    component.profile.leadership,
+    ...(component.profile.modelProfiles?.map(profile => profile.leadership) ?? []),
+  ]));
 }
 
-function isBelowHalfStrength(unit: BattleUnit): boolean {
-  if (unit.profile.baseModelCount === 1) {
+function isBelowHalfStrength(state: BattleState, unit: BattleUnit): boolean {
+  const startingStrength = attachedUnitComponents(state, unit, true)
+    .reduce((total, component) => total + component.profile.baseModelCount, 0);
+  if (startingStrength === 1) {
     return unit.woundsOnLeadModel < unit.profile.wounds / 2;
   }
 
-  return unit.remainingModels < unit.profile.baseModelCount / 2;
+  return attachedUnitRemainingModels(state, unit) < startingStrength / 2;
 }
 
 function unitHasInsaneBraveryForCurrentBattleshock(state: BattleState, unit: BattleUnit): boolean {
@@ -3270,9 +3276,11 @@ function runBattleshock(state: BattleState, side: Side): LogEntry[] {
   const logs: LogEntry[] = [];
   for (const unit of state.units) {
     if (unit.destroyed || unit.side !== side) continue;
-    if (isBelowHalfStrength(unit)) {
+    if (attachedUnitTargetRepresentative(state, unit)?.id !== unit.id) continue;
+    const components = attachedUnitComponents(state, unit);
+    if (isBelowHalfStrength(state, unit)) {
       if (unitHasInsaneBraveryForCurrentBattleshock(state, unit)) {
-        unit.battleshocked = false;
+        for (const component of components) component.battleshocked = false;
         logs.push(log(state, unit.side, unit.profile.name,
           `${unit.profile.name} automatically passes its Battle-shock test with Insane Bravery.`,
           'info',
@@ -3281,15 +3289,15 @@ function runBattleshock(state: BattleState, side: Side): LogEntry[] {
       }
       const rolls = [d6(), d6()];
       const roll = rolls[0] + rolls[1];
-      const needed = bestLeadership(unit);
+      const needed = bestLeadership(state, unit);
       const passed = roll >= needed;
-      unit.battleshocked = !passed;
+      for (const component of components) component.battleshocked = !passed;
       logs.push(log(state, unit.side, unit.profile.name,
         `😰 ${unit.profile.name} below half strength — Battle-shock (${needed}+): rolled ${rolls[0]}+${rolls[1]}=${roll} → ${passed ? 'PASSED' : 'FAILED (Battleshocked!)'}`,
         'info',
       ));
     } else {
-      unit.battleshocked = false;
+      for (const component of components) component.battleshocked = false;
     }
   }
   return logs;
@@ -3419,6 +3427,7 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
   s.fightStepStarted = undefined;
   s.engagedUnitIdsAtFightStepStart = undefined;
   s.lastFightSelectionSide = undefined;
+  s.activeAttachedFightUnitId = undefined;
   s.units.forEach(unit => {
     unit.overrunFightSelected = undefined;
     unit.overrunPiledIn = undefined;
@@ -5535,6 +5544,7 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
     s.fightStepStarted = false;
     s.engagedUnitIdsAtFightStepStart = undefined;
     s.lastFightSelectionSide = undefined;
+    s.activeAttachedFightUnitId = undefined;
     newLogs.push(phaseLog(s, side, armyName, `\n--- Fight Phase ---`));
     if (rules.metadata.edition === '11e') {
       s = runAutomaticEleventhFightPhase(s, side, rules);
@@ -5573,6 +5583,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   s.fightStepStarted = undefined;
   s.engagedUnitIdsAtFightStepStart = undefined;
   s.lastFightSelectionSide = undefined;
+  s.activeAttachedFightUnitId = undefined;
   s.units.forEach(u => { u.overrunFightSelected = undefined; u.overrunPiledIn = undefined; });
   myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
 
@@ -5620,6 +5631,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   s.fightStepStarted = false;
   s.engagedUnitIdsAtFightStepStart = undefined;
   s.lastFightSelectionSide = undefined;
+  s.activeAttachedFightUnitId = undefined;
   newLogs.push(phaseLog(s, side, armyName, `\n─── Fight Phase ───`));
   if (rules.metadata.edition === '11e') {
     s = runAutomaticEleventhFightPhase(s, side, rules);

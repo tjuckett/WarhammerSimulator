@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, PrimaryMissionScoringRecord, SecondaryMissionScoringRecord, Terrain, TerritoryZoneSet } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -54,6 +54,15 @@ import {
   scoreFixedAssassinationDestroyedModels,
   scoreSecondaryMissionsAtEndOfTurn,
 } from '../src/engine/secondaryMissionScoring';
+import {
+  attachedUnitComponents,
+  attachedUnitHasRule,
+  attachedUnitIsFormed,
+  attachedUnitKeywordSet,
+  attachedUnitStartingStrength,
+  attachedUnitTargetRepresentative,
+  attachedUnitToughness,
+} from '../src/engine/attachedUnits';
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -9476,6 +9485,133 @@ test('11th Fight phase lets a charged unit pile in before selecting melee attack
   assert.deepEqual(playFightWeaponOptions(piled, fighter.id, 0, rules40K11th), [
     { weaponIndex: 0, name: 'Blade', targetIds: [target.id] },
   ]);
+});
+
+test('11th attached formations keep a stable combined rules-unit identity and source-scoped rules', () => {
+  const bodyguard = {
+    name: 'Wardens', rosterId: 'wardens', move: 6, toughness: 6, save: 3, wounds: 2,
+    leadership: 7, oc: 2, baseModelCount: 2, keywords: ['Infantry'], factionKeywords: ['Imperium'],
+    weapons: [], abilities: [{ name: 'Stealth', description: 'This unit has Stealth.' }],
+  };
+  const leader = {
+    ...bodyguard, name: 'Captain', rosterId: 'captain', toughness: 4, baseModelCount: 1,
+    keywords: ['Infantry', 'Character'], factionKeywords: ['Imperium', 'Adeptus Astartes'],
+    abilities: [{ name: 'Unbroken Leadership', description: 'While this model is leading a unit, models in that unit have Feel No Pain 6+.' }],
+    leaderAttachment: { attachedToUnitId: 'wardens', attachedToName: 'Wardens' },
+  };
+  const battle = createBattleState(
+    { name: 'Blue', faction: 'Imperium', units: [bodyguard, leader] }, '#00f',
+    { name: 'Red', faction: 'Test', units: [] }, '#f00', [],
+    'balanced', 'balanced', undefined, undefined, rules40K11th,
+  );
+  const bodyguardUnit = battle.units.find(unit => unit.profile.rosterId === 'wardens')!;
+  const leaderUnit = battle.units.find(unit => unit.profile.rosterId === 'captain')!;
+
+  assert.equal(attachedUnitIsFormed(battle, bodyguardUnit), true);
+  assert.deepEqual(attachedUnitComponents(battle, leaderUnit).map(unit => unit.id).sort(), [bodyguardUnit.id, leaderUnit.id].sort());
+  assert.equal(bodyguardUnit.tabletopUnitId, leaderUnit.tabletopUnitId);
+  assert.equal(attachedUnitStartingStrength(battle, leaderUnit), 3);
+  assert.equal(attachedUnitToughness(battle, leaderUnit), 6);
+  assert.equal(attachedUnitKeywordSet(battle, bodyguardUnit).has('character'), true);
+  assert.equal(attachedUnitHasRule(battle, bodyguardUnit, 'Stealth'), true);
+  assert.equal(attachedUnitHasRule(battle, bodyguardUnit, 'Feel No Pain'), true);
+  assert.equal(attachedUnitTargetRepresentative(battle, leaderUnit)?.id, bodyguardUnit.id);
+});
+
+test('11th attached units persist after Bodyguard loss and emit one aggregate unit-destruction fact', () => {
+  const battle = state('shooting');
+  const bodyguard = losTestUnit('bodyguard', 1, { x: 12, y: 10 });
+  bodyguard.tabletopUnitId = bodyguard.id;
+  bodyguard.profile = {
+    ...bodyguard.profile, name: 'Bodyguard', toughness: 6, baseModelCount: 2,
+    keywords: ['Infantry'], factionKeywords: [], weapons: [], abilities: [{ name: 'Stealth', description: 'Stealth' }],
+  };
+  bodyguard.remainingModels = 0;
+  bodyguard.destroyed = true;
+  bodyguard.modelPositions = [];
+  const leader = losTestUnit('leader', 1, { x: 10, y: 10 });
+  leader.tabletopUnitId = bodyguard.id;
+  leader.attachedToUnitId = bodyguard.id;
+  leader.profile = {
+    ...leader.profile, name: 'Leader', toughness: 4, baseModelCount: 1,
+    keywords: ['Infantry', 'Character'], factionKeywords: [], weapons: [],
+    abilities: [{ name: 'Leader Ward', description: 'While this model is leading a unit, this unit has Feel No Pain 6+.' }],
+  };
+  battle.units = [bodyguard, leader];
+
+  recordDestroyedModelMissionEvents(battle, bodyguard, [0, 1], 0);
+  recordDestroyedUnitMissionEvent(battle, bodyguard, 0);
+  assert.equal(battle.missionEvents?.destroyedUnitsThisTurn?.length ?? 0, 0);
+  assert.equal(battle.missionEvents?.destroyedModelsThisTurn?.[0]?.unitStartingStrength, 3);
+  assert.equal(attachedUnitIsFormed(battle, leader), true);
+  assert.equal(attachedUnitTargetRepresentative(battle, leader)?.id, leader.id);
+  assert.equal(attachedUnitToughness(battle, leader), 4);
+  assert.equal(attachedUnitHasRule(battle, leader, 'Stealth'), false);
+  assert.equal(attachedUnitHasRule(battle, leader, 'Feel No Pain'), true);
+
+  leader.remainingModels = 0;
+  leader.destroyed = true;
+  leader.modelPositions = [];
+  recordDestroyedModelMissionEvents(battle, leader, [0], 0);
+  recordDestroyedUnitMissionEvent(battle, leader, 0);
+  recordDestroyedUnitMissionEvent(battle, bodyguard, 0);
+  const event = battle.missionEvents?.destroyedUnitsThisTurn?.[0];
+  assert.equal(battle.missionEvents?.destroyedUnitsThisTurn?.length, 1);
+  assert.equal(event?.unitId, bodyguard.id);
+  assert.equal(event?.startingStrength, 3);
+  assert.equal(event?.isCharacter, true);
+  assert.match(event?.unitName ?? '', /Bodyguard \+ Leader/);
+
+  const restored = JSON.parse(JSON.stringify(battle)) as BattleState;
+  assert.deepEqual(restored.missionEvents?.destroyedUnitsThisTurn, battle.missionEvents?.destroyedUnitsThisTurn);
+  assert.equal(attachedUnitComponents(restored, restored.units[1], true).length, 2);
+});
+
+test('11th attached components complete one uninterrupted Fight activation and replay the cursor', () => {
+  const battle = state('fight');
+  battle.activeArmy = 0;
+  battle.fightStepStarted = true;
+  const bodyguard = losTestUnit('bodyguard', 0, { x: 10, y: 10 });
+  bodyguard.tabletopUnitId = bodyguard.id;
+  bodyguard.charged = true;
+  bodyguard.inCombat = true;
+  bodyguard.profile = { ...bodyguard.profile, name: 'Bodyguard', weapons: [] };
+  const leader = losTestUnit('leader', 0, { x: 10.5, y: 10 });
+  leader.tabletopUnitId = bodyguard.id;
+  leader.attachedToUnitId = bodyguard.id;
+  leader.charged = true;
+  leader.inCombat = true;
+  leader.profile = { ...leader.profile, name: 'Leader', keywords: ['Infantry', 'Character'], weapons: [] };
+  const enemy = losTestUnit('enemy', 1, { x: 11.5, y: 10 });
+  enemy.inCombat = true;
+  enemy.profile = { ...enemy.profile, name: 'Enemy', weapons: [] };
+  battle.units = [bodyguard, leader, enemy];
+  battle.engagedUnitIdsAtFightStepStart = battle.units.map(unit => unit.id);
+
+  const firstAction: GameAction = {
+    type: GAME_ACTION_TYPE.FightUnitWeapon, unitId: bodyguard.id, side: 0,
+    targetUnitId: enemy.id, weaponIndex: -1,
+  };
+  const afterBodyguard = applyGameAction(battle, firstAction, { rules: rules40K11th });
+  assert.equal(afterBodyguard.activeAttachedFightUnitId, bodyguard.id);
+  assert.deepEqual(playFightActivationUnitIds(afterBodyguard, 0, rules40K11th), [leader.id]);
+  assert.deepEqual(playFightActivationUnitIds(afterBodyguard, 1, rules40K11th), []);
+
+  const secondAction: GameAction = {
+    type: GAME_ACTION_TYPE.FightUnitWeapon, unitId: leader.id, side: 0,
+    targetUnitId: enemy.id, weaponIndex: -1,
+  };
+  const completed = applyGameAction(afterBodyguard, secondAction, { rules: rules40K11th });
+  assert.equal(completed.activeAttachedFightUnitId, undefined);
+  assert.equal(completed.lastFightSelectionSide, 0);
+  assert.deepEqual(playFightActivationUnitIds(completed, 1, rules40K11th), [enemy.id]);
+
+  const timeline = createPracticeTimeline(battle);
+  const firstEntry = appendTimelineAction(timeline, battle, firstAction, { rules: rules40K11th });
+  const secondEntry = appendTimelineAction(firstEntry.timeline, firstEntry.state, secondAction, { rules: rules40K11th });
+  const replayed = replayTimeline(secondEntry.timeline, { rules: rules40K11th }, false);
+  assert.deepEqual(replayed.units.map(unit => unit.activated), completed.units.map(unit => unit.activated));
+  assert.equal(replayed.activeAttachedFightUnitId, undefined);
 });
 
 test('11th Overrun uses the Fight-step engagement snapshot and current eligibility', () => {

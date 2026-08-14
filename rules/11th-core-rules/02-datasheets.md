@@ -33,6 +33,6 @@ Source: https://gdmissions.app/11th/rules/core-rules
 ## TODO
 
 - Add exact command/faction/datasheet ability effects only when source text or structured data exists.
-- Improve attached-unit and leader/bodyguard ability sharing once exact wording and data model needs are confirmed.
+- Attached-unit generic sharing is implemented for modeled unit-level passive hooks; continue adding typed datasheet-specific effects and exceptional attachment/split rules only as their source data is transcribed.
 - Add roster construction validation in the import/army-builder layer.
 
