@@ -412,6 +412,10 @@ test('11th secondary mission rules track transcribed scoring text', () => {
   ]);
   assert.equal(ELEVENTH_SECONDARY_MISSION_RULES.every(rule => rule.deck === 'secondary'), true);
 
+  const grievousBlow = eleventhSecondaryMissionRuleForName('A Grievous Blow');
+  assert.match(grievousBlow?.scoring[1].sourceText ?? '', /One or more.+5VP/);
+  assert.equal(grievousBlow?.scoring[1].maxVp, undefined);
+
   const assassination = eleventhSecondaryMissionRuleForName('Assassination');
   assert.equal(assassination?.mode, 'fixed-or-tactical');
   assert.equal(assassination?.scoring.length, 3);
@@ -421,6 +425,10 @@ test('11th secondary mission rules track transcribed scoring text', () => {
   const behindEnemyLines = eleventhSecondaryMissionRuleForName('Behind Enemy Lines');
   assert.equal(behindEnemyLines?.scoring[0].maxVp, 5);
   assert.match(behindEnemyLines?.scoring[0].notes ?? '', /Automatically scored.*deployment-zone/);
+
+  const bringItDown = eleventhSecondaryMissionRuleForName('Bring It Down');
+  assert.match(bringItDown?.scoring[1].sourceText ?? '', /One or more.+5VP/);
+  assert.equal(bringItDown?.scoring[1].maxVp, undefined);
 
   const burden = eleventhSecondaryMissionRuleForName('Burden of Trust');
   assert.equal(burden?.scoring[0].maxVp, 5);
