@@ -1,4 +1,4 @@
-import type { ImportedArmy, ModelStatProfile, UnitProfile, WeaponProfile } from '../types/army';
+import type { ImportedArmy, ModelStatProfile, RuleText, UnitProfile, WeaponProfile } from '../types/army';
 import { applyBaseSizesToArmy } from '../data/unitBaseSizes';
 
 // ─── Raw BattleScribe JSON shape ──────────────────────────────────────────────
@@ -209,11 +209,15 @@ function aggregateModelStatProfiles(profiles: ModelStatProfile[]): ModelStatProf
   return [...merged.values()];
 }
 
-function parseAbility(profile: BSProfile): { name: string; description: string } {
+function parseAbility(profile: BSProfile): RuleText {
   const description = charVal(profile, 'Description')
     || profile.characteristics?.map(c => c.value ?? c.$text ?? '').filter(Boolean).join('\n')
     || '';
-  return { name: profile.name, description };
+  const printed = `${profile.name} ${description}`;
+  const tags: RuleText['tags'] = [];
+  if (/(?:\[|\()\s*aura\s*(?:\]|\))/i.test(printed)) tags.push('Aura');
+  if (/(?:\[|\()\s*psychic\s*(?:\]|\))/i.test(printed)) tags.push('Psychic');
+  return { name: profile.name, description, ...(tags.length ? { tags } : {}) };
 }
 
 function buildModelWeaponLoadouts(modelCount: number, weaponModelIndexes: number[][]): number[][] {

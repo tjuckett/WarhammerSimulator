@@ -25,6 +25,16 @@ export interface ModelStatProfile {
 export interface RuleText {
   name: string;
   description: string;
+  /** Core 22 tags printed on the rule. Text-only imports remain supported. */
+  tags?: Array<'Aura' | 'Psychic'>;
+  /** Core 22 classification; this does not invent or execute a datasheet effect. */
+  category?: 'datasheet' | 'faction' | 'wargear';
+  /** Explicit Aura range in inches when the source data provides one. */
+  range?: number;
+  /** Original roster-model index for a bearer-only Wargear or Aura ability. */
+  bearerModelIndex?: number;
+  /** Explicit Core 22.02 "unless otherwise stated" exception from source data. */
+  appliesAcrossArmyFactions?: boolean;
 }
 
 export interface MovementRuleOverride {

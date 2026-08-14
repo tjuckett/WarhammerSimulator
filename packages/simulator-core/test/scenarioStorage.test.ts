@@ -63,6 +63,15 @@ import {
   attachedUnitTargetRepresentative,
   attachedUnitToughness,
 } from '../src/engine/attachedUnits';
+import {
+  abilityDamageSourceTags,
+  attackingModelHasPlungingFire,
+  auraAbilitiesInRange,
+  factionAbilityApplies,
+  ruleIsActiveForUnit,
+  ruleIsAura,
+  ruleIsPsychic,
+} from '../src/engine/otherRules';
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -11372,4 +11381,135 @@ test('movement overrides can increase move and auto 6 an Advance', () => {
   assert.equal(advancedUnit.movementAllowanceRemaining, 15);
   assert.deepEqual(advancedUnit.movementAllowanceRemainingByModel, [15]);
   assert.match(advanced.log.at(-1)?.message ?? '', /auto 6/);
+});
+
+test('Core 22 classifies Aura, Psychic, faction, and bearer wargear rules without inventing effects', () => {
+  const unit = losTestUnit('source', 0, { x: 10, y: 10 });
+  unit.profile.factionKeywords = ['Faction: Test'];
+  unit.modelRosterIndexes = [1];
+  const aura = { name: 'Command Field [Aura]', description: 'While a unit is within 6 inches, apply its listed effect.' };
+  const psychic = { name: 'Mind Lance', description: '(Psychic) The target loses wounds.' };
+  const faction = { name: 'Army Rule', description: 'Faction ability.', category: 'faction' as const };
+  const survivingWargear = { name: 'Icon', description: 'Bearer ability.', category: 'wargear' as const, bearerModelIndex: 1 };
+  const lostWargear = { ...survivingWargear, bearerModelIndex: 0 };
+
+  assert.equal(ruleIsAura(aura), true);
+  assert.equal(ruleIsPsychic(psychic), true);
+  assert.deepEqual(abilityDamageSourceTags(psychic), ['psychic']);
+  assert.equal(factionAbilityApplies('Test', unit, faction), true);
+  assert.equal(factionAbilityApplies('Other', unit, faction), false);
+  assert.equal(factionAbilityApplies('Other', unit, { ...faction, appliesAcrossArmyFactions: true }), true);
+  assert.equal(ruleIsActiveForUnit(unit, survivingWargear), true);
+  assert.equal(ruleIsActiveForUnit(unit, lostWargear), false);
+});
+
+test('Core 22 Aura range includes self, permits different auras, and applies the same aura only once', () => {
+  const battle = state('command');
+  const source = losTestUnit('source', 0, { x: 10, y: 10 });
+  source.profile.abilities = [
+    { name: 'Command Field', description: 'Effect text.', tags: ['Aura'], range: 6 },
+    { name: 'Second Field', description: 'Effect text.', tags: ['Aura'], range: 0 },
+  ];
+  const duplicate = losTestUnit('duplicate', 0, { x: 11, y: 10 });
+  duplicate.profile.abilities = [{ name: 'Command Field', description: 'Effect text.', tags: ['Aura'], range: 6 }];
+  const target = losTestUnit('target', 0, { x: 15, y: 10 });
+  battle.units = [source, duplicate, target];
+
+  assert.deepEqual(auraAbilitiesInRange(battle, target).map(application => application.rule.name), ['Command Field']);
+  assert.deepEqual(auraAbilitiesInRange(battle, source).map(application => application.rule.name).sort(), ['Command Field', 'Second Field']);
+  target.modelPositions[0].z = 10;
+  assert.deepEqual(auraAbilitiesInRange(battle, target), []);
+  target.modelPositions[0].z = 0;
+  source.embarkedInUnitId = 'transport';
+  duplicate.destroyed = true;
+  assert.deepEqual(auraAbilitiesInRange(battle, target), []);
+});
+
+test('Core 22 Plunging Fire uses exact terrain, ground-level, visibility, Towering, and Aircraft gates', () => {
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const attacker = losTestUnit('attacker', 0, { x: 10, y: 10, z: 3 });
+  const target = losTestUnit('target', 1, { x: 16, y: 10, z: 0 });
+  battle.terrain = [terrainMat({
+    type: 'ruin', x: 8, y: 8, width: 4, height: 4, providesCover: false,
+    features: [{
+      id: 'upper-floor', name: 'Upper floor', x: 8, y: 8, width: 4, height: 4,
+      featureHeight: 'mid', blocksLOS: false, blocksMovement: false, difficult: false,
+    }],
+  })];
+  battle.units = [attacker, target];
+
+  assert.equal(attackingModelHasPlungingFire(battle, attacker, 0, target, true), true);
+  assert.equal(attackingModelHasPlungingFire(battle, attacker, 0, target, false), false);
+  target.modelPositions[0].z = 1;
+  assert.equal(attackingModelHasPlungingFire(battle, attacker, 0, target, true), false);
+  target.modelPositions[0].z = 0;
+  target.profile.keywords = ['Aircraft'];
+  assert.equal(attackingModelHasPlungingFire(battle, attacker, 0, target, true), false);
+
+  target.profile.keywords = ['Infantry'];
+  attacker.profile.keywords = ['Towering'];
+  attacker.modelPositions[0] = { x: 10, y: 10 };
+  battle.terrain = [];
+  assert.equal(attackingModelHasPlungingFire(battle, attacker, 0, target, true), true);
+  target.modelPositions[0] = { x: 24, y: 10 };
+  assert.equal(attackingModelHasPlungingFire(battle, attacker, 0, target, true), false);
+});
+
+test('11th ranged resolution applies Plunging Fire as a Ballistic Skill improvement', () => {
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const attacker = losTestUnit('tower', 0, { x: 10, y: 10 });
+  attacker.profile.keywords = ['Towering'];
+  attacker.profile.weapons = [{
+    name: 'Tower gun', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false,
+  }];
+  const target = losTestUnit('ground-target', 1, { x: 16, y: 10 }, 2);
+  battle.units = [attacker, target];
+
+  const resolved = shootPlayUnitWeapon(battle, attacker.id, 0, target.id, 0, rules40K11th);
+  assert.equal(resolved.log.some(entry => /Hit rolls \(2\+; Plunging Fire improves BS by 1\)/.test(entry.message)), true);
+});
+
+test('11th Plunging Fire splits mixed-elevation models into the correct hit pools', () => {
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const attacker = losTestUnit('mixed-height', 0, { x: 12, y: 10 });
+  attacker.profile.baseModelCount = 2;
+  attacker.profile.modelWeaponLoadouts = [[0], [0]];
+  attacker.profile.weapons = [{
+    name: 'Rifles', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false,
+  }];
+  attacker.remainingModels = 2;
+  attacker.modelPositions = [{ x: 10, y: 10, z: 3 }, { x: 14, y: 10, z: 0 }];
+  const target = losTestUnit('ground-target', 1, { x: 18, y: 10 }, 2);
+  battle.terrain = [terrainMat({
+    type: 'ruin', x: 8, y: 8, width: 4, height: 4, providesCover: false,
+    features: [{
+      id: 'upper-floor', name: 'Upper floor', x: 8, y: 8, width: 4, height: 4,
+      featureHeight: 'mid', blocksLOS: false, blocksMovement: false, difficult: false,
+    }],
+  })];
+  battle.units = [attacker, target];
+
+  const resolved = shootPlayUnitWeapon(battle, attacker.id, 0, target.id, 0, rules40K11th);
+  const messages = resolved.log.map(entry => entry.message).join(' ');
+  assert.match(messages, /Hit rolls \(2\+; Plunging Fire improves BS by 1\)/);
+  assert.match(messages, /Hit rolls \(3\+\)/);
+});
+
+test('Psychic ability wound provenance survives destruction facts and serialization', () => {
+  const battle = state('shooting');
+  const target = losTestUnit('psychic-target', 1, { x: 10, y: 10 });
+  battle.units = [target];
+  applyDamage(target, 1, battle, 0, {
+    source: 'Mind Lance',
+    sourceUnitId: 'psyker',
+    sourceTags: ['psychic'],
+  });
+
+  assert.deepEqual(battle.missionEvents?.destroyedModelsThisTurn?.[0].sourceTags, ['psychic']);
+  assert.deepEqual(battle.missionEvents?.destroyedUnitsThisTurn?.[0].sourceTags, ['psychic']);
+  const restored = JSON.parse(JSON.stringify(battle)) as BattleState;
+  assert.deepEqual(restored.missionState?.destroyedModelsDuringBattle?.[0].sourceTags, ['psychic']);
 });

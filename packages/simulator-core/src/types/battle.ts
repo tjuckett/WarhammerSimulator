@@ -53,6 +53,8 @@ export interface BattleUnit {
     source?: string;
     sourceUnitId?: string;
     sourceObjectiveIndexesWithinRange?: number[];
+    /** Core 22 attack provenance, e.g. damage caused by a Psychic ability. */
+    sourceTags?: Array<'psychic'>;
   }>;
   position: Position;          // centroid of modelPositions; display and coarse AI positioning
   modelPositions: Position[];  // one entry per remaining model
@@ -135,6 +137,7 @@ export interface DestroyedUnitMissionEvent {
   destroyedBySide: Side;
   destroyedByUnitId?: string;
   destroyingUnitObjectiveIndexesWithinRange?: number[];
+  sourceTags?: Array<'psychic'>;
   battleRound: number;
   turn: number;
   phase: Phase;
@@ -171,6 +174,7 @@ export interface DestroyedModelMissionEvent {
   isCharacter: boolean;
   destroyedBySide: Side;
   destroyedByUnitId?: string;
+  sourceTags?: Array<'psychic'>;
   battleRound: number;
   turn: number;
   phase: Phase;

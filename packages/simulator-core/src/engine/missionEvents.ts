@@ -161,6 +161,7 @@ export function recordDestroyedUnitMissionEvent(
   options: {
     destroyedByUnitId?: string;
     destroyingUnitObjectiveIndexesWithinRange?: number[];
+    sourceTags?: Array<'psychic'>;
   } = {},
 ): void {
   state.missionEvents = state.missionEvents ?? {};
@@ -185,6 +186,7 @@ export function recordDestroyedUnitMissionEvent(
       ...(options.destroyingUnitObjectiveIndexesWithinRange
         ? { destroyingUnitObjectiveIndexesWithinRange: [...options.destroyingUnitObjectiveIndexesWithinRange] }
         : {}),
+      ...(options.sourceTags?.length ? { sourceTags: [...options.sourceTags] } : {}),
       battleRound: battleRound(state),
       turn: state.turn,
       phase: state.phase,
@@ -211,7 +213,7 @@ export function recordDestroyedModelMissionEvents(
   unit: BattleUnit,
   modelIndices: number[],
   destroyedBySide: Side,
-  options: { destroyedByUnitId?: string } = {},
+  options: { destroyedByUnitId?: string; sourceTags?: Array<'psychic'> } = {},
 ): void {
   if (!modelIndices.length) return;
   state.missionEvents = state.missionEvents ?? {};
@@ -236,6 +238,7 @@ export function recordDestroyedModelMissionEvents(
       isCharacter,
       destroyedBySide,
       ...(options.destroyedByUnitId ? { destroyedByUnitId: options.destroyedByUnitId } : {}),
+      ...(options.sourceTags?.length ? { sourceTags: [...options.sourceTags] } : {}),
       battleRound: battleRound(state),
       turn: state.turn,
       phase: state.phase,

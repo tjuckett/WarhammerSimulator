@@ -57,6 +57,7 @@ import {
   modelBaseFootprintInches,
   modelBaseRadiusInches,
 } from './baseSizes';
+import { attackingModelHasPlungingFire } from './otherRules';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -499,9 +500,19 @@ function aliveWeaponModelCount(
   defender?: BattleUnit,
   terrain?: Terrain[],
 ): number {
-  let count = 0;
+  return aliveWeaponModelIndexes(unit, weaponIndex, defender, terrain).length;
+}
+
+function aliveWeaponModelIndexes(
+  unit: BattleUnit,
+  weaponIndex: number,
+  defender?: BattleUnit,
+  terrain?: Terrain[],
+): number[] {
+  const indexes: number[] = [];
   for (let modelIndex = 0; modelIndex < unit.remainingModels; modelIndex++) {
-    if (!modelWeaponLoadout(unit.profile, modelIndex).some(i => i === weaponIndex)) continue;
+    const rosterModelIndex = unit.modelRosterIndexes?.[modelIndex] ?? modelIndex;
+    if (!modelWeaponLoadout(unit.profile, rosterModelIndex).some(i => i === weaponIndex)) continue;
     if (defender && terrain) {
       const fromCenter = unit.modelPositions[modelIndex];
       if (!fromCenter) continue;
@@ -511,9 +522,9 @@ function aliveWeaponModelCount(
       );
       if (!canSee) continue;
     }
-    count++;
+    indexes.push(modelIndex);
   }
-  return count;
+  return indexes;
 }
 
 function weaponIsSidearm(weapon: WeaponProfile): boolean {
@@ -549,6 +560,19 @@ function hasAnyModelLOS(
   );
 }
 
+function participatingWeaponModelIndexes(
+  attacker: BattleUnit,
+  defender: BattleUnit,
+  weapon: WeaponProfile,
+  weaponIndex: number,
+  terrain: Terrain[],
+): number[] {
+  const needsLOS = !weapon.isMelee && !weaponHasKeyword(weapon, 'Indirect Fire');
+  return needsLOS
+    ? aliveWeaponModelIndexes(attacker, weaponIndex, defender, terrain)
+    : aliveWeaponModelIndexes(attacker, weaponIndex);
+}
+
 function participatingWeaponModelCount(
   attacker: BattleUnit,
   defender: BattleUnit,
@@ -556,10 +580,7 @@ function participatingWeaponModelCount(
   weaponIndex: number,
   terrain: Terrain[],
 ): number {
-  const needsLOS = !weapon.isMelee && !weaponHasKeyword(weapon, 'Indirect Fire');
-  return needsLOS
-    ? aliveWeaponModelCount(attacker, weaponIndex, defender, terrain)
-    : aliveWeaponModelCount(attacker, weaponIndex);
+  return participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, terrain).length;
 }
 
 function terrainIsWoods(t: Terrain): boolean {
@@ -676,6 +697,24 @@ function modelBaseEdgeDistance3d(
   const horizontal = baseFootprintDistance(aModel, aFootprint, bModel, bFootprint);
   const vertical = verticalDistance(aModel, bModel);
   return Math.hypot(horizontal, vertical);
+}
+
+function attackingModelToAttachedUnitDistance(
+  state: BattleState,
+  attacker: BattleUnit,
+  attackerModelIndex: number,
+  defender: BattleUnit,
+): number {
+  const attackerPosition = attacker.modelPositions[attackerModelIndex];
+  if (!attackerPosition) return Number.POSITIVE_INFINITY;
+  return Math.min(...attachedUnitComponents(state, defender).flatMap(component =>
+    component.modelPositions.map((position, modelIndex) => modelBaseEdgeDistance3d(
+      attackerPosition,
+      modelFootprint(attacker, attackerModelIndex),
+      position,
+      modelFootprint(component, modelIndex),
+    )),
+  ));
 }
 
 function modelBaseEdgeHorizontalDistance(
@@ -801,16 +840,29 @@ function resolveAttacks(
     ? dist(attacker.position, defender.position)
     : battleUnitToAttachedUnitDistance(state, attacker, defender);
 
-  const weaponModelCount = participatingWeaponModelCount(attacker, defender, weapon, weaponIndex, state.terrain);
+  const participatingModelIndexes = participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, state.terrain);
+  const weaponModelCount = participatingModelIndexes.length;
   if (weaponModelCount <= 0) return logs;
   const isVariableAttacks = !/^\d+$/i.test(String(weapon.attacks).trim());
   const perModelRolls: number[] = [];
   for (let i = 0; i < weaponModelCount; i++) {
     perModelRolls.push(rollExpression(weapon.attacks).total);
   }
-  let numAttacks = options.attackCountOverride ?? perModelRolls.reduce((a, b) => a + b, 0);
+  let perModelAttackCounts = [...perModelRolls];
+  let numAttacks = options.attackCountOverride ?? perModelAttackCounts.reduce((a, b) => a + b, 0);
   if (options.attackCountOverride === undefined) {
-    numAttacks = rules.modifyAttackCount(numAttacks, attacker, weapon, rangeDistance, attachedUnitRemainingModels(state, defender));
+    if (rules.metadata.edition === '11e' && !weapon.isMelee) {
+      perModelAttackCounts = perModelAttackCounts.map((attacks, index) => rules.modifyAttackCount(
+        attacks,
+        { ...attacker, remainingModels: 1 },
+        weapon,
+        attackingModelToAttachedUnitDistance(state, attacker, participatingModelIndexes[index], defender),
+        attachedUnitRemainingModels(state, defender),
+      ));
+      numAttacks = perModelAttackCounts.reduce((total, attacks) => total + attacks, 0);
+    } else {
+      numAttacks = rules.modifyAttackCount(numAttacks, attacker, weapon, rangeDistance, attachedUnitRemainingModels(state, defender));
+    }
   }
 
   if (numAttacks <= 0) return logs;
@@ -851,18 +903,44 @@ function resolveAttacks(
       'roll',
     ));
   } else {
-  const hitRolls = rollMultiple(numAttacks);
-  const hitTarget = options.snapShooting ? 6 : Math.min(6, Math.max(2, weapon.skill + hitModifier));
-  hitResult = rules.processHits(hitRolls, hitTarget, weapon);
-  lethalAutoWounds = weaponHasKeyword(weapon, 'Lethal Hits')
-    ? hitRolls.filter(roll => roll === 6).length
-    : 0;
-  weapon = { ...weapon, skill: hitTarget };
-  const noteHit = hitResult.logNote ? ` [${hitResult.logNote}]` : '';
-  logs.push(log(state, attacker.side, attacker.profile.name,
-    `     Hit rolls (${weapon.skill}+): [${hitRolls.join(', ')}] → ${hitResult.hits} hits${noteHit}`,
-    'roll',
-  ));
+    const plungingAttackCount = options.snapShooting || weapon.isMelee
+      ? 0
+      : participatingModelIndexes.reduce((total, modelIndex, index) => {
+        const position = attacker.modelPositions[modelIndex];
+        const visible = position
+          ? hasAnyModelLOS(position, modelBaseRadius(attacker, modelIndex), defender, state.terrain)
+          : false;
+        return total + (attackingModelHasPlungingFire(state, attacker, modelIndex, defender, visible)
+          ? perModelAttackCounts[index]
+          : 0);
+      }, 0);
+    const hitRolls = rollMultiple(numAttacks);
+    const plungingRolls = hitRolls.slice(0, plungingAttackCount);
+    const normalRolls = hitRolls.slice(plungingAttackCount);
+    const normalTarget = options.snapShooting ? 6 : Math.min(6, Math.max(2, weapon.skill + hitModifier));
+    const plungingTarget = Math.min(6, Math.max(2, weapon.skill - 1 + hitModifier));
+    const hitPools = [
+      ...(plungingRolls.length ? [{ rolls: plungingRolls, target: plungingTarget, plunging: true }] : []),
+      ...(normalRolls.length ? [{ rolls: normalRolls, target: normalTarget, plunging: false }] : []),
+    ];
+    const results = hitPools.map(pool => ({ ...pool, result: rules.processHits(pool.rolls, pool.target, weapon) }));
+    hitResult = {
+      hits: results.reduce((total, pool) => total + pool.result.hits, 0),
+      rolls: hitRolls,
+      mortalsFromCrits: results.reduce((total, pool) => total + pool.result.mortalsFromCrits, 0),
+      logNote: results.map(pool => pool.result.logNote).filter(Boolean).join('; '),
+    };
+    lethalAutoWounds = weaponHasKeyword(weapon, 'Lethal Hits')
+      ? hitRolls.filter(roll => roll === 6).length
+      : 0;
+    for (const pool of results) {
+      const noteHit = pool.result.logNote ? ` [${pool.result.logNote}]` : '';
+      const plungingNote = pool.plunging ? '; Plunging Fire improves BS by 1' : '';
+      logs.push(log(state, attacker.side, attacker.profile.name,
+        `     Hit rolls (${pool.target}+${plungingNote}): [${pool.rolls.join(', ')}] → ${pool.result.hits} hits${noteHit}`,
+        'roll',
+      ));
+    }
 
   }
 
@@ -1026,6 +1104,7 @@ export function applyDamage(
     source?: string;
     sourceUnitId?: string;
     sourceObjectiveIndexesWithinRange?: number[];
+    sourceTags?: Array<'psychic'>;
   } = {},
 ): LogEntry[] {
   const logs: LogEntry[] = [];
@@ -1040,6 +1119,7 @@ export function applyDamage(
         ...(options.sourceObjectiveIndexesWithinRange
           ? { sourceObjectiveIndexesWithinRange: options.sourceObjectiveIndexesWithinRange }
           : {}),
+        ...(options.sourceTags?.length ? { sourceTags: [...options.sourceTags] } : {}),
       },
     ];
     logs.push(log(state, attackerSide, unit.profile.name,
@@ -1112,7 +1192,7 @@ export function applyDamage(
         unit,
         Array.from({ length: killed }, (_, index) => simulatedModels + index),
         attackerSide,
-        { destroyedByUnitId: options.sourceUnitId },
+        { destroyedByUnitId: options.sourceUnitId, sourceTags: options.sourceTags },
       );
     }
     unit.remainingModels = simulatedModels;
@@ -1130,6 +1210,7 @@ export function applyDamage(
     recordDestroyedUnitMissionEvent(state, unit, attackerSide, {
       destroyedByUnitId: options.sourceUnitId,
       destroyingUnitObjectiveIndexesWithinRange: options.sourceObjectiveIndexesWithinRange,
+      sourceTags: options.sourceTags,
     });
     logs.push(log(state, attackerSide, unit.profile.name,
       `  💀 ${unit.profile.name} DESTROYED`,
@@ -5456,6 +5537,7 @@ export function allocatePlayDamageToModel(
     const destroyedBySide = s.units.find(candidate => candidate.id === damage.sourceUnitId)?.side ?? state.activeArmy;
     recordDestroyedModelMissionEvents(s, unit, [modelIndex], destroyedBySide, {
       destroyedByUnitId: damage.sourceUnitId,
+      sourceTags: damage.sourceTags,
     });
     spliceModelIndices(unit, [modelIndex]);
     unit.remainingModels = Math.max(0, unit.remainingModels - 1);
@@ -5470,6 +5552,7 @@ export function allocatePlayDamageToModel(
       recordDestroyedUnitMissionEvent(s, unit, destroyedBySide, {
         destroyedByUnitId: damage.sourceUnitId,
         destroyingUnitObjectiveIndexesWithinRange: damage.sourceObjectiveIndexesWithinRange,
+        sourceTags: damage.sourceTags,
       });
     } else {
       unit.position = centroid(unit.modelPositions);
