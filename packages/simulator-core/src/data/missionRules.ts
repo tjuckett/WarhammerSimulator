@@ -1775,7 +1775,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'fixed-or-tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/bring-it-down-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Per-model events now preserve Wounds facts; automatic secondary scoring is not wired yet.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Fixed event-time and tactical end-of-turn scoring are wired from preserved per-model Wounds facts.',
     whenDrawn: 'If there are no enemy models on the battlefield with a Wounds characteristic of 10 or more, you may discard this card and draw one new Secondary Mission card.',
     scoring: [
       {
@@ -1784,7 +1784,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of a turn',
         vp: 4,
         sourceText: 'For each enemy model with a Wounds characteristic of 10 or more that is destroyed this turn. 4VP.',
-        notes: 'Per-model destruction events preserve Wounds facts for this clause.',
+        notes: 'Automatically scored for each qualifying per-model destruction event while the fixed card is active.',
       },
       {
         id: 'tactical-high-wounds-model-destroyed',
@@ -1792,7 +1792,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of a turn',
         vp: 5,
         sourceText: 'One or more enemy models with a Wounds characteristic of 10 or more were destroyed this turn. 5VP.',
-        notes: 'Per-turn model destruction events preserve Wounds facts for this clause.',
+        notes: 'Automatically scored from qualifying per-turn model destruction events.',
       },
     ],
   },
@@ -1804,7 +1804,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/burden-of-trust-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Guarded objective selections and unit/objective range state are required before this can score automatically.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Deadline scoring validates stored guard selections against current objective control and unit range.',
     whenDrawn: 'For each objective, you may pick one friendly unit on the battlefield to guard that objective. Until the start of your next turn, that objective counts as guarded by your army for as long as the chosen unit is within range of it and you control it.',
     scoring: [
       {
@@ -1814,7 +1814,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         vp: 2,
         maxVp: 5,
         sourceText: 'For each objective guarded by your army. 2VP, max 5VP.',
-        notes: 'Requires storing guarded objective/unit selections and checking objective control plus chosen unit range.',
+        notes: 'Automatically scored from stored guarded objective/unit selections, current control, and current unit range.',
       },
     ],
   },
@@ -1826,7 +1826,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/centre-ground-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Footprint-aware battlefield-centre proximity is available; automatic scoring must filter Battle-shocked/Aircraft units.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Additive end-of-owner-turn scoring uses footprint-aware battlefield-centre proximity and friendly eligibility filters.',
     scoring: [
       {
         id: 'friendly-near-centre-no-enemy-three',
@@ -1834,7 +1834,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 3,
         sourceText: 'One or more friendly units, excluding Aircraft and Battle-shocked units, are within 3" of the centre of the battlefield, while no enemy units are within 3" of that centre. 3VP.',
-        notes: 'Footprint-aware battlefield-centre proximity is available; scoring must filter Aircraft/Battle-shocked units.',
+        notes: 'Automatically scored using footprint-aware centre proximity and Aircraft/Battle-shock exclusions for friendly units.',
       },
       {
         id: 'friendly-near-centre-no-enemy-six',
@@ -1842,7 +1842,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 5,
         sourceText: 'One or more friendly units, excluding Aircraft and Battle-shocked units, are within 3" of the centre of the battlefield, while no enemy units are within 6" of that centre. 5VP.',
-        notes: 'Footprint-aware battlefield-centre proximity is available; scoring must filter Aircraft/Battle-shocked units.',
+        notes: 'Automatically scored using footprint-aware centre proximity and Aircraft/Battle-shock exclusions for friendly units.',
       },
     ],
   },
@@ -1854,7 +1854,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/cleanse-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Cleanse action completion and cleansed-objective tracking are implemented; automatic secondary scoring remains unwired.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. End-of-owner-turn scoring is wired to distinct completed Cleanse action targets.',
     whenDrawn: 'If you have the Plunder Secondary Mission active, you may shuffle this card back into your Secondary Mission deck and then draw one new Secondary Mission card.',
     scoring: [
       {
@@ -1863,7 +1863,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 2,
         sourceText: 'One objective was cleansed by your army this turn. 2VP.',
-        notes: 'Cleanse objective action completion and per-turn target tracking are available for automatic scoring.',
+        notes: 'Automatically scored when exactly one distinct objective has a completed Cleanse action this turn.',
       },
       {
         id: 'two-objectives-cleansed',
@@ -1871,7 +1871,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: 'End of your turn',
         vp: 5,
         sourceText: 'Two or more objectives were cleansed by your army this turn. 5VP.',
-        notes: 'Cleanse objective action completion and per-turn target tracking are available for automatic scoring.',
+        notes: 'Automatically scored when two or more distinct objectives have completed Cleanse actions this turn.',
       },
     ],
   },
@@ -1883,7 +1883,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
     status: 'implemented',
     mode: 'tactical',
     source: `${SECONDARY_DEFENDER_SOURCE}/defend-stronghold-defender`,
-    notes: 'Scoring text transcribed from GDM 2026 secondary card. Home objective control and footprint-aware deployment-zone checks are available; automatic secondary scoring remains unwired.',
+    notes: 'Scoring text transcribed from GDM 2026 secondary card. Additive deadline scoring uses explicit home-objective roles, current control, and footprint-aware deployment-zone checks.',
     whenDrawn: 'During the first battle round, shuffle this card back into your Secondary Mission deck and then draw one new Secondary Mission card.',
     scoring: [
       {
@@ -1892,7 +1892,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: "End of your opponent's turn or the end of the fifth battle round, whichever comes first",
         vp: 3,
         sourceText: 'You control your home objective. 3VP.',
-        notes: 'Can use objective role/control state once secondary scoring is wired.',
+        notes: 'Automatically scored from the explicit friendly home-objective role and current objective control.',
       },
       {
         id: 'control-home-no-enemy-deployment-zone',
@@ -1900,7 +1900,7 @@ export const ELEVENTH_SECONDARY_MISSION_RULES: SecondaryMissionRuleSpec[] = [
         timing: "End of your opponent's turn or the end of the fifth battle round, whichever comes first",
         vp: 5,
         sourceText: 'You control your home objective and no enemy units are within your deployment zone. 5VP.',
-        notes: 'Objective role/control state and footprint-aware deployment-zone geometry are available for automatic scoring.',
+        notes: 'Automatically scored from home-objective control and footprint-aware enemy presence in the friendly deployment zone; unknown setup geometry is unsupported.',
       },
     ],
   },

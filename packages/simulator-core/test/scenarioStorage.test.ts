@@ -1553,6 +1553,168 @@ test('automatic Behind Enemy Lines uses whole-unit containment, exclusions, timi
   assert.match(records[0].detail, /2 eligible friendly units/);
 });
 
+test('automatic Bring It Down scores fixed destruction events and aggregates tactical turn scoring', () => {
+  const initial = state('shooting');
+  initial.ruleset = rulesetMetadataForState(rules40K11th);
+  const highWounds = losTestUnit('high-wounds', 1, { x: 20, y: 10 });
+  highWounds.profile.wounds = 12;
+  const lowWounds = losTestUnit('low-wounds', 1, { x: 22, y: 10 });
+  lowWounds.profile.wounds = 9;
+  initial.units = [losTestUnit('blue', 0, { x: 10, y: 10 }), highWounds, lowWounds];
+
+  const fixed = configureSecondaryMissions(initial, 0, 'fixed', ['Bring It Down']);
+  recordDestroyedModelMissionEvents(fixed, fixed.units[1], [0], 0);
+  recordDestroyedModelMissionEvents(fixed, fixed.units[2], [0], 0);
+  assert.equal(fixed.scores[0], 4);
+  assert.equal(fixed.missionState?.secondaryMissionScoringRecords?.length, 1);
+  assert.ok(fixed.log.some(entry => /Secondary \(Bring It Down\).+\+4VP/.test(entry.message)));
+
+  let tactical = configureSecondaryMissions(initial, 0, 'tactical', ['Bring It Down']);
+  tactical = drawSecondaryMission(tactical, 0, 'Bring It Down');
+  recordDestroyedModelMissionEvents(tactical, tactical.units[1], [0], 0);
+  const records = scoreSecondaryMissionsAtEndOfTurn(tactical, 0, rules40K11th);
+  assert.equal(records[0].vp, 5);
+  assert.equal(tactical.scores[0], 5);
+  assert.deepEqual(scoreSecondaryMissionsAtEndOfTurn(tactical, 0, rules40K11th), []);
+});
+
+test('automatic Burden of Trust validates guards at its deadline and applies its 5VP cap', () => {
+  const initial = state('fight');
+  initial.ruleset = rulesetMetadataForState(rules40K11th);
+  initial.objectives = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 30, y: 10 }];
+  initial.objectiveOwners = [null, null, null];
+  const guards = [
+    losTestUnit('guard-1', 0, { x: 10, y: 10 }),
+    losTestUnit('guard-2', 0, { x: 20, y: 10 }),
+    losTestUnit('guard-3', 0, { x: 30, y: 10 }),
+  ];
+  initial.units = [...guards, losTestUnit('red', 1, { x: 50, y: 30 })];
+  let battle = configureSecondaryMissions(initial, 0, 'tactical', ['Burden of Trust']);
+  battle = drawSecondaryMission(battle, 0, 'Burden of Trust');
+  battle = selectBurdenOfTrustGuards(battle, 0, {
+    guards: guards.map((unit, objectiveIndex) => ({ unitId: unit.id, objectiveIndex })),
+  });
+  assert.deepEqual(scoreSecondaryMissionsAtEndOfTurn(battle, 0, rules40K11th), []);
+  battle.activeArmy = 1;
+  const records = scoreSecondaryMissionsAtEndOfTurn(battle, 1, rules40K11th);
+  assert.equal(records[0].vp, 5);
+  assert.match(records[0].detail, /3 objectives remained guarded/);
+
+  const unsupported = state('fight');
+  unsupported.ruleset = rulesetMetadataForState(rules40K11th);
+  unsupported.objectiveControl = rules40K11th.objectiveControl;
+  unsupported.objectives = [{ x: 10, y: 10 }];
+  unsupported.units = [losTestUnit('guard', 0, { x: 10, y: 10 }), losTestUnit('red', 1, { x: 40, y: 30 })];
+  let unknown = configureSecondaryMissions(unsupported, 0, 'tactical', ['Burden of Trust']);
+  unknown = drawSecondaryMission(unknown, 0, 'Burden of Trust');
+  unknown = selectBurdenOfTrustGuards(unknown, 0, { guards: [{ objectiveIndex: 0, unitId: 'guard' }] });
+  unknown.activeArmy = 1;
+  assert.equal(scoreSecondaryMissionsAtEndOfTurn(unknown, 1, rules40K11th)[0].status, 'unsupported');
+});
+
+test('automatic Centre Ground uses footprints, eligibility filters, and additive clauses', () => {
+  const initial = state('fight');
+  initial.ruleset = rulesetMetadataForState(rules40K11th);
+  const friendly = losTestUnit('friendly-centre', 0, { x: 30, y: 22 });
+  initial.units = [friendly, losTestUnit('enemy-far', 1, { x: 45, y: 35 })];
+  let battle = configureSecondaryMissions(initial, 0, 'tactical', ['Centre Ground']);
+  battle = drawSecondaryMission(battle, 0, 'Centre Ground');
+  const records = scoreSecondaryMissionsAtEndOfTurn(battle, 0, rules40K11th);
+  assert.deepEqual(records.map(record => record.vp), [3, 5]);
+  assert.equal(battle.scores[0], 8);
+
+  const contested = state('fight');
+  contested.ruleset = rulesetMetadataForState(rules40K11th);
+  const shockedEnemy = losTestUnit('shocked-enemy', 1, { x: 30, y: 26 });
+  shockedEnemy.battleshocked = true;
+  contested.units = [losTestUnit('friendly-centre', 0, { x: 30, y: 22 }), shockedEnemy];
+  let limited = configureSecondaryMissions(contested, 0, 'tactical', ['Centre Ground']);
+  limited = drawSecondaryMission(limited, 0, 'Centre Ground');
+  assert.deepEqual(scoreSecondaryMissionsAtEndOfTurn(limited, 0, rules40K11th).map(record => record.vp), [3, 0]);
+});
+
+test('automatic Cleanse scores mutually exclusive completed-action target counts', () => {
+  const initial = state('fight');
+  initial.ruleset = rulesetMetadataForState(rules40K11th);
+  let one = configureSecondaryMissions(initial, 0, 'tactical', ['Cleanse']);
+  one = drawSecondaryMission(one, 0, 'Cleanse');
+  one.missionEvents = {
+    completedActionsThisTurn: [{
+      actionId: 'cleanse', actionName: 'Cleanse', side: 0, unitId: 'unit-1', unitName: 'Unit 1',
+      targetObjectiveIndex: 0, battleRound: 1, turn: 1,
+    }],
+  };
+  assert.deepEqual(scoreSecondaryMissionsAtEndOfTurn(one, 0, rules40K11th).map(record => record.vp), [2, 0]);
+
+  let two = configureSecondaryMissions(initial, 0, 'tactical', ['Cleanse']);
+  two = drawSecondaryMission(two, 0, 'Cleanse');
+  two.missionEvents = {
+    completedActionsThisTurn: [0, 1].map(index => ({
+      actionId: 'cleanse', actionName: 'Cleanse', side: 0 as const, unitId: `unit-${index}`, unitName: `Unit ${index}`,
+      targetObjectiveIndex: index, battleRound: 1, turn: 1,
+    })),
+  };
+  assert.deepEqual(scoreSecondaryMissionsAtEndOfTurn(two, 0, rules40K11th).map(record => record.vp), [0, 5]);
+  assert.equal(two.scores[0], 5);
+});
+
+test('automatic Defend Stronghold scores additive clauses and fails closed for unknown deployment geometry', () => {
+  const makeStronghold = (deployment: string, enemyPosition: Position) => {
+    const initial = state('fight');
+    initial.ruleset = rulesetMetadataForState(rules40K11th);
+    initial.setup = { ...initial.setup!, deployment };
+    initial.objectives = [{ x: 10, y: 5 }];
+    initial.objectiveOwners = [null];
+    initial.terrain = [terrainMat({ id: 'home', type: 'ruin', x: 8, y: 3, width: 4, height: 4, objectiveRole: 'home-0' })];
+    initial.units = [losTestUnit('blue-home', 0, { x: 10, y: 5 }), losTestUnit('red', 1, enemyPosition)];
+    let battle = configureSecondaryMissions(initial, 0, 'tactical', ['Defend Stronghold']);
+    battle = drawSecondaryMission(battle, 0, 'Defend Stronghold');
+    battle.activeArmy = 1;
+    return battle;
+  };
+  const clear = makeStronghold('Dawn of War', { x: 40, y: 30 });
+  assert.deepEqual(scoreSecondaryMissionsAtEndOfTurn(clear, 1, rules40K11th).map(record => record.vp), [3, 5]);
+  assert.equal(clear.scores[0], 8);
+
+  const invaded = makeStronghold('Dawn of War', { x: 20, y: 5 });
+  assert.deepEqual(scoreSecondaryMissionsAtEndOfTurn(invaded, 1, rules40K11th).map(record => record.vp), [3, 0]);
+
+  const unknown = makeStronghold('Layout Defined', { x: 40, y: 30 });
+  const unknownRecords = scoreSecondaryMissionsAtEndOfTurn(unknown, 1, rules40K11th);
+  assert.deepEqual(unknownRecords.map(record => record.status), ['awarded', 'unsupported']);
+  assert.equal(unknown.scores[0], 3);
+});
+
+test('secondary scoring lifecycle replays and persists Defend Stronghold awards and logs', async () => {
+  installStorage();
+  const initial = state('fight');
+  initial.ruleset = rulesetMetadataForState(rules40K11th);
+  initial.activeArmy = 1;
+  initial.objectives = [{ x: 10, y: 5 }];
+  initial.objectiveOwners = [null];
+  initial.terrain = [terrainMat({ id: 'home', type: 'ruin', x: 8, y: 3, width: 4, height: 4, objectiveRole: 'home-0' })];
+  initial.units = [losTestUnit('blue-home', 0, { x: 10, y: 5 }), losTestUnit('red', 1, { x: 40, y: 30 })];
+  let battle = configureSecondaryMissions(initial, 0, 'tactical', ['Defend Stronghold']);
+  battle = drawSecondaryMission(battle, 0, 'Defend Stronghold');
+  const result = appendTimelineAction(
+    createPracticeTimeline(battle, { id: 'stronghold-scoring-game' }),
+    battle,
+    { type: GAME_ACTION_TYPE.StepPhase },
+    { rules: rules40K11th },
+  );
+  assert.equal(result.state.scores[0], 8);
+  assert.equal(result.state.log.filter(entry => entry.message.includes('Secondary (Defend Stronghold)')).length, 2);
+  const replayed = replayTimeline(result.timeline, { rules: rules40K11th }, false);
+  assert.deepEqual(replayed.missionState?.secondaryMissionScoringRecords, result.state.missionState?.secondaryMissionScoringRecords);
+  assert.deepEqual(replayed.scores, result.state.scores);
+
+  await localPracticeScenarioRepository.saveScenario(scenarioFromTimeline(result.timeline, { id: 'stronghold-scoring-save' }));
+  const loaded = await localPracticeScenarioRepository.loadScenario('stronghold-scoring-save');
+  const loadedState = currentTimelineState(loaded!.timeline);
+  assert.deepEqual(loadedState.missionState?.secondaryMissionScoringRecords, result.state.missionState?.secondaryMissionScoringRecords);
+  assert.deepEqual(loadedState.scores, result.state.scores);
+});
+
 test('secondary scoring lifecycle logs and fixed Assassination replay and persistence are deterministic', async () => {
   installStorage();
   const battle = state('shooting');

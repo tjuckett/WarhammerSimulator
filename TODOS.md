@@ -199,6 +199,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Completed fifth slice: added footprint-aware helpers for known deployment zones, deployment-derived No Man's Land, battlefield centre/edges, opposite edges, table quarters, whole-unit region/terrain containment, explicit friendly/enemy territory roles, and per-player expansion objectives. Existing historical start-of-turn objective facts already cover the only current secondary clause that needs past geometry, so no redundant geometry snapshot was added. Layout-defined territory boundaries remain outstanding where setup data does not identify them.
 - [ ] Implement automatic scoring for 11th secondary missions once the required state tracking exists.
   - Completed first slice: added a serializable, idempotent scoring ledger and lifecycle integration for A Grievous Blow, A Tempting Target, Assassination, Beacon, and Behind Enemy Lines, including fixed/tactical timing, per-card caps, replay/save stability, and explicit unsupported results when layout territory is unknown.
+  - Completed second slice: added fixed/tactical Bring It Down, guarded-objective Burden of Trust, additive Centre Ground, completed-action Cleanse, and additive Defend Stronghold scoring, including manual-play lifecycle logs and fail-closed objective/setup geometry.
 - [ ] Audit each 11th core stratagem against final wording once the final 11th rules are available.
 - [x] Implement Command Re-roll pending reroll/resolution support. UI can now wire a prompt to `resolveCommandReroll`; current support records the pending token, rerolls matching dice, logs the result, and supports practice replay.
 - [x] Implement Rapid Ingress resolution flow: target validation marks a non-Aircraft Strategic Reserve unit so it can be placed during the opponent Movement/Reinforcements step.
@@ -354,7 +355,7 @@ The current runtime now has both terrain mats and terrain features. Continue sou
   - Waaagh! (Orks): one-use buff to charge/fight
 - [x] **Assault keyword** - Advanced units can shoot Assault weapons but not other ranged weapons.
 - [ ] **11th edition rules** — stub in place, fill in when the core rulebook drops (update `rulesEngine.ts → rules40K11th`)
-- [ ] **Secondary objectives** — fixed/tactical state and supporting events/geometry are tracked; automatic scoring is complete for the first five cards and remains for the other thirteen.
+- [ ] **Secondary objectives** — fixed/tactical state and supporting events/geometry are tracked; automatic scoring is complete for the first ten cards and remains for the other eight.
 - [ ] **Morale/flee** — units that fail battle-shock should have a chance to flee (lose models), not just lose OC
 - [ ] **Stratagems / command points** — basic CP economy and a few key stratagems per faction
 - [ ] **Better AI movement** — units should consider objective control in their movement decisions (not just rush nearest enemy)

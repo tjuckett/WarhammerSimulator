@@ -43,6 +43,7 @@ import {
 } from '../engine/simulator';
 import { completeMissionEventsForCurrentTurn, startMissionEventsForNewTurn } from '../engine/missionEvents';
 import { configureSecondaryMissions, discardSecondaryMission, drawSecondaryMission, selectBeaconUnit, selectBurdenOfTrustGuards, selectSecondaryMissionWhenDrawn, selectTemptingTargetObjective } from '../engine/secondaryMissions';
+import { scoreSecondaryMissionsAtEndOfTurn, secondaryMissionScoringLogs } from '../engine/secondaryMissionScoring';
 
 export interface GameActionBase {
   id?: string;
@@ -380,6 +381,8 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   }
   if (phaseBeforeStep === BATTLE_PHASE.Fight) {
     completeEndOfTurnActions(next, scoringSide);
+    const secondaryRecords = scoreSecondaryMissionsAtEndOfTurn(next, scoringSide, rules);
+    next.log = [...next.log, ...secondaryMissionScoringLogs(next, secondaryRecords)];
     scorePrimaryMissionsAtEndOfTurn(next, scoringSide, rules);
     completeMissionEventsForCurrentTurn(next);
   }
