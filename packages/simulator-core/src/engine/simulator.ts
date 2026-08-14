@@ -2770,6 +2770,21 @@ export type PlayMeleeAttackSplit = {
   attacks: number;
 };
 
+export function playMeleeFixedAttackCount(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  weaponIndex: number,
+  rules: RulesEdition = rules40K10th,
+): number | null {
+  const option = playFightWeaponOptions(state, unitId, side, rules)
+    .find(candidate => candidate.weaponIndex === weaponIndex);
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  const attacks = unit?.profile.weapons[weaponIndex]?.attacks;
+  if (!option || !unit || !/^\d+$/.test(String(attacks).trim())) return null;
+  return Number(attacks) * aliveWeaponModelCount(unit, weaponIndex);
+}
+
 function unitCanFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean {
   return !unit.destroyed
     && !unit.embarkedInUnitId
@@ -3021,9 +3036,10 @@ export function fightPlayUnitWeapon(
     const maxAttacks = maxTargets * aliveWeaponModelCount(fightingUnit, option.weaponIndex);
     const declaredAttacks = targetSplits.reduce((total, split) => total + split.attacks, 0);
     if (
-      targetSplits.some(split => split.attacks < 1 || !Number.isInteger(split.attacks))
-      || (Number.isFinite(maxTargets) && targetSplits.length > maxTargets)
-      || (Number.isFinite(maxAttacks) && declaredAttacks > maxAttacks)
+      !Number.isFinite(maxTargets)
+      || targetSplits.some(split => split.attacks < 1 || !Number.isInteger(split.attacks))
+      || new Set(targetSplits.map(split => split.targetUnitId)).size !== targetSplits.length
+      || declaredAttacks !== maxAttacks
     ) return state;
 
     for (const split of targetSplits) {

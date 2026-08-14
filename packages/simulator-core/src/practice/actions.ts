@@ -20,6 +20,7 @@ import {
   embarkPlayUnit,
   fallBackPlayUnit,
   fightPlayUnitWeapon,
+  type PlayMeleeAttackSplit,
   lockPlayUnitShooting,
   markRemainingStationaryUnits,
   movementStep,
@@ -227,6 +228,7 @@ export type GameAction =
       unitId: string;
       targetUnitId: string;
       weaponIndex: number | 'all';
+      targetSplits?: PlayMeleeAttackSplit[];
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.PileInUnit;
@@ -565,6 +567,7 @@ export function applyGameAction(
         normalizedAction.targetUnitId,
         normalizedAction.weaponIndex,
         context.rules,
+        normalizedAction.targetSplits,
       );
 
     case GAME_ACTION_TYPE.PileInUnit:
@@ -685,7 +688,10 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
       return normalizedAction.unitId === unitId;
     case GAME_ACTION_TYPE.FightUnitWeapon:
     case GAME_ACTION_TYPE.SnapShootUnitWeapon:
-      return normalizedAction.unitId === unitId || normalizedAction.targetUnitId === unitId;
+      return normalizedAction.unitId === unitId
+        || normalizedAction.targetUnitId === unitId
+        || (normalizedAction.type === GAME_ACTION_TYPE.FightUnitWeapon
+          && normalizedAction.targetSplits?.some(split => split.targetUnitId === unitId) === true);
     case GAME_ACTION_TYPE.UseStratagem:
       return normalizedAction.targetUnitId === unitId;
     case GAME_ACTION_TYPE.UseUnitAbility:

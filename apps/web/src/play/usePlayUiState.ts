@@ -25,6 +25,7 @@ export function usePlayUiState() {
   const [selectedChargeTargetId, setSelectedChargeTargetId] = useState('');
   const [selectedFightTargetId, setSelectedFightTargetId] = useState('');
   const [selectedFightWeaponIndex, setSelectedFightWeaponIndex] = useState<'all' | string>('all');
+  const [fightAttackSplits, setFightAttackSplits] = useState<Record<string, number>>({});
   const [overwatchUnitId, setOverwatchUnitId] = useState('');
   const [selectedStratagemId, setSelectedStratagemId] = useState('');
   const [selectedAbilityKey, setSelectedAbilityKey] = useState('');
@@ -60,6 +61,8 @@ export function usePlayUiState() {
       setSelectedFightTargetId,
       selectedFightWeaponIndex,
       setSelectedFightWeaponIndex,
+      fightAttackSplits,
+      setFightAttackSplits,
       overwatchUnitId,
       setOverwatchUnitId,
       casualtyRemovalShooterId,

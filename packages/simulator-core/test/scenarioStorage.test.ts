@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, PrimaryMissionScoringRecord, SecondaryMissionScoringRecord, Terrain, TerritoryZoneSet } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playMeleeFixedAttackCount, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, rotatePlayModels, sabotageObjectiveOptions, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -14,7 +14,7 @@ import {
   replayTimeline,
   type PracticeTimeline,
 } from '../src/practice/timeline';
-import { applyGameAction, GAME_ACTION_TYPE } from '../src/practice/actions';
+import { applyGameAction, GAME_ACTION_TYPE, type GameAction } from '../src/practice/actions';
 import { getLegalActions } from '../src/engine/legalActions';
 import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
@@ -9172,6 +9172,11 @@ test('Melee weapons can split declared attacks between engaged targets', () => {
   targetB.woundsOnLeadModel = 99;
   targetB.inCombat = true;
   battle.units = [fighter, targetA, targetB];
+  assert.equal(playMeleeFixedAttackCount(battle, fighter.id, fighter.side, 0, rules40K11th), 4);
+  assert.equal(fightPlayUnitWeapon(battle, fighter.id, fighter.side, targetA.id, 0, rules40K11th, [
+    { targetUnitId: targetA.id, attacks: 1 },
+    { targetUnitId: targetB.id, attacks: 2 },
+  ]), battle);
 
   const originalRandom = Math.random;
   Math.random = () => 0.99;
@@ -9195,6 +9200,25 @@ test('Melee weapons can split declared attacks between engaged targets', () => {
     ]);
     assert.match(messages, /Split melee attacks: 2 attack\(s\) declared against Target A/);
     assert.match(messages, /Split melee attacks: 2 attack\(s\) declared against Target B/);
+
+    const action = {
+      type: GAME_ACTION_TYPE.FightUnitWeapon,
+      unitId: fighter.id,
+      side: fighter.side,
+      targetUnitId: targetA.id,
+      weaponIndex: 0,
+      targetSplits: [
+        { targetUnitId: targetA.id, attacks: 2 },
+        { targetUnitId: targetB.id, attacks: 2 },
+      ],
+    } satisfies GameAction;
+    const resolved = applyGameAction(battle, action, { rules: rules40K11th });
+    const appended = appendTimelineAction(createPracticeTimeline(battle), battle, action, { rules: rules40K11th });
+    const replayed = replayTimeline(appended.timeline, { rules: rules40K11th }, false);
+    assert.deepEqual(
+      replayed.units.map(unit => unit.pendingDamageAllocations),
+      resolved.units.map(unit => unit.pendingDamageAllocations),
+    );
   } finally {
     Math.random = originalRandom;
   }

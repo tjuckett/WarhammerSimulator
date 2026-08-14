@@ -381,10 +381,14 @@ export function PlayFightPanel({
   selectedTargetId,
   selectedWeaponIndex,
   weaponOptions,
+  fixedAttackCount,
+  attackSplits,
   damageAllocationLocked,
   pendingDamageLabel,
   onTargetChange,
   onWeaponChange,
+  onAttackSplitChange,
+  onClearAttackSplits,
   onResolve,
 }: {
   fighter: BattleUnit | null;
@@ -394,10 +398,14 @@ export function PlayFightPanel({
   selectedTargetId: string;
   selectedWeaponIndex: 'all' | string;
   weaponOptions: PlayFightWeaponOption[];
+  fixedAttackCount: number | null;
+  attackSplits: Record<string, number>;
   damageAllocationLocked: boolean;
   pendingDamageLabel?: string | null;
   onTargetChange: (value: string) => void;
   onWeaponChange: (value: 'all' | string) => void;
+  onAttackSplitChange: (targetId: string, attacks: number) => void;
+  onClearAttackSplits: () => void;
   onResolve: () => void;
 }) {
   if (!fighter) {
@@ -411,10 +419,16 @@ export function PlayFightPanel({
   const selectedOptions = selectedWeaponIndex === 'all'
     ? weaponOptions
     : weaponOptions.filter(option => String(option.weaponIndex) === selectedWeaponIndex);
+  const allocatedAttacks = targets.reduce((total, target) => total + (attackSplits[target.id] ?? 0), 0);
+  const hasAttackSplits = allocatedAttacks > 0;
+  const splitAllocationValid = fixedAttackCount !== null
+    && allocatedAttacks === fixedAttackCount
+    && targets.every(target => Number.isInteger(attackSplits[target.id] ?? 0) && (attackSplits[target.id] ?? 0) >= 0);
   const canResolve = !damageAllocationLocked
     && !fighter.activated
-    && !!selectedTarget
-    && selectedOptions.some(option => option.targetIds.includes(selectedTargetId));
+    && (hasAttackSplits
+      ? splitAllocationValid
+      : !!selectedTarget && selectedOptions.some(option => option.targetIds.includes(selectedTargetId)));
   return (
     <Box sx={playPanelSx}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
@@ -456,6 +470,37 @@ export function PlayFightPanel({
           ))}
         </Select>
       </FormControl>
+      {targets.length > 1 && fixedAttackCount !== null && (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75, p: 1, border: `1px solid ${uiTokens.border.control}`, borderRadius: uiTokens.radius.control }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
+            <Typography variant="caption" sx={{ color: uiTokens.color.text.muted }}>
+              Split attacks: {allocatedAttacks}/{fixedAttackCount} allocated
+            </Typography>
+            <Button size="small" disabled={!hasAttackSplits} onClick={onClearAttackSplits}>Clear</Button>
+          </Box>
+          {targets.map(target => (
+            <TextField
+              key={target.id}
+              size="small"
+              type="number"
+              label={target.profile.name}
+              value={attackSplits[target.id] ?? 0}
+              disabled={damageAllocationLocked || fighter.activated}
+              slotProps={{ htmlInput: { min: 0, max: fixedAttackCount, step: 1 } }}
+              onChange={event => {
+                const attacks = Number(event.target.value);
+                onAttackSplitChange(target.id, Number.isFinite(attacks) ? attacks : 0);
+              }}
+            />
+          ))}
+          {hasAttackSplits && !splitAllocationValid && (
+            <Typography variant="caption" sx={warningTextSx}>Allocate exactly {fixedAttackCount} attacks across the engaged targets.</Typography>
+          )}
+        </Box>
+      )}
+      {targets.length > 1 && fixedAttackCount === null && selectedWeaponIndex !== 'all' && (
+        <Typography variant="caption" sx={disabledTextSx}>Split allocation is available for weapons with a fixed Attacks characteristic.</Typography>
+      )}
       {damageAllocationLocked ? (
         <Typography variant="caption" sx={warningTextSx}>
           {pendingDamageLabel ? `Allocate ${pendingDamageLabel} before fighting again.` : 'Allocate pending damage before fighting again.'}
