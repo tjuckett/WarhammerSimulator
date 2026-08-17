@@ -5781,8 +5781,8 @@ test('11th Fly only bypasses paths and vertical distance after Take to the Skies
   assert.notEqual(ordinary, battle);
   assert.equal(completePlayUnitMovement(ordinary, flyer.id, 0), ordinary);
 
-  assert.equal(playUnitCanTakeToSkies(battle, flyer.id, 0, rules40K11th), true);
-  const declared = declarePlayUnitTakeToSkies(battle, flyer.id, 0, rules40K11th);
+  assert.equal(playUnitCanTakeToSkies(battle, flyer.id, 0), true);
+  const declared = declarePlayUnitTakeToSkies(battle, flyer.id, 0);
   const flown = movePlayModels(declared, flyer.id, 0, [0], 6, 0);
   assert.equal(flown.units[0].modelPositions[0].x, 14);
   const completed = completePlayUnitMovement(flown, flyer.id, 0);
@@ -5791,7 +5791,7 @@ test('11th Fly only bypasses paths and vertical distance after Take to the Skies
 
   const verticalBattle = structuredClone(battle);
   verticalBattle.terrain = [];
-  const verticalDeclared = declarePlayUnitTakeToSkies(verticalBattle, flyer.id, 0, rules40K11th);
+  const verticalDeclared = declarePlayUnitTakeToSkies(verticalBattle, flyer.id, 0);
   const climbed = movePlayModelsVertically(verticalDeclared, flyer.id, 0, [0], 10);
   assert.equal(climbed.units[0].modelPositions[0].z, 10);
 
@@ -5801,7 +5801,7 @@ test('11th Fly only bypasses paths and vertical distance after Take to the Skies
   const crossedNormally = movePlayModels(modelPathBattle, flyer.id, 0, [0], 6, 0);
   assert.equal(completePlayUnitMovement(crossedNormally, flyer.id, 0), crossedNormally);
   const crossedFromSkies = movePlayModels(
-    declarePlayUnitTakeToSkies(modelPathBattle, flyer.id, 0, rules40K11th),
+    declarePlayUnitTakeToSkies(modelPathBattle, flyer.id, 0),
     flyer.id, 0, [0], 6, 0,
   );
   assert.notEqual(completePlayUnitMovement(crossedFromSkies, flyer.id, 0), crossedFromSkies);
@@ -5812,7 +5812,7 @@ test('11th Fly only bypasses paths and vertical distance after Take to the Skies
   Math.random = () => 0.5;
   try {
     const advanced = advancePlayUnit(
-      declarePlayUnitTakeToSkies(advanceBattle, flyer.id, 0, rules40K11th),
+      declarePlayUnitTakeToSkies(advanceBattle, flyer.id, 0),
       flyer.id, 0, rules40K11th,
     );
     assert.equal(advanced.units[0].movementAllowanceTotalByModel?.[0], 8);
