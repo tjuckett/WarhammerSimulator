@@ -84,7 +84,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Keep AI policy decisions behind legal action generation and battle observation helpers.
   - Next after this task: add simple heuristic AI actions before considering learned or external model-backed policies.
 - [ ] Add AI army generation architecture.
-  - Progress: deterministic balanced/aggressive/objective generation now ranks imported or sample units, records an editable explanation and heuristic score, feeds the normal Army Builder save/export path, and compares candidates in an explicit mission/opponent heuristic scenario matrix; catalog-backed points, faction limits, and official mission simulation remain open.
+  - Progress: deterministic balanced/aggressive/objective generation now ranks imported or sample units, records an editable explanation and heuristic score, feeds the normal Army Builder save/export path, and compares candidates in an explicit mission/opponent heuristic scenario matrix exposed through the Army Builder; catalog-backed points, faction limits, and official mission simulation remain open.
   - Support AI-created armies through the same Army Builder and saved-army repository path as human-created armies.
   - Start from imported/sample army data and simple role/package swaps before requiring a full faction catalog.
   - Evaluate candidate lists with heuristics first, then small mission/opponent scenario matrices.

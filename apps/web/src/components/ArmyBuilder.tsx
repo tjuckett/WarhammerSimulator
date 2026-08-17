@@ -3,8 +3,8 @@ import type { ImportedArmy, UnitProfile } from '@warhammer-simulator/core/types/
 import { applyBaseSizesToArmy } from '@warhammer-simulator/core/data/unitBaseSizes';
 import { isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
 import { validateImportedArmy } from '@warhammer-simulator/core/engine/armyValidation';
-import { generateAiArmy } from '@warhammer-simulator/core/engine/armyGeneration';
-import type { AiArmyStrategy } from '@warhammer-simulator/core/engine/armyGeneration';
+import { generateAiArmy, selectAiArmyForScenario } from '@warhammer-simulator/core/engine/armyGeneration';
+import type { AiArmyScenario, AiArmyStrategy, AiMissionFocus } from '@warhammer-simulator/core/engine/armyGeneration';
 import type { DeploymentStrategy } from '@warhammer-simulator/core/engine/deployment';
 import { parseBattleScribeJSON } from '@warhammer-simulator/core/parsers/battlescribe';
 import { ArmyPanel } from './ArmyPanel';
@@ -52,6 +52,7 @@ function uniqueLibraryUnits(armies: ImportedArmy[]): UnitProfile[] {
 
 export function ArmyBuilder({ armies, sampleArmies, savedSlot, onSavedSlotChange, onChange, onSave, onLoad, storageStatus }: Props) {
   const [side, setSide] = useState<0 | 1>(0);
+  const [aiContext, setAiContext] = useState<'strategy' | AiMissionFocus>('strategy');
   const [aiStrategy, setAiStrategy] = useState<AiArmyStrategy>('balanced');
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const addedUnitSequence = useRef(0);
@@ -100,7 +101,9 @@ export function ArmyBuilder({ armies, sampleArmies, savedSlot, onSavedSlotChange
   }
 
   function generateArmy() {
-    const result = generateAiArmy(army, { strategy: aiStrategy });
+    const result = aiContext === 'strategy'
+      ? generateAiArmy(army, { strategy: aiStrategy })
+      : selectAiArmyForScenario(army, { id: `builder-${aiContext}`, focus: aiContext } satisfies AiArmyScenario);
     updateArmy(result.army);
     setSelectedUnitId(null);
   }
@@ -125,13 +128,22 @@ export function ArmyBuilder({ armies, sampleArmies, savedSlot, onSavedSlotChange
         </label>
         <button type="button" onClick={() => { updateArmy(blankArmy()); setSelectedUnitId(null); }}>New</button>
         <label>
+          AI context
+          <select value={aiContext} onChange={event => setAiContext(event.target.value as 'strategy' | AiMissionFocus)}>
+            <option value="strategy">Plan: use selected strategy</option>
+            <option value="objectives">Scenario: hold objectives</option>
+            <option value="attrition">Scenario: attrition</option>
+            <option value="balanced">Scenario: balanced mission</option>
+          </select>
+        </label>
+        {aiContext === 'strategy' && <label>
           AI plan
           <select value={aiStrategy} onChange={event => setAiStrategy(event.target.value as AiArmyStrategy)}>
             <option value="balanced">Balanced</option>
             <option value="aggressive">Aggressive</option>
             <option value="objective">Objective</option>
           </select>
-        </label>
+        </label>}
         <button type="button" onClick={generateArmy} disabled={army.units.length === 0}>Generate AI</button>
         <button type="button" onClick={() => onSave(side)}>Save</button>
         <button type="button" onClick={() => onLoad(side)}>Load</button>
