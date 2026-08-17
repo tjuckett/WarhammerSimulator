@@ -5,6 +5,7 @@ import { rulesEditionForRuleset } from './rulesEngine';
 import { availableStratagems } from './stratagems';
 import { availableUnitAbilities } from './unitAbilities';
 import {
+  battleUnitsBaseEdgeDistance,
   boobyTrapTerrainOptions,
   cleanseObjectiveOptions,
   consecrateObjectiveOptions,
@@ -418,15 +419,24 @@ function addStratagemActions(actions: LegalAction[], state: BattleState, side: S
       const modelIndices = stratagem.id === 'epic-challenge'
         ? unit.modelPositions.map((_, modelIndex) => modelIndex)
         : [undefined];
+      const secondaryTargets = stratagem.id === 'crushing-impact'
+        ? state.units.filter(candidate =>
+            !candidate.destroyed
+            && candidate.side !== side
+            && battleUnitsBaseEdgeDistance(unit, candidate) <= rules.engagementRange()
+          )
+        : [undefined];
       for (const targetModelIndex of modelIndices) {
+        for (const secondaryTargetUnit of secondaryTargets) {
         actions.push({
-          action: { type: 'play.useStratagem', side, stratagemId: stratagem.id, targetUnitId: unit.id, targetModelIndex },
+          action: { type: 'play.useStratagem', side, stratagemId: stratagem.id, targetUnitId: unit.id, targetModelIndex, ...(secondaryTargetUnit ? { secondaryTargetUnitId: secondaryTargetUnit.id } : {}) },
           category: 'stratagem',
           side,
           unitId: unit.id,
           targetUnitId: unit.id,
-          label: `${unit.profile.name}: Use ${stratagem.name}${targetModelIndex === undefined ? '' : ` on model ${targetModelIndex + 1}`}`,
+          label: `${unit.profile.name}: Use ${stratagem.name}${secondaryTargetUnit ? ` on ${secondaryTargetUnit.profile.name}` : ''}${targetModelIndex === undefined ? '' : ` on model ${targetModelIndex + 1}`}`,
         });
+        }
       }
     }
   }

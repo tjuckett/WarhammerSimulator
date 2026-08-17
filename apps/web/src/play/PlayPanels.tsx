@@ -5,7 +5,7 @@ import CasinoOutlinedIcon from '@mui/icons-material/CasinoOutlined';
 import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { CommandRerollRollType, StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
-import type { FiringDeckSelection, PlayChargeTargetOption, PlayFightWeaponOption, PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
+import { battleUnitsBaseEdgeDistance, type FiringDeckSelection, type PlayChargeTargetOption, type PlayFightWeaponOption, type PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
 import {
   abilityOptionKey,
   abilityTimingLabel,
@@ -573,7 +573,7 @@ export function PlayTacticsPanel({
   selectedUnitIsCondemned: boolean;
   onStratagemChange: (value: string) => void;
   onAbilityChange: (value: string) => void;
-  onUseStratagem: (stratagemId: string, targetModelIndex?: number) => void;
+  onUseStratagem: (stratagemId: string, targetModelIndex?: number, secondaryTargetUnitId?: string) => void;
   onUseAbility: () => void;
   onStartAction: () => void;
   onToggleCondemnedUnit: () => void;
@@ -585,6 +585,7 @@ export function PlayTacticsPanel({
   const [commandRerollInput, setCommandRerollInput] = useState('');
   const [commandRerollRollType, setCommandRerollRollType] = useState<CommandRerollRollType>('hit');
   const [epicChallengeModelIndex, setEpicChallengeModelIndex] = useState(0);
+  const [crushingImpactTargetId, setCrushingImpactTargetId] = useState('');
   const commandRerollRolls = parseDiceInput(commandRerollInput);
   const selectedEpicChallengeModelIndex = selectedUnit?.modelPositions.length
     ? Math.min(epicChallengeModelIndex, selectedUnit.modelPositions.length - 1)
@@ -654,6 +655,23 @@ export function PlayTacticsPanel({
             ))}
           </Select>
         )}
+        {selectedUnit && stratagems.some(stratagem => stratagem.id === 'crushing-impact') && (
+          <Select
+            size="small"
+            value={crushingImpactTargetId}
+            onChange={event => setCrushingImpactTargetId(event.target.value)}
+            displayEmpty
+            aria-label="Crushing Impact target"
+          >
+            <MenuItem value="">Select Crushing Impact target</MenuItem>
+            {state.units
+              .filter(unit => unit.side !== selectedUnit.side && !unit.destroyed && !unit.embarkedInUnitId && !unit.inStrategicReserves)
+              .sort((left, right) => battleUnitsBaseEdgeDistance(selectedUnit, left) - battleUnitsBaseEdgeDistance(selectedUnit, right))
+              .map(unit => (
+                <MenuItem key={unit.id} value={unit.id}>Crushing Impact: {unit.profile.name}</MenuItem>
+              ))}
+          </Select>
+        )}
         {stratagems.map(stratagem => (
           <Button
             key={stratagem.id}
@@ -661,7 +679,12 @@ export function PlayTacticsPanel({
             variant={stratagem.id === selectedStratagemId ? 'contained' : 'outlined'}
             onMouseEnter={() => onStratagemChange(stratagem.id)}
             onFocus={() => onStratagemChange(stratagem.id)}
-            onClick={() => onUseStratagem(stratagem.id, stratagem.id === 'epic-challenge' ? selectedEpicChallengeModelIndex : undefined)}
+            disabled={stratagem.id === 'crushing-impact' && !crushingImpactTargetId}
+            onClick={() => onUseStratagem(
+              stratagem.id,
+              stratagem.id === 'epic-challenge' ? selectedEpicChallengeModelIndex : undefined,
+              stratagem.id === 'crushing-impact' ? crushingImpactTargetId : undefined,
+            )}
             title={stratagem.description}
             sx={{ justifyContent: 'space-between', textTransform: 'none' }}
           >

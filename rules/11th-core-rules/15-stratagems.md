@@ -24,6 +24,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 
 - Core stratagem definitions, CP spending, timing/target restrictions, once-per-phase/battle limits, affected-target restrictions, and current effects are represented.
 - Rapid Ingress also enforces its final restriction against use during the first battle round.
+- Crushing Impact selects an explicit engaged enemy after the charge, rolls up to six dice from the charging unit's Toughness, deals mortal wounds on 5+, and applies one mortal wound back for each unmodified 1.
 - Command Re-roll records the eligible roll type and rerolls one die, except that Charge rolls are rerolled in full; practice replay carries that type through the action.
 - Epic Challenge records the selected Character model and applies temporary melee Precision, including model-constrained damage allocation, through replayable legal actions and the play UI.
 - Command Re-roll, Rapid Ingress, Heroic Intervention, and Counteroffensive have resolution/test coverage.

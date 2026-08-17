@@ -327,6 +327,7 @@ export type GameAction =
       stratagemId: string;
       targetUnitId?: string;
       targetModelIndex?: number;
+      secondaryTargetUnitId?: string;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.ResolveCommandReroll;
@@ -742,7 +743,7 @@ export function applyGameAction(
       return stepPlayPhase(state, context.rules);
 
     case GAME_ACTION_TYPE.UseStratagem:
-      return useStratagem(state, normalizedAction.side, normalizedAction.stratagemId, context.rules, normalizedAction.targetUnitId, normalizedAction.targetModelIndex);
+      return useStratagem(state, normalizedAction.side, normalizedAction.stratagemId, context.rules, normalizedAction.targetUnitId, normalizedAction.targetModelIndex, normalizedAction.secondaryTargetUnitId);
 
     case GAME_ACTION_TYPE.ResolveCommandReroll:
       return resolveCommandReroll(state, normalizedAction.side, normalizedAction.originalRolls, {

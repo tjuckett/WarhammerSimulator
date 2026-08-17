@@ -194,6 +194,22 @@ function targetModelIndexAllowed(target: BattleUnit, stratagem: StratagemDefinit
   return Number.isInteger(index) && index >= 0 && !!target.modelPositions[index];
 }
 
+function secondaryTargetAllowed(
+  state: BattleState,
+  side: Side,
+  stratagem: StratagemDefinition,
+  source: BattleUnit | null,
+  secondaryTargetUnitId: string | undefined,
+  rules: RulesEdition,
+): boolean {
+  if (stratagem.id !== 'crushing-impact') return secondaryTargetUnitId === undefined;
+  if (!source || !secondaryTargetUnitId) return false;
+  const target = targetUnitFor(state, secondaryTargetUnitId);
+  return !!target
+    && target.side !== side
+    && battleUnitsBaseEdgeDistance(source, target) <= rules.engagementRange();
+}
+
 function applyInsaneBraveryStratagemEffect(
   state: BattleState,
   side: Side,
@@ -297,6 +313,7 @@ function applyMortalWoundStratagemEffect(
   side: Side,
   stratagem: StratagemDefinition,
   targetUnitId?: string,
+  secondaryTargetUnitId?: string,
 ): void {
   if (stratagem.id !== 'explosives' && stratagem.id !== 'crushing-impact') return;
   const unit = targetUnitFor(state, targetUnitId);
@@ -308,23 +325,33 @@ function applyMortalWoundStratagemEffect(
         && unitHasVisibleLineToTarget(state, unit, candidate)
       )
     : stratagem.id === 'crushing-impact'
-      ? nearestValidEnemy(state, unit, candidate =>
-          battleUnitsBaseEdgeDistance(unit, candidate) <= 1
-        )
+      ? targetUnitFor(state, secondaryTargetUnitId)
       : null;
   if (!enemy) {
     appendStratagemEffectLog(state, side, unit.profile.name, `${stratagem.name} has no valid enemy target.`, 'info');
     return;
   }
 
-  const rolls = rollMultiple(6);
-  const mortalWounds = countSuccesses(rolls, 4);
+  const diceCount = stratagem.id === 'crushing-impact'
+    ? Math.min(6, Math.max(0, Math.floor(unit.profile.toughness)))
+    : 6;
+  const rolls = rollMultiple(diceCount);
+  const mortalWounds = countSuccesses(rolls, stratagem.id === 'crushing-impact' ? 5 : 4);
+  const returnedMortalWounds = stratagem.id === 'crushing-impact'
+    ? rolls.filter(roll => roll === 1).length
+    : 0;
   appendStratagemEffectLog(state, side, unit.profile.name, `${stratagem.name} targets ${enemy.profile.name}.`, 'info');
   appendStratagemEffectLog(state, side, unit.profile.name, `${stratagem.name} rolls: [${rolls.join(', ')}] -> ${mortalWounds} mortal wound(s).`, 'roll');
   if (mortalWounds > 0) {
     state.log = [
       ...state.log,
       ...applyDamage(enemy, mortalWounds, state, side, { deferCasualties: true, source: stratagem.name }),
+    ];
+  }
+  if (returnedMortalWounds > 0 && stratagem.id === 'crushing-impact') {
+    state.log = [
+      ...state.log,
+      ...applyDamage(unit, returnedMortalWounds, state, enemy.side, { deferCasualties: true, source: stratagem.name }),
     ];
   }
 }
@@ -391,6 +418,7 @@ export function useStratagem(
   rules: RulesEdition,
   targetUnitId?: string,
   targetModelIndex?: number,
+  secondaryTargetUnitId?: string,
 ): BattleState {
   const stratagem = stratagemById(rules, stratagemId);
   if (!stratagem) return state;
@@ -404,6 +432,7 @@ export function useStratagem(
   const target = targetUnitFor(state, targetUnitId);
   if (stratagem.id === 'epic-challenge' && (!target || !targetModelIndexAllowed(target, stratagem, targetModelIndex))) return state;
   if (stratagem.id !== 'epic-challenge' && targetModelIndex !== undefined) return state;
+  if (!secondaryTargetAllowed(state, side, stratagem, target, secondaryTargetUnitId, rules)) return state;
 
   const next: BattleState = JSON.parse(JSON.stringify(state));
   if (!spendCommandPoints(next, side, stratagem.cost)) return state;
@@ -417,6 +446,7 @@ export function useStratagem(
     battleRound: battleRound(next),
     targetUnitId,
     ...(stratagem.id === 'epic-challenge' ? { targetModelIndex: targetModelIndex ?? 0 } : {}),
+    ...(secondaryTargetUnitId ? { secondaryTargetUnitId } : {}),
     commandPointsSpent: stratagem.cost,
   };
   next.stratagemUses = [...(next.stratagemUses ?? []), use];
@@ -434,6 +464,6 @@ export function useStratagem(
   applyInsaneBraveryStratagemEffect(next, side, stratagem, targetUnitId);
   applyRapidIngressStratagemEffect(next, side, stratagem, targetUnitId);
   applyHeroicInterventionStratagemEffect(next, side, stratagem, targetUnitId);
-  applyMortalWoundStratagemEffect(next, side, stratagem, targetUnitId);
+  applyMortalWoundStratagemEffect(next, side, stratagem, targetUnitId, secondaryTargetUnitId);
   return next;
 }

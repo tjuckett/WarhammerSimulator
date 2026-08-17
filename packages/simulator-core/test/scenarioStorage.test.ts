@@ -1261,6 +1261,7 @@ test('11th Crushing Impact deals mortal wounds to an engaged enemy', () => {
   const crusher = losTestUnit('crusher', 0, { x: 10, y: 10 });
   crusher.charged = true;
   crusher.profile.keywords = ['Monster'];
+  crusher.profile.toughness = 6;
   const target = losTestUnit('target', 1, { x: 10.5, y: 10 });
   target.profile.wounds = 4;
   target.woundsOnLeadModel = 4;
@@ -1270,13 +1271,16 @@ test('11th Crushing Impact deals mortal wounds to an engaged enemy', () => {
   const rolls = [0.5, 0.5, 0.3, 0.3, 0.99, 0.0];
   Math.random = () => rolls.shift() ?? 0;
   try {
-    const impacted = useStratagem(battle, 0, 'crushing-impact', rules40K11th, crusher.id);
+    const impacted = useStratagem(battle, 0, 'crushing-impact', rules40K11th, crusher.id, undefined, target.id);
     assert.deepEqual(impacted.commandPoints, [0, 0]);
     assert.deepEqual(impacted.units.find(unit => unit.id === target.id)?.pendingDamageAllocations, [
-      { damage: 3, noCarryOver: undefined, source: 'Crushing Impact' },
+      { damage: 1, noCarryOver: undefined, source: 'Crushing Impact' },
+    ]);
+    assert.deepEqual(impacted.units.find(unit => unit.id === crusher.id)?.pendingDamageAllocations, [
+      { damage: 1, noCarryOver: undefined, source: 'Crushing Impact' },
     ]);
     assert.match(impacted.log.map(entry => entry.message).join(' '), /Crushing Impact targets target/);
-    assert.match(impacted.log.map(entry => entry.message).join(' '), /Crushing Impact rolls: \[4, 4, 2, 2, 6, 1\] -> 3 mortal wound/);
+    assert.match(impacted.log.map(entry => entry.message).join(' '), /Crushing Impact rolls: \[4, 4, 2, 2, 6, 1\] -> 1 mortal wound/);
   } finally {
     Math.random = originalRandom;
   }

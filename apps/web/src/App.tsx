@@ -2145,13 +2145,13 @@ export default function App() {
     commitBattleState(next);
   }
 
-  function useSelectedPlayStratagem(stratagemId = selectedStratagemId, targetModelIndex?: number) {
+  function useSelectedPlayStratagem(stratagemId = selectedStratagemId, targetModelIndex?: number, secondaryTargetUnitId?: string) {
     const prev = battleStateRef.current;
     if (!prev || !isPlayMode || !stratagemId) return;
     const targetUnitId = selectedTacticsUnit?.id;
     const stratagemSide = selectedTacticsUnit?.side ?? prev.activeArmy;
     const stratagem = availablePlayStratagems.find(option => option.id === stratagemId);
-    const next = applyStratagem(prev, stratagemSide, stratagemId, activeRulesForBattle, stratagem?.target === 'none' ? undefined : targetUnitId, targetModelIndex);
+    const next = applyStratagem(prev, stratagemSide, stratagemId, activeRulesForBattle, stratagem?.target === 'none' ? undefined : targetUnitId, targetModelIndex, secondaryTargetUnitId);
     if (next === prev) return;
     setSelectedStratagemId(stratagemId);
     pushPlayUndo(playUndoEntry(prev), next, {
@@ -2160,6 +2160,7 @@ export default function App() {
       stratagemId,
       targetUnitId: stratagem?.target === 'none' ? undefined : targetUnitId,
       targetModelIndex,
+      secondaryTargetUnitId,
     });
     if (stratagem?.id === 'fire-overwatch' && targetUnitId) {
       setOverwatchUnitId(targetUnitId);
