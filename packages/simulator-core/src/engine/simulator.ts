@@ -6253,9 +6253,11 @@ export function fallBackPlayUnit(
   const requestedDy = direction.y * maximumDistance;
   const move = collisionAdjustedPlayMove(s, unitId, side, modelIndices, requestedDx, requestedDy, { ignoreEnemyModelPath: true });
   if (Math.hypot(move.dx, move.dy) < 0.01) return state;
+  const wasBattleshocked = unit.battleshocked;
   const desperateEscapeModelIndices = unit.battleshocked
     ? undefined
     : playMoveEnemyCrossingModelIndices(s, unit, new Set(modelIndices), move.dx, move.dy);
+  const usesDesperateEscape = wasBattleshocked || (desperateEscapeModelIndices?.length ?? 0) > 0;
 
   applyPlayModelTranslation(unit, modelIndices, move.dx, move.dy, boardFormatForState(s));
   cancelUnitAction(s, unit, 'it made a Fall Back move');
@@ -6289,11 +6291,27 @@ export function fallBackPlayUnit(
     desperateEscapeModelIndices,
     (testedUnit, modelIndices) => recordDestroyedModelMissionEvents(s, testedUnit, modelIndices, destroyedBySide),
   );
+  const postMoveBattleshockLogs: LogEntry[] = [];
+  if (rules.metadata.edition === '11e' && usesDesperateEscape && !wasBattleshocked && !unit.destroyed) {
+    const rolls = [d6(), d6()];
+    const roll = rolls[0] + rolls[1];
+    const needed = bestLeadership(s, unit);
+    const passed = roll >= needed;
+    for (const component of attachedUnitComponents(s, unit)) component.battleshocked = !passed;
+    postMoveBattleshockLogs.push(log(
+      s,
+      unit.side,
+      unit.profile.name,
+      `${unit.profile.name} makes a Desperate Escape Battle-shock roll (${needed}+): rolled ${rolls[0]}+${rolls[1]}=${roll} → ${passed ? 'PASSED' : 'FAILED (Battleshocked!)'}`,
+      'info',
+    ));
+  }
   resolveSuperHeavyMobileInPlace(s, unit);
   if (unit.destroyed) recordDestroyedUnitMissionEvent(s, unit, destroyedBySide);
   const newLogs: LogEntry[] = [
     log(s, side, unit.profile.name, `${unit.profile.name} Falls Back ${moved.toFixed(1)}".`, 'move'),
     ...desperateEscapeLogs,
+    ...postMoveBattleshockLogs,
   ];
   if (!unit.destroyed) unit.position = centroid(unit.modelPositions);
   s.log = [...s.log, ...newLogs];

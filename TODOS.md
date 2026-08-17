@@ -217,6 +217,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: the first final-source movement audit slice now applies 11th Core 03.03's 9-inch every-model coherency limit while preserving the 2-inch neighbor and 5-inch vertical requirements; regression coverage distinguishes 10th and 11th behavior.
   - Progress: 11th Core 10.04-10.07 now prevents a unit from starting an action after any shooting activation, including a partially resolved activation with remaining weapons.
   - Progress: 11th Core 18.04 Tactical Disembark now remains available when a transport has been explicitly marked stationary.
+  - Progress: 11th Core 09.07 now applies the required post-move Battle-shock roll when a non-shocked unit uses Desperate Escape.
 - [ ] Remove or narrow the 11th preview notice once final 11th rules are fully modeled.
 - [ ] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.
   - Progress: pile-in and consolidation availability, plus Fight-step start/end gating, now rely on focused core rules helpers rather than duplicating edition checks in React; phase-specific labels remain presentation concerns.

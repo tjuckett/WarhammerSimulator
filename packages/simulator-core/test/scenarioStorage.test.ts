@@ -5765,6 +5765,55 @@ test('play Movement with Fly can move over enemy models and blocking terrain', (
   assert.ok((illegalEnd.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x ?? 0) < 13);
 });
 
+test('11th Desperate Escape applies a Battle-shock roll after a non-shocked unit falls back through enemies', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const profile = {
+    name: 'Desperate Unit',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: [],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+  };
+  const unit: BattleUnit = {
+    id: 'desperate-unit',
+    side: 0,
+    profile,
+    remainingModels: 1,
+    woundsOnLeadModel: 1,
+    position: { x: 10, y: 10 },
+    modelPositions: [{ x: 10, y: 10 }],
+    facingDeg: 0,
+    charged: false,
+    inCombat: true,
+    battleshocked: false,
+    activated: false,
+    destroyed: false,
+  };
+  const engagedEnemy = { ...unit, id: 'desperate-engaged', side: 1 as const, position: { x: 10.5, y: 10 }, modelPositions: [{ x: 10.5, y: 10 }] };
+  const crossedEnemy = { ...unit, id: 'desperate-crossed', side: 1 as const, position: { x: 9.5, y: 10 }, modelPositions: [{ x: 9.5, y: 10 }] };
+  battle.units = [unit, engagedEnemy, crossedEnemy];
+
+  const originalRandom = Math.random;
+  const rolls = [0.99, 0, 0];
+  Math.random = () => rolls.shift() ?? 0.99;
+  try {
+    const next = fallBackPlayUnit(battle, unit.id, 0, rules40K11th);
+    const escaped = next.units.find(candidate => candidate.id === unit.id)!;
+    assert.equal(escaped.battleshocked, true);
+    assert.match(next.log.at(-1)?.message ?? '', /Desperate Escape Battle-shock roll \(7\+\): rolled 1\+1=2 .*FAILED/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('11th shooting types prevent an action after a partial shooting activation', () => {
   const battle = state('shooting');
   const shooter = losTestUnit('partial-shooter', 0, { x: 10, y: 10 });
