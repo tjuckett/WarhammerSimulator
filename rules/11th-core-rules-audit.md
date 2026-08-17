@@ -1,22 +1,22 @@
 # 11th Edition Core Rules Audit
 
-Date: 2026-06-24
+Date: 2026-08-17
 
 ## Source Status
 
-- Local source available: `rules/Warhammer_11th_Core_Rules_Preview.pdf`.
+- Final local source available: `rules/eng_01-06_warhammer40k_new40k_core_rules-was6fbu1ix-hfewhmxyiy.pdf`.
+- The older copy `rules/Warhammer_11th_Core_Rules_Preview.pdf` is retained as a historical reference.
 - Local extracted text available: `.tmp-rules-pages/page-13.txt` and `.tmp-rules-pages/page-14.txt`.
 - Local event companion source available: `rules/eng_12-06_warhammer40000_event_companion.pdf`.
-- Final full 11th Edition core rulebook text is not currently present in the repo.
-- Web search did not find an official final 11th Edition core rules PDF. Treat final wording confirmation as blocked until an official final source is available.
+- The final source is tracked, so final-wording work is actionable; the complete shared-rules re-audit remains open in `TODOS.md`.
 
-## Confirmed Against Available Preview Text
+## Confirmed Movement Implementation
 
 ### Movement Phase Structure
 
 Status: implemented.
 
-Preview source covers:
+The final source covers:
 - Movement phase has Move Units and Reinforcements steps.
 - Units outside Engagement Range can Normal Move, Advance, or Remain Stationary.
 - Units within Engagement Range can Remain Stationary or Fall Back.
@@ -35,7 +35,7 @@ Primary files:
 
 Status: implemented.
 
-Preview source covers:
+The final source covers:
 - Player chooses the order to move models.
 - A moved model can pivot and/or change position along a path.
 - Base path cannot cross enemy models or battlefield edge.
@@ -58,7 +58,7 @@ Primary files:
 
 Status: implemented.
 
-Preview source covers:
+The final source covers:
 - Models move up to their Move characteristic.
 - Normal moves cannot move within Engagement Range of enemy models.
 
@@ -71,7 +71,7 @@ Implementation notes:
 
 Status: implemented.
 
-Preview source covers:
+The final source covers:
 - Advance roll is one D6.
 - Each model can move up to Move plus the Advance roll.
 - Advance moves cannot move within Engagement Range.
@@ -86,7 +86,7 @@ Implementation notes:
 
 Status: implemented.
 
-Preview source covers:
+The final source covers:
 - Falling Back models move up to Move.
 - They can move within Engagement Range during the move but cannot end within Engagement Range.
 - Units that Fell Back cannot shoot or declare a charge that turn.
@@ -100,9 +100,9 @@ Implementation notes:
 - Crossing enemy models triggers Desperate Escape tests.
 - Battle-shocked Fall Back tests all models.
 
-## Implemented From Available 11th Preview/Event Companion Work
+## Implemented Core Areas
 
-These systems are implemented from the locally available preview/event-companion work, but still need final official wording confirmation.
+These systems have source-backed implementations and regression coverage. The remaining cross-edition audit is tracked separately rather than being implied complete by this list.
 
 - 11th ruleset selection and metadata.
 - Per-player Force Disposition setup.
@@ -125,35 +125,25 @@ These systems are implemented from the locally available preview/event-companion
 - Aircraft movement, Strategic Reserves return, charge restrictions, and fight restrictions.
 - Vertical movement, vertical coherency, vertical engagement, and vertical range.
 
-## Final Wording Confirmation Still Needed
+## Open Final-Source Implementation Work
 
-Blocked until the final full 11th Edition core rules source is available.
+The source is available, but these areas still require a complete audit, additional implementation, or source-dependent data before they can be marked final-complete:
 
-- Command phase and Battle-shock final timing.
-- Shooting phase final target eligibility, cover, LOS, and weapon keyword changes.
-- Charge phase final timing and Heroic Intervention wording.
-- Fight phase final activation order and Counteroffensive wording.
-- Final Command Re-roll wording and eligible reroll types.
-- Final Rapid Ingress placement timing and restrictions.
-- Final Fire Overwatch/Snap Shooting timing, target limits, and hit restrictions.
-- Final Smokescreen benefit wording.
-- Final Explosives and Crushing Impact wording.
-- Final Aircraft rules.
-- Final transport, embark, disembark, emergency disembark, and reserves wording.
-- Final terrain rules, including terrain footprints, walls/features, Hidden units if present in final text, cover, and LOS.
-- Final objective-control rules.
+- Complete shared 10th-compatible movement, shooting, charge, fight, Battle-shock, objective, reserves, transport, terrain, aircraft, and vertical re-audit.
+- Datasheet-specific command abilities, Fight On Death, and typed faction/character effects when authoritative data is available.
+- Full Core 25 Muster Armies catalog, points, faction limits, battle-size validation, and roster construction data.
+- Allocation-group distinctions that cannot be represented by the current imported per-unit model data.
 
 ## Mission Rules Status
 
 Not part of core rules, but relevant to 11th completion.
 
-- 24 primary mission names are known and tracked.
-- Exact primary mission scoring text is missing.
-- Known 11th primary missions deliberately do not award fallback VP until source text is transcribed.
+- 25 primary mission names are known and tracked.
+- Exact scoring is implemented from the current mission data with explicit fail-closed behavior for missing layout geometry.
 - 45 Event Companion terrain layouts remain manual data-entry work.
 
 ## Audit Conclusion
 
-The available local preview text confirms the movement-phase implementation at a high level, including model-level movement, Normal Move, Advance, Fall Back, and Desperate Escape behavior. The remaining 11th core rules are implemented as preview-derived or 10th-compatible behavior where source text is missing.
+The final core source is now present and the movement implementation, core stratagems, mission systems, transports, aircraft, vertical rules, and supported generic abilities have corresponding code and tests. The remaining cross-edition audit and source-dependent construction/datasheet work remain intentionally open.
 
-Do not mark the 11th core rules as final-complete until the final full 11th Edition core rules are added to `rules/` and the final wording confirmation checklist above is completed.
+Do not mark the 11th core rules as final-complete until the open implementation work above and the matching TODO entries are completed.
