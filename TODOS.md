@@ -76,7 +76,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Design the save/load path around an army repository so local storage can be replaced or backed by Postgres without changing the builder UI.
   - Start with available units from sample/imported armies, then add a real unit catalog/source later if needed.
   - Next after this task: decide whether full roster validation and complete faction catalog data belong in app data, imported BattleScribe data, or a separate catalog package.
-- [ ] Add player/AI controller architecture.
+- [x] Add player/AI controller architecture.
   - Progress: core seat/observation/action boundary now validates intended actions through legal-action generation, `/api/practice/scenarios/[id]/actions` applies remote intended actions authoritatively through `GameAction`, AI-selected turns use the same action path, and database-backed per-scenario seat grants now authenticate remote action requests; account/provider authentication remains a later integration.
   - Model each side as a player seat controlled by a local human, remote human, or AI policy.
   - Ensure local play, network play, human-vs-AI, AI-vs-AI simulation, replay, and saved sessions all use the same core `GameAction` execution path.
