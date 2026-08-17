@@ -295,8 +295,8 @@ Use this section as the next-session pickup point for the rules implementation w
 
 ### Rule Architecture Notes
 - [x] Prefer core rule functions in `packages/simulator-core`; React should call/import those through `@warhammer-simulator/core`.
-- [ ] Keep phase logic structured as ordered phase steps, not one large phase function.
-  - Progress: unit/phase stepping is already exposed, and the atomic simulator now delegates Command, Movement, Shooting, and Charge phase setup/resolution to named core phase helpers; Fight extraction remains.
+- [x] Keep phase logic structured as ordered phase steps, not one large phase function.
+  - Completed: unit/phase stepping is exposed, and the atomic simulator delegates Command, Movement, Shooting, Charge, and Fight setup/resolution to named core phase helpers while retaining the atomic convenience API.
 - [ ] Keep edition-specific behavior behind the rules engine so 10th and 11th can share common concepts but diverge cleanly. Some play helpers still default directly to `rules40K10th`; audit as rulesets diverge.
 - [ ] Treat 11th edition as a separate ruleset placeholder until rules are actually available; do not guess 11th rules from 10th.
 - [ ] Shared concepts likely worth keeping edition-neutral: battle rounds, active army, phase/step cursor, unit/model positions, dice helpers, objective ownership scaffolding.

@@ -6732,6 +6732,35 @@ function runSimulatedChargePhase(state: BattleState, side: Side, rules: RulesEdi
   return logs;
 }
 
+function runSimulatedFightPhase(
+  state: BattleState,
+  side: Side,
+  rules: RulesEdition,
+): { state: BattleState; logs: LogEntry[] } {
+  const armyName = state.armies[side].name;
+  const logs: LogEntry[] = [];
+  state.phase = 'fight';
+  state.fightStepStarted = false;
+  state.engagedUnitIdsAtFightStepStart = undefined;
+  state.lastFightSelectionSide = undefined;
+  state.activeAttachedFightUnitId = undefined;
+  state.activeAttachedShootingUnitId = undefined;
+  state.attachedShootingTargetUnitId = undefined;
+  logs.push(phaseLog(state, side, armyName, `\n─── Fight Phase ───`));
+  if (rules.metadata.edition === '11e') {
+    state = runAutomaticEleventhFightPhase(state, side, rules);
+  } else {
+    state.units.filter(unit => unit.side === side && !unit.destroyed && unit.charged)
+      .forEach(unit => logs.push(...runFight(unit, state, rules)));
+    state.units.filter(unit => unit.side === side && !unit.destroyed && !unit.charged && unit.inCombat)
+      .forEach(unit => logs.push(...runFight(unit, state, rules)));
+    state.units.filter(unit => unit.side !== side && !unit.destroyed && unit.inCombat)
+      .forEach(unit => logs.push(...runFight(unit, state, rules)));
+  }
+  updateObjectiveControl(state, rules);
+  return { state, logs };
+}
+
 export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): BattleState {
   let s = clone(state);
   const side = s.activeArmy;
@@ -6771,23 +6800,9 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   newLogs.push(...runSimulatedChargePhase(s, side, rules));
 
   // Fight — charged first, then others in melee, then defender counterattacks
-  s.phase = 'fight';
-  s.fightStepStarted = false;
-  s.engagedUnitIdsAtFightStepStart = undefined;
-  s.lastFightSelectionSide = undefined;
-  s.activeAttachedFightUnitId = undefined;
-  s.activeAttachedShootingUnitId = undefined;
-  s.attachedShootingTargetUnitId = undefined;
-  newLogs.push(phaseLog(s, side, armyName, `\n─── Fight Phase ───`));
-  if (rules.metadata.edition === '11e') {
-    s = runAutomaticEleventhFightPhase(s, side, rules);
-  } else {
-    myUnits().filter(u => u.charged).forEach(u => newLogs.push(...runFight(u, s, rules)));
-    myUnits().filter(u => !u.charged && u.inCombat).forEach(u => newLogs.push(...runFight(u, s, rules)));
-    s.units.filter(u => u.side !== side && !u.destroyed && u.inCombat)
-      .forEach(u => newLogs.push(...runFight(u, s, rules)));
-  }
-  updateObjectiveControl(s, rules);
+  const fightResult = runSimulatedFightPhase(s, side, rules);
+  s = fightResult.state;
+  newLogs.push(...fightResult.logs);
 
   checkWinner(s);
   if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }
