@@ -2,6 +2,16 @@ import type { Phase, Side } from './battle';
 
 export type StratagemTargetKind = 'none' | 'friendly-unit' | 'enemy-unit' | 'any-unit';
 
+export type CommandRerollRollType =
+  | 'advance'
+  | 'charge'
+  | 'damage'
+  | 'hazard'
+  | 'hit'
+  | 'save'
+  | 'wound'
+  | 'attacks';
+
 export interface StratagemDefinition {
   id: string;
   name: string;

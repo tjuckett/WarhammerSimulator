@@ -1,5 +1,5 @@
 import type { BattleState, BattleUnit, Phase, Side } from '../types/battle';
-import type { StratagemDefinition, StratagemUse } from '../types/stratagem';
+import type { CommandRerollRollType, StratagemDefinition, StratagemUse } from '../types/stratagem';
 import { battleRound } from './battleRound';
 import { canSpendCommandPoints, spendCommandPoints } from './commandPoints';
 import { unitCanBeAffectedByStratagem } from './battleshock';
@@ -253,10 +253,11 @@ export function resolveCommandReroll(
   state: BattleState,
   side: Side,
   originalRolls: number[],
-  options: { sides?: number; label?: string } = {},
+  options: { sides?: number; label?: string; rollType?: CommandRerollRollType } = {},
 ): BattleState {
   const pending = state.pendingCommandReroll;
   const sides = options.sides ?? 6;
+  const rollType = options.rollType ?? 'hit';
   if (
     !pending
     || pending.side !== side
@@ -267,7 +268,9 @@ export function resolveCommandReroll(
   ) return state;
 
   const next: BattleState = JSON.parse(JSON.stringify(state));
-  const rerolls = originalRolls.map(() => rollDie(sides));
+  const rerolls = originalRolls.map((roll, index) =>
+    rollType === 'charge' || index === 0 ? rollDie(sides) : roll,
+  );
   next.pendingCommandReroll = undefined;
   const label = options.label ?? 'roll';
   next.log = [...next.log, {

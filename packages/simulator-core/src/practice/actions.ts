@@ -6,6 +6,7 @@ import { primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtE
 import { resolveCommandReroll, useStratagem } from '../engine/stratagems';
 import { useUnitAbility } from '../engine/unitAbilities';
 import type { AbilityTiming } from '../types/ability';
+import type { CommandRerollRollType } from '../types/stratagem';
 import {
   advancePlayUnit,
   allocatePlayDamageToModel,
@@ -332,6 +333,7 @@ export type GameAction =
       originalRolls: number[];
       sides?: number;
       label?: string;
+      rollType?: CommandRerollRollType;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.UseUnitAbility;
@@ -745,6 +747,7 @@ export function applyGameAction(
       return resolveCommandReroll(state, normalizedAction.side, normalizedAction.originalRolls, {
         sides: normalizedAction.sides,
         label: normalizedAction.label,
+        rollType: normalizedAction.rollType,
       });
 
     case GAME_ACTION_TYPE.UseUnitAbility:

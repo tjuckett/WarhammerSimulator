@@ -530,7 +530,7 @@ test('Command Re-roll creates and resolves a pending reroll token', () => {
   const originalRandom = Math.random;
   Math.random = () => 0.99;
   try {
-    const resolved = resolveCommandReroll(used, 0, [1, 2], { label: 'charge roll' });
+    const resolved = resolveCommandReroll(used, 0, [1, 2], { label: 'charge roll', rollType: 'charge' });
     assert.equal(resolved.pendingCommandReroll, undefined);
     assert.match(resolved.log.at(-1)?.message ?? '', /Command Re-roll charge roll: \[1, 2\] -> \[6, 6\]/);
   } finally {
@@ -551,6 +551,7 @@ test('Command Re-roll can be replayed through practice actions', () => {
       side: 0,
       originalRolls: [6],
       label: 'save roll',
+      rollType: 'save',
     }, { rules: rules40K10th });
     assert.equal(replayed.pendingCommandReroll, undefined);
     assert.match(replayed.log.at(-1)?.message ?? '', /Command Re-roll save roll: \[6\] -> \[1\]/);
@@ -789,6 +790,21 @@ test('11th battle round flow starts player turns at Command and advances rounds 
   assert.equal(nextRound.activeArmy, 0);
   assert.equal(nextRound.battleRound, 2);
   assert.equal(nextRound.turn, 2);
+});
+
+test('Command Re-roll rerolls one die except for a full Charge roll', () => {
+  const battle = state('shooting');
+  battle.commandPoints = [1, 0];
+  const used = useStratagem(battle, 0, 'command-reroll', rules40K10th);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const resolved = resolveCommandReroll(used, 0, [1, 2], { rollType: 'save' });
+    assert.match(resolved.log.at(-1)?.message ?? '', /\[1, 2\] -> \[6, 2\]/);
+  } finally {
+    Math.random = originalRandom;
+  }
 });
 
 test('simulation unit stepping activates one unit before advancing the phase boundary', () => {

@@ -20,6 +20,7 @@ import StopIcon from '@mui/icons-material/Stop';
 import { BATTLE_PHASE, MOVEMENT_STEP, type BattleState, type BattleUnit, type Phase } from '@warhammer-simulator/core/types/battle';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile } from '@warhammer-simulator/core/types/army';
 import type { AbilityTiming } from '@warhammer-simulator/core/types/ability';
+import type { CommandRerollRollType } from '@warhammer-simulator/core/types/stratagem';
 import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simulator/core/engine/rulesEngine';
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
@@ -2170,17 +2171,18 @@ export default function App() {
     commitBattleState(next);
   }
 
-  function resolvePendingCommandReroll(originalRolls: number[], label: string) {
+  function resolvePendingCommandReroll(originalRolls: number[], label: string, rollType: CommandRerollRollType) {
     const prev = battleStateRef.current;
     if (!prev || !isPlayMode || !prev.pendingCommandReroll) return;
     const side = prev.pendingCommandReroll.side;
-    const next = resolveCommandReroll(prev, side, originalRolls, { label });
+    const next = resolveCommandReroll(prev, side, originalRolls, { label, rollType });
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
       type: GAME_ACTION_TYPE.ResolveCommandReroll,
       side,
       originalRolls,
       label,
+      rollType,
     });
     setTargetErrorMsg('Command Re-roll resolved.');
     commitBattleState(next);

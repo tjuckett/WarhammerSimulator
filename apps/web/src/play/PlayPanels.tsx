@@ -3,7 +3,7 @@ import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typo
 import type { SelectChangeEvent } from '@mui/material/Select';
 import CasinoOutlinedIcon from '@mui/icons-material/CasinoOutlined';
 import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
-import type { StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
+import type { CommandRerollRollType, StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import type { FiringDeckSelection, PlayChargeTargetOption, PlayFightWeaponOption, PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
 import {
@@ -577,12 +577,13 @@ export function PlayTacticsPanel({
   onUseAbility: () => void;
   onStartAction: () => void;
   onToggleCondemnedUnit: () => void;
-  onResolveCommandReroll: (originalRolls: number[], label: string) => void;
+  onResolveCommandReroll: (originalRolls: number[], label: string, rollType: CommandRerollRollType) => void;
 }) {
   const cp = commandPoints(state);
   const selectedAbility = abilities.find(option => abilityOptionKey(option) === selectedAbilityKey) ?? null;
   const pendingFollowUps = stratagemFollowUpLabels(state);
   const [commandRerollInput, setCommandRerollInput] = useState('');
+  const [commandRerollRollType, setCommandRerollRollType] = useState<CommandRerollRollType>('hit');
   const commandRerollRolls = parseDiceInput(commandRerollInput);
 
   return (
@@ -604,7 +605,17 @@ export function PlayTacticsPanel({
           </Typography>
         ))}
         {state.pendingCommandReroll && (
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 0.75, alignItems: 'center' }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: 0.75, alignItems: 'center' }}>
+            <Select
+              size="small"
+              value={commandRerollRollType}
+              onChange={event => setCommandRerollRollType(event.target.value as CommandRerollRollType)}
+              aria-label="Command Re-roll type"
+            >
+              {['advance', 'charge', 'damage', 'hazard', 'hit', 'save', 'wound', 'attacks'].map(type => (
+                <MenuItem key={type} value={type}>{type === 'attacks' ? 'attacks roll' : `${type} roll`}</MenuItem>
+              ))}
+            </Select>
             <TextField
               size="small"
               label="Original roll"
@@ -619,7 +630,7 @@ export function PlayTacticsPanel({
               variant="contained"
               disabled={!commandRerollRolls.length}
               onClick={() => {
-                onResolveCommandReroll(commandRerollRolls, 'roll');
+                onResolveCommandReroll(commandRerollRolls, `${commandRerollRollType} roll`, commandRerollRollType);
                 setCommandRerollInput('');
               }}
             >
