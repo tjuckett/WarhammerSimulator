@@ -283,7 +283,7 @@ Use this section as the next-session pickup point for the rules implementation w
 - [ ] Review one rule at a time with the user before implementing it.
 - [ ] Next likely rule area: tighten Movement phase legality around terrain/collision/coherency now that model-level movement exists.
 - [x] Coherency enforcement policy implemented: allow temporary incoherency during movement editing, but block Movement phase advance until all active-army units are coherent.
-- [ ] Move or expose `findReachablePosition` from `simulator.ts` if other engine modules need it; it currently exists as an internal helper, not in `engine/terrain.ts`.
+- [x] Move or expose `findReachablePosition` from `simulator.ts` for reuse/testing; it is now an exported simulator-core pathing helper.
 - [x] Add/confirm full 10th-edition vertical coherency rules. Model height, vertical separation, and the 5" vertical coherency limit are implemented and covered by simulator-core tests.
 - [ ] Review collision mode UX: normal dragging can ignore terrain/model collision, while collision mode applies the legality/pathing checks.
 - [x] Reviewed terrain LOS/cover behavior against the 10th Core Rules PDF and separated ruin footprints, obstacle mats, woods cover, and feature/wall blocking.
@@ -350,7 +350,7 @@ The current runtime now has both terrain mats and terrain features. Continue sou
 - [x] **Keyword movement interactions** - Fly, Infantry, Vehicle, Monster, and Titanic interactions are represented in collision checks.
 - [x] **LOS per-feature blocking** - feature-level `blocksLOS` is used by LOS geometry.
 - [x] **Cover eligibility verification** - reviewed against the 10th Core Rules PDF; ruins, woods, obstacle mats, and blocking features now have separate LOS/cover behavior.
-- [ ] **Terrain pathing extraction** - decide whether `findReachablePosition` should move from `simulator.ts` to `engine/terrain.ts` for reuse/testing.
+- [x] **Terrain pathing extraction** - expose `findReachablePosition` as a reusable simulator-core helper and cover its movement-distance contract with a focused test.
 - [ ] **Terrain tuning** - tune generated feature placement and colors once the rules behavior is stable.
 
 ### Other
