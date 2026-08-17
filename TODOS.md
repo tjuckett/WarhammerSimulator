@@ -302,7 +302,7 @@ Use this section as the next-session pickup point for the rules implementation w
 
 ### Known Rules/UI Followups
 - [x] Review whether "practice game" naming should be changed to a more future-proof term before multiplayer features are added. Decision: use game/session language going forward; existing `practice` code paths can be migrated in a focused rename later.
-- [ ] Improve selected-model action placement/UI if Advance/Fall Back/Movement Done still feel disconnected from selected unit actions.
+- [x] Improve selected-model action placement/UI — the action HUD now stays within the scrollable board bounds and repositions after viewport resize.
 - [ ] Add tests when each rule is implemented in `packages/simulator-core/test/`.
 - [ ] Re-run `npx tsc -p apps/web/tsconfig.json --noEmit`, `npm run lint`, and root `npm run build` after frontend/rules changes.
 

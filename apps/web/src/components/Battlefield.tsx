@@ -78,6 +78,7 @@ const ALIGN_VERTEX_PICK_RADIUS = 0.22;
 export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], activeSimulationUnitId = null, shooterUnitId = null, targetUnitId = null, shootingReadyUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, onSelectUnit, deployer, editor }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const selectedActionsRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<null | { selection: TerrainEditSelection; offsetX: number; offsetY: number }>(null);
   const modelDragRef = useRef<null | {
     selection: PlayModelSelection;
@@ -156,6 +157,8 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
   useEffect(() => {
     renderCanvas();
     updateSelectedActionsPosition();
+    window.addEventListener('resize', updateSelectedActionsPosition);
+    return () => window.removeEventListener('resize', updateSelectedActionsPosition);
   }, [state, editor?.selected, hoverGridPoint, zoom, deployer?.selectedModel, deployer?.selectedModelActions, hideSelectedActions, selectedUnitId, selectedUnitIds, activeSimulationUnitId, shooterUnitId, targetUnitId, shootingReadyUnitIds, boxSelect, hoveredTransport, hoveredUnitId, coverUnitIds, losRays, visibleOutOfRangeUnitIds]);
 
   useEffect(() => {
@@ -262,6 +265,14 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       left: canvasRect.left - containerRect.left + anchor.x * scale + 18,
       top: canvasRect.top - containerRect.top + anchor.y * scale,
     };
+    const actionRect = selectedActionsRef.current?.getBoundingClientRect();
+    if (actionRect) {
+      const minTop = actionRect.height / 2 + 4;
+      const maxTop = Math.max(minTop, container.scrollHeight - actionRect.height / 2 - 4);
+      const maxLeft = Math.max(4, container.scrollWidth - actionRect.width - 4);
+      nextPosition.left = Math.max(4, Math.min(maxLeft, nextPosition.left));
+      nextPosition.top = Math.max(minTop, Math.min(maxTop, nextPosition.top));
+    }
     setSelectedActionsPosition(current =>
       current
         && Math.abs(current.left - nextPosition.left) < 0.5
@@ -670,6 +681,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
         />
         {selectedActionsPosition && deployer?.selectedModelActions && (
           <div
+            ref={selectedActionsRef}
             className="selected-unit-actions"
             style={{
               left: selectedActionsPosition.left,
