@@ -3,6 +3,7 @@ import type { ImportedArmy, UnitProfile } from '@warhammer-simulator/core/types/
 import { applyBaseSizesToArmy } from '@warhammer-simulator/core/data/unitBaseSizes';
 import { isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
 import { validateImportedArmy } from '@warhammer-simulator/core/engine/armyValidation';
+import { generateAiArmy } from '@warhammer-simulator/core/engine/armyGeneration';
 import type { DeploymentStrategy } from '@warhammer-simulator/core/engine/deployment';
 import { parseBattleScribeJSON } from '@warhammer-simulator/core/parsers/battlescribe';
 import { ArmyPanel } from './ArmyPanel';
@@ -96,6 +97,12 @@ export function ArmyBuilder({ armies, sampleArmies, savedSlot, onSavedSlotChange
     URL.revokeObjectURL(url);
   }
 
+  function generateArmy() {
+    const result = generateAiArmy(army, { strategy: 'balanced' });
+    updateArmy(result.army);
+    setSelectedUnitId(null);
+  }
+
   return (
     <div className="army-builder">
       <div className="army-builder-toolbar">
@@ -115,6 +122,7 @@ export function ArmyBuilder({ armies, sampleArmies, savedSlot, onSavedSlotChange
           </select>
         </label>
         <button type="button" onClick={() => { updateArmy(blankArmy()); setSelectedUnitId(null); }}>New</button>
+        <button type="button" onClick={generateArmy} disabled={army.units.length === 0}>Generate AI</button>
         <button type="button" onClick={() => onSave(side)}>Save</button>
         <button type="button" onClick={() => onLoad(side)}>Load</button>
         <label className="army-builder-file-button">
@@ -134,6 +142,7 @@ export function ArmyBuilder({ armies, sampleArmies, savedSlot, onSavedSlotChange
         {validation.errors.slice(0, 3).map(item => <span key={`${item.code}:${item.unitIndex ?? 'army'}`}>{item.message}</span>)}
         {validation.warnings.slice(0, 2).map(item => <span key={`${item.code}:${item.unitIndex ?? 'army'}`}>{item.message}</span>)}
         {(validation.errors.length > 3 || validation.warnings.length > 2) && <span>Additional issues are shown in the exported/inspected roster data.</span>}
+        {army.generation?.explanation && <span>AI plan: {army.generation.explanation}</span>}
       </div>
 
       <div className="army-builder-columns">

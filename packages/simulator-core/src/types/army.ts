@@ -86,6 +86,13 @@ export interface ImportedArmy {
   name: string;
   faction: string;
   units: UnitProfile[];
+  generation?: ArmyGenerationMetadata;
+}
+
+export interface ArmyGenerationMetadata {
+  strategy: 'balanced' | 'aggressive' | 'objective';
+  sourceArmyName: string;
+  explanation: string;
 }
 
 export const UNIT_DEPLOYMENT_MODE = {
