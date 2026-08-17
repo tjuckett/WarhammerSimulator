@@ -3,7 +3,7 @@ import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typo
 import type { SelectChangeEvent } from '@mui/material/Select';
 import CasinoOutlinedIcon from '@mui/icons-material/CasinoOutlined';
 import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
-import type { CommandRerollRollType, StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
+import type { CommandRerollRollType, HeroicInterventionMode, StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import { battleUnitsBaseEdgeDistance, type FiringDeckSelection, type PlayChargeTargetOption, type PlayFightWeaponOption, type PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
 import { explosivesTargetAllowed } from '@warhammer-simulator/core/engine/stratagems';
@@ -575,7 +575,7 @@ export function PlayTacticsPanel({
   selectedUnitIsCondemned: boolean;
   onStratagemChange: (value: string) => void;
   onAbilityChange: (value: string) => void;
-  onUseStratagem: (stratagemId: string, targetModelIndex?: number, secondaryTargetUnitId?: string, sourceModelIndex?: number) => void;
+  onUseStratagem: (stratagemId: string, targetModelIndex?: number, secondaryTargetUnitId?: string, sourceModelIndex?: number, heroicInterventionMode?: HeroicInterventionMode) => void;
   onUseAbility: () => void;
   onStartAction: () => void;
   onToggleCondemnedUnit: () => void;
@@ -590,6 +590,7 @@ export function PlayTacticsPanel({
   const [crushingImpactTargetId, setCrushingImpactTargetId] = useState('');
   const [explosivesSourceModelIndex, setExplosivesSourceModelIndex] = useState(0);
   const [explosivesTargetId, setExplosivesTargetId] = useState('');
+  const [heroicInterventionMode, setHeroicInterventionMode] = useState<HeroicInterventionMode>('leap-to-defend');
   const commandRerollRolls = parseDiceInput(commandRerollInput);
   const selectedEpicChallengeModelIndex = selectedUnit?.modelPositions.length
     ? Math.min(epicChallengeModelIndex, selectedUnit.modelPositions.length - 1)
@@ -706,6 +707,17 @@ export function PlayTacticsPanel({
             </Select>
           </>
         )}
+        {selectedUnit && stratagems.some(stratagem => stratagem.id === 'heroic-intervention') && (
+          <Select
+            size="small"
+            value={heroicInterventionMode}
+            onChange={event => setHeroicInterventionMode(event.target.value as HeroicInterventionMode)}
+            aria-label="Heroic Intervention mode"
+          >
+            <MenuItem value="leap-to-defend">Heroic Intervention: Leap to Defend (1CP)</MenuItem>
+            <MenuItem value="into-the-fray" disabled={cp[selectedUnit.side] < 2}>Heroic Intervention: Into the Fray (2CP)</MenuItem>
+          </Select>
+        )}
         {stratagems.map(stratagem => (
           <Button
             key={stratagem.id}
@@ -713,12 +725,13 @@ export function PlayTacticsPanel({
             variant={stratagem.id === selectedStratagemId ? 'contained' : 'outlined'}
             onMouseEnter={() => onStratagemChange(stratagem.id)}
             onFocus={() => onStratagemChange(stratagem.id)}
-            disabled={(stratagem.id === 'crushing-impact' && !crushingImpactTargetId) || (stratagem.id === 'explosives' && !explosivesTargetId)}
+            disabled={(stratagem.id === 'crushing-impact' && !crushingImpactTargetId) || (stratagem.id === 'explosives' && !explosivesTargetId) || (stratagem.id === 'heroic-intervention' && heroicInterventionMode === 'into-the-fray' && cp[selectedUnit?.side ?? 0] < 2)}
             onClick={() => onUseStratagem(
               stratagem.id,
               stratagem.id === 'epic-challenge' ? selectedEpicChallengeModelIndex : undefined,
               stratagem.id === 'crushing-impact' ? crushingImpactTargetId : undefined,
               stratagem.id === 'explosives' ? selectedExplosivesSourceModelIndex : undefined,
+              stratagem.id === 'heroic-intervention' ? heroicInterventionMode : undefined,
             )}
             title={stratagem.description}
             sx={{ justifyContent: 'space-between', textTransform: 'none' }}

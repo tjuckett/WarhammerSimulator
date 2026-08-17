@@ -3244,7 +3244,13 @@ export function playChargeTargetOptions(
     || !sideCanDeclareCharge(state, side, unit)
     || !unitCanDeclareCharge(unit)) return [];
   return enemies(state, side)
-    .filter(target => unitCanChargeTarget(unit, target))
+    .filter(target => unitCanChargeTarget(unit, target)
+      && (state.activeArmy === side
+        || (unit.heroicInterventionMode === 'leap-to-defend'
+          ? target.charged
+          : unit.heroicInterventionMode === 'into-the-fray'
+            ? battleUnitsBaseEdgeDistance(unit, target) <= 6
+            : false)))
     .map(target => ({ targetId: target.id, needed: chargeNeededDistance(unit, target, rules) }))
     .filter(option => option.needed <= rules.chargeRange());
 }
@@ -3265,7 +3271,13 @@ export function chargePlayUnitTarget(
     || !target
     || !sideCanDeclareCharge(state, side, unit)
     || !unitCanDeclareCharge(unit)
-    || !unitCanChargeTarget(unit, target)) return state;
+    || !unitCanChargeTarget(unit, target)
+    || (state.activeArmy !== side
+      && (unit.heroicInterventionMode === 'leap-to-defend'
+        ? !target.charged
+        : unit.heroicInterventionMode === 'into-the-fray'
+          ? battleUnitsBaseEdgeDistance(unit, target) > 6
+          : true))) return state;
   const needed = chargeNeededDistance(unit, target, rules);
   if (needed > rules.chargeRange()) return state;
 
@@ -3276,11 +3288,15 @@ export function chargePlayUnitTarget(
 
   const r1 = d6();
   const r2 = d6();
-  const roll = r1 + r2;
+  const rawRoll = r1 + r2;
+  const heroicIntervention = state.activeArmy !== side;
+  const roll = heroicIntervention && chargingUnit.heroicInterventionMode === 'into-the-fray'
+    ? Math.min(6, rawRoll)
+    : rawRoll;
   const maximumDistance = Math.max(0, roll - takeToSkiesDistanceCost(chargingUnit));
   const logs: LogEntry[] = [
     log(s, side, chargingUnit.profile.name,
-      `${chargingUnit.profile.name} declares a charge against ${chargeTarget.profile.name} (${needed.toFixed(1)}" needed, rolled ${r1}+${r2}=${roll}).`,
+      `${chargingUnit.profile.name} declares a charge against ${chargeTarget.profile.name} (${needed.toFixed(1)}" needed, rolled ${r1}+${r2}=${roll}${roll !== rawRoll ? ` (capped from ${rawRoll})` : ''}).`,
       'charge',
     ),
   ];
@@ -3289,6 +3305,7 @@ export function chargePlayUnitTarget(
     for (const component of attachedUnitComponents(s, chargingUnit)) {
       component.activated = true;
       component.heroicInterventionThisPhase = undefined;
+      component.heroicInterventionMode = undefined;
       component.takingToSkies = undefined;
     }
     logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} fails the charge.`, 'charge'));
@@ -3321,6 +3338,7 @@ export function chargePlayUnitTarget(
     for (const component of attachedUnitComponents(failed, failedUnit)) {
       component.activated = true;
       component.heroicInterventionThisPhase = undefined;
+      component.heroicInterventionMode = undefined;
       component.takingToSkies = undefined;
     }
     logs.push(log(failed, side, failedUnit.profile.name, `${failedUnit.profile.name} cannot reach engagement range.`, 'charge'));
@@ -3330,8 +3348,9 @@ export function chargePlayUnitTarget(
 
   for (const component of attachedUnitComponents(s, chargingUnit)) {
     component.activated = true;
-    component.charged = true;
+    component.charged = !heroicIntervention;
     component.heroicInterventionThisPhase = undefined;
+    component.heroicInterventionMode = undefined;
     component.inCombat = true;
     component.lastMovePhase = s.phase;
     component.lastMoveTurn = s.turn;

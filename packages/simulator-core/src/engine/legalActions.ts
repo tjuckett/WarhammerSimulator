@@ -2,6 +2,7 @@ import type { Side } from '../types/battle';
 import type { GameAction } from '../practice/actions';
 import type { RulesEdition } from './rulesEngine';
 import { rulesEditionForRuleset } from './rulesEngine';
+import { canSpendCommandPoints } from './commandPoints';
 import { availableStratagems, explosivesTargetAllowed } from './stratagems';
 import { availableUnitAbilities } from './unitAbilities';
 import {
@@ -422,6 +423,11 @@ function addStratagemActions(actions: LegalAction[], state: BattleState, side: S
       const sourceModelIndices = stratagem.id === 'explosives'
         ? unit.modelPositions.map((_, modelIndex) => modelIndex)
         : [undefined];
+      const heroicModes = stratagem.id === 'heroic-intervention'
+        ? canSpendCommandPoints(state, side, stratagem.cost + 1)
+          ? ['leap-to-defend', 'into-the-fray'] as const
+          : ['leap-to-defend'] as const
+        : [undefined];
       const secondaryTargets = stratagem.id === 'crushing-impact'
         ? state.units.filter(candidate =>
             !candidate.destroyed
@@ -437,14 +443,16 @@ function addStratagemActions(actions: LegalAction[], state: BattleState, side: S
             ? state.units.filter(candidate => !candidate.destroyed && explosivesTargetAllowed(state, unit, candidate, sourceModelIndex!, rules))
             : secondaryTargets;
           for (const secondaryTargetUnit of sourceTargets) {
+          for (const heroicInterventionMode of heroicModes) {
         actions.push({
-          action: { type: 'play.useStratagem', side, stratagemId: stratagem.id, targetUnitId: unit.id, targetModelIndex, ...(secondaryTargetUnit ? { secondaryTargetUnitId: secondaryTargetUnit.id } : {}), ...(sourceModelIndex !== undefined ? { sourceModelIndex } : {}) },
+          action: { type: 'play.useStratagem', side, stratagemId: stratagem.id, targetUnitId: unit.id, targetModelIndex, ...(secondaryTargetUnit ? { secondaryTargetUnitId: secondaryTargetUnit.id } : {}), ...(sourceModelIndex !== undefined ? { sourceModelIndex } : {}), ...(heroicInterventionMode ? { heroicInterventionMode } : {}) },
           category: 'stratagem',
           side,
           unitId: unit.id,
           targetUnitId: unit.id,
-          label: `${unit.profile.name}: Use ${stratagem.name}${secondaryTargetUnit ? ` on ${secondaryTargetUnit.profile.name}` : ''}${sourceModelIndex === undefined ? '' : ` from model ${sourceModelIndex + 1}`}${targetModelIndex === undefined ? '' : ` on model ${targetModelIndex + 1}`}`,
+          label: `${unit.profile.name}: Use ${stratagem.name}${heroicInterventionMode ? ` (${heroicInterventionMode})` : ''}${secondaryTargetUnit ? ` on ${secondaryTargetUnit.profile.name}` : ''}${sourceModelIndex === undefined ? '' : ` from model ${sourceModelIndex + 1}`}${targetModelIndex === undefined ? '' : ` on model ${targetModelIndex + 1}`}`,
         });
+          }
           }
         }
       }

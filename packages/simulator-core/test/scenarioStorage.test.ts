@@ -1150,12 +1150,13 @@ test('11th Heroic Intervention lets the targeted defender declare a charge in th
   battle.activeArmy = 0;
   battle.commandPoints = [0, 1];
   const attacker = losTestUnit('attacker', 0, { x: 10, y: 10 });
+  attacker.charged = true;
   const defender = losTestUnit('defender', 1, { x: 16, y: 10 });
   battle.units = [attacker, defender];
 
   assert.deepEqual(playChargeTargetOptions(battle, defender.id, 1, rules40K11th), []);
 
-  const intervening = useStratagem(battle, 1, 'heroic-intervention', rules40K11th, defender.id);
+  const intervening = useStratagem(battle, 1, 'heroic-intervention', rules40K11th, defender.id, undefined, undefined, undefined, 'leap-to-defend');
   assert.equal(intervening.commandPoints?.[1], 0);
   assert.equal(intervening.units.find(unit => unit.id === defender.id)?.heroicInterventionThisPhase, true);
   assert.deepEqual(playChargeTargetOptions(intervening, defender.id, 1, rules40K11th).map(option => option.targetId), [attacker.id]);
@@ -1165,7 +1166,8 @@ test('11th Heroic Intervention lets the targeted defender declare a charge in th
   try {
     const charged = chargePlayUnitTarget(intervening, defender.id, 1, attacker.id, rules40K11th);
     const chargedDefender = charged.units.find(unit => unit.id === defender.id)!;
-    assert.equal(chargedDefender.charged, true);
+    assert.equal(chargedDefender.charged, false);
+    assert.equal(chargedDefender.heroicInterventionMode, undefined);
     assert.equal(chargedDefender.heroicInterventionThisPhase, undefined);
     assert.equal(chargedDefender.inCombat, true);
     assert.equal(charged.units.find(unit => unit.id === attacker.id)?.inCombat, true);
@@ -1444,6 +1446,30 @@ test('11th Inescapable Dominion scores fixed objective conditions from mission d
   assert.equal(result.scoringModel, '11e-data:Inescapable Dominion');
   assert.equal(result.vpGained, 9);
   assert.deepEqual(battle.scores, [9, 0]);
+});
+
+test('11th Heroic Intervention Into the Fray costs 2CP, allows a nearby target, and caps the charge roll', () => {
+  const battle = state('charge');
+  battle.activeArmy = 0;
+  battle.commandPoints = [0, 2];
+  const attacker = losTestUnit('into-attacker', 0, { x: 10, y: 10 });
+  const defender = losTestUnit('into-defender', 1, { x: 16, y: 10 });
+  battle.units = [attacker, defender];
+
+  const intervening = useStratagem(battle, 1, 'heroic-intervention', rules40K11th, defender.id, undefined, undefined, undefined, 'into-the-fray');
+  assert.deepEqual(intervening.commandPoints, [0, 0]);
+  assert.equal(intervening.units.find(unit => unit.id === defender.id)?.heroicInterventionMode, 'into-the-fray');
+  assert.deepEqual(playChargeTargetOptions(intervening, defender.id, 1, rules40K11th).map(option => option.targetId), [attacker.id]);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const charged = chargePlayUnitTarget(intervening, defender.id, 1, attacker.id, rules40K11th);
+    assert.equal(charged.units.find(unit => unit.id === defender.id)?.charged, false);
+    assert.match(charged.log.map(entry => entry.message).join(' '), /capped from 12/);
+  } finally {
+    Math.random = originalRandom;
+  }
 });
 
 test('11th primary scoring coverage matrix exercises every clause positively and at a negative boundary', () => {

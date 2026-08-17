@@ -6,7 +6,7 @@ import { primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtE
 import { resolveCommandReroll, useStratagem } from '../engine/stratagems';
 import { useUnitAbility } from '../engine/unitAbilities';
 import type { AbilityTiming } from '../types/ability';
-import type { CommandRerollRollType } from '../types/stratagem';
+import type { CommandRerollRollType, HeroicInterventionMode } from '../types/stratagem';
 import {
   advancePlayUnit,
   allocatePlayDamageToModel,
@@ -329,6 +329,7 @@ export type GameAction =
       targetModelIndex?: number;
       secondaryTargetUnitId?: string;
       sourceModelIndex?: number;
+      heroicInterventionMode?: HeroicInterventionMode;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.ResolveCommandReroll;
@@ -479,6 +480,7 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
       unit.arrivedFromReinforcements = undefined;
       unit.rapidIngressThisPhase = undefined;
       unit.heroicInterventionThisPhase = undefined;
+      unit.heroicInterventionMode = undefined;
       unit.actionStartedThisTurn = undefined;
       if (unit.emergencyDisembarkedThisTurn) unit.battleshocked = false;
       unit.emergencyDisembarkedThisTurn = undefined;
@@ -744,7 +746,7 @@ export function applyGameAction(
       return stepPlayPhase(state, context.rules);
 
     case GAME_ACTION_TYPE.UseStratagem:
-      return useStratagem(state, normalizedAction.side, normalizedAction.stratagemId, context.rules, normalizedAction.targetUnitId, normalizedAction.targetModelIndex, normalizedAction.secondaryTargetUnitId, normalizedAction.sourceModelIndex);
+      return useStratagem(state, normalizedAction.side, normalizedAction.stratagemId, context.rules, normalizedAction.targetUnitId, normalizedAction.targetModelIndex, normalizedAction.secondaryTargetUnitId, normalizedAction.sourceModelIndex, normalizedAction.heroicInterventionMode);
 
     case GAME_ACTION_TYPE.ResolveCommandReroll:
       return resolveCommandReroll(state, normalizedAction.side, normalizedAction.originalRolls, {

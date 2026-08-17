@@ -20,7 +20,7 @@ import StopIcon from '@mui/icons-material/Stop';
 import { BATTLE_PHASE, MOVEMENT_STEP, type BattleState, type BattleUnit, type Phase } from '@warhammer-simulator/core/types/battle';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile } from '@warhammer-simulator/core/types/army';
 import type { AbilityTiming } from '@warhammer-simulator/core/types/ability';
-import type { CommandRerollRollType } from '@warhammer-simulator/core/types/stratagem';
+import type { CommandRerollRollType, HeroicInterventionMode } from '@warhammer-simulator/core/types/stratagem';
 import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simulator/core/engine/rulesEngine';
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
@@ -2145,13 +2145,13 @@ export default function App() {
     commitBattleState(next);
   }
 
-  function useSelectedPlayStratagem(stratagemId = selectedStratagemId, targetModelIndex?: number, secondaryTargetUnitId?: string, sourceModelIndex?: number) {
+  function useSelectedPlayStratagem(stratagemId = selectedStratagemId, targetModelIndex?: number, secondaryTargetUnitId?: string, sourceModelIndex?: number, heroicInterventionMode?: HeroicInterventionMode) {
     const prev = battleStateRef.current;
     if (!prev || !isPlayMode || !stratagemId) return;
     const targetUnitId = selectedTacticsUnit?.id;
     const stratagemSide = selectedTacticsUnit?.side ?? prev.activeArmy;
     const stratagem = availablePlayStratagems.find(option => option.id === stratagemId);
-    const next = applyStratagem(prev, stratagemSide, stratagemId, activeRulesForBattle, stratagem?.target === 'none' ? undefined : targetUnitId, targetModelIndex, secondaryTargetUnitId);
+    const next = applyStratagem(prev, stratagemSide, stratagemId, activeRulesForBattle, stratagem?.target === 'none' ? undefined : targetUnitId, targetModelIndex, secondaryTargetUnitId, sourceModelIndex, heroicInterventionMode);
     if (next === prev) return;
     setSelectedStratagemId(stratagemId);
     pushPlayUndo(playUndoEntry(prev), next, {
@@ -2162,6 +2162,7 @@ export default function App() {
       targetModelIndex,
       secondaryTargetUnitId,
       sourceModelIndex,
+      heroicInterventionMode,
     });
     if (stratagem?.id === 'fire-overwatch' && targetUnitId) {
       setOverwatchUnitId(targetUnitId);
@@ -2678,6 +2679,7 @@ export default function App() {
         unit.arrivedFromReinforcements = undefined;
         unit.rapidIngressThisPhase = undefined;
         unit.heroicInterventionThisPhase = undefined;
+        unit.heroicInterventionMode = undefined;
         if (unit.emergencyDisembarkedThisTurn) unit.battleshocked = false;
         unit.emergencyDisembarkedThisTurn = undefined;
         unit.combatDisembarkedThisTurn = undefined;

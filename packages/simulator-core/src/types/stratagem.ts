@@ -12,6 +12,8 @@ export type CommandRerollRollType =
   | 'wound'
   | 'attacks';
 
+export type HeroicInterventionMode = 'leap-to-defend' | 'into-the-fray';
+
 export interface StratagemDefinition {
   id: string;
   name: string;
@@ -48,5 +50,6 @@ export interface StratagemUse {
   targetModelIndex?: number;
   secondaryTargetUnitId?: string;
   sourceModelIndex?: number;
+  heroicInterventionMode?: HeroicInterventionMode;
   commandPointsSpent: number;
 }

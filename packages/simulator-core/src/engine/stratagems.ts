@@ -1,5 +1,5 @@
 import type { BattleState, BattleUnit, Phase, Side } from '../types/battle';
-import type { CommandRerollRollType, StratagemDefinition, StratagemUse } from '../types/stratagem';
+import type { CommandRerollRollType, HeroicInterventionMode, StratagemDefinition, StratagemUse } from '../types/stratagem';
 import { battleRound } from './battleRound';
 import { canSpendCommandPoints, spendCommandPoints } from './commandPoints';
 import { unitCanBeAffectedByStratagem } from './battleshock';
@@ -179,6 +179,12 @@ function targetModelIndexAllowed(target: BattleUnit, stratagem: StratagemDefinit
   return Number.isInteger(index) && index >= 0 && !!target.modelPositions[index];
 }
 
+function heroicInterventionModeAllowed(stratagem: StratagemDefinition, mode?: HeroicInterventionMode): boolean {
+  return stratagem.id === 'heroic-intervention'
+    ? mode !== undefined
+    : mode === undefined;
+}
+
 function sourceModelIndexAllowed(source: BattleUnit | null, stratagem: StratagemDefinition, sourceModelIndex?: number): boolean {
   if (stratagem.id !== 'explosives') return sourceModelIndex === undefined;
   if (!source) return false;
@@ -265,12 +271,14 @@ function applyHeroicInterventionStratagemEffect(
   side: Side,
   stratagem: StratagemDefinition,
   targetUnitId?: string,
+  mode?: HeroicInterventionMode,
 ): void {
   if (stratagem.id !== 'heroic-intervention') return;
   const unit = targetUnitFor(state, targetUnitId);
   if (!unit) return;
 
   unit.heroicInterventionThisPhase = true;
+  unit.heroicInterventionMode = mode;
   appendStratagemEffectLog(state, side, unit.profile.name, `${unit.profile.name} can declare a Heroic Intervention charge this phase.`, 'info');
 }
 
@@ -441,11 +449,13 @@ export function useStratagem(
   targetModelIndex?: number,
   secondaryTargetUnitId?: string,
   sourceModelIndex?: number,
+  heroicInterventionMode?: HeroicInterventionMode,
 ): BattleState {
   const stratagem = stratagemById(rules, stratagemId);
   if (!stratagem) return state;
   if (!phaseAllowed(stratagem, state.phase)) return state;
   if (!timingAllowed(state, stratagem)) return state;
+  if (!heroicInterventionModeAllowed(stratagem, heroicInterventionMode)) return state;
   if (!turnAllowed(state, side, stratagem)) return state;
   if (!battleRoundAllowed(state, stratagem)) return state;
   if (alreadyUsedThisPhase(state, side, stratagem)) return state;
@@ -459,7 +469,8 @@ export function useStratagem(
   if (!secondaryTargetAllowed(state, side, stratagem, target, secondaryTargetUnitId, sourceModelIndex, rules)) return state;
 
   const next: BattleState = JSON.parse(JSON.stringify(state));
-  if (!spendCommandPoints(next, side, stratagem.cost)) return state;
+  const commandPointsSpent = stratagem.cost + (heroicInterventionMode === 'into-the-fray' ? 1 : 0);
+  if (!spendCommandPoints(next, side, commandPointsSpent)) return state;
 
   const use: StratagemUse = {
     id: `stratagem-${++_stratagemUseId}`,
@@ -472,7 +483,8 @@ export function useStratagem(
     ...(stratagem.id === 'epic-challenge' ? { targetModelIndex: targetModelIndex ?? 0 } : {}),
     ...(secondaryTargetUnitId ? { secondaryTargetUnitId } : {}),
     ...(sourceModelIndex !== undefined ? { sourceModelIndex } : {}),
-    commandPointsSpent: stratagem.cost,
+    ...(heroicInterventionMode ? { heroicInterventionMode } : {}),
+    commandPointsSpent,
   };
   next.stratagemUses = [...(next.stratagemUses ?? []), use];
   next.log = [...next.log, {
@@ -488,7 +500,7 @@ export function useStratagem(
   applyCommandRerollStratagemEffect(next, side, use);
   applyInsaneBraveryStratagemEffect(next, side, stratagem, targetUnitId);
   applyRapidIngressStratagemEffect(next, side, stratagem, targetUnitId);
-  applyHeroicInterventionStratagemEffect(next, side, stratagem, targetUnitId);
+  applyHeroicInterventionStratagemEffect(next, side, stratagem, targetUnitId, heroicInterventionMode);
   applyMortalWoundStratagemEffect(next, side, stratagem, targetUnitId, secondaryTargetUnitId, sourceModelIndex);
   return next;
 }

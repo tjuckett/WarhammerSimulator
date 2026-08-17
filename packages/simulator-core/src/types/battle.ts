@@ -90,6 +90,7 @@ export interface BattleUnit {
   inStrategicReserves?: boolean;
   rapidIngressThisPhase?: boolean;
   heroicInterventionThisPhase?: boolean;
+  heroicInterventionMode?: 'leap-to-defend' | 'into-the-fray';
   embarkedInUnitId?: string;
   emergencyDisembarkedThisTurn?: boolean;
   /** 11e Core 18.04 Combat Disembark restriction for the current turn. */
