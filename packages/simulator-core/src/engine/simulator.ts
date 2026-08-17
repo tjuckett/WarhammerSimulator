@@ -6710,6 +6710,17 @@ function runSimulatedMovementPhase(state: BattleState, side: Side, rules: RulesE
   return logs;
 }
 
+function runSimulatedShootingPhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
+  const armyName = state.armies[side].name;
+  const logs: LogEntry[] = [];
+  state.phase = 'shooting';
+  state.movementStep = undefined;
+  logs.push(phaseLog(state, side, armyName, `\n─── Shooting Phase ───`));
+  logs.push(...runShootingPhaseUnits(state, side, rules));
+  updateObjectiveControl(state, rules);
+  return logs;
+}
+
 export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): BattleState {
   let s = clone(state);
   const side = s.activeArmy;
@@ -6740,11 +6751,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }
 
   // Shooting
-  s.phase = 'shooting';
-  s.movementStep = undefined;
-  newLogs.push(phaseLog(s, side, armyName, `\n─── Shooting Phase ───`));
-  newLogs.push(...runShootingPhaseUnits(s, side, rules));
-  updateObjectiveControl(s, rules);
+  newLogs.push(...runSimulatedShootingPhase(s, side, rules));
 
   checkWinner(s);
   if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }
