@@ -2293,7 +2293,7 @@ export function startPlayUnitAction(
   side: Side,
   actionId = 'generic-action',
   actionName = 'Action',
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
   targetObjectiveIndex?: number,
   targetTerrainId?: string,
   targetOperationMarkerId?: string,
