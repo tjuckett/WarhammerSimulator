@@ -232,6 +232,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: Rapid Disembark is also available during the Reinforcements step when the transport arrived via Ingress; ordinary disembark remains restricted to the Movement Units step.
   - Progress: final Core 05.04.02 damage handling now clamps weapon damage to the minimum characteristic value of 1 before allocation, with regression coverage.
 - [ ] Remove or narrow the 11th preview notice once final 11th rules are fully modeled.
+  - Progress: the ruleset now identifies the tracked final-source implementation as source-audited and partial, with remaining unsupported mechanics described explicitly instead of presenting the whole edition as an unavailable preview.
 - [ ] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.
   - Progress: pile-in and consolidation availability, plus Fight-step start/end gating, now rely on focused core rules helpers rather than duplicating edition checks in React; phase-specific labels remain presentation concerns.
   - Progress: shared disembark-mode resolution now owns 11th Combat/Rapid Disembark flags in simulator-core and is reused by legal actions and the play UI, including Reinforcements-step Rapid Disembark.

@@ -251,12 +251,14 @@ const ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE = true;
 export const rules40K11th: RulesEdition = {
   ...rules40K10th,
   id: 'w40k-11th',
-  name: '40K 11th Edition',
+  name: '40K 11th Edition (source-audited)',
   metadata: {
+    // Keep the stable identifier so saved games created before the source audit
+    // continue to resolve to 11th Edition instead of falling back to 10th.
     id: 'w40k-11e-preview-core',
     gameSystem: 'warhammer-40k',
     edition: '11e',
-    rulesVersion: 'preview-core',
+    rulesVersion: '2026-core-partial',
     status: 'implemented',
     compatibilitySourceId: rules40K10th.id,
   },
@@ -396,7 +398,7 @@ export const rules40K11th: RulesEdition = {
     },
   ],
   unitAbilities: [],
-  description: 'Warhammer 40,000 11th Edition preview core rules with terrain objectives, actions, snap shooting, aircraft/vertical movement support, and core stratagem targeting/effects implemented where preview wording is available. Remaining mechanics fall back to compatible 10th Edition behavior until final 11th rules are added.',
+  description: 'Warhammer 40,000 11th Edition using the tracked 2026 Core Rules source. Supported core phases, terrain objectives, actions, aircraft/vertical movement, stratagems, missions, and generic abilities are implemented; remaining source-dependent or unmodeled mechanics are explicit and fail closed.',
 };
 
 // ─── Registry ─────────────────────────────────────────────────────────────────

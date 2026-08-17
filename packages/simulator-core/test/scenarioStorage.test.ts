@@ -584,9 +584,9 @@ test('stratagem framework blocks battle-shocked target units', () => {
   assert.deepEqual(battle.commandPoints, [1, 0]);
 });
 
-test('11th edition preview exposes core stratagems from the rules preview', () => {
+test('11th source-audited ruleset exposes its core stratagems and metadata', () => {
   assert.equal(rules40K11th.metadata.status, 'implemented');
-  assert.equal(rules40K11th.metadata.rulesVersion, 'preview-core');
+  assert.equal(rules40K11th.metadata.rulesVersion, '2026-core-partial');
   assert.deepEqual(rules40K11th.stratagems.map(stratagem => stratagem.id), [
     'command-reroll',
     'epic-challenge',
