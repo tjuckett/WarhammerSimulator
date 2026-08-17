@@ -1033,7 +1033,7 @@ export default function App() {
         ? prev
         : availablePlayStratagems[0]?.id ?? '',
     );
-  }, [availablePlayStratagems]);
+  }, [availablePlayStratagems, setSelectedStratagemId]);
 
   useEffect(() => {
     setSelectedAbilityKey(prev =>
@@ -1041,7 +1041,7 @@ export default function App() {
         ? prev
         : availablePlayAbilities[0] ? abilityOptionKey(availablePlayAbilities[0]) : '',
     );
-  }, [availablePlayAbilities]);
+  }, [availablePlayAbilities, setSelectedAbilityKey]);
   const selectedPlayDisembarkOptions = useMemo(() => {
     if (!isPlayMode || !battleState || !primaryPlaySelection || !selectedPlayBattleUnit) return [];
     const side = primaryPlaySelection.side;
