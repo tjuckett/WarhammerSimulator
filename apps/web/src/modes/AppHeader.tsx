@@ -20,6 +20,7 @@ import {
 } from '@warhammer-simulator/core/engine/missions';
 
 type Props = {
+  armyBuilderMode?: boolean;
   battleStarted: boolean;
   editionId: string;
   isEleventhEdition: boolean;
@@ -43,6 +44,7 @@ type Props = {
 };
 
 export function AppHeader({
+  armyBuilderMode = false,
   battleStarted,
   editionId,
   isEleventhEdition,
@@ -74,7 +76,7 @@ export function AppHeader({
         Change Mode
       </Button>
 
-      {!battleStarted && (
+      {!battleStarted && !armyBuilderMode && (
         <Box className="header-controls">
           <FormControl sx={{ minWidth: 132 }}>
             <InputLabel id="edition-label">Edition</InputLabel>

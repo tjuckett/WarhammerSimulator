@@ -130,3 +130,22 @@ export function useUnitAbility(
   }];
   return next;
 }
+
+/** Resolve modeled automatic abilities at their declared simulation timing. */
+export function runAutomaticUnitAbilities(
+  state: BattleState,
+  side: Side,
+  timing: AbilityTiming,
+  rules: RulesEdition,
+): void {
+  const unitIds = state.units
+    .filter(unit => unit.side === side && !unit.destroyed && !unit.embarkedInUnitId)
+    .map(unit => unit.id);
+  const abilities = rules.unitAbilities.filter(ability => ability.timing === timing);
+  for (const unitId of unitIds) {
+    for (const ability of abilities) {
+      const next = useUnitAbility(state, unitId, side, ability.id, timing, rules);
+      if (next !== state) Object.assign(state, next);
+    }
+  }
+}

@@ -1,6 +1,8 @@
 import type { BattleSetup, Position } from '../types/battle';
 import { CHAPTER_APPROVED_MISSION_POOL, ELEVENTH_EVENT_MISSION_MATCHUPS, ELEVENTH_FORCE_DISPOSITIONS, type EleventhForceDispositionId as DataEleventhForceDispositionId, type EleventhForceDispositionSpec, type EleventhMissionMatchupSpec, type TournamentMissionSpec } from '../data/missions';
 import { DEFAULT_OBJECTIVE_MARKERS, OBJECTIVE_MARKER_SETS } from '../data/objectiveMarkers';
+import { missionLayoutForBoardFormat } from '../data/missionLayouts';
+import type { BoardFormat } from '../types/battle';
 
 export type TournamentMission = TournamentMissionSpec;
 export type EleventhForceDispositionId = DataEleventhForceDispositionId;
@@ -22,7 +24,13 @@ export const DEPLOYMENTS = Array.from(new Set(
 
 export const DEFAULT_OBJECTIVES: Position[] = DEFAULT_OBJECTIVE_MARKERS.objectives;
 
-export function objectivesForDeployment(deployment: string): Position[] {
+export function objectivesForDeployment(
+  deployment: string,
+  boardFormat: BoardFormat['id'] = 'strike-force',
+): Position[] {
+  if (boardFormat !== 'strike-force') {
+    return missionLayoutForBoardFormat(boardFormat).objectives.map(position => ({ ...position }));
+  }
   return (
     OBJECTIVE_MARKER_SETS.find(markerSet => markerSet.deployment === deployment)?.objectives
     ?? DEFAULT_OBJECTIVES

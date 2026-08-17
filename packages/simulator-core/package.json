@@ -12,7 +12,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "tsc -p tsconfig.test.json && node -e \"require('fs').writeFileSync('.test-dist/package.json', JSON.stringify({ type: 'commonjs' }))\" && node .test-dist/test/scenarioStorage.test.js"
+    "test": "tsc -p tsconfig.test.json && node -e \"require('fs').writeFileSync('.test-dist/package.json', JSON.stringify({ type: 'commonjs' }))\" && node .test-dist/test/armyValidation.test.js && node .test-dist/test/controllerArchitecture.test.js && node .test-dist/test/realArmyImport.test.js && node .test-dist/test/missionLayouts.test.js && node .test-dist/test/terrainPathing.test.js && node .test-dist/test/unitAbilitiesSimulation.test.js && node .test-dist/test/scenarioStorage.test.js"
   },
   "devDependencies": {
     "typescript": "~6.0.2"

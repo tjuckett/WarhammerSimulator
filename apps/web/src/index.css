@@ -42,6 +42,232 @@ html, body, #root {
   flex-wrap: wrap;
 }
 
+.army-builder {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 10px;
+  background: #0f0f1a;
+}
+
+.army-builder-hidden {
+  display: none !important;
+}
+
+.army-builder-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px;
+  border: 1px solid #2f2f55;
+  background: #151525;
+}
+
+.army-builder-toolbar strong {
+  color: #d8d8ff;
+  margin-right: 8px;
+}
+
+.army-builder-toolbar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #aaaacc;
+  font-size: 11px;
+}
+
+.army-builder-toolbar select,
+.army-builder-toolbar button,
+.army-builder-file-button,
+.army-builder-meta input {
+  border: 1px solid #3a3a6e;
+  border-radius: 4px;
+  background: #1e1e36;
+  color: #eeeeff;
+  font: inherit;
+  font-size: 11px;
+  padding: 5px 7px;
+}
+
+.army-builder-toolbar button,
+.army-builder-file-button {
+  cursor: pointer;
+}
+
+.army-builder-toolbar button:hover,
+.army-builder-file-button:hover {
+  background: #292950;
+  border-color: #7777cc;
+}
+
+.army-builder-file-button input {
+  display: none;
+}
+
+.army-builder-validation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 6px 8px;
+  border: 1px solid #6d5d27;
+  background: #211e13;
+  color: #e5c96a;
+  font-size: 10px;
+}
+
+.army-builder-validation.is-valid {
+  border-color: #286b45;
+  background: #132219;
+  color: #7fe0a4;
+}
+
+.army-builder-validation.has-errors {
+  border-color: #8c3d47;
+  background: #29171b;
+  color: #ff9ca5;
+}
+
+.army-builder-validation span {
+  color: #b7b0a0;
+}
+
+.army-builder-storage-status {
+  color: #8ec5ff;
+  font-size: 10px;
+  margin-left: auto;
+}
+
+.army-builder-columns {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.8fr) minmax(320px, 1.25fr) minmax(220px, 0.9fr);
+  gap: 10px;
+}
+
+.army-builder-library,
+.army-builder-current,
+.army-builder-stats {
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid #2f2f55;
+  background: #13132a;
+  padding: 9px;
+}
+
+.army-builder-current {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.army-builder-current > .army-builder-section-title,
+.army-builder-current > .army-builder-meta {
+  margin-left: 9px;
+  margin-right: 9px;
+}
+
+.army-builder-section-title {
+  color: #d8d8ff;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 7px;
+}
+
+.army-builder-hint {
+  color: #777799;
+  font-size: 10px;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.army-builder-library-item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 3px;
+  margin-bottom: 5px;
+  padding: 7px;
+  border: 1px solid #30305a;
+  border-radius: 4px;
+  background: #191932;
+  color: #eeeeff;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.army-builder-library-item:hover {
+  border-color: #7777cc;
+  background: #242448;
+}
+
+.army-builder-library-item small {
+  color: #8888aa;
+  font-size: 10px;
+}
+
+.army-builder-meta {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.army-builder-meta input {
+  min-width: 0;
+  flex: 1;
+}
+
+.army-builder-current > div:last-child {
+  flex: 1;
+  min-height: 0;
+}
+
+.army-builder-stats h2 {
+  color: #eeeeff;
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.army-builder-stats h3 {
+  color: #aaaacc;
+  font-size: 11px;
+  margin: 14px 0 5px;
+}
+
+.army-builder-stats p {
+  color: #8888aa;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.army-builder-stat-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px 12px;
+  color: #8888aa;
+  font-size: 11px;
+}
+
+.army-builder-stat-grid strong {
+  color: #eeeeff;
+}
+
+@media (max-width: 900px) {
+  .army-builder-columns {
+    grid-template-columns: 1fr 1fr;
+    overflow: auto;
+  }
+
+  .army-builder-stats {
+    grid-column: 1 / -1;
+  }
+}
+
 .header-battle-actions {
   display: flex;
   align-items: center;
@@ -1041,6 +1267,13 @@ html, body, #root {
   gap: 6px;
   font-size: 11px;
   color: #777;
+}
+
+.controller-seat-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 .speed-label input[type=range] { width: 80px; accent-color: #6666cc; cursor: pointer; }
 

@@ -14,6 +14,7 @@ type PlayModelSelectionLike = {
 export function canEditPlayModels(state: BattleState | null | undefined): state is BattleState {
   return !!state && (
     state.phase === BATTLE_PHASE.Deployment
+    || (state.phase === BATTLE_PHASE.Setup && state.units.some(unit => unit.scoutMoveStarted))
     || (state.phase === BATTLE_PHASE.Movement && movementStep(state) === MOVEMENT_STEP.MoveUnits)
   );
 }

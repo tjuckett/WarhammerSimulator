@@ -17,10 +17,12 @@ import {
   consecrateObjective,
   consolidatePlayUnit,
   declarePlayUnitTakeToSkies,
+  declarePlaySuperHeavyMobile,
   disembarkPlayUnit,
   embarkPlayUnit,
   fallBackPlayUnit,
   fightPlayUnitWeapon,
+  type FiringDeckSelection,
   grantPlaySurgeMove,
   type PlayMeleeAttackSplit,
   lockPlayUnitShooting,
@@ -42,7 +44,12 @@ import {
   rotatePlayModels,
   shootPlayUnitWeapon,
   simulateNextPhase,
+  simulateNextUnit,
+  simulatePlayerTurn,
   selectPlayOverrunFight,
+  selectPlayFiringDeckWeapons,
+  startPlayScoutMove,
+  completePlayScoutMove,
   startPlayFightStep,
   snapShootPlayUnitWeapon,
   startPlayUnitAction,
@@ -73,6 +80,7 @@ export const GAME_ACTION_TYPE = {
   MoveModels: 'play.moveModels',
   MoveModelsVertically: 'play.moveModelsVertically',
   DeclareTakeToSkies: 'play.declareTakeToSkies',
+  DeclareSuperHeavyMobile: 'play.declareSuperHeavyMobile',
   GrantSurgeMove: 'play.grantSurgeMove',
   ResolveSurgeMove: 'play.resolveSurgeMove',
   AdvanceUnit: 'play.advanceUnit',
@@ -87,6 +95,9 @@ export const GAME_ACTION_TYPE = {
   AssignWoundedModel: 'play.assignWoundedModel',
   AllocateDamage: 'play.allocateDamage',
   ShootUnitWeapon: 'play.shootUnitWeapon',
+  SelectFiringDeckWeapons: 'play.selectFiringDeckWeapons',
+  StartScoutMove: 'play.startScoutMove',
+  CompleteScoutMove: 'play.completeScoutMove',
   SnapShootUnitWeapon: 'play.snapShootUnitWeapon',
   LockUnitShooting: 'play.lockUnitShooting',
   ChargeUnitTarget: 'play.chargeUnitTarget',
@@ -112,7 +123,9 @@ export const GAME_ACTION_TYPE = {
   SelectBeaconUnit: 'mission.selectBeaconUnit',
   SelectBurdenOfTrustGuards: 'mission.selectBurdenOfTrustGuards',
   SimulationPlaceNextUnit: 'simulation.placeNextUnit',
+  SimulationStepUnit: 'simulation.stepUnit',
   SimulationStepPhase: 'simulation.stepPhase',
+  SimulationStepTurn: 'simulation.stepTurn',
 } as const;
 
 export type GameAction =
@@ -153,6 +166,11 @@ export type GameAction =
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.DeclareTakeToSkies;
+      side: Side;
+      unitId: string;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.DeclareSuperHeavyMobile;
       side: Side;
       unitId: string;
     })
@@ -233,6 +251,22 @@ export type GameAction =
       unitId: string;
       targetUnitId: string;
       weaponIndex: number | 'all';
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.SelectFiringDeckWeapons;
+      side: Side;
+      unitId: string;
+      selections: FiringDeckSelection[];
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.StartScoutMove;
+      side: Side;
+      unitId: string;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.CompleteScoutMove;
+      side: Side;
+      unitId: string;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.SnapShootUnitWeapon;
@@ -374,6 +408,12 @@ export type GameAction =
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.SimulationStepPhase;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.SimulationStepUnit;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.SimulationStepTurn;
     });
 
 export interface GameActionContext {
@@ -552,6 +592,9 @@ export function applyGameAction(
     case GAME_ACTION_TYPE.DeclareTakeToSkies:
       return declarePlayUnitTakeToSkies(state, normalizedAction.unitId, normalizedAction.side, context.rules);
 
+    case GAME_ACTION_TYPE.DeclareSuperHeavyMobile:
+      return declarePlaySuperHeavyMobile(state, normalizedAction.unitId, normalizedAction.side);
+
     case GAME_ACTION_TYPE.GrantSurgeMove:
       return grantPlaySurgeMove(
         state,
@@ -631,6 +674,20 @@ export function applyGameAction(
         normalizedAction.weaponIndex,
         context.rules,
       );
+
+    case GAME_ACTION_TYPE.SelectFiringDeckWeapons:
+      return selectPlayFiringDeckWeapons(
+        state,
+        normalizedAction.unitId,
+        normalizedAction.side,
+        normalizedAction.selections,
+      );
+
+    case GAME_ACTION_TYPE.StartScoutMove:
+      return startPlayScoutMove(state, normalizedAction.unitId, normalizedAction.side);
+
+    case GAME_ACTION_TYPE.CompleteScoutMove:
+      return completePlayScoutMove(state, normalizedAction.unitId, normalizedAction.side);
 
     case GAME_ACTION_TYPE.SnapShootUnitWeapon:
       return snapShootPlayUnitWeapon(
@@ -767,6 +824,12 @@ export function applyGameAction(
 
     case GAME_ACTION_TYPE.SimulationStepPhase:
       return simulateNextPhase(state, context.rules);
+
+    case GAME_ACTION_TYPE.SimulationStepUnit:
+      return simulateNextUnit(state, context.rules);
+
+    case GAME_ACTION_TYPE.SimulationStepTurn:
+      return simulatePlayerTurn(state, context.rules);
   }
 }
 
@@ -774,6 +837,7 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
   const normalizedAction = normalizeGameAction(action);
   switch (normalizedAction.type) {
     case GAME_ACTION_TYPE.UndeployUnit:
+    case GAME_ACTION_TYPE.DeclareSuperHeavyMobile:
     case GAME_ACTION_TYPE.PlaceStrategicReserveUnit:
     case GAME_ACTION_TYPE.FallBackUnit:
     case GAME_ACTION_TYPE.AdvanceUnit:
@@ -783,6 +847,9 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
     case GAME_ACTION_TYPE.ChargeUnitTarget:
     case GAME_ACTION_TYPE.PileInUnit:
     case GAME_ACTION_TYPE.ConsolidateUnit:
+    case GAME_ACTION_TYPE.SelectFiringDeckWeapons:
+    case GAME_ACTION_TYPE.StartScoutMove:
+    case GAME_ACTION_TYPE.CompleteScoutMove:
       return normalizedAction.unitId === unitId;
     case GAME_ACTION_TYPE.FightUnitWeapon:
     case GAME_ACTION_TYPE.SnapShootUnitWeapon:

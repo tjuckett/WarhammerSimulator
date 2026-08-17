@@ -6,7 +6,14 @@ export function unitCanBeAffectedByStratagem(unit: BattleUnit): boolean {
 }
 
 export function objectiveControlValue(unit: BattleUnit): number {
-  return unit.battleshocked ? 0 : unit.profile.oc;
+  if (unit.battleshocked) return 0;
+  const damaged = unit.profile.damagedProfile;
+  const modifier = damaged
+    && unit.remainingModels === 1
+    && unit.woundsOnLeadModel <= damaged.maxRemainingWounds
+    ? damaged.objectiveControlModifier ?? 0
+    : 0;
+  return Math.max(0, unit.profile.oc + modifier);
 }
 
 export function resolveDesperateEscapeTests(

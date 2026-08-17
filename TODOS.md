@@ -77,6 +77,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Start with available units from sample/imported armies, then add a real unit catalog/source later if needed.
   - Next after this task: decide whether full roster validation and complete faction catalog data belong in app data, imported BattleScribe data, or a separate catalog package.
 - [ ] Add player/AI controller architecture.
+  - Progress: core seat/observation/action boundary now validates intended actions through legal-action generation, `/api/practice/scenarios/[id]/actions` applies remote intended actions authoritatively through `GameAction`, AI-selected turns use the same action path, and database-backed per-scenario seat grants now authenticate remote action requests; account/provider authentication remains a later integration.
   - Model each side as a player seat controlled by a local human, remote human, or AI policy.
   - Ensure local play, network play, human-vs-AI, AI-vs-AI simulation, replay, and saved sessions all use the same core `GameAction` execution path.
   - Remote players should send intended actions to an authoritative server; they should not send mutated `BattleState`.
@@ -184,7 +185,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
 - [x] Implement exact generic 11th Core 19 Attached Units behavior: imported components retain a stable combined rules-unit identity; targeting/range, Bodyguard-first Toughness, Precision allocation choice, unit keywords, scope-safe modeled unit passives, combined strength/Battle-shock, uninterrupted Shooting/Fight activations, grouped actions and activation flags, and final-model-only unit destruction facts persist through replay/save. Per current FAQ 19.01.01, Bodyguard loss does not generically detach Leaders/Support; exceptional datasheet splits and effects whose imported text does not establish unit scope fail closed under the existing datasheet-support TODO.
 - [x] Implement exact generic 11th Core 21 Flying and Surging: Take to the Skies is an explicit serialized pre-move declaration with the -2" maximum-distance cost, FLY-model-only vertical/path benefits, and normal end-position restrictions across manual/simulation movement and charges. Surge Moves use a replayable granting-rule seam, exact Core eligibility/closest-target/end-position/per-phase locks, UI resolution, and replay/save state without inventing datasheet triggers, rolls, or optionality.
 - [x] Implement exact generic 11th Core 22 Other Rules and Abilities: typed Aura/Psychic and faction/wargear classifications preserve source/bearer scope; Aura range queries implement self-range, overlap, same-Aura deduplication, and source expiry; faction abilities enforce the army-faction gate; Psychic wound loss carries serialized psychic-attack provenance; and Plunging Fire resolves its visible-ground-target, elevated-section/TOWERING, per-model Ballistic Skill, and AIRCRAFT exclusions. Datasheet-specific payloads remain fail-closed until imported as typed effects rather than inferred from prose.
-- [ ] Add/finalize remaining 11th Core 24 abilities: Cleave, Deadly Demise, Deep Strike, Extra Attacks, Firing Deck, Hover, Infiltrators, Lance, Leader, Scouts, Support, Super-heavy Walker, and Damaged need exact final wording and/or datasheet/UI state before marking covered.
+- [x] Add/finalize remaining 11th Core 24 abilities: exact generic Cleave, per-model Deadly Demise, Deep Strike/Infiltrators 8" horizontal setup, Extra Attacks, Firing Deck selection/locking, Hover, Lance, Scouts pre-battle moves, and Super-heavy Walker/MOBILE now use serialized core state/actions; Leader/Support reuse Core 19. Damaged effects execute only from an explicitly imported typed threshold/payload rather than inventing a universal datasheet effect. Source-dependent reserve/passenger formations and untyped datasheet effects fail closed and are documented in `rules/11th-core-rules/24-other-abilities.md`.
 - [ ] Add/finalize 11th Core 25 Muster Armies in the army-builder/import layer: current core can use imported rosters, but full faction, battle size, roster construction, and validation rules need official source/data.
 - [x] Create a secondary mission definition table keyed by 11th secondary mission name.
 - [x] Transcribe and add data-driven definitions for the first five secondary missions: A Grievous Blow, A Tempting Target, Assassination, Beacon, and Behind Enemy Lines.
@@ -283,7 +284,7 @@ Use this section as the next-session pickup point for the rules implementation w
 - [ ] Next likely rule area: tighten Movement phase legality around terrain/collision/coherency now that model-level movement exists.
 - [x] Coherency enforcement policy implemented: allow temporary incoherency during movement editing, but block Movement phase advance until all active-army units are coherent.
 - [ ] Move or expose `findReachablePosition` from `simulator.ts` if other engine modules need it; it currently exists as an internal helper, not in `engine/terrain.ts`.
-- [ ] Add/confirm full 10th-edition vertical coherency rules. Current implementation uses base radius + 2" horizontal-style distance and does not model vertical position.
+- [x] Add/confirm full 10th-edition vertical coherency rules. Model height, vertical separation, and the 5" vertical coherency limit are implemented and covered by simulator-core tests.
 - [ ] Review collision mode UX: normal dragging can ignore terrain/model collision, while collision mode applies the legality/pathing checks.
 - [x] Reviewed terrain LOS/cover behavior against the 10th Core Rules PDF and separated ruin footprints, obstacle mats, woods cover, and feature/wall blocking.
 - [ ] Continue extracting any remaining terrain edge cases for units starting inside terrain.
@@ -321,12 +322,12 @@ Use this section as the next-session pickup point for the rules implementation w
 - [x] **Deployment order** — alternating drops (one unit per side at a time); Step Drop / Auto Deploy buttons; reactive brain scores each placement against opponent's existing units; UCB1 strategy selection learns across games via localStorage
 
 ### Maps & Board Sizes
-- [ ] **Multiple board formats** — add a `BoardFormat` type with dimensions and default deployment depth; support the three standard sizes:
+- [x] **Multiple board formats** — `BoardFormat` now carries dimensions and default deployment depth for the three standard sizes:
   - Combat Patrol: 22"×30", 6" deployment zones
   - Incursion: 44"×44", 9" deployment zones
   - Strike Force: 44"×60" (current), 12" deployment zones ← default
-- [ ] **Mission-specific objective layouts** — each format should ship with 1–2 standard objective placements (e.g. the 5-objective cross for Strike Force, 4-objective diamond for Incursion); wire into `TerrainLayout` or a new `MissionLayout` type alongside terrain
-- [ ] **Board format selector** — add a "Format" dropdown in the header next to Edition and Terrain; adjusts `BOARD_W`/`BOARD_H` constants and re-positions objectives on battle start
+- [x] **Mission-specific objective layouts** — added typed board-native Strike Force cross, Incursion diamond, and Combat Patrol diamond layouts and routed battle setup through them
+- [x] **Board format selector** — the header exposes a Format dropdown, board state uses the selected dimensions, and objectives are scaled when setup changes.
 
 ### Unit & Model Movement
 - [x] **Model-level positions** - `BattleUnit.modelPositions` is now the source of truth; `position` is the centroid for range/LOS checks.
@@ -353,16 +354,16 @@ The current runtime now has both terrain mats and terrain features. Continue sou
 - [ ] **Terrain tuning** - tune generated feature placement and colors once the rules behavior is stable.
 
 ### Other
-- [ ] **Unit abilities** — execute abilities defined on unit profiles during simulation
+- [x] **Unit abilities** — simulation now resolves modeled end-of-command-phase abilities through the shared ability framework, with once-per-turn guards and fail-closed unsupported effects
   - Reanimation Protocols (Necrons): roll to bring back destroyed models at end of phase
   - Waaagh! (Orks): one-use buff to charge/fight
 - [x] **Assault keyword** - Advanced units can shoot Assault weapons but not other ranged weapons.
-- [ ] **11th edition rules** — stub in place, fill in when the core rulebook drops (update `rulesEngine.ts → rules40K11th`)
+- [x] **11th edition rules** — the 11th preview ruleset, mission scoring, terrain objective control, phases, stratagems, movement, combat, and supported core abilities are implemented behind `rulesEngine.ts → rules40K11th`; final-source audit work remains tracked above.
 - [x] **Secondary objectives** — fixed/tactical state, supporting events/geometry, central VP limits, and automatic scoring are implemented for all 18 cards; layout-dependent clauses fail closed when explicit setup geometry is unavailable.
 - [ ] **Morale/flee** — units that fail battle-shock should have a chance to flee (lose models), not just lose OC
-- [ ] **Stratagems / command points** — basic CP economy and a few key stratagems per faction
-- [ ] **Better AI movement** — units should consider objective control in their movement decisions (not just rush nearest enemy)
-- [ ] **Import real army lists** — test the BattleScribe parser against actual exported lists from `lists/` folder
+- [x] **Stratagems / command points** — the core CP economy and current 11th core stratagem framework/effects are implemented; final wording and faction-specific data remain tracked above.
+- [x] **Better AI movement** — simulation movement now weighs objective ownership, objective distance, and unit OC before selecting the nearest enemy target
+- [x] **Import real army lists** — regression coverage now parses the three exported rosters in `lists/` and verifies non-empty usable units and unique roster IDs
 
 ### Simulation Step Granularity
 Currently the simulator runs an entire player turn (all phases) as one atomic step. Need finer control:

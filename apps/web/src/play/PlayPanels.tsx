@@ -5,7 +5,7 @@ import CasinoOutlinedIcon from '@mui/icons-material/CasinoOutlined';
 import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
-import type { PlayChargeTargetOption, PlayFightWeaponOption, PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
+import type { FiringDeckSelection, PlayChargeTargetOption, PlayFightWeaponOption, PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
 import {
   abilityOptionKey,
   abilityTimingLabel,
@@ -108,6 +108,9 @@ export function PlayShootingPanel({
   coverUnitIds,
   onTargetChange,
   onWeaponChange,
+  firingDeckOptions = [],
+  firingDeckCapacity = 0,
+  onFiringDeckSelect,
   onResolve,
 }: {
   shooter: BattleUnit | null;
@@ -124,8 +127,12 @@ export function PlayShootingPanel({
   coverUnitIds?: Set<string>;
   onTargetChange: (value: string) => void;
   onWeaponChange: (value: 'all' | string) => void;
+  firingDeckOptions?: FiringDeckSelection[];
+  firingDeckCapacity?: number;
+  onFiringDeckSelect?: (selections: FiringDeckSelection[]) => void;
   onResolve: () => void;
 }) {
+  const [firingDeckKeys, setFiringDeckKeys] = useState<string[]>([]);
   if (!shooter) {
     return (
       <Box sx={playPanelSx}>
@@ -155,6 +162,25 @@ export function PlayShootingPanel({
 
   return (
     <Box sx={playPanelSx}>
+      {firingDeckOptions.length > 0 && onFiringDeckSelect && (
+        <Box sx={{ display: 'grid', gap: 0.5 }}>
+          <Typography variant="caption">Firing Deck: select up to {firingDeckCapacity} embarked model{firingDeckCapacity === 1 ? '' : 's'}.</Typography>
+          {firingDeckOptions.map(option => {
+            const key = `${option.passengerRosterId}:${option.modelIndex}:${option.weaponIndex}`;
+            const modelPrefix = `${option.passengerRosterId}:${option.modelIndex}:`;
+            const selected = firingDeckKeys.includes(key);
+            const anotherForModel = firingDeckKeys.some(candidate => candidate.startsWith(modelPrefix) && candidate !== key);
+            return (
+              <Button key={key} size="small" variant={selected ? 'contained' : 'outlined'} disabled={!selected && (anotherForModel || firingDeckKeys.length >= firingDeckCapacity)} onClick={() => setFiringDeckKeys(current => selected ? current.filter(candidate => candidate !== key) : [...current, key])}>
+                {option.passengerName ?? option.passengerRosterId} model {option.modelIndex + 1}: {option.weaponName ?? `weapon ${option.weaponIndex + 1}`}
+              </Button>
+            );
+          })}
+          <Button size="small" color="secondary" variant="contained" onClick={() => onFiringDeckSelect(firingDeckOptions.filter(option => firingDeckKeys.includes(`${option.passengerRosterId}:${option.modelIndex}:${option.weaponIndex}`)))}>
+            Confirm Firing Deck
+          </Button>
+        </Box>
+      )}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
         <Box sx={{ minWidth: 0 }}>
           <Typography variant="subtitle2" sx={panelTitleSx}>{title}</Typography>

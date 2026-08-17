@@ -37,6 +37,7 @@ interface Props {
   state: BattleState;
   selectedUnitId?: string | null;
   selectedUnitIds?: string[];
+  activeSimulationUnitId?: string | null;
   shooterUnitId?: string | null;
   targetUnitId?: string | null;
   shootingReadyUnitIds?: Set<string>;
@@ -74,7 +75,7 @@ const ZOOM_STEP = 0.25;
 const NO_MANS_LAND_FILL = 'rgb(240, 240, 232)';
 const ALIGN_VERTEX_PICK_RADIUS = 0.22;
 
-export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], shooterUnitId = null, targetUnitId = null, shootingReadyUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, onSelectUnit, deployer, editor }: Props) {
+export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], activeSimulationUnitId = null, shooterUnitId = null, targetUnitId = null, shootingReadyUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, onSelectUnit, deployer, editor }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<null | { selection: TerrainEditSelection; offsetX: number; offsetY: number }>(null);
@@ -137,6 +138,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       deployer?.selectedModel ?? null,
       selectedUnitId,
       selectedUnitIds,
+      activeSimulationUnitId,
       shooterUnitId,
       targetUnitId,
       shootingReadyUnitIds,
@@ -154,7 +156,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
   useEffect(() => {
     renderCanvas();
     updateSelectedActionsPosition();
-  }, [state, editor?.selected, hoverGridPoint, zoom, deployer?.selectedModel, deployer?.selectedModelActions, hideSelectedActions, selectedUnitId, selectedUnitIds, shooterUnitId, targetUnitId, shootingReadyUnitIds, boxSelect, hoveredTransport, hoveredUnitId, coverUnitIds, losRays, visibleOutOfRangeUnitIds]);
+  }, [state, editor?.selected, hoverGridPoint, zoom, deployer?.selectedModel, deployer?.selectedModelActions, hideSelectedActions, selectedUnitId, selectedUnitIds, activeSimulationUnitId, shooterUnitId, targetUnitId, shootingReadyUnitIds, boxSelect, hoveredTransport, hoveredUnitId, coverUnitIds, losRays, visibleOutOfRangeUnitIds]);
 
   useEffect(() => {
     setHideSelectedActions(false);
@@ -721,6 +723,7 @@ function draw(
   selectedModel: PlayModelSelection | null,
   selectedUnitId: string | null,
   selectedUnitIds: string[],
+  activeSimulationUnitId: string | null,
   shooterUnitId: string | null,
   targetUnitId: string | null,
   shootingReadyUnitIds: Set<string> = new Set(),
@@ -911,7 +914,7 @@ function draw(
         ? unit.modelPositions.map((_, index) => index)
         : [];
     const shootingRole = unit.id === shooterUnitId ? 'shooter' : unit.id === targetUnitId ? 'target' : null;
-    drawUnit(ctx, previewUnit, state, scale, selectedModelIndices, hoveredUnitId === unit.id, coherencyIssueModelIds, !!modelDragPreview, coverUnitIds?.has(unit.id) ?? false, losModelStates, shootingRole, shootingReadyUnitIds.has(unit.id));
+    drawUnit(ctx, previewUnit, state, scale, selectedModelIndices, hoveredUnitId === unit.id, coherencyIssueModelIds, !!modelDragPreview, coverUnitIds?.has(unit.id) ?? false, losModelStates, shootingRole, shootingReadyUnitIds.has(unit.id), activeSimulationUnitId === unit.id);
   }
 
   if (hoveredTransport) drawTransportTooltip(ctx, hoveredTransport, scale, W, H);
@@ -1386,6 +1389,7 @@ function drawUnit(
   losModelStates: Map<string, ModelVisualState> = new Map(),
   shootingRole: 'shooter' | 'target' | null = null,
   shootingReady = false,
+  activeSimulationUnit = false,
 ) {
   const board = boardFormatForState(state);
   const color = state.armies[unit.side].color;
@@ -1396,6 +1400,23 @@ function drawUnit(
   const fillColor = unit.battleshocked ? '#888' : color;
   const outlineColor = unit.charged ? '#ffe000' : unit.inCombat ? '#ff8800' : unit.fellBack ? '#66d9ff' : unit.movementAction === 'advanced' ? '#7cff9b' : unit.movementAction === 'remainedStationary' ? '#b9d7ff' : 'rgba(255,255,255,0.5)';
   const outlineWidth = unit.charged || unit.inCombat || unit.fellBack || unit.movementAction === 'advanced' || unit.movementAction === 'remainedStationary' ? 1.7 : 0.9;
+
+  if (activeSimulationUnit) {
+    const ringRadius = unit.modelPositions.length > 0
+      ? Math.max(...unit.modelPositions.map((position, index) =>
+          Math.hypot(position.x - unit.position.x, position.y - unit.position.y) * scale + (modelRadii[index] ?? maxModelR),
+        )) + Math.max(3, scale * 0.35)
+      : maxModelR + Math.max(3, scale * 0.35);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(unit.position.x * scale, unit.position.y * scale, ringRadius, 0, Math.PI * 2);
+    ctx.strokeStyle = '#7df9ff';
+    ctx.lineWidth = Math.max(2, scale * 0.12);
+    ctx.setLineDash([Math.max(4, scale * 0.65), Math.max(3, scale * 0.45)]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
 
   // Draw each model footprint
   for (let i = 0; i < unit.modelPositions.length; i++) {
@@ -1458,7 +1479,7 @@ function drawUnit(
     }
   }
 
-  drawSelectedModelMovementHud(ctx, unit, state, scale, selectedModelIndices, modelRadii);
+  drawSelectedModelMovementHud(ctx, unit, state, scale, selectedModelIndices, modelRadii, board.width);
 
   const passengers = transportPassengersForUnit(state, unit);
   if (passengers.length) {
@@ -1730,6 +1751,7 @@ function drawSelectedModelMovementHud(
   scale: number,
   selectedModelIndices: number[],
   modelRadii: number[],
+  boardWidth: number,
 ) {
   if (!selectedModelIndices.length || unit.movementAction === 'fellBack' || unit.fellBack) return;
   if (state.phase !== 'movement') return;
@@ -1768,7 +1790,7 @@ function drawSelectedModelMovementHud(
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     const textW = ctx.measureText(remainingLabel).width;
-    const labelX = Math.max(textW / 2 + 4, Math.min(board.width * scale - textW / 2 - 4, mx));
+    const labelX = Math.max(textW / 2 + 4, Math.min(boardWidth * scale - textW / 2 - 4, mx));
     const labelY = Math.max(fontSize + 5, my - baseRadius - fontSize - 7);
     ctx.fillStyle = 'rgba(8, 12, 18, 0.86)';
     ctx.fillRect(labelX - textW / 2 - 4, labelY - fontSize / 2 - 3, textW + 8, fontSize + 6);

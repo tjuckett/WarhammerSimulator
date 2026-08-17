@@ -64,6 +64,12 @@ function actionLabel(action: GameAction): string {
       return `Move height ${action.dz > 0 ? '+' : ''}${action.dz}"`;
     case GAME_ACTION_TYPE.DeclareTakeToSkies:
       return 'Take to the Skies';
+    case GAME_ACTION_TYPE.DeclareSuperHeavyMobile:
+      return 'Declare MOBILE';
+    case GAME_ACTION_TYPE.StartScoutMove:
+      return 'Start Scouts move';
+    case GAME_ACTION_TYPE.CompleteScoutMove:
+      return 'Complete Scouts move';
     case GAME_ACTION_TYPE.GrantSurgeMove:
       return `Trigger Surge (${action.maximumDistance}")`;
     case GAME_ACTION_TYPE.ResolveSurgeMove:
@@ -88,6 +94,8 @@ function actionLabel(action: GameAction): string {
       return `Remove casualties`;
     case GAME_ACTION_TYPE.AssignWoundedModel:
       return 'Assign wounded model';
+    case GAME_ACTION_TYPE.SelectFiringDeckWeapons:
+      return `Select ${action.selections.length} Firing Deck weapon${action.selections.length === 1 ? '' : 's'}`;
     case GAME_ACTION_TYPE.AllocateDamage:
       return 'Allocate damage';
     case GAME_ACTION_TYPE.ShootUnitWeapon:

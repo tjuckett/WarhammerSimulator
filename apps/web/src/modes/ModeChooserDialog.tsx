@@ -22,6 +22,11 @@ const MODE_OPTIONS: ModeOption[] = [
     title: 'Editor',
     description: 'Edit terrain layouts before starting a game.',
   },
+  {
+    mode: 'army-builder',
+    title: 'Army Builder',
+    description: 'Create, edit, save, and export army lists.',
+  },
 ];
 
 type Props = {

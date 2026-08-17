@@ -9,6 +9,8 @@ export interface WeaponProfile {
   damage: string;      // "1", "D3", "2"
   keywords: string[];  // "Rapid Fire 1", "Lethal Hits", "Blast", etc.
   isMelee: boolean;
+  /** Temporary Core 24.14 source, present only while a transport resolves Firing Deck attacks. */
+  firingDeckSource?: { passengerRosterId: string; passengerName: string; modelIndex: number; weaponIndex: number };
 }
 
 export interface ModelStatProfile {
@@ -72,6 +74,12 @@ export interface UnitProfile {
   rules?: RuleText[];
   deployment?: UnitDeploymentAssignment;
   leaderAttachment?: LeaderAttachment;
+  /** Typed datasheet bracket; effects are applied only when explicitly supplied. */
+  damagedProfile?: {
+    maxRemainingWounds: number;
+    hitRollModifier?: number;
+    objectiveControlModifier?: number;
+  };
 }
 
 export interface ImportedArmy {

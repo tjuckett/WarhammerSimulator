@@ -76,7 +76,10 @@ export function useBattleSetupControls({
         .map(terrain => terrainCenter(terrain));
       if (terrainObjectives.length) return terrainObjectives;
     }
-    return scalePositionsForBoard(objectivesForDeployment(selectedMission.deployment), selectedBoardFormat);
+    const objectives = objectivesForDeployment(selectedMission.deployment, selectedBoardFormat.id);
+    return selectedBoardFormat.id === 'strike-force'
+      ? scalePositionsForBoard(objectives, selectedBoardFormat)
+      : objectives;
   }, [editorLayout.terrain, isEleventhEdition, selectedMission.deployment, selectedBoardFormat]);
   const eleventhPrimaryMissions = useMemo<[string, string]>(
     () => eleventhPrimaryMissionsForDispositions([forceDisposition0, forceDisposition1]),

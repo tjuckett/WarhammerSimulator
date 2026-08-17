@@ -220,6 +220,22 @@ function parseAbility(profile: BSProfile): RuleText {
   return { name: profile.name, description, ...(tags.length ? { tags } : {}) };
 }
 
+function parseDamagedProfile(abilities: RuleText[]): UnitProfile['damagedProfile'] {
+  for (const ability of abilities) {
+    const printed = `${ability.name} ${ability.description}`;
+    const threshold = printed.match(/Damaged\s*:?\s*1\s*[-–]\s*(\d+)\s*Wounds?\s+Remaining/i);
+    if (!threshold) continue;
+    const hitPenalty = /subtract\s+1\s+from\s+the\s+Hit\s+roll/i.test(printed) ? 1 : undefined;
+    const ocPenalty = printed.match(/subtract\s+(\d+)\s+from\s+(?:this model(?:'s|’s)|the model(?:'s|’s))\s+Objective Control/i);
+    return {
+      maxRemainingWounds: Number.parseInt(threshold[1], 10),
+      ...(hitPenalty ? { hitRollModifier: hitPenalty } : {}),
+      ...(ocPenalty ? { objectiveControlModifier: -Number.parseInt(ocPenalty[1], 10) } : {}),
+    };
+  }
+  return undefined;
+}
+
 function buildModelWeaponLoadouts(modelCount: number, weaponModelIndexes: number[][]): number[][] {
   const loadouts = Array.from({ length: modelCount }, () => [] as number[]);
   if (!modelCount) return loadouts;
@@ -318,6 +334,7 @@ function parseUnit(sel: BSSelection): UnitProfile | null {
 
   const rules = collectRules(sel);
   const abilityProfiles = profiles.filter(p => p.typeName === 'Abilities');
+  const abilities = abilityProfiles.map(parseAbility);
   const cats = sel.categories ?? [];
   const keywords = cats
     .map(c => c.name)
@@ -340,7 +357,11 @@ function parseUnit(sel: BSSelection): UnitProfile | null {
     factionKeywords,
     weapons,
     modelWeaponLoadouts: buildModelWeaponLoadouts(countModels(sel), weaponModelIndexes),
-    abilities: abilityProfiles.map(parseAbility),
+    abilities,
+    damagedProfile: parseDamagedProfile([
+      ...abilities,
+      ...rules.map(rule => ({ name: rule.name, description: rule.description })),
+    ]),
     rules: rules.map(r => ({ name: r.name, description: r.description })),
   };
 }

@@ -1,2 +1,2 @@
-export type AppMode = 'play' | 'simulation' | 'editor';
+export type AppMode = 'play' | 'simulation' | 'editor' | 'army-builder';
 

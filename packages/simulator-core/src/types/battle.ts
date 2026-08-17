@@ -71,6 +71,12 @@ export interface BattleUnit {
   movementComplete?: boolean;
   /** 11e Core 21.03 declaration for the move currently being resolved. */
   takingToSkies?: boolean;
+  /** Core 24 Scouts pre-battle Normal move allowance. */
+  scoutMoveAllowance?: number;
+  scoutMoveStarted?: boolean;
+  scoutMoved?: boolean;
+  /** Core 24 Super-heavy Walker MOBILE declaration for the current move. */
+  superHeavyMobile?: boolean;
   /** Last phase in which this component completed a move of any type. */
   lastMovePhase?: Phase;
   lastMoveTurn?: number;
@@ -96,6 +102,9 @@ export interface BattleUnit {
   fellBack?: boolean;
   firedWeaponIndices?: number[];
   oneShotSpentWeaponIndices?: number[];
+  firingDeckBaseWeaponCount?: number;
+  firingDeckGrantedWeaponIndices?: number[];
+  firingDeckTurn?: number;
   piledIn?: boolean;
   overrunFightSelected?: boolean;
   overrunPiledIn?: boolean;
@@ -104,6 +113,21 @@ export interface BattleUnit {
   battleshocked: boolean;
   activated: boolean;
   destroyed: boolean;
+}
+
+export interface PendingDeadlyDemise {
+  id: string;
+  sourceUnitId: string;
+  sourceUnitName: string;
+  sourceSide: Side;
+  destroyedBySide: Side;
+  position: Position;
+  footprint:
+    | { shape: 'circle'; radius: number }
+    | { shape: 'oval'; halfWidth: number; halfLength: number; rotationDeg?: number }
+    | { shape: 'square'; halfSize: number; rotationDeg?: number }
+    | { shape: 'rectangle'; halfWidth: number; halfLength: number; rotationDeg?: number };
+  mortalWounds: string;
 }
 
 export type LogType =
@@ -413,6 +437,10 @@ export interface BattleState {
   winner: null | Side | 'draw';
   log: LogEntry[];
   units: BattleUnit[];
+  pendingDeadlyDemises?: PendingDeadlyDemise[];
+  firingDeckLockedUnitIds?: string[];
+  /** Set after the first Command phase begins; Scouts are only legal before this. */
+  preBattleAbilitiesResolved?: boolean;
   terrain: Terrain[];
   board?: BoardFormat;
   armies: [

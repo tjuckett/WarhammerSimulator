@@ -22,6 +22,18 @@ model User {
   games PracticeGame[]
 }
 
+model SavedArmy {
+  id        String   @id @default(cuid())
+  slot      Int      @unique
+  name      String
+  faction   String
+  units     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([updatedAt])
+}
+
 model PracticeGame {
   id        String   @id @default(cuid())
   ownerId   String?
@@ -34,9 +46,25 @@ model PracticeGame {
   owner       User?                @relation(fields: [ownerId], references: [id], onDelete: SetNull)
   branches    PracticeBranch[]
   checkpoints PracticeCheckpoint[]
+  seatGrants  PracticeSeatGrant[]
 
   @@index([ownerId])
   @@index([updatedAt])
+}
+
+model PracticeSeatGrant {
+  id        String   @id @default(cuid())
+  gameId    String
+  side      Int
+  playerId  String
+  tokenHash String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  game PracticeGame @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, side])
+  @@index([gameId, playerId])
 }
 
 model PracticeBranch {

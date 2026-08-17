@@ -3,7 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, PrimaryMissionScoringRecord, SecondaryMissionScoringRecord, Terrain, TerritoryZoneSet } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, decoyObjectiveOptions, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, resolvePlaySurgeMove, rotatePlayModels, sabotageObjectiveOptions, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayScoutMove, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, decoyObjectiveOptions, declarePlaySuperHeavyMobile, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playScoutMoveAllowance, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, resolvePendingDeadlyDemises, resolvePlaySurgeMove, rotatePlayModels, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, simulateNextUnit, simulationNextUnitId, snapShootPlayUnitWeapon, startPlayFightStep, startPlayScoutMove, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -789,6 +789,34 @@ test('11th battle round flow starts player turns at Command and advances rounds 
   assert.equal(nextRound.activeArmy, 0);
   assert.equal(nextRound.battleRound, 2);
   assert.equal(nextRound.turn, 2);
+});
+
+test('simulation unit stepping activates one unit before advancing the phase boundary', () => {
+  const battle = state('movement', 1);
+  battle.movementStep = 'moveUnits';
+  battle.units = [
+    losTestUnit('blue-1', 0, { x: 10, y: 10 }),
+    losTestUnit('blue-2', 0, { x: 20, y: 10 }),
+    losTestUnit('red-1', 1, { x: 30, y: 10 }),
+  ];
+
+  assert.equal(simulationNextUnitId(battle, rules40K10th), 'blue-1');
+  const first = simulateNextUnit(battle, rules40K10th);
+  assert.equal(first.phase, 'movement');
+  assert.equal(first.units.find(unit => unit.id === 'blue-1')?.activated, true);
+  assert.equal(first.units.find(unit => unit.id === 'blue-2')?.activated, false);
+  assert.equal(simulationNextUnitId(first, rules40K10th), 'blue-2');
+
+  const second = simulateNextUnit(first, rules40K10th);
+  assert.equal(second.units.filter(unit => unit.side === 0).every(unit => unit.activated), true);
+  assert.equal(second.movementStep, 'moveUnits');
+  assert.equal(simulationNextUnitId(second, rules40K10th), undefined);
+
+  const reinforcements = simulateNextUnit(second, rules40K10th);
+  assert.equal(reinforcements.movementStep, 'reinforcements');
+  const shooting = simulateNextUnit(reinforcements, rules40K10th);
+  assert.equal(shooting.phase, 'shooting');
+  assert.equal(simulationNextUnitId(shooting, rules40K10th), 'blue-1');
 });
 
 test('11th command phase grants core CP and resets active player turn state', () => {
@@ -11512,4 +11540,179 @@ test('Psychic ability wound provenance survives destruction facts and serializat
   assert.deepEqual(battle.missionEvents?.destroyedUnitsThisTurn?.[0].sourceTags, ['psychic']);
   const restored = JSON.parse(JSON.stringify(battle)) as BattleState;
   assert.deepEqual(restored.missionState?.destroyedModelsDuringBattle?.[0].sourceTags, ['psychic']);
+});
+
+test('11th Scouts uses the lowest attached value, enforces 8 inches, and replays', () => {
+  const battle = state('setup');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const scout = losTestUnit('scout', 0, { x: 5, y: 10 });
+  scout.profile = { ...scout.profile, abilities: [{ name: 'Scouts 6"', description: 'Scouts 6"' }] };
+  scout.tabletopUnitId = scout.id;
+  const leader = losTestUnit('scout-leader', 0, { x: 5, y: 11.2 });
+  leader.profile = { ...leader.profile, abilities: [{ name: 'Scouts 4"', description: 'Scouts 4"' }] };
+  leader.attachedToUnitId = scout.id;
+  leader.tabletopUnitId = scout.id;
+  const enemy = losTestUnit('enemy', 1, { x: 22, y: 10 });
+  battle.units = [scout, leader, enemy];
+  battle.armies[0].army = { ...emptyArmy, units: [scout.profile, leader.profile] };
+
+  assert.equal(playScoutMoveAllowance(battle, scout.id, 0), 4);
+  const start: GameAction = { type: GAME_ACTION_TYPE.StartScoutMove, side: 0, unitId: scout.id };
+  const started = applyGameAction(battle, start, { rules: rules40K11th });
+  const movedBodyguard = movePlayModels(started, scout.id, 0, [0], 4, 0);
+  const moved = movePlayModels(movedBodyguard, leader.id, 0, [0], 4, 0);
+  assert.equal(moved.units[0].position.x, 9);
+  const completed = completePlayScoutMove(moved, scout.id, 0);
+  assert.equal(completed.units[0].scoutMoved, true);
+  assert.equal(playScoutMoveAllowance(completed, scout.id, 0), null);
+
+  const tooClose = structuredClone(started);
+  tooClose.units[2].position = { x: 13, y: 10 };
+  tooClose.units[2].modelPositions = [{ x: 13, y: 10 }];
+  const illegal = movePlayModels(tooClose, scout.id, 0, [0], 4, 0);
+  assert.equal(completePlayScoutMove(illegal, scout.id, 0), illegal);
+
+  const replayed = replayTimeline(
+    appendTimelineAction(createPracticeTimeline(battle), battle, start, { rules: rules40K11th }).timeline,
+    { rules: rules40K11th }, false,
+  );
+  assert.equal(replayed.units[0].scoutMoveAllowance, 4);
+  assert.equal(JSON.parse(JSON.stringify(replayed)).units[0].scoutMoveStarted, true);
+});
+
+test('11th Super-heavy Walker crosses non-TITANIC models and low terrain; MOBILE is replayable', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const walker = losTestUnit('walker', 0, { x: 10, y: 10 });
+  walker.profile = { ...walker.profile, move: 10, keywords: ['Vehicle'], abilities: [{ name: 'Super-heavy Walker', description: 'Super-heavy Walker' }] };
+  const blocker = losTestUnit('blocker', 1, { x: 14, y: 11 });
+  battle.units = [walker, blocker];
+  battle.terrain = [{
+    id: 'low', name: 'Low wall', x: 12, y: 8, width: 0.5, height: 4, type: 'obstacle', providesCover: true, difficult: false, color: '#555',
+    features: [{ id: 'low-feature', name: 'Low section', x: 12, y: 8, width: 0.5, height: 4, featureHeight: 'low', blocksLOS: false, blocksMovement: true, difficult: false }],
+  }];
+  const moved = movePlayModels(battle, walker.id, 0, [0], 8, 0, true);
+  assert.equal(moved.units[0].position.x, 18);
+
+  const mobileAction: GameAction = { type: GAME_ACTION_TYPE.DeclareSuperHeavyMobile, side: 0, unitId: walker.id };
+  const mobile = applyGameAction(battle, mobileAction, { rules: rules40K11th });
+  assert.equal(mobile.units[0].superHeavyMobile, true);
+  const replayed = replayTimeline(
+    appendTimelineAction(createPracticeTimeline(battle), battle, mobileAction, { rules: rules40K11th }).timeline,
+    { rules: rules40K11th }, false,
+  );
+  assert.equal(replayed.units[0].superHeavyMobile, true);
+  assert.equal(declarePlaySuperHeavyMobile(moved, walker.id, 0), moved);
+});
+
+test('11th Firing Deck grants one non-One Shot passenger weapon and locks that passenger unit', () => {
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const transport = losTestUnit('transport', 0, { x: 10, y: 10 });
+  transport.profile = { ...transport.profile, keywords: ['Vehicle', 'Transport'], abilities: [{ name: 'Firing Deck 1', description: 'Firing Deck 1' }] };
+  const passenger = losTestUnit('passenger', 0, { x: 10, y: 10 });
+  passenger.profile = { ...passenger.profile, weapons: [
+    { name: 'Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    { name: 'One-shot rocket', range: 24, attacks: '1', skill: 3, strength: 8, ap: -2, damage: '3', keywords: ['One Shot'], isMelee: false },
+  ] };
+  passenger.embarkedInUnitId = transport.id;
+  battle.units = [transport, passenger];
+
+  const options = playFiringDeckOptions(battle, transport.id, 0);
+  assert.equal(options.length, 1);
+  assert.equal(options[0].weaponIndex, 0);
+  const action: GameAction = { type: GAME_ACTION_TYPE.SelectFiringDeckWeapons, side: 0, unitId: transport.id, selections: options };
+  const selected = applyGameAction(battle, action, { rules: rules40K11th });
+  assert.equal(selected.units[0].profile.weapons.at(-1)?.name, 'Rifle (Firing Deck: passenger)');
+  assert.deepEqual(selected.firingDeckLockedUnitIds, [passenger.id]);
+  assert.equal(JSON.parse(JSON.stringify(selected)).units[0].profile.weapons.at(-1)?.firingDeckSource?.passengerRosterId, passenger.id);
+  const replayed = replayTimeline(
+    appendTimelineAction(createPracticeTimeline(battle), battle, action, { rules: rules40K11th }).timeline,
+    { rules: rules40K11th }, false,
+  );
+  assert.deepEqual(replayed.firingDeckLockedUnitIds, [passenger.id]);
+});
+
+test('11th Deadly Demise is a destroyed-model event, not a weapon critical-hit effect', () => {
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const doomed = losTestUnit('doomed', 1, { x: 10, y: 10 });
+  doomed.profile = { ...doomed.profile, abilities: [{ name: 'Deadly Demise D3', description: 'Deadly Demise D3' }] };
+  const nearby = losTestUnit('nearby', 0, { x: 12, y: 10 });
+  nearby.profile = { ...nearby.profile, wounds: 6 };
+  nearby.woundsOnLeadModel = 6;
+  battle.units = [nearby, doomed];
+  applyDamage(doomed, 1, battle, 0);
+  assert.equal(battle.pendingDeadlyDemises?.length, 1);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const resolved = resolvePendingDeadlyDemises(battle);
+    assert.equal(resolved.pendingDeadlyDemises, undefined);
+    assert.ok(resolved.units[0].woundsOnLeadModel < 6);
+    assert.match(resolved.log.map(entry => entry.message).join(' '), /Deadly Demise/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('11th Cleave, Extra Attacks, and Lance modify only their exact melee attack pools', () => {
+  const makeBattle = (weapons: BattleUnit['profile']['weapons'], targetModels = 1) => {
+    const battle = state('fight');
+    battle.ruleset = rulesetMetadataForState(rules40K11th);
+    battle.fightStepStarted = true;
+    battle.engagedUnitIdsAtFightStepStart = ['fighter', 'target'];
+    const fighter = losTestUnit('fighter', 0, { x: 10, y: 10 });
+    fighter.profile = { ...fighter.profile, weapons };
+    fighter.charged = true;
+    const target = losTestUnit('target', 1, { x: 11, y: 10 });
+    target.profile = { ...target.profile, save: 7, baseModelCount: targetModels };
+    target.remainingModels = targetModels;
+    target.modelPositions = Array.from({ length: targetModels }, (_, index) => ({ x: 11, y: 10 + index }));
+    battle.units = [fighter, target];
+    return battle;
+  };
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const cleave = makeBattle([{
+      name: 'Cleaver', range: 0, attacks: '1', skill: 2, strength: 20, ap: -10, damage: '1', keywords: ['Cleave 2', 'Lance'], isMelee: true,
+    }], 5);
+    const cleaved = fightPlayUnitWeapon(cleave, 'fighter', 0, 'target', 0, rules40K11th);
+    assert.equal(cleaved.units[1].pendingDamageAllocations?.length, 3);
+    assert.match(cleaved.log.map(entry => entry.message).join(' '), /Lance/);
+
+    const extra = makeBattle([
+      { name: 'Sword', range: 0, attacks: '1', skill: 2, strength: 20, ap: -10, damage: '1', keywords: [], isMelee: true },
+      { name: 'Tail', range: 0, attacks: '2', skill: 2, strength: 20, ap: -10, damage: '1', keywords: ['Extra Attacks'], isMelee: true },
+    ]);
+    const extraResolved = fightPlayUnitWeapon(extra, 'fighter', 0, 'target', 0, rules40K11th);
+    assert.equal(extraResolved.units[1].pendingDamageAllocations?.length, 3);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('11th Damaged profile applies only explicitly typed hit and OC effects at its threshold', () => {
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const attacker = losTestUnit('damaged', 0, { x: 10, y: 10 });
+  attacker.profile = {
+    ...attacker.profile,
+    wounds: 10,
+    oc: 5,
+    damagedProfile: { maxRemainingWounds: 3, hitRollModifier: 1, objectiveControlModifier: -5 },
+    weapons: [{ name: 'Gun', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false }],
+  };
+  attacker.woundsOnLeadModel = 3;
+  const target = losTestUnit('target', 1, { x: 15, y: 10 });
+  battle.units = [attacker, target];
+  assert.equal(objectiveControlValue(attacker), 0);
+  const resolved = shootPlayUnitWeapon(battle, attacker.id, 0, target.id, 0, rules40K11th);
+  assert.match(resolved.log.map(entry => entry.message).join(' '), /Damaged -1 to Hit/);
+
+  const healthy = structuredClone(attacker);
+  healthy.woundsOnLeadModel = 4;
+  assert.equal(objectiveControlValue(healthy), 5);
 });

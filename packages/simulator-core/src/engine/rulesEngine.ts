@@ -129,6 +129,7 @@ export const rules40K10th: RulesEdition = {
       name: 'Reanimation Protocols',
       timing: 'end-of-phase',
       target: 'self',
+      oncePerTurn: true,
       description: 'Framework placeholder for an end-of-phase unit ability.',
     },
   ],
@@ -175,7 +176,6 @@ export const rules40K10th: RulesEdition = {
     const notes: string[] = [];
 
     const sustainedVal = weaponHasKeyword(weapon,'Sustained Hits') ? weaponKeywordValue(weapon,'Sustained Hits') : 0;
-    const hasDeadlyDemise = weaponHasKeyword(weapon,'Deadly Demise');
 
     for (const r of rolls) {
       if (r === 1) continue;
@@ -185,10 +185,6 @@ export const rules40K10th: RulesEdition = {
           hits += sustainedVal;
           notes.push(`crit→+${sustainedVal} (Sustained Hits)`);
         }
-      }
-      if (r === 6 && hasDeadlyDemise) {
-        mortalsFromCrits++;
-        notes.push('crit→mortal (Deadly Demise)');
       }
     }
 

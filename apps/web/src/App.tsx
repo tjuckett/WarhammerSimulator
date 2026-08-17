@@ -17,35 +17,43 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SpeedIcon from '@mui/icons-material/Speed';
 import StopIcon from '@mui/icons-material/Stop';
-import { BATTLE_PHASE, MOVEMENT_STEP, type BattleState, type BattleUnit, type Phase, type Position, type TerrainLayout } from '@warhammer-simulator/core/types/battle';
+import { BATTLE_PHASE, MOVEMENT_STEP, type BattleState, type BattleUnit, type Phase } from '@warhammer-simulator/core/types/battle';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile } from '@warhammer-simulator/core/types/army';
 import type { AbilityTiming } from '@warhammer-simulator/core/types/ability';
 import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simulator/core/engine/rulesEngine';
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
-  battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, createDeploymentState, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels,
-  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTarget, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, sabotageObjectiveOptions, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, simulateNextPhase, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type LOSRay,
+  battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, completePlayScoutMove, createDeploymentState, declarePlaySuperHeavyMobile, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playScoutMoveAllowance, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels, startPlayScoutMove,
+  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTarget, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type FiringDeckSelection, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
-import { formatPrimaryScoringResult, primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, unsupportedPrimaryMissionScoringLogs } from '@warhammer-simulator/core/engine/missionScoring';
+import { formatPrimaryScoringResult, primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, unsupportedPrimaryMissionScoringLogs, updateObjectiveControl } from '@warhammer-simulator/core/engine/missionScoring';
 import { completeMissionEventsForCurrentTurn, startMissionEventsForNewTurn } from '@warhammer-simulator/core/engine/missionEvents';
-import { availableStratagems, resolveCommandReroll, useStratagem } from '@warhammer-simulator/core/engine/stratagems';
-import { availableUnitAbilities, useUnitAbility } from '@warhammer-simulator/core/engine/unitAbilities';
+import { availableStratagems, resolveCommandReroll, useStratagem as applyStratagem } from '@warhammer-simulator/core/engine/stratagems';
+import { availableUnitAbilities, useUnitAbility as applyUnitAbility } from '@warhammer-simulator/core/engine/unitAbilities';
 import {
   loadBrain, saveBrain, recordGame, suggestStrategy, brainStats,
   type BrainMemory, type GameRecord,
 } from '@warhammer-simulator/core/engine/deploymentBrain';
 import { SAMPLE_ARMIES } from '@warhammer-simulator/core/data/sampleArmies';
-import { Battlefield, type PlayModelSelection, type TerrainEditSelection } from './components/Battlefield';
+import { Battlefield, type PlayModelSelection } from './components/Battlefield';
 import { BattleLog } from './components/BattleLog';
 import { ArmyPanel } from './components/ArmyPanel';
+import { ArmyBuilder } from './components/ArmyBuilder';
+import { ControllerSeatControls } from './components/ControllerSeatControls';
+import { armyRepository } from './army/armyRepository';
 import { UnitStatsPanel } from './components/UnitStatsPanel';
 import { TerrainLayoutEditor } from './components/TerrainLayoutEditor';
 import { GameSessionControlsPanel, GameSessionLoadModal, GameSessionSaveModal } from './components/GameSessionSaveLoadPanel';
 import { CombatResultDialog } from './components/CombatResultDialog';
 import { isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
 import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
+import {
+  applyControllerAction,
+  chooseAiAction,
+  type PlayerSeatController,
+} from '@warhammer-simulator/core/engine/controllers';
 import {
   type TimelineStateResult,
 } from '@warhammer-simulator/core/practice/timeline';
@@ -64,7 +72,7 @@ import { ModeChooserDialog } from './modes/ModeChooserDialog';
 import { GameSessionCheckpointDialogs } from './gameSession/GameSessionCheckpointDialogs';
 import { useTerrainLayouts } from './terrain/useTerrainLayouts';
 import { useTerrainEditing } from './terrain/useTerrainEditing';
-import { PLAY_DEPLOY_SELECTION_KIND, usePlayUiState, type PlayDeploySelection } from './play/usePlayUiState';
+import { PLAY_DEPLOY_SELECTION_KIND, usePlayUiState } from './play/usePlayUiState';
 import { usePlayUndoState, type PendingPlayTimelineAction, type PlayUndoEntry } from './play/usePlayUndoState';
 import {
   attachedBattleUnitIdsForSelection,
@@ -73,6 +81,8 @@ import {
   normalizePlaySelectionForState,
   primaryPlaySelectionPart,
 } from './play/playSelectionHelpers';
+
+type SimulationGranularity = 'unit' | 'phase' | 'turn';
 import {
   abilityOptionKey,
   pendingDamageLabel,
@@ -156,6 +166,8 @@ export default function App() {
   const [appMode, setAppMode] = useState<AppMode>('editor');
   const [army1, setArmy1] = useState<ImportedArmy>(() => loadSavedArmy(0, SAMPLE_ARMIES[0]));
   const [army2, setArmy2] = useState<ImportedArmy>(() => loadSavedArmy(1, SAMPLE_ARMIES[1]));
+  const [armyBuilderSavedSlot, setArmyBuilderSavedSlot] = useState<0 | 1>(0);
+  const [armyBuilderStorageStatus, setArmyBuilderStorageStatus] = useState('');
   const [battleState, setBattleState] = useState<BattleState | null>(null);
   const [modeChooserOpen, setModeChooserOpen] = useState(true);
   const {
@@ -236,6 +248,11 @@ export default function App() {
   const [autoRunning, setAutoRunning] = useState(false);
   const [autoDeploying, setAutoDeploying] = useState(false);
   const [simSpeedMs, setSimSpeedMs] = useState(600);
+  const [simulationGranularity, setSimulationGranularity] = useState<SimulationGranularity>('phase');
+  const [simulationControllers, setSimulationControllers] = useState<[
+    PlayerSeatController['kind'],
+    PlayerSeatController['kind'],
+  ]>(['ai', 'ai']);
   const {
     deployment: {
       playDeploySelection,
@@ -329,7 +346,6 @@ export default function App() {
       compatibleLayouts,
       selectedLayout,
       selectedObjectives,
-      eleventhPrimaryMissions,
       selectedSetup,
     },
     actions: {
@@ -471,6 +487,10 @@ export default function App() {
   const isEditorMode = appMode === 'editor';
   const isPlayMode = appMode === 'play';
   const isSimulationMode = appMode === 'simulation';
+  const isArmyBuilderMode = appMode === 'army-builder';
+  const activeSimulationUnitId = isSimulationMode && simulationGranularity === 'unit' && battleState
+    ? simulationNextUnitId(battleState, activeRulesForBattle) ?? null
+    : null;
   const canEditTerrain = isEditorMode && !battleState;
   const playMovementStep = battleState?.phase === BATTLE_PHASE.Movement ? movementStep(battleState) : null;
   const isPlayReinforcementsStep = playMovementStep === MOVEMENT_STEP.Reinforcements;
@@ -690,10 +710,6 @@ export default function App() {
       ? playMeleeFixedAttackCount(battleState, selectedFightUnit.id, selectedFightUnit.side, weaponIndex, activeRulesForBattle)
       : null;
   }, [battleState, selectedFightUnit, selectedFightWeaponIndex, activeRulesForBattle]);
-  const fightActivationUnitIds = useMemo<Set<string>>(() => {
-    if (!battleState || battleState.phase !== 'fight') return new Set();
-    return new Set(playFightActivationUnitIds(battleState, battleState.activeArmy, activeRulesForBattle));
-  }, [battleState, activeRulesForBattle]);
   const selectedTacticsUnit = isPlayMode && battleState && selectedPlayBattleUnit && !selectedPlayBattleUnit.embarkedInUnitId
     ? selectedPlayBattleUnit
     : null;
@@ -704,6 +720,10 @@ export default function App() {
       : [],
     [battleState, activeRulesForBattle],
   );
+  const selectedFiringDeckOptions = battleState?.phase === 'shooting' && selectedShootingUnit
+    ? playFiringDeckOptions(battleState, selectedShootingUnit.id, selectedShootingUnit.side)
+    : [];
+  const selectedFiringDeckCapacity = selectedShootingUnit ? playFiringDeckCapacity(selectedShootingUnit) : 0;
   const condemnedUnitIds = battleState?.missionState?.condemnedUnitIds?.[battleState.activeArmy] ?? [];
   const selectedUnitIsCondemned = !!battleState
     && !!selectedTacticsUnit
@@ -957,7 +977,7 @@ export default function App() {
   );
   const selectedPlayCanMoveVertically = !!(
     isPlayMode
-    && battleState?.phase === 'movement'
+    && (battleState?.phase === 'movement' || selectedPlayBattleUnit?.scoutMoveStarted)
     && !isPlayReinforcementsStep
     && playModelSelection
     && primaryPlaySelection
@@ -969,6 +989,15 @@ export default function App() {
     && primaryPlaySelection
     && (primaryPlaySelection.side === battleState.activeArmy || activeRulesForBattle.metadata.edition === '11e')
     && playUnitCanPileIn(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side, activeRulesForBattle)
+  );
+  const selectedPlayScoutAllowance = battleState && primaryPlaySelection
+    ? playScoutMoveAllowance(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side)
+    : null;
+  const selectedPlayScoutMoveStarted = !!selectedPlayBattleUnit?.scoutMoveStarted;
+  const selectedPlayCanDeclareMobile = !!(
+    battleState
+    && primaryPlaySelection
+    && declarePlaySuperHeavyMobile(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side) !== battleState
   );
   const selectedPlayCanTakeToSkies = !!(
     isPlayMode
@@ -1820,7 +1849,7 @@ export default function App() {
     commitPendingPlayModelMove();
     const selection = playModelSelection;
     const prev = battleStateRef.current;
-    if (!selection || !canEditMovementModels(prev)) return;
+    if (!selection || (!canEditMovementModels(prev) && !(prev?.phase === 'setup' && selectedPlayBattleUnit?.scoutMoveStarted))) return;
     const next = transformPlayModelSelection(prev, selection, (current, part) =>
       movePlayModelsVertically(current, part.unitId, part.side, part.modelIndices, dz),
     );
@@ -2092,7 +2121,7 @@ export default function App() {
     const targetUnitId = selectedTacticsUnit?.id;
     const stratagemSide = selectedTacticsUnit?.side ?? prev.activeArmy;
     const stratagem = availablePlayStratagems.find(option => option.id === stratagemId);
-    const next = useStratagem(prev, stratagemSide, stratagemId, activeRulesForBattle, stratagem?.target === 'none' ? undefined : targetUnitId);
+    const next = applyStratagem(prev, stratagemSide, stratagemId, activeRulesForBattle, stratagem?.target === 'none' ? undefined : targetUnitId);
     if (next === prev) return;
     setSelectedStratagemId(stratagemId);
     pushPlayUndo(playUndoEntry(prev), next, {
@@ -2133,7 +2162,7 @@ export default function App() {
     if (!prev || !isPlayMode || !selectedTacticsUnit || !selectedAbilityKey) return;
     const option = availablePlayAbilities.find(candidate => abilityOptionKey(candidate) === selectedAbilityKey);
     if (!option) return;
-    const next = useUnitAbility(
+    const next = applyUnitAbility(
       prev,
       selectedTacticsUnit.id,
       selectedTacticsUnit.side,
@@ -2194,6 +2223,46 @@ export default function App() {
     commitBattleState(next);
   }
 
+  function updateArmyBuilder(side: 0 | 1, nextArmy: ImportedArmy) {
+    if (side === 0) updateArmy1(nextArmy);
+    else updateArmy2(nextArmy);
+  }
+
+  async function saveArmyBuilderSlot(side: 0 | 1) {
+    try {
+      const result = await armyRepository.save(armyBuilderSavedSlot, side === 0 ? army1 : army2);
+      setArmyBuilderStorageStatus(`Saved Army ${side + 1} to ${result.storage === 'database' ? 'Postgres' : 'browser storage'}.`);
+    } catch (error) {
+      setArmyBuilderStorageStatus(`Save failed: ${error instanceof Error ? error.message : 'unknown error'}`);
+    }
+  }
+
+  async function loadArmyBuilderSlot(side: 0 | 1) {
+    const fallback = side === 0 ? army1 : army2;
+    try {
+      const result = await armyRepository.load(armyBuilderSavedSlot);
+      if (!result) {
+        setArmyBuilderStorageStatus('No saved army in this slot.');
+        return;
+      }
+      updateArmyBuilder(side, result.army);
+      setArmyBuilderStorageStatus(`Loaded Army ${side + 1} from ${result.storage === 'database' ? 'Postgres' : 'browser storage'}.`);
+    } catch (error) {
+      setArmyBuilderStorageStatus(`Load failed: ${error instanceof Error ? error.message : 'unknown error'}`);
+      updateArmyBuilder(side, fallback);
+    }
+  }
+
+  function selectFiringDeckWeapons(selections: FiringDeckSelection[]) {
+    const prev = battleStateRef.current;
+    const shooter = selectedShootingUnit;
+    if (!prev || !shooter) return;
+    const next = selectPlayFiringDeckWeapons(prev, shooter.id, shooter.side, selections);
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, { type: GAME_ACTION_TYPE.SelectFiringDeckWeapons, unitId: shooter.id, side: shooter.side, selections });
+    commitBattleState(next);
+  }
+
   function takeSelectedPlayUnitToSkies() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
@@ -2202,6 +2271,37 @@ export default function App() {
     if (!result) return;
     pushPlayUndo(playUndoEntry(prev), result.next, result.action);
     commitBattleState(result.next);
+  }
+
+  function startSelectedPlayScoutMove() {
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || !selection) return;
+    const next = startPlayScoutMove(prev, selection.unitId, selection.side);
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, { type: GAME_ACTION_TYPE.StartScoutMove, unitId: selection.unitId, side: selection.side });
+    commitBattleState(next);
+  }
+
+  function completeSelectedPlayScoutMove() {
+    commitPendingPlayModelMove();
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || !selection) return;
+    const next = completePlayScoutMove(prev, selection.unitId, selection.side);
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, { type: GAME_ACTION_TYPE.CompleteScoutMove, unitId: selection.unitId, side: selection.side });
+    commitBattleState(next);
+  }
+
+  function declareSelectedPlayMobile() {
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || !selection) return;
+    const next = declarePlaySuperHeavyMobile(prev, selection.unitId, selection.side);
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, { type: GAME_ACTION_TYPE.DeclareSuperHeavyMobile, unitId: selection.unitId, side: selection.side });
+    commitBattleState(next);
   }
 
   function surgeSelectedPlayUnit(targetUnitId: string) {
@@ -2393,6 +2493,72 @@ export default function App() {
     commitBattleState(next);
   }, []);
 
+  const stepTurn = useCallback(() => {
+    const prev = battleStateRef.current;
+    if (!prev || prev.winner !== null || prev.phase === BATTLE_PHASE.Deployment) return;
+    const activeRules = rulesEditionForRuleset(prev.ruleset);
+    const next = simulatePlayerTurn(prev, activeRules);
+    if (next !== prev) {
+      recordGameSessionAction(prev, next, { type: GAME_ACTION_TYPE.SimulationStepTurn });
+      void saveGameSessionCheckpoint('auto-turn');
+    }
+    commitBattleState(next);
+  }, []);
+
+  const stepUnit = useCallback(() => {
+    const prev = battleStateRef.current;
+    if (!prev || prev.winner !== null || prev.phase === BATTLE_PHASE.Deployment) return;
+    const activeRules = rulesEditionForRuleset(prev.ruleset);
+    const next = simulateNextUnit(prev, activeRules);
+    if (next !== prev) {
+      recordGameSessionAction(prev, next, { type: GAME_ACTION_TYPE.SimulationStepUnit });
+      void saveGameSessionCheckpoint('auto-unit');
+    }
+    commitBattleState(next);
+  }, []);
+
+  const stepAiController = useCallback((): boolean => {
+    const prev = battleStateRef.current;
+    if (!prev || prev.winner !== null) return false;
+    const side = prev.activeArmy;
+    const controller = simulationControllers[side];
+    if (controller.kind !== 'ai') return false;
+    const activeRules = rulesEditionForRuleset(prev.ruleset);
+    const action = chooseAiAction(prev, { side, controller }, activeRules);
+    if (!action) {
+      setAutoRunning(false);
+      return true;
+    }
+    const next = applyControllerAction(prev, { side, action }, activeRules);
+    if (next !== prev) {
+      recordGameSessionAction(prev, next, action);
+      void saveGameSessionCheckpoint('auto-controller');
+      commitBattleState(next);
+    }
+    return true;
+  }, [simulationControllers]);
+
+  const stepSimulation = useCallback(() => {
+    const activeController = simulationControllers[battleStateRef.current?.activeArmy ?? 0];
+    if (activeController.kind === 'ai' && stepAiController()) return;
+    if (activeController.kind === 'remote-human') {
+      setAutoRunning(false);
+      return;
+    }
+    if (simulationGranularity === 'unit') stepUnit();
+    else if (simulationGranularity === 'turn') stepTurn();
+    else stepPhase();
+  }, [simulationControllers, simulationGranularity, stepAiController, stepPhase, stepTurn, stepUnit]);
+
+  const changeSimulationController = useCallback((side: 0 | 1, controller: PlayerSeatController['kind']) => {
+    setAutoRunning(false);
+    setSimulationControllers(previous => {
+      const next: [PlayerSeatController['kind'], PlayerSeatController['kind']] = [...previous];
+      next[side] = controller;
+      return next;
+    });
+  }, []);
+
   const stepPlayPhase = useCallback(() => {
     const prev = battleStateRef.current;
     if (!prev || prev.winner !== null || prev.phase === BATTLE_PHASE.Deployment || prev.phase === BATTLE_PHASE.End) return;
@@ -2537,9 +2703,9 @@ export default function App() {
     if (!autoRunning) return;
     if (!battleState || battleState.phase === 'deployment') { setAutoRunning(false); return; }
     if (battleState.winner !== null) { setAutoRunning(false); return; }
-    const timer = setTimeout(stepPhase, simSpeedMs);
+    const timer = setTimeout(stepSimulation, simSpeedMs);
     return () => clearTimeout(timer);
-  }, [autoRunning, battleState, simSpeedMs, stepPhase]);
+  }, [autoRunning, battleState, simSpeedMs, stepSimulation]);
 
   // Record game outcome in brain when battle ends
   useEffect(() => {
@@ -2572,6 +2738,7 @@ export default function App() {
     <div className="app">
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <AppHeader
+        armyBuilderMode={isArmyBuilderMode}
         battleStarted={!!battleState}
         editionId={editionId}
         isEleventhEdition={isEleventhEdition}
@@ -2603,7 +2770,7 @@ export default function App() {
       )}
 
       {/* ── Main layout ───────────────────────────────────────────────────── */}
-      <div className="main">
+      <div className={`main${isArmyBuilderMode ? ' army-builder-hidden' : ''}`}>
         {/* Left: Army panels */}
         <div className="side-panel">
           <ArmyPanel
@@ -2662,6 +2829,7 @@ export default function App() {
           <Battlefield
             state={battleState ?? previewState}
             selectedUnitId={inspectedBattleUnitId}
+            activeSimulationUnitId={activeSimulationUnitId}
             selectedUnitIds={isPlayMode
               ? (battleState?.phase === 'shooting' && selectedShootingTargetId
                   ? [selectedShootingTargetId]
@@ -2709,7 +2877,7 @@ export default function App() {
               onRotateModel: canEditPlayModelsNow
                 ? (_selection, degrees, batched) => rotateSelectedPlayModels(degrees, batched)
                 : undefined,
-              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayCanAdvance || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
+              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayScoutAllowance !== null || selectedPlayScoutMoveStarted || selectedPlayCanDeclareMobile || selectedPlayCanAdvance || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
                 <>
                   {pendingDamageAllocationUnit && (
                     <PendingDamageAllocationHud unit={pendingDamageAllocationUnit} />
@@ -2717,6 +2885,21 @@ export default function App() {
                   {selectedPlayCanPileIn && (
                     <Button size="small" color="secondary" variant="contained" onClick={pileInSelectedPlayUnit}>
                       Pile In
+                    </Button>
+                  )}
+                  {selectedPlayScoutAllowance !== null && (
+                    <Button size="small" color="success" variant="contained" onClick={startSelectedPlayScoutMove}>
+                      Scouts {selectedPlayScoutAllowance}&quot;
+                    </Button>
+                  )}
+                  {selectedPlayScoutMoveStarted && (
+                    <Button size="small" color="primary" variant="contained" startIcon={<DoneIcon />} onClick={completeSelectedPlayScoutMove}>
+                      Complete Scouts
+                    </Button>
+                  )}
+                  {selectedPlayCanDeclareMobile && (
+                    <Button size="small" color="warning" variant="contained" onClick={declareSelectedPlayMobile}>
+                      MOBILE
                     </Button>
                   )}
                   {selectedPlayCanSelectOverrun && (
@@ -2913,6 +3096,9 @@ export default function App() {
                   damageAllocationLocked={damageAllocationLocked}
                   pendingDamageLabel={pendingDamageText}
                   weaponOptions={selectedPlayShootingOptions}
+                  firingDeckOptions={selectedFiringDeckOptions}
+                  firingDeckCapacity={selectedFiringDeckCapacity}
+                  onFiringDeckSelect={selectFiringDeckWeapons}
                   selectedTargetId={selectedShootingTargetId}
                   selectedWeaponIndex={selectedShootingWeaponIndex}
                   onTargetChange={setSelectedShootingTargetId}
@@ -2988,6 +3174,19 @@ export default function App() {
         </div>
       </div>
 
+      {isArmyBuilderMode && (
+        <ArmyBuilder
+          armies={[army1, army2]}
+          sampleArmies={SAMPLE_ARMIES}
+          savedSlot={armyBuilderSavedSlot}
+          onSavedSlotChange={setArmyBuilderSavedSlot}
+          onChange={updateArmyBuilder}
+          onSave={saveArmyBuilderSlot}
+          onLoad={loadArmyBuilderSlot}
+          storageStatus={armyBuilderStorageStatus}
+        />
+      )}
+
       {/* ── Controls bar ─────────────────────────────────────────────────── */}
       <CombatResultDialog
         open={shootingResultEntries.length > 0}
@@ -3043,7 +3242,7 @@ export default function App() {
         onCancelDelete={() => setPendingCheckpointDelete(null)}
       />
 
-      <Box className="controls">
+      <Box className={`controls${isArmyBuilderMode ? ' army-builder-hidden' : ''}`}>
         <div className="controls-edge controls-edge-left">
           {!isEditorMode && battleState && (
             <Button
@@ -3151,8 +3350,26 @@ export default function App() {
         {/* Battle phase controls */}
         {isSimulationMode && battleState && !isOver && battleState.phase !== 'deployment' && (
           <>
-            <Button onClick={stepPhase} disabled={autoRunning} startIcon={<PlayArrowIcon />}>
-              Step Phase
+            <ControllerSeatControls
+              controllers={simulationControllers}
+              onChange={changeSimulationController}
+              disabled={autoRunning}
+            />
+            <label className="select-group simulation-granularity">
+              <span>Granularity</span>
+              <select
+                value={simulationGranularity}
+                onChange={event => setSimulationGranularity(event.target.value as SimulationGranularity)}
+                disabled={autoRunning}
+                aria-label="Simulation granularity"
+              >
+                <option value="unit">Unit</option>
+                <option value="phase">Phase</option>
+                <option value="turn">Turn</option>
+              </select>
+            </label>
+            <Button onClick={stepSimulation} disabled={autoRunning} startIcon={<PlayArrowIcon />}>
+              Step {simulationGranularity === 'unit' ? 'Unit' : simulationGranularity === 'turn' ? 'Turn' : 'Phase'}
             </Button>
             <Button
               color={autoRunning ? 'error' : 'secondary'}
@@ -3160,7 +3377,7 @@ export default function App() {
               startIcon={autoRunning ? <StopIcon /> : <PlayArrowIcon />}
               onClick={toggleAuto}
             >
-              {autoRunning ? 'Stop' : 'Auto Phase'}
+              {autoRunning ? 'Stop' : `Auto ${simulationGranularity === 'unit' ? 'Unit' : simulationGranularity === 'turn' ? 'Turn' : 'Phase'}`}
             </Button>
           </>
         )}
