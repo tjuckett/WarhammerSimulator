@@ -1119,6 +1119,7 @@ test('11th Rapid Ingress lets a non-Aircraft unit return from Strategic Reserves
   const battle = state('movement');
   battle.movementStep = 'reinforcements';
   battle.activeArmy = 0;
+  battle.lastFightSelectionSide = 0;
   battle.battleRound = 2;
   battle.turn = 2;
   battle.movementStep = 'reinforcements';
@@ -1211,6 +1212,7 @@ test('11th Smokescreen applies cover and a hit penalty for the phase', () => {
 test('11th Counteroffensive lets only the targeted defender fight next', () => {
   const battle = state('fight');
   battle.activeArmy = 0;
+  battle.lastFightSelectionSide = 0;
   battle.commandPoints = [0, 2];
   const charger = losTestUnit('charger', 0, { x: 10, y: 10 });
   charger.charged = true;
@@ -1228,8 +1230,16 @@ test('11th Counteroffensive lets only the targeted defender fight next', () => {
   otherDefender.profile.weapons = defender.profile.weapons;
   battle.units = [charger, defender, otherDefender];
 
+  const replayed = applyGameAction(battle, {
+    type: GAME_ACTION_TYPE.UseStratagem,
+    side: 1,
+    stratagemId: 'counteroffensive',
+    targetUnitId: defender.id,
+  }, { rules: rules40K11th });
+  assert.equal(replayed.forcedFightUnitId, defender.id);
   const countered = useStratagem(battle, 1, 'counteroffensive', rules40K11th, defender.id);
   assert.deepEqual(countered.commandPoints, [0, 0]);
+  assert.equal(countered.forcedFightUnitId, defender.id);
   assert.deepEqual(playFightActivationUnitIds(countered, 1, rules40K11th), [defender.id]);
   assert.deepEqual(playFightWeaponOptions(countered, defender.id, 1, rules40K11th).map(option => option.name), ['Claw']);
   assert.deepEqual(playFightWeaponOptions(countered, otherDefender.id, 1, rules40K11th), []);

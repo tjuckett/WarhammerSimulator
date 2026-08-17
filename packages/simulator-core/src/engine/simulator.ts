@@ -3410,6 +3410,7 @@ function unitEligibleToFight(unit: BattleUnit, state: BattleState, rules: RulesE
 
 function startFightStepInPlace(s: BattleState, rules: RulesEdition): void {
   s.fightStepStarted = true;
+  s.forcedFightUnitId = undefined;
   s.lastFightSelectionSide = undefined;
   s.activeAttachedFightUnitId = undefined;
   s.activeAttachedShootingUnitId = undefined;
@@ -3464,6 +3465,7 @@ function finishAttachedFightComponent(state: BattleState, unit: BattleUnit, rule
     return;
   }
   state.activeAttachedFightUnitId = undefined;
+  if (state.forcedFightUnitId === unit.id) state.forcedFightUnitId = undefined;
   state.lastFightSelectionSide = unit.side;
 }
 
@@ -3485,6 +3487,10 @@ export function playFightActivationUnitIds(
     return eligible
       .filter(unit => attachedUnitId(unit) === state.activeAttachedFightUnitId)
       .map(unit => unit.id);
+  }
+  if (state.forcedFightUnitId) {
+    const forced = eligible.find(unit => unit.id === state.forcedFightUnitId);
+    return side === forced?.side && forced ? [forced.id] : [];
   }
   if (rules.metadata.edition !== '11e' && state.activeArmy !== side) {
     return eligible.filter(unit => unitHasCounteroffensive(state, unit)).map(unit => unit.id);

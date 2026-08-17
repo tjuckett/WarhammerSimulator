@@ -29,6 +29,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 - Fire Overwatch is restricted to the opponent's Reinforcements/end-of-Movement step, and snap shooting requires the recorded Fire Overwatch use.
 - Smokescreen grants Benefit of Cover to the Smoke unit and to units screened by it for the rest of the Shooting phase; it does not add a separate hit modifier.
 - Heroic Intervention records the selected Leap to Defend or Into the Fray mode; Into the Fray costs an additional CP, limits targets to 6 inches, caps the charge roll at 6, and intervention charges do not receive Charge bonuses.
+- Counteroffensive is restricted to after an enemy attack resolution and serializes the targeted unit as the forced next fight while its phase-scoped Fights First effect remains active.
 - Command Re-roll records the eligible roll type and rerolls one die, except that Charge rolls are rerolled in full; practice replay carries that type through the action.
 - Epic Challenge records the selected Character model and applies temporary melee Precision, including model-constrained damage allocation, through replayable legal actions and the play UI.
 - Command Re-roll, Rapid Ingress, Heroic Intervention, and Counteroffensive have resolution/test coverage.

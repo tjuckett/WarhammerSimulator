@@ -432,6 +432,8 @@ export interface BattleState {
   fightStepStarted?: boolean;
   engagedUnitIdsAtFightStepStart?: string[];
   lastFightSelectionSide?: Side;
+  /** 11e Core 15.12 target that must be selected next after Counteroffensive. */
+  forcedFightUnitId?: string;
   activeAttachedFightUnitId?: string;
   activeAttachedShootingUnitId?: string;
   attachedShootingTargetUnitId?: string;

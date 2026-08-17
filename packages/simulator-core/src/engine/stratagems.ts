@@ -28,9 +28,14 @@ function phaseAllowed(stratagem: StratagemDefinition, phase: Phase): boolean {
   return stratagem.phases === 'any' || stratagem.phases.includes(phase);
 }
 
-function timingAllowed(state: BattleState, stratagem: StratagemDefinition): boolean {
-  return stratagem.id !== 'fire-overwatch'
-    || (state.phase === 'movement' && state.movementStep === 'reinforcements');
+function timingAllowed(state: BattleState, stratagem: StratagemDefinition, side: Side): boolean {
+  if (stratagem.id === 'fire-overwatch') return state.phase === 'movement' && state.movementStep === 'reinforcements';
+  if (stratagem.id === 'counteroffensive') {
+    return state.phase === 'fight'
+      && state.lastFightSelectionSide !== undefined
+      && state.lastFightSelectionSide !== side;
+  }
+  return true;
 }
 
 function turnAllowed(state: BattleState, side: Side, stratagem: StratagemDefinition): boolean {
@@ -282,6 +287,14 @@ function applyHeroicInterventionStratagemEffect(
   appendStratagemEffectLog(state, side, unit.profile.name, `${unit.profile.name} can declare a Heroic Intervention charge this phase.`, 'info');
 }
 
+function applyCounteroffensiveStratagemEffect(
+  state: BattleState,
+  stratagem: StratagemDefinition,
+  targetUnitId?: string,
+): void {
+  if (stratagem.id === 'counteroffensive') state.forcedFightUnitId = targetUnitId;
+}
+
 function rollDie(sides: number): number {
   return Math.floor(Math.random() * sides) + 1;
 }
@@ -425,7 +438,7 @@ export function availableStratagems(
 ): StratagemDefinition[] {
   return rules.stratagems.filter(stratagem =>
     phaseAllowed(stratagem, state.phase)
-    && timingAllowed(state, stratagem)
+    && timingAllowed(state, stratagem, side)
     && turnAllowed(state, side, stratagem)
     && battleRoundAllowed(state, stratagem)
     && canSpendCommandPoints(state, side, stratagem.cost)
@@ -454,7 +467,7 @@ export function useStratagem(
   const stratagem = stratagemById(rules, stratagemId);
   if (!stratagem) return state;
   if (!phaseAllowed(stratagem, state.phase)) return state;
-  if (!timingAllowed(state, stratagem)) return state;
+  if (!timingAllowed(state, stratagem, side)) return state;
   if (!heroicInterventionModeAllowed(stratagem, heroicInterventionMode)) return state;
   if (!turnAllowed(state, side, stratagem)) return state;
   if (!battleRoundAllowed(state, stratagem)) return state;
@@ -501,6 +514,7 @@ export function useStratagem(
   applyInsaneBraveryStratagemEffect(next, side, stratagem, targetUnitId);
   applyRapidIngressStratagemEffect(next, side, stratagem, targetUnitId);
   applyHeroicInterventionStratagemEffect(next, side, stratagem, targetUnitId, heroicInterventionMode);
+  applyCounteroffensiveStratagemEffect(next, stratagem, targetUnitId);
   applyMortalWoundStratagemEffect(next, side, stratagem, targetUnitId, secondaryTargetUnitId, sourceModelIndex);
   return next;
 }
