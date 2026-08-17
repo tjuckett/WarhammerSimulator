@@ -3465,7 +3465,8 @@ function finishAttachedFightComponent(state: BattleState, unit: BattleUnit, rule
     return;
   }
   state.activeAttachedFightUnitId = undefined;
-  if (state.forcedFightUnitId === unit.id) state.forcedFightUnitId = undefined;
+  const forcedUnit = state.units.find(candidate => candidate.id === state.forcedFightUnitId);
+  if (forcedUnit && attachedUnitId(forcedUnit) === attachedUnitId(unit)) state.forcedFightUnitId = undefined;
   state.lastFightSelectionSide = unit.side;
 }
 
@@ -3489,8 +3490,11 @@ export function playFightActivationUnitIds(
       .map(unit => unit.id);
   }
   if (state.forcedFightUnitId) {
-    const forced = eligible.find(unit => unit.id === state.forcedFightUnitId);
-    return side === forced?.side && forced ? [forced.id] : [];
+    const forced = state.units.find(unit => unit.id === state.forcedFightUnitId);
+    if (!forced || forced.side !== side) return [];
+    return eligible
+      .filter(unit => attachedUnitId(unit) === attachedUnitId(forced))
+      .map(unit => unit.id);
   }
   if (rules.metadata.edition !== '11e' && state.activeArmy !== side) {
     return eligible.filter(unit => unitHasCounteroffensive(state, unit)).map(unit => unit.id);

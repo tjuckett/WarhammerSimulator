@@ -1225,10 +1225,14 @@ test('11th Counteroffensive lets only the targeted defender fight next', () => {
   defender.profile.weapons = [
     { name: 'Claw', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true },
   ];
+  const attachedLeader = losTestUnit('attached-leader', 1, { x: 10.6, y: 10 });
+  attachedLeader.attachedToUnitId = defender.id;
+  attachedLeader.inCombat = true;
+  attachedLeader.profile = { ...defender.profile, name: 'Attached Leader' };
   const otherDefender = losTestUnit('other-defender', 1, { x: 10, y: 10.5 });
   otherDefender.inCombat = true;
   otherDefender.profile.weapons = defender.profile.weapons;
-  battle.units = [charger, defender, otherDefender];
+  battle.units = [charger, defender, attachedLeader, otherDefender];
 
   const replayed = applyGameAction(battle, {
     type: GAME_ACTION_TYPE.UseStratagem,
@@ -1240,7 +1244,7 @@ test('11th Counteroffensive lets only the targeted defender fight next', () => {
   const countered = useStratagem(battle, 1, 'counteroffensive', rules40K11th, defender.id);
   assert.deepEqual(countered.commandPoints, [0, 0]);
   assert.equal(countered.forcedFightUnitId, defender.id);
-  assert.deepEqual(playFightActivationUnitIds(countered, 1, rules40K11th), [defender.id]);
+  assert.deepEqual(playFightActivationUnitIds(countered, 1, rules40K11th), [defender.id, attachedLeader.id]);
   assert.deepEqual(playFightWeaponOptions(countered, defender.id, 1, rules40K11th).map(option => option.name), ['Claw']);
   assert.deepEqual(playFightWeaponOptions(countered, otherDefender.id, 1, rules40K11th), []);
 
@@ -1249,7 +1253,11 @@ test('11th Counteroffensive lets only the targeted defender fight next', () => {
   try {
     const fought = fightPlayUnitWeapon(countered, defender.id, 1, charger.id, 'all', rules40K11th);
     assert.equal(fought.units.find(unit => unit.id === defender.id)?.activated, true);
-    assert.notEqual(fought, countered);
+    assert.equal(fought.forcedFightUnitId, defender.id);
+    assert.deepEqual(playFightActivationUnitIds(fought, 1, rules40K11th), [attachedLeader.id]);
+    const leaderFought = fightPlayUnitWeapon(fought, attachedLeader.id, 1, charger.id, 'all', rules40K11th);
+    assert.equal(leaderFought.forcedFightUnitId, undefined);
+    assert.notEqual(leaderFought, countered);
   } finally {
     Math.random = originalRandom;
   }
