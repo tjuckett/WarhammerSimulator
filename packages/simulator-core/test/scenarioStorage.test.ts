@@ -10222,6 +10222,57 @@ test('play Movement disembarks a staged transport passenger before the transport
   assert.equal(playUnitCanDisembark(movedTransport, 0, 'transport-1', undefined, 1), false);
 });
 
+test('11th Tactical Disembark remains available after a transport is marked stationary', () => {
+  const battle = state('movement');
+  const passengerProfile = {
+    name: 'Stationary Passengers',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+    deployment: { mode: 'transport' as const, transportUnitId: 'stationary-transport-roster', transportName: 'Stationary Transport' },
+  };
+  const transportProfile = {
+    ...passengerProfile,
+    rosterId: 'stationary-transport-roster',
+    name: 'Stationary Transport',
+    keywords: ['Transport'],
+    oc: 0,
+    transportCapacity: 2,
+    deployment: undefined,
+  };
+  const transport: BattleUnit = {
+    id: 'stationary-transport',
+    side: 0,
+    profile: transportProfile,
+    remainingModels: 1,
+    woundsOnLeadModel: 10,
+    position: { x: 20, y: 20 },
+    modelPositions: [{ x: 20, y: 20 }],
+    facingDeg: 0,
+    charged: false,
+    inCombat: false,
+    battleshocked: false,
+    activated: false,
+    destroyed: false,
+  };
+  battle.armies[0].army = { ...battle.armies[0].army, units: [transportProfile, passengerProfile] };
+  battle.units = [transport];
+  markRemainingStationaryUnits(battle, 0);
+
+  assert.equal(battle.units[0].movementAction, 'remainedStationary');
+  assert.equal(playUnitCanDisembark(battle, 0, transport.id, undefined, 1), true);
+  const disembarked = disembarkPlayUnit(battle, 0, transport.id, undefined, 1);
+  assert.equal(disembarked.units.some(unit => unit.profile.name === 'Stationary Passengers'), true);
+});
+
 test('destroyed transports force embarked passengers to emergency disembark', () => {
   const battle = state('movement');
   battle.movementStep = 'reinforcements';

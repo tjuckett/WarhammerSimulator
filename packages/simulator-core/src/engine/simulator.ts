@@ -4619,7 +4619,9 @@ export function playUnitCanDisembark(
 ): boolean {
   if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
   const transport = state.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!transport || !unitIsTransportProfile(transport.profile) || transport.movementAction || transport.movementComplete) return false;
+  if (!transport || !unitIsTransportProfile(transport.profile)
+    || (transport.movementAction && transport.movementAction !== 'remainedStationary')
+    || (transport.movementComplete && transport.movementAction !== 'remainedStationary')) return false;
   const passenger = passengerUnitId
     ? state.units.find(candidate => candidate.id === passengerUnitId && candidate.side === side && !candidate.destroyed && candidate.embarkedInUnitId === transportUnitId)
     : null;
