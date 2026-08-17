@@ -4111,9 +4111,11 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
     u.movementStartPositionsByModel = undefined;
     u.movementStartRotationsByModel = undefined;
     u.movementComplete = undefined;
+    u.takingToSkies = undefined;
     u.arrivedFromReinforcements = undefined;
     u.rapidIngressThisPhase = undefined;
     u.heroicInterventionThisPhase = undefined;
+    u.heroicInterventionMode = undefined;
     u.emergencyDisembarkedThisTurn = undefined;
     u.combatDisembarkedThisTurn = undefined;
     u.rapidDisembarkedThisTurn = undefined;

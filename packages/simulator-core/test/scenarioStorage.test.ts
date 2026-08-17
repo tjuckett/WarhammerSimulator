@@ -926,9 +926,11 @@ test('11th command phase grants core CP and resets active player turn state', ()
   blue.firedWeaponIndices = [0];
   blue.movementAction = 'normalMove';
   blue.movementComplete = true;
+  blue.takingToSkies = true;
   blue.arrivedFromReinforcements = true;
   blue.rapidIngressThisPhase = true;
   blue.heroicInterventionThisPhase = true;
+  blue.heroicInterventionMode = 'into-the-fray';
   blue.emergencyDisembarkedThisTurn = true;
   blue.fellBack = true;
   blue.inCombat = true;
@@ -951,9 +953,11 @@ test('11th command phase grants core CP and resets active player turn state', ()
   assert.equal(resetBlue.firedWeaponIndices, undefined);
   assert.equal(resetBlue.movementAction, undefined);
   assert.equal(resetBlue.movementComplete, undefined);
+  assert.equal(resetBlue.takingToSkies, undefined);
   assert.equal(resetBlue.arrivedFromReinforcements, undefined);
   assert.equal(resetBlue.rapidIngressThisPhase, undefined);
   assert.equal(resetBlue.heroicInterventionThisPhase, undefined);
+  assert.equal(resetBlue.heroicInterventionMode, undefined);
   assert.equal(resetBlue.emergencyDisembarkedThisTurn, undefined);
   assert.equal(resetBlue.fellBack, false);
   assert.equal(resetBlue.inCombat, false);
