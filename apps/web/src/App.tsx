@@ -2502,7 +2502,7 @@ export default function App() {
     const next = placeNextUnit(prev);
     if (next !== prev) recordGameSessionAction(prev, next, { type: GAME_ACTION_TYPE.SimulationPlaceNextUnit });
     commitBattleState(next);
-  }, []);
+  }, [recordGameSessionAction]);
 
   const stepPhase = useCallback(() => {
     const prev = battleStateRef.current;
