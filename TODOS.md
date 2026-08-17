@@ -309,7 +309,7 @@ Use this section as the next-session pickup point for the rules implementation w
 - [x] Improve selected-model action placement/UI — the action HUD now stays within the scrollable board bounds and repositions after viewport resize.
 - [ ] Add tests when each rule is implemented in `packages/simulator-core/test/`.
   - Progress: the edition-boundary audit now has regression coverage proving Take to the Skies resolves omitted rules from an 11th-edition BattleState.
-- [x] Re-run `npx tsc -p apps/web/tsconfig.json --noEmit`, `npm run lint`, and root `npm run build` after frontend/rules changes. Latest verification passes; lint retains 1 React Hook dependency warning in the Battlefield canvas effect, and no errors.
+- [x] Re-run `npx tsc -p apps/web/tsconfig.json --noEmit`, `npm run lint`, and root `npm run build` after frontend/rules changes. Latest verification passes with zero TypeScript, lint, or build errors/warnings.
 
 ## Done
 - [x] 10th edition combat engine (hit/wound/save/damage)

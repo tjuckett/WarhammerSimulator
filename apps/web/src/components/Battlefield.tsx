@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, type PointerEvent, type ReactNode } from 'react';
+import { useRef, useEffect, useLayoutEffect, useState, useCallback, type PointerEvent, type ReactNode } from 'react';
 import type { BattleState, BattleUnit, Position } from '@warhammer-simulator/core/types/battle';
 import { pointInTerrain, terrainCenter, terrainCorners } from '@warhammer-simulator/core/engine/terrainGeometry';
 import { featureColor } from '@warhammer-simulator/core/engine/terrain';
@@ -32,6 +32,14 @@ export type PlayModelSelection = {
 };
 
 type ModelVisualState = 'los-visible' | 'los-visible-out-of-range' | 'los-blocked';
+
+function useStableLayoutEvent<T extends (...args: never[]) => unknown>(callback: T): T {
+  const callbackRef = useRef(callback);
+  useLayoutEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+  return useCallback((...args: Parameters<T>) => callbackRef.current(...args), []) as T;
+}
 
 interface Props {
   state: BattleState;
@@ -155,12 +163,15 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     return true;
   }
 
+  const renderCanvasEvent = useStableLayoutEvent(renderCanvas);
+  const updateSelectedActionsPositionEvent = useStableLayoutEvent(updateSelectedActionsPosition);
+
   useEffect(() => {
-    renderCanvas();
-    updateSelectedActionsPosition();
-    window.addEventListener('resize', updateSelectedActionsPosition);
-    return () => window.removeEventListener('resize', updateSelectedActionsPosition);
-  }, [state, editor?.selected, hoverGridPoint, zoom, deployer?.selectedModel, deployer?.selectedModelActions, hideSelectedActions, selectedUnitId, selectedUnitIds, activeSimulationUnitId, shooterUnitId, targetUnitId, shootingReadyUnitIds, boxSelect, hoveredTransport, hoveredUnitId, coverUnitIds, losRays, visibleOutOfRangeUnitIds]);
+    renderCanvasEvent();
+    updateSelectedActionsPositionEvent();
+    window.addEventListener('resize', updateSelectedActionsPositionEvent);
+    return () => window.removeEventListener('resize', updateSelectedActionsPositionEvent);
+  }, [state, editor?.selected, hoverGridPoint, zoom, deployer?.selectedModel, deployer?.selectedModelActions, hideSelectedActions, selectedUnitId, selectedUnitIds, activeSimulationUnitId, shooterUnitId, targetUnitId, shootingReadyUnitIds, boxSelect, hoveredTransport, hoveredUnitId, coverUnitIds, losRays, visibleOutOfRangeUnitIds, renderCanvasEvent, updateSelectedActionsPositionEvent]);
 
   useEffect(() => {
     setHideSelectedActions(false);
