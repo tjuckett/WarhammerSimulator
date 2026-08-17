@@ -68,7 +68,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Prioritize mission/event state tracking, automatic secondary scoring, primary scoring tests, scoring log explanations, and remaining core rule audit items listed below.
   - Keep edition-specific behavior behind `RulesEdition` or focused simulator-core helpers.
   - Next after this task: build Army Builder mode using the cleaned-up army editing and import/export boundaries.
-- [ ] Add a dedicated Army Builder mode.
+- [x] Add a dedicated Army Builder mode.
   - Add a fourth app mode for army/list management with no battlefield canvas.
   - Top bar should show army-focused controls instead of play controls: army slot, army type/faction, saved army dropdown, New, Save, Import JSON, and Export JSON.
   - Main layout should be three focused columns: available unit library on the left, current army selection in the middle, selected unit stats/options on the right.
@@ -366,9 +366,9 @@ The current runtime now has both terrain mats and terrain features. Continue sou
 - [x] **Import real army lists** — regression coverage now parses the three exported rosters in `lists/` and verifies non-empty usable units and unique roster IDs
 
 ### Simulation Step Granularity
-Currently the simulator runs an entire player turn (all phases) as one atomic step. Need finer control:
+The simulator now supports turn-, phase-, and unit-granularity stepping with a persisted simulation cursor:
 
-- [ ] **Phase-step mode** — "Step Phase" button advances one phase at a time (Movement → Shooting → Charge → Fight → Battle-shock → Objectives) for the active player, then hands off to the opponent. Requires splitting `simulatePlayerTurn` into individual phase functions that can be called one at a time and persisted back to `BattleState` (add a `pendingPhaseIndex` field or similar cursor).
-- [ ] **Unit-step mode** — within a phase, "Step Unit" button activates one unit at a time. Requires tracking which units in the current phase have already activated (`BattleUnit.activated` is already present, just unused). UI should highlight the next unit to act.
-- [ ] **Step-granularity selector** — add a control (e.g. segmented button: "Unit | Phase | Turn") that switches between the three modes; Auto Run respects the same granularity setting.
-- [ ] **Active unit highlight** — when in unit-step mode, draw a pulsing ring or bright outline around the unit currently being activated on the Battlefield canvas.
+- [x] **Phase-step mode** — the Step control advances one phase at a time through the persisted simulation cursor and hands off to the opponent at the turn boundary.
+- [x] **Unit-step mode** — the Step control activates one unit at a time within the current phase and tracks the active unit through the simulation cursor.
+- [x] **Step-granularity selector** — the Unit | Phase | Turn selector switches both manual stepping and Auto Run behavior.
+- [x] **Active unit highlight** — unit-step mode draws the active unit highlight on the Battlefield canvas.
