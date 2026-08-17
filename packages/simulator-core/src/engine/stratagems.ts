@@ -92,26 +92,6 @@ function distance(a: { x: number; y: number }, b: { x: number; y: number }): num
   return Math.hypot(a.x - b.x, a.y - b.y);
 }
 
-function unitHasVisibleLineToTarget(state: BattleState, unit: BattleUnit, target: BattleUnit): boolean {
-  const unitRadius = battleUnitMaxBaseRadiusInches(unit);
-  const targetRadius = battleUnitMaxBaseRadiusInches(target);
-  return unit.modelPositions.some(from =>
-    target.modelPositions.some(to => hasLOSEdgeToEdge(from, unitRadius, to, targetRadius, state.terrain))
-  );
-}
-
-function nearestValidEnemy(
-  state: BattleState,
-  unit: BattleUnit,
-  predicate: (enemy: BattleUnit) => boolean,
-): BattleUnit | null {
-  const candidates = enemies(state, unit.side).filter(predicate);
-  return candidates.reduce<BattleUnit | null>((best, enemy) => {
-    if (!best) return enemy;
-    return battleUnitsBaseEdgeDistance(unit, enemy) < battleUnitsBaseEdgeDistance(unit, best) ? enemy : best;
-  }, null);
-}
-
 function unitIsEngaged(state: BattleState, unit: BattleUnit, rules: RulesEdition): boolean {
   return enemies(state, unit.side).some(enemy => distance(unit.position, enemy.position) <= rules.engagementRange());
 }
@@ -194,17 +174,54 @@ function targetModelIndexAllowed(target: BattleUnit, stratagem: StratagemDefinit
   return Number.isInteger(index) && index >= 0 && !!target.modelPositions[index];
 }
 
+function sourceModelIndexAllowed(source: BattleUnit | null, stratagem: StratagemDefinition, sourceModelIndex?: number): boolean {
+  if (stratagem.id !== 'explosives') return sourceModelIndex === undefined;
+  if (!source) return false;
+  return Number.isInteger(sourceModelIndex)
+    && sourceModelIndex! >= 0
+    && !!source.modelPositions[sourceModelIndex!];
+}
+
+export function explosivesTargetAllowed(
+  state: BattleState,
+  source: BattleUnit,
+  target: BattleUnit,
+  sourceModelIndex: number,
+  rules: RulesEdition,
+): boolean {
+  const sourcePosition = source.modelPositions[sourceModelIndex];
+  if (!sourcePosition || target.side === source.side || target.destroyed || target.embarkedInUnitId || target.inStrategicReserves) return false;
+  if (unitIsEngaged(state, target, rules)) return false;
+  return target.modelPositions.some(targetPosition =>
+    battleUnitsBaseEdgeDistance(source, target) <= 8
+      && hasLOSEdgeToEdge(
+        sourcePosition,
+        battleUnitMaxBaseRadiusInches(source),
+        targetPosition,
+        battleUnitMaxBaseRadiusInches(target),
+        state.terrain,
+      )
+  );
+}
+
 function secondaryTargetAllowed(
   state: BattleState,
   side: Side,
   stratagem: StratagemDefinition,
   source: BattleUnit | null,
   secondaryTargetUnitId: string | undefined,
+  sourceModelIndex: number | undefined,
   rules: RulesEdition,
 ): boolean {
-  if (stratagem.id !== 'crushing-impact') return secondaryTargetUnitId === undefined;
+  if (stratagem.id !== 'crushing-impact' && stratagem.id !== 'explosives') return secondaryTargetUnitId === undefined;
   if (!source || !secondaryTargetUnitId) return false;
   const target = targetUnitFor(state, secondaryTargetUnitId);
+  if (stratagem.id === 'explosives') {
+    return sourceModelIndex !== undefined
+      && !!target
+      && explosivesTargetAllowed(state, source, target, sourceModelIndex, rules);
+  }
+  if (sourceModelIndex !== undefined) return false;
   return !!target
     && target.side !== side
     && battleUnitsBaseEdgeDistance(source, target) <= rules.engagementRange();
@@ -314,16 +331,14 @@ function applyMortalWoundStratagemEffect(
   stratagem: StratagemDefinition,
   targetUnitId?: string,
   secondaryTargetUnitId?: string,
+  sourceModelIndex?: number,
 ): void {
   if (stratagem.id !== 'explosives' && stratagem.id !== 'crushing-impact') return;
   const unit = targetUnitFor(state, targetUnitId);
   if (!unit) return;
 
   const enemy = stratagem.id === 'explosives'
-    ? nearestValidEnemy(state, unit, candidate =>
-        battleUnitsBaseEdgeDistance(unit, candidate) <= 8
-        && unitHasVisibleLineToTarget(state, unit, candidate)
-      )
+    ? targetUnitFor(state, secondaryTargetUnitId)
     : stratagem.id === 'crushing-impact'
       ? targetUnitFor(state, secondaryTargetUnitId)
       : null;
@@ -419,6 +434,7 @@ export function useStratagem(
   targetUnitId?: string,
   targetModelIndex?: number,
   secondaryTargetUnitId?: string,
+  sourceModelIndex?: number,
 ): BattleState {
   const stratagem = stratagemById(rules, stratagemId);
   if (!stratagem) return state;
@@ -432,7 +448,8 @@ export function useStratagem(
   const target = targetUnitFor(state, targetUnitId);
   if (stratagem.id === 'epic-challenge' && (!target || !targetModelIndexAllowed(target, stratagem, targetModelIndex))) return state;
   if (stratagem.id !== 'epic-challenge' && targetModelIndex !== undefined) return state;
-  if (!secondaryTargetAllowed(state, side, stratagem, target, secondaryTargetUnitId, rules)) return state;
+  if (!sourceModelIndexAllowed(target!, stratagem, sourceModelIndex)) return state;
+  if (!secondaryTargetAllowed(state, side, stratagem, target, secondaryTargetUnitId, sourceModelIndex, rules)) return state;
 
   const next: BattleState = JSON.parse(JSON.stringify(state));
   if (!spendCommandPoints(next, side, stratagem.cost)) return state;
@@ -447,6 +464,7 @@ export function useStratagem(
     targetUnitId,
     ...(stratagem.id === 'epic-challenge' ? { targetModelIndex: targetModelIndex ?? 0 } : {}),
     ...(secondaryTargetUnitId ? { secondaryTargetUnitId } : {}),
+    ...(sourceModelIndex !== undefined ? { sourceModelIndex } : {}),
     commandPointsSpent: stratagem.cost,
   };
   next.stratagemUses = [...(next.stratagemUses ?? []), use];
@@ -464,6 +482,6 @@ export function useStratagem(
   applyInsaneBraveryStratagemEffect(next, side, stratagem, targetUnitId);
   applyRapidIngressStratagemEffect(next, side, stratagem, targetUnitId);
   applyHeroicInterventionStratagemEffect(next, side, stratagem, targetUnitId);
-  applyMortalWoundStratagemEffect(next, side, stratagem, targetUnitId, secondaryTargetUnitId);
+  applyMortalWoundStratagemEffect(next, side, stratagem, targetUnitId, secondaryTargetUnitId, sourceModelIndex);
   return next;
 }

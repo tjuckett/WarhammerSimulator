@@ -2,7 +2,7 @@ import type { Side } from '../types/battle';
 import type { GameAction } from '../practice/actions';
 import type { RulesEdition } from './rulesEngine';
 import { rulesEditionForRuleset } from './rulesEngine';
-import { availableStratagems } from './stratagems';
+import { availableStratagems, explosivesTargetAllowed } from './stratagems';
 import { availableUnitAbilities } from './unitAbilities';
 import {
   battleUnitsBaseEdgeDistance,
@@ -419,23 +419,33 @@ function addStratagemActions(actions: LegalAction[], state: BattleState, side: S
       const modelIndices = stratagem.id === 'epic-challenge'
         ? unit.modelPositions.map((_, modelIndex) => modelIndex)
         : [undefined];
+      const sourceModelIndices = stratagem.id === 'explosives'
+        ? unit.modelPositions.map((_, modelIndex) => modelIndex)
+        : [undefined];
       const secondaryTargets = stratagem.id === 'crushing-impact'
         ? state.units.filter(candidate =>
             !candidate.destroyed
             && candidate.side !== side
             && battleUnitsBaseEdgeDistance(unit, candidate) <= rules.engagementRange()
           )
-        : [undefined];
+        : stratagem.id === 'explosives'
+          ? state.units.filter(candidate => !candidate.destroyed && explosivesTargetAllowed(state, unit, candidate, 0, rules))
+          : [undefined];
       for (const targetModelIndex of modelIndices) {
-        for (const secondaryTargetUnit of secondaryTargets) {
+        for (const sourceModelIndex of sourceModelIndices) {
+          const sourceTargets = stratagem.id === 'explosives'
+            ? state.units.filter(candidate => !candidate.destroyed && explosivesTargetAllowed(state, unit, candidate, sourceModelIndex!, rules))
+            : secondaryTargets;
+          for (const secondaryTargetUnit of sourceTargets) {
         actions.push({
-          action: { type: 'play.useStratagem', side, stratagemId: stratagem.id, targetUnitId: unit.id, targetModelIndex, ...(secondaryTargetUnit ? { secondaryTargetUnitId: secondaryTargetUnit.id } : {}) },
+          action: { type: 'play.useStratagem', side, stratagemId: stratagem.id, targetUnitId: unit.id, targetModelIndex, ...(secondaryTargetUnit ? { secondaryTargetUnitId: secondaryTargetUnit.id } : {}), ...(sourceModelIndex !== undefined ? { sourceModelIndex } : {}) },
           category: 'stratagem',
           side,
           unitId: unit.id,
           targetUnitId: unit.id,
-          label: `${unit.profile.name}: Use ${stratagem.name}${secondaryTargetUnit ? ` on ${secondaryTargetUnit.profile.name}` : ''}${targetModelIndex === undefined ? '' : ` on model ${targetModelIndex + 1}`}`,
+          label: `${unit.profile.name}: Use ${stratagem.name}${secondaryTargetUnit ? ` on ${secondaryTargetUnit.profile.name}` : ''}${sourceModelIndex === undefined ? '' : ` from model ${sourceModelIndex + 1}`}${targetModelIndex === undefined ? '' : ` on model ${targetModelIndex + 1}`}`,
         });
+          }
         }
       }
     }

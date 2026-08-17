@@ -6,6 +6,8 @@ import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/ba
 import type { CommandRerollRollType, StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import { battleUnitsBaseEdgeDistance, type FiringDeckSelection, type PlayChargeTargetOption, type PlayFightWeaponOption, type PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
+import { explosivesTargetAllowed } from '@warhammer-simulator/core/engine/stratagems';
+import { rulesEditionForRuleset } from '@warhammer-simulator/core/engine/rulesEngine';
 import {
   abilityOptionKey,
   abilityTimingLabel,
@@ -573,7 +575,7 @@ export function PlayTacticsPanel({
   selectedUnitIsCondemned: boolean;
   onStratagemChange: (value: string) => void;
   onAbilityChange: (value: string) => void;
-  onUseStratagem: (stratagemId: string, targetModelIndex?: number, secondaryTargetUnitId?: string) => void;
+  onUseStratagem: (stratagemId: string, targetModelIndex?: number, secondaryTargetUnitId?: string, sourceModelIndex?: number) => void;
   onUseAbility: () => void;
   onStartAction: () => void;
   onToggleCondemnedUnit: () => void;
@@ -586,9 +588,15 @@ export function PlayTacticsPanel({
   const [commandRerollRollType, setCommandRerollRollType] = useState<CommandRerollRollType>('hit');
   const [epicChallengeModelIndex, setEpicChallengeModelIndex] = useState(0);
   const [crushingImpactTargetId, setCrushingImpactTargetId] = useState('');
+  const [explosivesSourceModelIndex, setExplosivesSourceModelIndex] = useState(0);
+  const [explosivesTargetId, setExplosivesTargetId] = useState('');
   const commandRerollRolls = parseDiceInput(commandRerollInput);
   const selectedEpicChallengeModelIndex = selectedUnit?.modelPositions.length
     ? Math.min(epicChallengeModelIndex, selectedUnit.modelPositions.length - 1)
+    : 0;
+  const rules = rulesEditionForRuleset(state.ruleset);
+  const selectedExplosivesSourceModelIndex = selectedUnit?.modelPositions.length
+    ? Math.min(explosivesSourceModelIndex, selectedUnit.modelPositions.length - 1)
     : 0;
 
   return (
@@ -672,6 +680,32 @@ export function PlayTacticsPanel({
               ))}
           </Select>
         )}
+        {selectedUnit && stratagems.some(stratagem => stratagem.id === 'explosives') && (
+          <>
+            <Select
+              size="small"
+              value={selectedExplosivesSourceModelIndex}
+              onChange={event => setExplosivesSourceModelIndex(Number(event.target.value))}
+              aria-label="Explosives source model"
+            >
+              {selectedUnit.modelPositions.map((_, modelIndex) => (
+                <MenuItem key={modelIndex} value={modelIndex}>Explosives from model {modelIndex + 1}</MenuItem>
+              ))}
+            </Select>
+            <Select
+              size="small"
+              value={explosivesTargetId}
+              onChange={event => setExplosivesTargetId(event.target.value)}
+              displayEmpty
+              aria-label="Explosives target"
+            >
+              <MenuItem value="">Select Explosives target</MenuItem>
+              {state.units
+                .filter(unit => !unit.destroyed && explosivesTargetAllowed(state, selectedUnit, unit, selectedExplosivesSourceModelIndex, rules))
+                .map(unit => <MenuItem key={unit.id} value={unit.id}>Explosives: {unit.profile.name}</MenuItem>)}
+            </Select>
+          </>
+        )}
         {stratagems.map(stratagem => (
           <Button
             key={stratagem.id}
@@ -679,11 +713,12 @@ export function PlayTacticsPanel({
             variant={stratagem.id === selectedStratagemId ? 'contained' : 'outlined'}
             onMouseEnter={() => onStratagemChange(stratagem.id)}
             onFocus={() => onStratagemChange(stratagem.id)}
-            disabled={stratagem.id === 'crushing-impact' && !crushingImpactTargetId}
+            disabled={(stratagem.id === 'crushing-impact' && !crushingImpactTargetId) || (stratagem.id === 'explosives' && !explosivesTargetId)}
             onClick={() => onUseStratagem(
               stratagem.id,
               stratagem.id === 'epic-challenge' ? selectedEpicChallengeModelIndex : undefined,
               stratagem.id === 'crushing-impact' ? crushingImpactTargetId : undefined,
+              stratagem.id === 'explosives' ? selectedExplosivesSourceModelIndex : undefined,
             )}
             title={stratagem.description}
             sx={{ justifyContent: 'space-between', textTransform: 'none' }}

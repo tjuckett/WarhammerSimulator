@@ -47,5 +47,6 @@ export interface StratagemUse {
   targetUnitId?: string;
   targetModelIndex?: number;
   secondaryTargetUnitId?: string;
+  sourceModelIndex?: number;
   commandPointsSpent: number;
 }

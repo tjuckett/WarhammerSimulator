@@ -1241,8 +1241,10 @@ test('11th Explosives deals mortal wounds to the nearest visible enemy within 8 
   const rolls = [0.5, 0.3, 0.67, 0.99, 0.0, 0.5];
   Math.random = () => rolls.shift() ?? 0;
   try {
-    const exploded = useStratagem(battle, 0, 'explosives', rules40K11th, grenadier.id);
+    const exploded = useStratagem(battle, 0, 'explosives', rules40K11th, grenadier.id, undefined, target.id, 0);
     assert.deepEqual(exploded.commandPoints, [0, 0]);
+    assert.equal(exploded.stratagemUses?.[0]?.secondaryTargetUnitId, target.id);
+    assert.equal(exploded.stratagemUses?.[0]?.sourceModelIndex, 0);
     assert.deepEqual(exploded.units.find(unit => unit.id === target.id)?.pendingDamageAllocations, [
       { damage: 4, noCarryOver: undefined, source: 'Explosives' },
     ]);
