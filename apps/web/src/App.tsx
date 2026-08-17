@@ -987,7 +987,6 @@ export default function App() {
     isPlayMode
     && battleState
     && primaryPlaySelection
-    && (primaryPlaySelection.side === battleState.activeArmy || activeRulesForBattle.metadata.edition === '11e')
     && playUnitCanPileIn(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side, activeRulesForBattle)
   );
   const selectedPlayScoutAllowance = battleState && primaryPlaySelection
@@ -1019,7 +1018,6 @@ export default function App() {
     isPlayMode
     && battleState
     && primaryPlaySelection
-    && (primaryPlaySelection.side === battleState.activeArmy || activeRulesForBattle.metadata.edition === '11e')
     && playUnitCanConsolidate(battleState, primaryPlaySelection.unitId, primaryPlaySelection.side, activeRulesForBattle)
   );
   const selectedPlayCanEmbark = !!(
