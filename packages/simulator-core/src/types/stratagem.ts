@@ -20,6 +20,7 @@ export interface StratagemDefinition {
   targetMustHaveCharged?: boolean;
   targetMustNotHaveAdvanced?: boolean;
   targetWithinEnemyDistance?: number;
+  minimumBattleRound?: number;
   oncePerPhase?: boolean;
   oncePerBattle?: boolean;
   targetOncePerPhase?: boolean;

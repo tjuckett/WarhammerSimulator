@@ -1005,6 +1005,10 @@ test('11th core stratagems enforce target keyword and reserve restrictions', () 
   aircraft.modelPositions = [];
   movement.units = [reserve, aircraft];
 
+  assert.equal(availableStratagems(movement, 1, rules40K11th, reserve.id).some(stratagem => stratagem.id === 'rapid-ingress'), false);
+  assert.equal(useStratagem(movement, 1, 'rapid-ingress', rules40K11th, reserve.id), movement);
+  movement.battleRound = 2;
+  movement.turn = 2;
   assert.equal(availableStratagems(movement, 1, rules40K11th, reserve.id).some(stratagem => stratagem.id === 'rapid-ingress'), true);
   assert.equal(availableStratagems(movement, 1, rules40K11th, aircraft.id).some(stratagem => stratagem.id === 'rapid-ingress'), false);
 });
@@ -1012,6 +1016,8 @@ test('11th core stratagems enforce target keyword and reserve restrictions', () 
 test('11th Rapid Ingress lets a non-Aircraft unit return from Strategic Reserves in the opponent Movement phase', () => {
   const battle = state('movement');
   battle.activeArmy = 0;
+  battle.battleRound = 2;
+  battle.turn = 2;
   battle.movementStep = 'reinforcements';
   battle.commandPoints = [0, 1];
   battle.ruleset = rulesetMetadataForState(rules40K11th);

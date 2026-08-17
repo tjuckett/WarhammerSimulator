@@ -333,6 +333,7 @@ export const rules40K11th: RulesEdition = {
       target: 'friendly-unit',
       targetMustBeInStrategicReserves: true,
       targetForbiddenKeywordsAny: ['Aircraft'],
+      minimumBattleRound: 2,
       oncePerPhase: true,
       targetOncePerPhase: ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE,
       description: 'A non-Aircraft unit in Strategic Reserves makes an ingress move at the end of the opponent movement phase.',

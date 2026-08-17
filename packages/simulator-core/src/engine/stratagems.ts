@@ -35,6 +35,11 @@ function turnAllowed(state: BattleState, side: Side, stratagem: StratagemDefinit
     : state.activeArmy !== side;
 }
 
+function battleRoundAllowed(state: BattleState, stratagem: StratagemDefinition): boolean {
+  return stratagem.minimumBattleRound === undefined
+    || battleRound(state) >= stratagem.minimumBattleRound;
+}
+
 function targetUnitFor(state: BattleState, targetUnitId?: string): BattleUnit | null {
   if (!targetUnitId) return null;
   return state.units.find(unit => unit.id === targetUnitId && !unit.destroyed && !unit.embarkedInUnitId) ?? null;
@@ -357,6 +362,7 @@ export function availableStratagems(
   return rules.stratagems.filter(stratagem =>
     phaseAllowed(stratagem, state.phase)
     && turnAllowed(state, side, stratagem)
+    && battleRoundAllowed(state, stratagem)
     && canSpendCommandPoints(state, side, stratagem.cost)
     && !alreadyUsedThisPhase(state, side, stratagem)
     && !alreadyUsedThisBattle(state, side, stratagem)
@@ -380,6 +386,7 @@ export function useStratagem(
   if (!stratagem) return state;
   if (!phaseAllowed(stratagem, state.phase)) return state;
   if (!turnAllowed(state, side, stratagem)) return state;
+  if (!battleRoundAllowed(state, stratagem)) return state;
   if (alreadyUsedThisPhase(state, side, stratagem)) return state;
   if (alreadyUsedThisBattle(state, side, stratagem)) return state;
   if (targetAlreadyUsedThisPhase(state, side, stratagem, targetUnitId)) return state;
