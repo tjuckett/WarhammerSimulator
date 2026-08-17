@@ -382,7 +382,7 @@ The current runtime now has both terrain mats and terrain features. Continue sou
 - [x] **Assault keyword** - Advanced units can shoot Assault weapons but not other ranged weapons.
 - [x] **11th edition rules** — the 11th preview ruleset, mission scoring, terrain objective control, phases, stratagems, movement, combat, and supported core abilities are implemented behind `rulesEngine.ts → rules40K11th`; final-source audit work remains tracked above.
 - [x] **Secondary objectives** — fixed/tactical state, supporting events/geometry, central VP limits, and automatic scoring are implemented for all 18 cards; layout-dependent clauses fail closed when explicit setup geometry is unavailable.
-- [ ] **Morale/flee** — units that fail battle-shock should have a chance to flee (lose models), not just lose OC
+- [x] **Morale/flee** — no separate post-test flee mechanic is present in the current 10th/11th Core Rules; Battle-shock and Desperate Escape are modeled instead.
 - [x] **Stratagems / command points** — the core CP economy and current 11th core stratagem framework/effects are implemented; final wording and faction-specific data remain tracked above.
 - [x] **Better AI movement** — simulation movement now weighs objective ownership, objective distance, and unit OC before selecting the nearest enemy target
 - [x] **Import real army lists** — regression coverage now parses the three exported rosters in `lists/` and verifies non-empty usable units and unique roster IDs
