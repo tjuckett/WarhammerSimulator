@@ -3312,6 +3312,22 @@ export function startPlayFightStep(
   return s;
 }
 
+export function playFightStepNeedsStart(
+  state: BattleState,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): boolean {
+  return rules.metadata.edition === '11e' && state.phase === 'fight' && state.fightStepStarted === false;
+}
+
+export function playFightPhaseHasPendingActivations(
+  state: BattleState,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): boolean {
+  return rules.metadata.edition === '11e'
+    && (playFightActivationUnitIds(state, 0, rules).length > 0
+      || playFightActivationUnitIds(state, 1, rules).length > 0);
+}
+
 function unitHasCounteroffensive(state: BattleState, unit: BattleUnit): boolean {
   return unitHasActiveStratagem(state, unit, 'counteroffensive', 'fight');
 }

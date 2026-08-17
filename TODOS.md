@@ -216,8 +216,9 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
 - [ ] Re-audit shared 10th-compatible movement, shooting, charge, fight, Battle-shock, objective control, reserves, transports, terrain, aircraft, and vertical rules against the final full 11th wording.
 - [ ] Remove or narrow the 11th preview notice once final 11th rules are fully modeled.
 - [ ] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.
-  - Progress: pile-in and consolidation availability now relies on the core rules helpers rather than duplicating the 11th-edition side gate in React; phase-specific labels and controls remain presentation concerns.
+  - Progress: pile-in and consolidation availability, plus Fight-step start/end gating, now rely on focused core rules helpers rather than duplicating edition checks in React; phase-specific labels remain presentation concerns.
 - [ ] Continue datasheet/character ability support beyond the first passive hooks: Leader aura/attached-unit modifiers, Precision interactions beyond targeting, and faction-specific abilities as source text/data becomes available.
+  - Progress: structured Aura range/eligibility and attached-unit/Precision foundations are implemented; effect execution remains fail-closed until imported source data provides typed modifiers.
 
 ### 11th Primary Missions To Implement
 - [x] Battlefield Dominance
