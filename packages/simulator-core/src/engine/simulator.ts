@@ -618,6 +618,40 @@ function participatingWeaponModelIndexes(
     : aliveWeaponModelIndexes(attacker, weaponIndex);
 }
 
+function linePassesThroughModel(from: Position, to: Position, model: Position, radius: number): boolean {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const lengthSquared = dx * dx + dy * dy;
+  if (lengthSquared < 0.0001) return false;
+  const projection = ((model.x - from.x) * dx + (model.y - from.y) * dy) / lengthSquared;
+  if (projection <= 0.02 || projection >= 0.98) return false;
+  const closestX = from.x + projection * dx;
+  const closestY = from.y + projection * dy;
+  return Math.hypot(model.x - closestX, model.y - closestY) <= radius;
+}
+
+function targetIsScreenedBySmoke(state: BattleState, attacker: BattleUnit, target: BattleUnit): boolean {
+  const smokeUnits = state.units.filter(unit =>
+    unit.side === target.side
+    && unit.id !== target.id
+    && !unit.destroyed
+    && !unit.embarkedInUnitId
+    && unitHasActiveStratagem(state, unit, 'smokescreen', 'shooting'),
+  );
+  return attacker.modelPositions.some(from =>
+    target.modelPositions.some(to =>
+      smokeUnits.some(smokeUnit => smokeUnit.modelPositions.some((smokeModel, smokeModelIndex) =>
+        linePassesThroughModel(
+          from,
+          to,
+          smokeModel,
+          modelBaseRadius(smokeUnit, smokeModelIndex),
+        )
+      ))
+    )
+  );
+}
+
 function meleeWeaponSelection(
   unit: BattleUnit,
   options: Array<{ weapon: WeaponProfile; weaponIndex: number }>,
@@ -2695,18 +2729,19 @@ function shootingWeaponModifiers(
   const bigGunsNeverTire = inEngagement(unit, foes, rules.engagementRange()) && unitCanUseBigGunsNeverTire(unit);
   const usesIndirectFirePenalty = weaponHasKeyword(weapon, 'Indirect Fire')
     && !unit.modelPositions.some((from, i) => hasAnyModelLOS(from, modelBaseRadius(unit, i), target, state.terrain));
-  const usesSmokescreen = unitHasActiveStratagem(state, target, 'smokescreen', 'shooting');
+  const usesSmokescreen = unitHasActiveStratagem(state, target, 'smokescreen', 'shooting')
+    || targetIsScreenedBySmoke(state, unit, target);
   const cover = targetHasTerrainCoverFrom(unit.modelPositions, target, state.terrain) || usesIndirectFirePenalty || usesSmokescreen;
   const usesBigGunsPenalty = (bigGunsNeverTire || targetWithinFriendlyEngagement(state, target, unit.side, rules))
     && !weaponIsSidearm(weapon);
   const usesHeavyBonus = weaponHasKeyword(weapon, 'Heavy') && unit.movementAction === 'remainedStationary';
   const usesStealth = attachedUnitHasRule(state, target, 'Stealth');
-  const hitModifier = (usesBigGunsPenalty ? 1 : 0) + (usesHeavyBonus ? -1 : 0) + (usesIndirectFirePenalty ? 1 : 0) + (usesSmokescreen ? 1 : 0) + (usesStealth ? 1 : 0);
+  const hitModifier = (usesBigGunsPenalty ? 1 : 0) + (usesHeavyBonus ? -1 : 0) + (usesIndirectFirePenalty ? 1 : 0) + (usesStealth ? 1 : 0);
   const hitModifierNotes = [
     usesBigGunsPenalty ? 'Big Guns Never Tire -1 to Hit' : '',
     usesHeavyBonus ? 'Heavy +1 to Hit' : '',
     usesIndirectFirePenalty ? 'Indirect Fire -1 to Hit; target has Benefit of Cover' : '',
-    usesSmokescreen ? 'Smokescreen -1 to Hit; target has Benefit of Cover' : '',
+    usesSmokescreen ? 'Smokescreen: target has Benefit of Cover' : '',
     usesStealth ? 'Stealth -1 to Hit' : '',
   ].filter(Boolean).join('; ');
   return { cover, hitModifier, hitModifierNotes };

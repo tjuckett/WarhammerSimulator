@@ -761,6 +761,21 @@ test('11th Epic Challenge constrains melee damage allocation to the selected Cha
   } finally {
     Math.random = originalRandom;
   }
+
+  const screenedBattle = state('shooting');
+  screenedBattle.activeArmy = 0;
+  screenedBattle.commandPoints = [0, 1];
+  const screenedShooter = losTestUnit('screened-shooter', 0, { x: 0, y: 0 });
+  screenedShooter.profile.weapons = [
+    { name: 'Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+  ];
+  const smokeScreen = losTestUnit('smoke-screen', 1, { x: 8, y: 0 });
+  smokeScreen.profile.keywords = ['Infantry', 'Smoke'];
+  const screenedTarget = losTestUnit('screened-target', 1, { x: 16, y: 0 });
+  screenedBattle.units = [screenedShooter, smokeScreen, screenedTarget];
+  const screened = useStratagem(screenedBattle, 1, 'smokescreen', rules40K11th, smokeScreen.id);
+  const screenedShooting = shootPlayUnitWeapon(screened, screenedShooter.id, 0, screenedTarget.id, 'all', rules40K11th);
+  assert.match(screenedShooting.log.map(entry => entry.message).join(' '), /Smokescreen: target has Benefit of Cover/);
 });
 
 test('11th edition preview Insane Bravery can only be used once per battle', () => {
@@ -1183,8 +1198,8 @@ test('11th Smokescreen applies cover and a hit penalty for the phase', () => {
   try {
     const shooting = shootPlayUnitWeapon(screened, shooter.id, 0, smoke.id, 'all', rules40K11th);
     const messages = shooting.log.map(entry => entry.message).join(' ');
-    assert.match(messages, /Smokescreen -1 to Hit; target has Benefit of Cover/);
-    assert.match(messages, /Hit rolls \(4\+\)/);
+    assert.match(messages, /Smokescreen: target has Benefit of Cover/);
+    assert.match(messages, /Hit rolls \(3\+\)/);
     assert.match(messages, /Save rolls \(3\+, cover \+1\)/);
   } finally {
     Math.random = originalRandom;

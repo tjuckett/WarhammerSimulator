@@ -212,6 +212,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: Crushing Impact now requires an explicit engaged enemy target, rolls up to six dice from the charging unit's Toughness, deals mortal wounds on 5+, and returns mortal wounds on unmodified 1s through replay/legal actions.
   - Progress: Explosives now selects an explicit throwing model and visible unengaged enemy target within 8 inches, with both selections preserved through legal/practice/UI actions.
   - Progress: Fire Overwatch is now restricted to the opponent's Reinforcements/end-of-Movement step, and snap shooting requires the recorded Fire Overwatch use.
+  - Progress: Smokescreen now grants only Benefit of Cover, including to units screened by the Smoke unit, without inventing a separate hit penalty.
 - [x] Implement Command Re-roll pending reroll/resolution support. UI can now wire a prompt to `resolveCommandReroll`; current support records the pending token, rerolls matching dice, logs the result, and supports practice replay.
 - [x] Implement Rapid Ingress resolution flow: target validation marks a non-Aircraft Strategic Reserve unit so it can be placed during the opponent Movement/Reinforcements step.
 - [x] Implement Heroic Intervention resolution flow: target validation marks an eligible defender so it can declare and resolve a Heroic Intervention charge during the opponent Charge phase.
