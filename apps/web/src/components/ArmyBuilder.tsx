@@ -103,7 +103,11 @@ export function ArmyBuilder({ armies, sampleArmies, savedSlot, onSavedSlotChange
   function generateArmy() {
     const result = aiContext === 'strategy'
       ? generateAiArmy(army, { strategy: aiStrategy })
-      : selectAiArmyForScenario(army, { id: `builder-${aiContext}`, focus: aiContext } satisfies AiArmyScenario);
+      : selectAiArmyForScenario(army, {
+        id: `builder-${aiContext}`,
+        focus: aiContext,
+        opponent: armies[side === 0 ? 1 : 0],
+      } satisfies AiArmyScenario);
     updateArmy(result.army);
     setSelectedUnitId(null);
   }

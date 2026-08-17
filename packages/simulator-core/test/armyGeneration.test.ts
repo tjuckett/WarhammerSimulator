@@ -56,6 +56,30 @@ test('AI scenario selection compares mission-focused strategy candidates', () =>
   assert.match(result.explanation, /Scenario hold-objectives selected/);
 });
 
+test('AI attrition scenarios account for the opposing army profile', () => {
+  const rangedSource: ImportedArmy = {
+    ...source,
+    units: [unit({
+      rosterId: 'ranged',
+      name: 'Ranged Squad',
+      weapons: [{ name: 'Rifle', range: 24, attacks: '2', skill: 3, strength: 5, ap: 1, damage: '1', keywords: [], isMelee: false }],
+    })],
+  };
+  const opponent: ImportedArmy = {
+    ...source,
+    units: [unit({ rosterId: 'heavy-opponent', toughness: 8 })],
+  };
+
+  const result = selectAiArmyForScenario(rangedSource, {
+    id: 'attrition-vs-heavy',
+    focus: 'attrition',
+    opponent,
+  });
+
+  assert.ok(result.evaluations.every(evaluation => evaluation.score > 0));
+  assert.match(result.explanation, /attrition-vs-heavy/);
+});
+
 test('AI army generation clears stale deployment relationships', () => {
   const result = generateAiArmy({
     ...source,
