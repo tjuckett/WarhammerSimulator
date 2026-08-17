@@ -53,6 +53,11 @@ test('AI scenario selection compares mission-focused strategy candidates', () =>
   assert.equal(result.scenarioId, 'hold-objectives');
   assert.equal(result.evaluations.length, 3);
   assert.equal(result.army.generation?.scenarioId, 'hold-objectives');
+  assert.equal(result.army.generation?.scenarioEvaluations?.length, 3);
+  assert.deepEqual(
+    result.army.generation?.scenarioEvaluations?.map(evaluation => evaluation.strategy),
+    ['balanced', 'aggressive', 'objective'],
+  );
   assert.match(result.explanation, /Scenario hold-objectives selected/);
 });
 

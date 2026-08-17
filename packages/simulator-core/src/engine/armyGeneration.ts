@@ -122,6 +122,7 @@ export function selectAiArmyForScenario(
     generation: {
       ...best.candidate.army.generation!,
       scenarioId: scenario.id,
+      scenarioEvaluations: candidates.map(candidate => candidate.evaluation),
       explanation: `${best.candidate.explanation} ${scenarioExplanation}`,
     },
   };

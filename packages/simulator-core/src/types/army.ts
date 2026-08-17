@@ -117,12 +117,20 @@ export interface ArmyCatalog {
   battleSizes?: ArmyCatalogBattleSize[];
 }
 
+export interface ArmyGenerationScenarioEvaluation {
+  scenarioId: string;
+  strategy: 'balanced' | 'aggressive' | 'objective';
+  score: number;
+  explanation: string;
+}
+
 export interface ArmyGenerationMetadata {
   strategy: 'balanced' | 'aggressive' | 'objective';
   sourceArmyName: string;
   explanation: string;
   heuristicScore: number;
   scenarioId?: string;
+  scenarioEvaluations?: ArmyGenerationScenarioEvaluation[];
 }
 
 export const UNIT_DEPLOYMENT_MODE = {
