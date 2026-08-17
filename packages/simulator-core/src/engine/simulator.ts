@@ -2728,7 +2728,7 @@ export function playShootingWeaponOptions(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): PlayShootingWeaponOption[] {
   if (state.phase !== 'shooting' || state.activeArmy !== side) return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
@@ -2834,7 +2834,7 @@ export function playSnapShootingWeaponOptions(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): PlayShootingWeaponOption[] {
   if (state.phase !== 'movement' || state.activeArmy === side) return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
@@ -2859,7 +2859,7 @@ export function shootPlayUnitWeapon(
   side: Side,
   targetUnitId: string | undefined,
   weaponIndex: number | 'all',
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
   if (state.phase !== 'shooting' || state.activeArmy !== side) return state;
   const s = clone(state);
@@ -2928,7 +2928,7 @@ export function snapShootPlayUnitWeapon(
   side: Side,
   targetUnitId: string,
   weaponIndex: number | 'all',
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
   if (state.phase !== 'movement' || state.activeArmy === side) return state;
   const s = clone(state);
