@@ -6696,6 +6696,20 @@ function runSimulatedCommandPhase(state: BattleState, side: Side, rules: RulesEd
   return logs;
 }
 
+function runSimulatedMovementPhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
+  const armyName = state.armies[side].name;
+  const logs: LogEntry[] = [];
+  state.phase = 'movement';
+  state.movementStep = 'moveUnits';
+  logs.push(phaseLog(state, side, armyName, `\n─── Movement Phase ───`));
+  state.units.filter(unit => unit.side === side && !unit.destroyed)
+    .forEach(unit => logs.push(...runMovement(unit, state, rules)));
+  markRemainingStationaryUnits(state, side);
+  state.movementStep = 'reinforcements';
+  updateObjectiveControl(state, rules);
+  return logs;
+}
+
 export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): BattleState {
   let s = clone(state);
   const side = s.activeArmy;
@@ -6720,13 +6734,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   newLogs.push(...runSimulatedCommandPhase(s, side, rules));
 
   // Movement
-  s.phase = 'movement';
-  s.movementStep = 'moveUnits';
-  newLogs.push(phaseLog(s, side, armyName, `\n─── Movement Phase ───`));
-  myUnits().forEach(u => newLogs.push(...runMovement(u, s, rules)));
-  markRemainingStationaryUnits(s, side);
-  s.movementStep = 'reinforcements';
-  updateObjectiveControl(s, rules);
+  newLogs.push(...runSimulatedMovementPhase(s, side, rules));
 
   checkWinner(s);
   if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }
