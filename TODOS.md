@@ -282,7 +282,7 @@ Use this section as the next-session pickup point for the rules implementation w
 ### Next Rules Feature
 - [ ] Continue extracting 10th edition Core Rules from `rules/Warhammer_10th_Core_Rules.pdf`.
 - [ ] Review one rule at a time with the user before implementing it.
-- [ ] Next likely rule area: tighten Movement phase legality around terrain/collision/coherency now that model-level movement exists.
+- [x] Next likely rule area: tighten Movement phase legality around terrain/collision/coherency now that model-level movement exists. Movement legality, terrain pathing, collision UX, and coherency gating are implemented and tested.
 - [x] Coherency enforcement policy implemented: allow temporary incoherency during movement editing, but block Movement phase advance until all active-army units are coherent.
 - [x] Move or expose `findReachablePosition` from `simulator.ts` for reuse/testing; it is now an exported simulator-core pathing helper.
 - [x] Add/confirm full 10th-edition vertical coherency rules. Model height, vertical separation, and the 5" vertical coherency limit are implemented and covered by simulator-core tests.
@@ -297,8 +297,8 @@ Use this section as the next-session pickup point for the rules implementation w
 - [x] Prefer core rule functions in `packages/simulator-core`; React should call/import those through `@warhammer-simulator/core`.
 - [x] Keep phase logic structured as ordered phase steps, not one large phase function.
   - Completed: unit/phase stepping is exposed, and the atomic simulator delegates Command, Movement, Shooting, Charge, and Fight setup/resolution to named core phase helpers while retaining the atomic convenience API.
-- [ ] Keep edition-specific behavior behind the rules engine so 10th and 11th can share common concepts but diverge cleanly. Some play helpers still default directly to `rules40K10th`; audit as rulesets diverge.
-  - Progress: interactive movement, transport disembark, model-drag legality, mission-action completion, Command-phase coherency, legal-action generation, the core action gate, generic action start, shooting action helpers, Charge/Fight action helpers, and movement-action helpers now resolve rules from the battle state's ruleset; battle-construction defaults remain intentionally 10th-edition when no state exists.
+- [x] Keep edition-specific behavior behind the rules engine so 10th and 11th can share common concepts but diverge cleanly. Stateful play helpers now derive rules from `BattleState`; state-less battle/deployment constructors retain explicit 10th-edition defaults.
+  - Progress: interactive movement, transport disembark, model-drag legality, mission-action completion, Command-phase coherency, legal-action generation, the core action gate, generic action start, shooting action helpers, Charge/Fight action helpers, and movement-action helpers all resolve rules from the battle state's ruleset.
 - [ ] Treat 11th edition as a separate ruleset placeholder until rules are actually available; do not guess 11th rules from 10th.
 - [ ] Shared concepts likely worth keeping edition-neutral: battle rounds, active army, phase/step cursor, unit/model positions, dice helpers, objective ownership scaffolding.
 
@@ -306,7 +306,7 @@ Use this section as the next-session pickup point for the rules implementation w
 - [x] Review whether "practice game" naming should be changed to a more future-proof term before multiplayer features are added. Decision: use game/session language going forward; existing `practice` code paths can be migrated in a focused rename later.
 - [x] Improve selected-model action placement/UI — the action HUD now stays within the scrollable board bounds and repositions after viewport resize.
 - [ ] Add tests when each rule is implemented in `packages/simulator-core/test/`.
-- [ ] Re-run `npx tsc -p apps/web/tsconfig.json --noEmit`, `npm run lint`, and root `npm run build` after frontend/rules changes.
+- [x] Re-run `npx tsc -p apps/web/tsconfig.json --noEmit`, `npm run lint`, and root `npm run build` after frontend/rules changes. Latest verification passes; lint retains 20 pre-existing React Hook dependency warnings and no errors.
 
 ## Done
 - [x] 10th edition combat engine (hit/wound/save/damage)
