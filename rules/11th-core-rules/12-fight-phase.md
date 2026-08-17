@@ -26,5 +26,5 @@ Source: https://gdmissions.app/11th/rules/core-rules
 
 ## TODO
 
-- Re-audit Counteroffensive interaction with fight order.
+- Counteroffensive interaction with fight order is covered, including attached formations and engaged units without melee weapons.
 

@@ -1466,6 +1466,21 @@ test('11th Inescapable Dominion scores fixed objective conditions from mission d
   assert.deepEqual(battle.scores, [9, 0]);
 });
 
+test('Counteroffensive can target an engaged unit without melee weapons', () => {
+  const battle = state('fight');
+  battle.activeArmy = 0;
+  battle.lastFightSelectionSide = 0;
+  battle.commandPoints = [0, 2];
+  const attacker = losTestUnit('attacker-no-melee', 0, { x: 10, y: 10 });
+  attacker.charged = true;
+  const defender = losTestUnit('defender-no-melee', 1, { x: 10.5, y: 10 });
+  battle.units = [attacker, defender];
+
+  const countered = useStratagem(battle, 1, 'counteroffensive', rules40K11th, defender.id);
+  assert.equal(countered.commandPoints?.[1], 0);
+  assert.equal(countered.forcedFightUnitId, defender.id);
+});
+
 test('Heroic Intervention proximity uses base-edge distance for large-base units', () => {
   const battle = state('charge');
   battle.activeArmy = 0;

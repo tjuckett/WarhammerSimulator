@@ -215,6 +215,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: Smokescreen now grants only Benefit of Cover, including to units screened by the Smoke unit, without inventing a separate hit penalty.
   - Progress: Heroic Intervention now records Leap to Defend or Into the Fray, applies the latter's +1CP cost, 6-inch target restriction and capped charge roll, and suppresses Charge bonuses for the resulting intervention charge.
   - Progress: Counteroffensive now requires the post-enemy-attack Fight timing and serializes one forced next-fight unit while granting Fights First for the phase.
+  - Progress: Counteroffensive eligibility now follows the no-melee-unit Fight selection rule, so an engaged unit may be forced to fight and make no attacks.
 - [x] Implement Command Re-roll pending reroll/resolution support. UI can now wire a prompt to `resolveCommandReroll`; current support records the pending token, rerolls matching dice, logs the result, and supports practice replay.
 - [x] Implement Rapid Ingress resolution flow: target validation marks a non-Aircraft Strategic Reserve unit so it can be placed during the opponent Movement/Reinforcements step.
 - [x] Implement Heroic Intervention resolution flow: target validation marks an eligible defender so it can declare and resolve a Heroic Intervention charge during the opponent Charge phase.

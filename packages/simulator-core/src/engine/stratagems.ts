@@ -124,8 +124,7 @@ function unitEligibleToFight(state: BattleState, unit: BattleUnit, rules: RulesE
     && !unit.embarkedInUnitId
     && !unit.inStrategicReserves
     && !unit.activated
-    && unitIsEngaged(state, unit, rules)
-    && unit.profile.weapons.some(weapon => weapon.isMelee);
+    && unitIsEngaged(state, unit, rules);
 }
 
 function targetRestrictionsAllowed(
