@@ -288,7 +288,7 @@ Use this section as the next-session pickup point for the rules implementation w
 - [x] Add/confirm full 10th-edition vertical coherency rules. Model height, vertical separation, and the 5" vertical coherency limit are implemented and covered by simulator-core tests.
 - [ ] Review collision mode UX: normal dragging can ignore terrain/model collision, while collision mode applies the legality/pathing checks.
 - [x] Reviewed terrain LOS/cover behavior against the 10th Core Rules PDF and separated ruin footprints, obstacle mats, woods cover, and feature/wall blocking.
-- [ ] Continue extracting any remaining terrain edge cases for units starting inside terrain.
+- [x] Handle terrain movement edge cases for units starting inside blocking terrain; path checks now allow exiting while still blocking entry and traversal.
 - [x] Vertical movement/climbing implemented: model positions support height, vertical movement spends movement allowance, coherency/engagement/range account for vertical separation, and elevated models show height badges on the canvas.
 - [x] Aircraft return-from-Strategic-Reserves UX implemented: off-board Aircraft appear in the Staged panel during Reinforcements and can return within 6" of a battlefield edge, more than 9" from enemies, marked as arrived from Reinforcements.
 - [x] Aircraft charge/fight restrictions implemented: Aircraft cannot declare charges; only Fly units can charge Aircraft; only Fly units can fight Aircraft; Aircraft can only fight Fly units.

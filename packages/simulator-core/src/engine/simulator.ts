@@ -372,9 +372,14 @@ function unitSurgedThisPhase(state: BattleState, unit: BattleUnit): boolean {
 }
 
 function lineBlockedByMovement(from: Position, to: Position, terrain: Terrain[], unit: BattleUnit): boolean {
+  const crossesBlockingShape = (shape: Terrain | TerrainFeature): boolean => {
+    if (pointInTerrain(from, shape)) return false;
+    if (pointInTerrain(to, shape)) return true;
+    return linePassesThroughTerrain(from, to, shape);
+  };
   for (const t of terrain) {
-    if (terrainMatBlocksMovementForUnit(t, unit) && lineIntersectsTerrain(from, to, t)) return true;
-    if (t.features.some(feature => featureBlocksMovementForUnit(feature, t, unit) && lineIntersectsTerrain(from, to, feature))) {
+    if (terrainMatBlocksMovementForUnit(t, unit) && crossesBlockingShape(t)) return true;
+    if (t.features.some(feature => featureBlocksMovementForUnit(feature, t, unit) && crossesBlockingShape(feature))) {
       return true;
     }
   }
@@ -4932,9 +4937,13 @@ function playMovePathCrossesBlockingTerrain(
     const from = movingUnit.modelPositions[modelIndex];
     const to = { x: from.x + dx, y: from.y + dy };
     for (const terrain of state.terrain) {
-      if (terrainMatBlocksMovementForUnit(terrain, movingUnit) && lineIntersectsTerrain(from, to, terrain)) return true;
+      if (terrainMatBlocksMovementForUnit(terrain, movingUnit)
+        && !pointInTerrain(from, terrain)
+        && (pointInTerrain(to, terrain) || linePassesThroughTerrain(from, to, terrain))) return true;
       for (const feature of terrain.features) {
-        if (featureBlocksMovementForUnit(feature, terrain, movingUnit) && lineIntersectsTerrain(from, to, feature)) return true;
+        if (featureBlocksMovementForUnit(feature, terrain, movingUnit)
+          && !pointInTerrain(from, feature)
+          && (pointInTerrain(to, feature) || linePassesThroughTerrain(from, to, feature))) return true;
       }
     }
   }
