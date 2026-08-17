@@ -3,6 +3,7 @@ import test from 'node:test';
 import type { BattleState, BattleUnit, Phase, Position, PrimaryMissionScoringRecord, SecondaryMissionScoringRecord, Terrain, TerritoryZoneSet } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
+import { simulatePlayerTurn } from '../src/engine/simulator';
 import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayScoutMove, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, decoyObjectiveOptions, declarePlaySuperHeavyMobile, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playDisembarkModes, playFightActivationUnitIds, playFightWeaponOptions, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playScoutMoveAllowance, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, resolvePendingDeadlyDemises, resolvePlaySurgeMove, rotatePlayModels, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, simulateNextUnit, simulationNextUnitId, snapShootPlayUnitWeapon, startPlayFightStep, startPlayScoutMove, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
@@ -958,6 +959,17 @@ test('11th command phase grants core CP and resets active player turn state', ()
   assert.equal(resetBlue.inCombat, false);
   assert.equal(resetBlue.actionStartedThisTurn, undefined);
   assert.equal(waitingRed.activated, true);
+});
+
+test('simulated turns reset action state before running the active player turn', () => {
+  const battle = state('command');
+  const unit = losTestUnit('simulated-unit', 0, { x: 10, y: 10 });
+  unit.actionStartedThisTurn = true;
+  battle.units = [unit];
+
+  const next = simulatePlayerTurn(battle, rules40K10th);
+
+  assert.equal(next.units.find(candidate => candidate.id === unit.id)?.actionStartedThisTurn, undefined);
 });
 
 test('11th battle-shock step tests damaged active units and clears healthy units', () => {
