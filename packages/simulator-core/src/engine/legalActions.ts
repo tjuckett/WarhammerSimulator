@@ -1,7 +1,7 @@
 import type { Side } from '../types/battle';
 import type { GameAction } from '../practice/actions';
 import type { RulesEdition } from './rulesEngine';
-import { rules40K10th } from './rulesEngine';
+import { rulesEditionForRuleset } from './rulesEngine';
 import { availableStratagems } from './stratagems';
 import { availableUnitAbilities } from './unitAbilities';
 import {
@@ -493,7 +493,7 @@ function addConsecrateActions(actions: LegalAction[], state: BattleState, side: 
 export function getLegalActions(
   state: BattleState,
   side: Side = state.activeArmy,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
   options: LegalActionOptions = {},
 ): LegalAction[] {
   const includePhaseStep = options.includePhaseStep ?? true;

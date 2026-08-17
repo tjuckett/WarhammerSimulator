@@ -1769,7 +1769,7 @@ export function playUnitCanStartAction(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): boolean {
   if (state.activeArmy !== side || state.phase === 'deployment' || state.phase === 'setup' || state.phase === 'end') return false;
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
