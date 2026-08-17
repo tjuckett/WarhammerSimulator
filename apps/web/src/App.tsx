@@ -1054,13 +1054,15 @@ export default function App() {
   const selectedPlayDisembarkOptions = useMemo(() => {
     if (!isPlayMode || !battleState || !primaryPlaySelection || !selectedPlayBattleUnit) return [];
     const side = primaryPlaySelection.side;
+    const combatDisembark = battleState.ruleset.edition === '11e' && selectedPlayBattleUnit.inCombat;
     const runtimePassengers = playTransportPassengers(battleState, selectedPlayBattleUnit.id)
-      .filter(passenger => playUnitCanDisembark(battleState, side, selectedPlayBattleUnit.id, passenger.id))
+      .filter(passenger => playUnitCanDisembark(battleState, side, selectedPlayBattleUnit.id, passenger.id, undefined, combatDisembark))
       .map(passenger => ({
         key: `passenger-${passenger.id}`,
         label: passenger.profile.name,
         passengerUnitId: passenger.id,
         armyUnitIndex: undefined as number | undefined,
+        combatDisembark,
       }));
     const transportRosterId = unitRosterId(selectedPlayBattleUnit.profile);
     const stagedPassengers = battleState.armies[side].army.units
@@ -1079,12 +1081,13 @@ export default function App() {
           && unitRosterId(candidate.profile) === unitRosterId(unit),
         )
       )
-      .filter(({ armyUnitIndex }) => playUnitCanDisembark(battleState, side, selectedPlayBattleUnit.id, undefined, armyUnitIndex))
+      .filter(({ armyUnitIndex }) => playUnitCanDisembark(battleState, side, selectedPlayBattleUnit.id, undefined, armyUnitIndex, combatDisembark))
       .map(({ unit, armyUnitIndex }) => ({
         key: `army-${armyUnitIndex}`,
         label: unit.name,
         passengerUnitId: undefined as string | undefined,
         armyUnitIndex,
+        combatDisembark,
       }));
     return [...runtimePassengers, ...stagedPassengers];
   }, [isPlayMode, battleState, primaryPlaySelection, selectedPlayBattleUnit]);
@@ -2667,6 +2670,7 @@ export default function App() {
         unit.heroicInterventionThisPhase = undefined;
         if (unit.emergencyDisembarkedThisTurn) unit.battleshocked = false;
         unit.emergencyDisembarkedThisTurn = undefined;
+        unit.combatDisembarkedThisTurn = undefined;
         unit.fellBack = false;
         unit.inCombat = false;
       }

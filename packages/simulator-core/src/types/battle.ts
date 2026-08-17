@@ -91,6 +91,8 @@ export interface BattleUnit {
   heroicInterventionThisPhase?: boolean;
   embarkedInUnitId?: string;
   emergencyDisembarkedThisTurn?: boolean;
+  /** 11e Core 18.04 Combat Disembark restriction for the current turn. */
+  combatDisembarkedThisTurn?: boolean;
   performingAction?: {
     id: string;
     name: string;

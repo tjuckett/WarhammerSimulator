@@ -10322,6 +10322,70 @@ test('11th Tactical Disembark remains available after a transport is marked stat
   assert.equal(disembarked.units.some(unit => unit.profile.name === 'Stationary Passengers'), true);
 });
 
+test('11th Combat Disembark uses the 6-inch setup mode, hazard rolls, Battle-shock, and charge restriction', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const passengerProfile = {
+    name: 'Combat Passengers',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 2,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+    deployment: { mode: 'transport' as const, transportUnitId: 'combat-transport-roster', transportName: 'Combat Transport' },
+  };
+  const transportProfile = {
+    ...passengerProfile,
+    rosterId: 'combat-transport-roster',
+    name: 'Combat Transport',
+    baseModelCount: 1,
+    keywords: ['Transport'],
+    oc: 0,
+    transportCapacity: 4,
+    deployment: undefined,
+  };
+  const transport: BattleUnit = {
+    id: 'combat-transport',
+    side: 0,
+    profile: transportProfile,
+    remainingModels: 1,
+    woundsOnLeadModel: 10,
+    position: { x: 20, y: 20 },
+    modelPositions: [{ x: 20, y: 20 }],
+    facingDeg: 0,
+    charged: false,
+    inCombat: true,
+    battleshocked: false,
+    activated: false,
+    destroyed: false,
+  };
+  const enemy = { ...transport, id: 'combat-enemy', side: 1 as const, profile: { ...transportProfile, name: 'Combat Enemy', keywords: [] }, position: { x: 20.5, y: 20 }, modelPositions: [{ x: 20.5, y: 20 }] };
+  battle.armies[0].army = { ...battle.armies[0].army, units: [transportProfile, passengerProfile] };
+  battle.units = [transport, enemy];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    assert.equal(playUnitCanDisembark(battle, 0, transport.id, undefined, 1), true);
+    const disembarked = disembarkPlayUnit(battle, 0, transport.id, undefined, 1);
+    const passenger = disembarked.units.find(unit => unit.profile.name === 'Combat Passengers')!;
+    assert.equal(passenger.combatDisembarkedThisTurn, true);
+    assert.equal(passenger.battleshocked, true);
+    assert.equal(passenger.remainingModels, 2);
+    assert.ok(passenger.position.x > 26 && passenger.position.x < 28);
+    assert.deepEqual(playChargeTargetOptions(disembarked, passenger.id, 0, rules40K11th), []);
+    assert.match(disembarked.log.at(-1)?.message ?? '', /Combat Disembark hazard rolls: 6, 6; no models destroyed/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('destroyed transports force embarked passengers to emergency disembark', () => {
   const battle = state('movement');
   battle.movementStep = 'reinforcements';

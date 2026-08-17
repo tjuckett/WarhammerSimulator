@@ -1567,6 +1567,37 @@ function emergencyDisembarkDestroyedTransport(
   return logs;
 }
 
+function resolveCombatDisembarkHazards(state: BattleState, unit: BattleUnit): LogEntry[] {
+  if (unit.destroyed || !unit.modelPositions.length) return [];
+  const rolls = unit.modelPositions.map(() => d6());
+  const failedModelIndices = rolls
+    .map((roll, modelIndex) => roll === 1 ? modelIndex : -1)
+    .filter(modelIndex => modelIndex >= 0);
+  if (failedModelIndices.length === 0) {
+    return [log(state, unit.side, unit.profile.name,
+      `${unit.profile.name} makes Combat Disembark hazard rolls: ${rolls.join(', ')}; no models destroyed.`, 'roll')];
+  }
+  if (failedModelIndices.length >= unit.modelPositions.length) {
+    unit.lastDestroyedPosition = { ...unit.position };
+    unit.lastDestroyedModelPositions = unit.modelPositions.map(position => ({ ...position }));
+  }
+  recordDestroyedModelMissionEvents(state, unit, failedModelIndices, unit.side);
+  for (const modelIndex of [...failedModelIndices].sort((a, b) => b - a)) {
+    unit.modelPositions.splice(modelIndex, 1);
+    unit.modelRosterIndexes?.splice(modelIndex, 1);
+    unit.modelRotations?.splice(modelIndex, 1);
+    unit.movementAllowanceRemainingByModel?.splice(modelIndex, 1);
+    unit.movementAllowanceTotalByModel?.splice(modelIndex, 1);
+    unit.movementStartPositionsByModel?.splice(modelIndex, 1);
+    unit.movementStartRotationsByModel?.splice(modelIndex, 1);
+  }
+  unit.remainingModels = Math.min(unit.remainingModels, unit.modelPositions.length);
+  unit.destroyed = unit.remainingModels <= 0;
+  return [log(state, unit.side, unit.profile.name,
+    `${unit.profile.name} makes Combat Disembark hazard rolls: ${rolls.join(', ')}; ${failedModelIndices.length} model${failedModelIndices.length === 1 ? '' : 's'} destroyed.`,
+    unit.destroyed ? 'death' : 'roll')];
+}
+
 function runMovement(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
   if (unit.destroyed || unit.embarkedInUnitId || unitSurgedThisPhase(state, unit)) return [];
   const eng = rules.engagementRange();
@@ -3124,6 +3155,7 @@ function unitCanDeclareCharge(unit: BattleUnit): boolean {
     && !unit.fellBack
     && !unit.arrivedFromReinforcements
     && !unit.emergencyDisembarkedThisTurn
+    && !unit.combatDisembarkedThisTurn
     && unit.movementAction !== 'fellBack'
     && unit.movementAction !== 'advanced';
 }
@@ -3985,6 +4017,7 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
     u.rapidIngressThisPhase = undefined;
     u.heroicInterventionThisPhase = undefined;
     u.emergencyDisembarkedThisTurn = undefined;
+    u.combatDisembarkedThisTurn = undefined;
     u.fellBack = false;
     u.inCombat = false;
   });
@@ -4141,6 +4174,7 @@ function markUnitArrivedFromReinforcements(unit: BattleUnit): void {
 }
 
 const TRANSPORT_ACCESS_RANGE = 3;
+const COMBAT_DISEMBARK_RANGE = 6;
 
 function unitAssignedToTransport(profile: UnitProfile, transport: BattleUnit): boolean {
   return profile.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport
@@ -4150,16 +4184,25 @@ function unitAssignedToTransport(profile: UnitProfile, transport: BattleUnit): b
     );
 }
 
-function disembarkPositions(state: BattleState, transport: BattleUnit, profile: UnitProfile): Position[] | null {
+function disembarkPositions(
+  state: BattleState,
+  transport: BattleUnit,
+  profile: UnitProfile,
+  combatDisembark = false,
+): Position[] | null {
   const side = transport.side;
   const forward = side === 0 ? 1 : -1;
+  const accessRange = combatDisembark ? COMBAT_DISEMBARK_RANGE : TRANSPORT_ACCESS_RANGE;
   const offsets: Position[] = [
-    { x: forward * (TRANSPORT_ACCESS_RANGE + 0.5), y: 0 },
-    { x: -forward * (TRANSPORT_ACCESS_RANGE + 0.5), y: 0 },
-    { x: 0, y: TRANSPORT_ACCESS_RANGE + 0.5 },
-    { x: 0, y: -(TRANSPORT_ACCESS_RANGE + 0.5) },
+    { x: forward * (accessRange + 0.5), y: 0 },
+    { x: -forward * (accessRange + 0.5), y: 0 },
+    { x: 0, y: accessRange + 0.5 },
+    { x: 0, y: -(accessRange + 0.5) },
   ];
   const enemiesInState = enemies(state, side);
+  const transportEngagedEnemyIds = new Set(
+    engagedEnemies(state, transport, rulesEditionForRuleset(state.ruleset)).map(enemy => enemy.id),
+  );
 
   for (const offset of offsets) {
     const positions = playGridFormation(profile, {
@@ -4167,7 +4210,11 @@ function disembarkPositions(state: BattleState, transport: BattleUnit, profile: 
       y: transport.position.y + offset.y,
     }, side);
     const candidateUnit = makeBattleUnit(profile, side, positions);
-    if (inEngagement(candidateUnit, enemiesInState, rulesEditionForRuleset(state.ruleset).engagementRange())) continue;
+    const engagedEnemyIds = enemiesInState
+      .filter(enemy => inEngagement(candidateUnit, [enemy], rulesEditionForRuleset(state.ruleset).engagementRange()))
+      .map(enemy => enemy.id);
+    if (!combatDisembark && engagedEnemyIds.length > 0) continue;
+    if (combatDisembark && engagedEnemyIds.some(enemyId => !transportEngagedEnemyIds.has(enemyId))) continue;
     if (!playMoveHasNoBaseOverlap(state, candidateUnit, new Set(candidateUnit.modelPositions.map((_, index) => index)))) continue;
     if (!playMoveHasNoWallOverlap(state, candidateUnit, new Set(candidateUnit.modelPositions.map((_, index) => index)))) continue;
     return positions;
@@ -4616,19 +4663,22 @@ export function playUnitCanDisembark(
   transportUnitId: string,
   passengerUnitId?: string,
   armyUnitIndex?: number,
+  combatDisembark?: boolean,
 ): boolean {
   if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
   const transport = state.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!transport || !unitIsTransportProfile(transport.profile)
     || (transport.movementAction && transport.movementAction !== 'remainedStationary')
     || (transport.movementComplete && transport.movementAction !== 'remainedStationary')) return false;
+  const useCombatDisembark = combatDisembark ?? (state.ruleset.edition === '11e' && transport.inCombat);
+  if (useCombatDisembark && state.ruleset.edition !== '11e') return false;
   const passenger = passengerUnitId
     ? state.units.find(candidate => candidate.id === passengerUnitId && candidate.side === side && !candidate.destroyed && candidate.embarkedInUnitId === transportUnitId)
     : null;
   const profile = passenger?.profile ?? (typeof armyUnitIndex === 'number' ? state.armies[side].army.units[armyUnitIndex] : undefined);
   if (!profile || (armyUnitIndex !== undefined && !unitAssignedToTransport(profile, transport))) return false;
   if (state.units.some(unit => unit.side === side && !unit.destroyed && !unit.embarkedInUnitId && unitRosterId(unit.profile) === unitRosterId(profile))) return false;
-  return !!disembarkPositions(state, transport, profile);
+  return !!disembarkPositions(state, transport, profile, useCombatDisembark);
 }
 
 export function disembarkPlayUnit(
@@ -4637,8 +4687,9 @@ export function disembarkPlayUnit(
   transportUnitId: string,
   passengerUnitId?: string,
   armyUnitIndex?: number,
+  combatDisembark?: boolean,
 ): BattleState {
-  if (!playUnitCanDisembark(state, side, transportUnitId, passengerUnitId, armyUnitIndex)) return state;
+  if (!playUnitCanDisembark(state, side, transportUnitId, passengerUnitId, armyUnitIndex, combatDisembark)) return state;
   const s = clone(state);
   const transport = s.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
   const existingPassenger = passengerUnitId
@@ -4646,7 +4697,8 @@ export function disembarkPlayUnit(
     : null;
   const profile = existingPassenger?.profile ?? (typeof armyUnitIndex === 'number' ? s.armies[side].army.units[armyUnitIndex] : undefined);
   if (!profile) return state;
-  const positions = disembarkPositions(s, transport, profile);
+  const useCombatDisembark = combatDisembark ?? (s.ruleset.edition === '11e' && transport.inCombat);
+  const positions = disembarkPositions(s, transport, profile, useCombatDisembark);
   if (!positions) return state;
 
   const unit = existingPassenger ?? makeBattleUnit(profile, side, positions);
@@ -4663,6 +4715,11 @@ export function disembarkPlayUnit(
   unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
   unit.movementComplete = false;
   unit.inCombat = false;
+  if (useCombatDisembark) {
+    unit.combatDisembarkedThisTurn = true;
+    unit.battleshocked = true;
+  }
+  const hazardLogs = useCombatDisembark ? resolveCombatDisembarkHazards(s, unit) : [];
   if (!existingPassenger) s.units.push(unit);
   s.log = [...s.log, log(
     s,
@@ -4671,6 +4728,7 @@ export function disembarkPlayUnit(
     `${unit.profile.name} disembarks from ${transport.profile.name}.`,
     'move',
   )];
+  s.log.push(...hazardLogs);
   return s;
 }
 
@@ -6821,7 +6879,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   s.firingDeckLockedUnitIds = undefined;
   s.units.forEach(clearFiringDeckWeapons);
   s.units.forEach(u => { u.overrunFightSelected = undefined; u.overrunPiledIn = undefined; });
-  myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
+  myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.combatDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
 
   // Command
   newLogs.push(...runSimulatedCommandPhase(s, side, rules));
