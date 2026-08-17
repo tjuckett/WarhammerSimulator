@@ -1128,6 +1128,11 @@ export default function App() {
     selectedShootingWeaponIndex,
     selectedPlayShootingOptions,
     selectedPlayShootingTargets,
+    selectedShootingUnit,
+    setCasualtyRemovalShooterId,
+    setSelectedShootingTargetId,
+    setSelectedShootingWeaponIndex,
+    battleState,
   ]);
 
   useEffect(() => {
@@ -1162,6 +1167,11 @@ export default function App() {
     selectedShootingWeaponIndex,
     selectedOverwatchOptions,
     selectedOverwatchTargets,
+    battleState,
+    overwatchUnit,
+    setOverwatchUnitId,
+    setSelectedShootingTargetId,
+    setSelectedShootingWeaponIndex,
   ]);
 
   useEffect(() => {
@@ -1175,7 +1185,7 @@ export default function App() {
     ) {
       setSelectedChargeTargetId(selectedPlayChargeOptions[0]?.targetId ?? '');
     }
-  }, [battleState?.phase, battleState?.units, selectedChargeUnit?.id, selectedChargeTargetId, selectedPlayChargeOptions]);
+  }, [battleState?.phase, battleState?.units, selectedChargeUnit?.id, selectedChargeTargetId, selectedPlayChargeOptions, battleState, selectedChargeUnit, setSelectedChargeTargetId]);
 
   useEffect(() => {
     if (!battleState || battleState.phase !== 'fight' || !selectedFightUnit) {
@@ -1204,11 +1214,15 @@ export default function App() {
     selectedFightWeaponIndex,
     selectedPlayFightOptions,
     selectedPlayFightTargets,
+    battleState,
+    selectedFightUnit,
+    setSelectedFightTargetId,
+    setSelectedFightWeaponIndex,
   ]);
 
   useEffect(() => {
     setFightAttackSplits({});
-  }, [battleState?.phase, selectedFightUnit?.id, selectedFightWeaponIndex]);
+  }, [battleState?.phase, selectedFightUnit?.id, selectedFightWeaponIndex, setFightAttackSplits]);
 
   const selectedFightTargetKey = selectedPlayFightTargets.map(target => target.id).join('|');
   useEffect(() => {
@@ -1216,7 +1230,7 @@ export default function App() {
     setFightAttackSplits(current => Object.fromEntries(
       Object.entries(current).filter(([targetId]) => validTargetIds.has(targetId)),
     ));
-  }, [selectedFightTargetKey]);
+  }, [selectedFightTargetKey, setFightAttackSplits]);
 
   useEffect(() => {
     if (playCoherencyIssues.length === 0) setPlayPhaseWarning('');
