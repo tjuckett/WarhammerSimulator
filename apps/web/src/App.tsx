@@ -2439,12 +2439,23 @@ export default function App() {
     setPlayModelSelection(clone(entry.playModelSelection));
     clearPendingPlayModelMove();
     popPlayUndoEntry();
-  }, [isPlayMode]);
+  }, [
+    isPlayMode,
+    clearPendingPlayRotation,
+    setPlayDeploySelection,
+    setPlayModelSelection,
+    clearPendingPlayModelMove,
+    undoGameSessionTimelineAction,
+    undoGameSessionTimelineCursor,
+    popPlayUndoEntry,
+    pendingPlayRotationUndoRef,
+    playUndoStackRef,
+  ]);
 
   const redoPlayAction = useCallback(() => {
     if (!isPlayMode) return;
     redoGameSessionTimelineAction();
-  }, [isPlayMode]);
+  }, [isPlayMode, redoGameSessionTimelineAction]);
 
   useEffect(() => {
     if (!isPlayMode) return;
@@ -2483,7 +2494,7 @@ export default function App() {
     }
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isPlayMode, battleState?.phase, battleState?.movementStep, undoPlayAction, redoPlayAction, reorganizeSelectedPlayUnit, rotateSelectedPlayModels]);
+  }, [isPlayMode, battleState?.phase, battleState?.movementStep, battleState, undoPlayAction, redoPlayAction, reorganizeSelectedPlayUnit, rotateSelectedPlayModels]);
 
   const stepDrop = useCallback(() => {
     const prev = battleStateRef.current;
@@ -2503,7 +2514,7 @@ export default function App() {
       void saveGameSessionCheckpoint('auto-phase');
     }
     commitBattleState(next);
-  }, []);
+  }, [recordGameSessionAction, saveGameSessionCheckpoint]);
 
   const stepTurn = useCallback(() => {
     const prev = battleStateRef.current;
@@ -2515,7 +2526,7 @@ export default function App() {
       void saveGameSessionCheckpoint('auto-turn');
     }
     commitBattleState(next);
-  }, []);
+  }, [recordGameSessionAction, saveGameSessionCheckpoint]);
 
   const stepUnit = useCallback(() => {
     const prev = battleStateRef.current;
@@ -2527,7 +2538,7 @@ export default function App() {
       void saveGameSessionCheckpoint('auto-unit');
     }
     commitBattleState(next);
-  }, []);
+  }, [recordGameSessionAction, saveGameSessionCheckpoint]);
 
   const stepAiController = useCallback((): boolean => {
     const prev = battleStateRef.current;
@@ -2548,7 +2559,7 @@ export default function App() {
       commitBattleState(next);
     }
     return true;
-  }, [simulationControllers]);
+  }, [simulationControllers, recordGameSessionAction, saveGameSessionCheckpoint]);
 
   const stepSimulation = useCallback(() => {
     const activeController = simulationControllers[battleStateRef.current?.activeArmy ?? 0];
@@ -2695,7 +2706,7 @@ export default function App() {
     recordGameSessionAction(prev, next, { type: GAME_ACTION_TYPE.StepPhase });
     void saveGameSessionCheckpoint('auto-phase');
     commitBattleState(next);
-  }, []);
+  }, [activeRulesForBattle, recordGameSessionAction, saveGameSessionCheckpoint]);
 
   // Auto-deploy loop
   useEffect(() => {
@@ -2733,7 +2744,7 @@ export default function App() {
     const updated = recordGame(brain, record);
     setBrain(updated);
     saveBrain(updated);
-  }, [battleState?.winner]);
+  }, [battleState, brain]);
 
   const toggleAuto = () => setAutoRunning(prev => !prev);
 
