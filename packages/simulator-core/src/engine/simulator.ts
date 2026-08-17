@@ -4668,7 +4668,9 @@ export function playUnitCanDisembark(
   combatDisembark?: boolean,
   rapidDisembark?: boolean,
 ): boolean {
-  if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
+  if (state.phase !== 'movement' || state.activeArmy !== side) return false;
+  const currentMovementStep = movementStep(state);
+  if (currentMovementStep !== 'moveUnits' && currentMovementStep !== 'reinforcements') return false;
   const transport = state.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!transport || !unitIsTransportProfile(transport.profile)
     || transport.movementAction === 'advanced'
@@ -4677,6 +4679,7 @@ export function playUnitCanDisembark(
     state.ruleset.edition === '11e'
     && transport.movementComplete === true
     && transport.movementAction === 'normalMove'
+    && (currentMovementStep === 'moveUnits' || transport.arrivedFromReinforcements === true)
   );
   const useCombatDisembark = combatDisembark ?? (
     state.ruleset.edition === '11e' && transport.inCombat && !useRapidDisembark
@@ -4687,6 +4690,7 @@ export function playUnitCanDisembark(
     || transport.movementAction === 'remainedStationary';
   if (!useRapidDisembark && !useCombatDisembark && !transportCanDisembarkBeforeMovement) return false;
   if (useRapidDisembark && (transport.movementAction !== 'normalMove' || !transport.movementComplete)) return false;
+  if (currentMovementStep === 'reinforcements' && !useRapidDisembark) return false;
   const passenger = passengerUnitId
     ? state.units.find(candidate => candidate.id === passengerUnitId && candidate.side === side && !candidate.destroyed && candidate.embarkedInUnitId === transportUnitId)
     : null;
@@ -4717,6 +4721,7 @@ export function disembarkPlayUnit(
     s.ruleset.edition === '11e'
     && transport.movementComplete === true
     && transport.movementAction === 'normalMove'
+    && (movementStep(s) === 'moveUnits' || transport.arrivedFromReinforcements === true)
   );
   const useCombatDisembark = combatDisembark ?? (
     s.ruleset.edition === '11e' && transport.inCombat && !useRapidDisembark

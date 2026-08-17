@@ -10442,6 +10442,11 @@ test('11th Rapid Disembark is available after a completed Normal move and cannot
   assert.equal(passenger.movementComplete, true);
   assert.equal(passenger.movementAllowanceRemaining, 0);
   assert.deepEqual(playChargeTargetOptions(disembarked, passenger.id, 0, rules40K11th), []);
+
+  const ingress = structuredClone(completed);
+  ingress.movementStep = 'reinforcements';
+  ingress.units.find(unit => unit.id === transport.id)!.arrivedFromReinforcements = true;
+  assert.equal(playUnitCanDisembark(ingress, 0, transport.id, undefined, 1), true);
 });
 
 test('destroyed transports force embarked passengers to emergency disembark', () => {
