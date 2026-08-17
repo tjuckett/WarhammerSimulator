@@ -93,6 +93,8 @@ export interface BattleUnit {
   emergencyDisembarkedThisTurn?: boolean;
   /** 11e Core 18.04 Combat Disembark restriction for the current turn. */
   combatDisembarkedThisTurn?: boolean;
+  /** 11e Core 18.04 Rapid Disembark restriction for the current turn. */
+  rapidDisembarkedThisTurn?: boolean;
   performingAction?: {
     id: string;
     name: string;

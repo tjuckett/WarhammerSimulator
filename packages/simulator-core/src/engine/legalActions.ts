@@ -145,9 +145,9 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
       })));
     if (unit.profile.transportCapacity) {
       actions.push(...playTransportPassengers(state, unit.id)
-        .filter(passenger => playUnitCanDisembark(state, side, unit.id, passenger.id, undefined, rules.metadata.edition === '11e' && unit.inCombat))
+        .filter(passenger => playUnitCanDisembark(state, side, unit.id, passenger.id, undefined, rules.metadata.edition === '11e' && unit.inCombat, rules.metadata.edition === '11e' && unit.movementAction === 'normalMove' && unit.movementComplete === true))
         .map((passenger): LegalAction => ({
-          action: { type: 'play.disembarkUnit', side, transportUnitId: unit.id, passengerUnitId: passenger.id, combatDisembark: rules.metadata.edition === '11e' && unit.inCombat },
+          action: { type: 'play.disembarkUnit', side, transportUnitId: unit.id, passengerUnitId: passenger.id, combatDisembark: rules.metadata.edition === '11e' && unit.inCombat, rapidDisembark: rules.metadata.edition === '11e' && unit.movementAction === 'normalMove' && unit.movementComplete === true },
           category: 'movement',
           side,
           unitId: passenger.id,

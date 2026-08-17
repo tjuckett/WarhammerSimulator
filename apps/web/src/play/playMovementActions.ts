@@ -25,6 +25,7 @@ export type PlayDisembarkOption = {
   passengerUnitId?: string;
   armyUnitIndex?: number;
   combatDisembark?: boolean;
+  rapidDisembark?: boolean;
 };
 
 type MovementUnitAction = Extract<
@@ -135,7 +136,7 @@ export function resolveDisembarkPlayUnitAction(
   selection: PlayUnitSelection,
   option: PlayDisembarkOption,
 ): { next: BattleState; action: DisembarkAction; disembarkedUnitId?: string } | null {
-  const next = disembarkPlayUnit(state, selection.side, selection.unitId, option.passengerUnitId, option.armyUnitIndex, option.combatDisembark);
+  const next = disembarkPlayUnit(state, selection.side, selection.unitId, option.passengerUnitId, option.armyUnitIndex, option.combatDisembark, option.rapidDisembark);
   if (next === state) return null;
 
   const disembarkedUnit = option.passengerUnitId
@@ -158,6 +159,7 @@ export function resolveDisembarkPlayUnitAction(
       passengerUnitId: option.passengerUnitId,
       armyUnitIndex: option.armyUnitIndex,
       combatDisembark: option.combatDisembark,
+      rapidDisembark: option.rapidDisembark,
     },
   };
 }

@@ -10386,6 +10386,64 @@ test('11th Combat Disembark uses the 6-inch setup mode, hazard rolls, Battle-sho
   }
 });
 
+test('11th Rapid Disembark is available after a completed Normal move and cannot move or charge again', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const passengerProfile = {
+    name: 'Rapid Passengers',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+    deployment: { mode: 'transport' as const, transportUnitId: 'rapid-transport-roster', transportName: 'Rapid Transport' },
+  };
+  const transportProfile = {
+    ...passengerProfile,
+    rosterId: 'rapid-transport-roster',
+    name: 'Rapid Transport',
+    keywords: ['Transport'],
+    oc: 0,
+    transportCapacity: 2,
+    deployment: undefined,
+  };
+  const transport: BattleUnit = {
+    id: 'rapid-transport',
+    side: 0,
+    profile: transportProfile,
+    remainingModels: 1,
+    woundsOnLeadModel: 10,
+    position: { x: 20, y: 20 },
+    modelPositions: [{ x: 20, y: 20 }],
+    facingDeg: 0,
+    charged: false,
+    inCombat: false,
+    battleshocked: false,
+    activated: false,
+    destroyed: false,
+  };
+  const enemy = { ...transport, id: 'rapid-enemy', side: 1 as const, profile: { ...transportProfile, name: 'Rapid Enemy', keywords: [] }, position: { x: 25, y: 20 }, modelPositions: [{ x: 25, y: 20 }] };
+  battle.armies[0].army = { ...battle.armies[0].army, units: [transportProfile, passengerProfile] };
+  battle.units = [transport, enemy];
+
+  const moved = movePlayModels(battle, transport.id, 0, [0], 1, 0);
+  const completed = completePlayUnitMovement(moved, transport.id, 0);
+  assert.equal(completed.units.find(unit => unit.id === transport.id)?.movementComplete, true);
+  assert.equal(playUnitCanDisembark(completed, 0, transport.id, undefined, 1), true);
+  const disembarked = disembarkPlayUnit(completed, 0, transport.id, undefined, 1);
+  const passenger = disembarked.units.find(unit => unit.profile.name === 'Rapid Passengers')!;
+  assert.equal(passenger.rapidDisembarkedThisTurn, true);
+  assert.equal(passenger.movementComplete, true);
+  assert.equal(passenger.movementAllowanceRemaining, 0);
+  assert.deepEqual(playChargeTargetOptions(disembarked, passenger.id, 0, rules40K11th), []);
+});
+
 test('destroyed transports force embarked passengers to emergency disembark', () => {
   const battle = state('movement');
   battle.movementStep = 'reinforcements';

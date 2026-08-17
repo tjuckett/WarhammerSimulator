@@ -219,6 +219,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: 11th Core 18.04 Tactical Disembark now remains available when a transport has been explicitly marked stationary.
   - Progress: 11th Core 09.07 now applies the required post-move Battle-shock roll when a non-shocked unit uses Desperate Escape.
   - Progress: 11th Core 18.04 Combat Disembark now supports 6-inch setup, hazard rolls, Battle-shock, and the end-of-turn charge restriction through the practice/UI action path.
+  - Progress: 11th Core 18.04 Rapid Disembark now works after a completed Normal/Ingress move, prevents a second move, and preserves the end-of-turn charge restriction through replayable actions.
 - [ ] Remove or narrow the 11th preview notice once final 11th rules are fully modeled.
 - [ ] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.
   - Progress: pile-in and consolidation availability, plus Fight-step start/end gating, now rely on focused core rules helpers rather than duplicating edition checks in React; phase-specific labels remain presentation concerns.

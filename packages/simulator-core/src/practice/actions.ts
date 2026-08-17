@@ -215,6 +215,7 @@ export type GameAction =
       passengerUnitId?: string;
       armyUnitIndex?: number;
       combatDisembark?: boolean;
+      rapidDisembark?: boolean;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.RotateModels;
@@ -635,6 +636,7 @@ export function applyGameAction(
         normalizedAction.passengerUnitId,
         normalizedAction.armyUnitIndex,
         normalizedAction.combatDisembark,
+        normalizedAction.rapidDisembark,
       );
 
     case GAME_ACTION_TYPE.RotateModels:
