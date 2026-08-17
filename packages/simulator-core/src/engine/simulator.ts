@@ -1206,13 +1206,14 @@ function resolveAttacks(
       const effectiveRemaining = defender.remainingModels - (defender.pendingCasualties ?? 0);
       if (effectiveRemaining <= 0 || defender.destroyed) break;
       const dmgResult = rollExpression(weapon.damage);
+      const damage = Math.max(1, dmgResult.total + meltaBonus);
       if (isVariableDamage) {
         logs.push(log(state, attacker.side, attacker.profile.name,
           `     Damage roll (${weapon.damage}): [${dmgResult.rolls.join(', ')}] = ${dmgResult.total}`,
           'roll',
         ));
       }
-      logs.push(...applyDamage(defender, dmgResult.total + meltaBonus, state, attacker.side, {
+      logs.push(...applyDamage(defender, damage, state, attacker.side, {
         ...damageOptions,
         noCarryOver: true,
         source: weapon.name,
@@ -1232,13 +1233,14 @@ function resolveAttacks(
       const effectiveRemaining = defender.remainingModels - (defender.pendingCasualties ?? 0);
       if (effectiveRemaining <= 0 || defender.destroyed) break;
       const dmgResult = rollExpression(weapon.damage);
+      const damage = Math.max(1, dmgResult.total + meltaBonus);
       if (isVariableDamage) {
         logs.push(log(state, attacker.side, attacker.profile.name,
           `     Damage roll (${weapon.damage}): [${dmgResult.rolls.join(', ')}] = ${dmgResult.total}`,
           'roll',
         ));
       }
-      logs.push(...applyDamage(defender, dmgResult.total + meltaBonus, state, attacker.side, {
+      logs.push(...applyDamage(defender, damage, state, attacker.side, {
         ...damageOptions,
         noCarryOver: true,
         source: weapon.name,

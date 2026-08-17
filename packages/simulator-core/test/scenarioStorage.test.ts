@@ -7441,6 +7441,27 @@ test('Selected ranged target only resolves weapons that can still attack that ta
   }
 });
 
+test('weapon Damage characteristics cannot resolve below one wound', () => {
+  const battle = state('shooting');
+  const shooter = losTestUnit('minimum-damage-shooter', 0, { x: 0, y: 10 });
+  shooter.profile.weapons = [
+    { name: 'Broken Damage Profile', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '0', keywords: [], isMelee: false },
+  ];
+  const target = losTestUnit('minimum-damage-target', 1, { x: 8, y: 10 }, 7);
+  target.profile = { ...target.profile, save: 7, wounds: 1, weapons: [] };
+  target.woundsOnLeadModel = 1;
+  battle.units = [shooter, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const next = shootPlayUnitWeapon(battle, shooter.id, shooter.side, target.id, 'all', rules40K11th);
+    assert.deepEqual(next.units.find(unit => unit.id === target.id)?.pendingDamageAllocations?.map(allocation => allocation.damage), [1]);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('Engaged units without Pistols cannot shoot', () => {
   const battle = state('movement');
   battle.movementStep = 'reinforcements';
