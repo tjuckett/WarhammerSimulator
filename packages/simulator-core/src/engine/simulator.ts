@@ -1,6 +1,6 @@
 import { MOVEMENT_STEP, type BattleSetup, type BattleState, type BattleUnit, type LogEntry, type MovementStep, type Phase, type Position, type Side, type Terrain, type TerrainFeature } from '../types/battle';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile, type WeaponProfile } from '../types/army';
-import { rules40K10th, rules40K11th, rulesEditionForRuleset, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
+import { rules40K10th, rulesEditionForRuleset, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
 import { deployArmy, distanceToDeploymentZone, fp, pointInDeploymentZone, zoneFor, unitRole, type DeploymentStrategy, type DeploymentZoneSource } from './deployment';
 import { selectUnitToDrop, reactivePosition, deployModelFormation } from './deploymentBrain';
@@ -2098,7 +2098,7 @@ function removeOpponentOperationMarkersAfterMove(
 ): void {
   const selectedMissionName = state.setup?.primaryMissions?.[unit.side] ?? state.setup?.primaryMission;
   if (state.ruleset?.edition !== '11e' || selectedMissionName !== 'Surveil the Foe') return;
-  const objectiveIndexes = new Set(attachedObjectiveIndexesWithinRange(state, unit, rules40K11th));
+  const objectiveIndexes = new Set(attachedObjectiveIndexesWithinRange(state, unit, rulesEditionForRuleset(state.ruleset)));
   if (!objectiveIndexes.size) return;
   const markers = state.missionState?.operationMarkers ?? [];
   const removed = markers.filter(marker =>
@@ -2161,7 +2161,7 @@ function boobyTrapTerrainIsValid(
   if (!terrain || !attachedTerrainAreaIdsContainingUnit(state, unit).includes(terrainId)) return false;
 
   const homeRole = side === 0 ? 'home-0' : 'home-1';
-  const objectiveIndexes = attachedObjectiveIndexesWithinRange(state, unit, rules40K11th);
+  const objectiveIndexes = attachedObjectiveIndexesWithinRange(state, unit, rulesEditionForRuleset(state.ruleset));
   const isEligibleObjectiveTerrain = objectiveIndexes.some(objectiveIndex => {
     const objective = state.objectives[objectiveIndex];
     return objective
@@ -2433,7 +2433,7 @@ export function completeEndOfTurnActions(state: BattleState, side: Side): void {
     if (action.id === 'cleanse'
       && (action.targetObjectiveIndex === undefined
         || !hasActiveSecondaryMission(state, side, 'Cleanse')
-        || !attachedObjectiveIndexesWithinRange(state, unit, rules40K11th).includes(action.targetObjectiveIndex))) {
+        || !attachedObjectiveIndexesWithinRange(state, unit, rulesEditionForRuleset(state.ruleset)).includes(action.targetObjectiveIndex))) {
       cancelUnitAction(state, unit, 'the selected objective is no longer eligible');
       continue;
     }
@@ -2450,9 +2450,9 @@ export function completeEndOfTurnActions(state: BattleState, side: Side): void {
         marker.id === action.targetOperationMarkerId
       ) ?? -1;
       const controlsTargetObjective = action.targetObjectiveIndex !== undefined
-        && attachedObjectiveIndexesWithinRange(state, unit, rules40K11th).includes(action.targetObjectiveIndex)
+        && attachedObjectiveIndexesWithinRange(state, unit, rulesEditionForRuleset(state.ruleset)).includes(action.targetObjectiveIndex)
         && objectiveIsCentral(state, action.targetObjectiveIndex)
-        && updateObjectiveControl(state, rules40K11th)?.some(objective =>
+        && updateObjectiveControl(state, rulesEditionForRuleset(state.ruleset))?.some(objective =>
           objective.objectiveIndex === action.targetObjectiveIndex && objective.owner === side
         );
       if (markerIndex < 0 || !controlsTargetObjective) {
@@ -2465,7 +2465,7 @@ export function completeEndOfTurnActions(state: BattleState, side: Side): void {
         marker => marker.id !== action.targetOperationMarkerId,
       );
     }
-    recordCompletedMissionAction(state, unit, action, attachedObjectiveIndexesWithinRange(state, unit, rules40K11th));
+    recordCompletedMissionAction(state, unit, action, attachedObjectiveIndexesWithinRange(state, unit, rulesEditionForRuleset(state.ruleset)));
     for (const component of attachedUnitComponents(state, unit)) component.performingAction = undefined;
     state.log = [...state.log, log(state, side, unit.profile.name, `${unit.profile.name} completes ${actionName}.`, 'info')];
   }
@@ -4730,7 +4730,7 @@ export function playPhaseCoherencyIssues(state: BattleState): string[] {
     return [`Resolve ${unitName}'s triggered Surge Move before leaving the phase.`];
   }
   if (state.phase === 'command') {
-    const options = punishmentCondemnedUnitOptions(state, state.activeArmy, rules40K11th);
+    const options = punishmentCondemnedUnitOptions(state, state.activeArmy, rulesEditionForRuleset(state.ruleset));
     const selected = state.missionState?.condemnedUnitIds?.[state.activeArmy] ?? [];
     return options.length > 0 && selected.length === 0
       ? ['Select at least one enemy unit to condemn before leaving the Command phase.']

@@ -298,7 +298,7 @@ Use this section as the next-session pickup point for the rules implementation w
 - [x] Keep phase logic structured as ordered phase steps, not one large phase function.
   - Completed: unit/phase stepping is exposed, and the atomic simulator delegates Command, Movement, Shooting, Charge, and Fight setup/resolution to named core phase helpers while retaining the atomic convenience API.
 - [ ] Keep edition-specific behavior behind the rules engine so 10th and 11th can share common concepts but diverge cleanly. Some play helpers still default directly to `rules40K10th`; audit as rulesets diverge.
-  - Progress: interactive movement engagement, transport disembark, and model-drag legality checks now resolve the engagement rules from the battle state's ruleset; remaining public helper defaults still need an edition-boundary audit.
+  - Progress: interactive movement, transport disembark, model-drag legality, mission-action completion, and Command-phase coherency checks now resolve rules from the battle state's ruleset; remaining public helper defaults still need an edition-boundary audit.
 - [ ] Treat 11th edition as a separate ruleset placeholder until rules are actually available; do not guess 11th rules from 10th.
 - [ ] Shared concepts likely worth keeping edition-neutral: battle rounds, active army, phase/step cursor, unit/model positions, dice helpers, objective ownership scaffolding.
 
