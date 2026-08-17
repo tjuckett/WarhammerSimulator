@@ -99,6 +99,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
   const [hoveredTransport, setHoveredTransport] = useState<null | { x: number; y: number; label: string }>(null);
   const [boxSelect, setBoxSelect] = useState<null | { start: Position; current: Position }>(null);
   const [spacePanning, setSpacePanning] = useState(false);
+  const [collisionMode, setCollisionMode] = useState(false);
   const [selectedActionsPosition, setSelectedActionsPosition] = useState<null | { left: number; top: number }>(null);
   const [hideSelectedActions, setHideSelectedActions] = useState(false);
 
@@ -452,6 +453,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
             frameId: null,
             moved: false,
           };
+          setCollisionMode(e.shiftKey);
           e.currentTarget.setPointerCapture(e.pointerId);
         }
         return;
@@ -506,6 +508,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       const dy = point.y - drag.current.y;
       drag.current = point;
       drag.collide = e.shiftKey;
+      setCollisionMode(drag.collide);
       if (drag.collide) {
         if (Math.abs(dx) >= 0.001 || Math.abs(dy) >= 0.001) {
           drag.previewState = movedStateForSelection(drag.previewState, drag.selection, dx, dy, true);
@@ -582,12 +585,13 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
         }
         const applied = appliedDragDelta(drag);
         if (Math.abs(applied.x) >= 0.001 || Math.abs(applied.y) >= 0.001) {
-          deployer.onMoveModel(drag.selection, applied.x, applied.y, false);
+          deployer.onMoveModel(drag.selection, applied.x, applied.y, drag.collide);
         }
       }
       deployer?.onEndModelMove?.();
     }
     modelDragRef.current = null;
+    setCollisionMode(false);
     if (e.currentTarget.hasPointerCapture(e.pointerId)) {
       e.currentTarget.releasePointerCapture(e.pointerId);
     }
@@ -642,7 +646,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
           }}
           title={battlefieldStatusLabel(state)}
         >
-          {battlefieldStatusLabel(state)}
+          {collisionMode ? 'Collision mode — Shift held' : battlefieldStatusLabel(state)}
         </span>
         <div style={{ position: 'absolute', right: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
           <button type="button" onClick={() => setZoom(current => clampZoom(current - ZOOM_STEP))} title="Zoom out">-</button>

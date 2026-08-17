@@ -286,7 +286,7 @@ Use this section as the next-session pickup point for the rules implementation w
 - [x] Coherency enforcement policy implemented: allow temporary incoherency during movement editing, but block Movement phase advance until all active-army units are coherent.
 - [x] Move or expose `findReachablePosition` from `simulator.ts` for reuse/testing; it is now an exported simulator-core pathing helper.
 - [x] Add/confirm full 10th-edition vertical coherency rules. Model height, vertical separation, and the 5" vertical coherency limit are implemented and covered by simulator-core tests.
-- [ ] Review collision mode UX: normal dragging can ignore terrain/model collision, while collision mode applies the legality/pathing checks.
+- [x] Review collision mode UX: normal dragging may ignore terrain/model collision, while holding Shift visibly enables collision-aware preview and commits the same collision mode on pointer-up.
 - [x] Reviewed terrain LOS/cover behavior against the 10th Core Rules PDF and separated ruin footprints, obstacle mats, woods cover, and feature/wall blocking.
 - [x] Handle terrain movement edge cases for units starting inside blocking terrain; path checks now allow exiting while still blocking entry and traversal.
 - [x] Vertical movement/climbing implemented: model positions support height, vertical movement spends movement allowance, coherency/engagement/range account for vertical separation, and elevated models show height badges on the canvas.
