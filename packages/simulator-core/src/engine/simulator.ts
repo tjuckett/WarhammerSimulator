@@ -6721,6 +6721,17 @@ function runSimulatedShootingPhase(state: BattleState, side: Side, rules: RulesE
   return logs;
 }
 
+function runSimulatedChargePhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
+  const armyName = state.armies[side].name;
+  const logs: LogEntry[] = [];
+  state.phase = 'charge';
+  logs.push(phaseLog(state, side, armyName, `\n─── Charge Phase ───`));
+  state.units.filter(unit => unit.side === side && !unit.destroyed && !unit.inCombat)
+    .forEach(unit => logs.push(...runCharge(unit, state, rules)));
+  updateObjectiveControl(state, rules);
+  return logs;
+}
+
 export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): BattleState {
   let s = clone(state);
   const side = s.activeArmy;
@@ -6757,10 +6768,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }
 
   // Charge
-  s.phase = 'charge';
-  newLogs.push(phaseLog(s, side, armyName, `\n─── Charge Phase ───`));
-  myUnits().filter(u => !u.inCombat).forEach(u => newLogs.push(...runCharge(u, s, rules)));
-  updateObjectiveControl(s, rules);
+  newLogs.push(...runSimulatedChargePhase(s, side, rules));
 
   // Fight — charged first, then others in melee, then defender counterattacks
   s.phase = 'fight';
