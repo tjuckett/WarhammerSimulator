@@ -4,6 +4,7 @@ import { applyBaseSizesToArmy } from '@warhammer-simulator/core/data/unitBaseSiz
 import { isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
 import { validateImportedArmy } from '@warhammer-simulator/core/engine/armyValidation';
 import { generateAiArmy } from '@warhammer-simulator/core/engine/armyGeneration';
+import type { AiArmyStrategy } from '@warhammer-simulator/core/engine/armyGeneration';
 import type { DeploymentStrategy } from '@warhammer-simulator/core/engine/deployment';
 import { parseBattleScribeJSON } from '@warhammer-simulator/core/parsers/battlescribe';
 import { ArmyPanel } from './ArmyPanel';
@@ -51,6 +52,7 @@ function uniqueLibraryUnits(armies: ImportedArmy[]): UnitProfile[] {
 
 export function ArmyBuilder({ armies, sampleArmies, savedSlot, onSavedSlotChange, onChange, onSave, onLoad, storageStatus }: Props) {
   const [side, setSide] = useState<0 | 1>(0);
+  const [aiStrategy, setAiStrategy] = useState<AiArmyStrategy>('balanced');
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const addedUnitSequence = useRef(0);
   const army = armies[side];
@@ -98,7 +100,7 @@ export function ArmyBuilder({ armies, sampleArmies, savedSlot, onSavedSlotChange
   }
 
   function generateArmy() {
-    const result = generateAiArmy(army, { strategy: 'balanced' });
+    const result = generateAiArmy(army, { strategy: aiStrategy });
     updateArmy(result.army);
     setSelectedUnitId(null);
   }
@@ -122,6 +124,14 @@ export function ArmyBuilder({ armies, sampleArmies, savedSlot, onSavedSlotChange
           </select>
         </label>
         <button type="button" onClick={() => { updateArmy(blankArmy()); setSelectedUnitId(null); }}>New</button>
+        <label>
+          AI plan
+          <select value={aiStrategy} onChange={event => setAiStrategy(event.target.value as AiArmyStrategy)}>
+            <option value="balanced">Balanced</option>
+            <option value="aggressive">Aggressive</option>
+            <option value="objective">Objective</option>
+          </select>
+        </label>
         <button type="button" onClick={generateArmy} disabled={army.units.length === 0}>Generate AI</button>
         <button type="button" onClick={() => onSave(side)}>Save</button>
         <button type="button" onClick={() => onLoad(side)}>Load</button>
