@@ -82,7 +82,6 @@ import {
   primaryPlaySelectionPart,
 } from './play/playSelectionHelpers';
 
-type SimulationGranularity = 'unit' | 'phase' | 'turn';
 import {
   abilityOptionKey,
   pendingDamageLabel,
@@ -116,6 +115,16 @@ import {
   PlayShootingPanel,
   PlayTacticsPanel,
 } from './play/PlayPanels';
+
+type SimulationGranularity = 'unit' | 'phase' | 'turn';
+
+function useStableEvent<T extends (...args: never[]) => unknown>(callback: T): T {
+  const callbackRef = useRef(callback);
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+  return useCallback((...args: Parameters<T>) => callbackRef.current(...args), []) as T;
+}
 
 const ARMY_COLORS: [string, string] = ['#4af26a', '#f24a4a'];
 const SAVED_ARMY_KEYS = ['warhammer-saved-army-1', 'warhammer-saved-army-2'] as const;
@@ -2417,6 +2426,9 @@ export default function App() {
     commitBattleState(next);
   }
 
+  const reorganizeSelectedPlayUnitEvent = useStableEvent(reorganizeSelectedPlayUnit);
+  const rotateSelectedPlayModelsEvent = useStableEvent(rotateSelectedPlayModels);
+
   const undoPlayAction = useCallback(() => {
     if (!isPlayMode) return;
     if (pendingPlayRotationUndoRef.current) {
@@ -2478,23 +2490,23 @@ export default function App() {
       if (!canEditPlayModels(battleState)) return;
       if (!e.ctrlKey && !e.metaKey && !e.altKey && /^[1-9]$/.test(e.key)) {
         e.preventDefault();
-        reorganizeSelectedPlayUnit(Number(e.key));
+        reorganizeSelectedPlayUnitEvent(Number(e.key));
         return;
       }
       if (!e.ctrlKey && !e.metaKey && !e.altKey && (e.key === 'q' || e.key === 'Q' || e.key === 'e' || e.key === 'E')) {
         e.preventDefault();
         const step = e.shiftKey ? 5 : 15;
-        rotateSelectedPlayModels((e.key === 'q' || e.key === 'Q') ? -step : step);
+        rotateSelectedPlayModelsEvent((e.key === 'q' || e.key === 'Q') ? -step : step);
         return;
       }
       if (!e.ctrlKey && !e.metaKey && !e.altKey && (e.key === 'r' || e.key === 'R')) {
         e.preventDefault();
-        rotateSelectedPlayModels(90);
+        rotateSelectedPlayModelsEvent(90);
       }
     }
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isPlayMode, battleState?.phase, battleState?.movementStep, battleState, undoPlayAction, redoPlayAction, reorganizeSelectedPlayUnit, rotateSelectedPlayModels]);
+  }, [isPlayMode, battleState?.phase, battleState?.movementStep, battleState, undoPlayAction, redoPlayAction, reorganizeSelectedPlayUnitEvent, rotateSelectedPlayModelsEvent]);
 
   const stepDrop = useCallback(() => {
     const prev = battleStateRef.current;
