@@ -89,6 +89,34 @@ export interface ImportedArmy {
   generation?: ArmyGenerationMetadata;
 }
 
+/**
+ * Catalog-backed construction constraints. This is deliberately data-only so
+ * official faction/battle-size sources can be added without changing the
+ * Army Builder or the portable ImportedArmy format.
+ */
+export interface ArmyCatalogUnit {
+  id: string;
+  names?: string[];
+  modelCountPoints?: Record<string, number>;
+  minimumModels?: number;
+  maximumModels?: number;
+  maximumCopies?: number;
+}
+
+export interface ArmyCatalogBattleSize {
+  id: string;
+  label: string;
+  minimumPoints?: number;
+  maximumPoints?: number;
+}
+
+export interface ArmyCatalog {
+  id: string;
+  faction: string;
+  units: ArmyCatalogUnit[];
+  battleSizes?: ArmyCatalogBattleSize[];
+}
+
 export interface ArmyGenerationMetadata {
   strategy: 'balanced' | 'aggressive' | 'objective';
   sourceArmyName: string;

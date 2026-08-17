@@ -1,4 +1,4 @@
-import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile } from '../types/army';
+import { UNIT_DEPLOYMENT_MODE, type ArmyCatalog, type ArmyCatalogUnit, type ImportedArmy, type UnitProfile } from '../types/army';
 import { unitRosterId } from './armyUnits';
 
 export type ArmyValidationSeverity = 'error' | 'warning';
@@ -14,6 +14,11 @@ export interface ArmyValidationResult {
   valid: boolean;
   errors: ArmyValidationIssue[];
   warnings: ArmyValidationIssue[];
+}
+
+export interface ArmyValidationOptions {
+  catalog?: ArmyCatalog;
+  battleSizeId?: string;
 }
 
 function issue(
@@ -33,14 +38,28 @@ function referencedUnit(army: ImportedArmy, reference: string): UnitProfile | un
   return army.units.find(unit => unitRosterId(unit) === reference || unit.name === reference);
 }
 
+function catalogUnitFor(unit: UnitProfile, catalog: ArmyCatalog): ArmyCatalogUnit | undefined {
+  const rosterId = unitRosterId(unit);
+  return catalog.units.find(candidate => candidate.id === rosterId || candidate.names?.includes(unit.name));
+}
+
+function pointsForCatalogUnit(unit: UnitProfile, catalogUnit: ArmyCatalogUnit): number | null {
+  const points = catalogUnit.modelCountPoints?.[String(unit.baseModelCount)];
+  return points === undefined || !Number.isFinite(points) || points < 0 ? null : points;
+}
+
 /**
  * Checks portable roster structure only. Points, faction limits, battle size,
  * and official army-construction rules require an external catalog/source.
  */
-export function validateImportedArmy(army: ImportedArmy): ArmyValidationResult {
+export function validateImportedArmy(army: ImportedArmy, options: ArmyValidationOptions = {}): ArmyValidationResult {
   const errors: ArmyValidationIssue[] = [];
   const warnings: ArmyValidationIssue[] = [];
   const explicitRosterIds = new Map<string, number>();
+
+  const catalog = options.catalog;
+  const catalogUnitCounts = new Map<string, number>();
+  let catalogPoints = 0;
 
   if (!army.name.trim()) warnings.push(issue('warning', 'army-name-missing', 'Army name is empty.'));
   if (!army.faction.trim()) warnings.push(issue('warning', 'army-faction-missing', 'Army faction is empty.'));
@@ -48,6 +67,35 @@ export function validateImportedArmy(army: ImportedArmy): ArmyValidationResult {
 
   army.units.forEach((unit, index) => {
     const label = unit.name.trim() || `Unit ${index + 1}`;
+
+    if (catalog) {
+      if (army.faction.trim().toLowerCase() !== catalog.faction.trim().toLowerCase()) {
+        if (index === 0) errors.push(issue('error', 'catalog-faction-mismatch', `Army faction "${army.faction}" does not match catalog faction "${catalog.faction}".`));
+      } else {
+        const catalogUnit = catalogUnitFor(unit, catalog);
+        if (!catalogUnit) {
+          errors.push(issue('error', 'catalog-unit-unknown', `${label} is not present in catalog ${catalog.id}.`, index));
+        } else {
+          const count = (catalogUnitCounts.get(catalogUnit.id) ?? 0) + 1;
+          catalogUnitCounts.set(catalogUnit.id, count);
+          if (catalogUnit.maximumCopies !== undefined && count > catalogUnit.maximumCopies) {
+            errors.push(issue('error', 'catalog-unit-limit', `${label} exceeds the catalog limit of ${catalogUnit.maximumCopies} copy/copies.`, index));
+          }
+          if (catalogUnit.minimumModels !== undefined && unit.baseModelCount < catalogUnit.minimumModels) {
+            errors.push(issue('error', 'catalog-model-count-low', `${label} requires at least ${catalogUnit.minimumModels} models in catalog ${catalog.id}.`, index));
+          }
+          if (catalogUnit.maximumModels !== undefined && unit.baseModelCount > catalogUnit.maximumModels) {
+            errors.push(issue('error', 'catalog-model-count-high', `${label} allows at most ${catalogUnit.maximumModels} models in catalog ${catalog.id}.`, index));
+          }
+          const points = pointsForCatalogUnit(unit, catalogUnit);
+          if (points === null && catalogUnit.modelCountPoints) {
+            errors.push(issue('error', 'catalog-points-missing', `${label} has no catalog points entry for ${unit.baseModelCount} models.`, index));
+          } else if (points !== null) {
+            catalogPoints += points;
+          }
+        }
+      }
+    }
     if (!unit.name.trim()) errors.push(issue('error', 'unit-name-missing', `${label} has no name.`, index));
     if (!Number.isInteger(unit.baseModelCount) || unit.baseModelCount < 1) {
       errors.push(issue('error', 'model-count-invalid', `${label} must contain at least one model.`, index));
@@ -95,6 +143,20 @@ export function validateImportedArmy(army: ImportedArmy): ArmyValidationResult {
       if (target === unit) errors.push(issue('error', 'leader-self-reference', `${label} cannot attach to itself.`, index));
     }
   });
+
+  if (catalog && options.battleSizeId) {
+    const battleSize = catalog.battleSizes?.find(candidate => candidate.id === options.battleSizeId);
+    if (!battleSize) {
+      errors.push(issue('error', 'catalog-battle-size-unknown', `Battle size "${options.battleSizeId}" is not present in catalog ${catalog.id}.`));
+    } else {
+      if (battleSize.minimumPoints !== undefined && catalogPoints < battleSize.minimumPoints) {
+        errors.push(issue('error', 'catalog-points-low', `Army has ${catalogPoints} catalog points but requires at least ${battleSize.minimumPoints}.`));
+      }
+      if (battleSize.maximumPoints !== undefined && catalogPoints > battleSize.maximumPoints) {
+        errors.push(issue('error', 'catalog-points-high', `Army has ${catalogPoints} catalog points but allows at most ${battleSize.maximumPoints}.`));
+      }
+    }
+  }
 
   return { valid: errors.length === 0, errors, warnings };
 }
