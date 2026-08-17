@@ -6680,6 +6680,22 @@ export function simulateNextUnit(state: BattleState, rules: RulesEdition): Battl
   return s;
 }
 
+function runSimulatedCommandPhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
+  const armyName = state.armies[side].name;
+  const logs: LogEntry[] = [];
+  state.phase = 'command';
+  state.movementStep = undefined;
+  autoSelectPunishmentCondemnedUnits(state, side, rules);
+  const nextCommandPoints = gainCommandPhaseCommandPoints(state);
+  logs.push(phaseLog(state, side, armyName,
+    `\n═══ BATTLE ROUND ${battleRound(state)} — ${armyName.toUpperCase()} — ${rules.name.toUpperCase()} ═══`));
+  logs.push(log(state, side, armyName, `Both players gain 1CP (${nextCommandPoints[0]}CP / ${nextCommandPoints[1]}CP).`, 'info'));
+  logs.push(...runBattleshock(state, side));
+  logs.push(...scorePrimaryMissionLogs(state, side, rules));
+  runAutomaticUnitAbilities(state, side, 'end-of-phase', rules);
+  return logs;
+}
+
 export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): BattleState {
   let s = clone(state);
   const side = s.activeArmy;
@@ -6701,16 +6717,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
 
   // Command
-  s.phase = 'command';
-  s.movementStep = undefined;
-  autoSelectPunishmentCondemnedUnits(s, side, rules);
-  const nextCommandPoints = gainCommandPhaseCommandPoints(s);
-  newLogs.push(phaseLog(s, side, armyName,
-    `\n═══ BATTLE ROUND ${battleRound(s)} — ${armyName.toUpperCase()} — ${rules.name.toUpperCase()} ═══`));
-  newLogs.push(log(s, side, armyName, `Both players gain 1CP (${nextCommandPoints[0]}CP / ${nextCommandPoints[1]}CP).`, 'info'));
-  newLogs.push(...runBattleshock(s, side));
-  newLogs.push(...scorePrimaryMissionLogs(s, side, rules));
-  runAutomaticUnitAbilities(s, side, 'end-of-phase', rules);
+  newLogs.push(...runSimulatedCommandPhase(s, side, rules));
 
   // Movement
   s.phase = 'movement';
