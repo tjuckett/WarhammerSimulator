@@ -98,12 +98,8 @@ function enemies(state: BattleState, side: Side): BattleUnit[] {
   );
 }
 
-function distance(a: { x: number; y: number }, b: { x: number; y: number }): number {
-  return Math.hypot(a.x - b.x, a.y - b.y);
-}
-
 function unitIsEngaged(state: BattleState, unit: BattleUnit, rules: RulesEdition): boolean {
-  return enemies(state, unit.side).some(enemy => distance(unit.position, enemy.position) <= rules.engagementRange());
+  return enemies(state, unit.side).some(enemy => battleUnitsBaseEdgeDistance(unit, enemy) <= rules.engagementRange());
 }
 
 function unitEligibleToShoot(state: BattleState, unit: BattleUnit, rules: RulesEdition): boolean {
@@ -156,7 +152,7 @@ function targetRestrictionsAllowed(
   if (stratagem.targetMustNotHaveAdvanced && target.movementAction === 'advanced') return false;
   if (
     stratagem.targetWithinEnemyDistance !== undefined
-    && !enemies(state, side).some(enemy => distance(target.position, enemy.position) <= stratagem.targetWithinEnemyDistance!)
+    && !enemies(state, side).some(enemy => battleUnitsBaseEdgeDistance(target, enemy) <= stratagem.targetWithinEnemyDistance!)
   ) return false;
   return true;
 }

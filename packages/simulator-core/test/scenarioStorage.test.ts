@@ -1466,6 +1466,21 @@ test('11th Inescapable Dominion scores fixed objective conditions from mission d
   assert.deepEqual(battle.scores, [9, 0]);
 });
 
+test('Heroic Intervention proximity uses base-edge distance for large-base units', () => {
+  const battle = state('charge');
+  battle.activeArmy = 0;
+  battle.commandPoints = [0, 1];
+  const attacker = losTestUnit('large-attacker', 0, { x: 10, y: 10 });
+  attacker.profile.modelBases = [{ shape: 'round', diameterMm: 100 }];
+  attacker.charged = true;
+  const defender = losTestUnit('large-defender', 1, { x: 22.4, y: 10 });
+  defender.profile.modelBases = [{ shape: 'round', diameterMm: 100 }];
+  battle.units = [attacker, defender];
+
+  const intervening = useStratagem(battle, 1, 'heroic-intervention', rules40K11th, defender.id, undefined, undefined, undefined, 'leap-to-defend');
+  assert.equal(intervening.units.find(unit => unit.id === defender.id)?.heroicInterventionThisPhase, true);
+});
+
 test('11th Heroic Intervention Into the Fray costs 2CP, allows a nearby target, and caps the charge roll', () => {
   const battle = state('charge');
   battle.activeArmy = 0;
