@@ -1,6 +1,6 @@
 import { MOVEMENT_STEP, type BattleSetup, type BattleState, type BattleUnit, type LogEntry, type MovementStep, type Phase, type Position, type Side, type Terrain, type TerrainFeature } from '../types/battle';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile, type WeaponProfile } from '../types/army';
-import { rules40K10th, rules40K11th, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
+import { rules40K10th, rules40K11th, rulesEditionForRuleset, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
 import { deployArmy, distanceToDeploymentZone, fp, pointInDeploymentZone, zoneFor, unitRole, type DeploymentStrategy, type DeploymentZoneSource } from './deployment';
 import { selectUnitToDrop, reactivePosition, deployModelFormation } from './deploymentBrain';
@@ -4149,7 +4149,7 @@ function disembarkPositions(state: BattleState, transport: BattleUnit, profile: 
       y: transport.position.y + offset.y,
     }, side);
     const candidateUnit = makeBattleUnit(profile, side, positions);
-    if (inEngagement(candidateUnit, enemiesInState, rules40K10th.engagementRange())) continue;
+    if (inEngagement(candidateUnit, enemiesInState, rulesEditionForRuleset(state.ruleset).engagementRange())) continue;
     if (!playMoveHasNoBaseOverlap(state, candidateUnit, new Set(candidateUnit.modelPositions.map((_, index) => index)))) continue;
     if (!playMoveHasNoWallOverlap(state, candidateUnit, new Set(candidateUnit.modelPositions.map((_, index) => index)))) continue;
     return positions;
@@ -4857,7 +4857,7 @@ function playMoveHasNoEndCollision(
 ): boolean {
   return playMoveHasNoBaseOverlap(state, movingUnit, movingIndices)
     && playMoveHasNoWallOverlap(state, movingUnit, movingIndices)
-    && !inEngagement(movingUnit, enemies(state, movingUnit.side), rules40K10th.engagementRange());
+    && !inEngagement(movingUnit, enemies(state, movingUnit.side), rulesEditionForRuleset(state.ruleset).engagementRange());
 }
 
 function distancePointToSegment(point: Position, from: Position, to: Position): number {
@@ -4985,7 +4985,7 @@ function translatedPlayMoveEndsInEngagement(
   const testUnit = test.units.find(u => u.id === movingUnit.id && u.side === movingUnit.side && !u.destroyed);
   if (!testUnit) return false;
   applyPlayModelTranslation(testUnit, modelIndices, dx, dy, boardFormatForState(state));
-  return inEngagement(testUnit, enemies(test, testUnit.side), rules40K10th.engagementRange());
+  return inEngagement(testUnit, enemies(test, testUnit.side), rulesEditionForRuleset(test.ruleset).engagementRange());
 }
 
 function unitHasBaseOverlap(state: BattleState, unit: BattleUnit): boolean {
@@ -5167,7 +5167,7 @@ function playMovementUnitLegalityIssues(state: BattleState, unit: BattleUnit): s
   if (unitHasWallOverlap(state, unit)) issues.push(`${unit.profile.name} cannot end its move inside blocking terrain.`);
   if (
     (unit.movementAction === 'normalMove' || unit.movementAction === 'advanced')
-    && inEngagement(unit, enemies(state, unit.side), rules40K10th.engagementRange())
+    && inEngagement(unit, enemies(state, unit.side), rulesEditionForRuleset(state.ruleset).engagementRange())
   ) {
     issues.push(`${unit.profile.name} cannot end a Normal or Advance move within Engagement Range.`);
   }
@@ -5789,7 +5789,7 @@ export function movePlayModels(
       || existingUnit.movementAction === 'fellBack'
       || existingUnit.movementAction === 'remainedStationary'
     ) return state;
-    if (!isAircraft(existingUnit) && nonAircraftEngagedEnemies(state, existingUnit, rules40K10th).length > 0) return state;
+    if (!isAircraft(existingUnit) && nonAircraftEngagedEnemies(state, existingUnit, rulesEditionForRuleset(state.ruleset)).length > 0) return state;
   }
 
   const s = clone(state);
@@ -5834,7 +5834,7 @@ export function movePlayModels(
 
   applyPlayModelTranslation(unit, uniqueIndices, move.dx, move.dy, boardFormatForState(s));
   cancelUnitAction(s, unit, 'it made a move');
-  if ((s.phase === 'movement' || s.phase === 'setup') && inEngagement(unit, enemies(s, side), rules40K10th.engagementRange())) return state;
+  if ((s.phase === 'movement' || s.phase === 'setup') && inEngagement(unit, enemies(s, side), rulesEditionForRuleset(s.ruleset).engagementRange())) return state;
 
   if (s.phase === 'movement') {
     lockOtherMovedPlayUnits(s, unit);
@@ -5866,7 +5866,7 @@ export function movePlayModelsVertically(
     || existingUnit.movementAction === 'fellBack'
     || existingUnit.movementAction === 'remainedStationary'
     || isAircraft(existingUnit)
-    || nonAircraftEngagedEnemies(state, existingUnit, rules40K10th).length > 0
+    || nonAircraftEngagedEnemies(state, existingUnit, rulesEditionForRuleset(state.ruleset)).length > 0
   ) return state;
 
   const s = clone(state);
@@ -5884,7 +5884,7 @@ export function movePlayModelsVertically(
 
   const totals = ensureModelMovementAllowanceTotals(unit);
   if (uniqueIndices.some(modelIndex => modelMovementDistanceFromStart(unit, modelIndex) > (totals[modelIndex] ?? 0) + 0.001)) return state;
-  if (inEngagement(unit, enemies(s, side), rules40K10th.engagementRange())) return state;
+  if (inEngagement(unit, enemies(s, side), rulesEditionForRuleset(s.ruleset).engagementRange())) return state;
 
   lockOtherMovedPlayUnits(s, unit);
   cancelUnitAction(s, unit, 'it made a move');
