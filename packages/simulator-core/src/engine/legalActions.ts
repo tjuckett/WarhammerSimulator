@@ -16,6 +16,7 @@ import {
   movementStep,
   playChargeTargetOptions,
   playDeploymentIssues,
+  playDisembarkModes,
   playFightActivationUnitIds,
   playFightWeaponOptions,
   playOverrunFightUnitIds,
@@ -146,10 +147,11 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
         label: `${unit.profile.name}: Embark in ${transport.profile.name}`,
       })));
     if (unit.profile.transportCapacity) {
+      const disembarkModes = playDisembarkModes(state, unit.id);
       actions.push(...playTransportPassengers(state, unit.id)
-        .filter(passenger => playUnitCanDisembark(state, side, unit.id, passenger.id, undefined, rules.metadata.edition === '11e' && unit.inCombat, rules.metadata.edition === '11e' && unit.movementAction === 'normalMove' && unit.movementComplete === true))
+        .filter(passenger => playUnitCanDisembark(state, side, unit.id, passenger.id, undefined, disembarkModes.combatDisembark, disembarkModes.rapidDisembark))
         .map((passenger): LegalAction => ({
-          action: { type: 'play.disembarkUnit', side, transportUnitId: unit.id, passengerUnitId: passenger.id, combatDisembark: rules.metadata.edition === '11e' && unit.inCombat, rapidDisembark: rules.metadata.edition === '11e' && unit.movementAction === 'normalMove' && unit.movementComplete === true },
+          action: { type: 'play.disembarkUnit', side, transportUnitId: unit.id, passengerUnitId: passenger.id, combatDisembark: disembarkModes.combatDisembark, rapidDisembark: disembarkModes.rapidDisembark },
           category: 'movement',
           side,
           unitId: passenger.id,

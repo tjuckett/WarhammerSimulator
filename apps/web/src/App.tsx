@@ -24,7 +24,7 @@ import type { CommandRerollRollType, HeroicInterventionMode } from '@warhammer-s
 import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simulator/core/engine/rulesEngine';
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
-  battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, completePlayScoutMove, createDeploymentState, declarePlaySuperHeavyMobile, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playPhaseCoherencyIssues, playScoutMoveAllowance, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels, startPlayScoutMove,
+  battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, completePlayScoutMove, createDeploymentState, declarePlaySuperHeavyMobile, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playDisembarkModes, playPhaseCoherencyIssues, playScoutMoveAllowance, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels, startPlayScoutMove,
   allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTarget, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightPhaseHasPendingActivations, playFightStepNeedsStart, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type FiringDeckSelection, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
@@ -1055,10 +1055,7 @@ export default function App() {
   const selectedPlayDisembarkOptions = useMemo(() => {
     if (!isPlayMode || !battleState || !primaryPlaySelection || !selectedPlayBattleUnit) return [];
     const side = primaryPlaySelection.side;
-    const rapidDisembark = battleState.ruleset.edition === '11e'
-      && selectedPlayBattleUnit.movementAction === 'normalMove'
-      && selectedPlayBattleUnit.movementComplete === true;
-    const combatDisembark = battleState.ruleset.edition === '11e' && selectedPlayBattleUnit.inCombat && !rapidDisembark;
+    const { combatDisembark, rapidDisembark } = playDisembarkModes(battleState, selectedPlayBattleUnit.id);
     const runtimePassengers = playTransportPassengers(battleState, selectedPlayBattleUnit.id)
       .filter(passenger => playUnitCanDisembark(battleState, side, selectedPlayBattleUnit.id, passenger.id, undefined, combatDisembark, rapidDisembark))
       .map(passenger => ({
