@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import type { ImportedArmy, UnitProfile } from '../src/types/army';
-import { generateAiArmy } from '../src/engine/armyGeneration';
+import { evaluateAiArmyCandidate, generateAiArmy } from '../src/engine/armyGeneration';
 
 function unit(overrides: Partial<UnitProfile> = {}): UnitProfile {
   return {
@@ -37,7 +37,15 @@ test('AI army generation is deterministic and records its explanation', () => {
   assert.deepEqual(result.selectedUnitNames, ['Objective Squad', 'Elite Squad']);
   assert.equal(result.army.name, 'Test Roster AI (objective)');
   assert.equal(result.army.generation?.strategy, 'objective');
+  assert.equal(result.army.generation?.heuristicScore, result.heuristicScore);
   assert.match(result.explanation, /points, faction limits/);
+});
+
+test('AI candidate evaluation returns a deterministic heuristic score', () => {
+  const evaluation = evaluateAiArmyCandidate(source, 'balanced');
+  assert.equal(evaluation.unitCount, 3);
+  assert.ok(evaluation.score > 0);
+  assert.match(evaluation.explanation, /balanced heuristic/);
 });
 
 test('AI army generation clears stale deployment relationships', () => {

@@ -93,6 +93,7 @@ export interface ArmyGenerationMetadata {
   strategy: 'balanced' | 'aggressive' | 'objective';
   sourceArmyName: string;
   explanation: string;
+  heuristicScore: number;
 }
 
 export const UNIT_DEPLOYMENT_MODE = {

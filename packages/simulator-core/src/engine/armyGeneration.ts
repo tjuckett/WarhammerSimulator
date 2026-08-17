@@ -11,6 +11,14 @@ export interface AiArmyGenerationResult {
   army: ImportedArmy;
   explanation: string;
   selectedUnitNames: string[];
+  heuristicScore: number;
+}
+
+export interface AiArmyEvaluation {
+  strategy: AiArmyStrategy;
+  score: number;
+  unitCount: number;
+  explanation: string;
 }
 
 function hasKeyword(unit: UnitProfile, keyword: string): boolean {
@@ -33,6 +41,19 @@ function unitScore(unit: UnitProfile, strategy: AiArmyStrategy): number {
 
 function cloneUnit(unit: UnitProfile): UnitProfile {
   return JSON.parse(JSON.stringify(unit)) as UnitProfile;
+}
+
+/** Scores an already assembled candidate without applying points or faction rules. */
+export function evaluateAiArmyCandidate(army: ImportedArmy, strategy: AiArmyStrategy = 'balanced'): AiArmyEvaluation {
+  const rawScore = army.units.reduce((total, unit) => total + unitScore(unit, strategy), 0);
+  const averageScore = army.units.length ? rawScore / army.units.length : 0;
+  const score = Math.round(averageScore * 10) / 10;
+  return {
+    strategy,
+    score,
+    unitCount: army.units.length,
+    explanation: `${army.units.length} units scored ${score} using the ${strategy} heuristic.`,
+  };
 }
 
 /**
@@ -58,16 +79,19 @@ export function generateAiArmy(
     return copy;
   });
   const selectedUnitNames = units.map(unit => unit.name);
-  const explanation = `Selected ${selectedUnitNames.length} of ${source.units.length} available units using the ${strategy} heuristic. `
+  const evaluation = evaluateAiArmyCandidate({ ...source, units }, strategy);
+  const explanation = `Selected ${selectedUnitNames.length} of ${source.units.length} available units using the ${strategy} heuristic (score ${evaluation.score}). `
     + 'The list is editable; points, faction limits, and official construction rules are not inferred without catalog data.';
   const generation: ArmyGenerationMetadata = {
     strategy,
     sourceArmyName: source.name,
     explanation,
+    heuristicScore: evaluation.score,
   };
   return {
     army: { ...source, name: `${source.name} AI (${strategy})`, units, generation },
     explanation,
     selectedUnitNames,
+    heuristicScore: evaluation.score,
   };
 }
