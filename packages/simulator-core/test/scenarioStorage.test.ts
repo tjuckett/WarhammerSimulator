@@ -972,6 +972,26 @@ test('simulated turns reset action state before running the active player turn',
   assert.equal(next.units.find(candidate => candidate.id === unit.id)?.actionStartedThisTurn, undefined);
 });
 
+test('play Command reset clears per-turn shooting and disembark restrictions', () => {
+  const battle = state('fight');
+  battle.activeArmy = 1;
+  const unit = losTestUnit('reset-unit', 0, { x: 10, y: 10 });
+  unit.firedWeaponIndices = [0];
+  unit.combatDisembarkedThisTurn = true;
+  unit.rapidDisembarkedThisTurn = true;
+  unit.heroicInterventionMode = 'into-the-fray';
+  battle.units = [unit];
+
+  const command = applyGameAction(battle, { type: 'play.stepPhase' }, { rules: rules40K10th });
+  const resetUnit = command.units.find(candidate => candidate.id === unit.id)!;
+
+  assert.equal(command.phase, 'command');
+  assert.equal(resetUnit.firedWeaponIndices, undefined);
+  assert.equal(resetUnit.combatDisembarkedThisTurn, undefined);
+  assert.equal(resetUnit.rapidDisembarkedThisTurn, undefined);
+  assert.equal(resetUnit.heroicInterventionMode, undefined);
+});
+
 test('11th battle-shock step tests damaged active units and clears healthy units', () => {
   const battle = state('setup', 1);
   battle.ruleset = rulesetMetadataForState(rules40K11th);

@@ -470,6 +470,7 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
       unit.charged = false;
       unit.piledIn = undefined;
       unit.consolidated = undefined;
+      unit.firedWeaponIndices = undefined;
       unit.movementAction = undefined;
       unit.movementAllowanceRemaining = undefined;
       unit.movementAllowanceRemainingByModel = undefined;
@@ -484,6 +485,8 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
       unit.actionStartedThisTurn = undefined;
       if (unit.emergencyDisembarkedThisTurn) unit.battleshocked = false;
       unit.emergencyDisembarkedThisTurn = undefined;
+      unit.combatDisembarkedThisTurn = undefined;
+      unit.rapidDisembarkedThisTurn = undefined;
       unit.fellBack = false;
       unit.inCombat = false;
     }
