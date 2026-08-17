@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, Button, Checkbox, FormControlLabel, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -153,6 +153,22 @@ export function TerrainLayoutEditor({
   const [deploymentEditorOpen, setDeploymentEditorOpen] = useState(true);
   const snap = (value: number, step = 1) => snapToGrid ? Math.round(value / step) * step : value;
 
+  const removeTerrain = useCallback((index: number) => {
+    onChange({ ...layout, terrain: layout.terrain.filter((_, i) => i !== index) });
+    onSelect(null);
+  }, [layout, onChange, onSelect]);
+
+  const removeFeature = useCallback((terrainIndex: number, featureIndex: number) => {
+    onChange({
+      ...layout,
+      terrain: layout.terrain.map((terrain, i) => i === terrainIndex ? {
+        ...terrain,
+        features: terrain.features.filter((_, j) => j !== featureIndex),
+      } : terrain),
+    });
+    onSelect(null);
+  }, [layout, onChange, onSelect]);
+
   useEffect(() => {
     if (!selected) return;
     const key = selectedKey(selected);
@@ -174,7 +190,7 @@ export function TerrainLayoutEditor({
     }
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [disabled, selected, layout]);
+  }, [disabled, selected, layout, removeTerrain, removeFeature]);
 
   function updateTerrain(index: number, patch: Partial<Terrain>, snapPosition = true) {
     const target = layout.terrain[index];
@@ -346,11 +362,6 @@ export function TerrainLayoutEditor({
     onSelect({ kind: 'terrain', terrainIndex: layout.terrain.length });
   }
 
-  function removeTerrain(index: number) {
-    onChange({ ...layout, terrain: layout.terrain.filter((_, i) => i !== index) });
-    onSelect(null);
-  }
-
   function matchSelectedTerrainRotation(sourceIndex: number) {
     if (!selected || selected.kind !== 'terrain' || selected.terrainIndex === sourceIndex) return;
     const source = layout.terrain[sourceIndex];
@@ -384,17 +395,6 @@ export function TerrainLayoutEditor({
       } : terrain),
     });
     onSelect({ kind: 'feature', terrainIndex, featureIndex });
-  }
-
-  function removeFeature(terrainIndex: number, featureIndex: number) {
-    onChange({
-      ...layout,
-      terrain: layout.terrain.map((terrain, i) => i === terrainIndex ? {
-        ...terrain,
-        features: terrain.features.filter((_, j) => j !== featureIndex),
-      } : terrain),
-    });
-    onSelect(null);
   }
 
   function deploymentZonesForEdit(): DeploymentZoneSet {
