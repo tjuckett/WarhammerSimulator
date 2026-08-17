@@ -3134,7 +3134,7 @@ export function playChargeTargetOptions(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): PlayChargeTargetOption[] {
   if (state.phase !== 'charge') return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
@@ -3154,7 +3154,7 @@ export function chargePlayUnitTarget(
   unitId: string,
   side: Side,
   targetUnitId: string,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
   if (state.phase !== 'charge') return state;
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
@@ -3259,7 +3259,7 @@ export function playMeleeFixedAttackCount(
   unitId: string,
   side: Side,
   weaponIndex: number,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): number | null {
   const option = playFightWeaponOptions(state, unitId, side, rules)
     .find(candidate => candidate.weaponIndex === weaponIndex);
@@ -3304,7 +3304,7 @@ function startFightStepInPlace(s: BattleState, rules: RulesEdition): void {
 
 export function startPlayFightStep(
   state: BattleState,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
   if (rules.metadata.edition !== '11e' || state.phase !== 'fight' || state.fightStepStarted) return state;
   const s = clone(state);
@@ -3342,7 +3342,7 @@ function sideCanSelectFightUnit(state: BattleState, side: Side, rules: RulesEdit
 export function playFightActivationUnitIds(
   state: BattleState,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): string[] {
   if (!sideCanSelectFightUnit(state, side, rules)) return [];
   const eligible = activeUnits(state, side).filter(unit => unitEligibleToFight(unit, state, rules));
@@ -3381,7 +3381,7 @@ export function playFightActivationUnitIds(
 export function playOverrunFightUnitIds(
   state: BattleState,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): string[] {
   if (rules.metadata.edition !== '11e' || state.fightStepStarted !== true) return [];
   return playFightActivationUnitIds(state, side, rules).filter(unitId => {
@@ -3396,7 +3396,7 @@ export function selectPlayOverrunFight(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
   if (!playOverrunFightUnitIds(state, side, rules).includes(unitId)) return state;
   const s = clone(state);
@@ -3520,7 +3520,7 @@ export function playUnitCanPileIn(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): boolean {
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   return !!unit
@@ -3535,7 +3535,7 @@ export function playUnitCanConsolidate(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): boolean {
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   return !!unit && state.phase === 'fight' && (state.activeArmy === side || rules.metadata.edition === '11e') && unit.activated && !unit.consolidated
@@ -3546,7 +3546,7 @@ export function pileInPlayUnit(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
   return applyFightPhaseMove(state, unitId, side, 'pileIn', rules);
 }
@@ -3555,7 +3555,7 @@ export function consolidatePlayUnit(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
   return applyFightPhaseMove(state, unitId, side, 'consolidate', rules);
 }
@@ -3564,7 +3564,7 @@ export function playFightWeaponOptions(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): PlayFightWeaponOption[] {
   if (!sideCanSelectFightUnit(state, side, rules)) return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
@@ -3587,7 +3587,7 @@ export function fightPlayUnitWeapon(
   side: Side,
   targetUnitId: string,
   weaponIndex: number | 'all',
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
   targetSplits?: PlayMeleeAttackSplit[],
 ): BattleState {
   if (!sideCanSelectFightUnit(state, side, rules)) return state;
