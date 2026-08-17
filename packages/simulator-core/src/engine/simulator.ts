@@ -5395,7 +5395,7 @@ export function playUnitCanTakeToSkies(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): boolean {
   if (rules.metadata.edition !== '11e') return false;
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
@@ -5419,7 +5419,7 @@ export function declarePlayUnitTakeToSkies(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
   if (!playUnitCanTakeToSkies(state, unitId, side, rules)) return state;
   const s = clone(state);
@@ -5541,7 +5541,7 @@ export function grantPlaySurgeMove(
   side: Side,
   maximumDistance: number,
   source: string,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
   if (rules.metadata.edition !== '11e'
     || state.pendingSurgeMove
@@ -5569,7 +5569,7 @@ export function resolvePlaySurgeMove(
   unitId: string,
   side: Side,
   targetUnitId: string,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
   const pending = state.pendingSurgeMove;
   if (rules.metadata.edition !== '11e'
@@ -6105,7 +6105,7 @@ export function playUnitCanFallBack(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): boolean {
   if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
   const unit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
@@ -6116,7 +6116,7 @@ export function playUnitCanAdvance(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): boolean {
   if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
   const unit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
@@ -6163,7 +6163,7 @@ export function advancePlayUnit(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
   if (!playUnitCanAdvance(state, unitId, side, rules)) return state;
 
@@ -6203,7 +6203,7 @@ export function fallBackPlayUnit(
   state: BattleState,
   unitId: string,
   side: Side,
-  rules: RulesEdition = rules40K10th,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
   if (!playUnitCanFallBack(state, unitId, side, rules)) return state;
 
