@@ -954,6 +954,12 @@ function resolveAttacks(
   const rangeDistance = weapon.isMelee
     ? dist(attacker.position, defender.position)
     : battleUnitToAttachedUnitDistance(state, attacker, defender);
+  const epicChallengeModelIndex = weapon.isMelee
+    ? activeEpicChallengeModelIndex(state, defender)
+    : undefined;
+  const damageOptions = epicChallengeModelIndex === undefined
+    ? options
+    : { ...options, targetModelIndex: epicChallengeModelIndex };
 
   const participatingModelIndexes = participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, state.terrain);
   const weaponModelCount = participatingModelIndexes.length;
@@ -1173,7 +1179,7 @@ function resolveAttacks(
         ));
       }
       logs.push(...applyDamage(defender, dmgResult.total + meltaBonus, state, attacker.side, {
-        ...options,
+        ...damageOptions,
         noCarryOver: true,
         source: weapon.name,
         sourceUnitId: attacker.id,
@@ -1199,7 +1205,7 @@ function resolveAttacks(
         ));
       }
       logs.push(...applyDamage(defender, dmgResult.total + meltaBonus, state, attacker.side, {
-        ...options,
+        ...damageOptions,
         noCarryOver: true,
         source: weapon.name,
         sourceUnitId: attacker.id,
@@ -1215,7 +1221,7 @@ function resolveAttacks(
       'damage',
     ));
     logs.push(...applyDamage(defender, totalMortals, state, attacker.side, {
-      ...options,
+      ...damageOptions,
       source: 'mortal wounds',
       sourceUnitId: attacker.id,
       sourceObjectiveIndexesWithinRange: objectiveIndexesWithinRange(state, attacker, rules),
@@ -1235,6 +1241,7 @@ export function applyDamage(
     noCarryOver?: boolean;
     source?: string;
     sourceUnitId?: string;
+    targetModelIndex?: number;
     sourceObjectiveIndexesWithinRange?: number[];
     sourceTags?: Array<'psychic'>;
   } = {},
@@ -1248,6 +1255,7 @@ export function applyDamage(
         noCarryOver: options.noCarryOver,
         source: options.source,
         ...(options.sourceUnitId ? { sourceUnitId: options.sourceUnitId } : {}),
+        ...(options.targetModelIndex !== undefined ? { targetModelIndex: options.targetModelIndex } : {}),
         ...(options.sourceObjectiveIndexesWithinRange
           ? { sourceObjectiveIndexesWithinRange: options.sourceObjectiveIndexesWithinRange }
           : {}),
@@ -2569,9 +2577,21 @@ function shootingWeaponCanTarget(
   if (!targetPool.some(candidate => candidate.id === target.id && candidate.side === target.side)) return false;
 
   const representative = attachedUnitTargetRepresentative(state, target);
-  const precisionCharacter = weaponHasKeyword(weapon, 'Precision')
+  const epicChallengeModelIndex = weapon.isMelee ? activeEpicChallengeModelIndex(state, target) : undefined;
+  const epicChallengeVisible = epicChallengeModelIndex !== undefined
+    && target.modelPositions[epicChallengeModelIndex] !== undefined
+    && unit.modelPositions.some((from, modelIndex) => hasLOSEdgeToEdge(
+      from,
+      modelBaseRadius(unit, modelIndex),
+      target.modelPositions[epicChallengeModelIndex],
+      modelBaseRadius(target, epicChallengeModelIndex),
+      state.terrain,
+    ));
+  const precisionCharacter = (weaponHasKeyword(weapon, 'Precision') || epicChallengeModelIndex !== undefined)
     && unitHasKeyword(target, 'Character')
-    && unit.modelPositions.some((from, modelIndex) => hasAnyModelLOS(from, modelBaseRadius(unit, modelIndex), target, state.terrain));
+    && (epicChallengeModelIndex === undefined
+      ? unit.modelPositions.some((from, modelIndex) => hasAnyModelLOS(from, modelBaseRadius(unit, modelIndex), target, state.terrain))
+      : epicChallengeVisible);
   if (representative?.id !== target.id && !precisionCharacter) return false;
 
   const targetEngagedWithFriendly = targetWithinFriendlyEngagement(state, target, unit.side, rules);
@@ -2640,6 +2660,16 @@ export function battleUnitsBaseEdgeDistance(a: BattleUnit, b: BattleUnit): numbe
 
 export function battleUnitsWithinBaseEdgeRange(a: BattleUnit, b: BattleUnit, range: number): boolean {
   return battleUnitsBaseEdgeDistance(a, b) <= range;
+}
+
+function activeEpicChallengeModelIndex(state: BattleState, target: BattleUnit): number | undefined {
+  const round = battleRound(state);
+  return (state.stratagemUses ?? [])
+    .find(use => use.stratagemId === 'epic-challenge'
+      && use.phase === 'fight'
+      && (use.battleRound ?? round) === round
+      && use.targetUnitId === target.id)
+    ?.targetModelIndex;
 }
 
 function battleUnitToAttachedUnitDistance(state: BattleState, source: BattleUnit, target: BattleUnit): number {
@@ -6146,6 +6176,7 @@ export function allocatePlayDamageToModel(
   const pendingUnit = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
   const allocation = pendingUnit?.pendingDamageAllocations?.[0];
   if (!['shooting', 'fight'].includes(state.phase) || !pendingUnit || !allocation || !pendingUnit.modelPositions[modelIndex]) return state;
+  if (allocation.targetModelIndex !== undefined && allocation.targetModelIndex !== modelIndex) return state;
   if (pendingUnit.woundedModelIndex !== undefined && pendingUnit.woundedModelIndex !== modelIndex) return state;
 
   const s = clone(state);

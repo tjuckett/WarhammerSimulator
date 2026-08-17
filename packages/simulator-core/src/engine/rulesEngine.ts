@@ -279,6 +279,7 @@ export const rules40K11th: RulesEdition = {
       turn: 'own',
       target: 'friendly-unit',
       targetKeywordsAny: ['Character'],
+      targetMustBeEligibleToFight: true,
       oncePerPhase: true,
       targetOncePerPhase: ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE,
       description: 'A selected Character model gains Precision on melee weapons until the end of the phase.',

@@ -45,5 +45,6 @@ export interface StratagemUse {
   phase: Phase;
   battleRound?: number;
   targetUnitId?: string;
+  targetModelIndex?: number;
   commandPointsSpent: number;
 }

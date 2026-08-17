@@ -188,6 +188,12 @@ function targetAllowed(
   return true;
 }
 
+function targetModelIndexAllowed(target: BattleUnit, stratagem: StratagemDefinition, targetModelIndex?: number): boolean {
+  if (stratagem.id !== 'epic-challenge') return targetModelIndex === undefined;
+  const index = targetModelIndex ?? 0;
+  return Number.isInteger(index) && index >= 0 && !!target.modelPositions[index];
+}
+
 function applyInsaneBraveryStratagemEffect(
   state: BattleState,
   side: Side,
@@ -384,6 +390,7 @@ export function useStratagem(
   stratagemId: string,
   rules: RulesEdition,
   targetUnitId?: string,
+  targetModelIndex?: number,
 ): BattleState {
   const stratagem = stratagemById(rules, stratagemId);
   if (!stratagem) return state;
@@ -394,6 +401,9 @@ export function useStratagem(
   if (alreadyUsedThisBattle(state, side, stratagem)) return state;
   if (targetAlreadyUsedThisPhase(state, side, stratagem, targetUnitId)) return state;
   if (!targetAllowed(state, side, stratagem, rules, targetUnitId)) return state;
+  const target = targetUnitFor(state, targetUnitId);
+  if (stratagem.id === 'epic-challenge' && (!target || !targetModelIndexAllowed(target, stratagem, targetModelIndex))) return state;
+  if (stratagem.id !== 'epic-challenge' && targetModelIndex !== undefined) return state;
 
   const next: BattleState = JSON.parse(JSON.stringify(state));
   if (!spendCommandPoints(next, side, stratagem.cost)) return state;
@@ -406,6 +416,7 @@ export function useStratagem(
     phase: next.phase,
     battleRound: battleRound(next),
     targetUnitId,
+    ...(stratagem.id === 'epic-challenge' ? { targetModelIndex: targetModelIndex ?? 0 } : {}),
     commandPointsSpent: stratagem.cost,
   };
   next.stratagemUses = [...(next.stratagemUses ?? []), use];

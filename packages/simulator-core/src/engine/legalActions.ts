@@ -415,14 +415,19 @@ function addStratagemActions(actions: LegalAction[], state: BattleState, side: S
   for (const unit of activeUnits(state, side)) {
     for (const stratagem of availableStratagems(state, side, rules, unit.id)) {
       if (stratagem.target === 'none') continue;
-      actions.push({
-        action: { type: 'play.useStratagem', side, stratagemId: stratagem.id, targetUnitId: unit.id },
-        category: 'stratagem',
-        side,
-        unitId: unit.id,
-        targetUnitId: unit.id,
-        label: `${unit.profile.name}: Use ${stratagem.name}`,
-      });
+      const modelIndices = stratagem.id === 'epic-challenge'
+        ? unit.modelPositions.map((_, modelIndex) => modelIndex)
+        : [undefined];
+      for (const targetModelIndex of modelIndices) {
+        actions.push({
+          action: { type: 'play.useStratagem', side, stratagemId: stratagem.id, targetUnitId: unit.id, targetModelIndex },
+          category: 'stratagem',
+          side,
+          unitId: unit.id,
+          targetUnitId: unit.id,
+          label: `${unit.profile.name}: Use ${stratagem.name}${targetModelIndex === undefined ? '' : ` on model ${targetModelIndex + 1}`}`,
+        });
+      }
     }
   }
 }

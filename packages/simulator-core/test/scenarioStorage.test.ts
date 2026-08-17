@@ -691,11 +691,21 @@ test('11th edition preview blocks multiple stratagems targeting the same unit in
   battle.commandPoints = [3, 0];
   const character = losTestUnit('character-1', 0, { x: 10, y: 10 });
   character.profile.keywords = ['Character', 'Infantry'];
-  battle.units = [character];
+  character.profile.weapons = [{ name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true }];
+  character.inCombat = true;
+  const enemy = losTestUnit('character-enemy', 1, { x: 10.5, y: 10 });
+  enemy.inCombat = true;
+  battle.units = [character, enemy];
 
   const challenged = useStratagem(battle, 0, 'epic-challenge', rules40K11th, character.id);
   assert.deepEqual(challenged.commandPoints, [2, 0]);
   assert.equal(challenged.stratagemUses?.length, 1);
+  assert.equal(challenged.stratagemUses?.[0].targetModelIndex, 0);
+
+  assert.equal(
+    useStratagem(battle, 0, 'epic-challenge', rules40K11th, character.id, 1),
+    battle,
+  );
 
   assert.deepEqual(
     availableStratagems(challenged, 0, rules40K11th, character.id).map(stratagem => stratagem.id),
@@ -703,6 +713,54 @@ test('11th edition preview blocks multiple stratagems targeting the same unit in
   );
   const counteredSameTarget = useStratagem(challenged, 0, 'counteroffensive', rules40K11th, character.id);
   assert.equal(counteredSameTarget, challenged);
+});
+
+test('11th Epic Challenge constrains melee damage allocation to the selected Character model', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.activeArmy = 1;
+  battle.commandPoints = [0, 1];
+  battle.fightStepStarted = true;
+  const attacker = losTestUnit('epic-attacker', 0, { x: 10, y: 10 });
+  attacker.charged = true;
+  attacker.inCombat = true;
+  attacker.profile.weapons = [{ name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true }];
+  const character = losTestUnit('epic-character', 1, { x: 10.5, y: 10 });
+  character.inCombat = true;
+  character.profile.keywords = ['Character', 'Infantry'];
+  character.profile.weapons = [{ name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true }];
+  character.profile.wounds = 2;
+  character.profile.save = 7;
+  character.profile.baseModelCount = 2;
+  character.remainingModels = 2;
+  character.woundsOnLeadModel = 2;
+  character.modelPositions = [{ x: 10.5, y: 10 }, { x: 10.5, y: 11 }];
+  character.modelRosterIndexes = [0, 1];
+  character.modelRotations = [180, 180];
+  battle.units = [attacker, character];
+
+  const challenged = useStratagem(battle, 1, 'epic-challenge', rules40K11th, character.id, 1);
+  const replayed = applyGameAction(battle, {
+    type: GAME_ACTION_TYPE.UseStratagem,
+    side: 1,
+    stratagemId: 'epic-challenge',
+    targetUnitId: character.id,
+    targetModelIndex: 1,
+  }, { rules: rules40K11th });
+  assert.equal(replayed.stratagemUses?.[0].targetModelIndex, 1);
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const fought = fightPlayUnitWeapon(challenged, attacker.id, 0, character.id, 0, rules40K11th);
+    const pending = fought.units.find(unit => unit.id === character.id)?.pendingDamageAllocations?.[0];
+    assert.equal(pending?.targetModelIndex, 1);
+    const blocked = allocatePlayDamageToModel(fought, character.id, 1, 0);
+    assert.equal(blocked, fought);
+    const allocated = allocatePlayDamageToModel(fought, character.id, 1, 1);
+    assert.equal(allocated.units.find(unit => unit.id === character.id)?.pendingDamageAllocations, undefined);
+  } finally {
+    Math.random = originalRandom;
+  }
 });
 
 test('11th edition preview Insane Bravery can only be used once per battle', () => {
@@ -997,16 +1055,24 @@ test('11th core stratagems enforce target keyword and reserve restrictions', () 
   fight.commandPoints = [3, 0];
   const character = losTestUnit('captain', 0, { x: 10, y: 10 });
   character.profile.keywords = ['Character', 'Infantry'];
+  character.profile.weapons = [{ name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true }];
+  character.inCombat = true;
+  const characterEnemy = losTestUnit('captain-enemy', 1, { x: 10.5, y: 10 });
+  characterEnemy.inCombat = true;
   const infantry = losTestUnit('intercessors', 0, { x: 12, y: 10 });
-  fight.units = [character, infantry];
+  fight.units = [character, characterEnemy, infantry];
 
   assert.equal(availableStratagems(fight, 0, rules40K11th, character.id).some(stratagem => stratagem.id === 'epic-challenge'), true);
   assert.equal(availableStratagems(fight, 0, rules40K11th, infantry.id).some(stratagem => stratagem.id === 'epic-challenge'), false);
 
   const abilityCharacter = losTestUnit('ability-captain', 0, { x: 14, y: 10 });
   abilityCharacter.profile.keywords = ['Infantry'];
+  abilityCharacter.profile.weapons = [{ name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true }];
+  abilityCharacter.inCombat = true;
   abilityCharacter.profile.abilities = [{ name: 'Character', description: 'This model is a Character.' }];
-  fight.units = [abilityCharacter];
+  const abilityEnemy = losTestUnit('ability-enemy', 1, { x: 14.5, y: 10 });
+  abilityEnemy.inCombat = true;
+  fight.units = [abilityCharacter, abilityEnemy];
   assert.equal(availableStratagems(fight, 0, rules40K11th, abilityCharacter.id).some(stratagem => stratagem.id === 'epic-challenge'), true);
 
   const movement = state('movement');

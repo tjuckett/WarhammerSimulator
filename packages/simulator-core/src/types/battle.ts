@@ -50,6 +50,7 @@ export interface BattleUnit {
   pendingDamageAllocations?: Array<{
     damage: number;
     noCarryOver?: boolean;
+    targetModelIndex?: number;
     source?: string;
     sourceUnitId?: string;
     sourceObjectiveIndexesWithinRange?: number[];

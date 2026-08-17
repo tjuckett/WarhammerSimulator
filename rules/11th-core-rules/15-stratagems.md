@@ -25,6 +25,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 - Core stratagem definitions, CP spending, timing/target restrictions, once-per-phase/battle limits, affected-target restrictions, and current effects are represented.
 - Rapid Ingress also enforces its final restriction against use during the first battle round.
 - Command Re-roll records the eligible roll type and rerolls one die, except that Charge rolls are rerolled in full; practice replay carries that type through the action.
+- Epic Challenge records the selected Character model and applies temporary melee Precision, including model-constrained damage allocation, through replayable legal actions and the play UI.
 - Command Re-roll, Rapid Ingress, Heroic Intervention, and Counteroffensive have resolution/test coverage.
 - Tactics panel exposes direct stratagem action buttons and pending follow-up labels for key flows; Command Re-roll has a simple UI resolution path.
 

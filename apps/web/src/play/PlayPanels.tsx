@@ -573,7 +573,7 @@ export function PlayTacticsPanel({
   selectedUnitIsCondemned: boolean;
   onStratagemChange: (value: string) => void;
   onAbilityChange: (value: string) => void;
-  onUseStratagem: (stratagemId: string) => void;
+  onUseStratagem: (stratagemId: string, targetModelIndex?: number) => void;
   onUseAbility: () => void;
   onStartAction: () => void;
   onToggleCondemnedUnit: () => void;
@@ -584,7 +584,11 @@ export function PlayTacticsPanel({
   const pendingFollowUps = stratagemFollowUpLabels(state);
   const [commandRerollInput, setCommandRerollInput] = useState('');
   const [commandRerollRollType, setCommandRerollRollType] = useState<CommandRerollRollType>('hit');
+  const [epicChallengeModelIndex, setEpicChallengeModelIndex] = useState(0);
   const commandRerollRolls = parseDiceInput(commandRerollInput);
+  const selectedEpicChallengeModelIndex = selectedUnit?.modelPositions.length
+    ? Math.min(epicChallengeModelIndex, selectedUnit.modelPositions.length - 1)
+    : 0;
 
   return (
     <Box sx={playPanelSx}>
@@ -638,6 +642,18 @@ export function PlayTacticsPanel({
             </Button>
           </Box>
         )}
+        {selectedUnit && stratagems.some(stratagem => stratagem.id === 'epic-challenge') && (
+          <Select
+            size="small"
+            value={selectedEpicChallengeModelIndex}
+            onChange={event => setEpicChallengeModelIndex(Number(event.target.value))}
+            aria-label="Epic Challenge model"
+          >
+            {selectedUnit.modelPositions.map((_, modelIndex) => (
+              <MenuItem key={modelIndex} value={modelIndex}>Epic Challenge: model {modelIndex + 1}</MenuItem>
+            ))}
+          </Select>
+        )}
         {stratagems.map(stratagem => (
           <Button
             key={stratagem.id}
@@ -645,7 +661,7 @@ export function PlayTacticsPanel({
             variant={stratagem.id === selectedStratagemId ? 'contained' : 'outlined'}
             onMouseEnter={() => onStratagemChange(stratagem.id)}
             onFocus={() => onStratagemChange(stratagem.id)}
-            onClick={() => onUseStratagem(stratagem.id)}
+            onClick={() => onUseStratagem(stratagem.id, stratagem.id === 'epic-challenge' ? selectedEpicChallengeModelIndex : undefined)}
             title={stratagem.description}
             sx={{ justifyContent: 'space-between', textTransform: 'none' }}
           >
