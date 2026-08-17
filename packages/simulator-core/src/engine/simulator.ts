@@ -4218,7 +4218,7 @@ function reinforcementPlacementIsOutsideEnemyRange(
   side: Side,
   profile: UnitProfile,
   modelPositions: Position[],
-  minRange = state.ruleset.edition === '11e' ? 8 : 9,
+  minRange = rulesEditionForRuleset(state.ruleset).reinforcementRange(),
 ): boolean {
   const foes = enemies(state, side);
   return modelPositions.every((model, modelIndex) =>
@@ -4639,7 +4639,7 @@ export function placePlayReinforcement(state: BattleState, side: Side, armyUnitI
     s,
     side,
     profile.name,
-    `${s.armies[side].name} sets up ${profile.name} as Reinforcements more than ${s.ruleset.edition === '11e' ? 8 : 9}" horizontally from enemy units.`,
+    `${s.armies[side].name} sets up ${profile.name} as Reinforcements more than ${rulesEditionForRuleset(s.ruleset).reinforcementRange()}" horizontally from enemy units.`,
     'move',
   )];
   return s;
@@ -4683,7 +4683,7 @@ export function placePlayStrategicReserveUnit(state: BattleState, side: Side, un
     s,
     side,
     unit.profile.name,
-    `${s.armies[side].name} returns ${unit.profile.name} from Strategic Reserves more than ${s.ruleset.edition === '11e' ? 8 : 9}" horizontally from enemy units${state.activeArmy !== side ? ' using Rapid Ingress' : ''}.`,
+    `${s.armies[side].name} returns ${unit.profile.name} from Strategic Reserves more than ${rulesEditionForRuleset(s.ruleset).reinforcementRange()}" horizontally from enemy units${state.activeArmy !== side ? ' using Rapid Ingress' : ''}.`,
     'move',
   )];
   return s;

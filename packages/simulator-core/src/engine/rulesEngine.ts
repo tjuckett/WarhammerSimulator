@@ -71,6 +71,7 @@ export interface RulesEdition {
   advanceBonus(): string;   // dice expr e.g. "D6"
   chargeRange(): number;    // inches
   engagementRange(): number; // inches
+  reinforcementRange(): number; // minimum horizontal distance from enemy models
 }
 
 // ─── Weapon keyword helpers ────────────────────────────────────────────────────
@@ -241,6 +242,7 @@ export const rules40K10th: RulesEdition = {
   advanceBonus(): string { return 'D6'; },
   chargeRange(): number  { return 12; },
   engagementRange(): number { return 1; },
+  reinforcementRange(): number { return 9; },
 };
 
 // ─── 40K 11th Edition (stub) ──────────────────────────────────────────────────
@@ -259,6 +261,7 @@ export const rules40K11th: RulesEdition = {
     compatibilitySourceId: rules40K10th.id,
   },
   objectiveControl: ELEVENTH_EDITION_TERRAIN_OBJECTIVE_PLACEHOLDER,
+  reinforcementRange(): number { return 8; },
   stratagems: [
     {
       id: 'command-reroll',

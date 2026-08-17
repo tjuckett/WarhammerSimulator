@@ -6258,6 +6258,8 @@ test('play Movement lets units deployed inside terrain mats move without collisi
 });
 
 test('play Movement can set up Reinforcements more than 9 inches from enemies', () => {
+  assert.equal(rules40K10th.reinforcementRange(), 9);
+  assert.equal(rules40K11th.reinforcementRange(), 8);
   const battle = state('movement');
   const reserveProfile = {
     name: 'Reserve Unit',
