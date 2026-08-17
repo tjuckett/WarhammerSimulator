@@ -212,7 +212,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
 - [x] Start stratagem UI cleanup: Tactics panel now shows direct stratagem action buttons and pending follow-up labels for Command Re-roll, Rapid Ingress, and Heroic Intervention.
 - [x] Add simple Command Re-roll UI resolution: pending reroll accepts original D6 values, resolves through core rules, logs the new roll, and records practice replay.
 - [x] Create 11th core audit from available local preview/event-companion sources. See `rules/11th-core-rules-audit.md`.
-- [ ] Add the final full 11th Edition core rules source to `rules/` when available.
+- [x] Add the final full 11th Edition core rules source to `rules/`. The official June 2026 Core Rules PDF is tracked as `rules/eng_01-06_warhammer40k_new40k_core_rules-was6fbu1ix-hfewhmxyiy.pdf`.
 - [ ] Re-audit shared 10th-compatible movement, shooting, charge, fight, Battle-shock, objective control, reserves, transports, terrain, aircraft, and vertical rules against the final full 11th wording.
 - [ ] Remove or narrow the 11th preview notice once final 11th rules are fully modeled.
 - [ ] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.
@@ -301,7 +301,7 @@ Use this section as the next-session pickup point for the rules implementation w
   - Completed: unit/phase stepping is exposed, and the atomic simulator delegates Command, Movement, Shooting, Charge, and Fight setup/resolution to named core phase helpers while retaining the atomic convenience API.
 - [x] Keep edition-specific behavior behind the rules engine so 10th and 11th can share common concepts but diverge cleanly. Stateful play helpers now derive rules from `BattleState`; state-less battle/deployment constructors retain explicit 10th-edition defaults.
   - Progress: interactive movement, transport disembark, model-drag legality, mission-action completion, Command-phase coherency, legal-action generation, the core action gate, generic action start, shooting action helpers, Charge/Fight action helpers, and movement-action helpers all resolve rules from the battle state's ruleset.
-- [ ] Treat 11th edition as a separate ruleset placeholder until rules are actually available; do not guess 11th rules from 10th.
+- [x] Treat 11th edition as a separate ruleset with source-backed behavior; do not guess unsupported 11th rules from 10th. Remaining unmodeled mechanics stay explicit fail-closed/source-dependent TODOs.
 - [ ] Shared concepts likely worth keeping edition-neutral: battle rounds, active army, phase/step cursor, unit/model positions, dice helpers, objective ownership scaffolding.
 
 ### Known Rules/UI Followups
