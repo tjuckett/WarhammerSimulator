@@ -214,6 +214,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
 - [x] Create 11th core audit from available local preview/event-companion sources. See `rules/11th-core-rules-audit.md`.
 - [x] Add the final full 11th Edition core rules source to `rules/`. The official June 2026 Core Rules PDF is tracked as `rules/eng_01-06_warhammer40k_new40k_core_rules-was6fbu1ix-hfewhmxyiy.pdf`.
 - [ ] Re-audit shared 10th-compatible movement, shooting, charge, fight, Battle-shock, objective control, reserves, transports, terrain, aircraft, and vertical rules against the final full 11th wording.
+  - Progress: the first final-source movement audit slice now applies 11th Core 03.03's 9-inch every-model coherency limit while preserving the 2-inch neighbor and 5-inch vertical requirements; regression coverage distinguishes 10th and 11th behavior.
 - [ ] Remove or narrow the 11th preview notice once final 11th rules are fully modeled.
 - [ ] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.
   - Progress: pile-in and consolidation availability, plus Fight-step start/end gating, now rely on focused core rules helpers rather than duplicating edition checks in React; phase-specific labels remain presentation concerns.

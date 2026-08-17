@@ -4707,11 +4707,15 @@ function shouldShowCoherencyIssues(state: BattleState): boolean {
   return state.phase === 'deployment' || state.phase === 'movement';
 }
 
+function coherencyEditionForState(state: BattleState): '10e' | '11e' {
+  return state.ruleset.edition;
+}
+
 export function battleUnitIdsWithCoherencyIssues(state: BattleState): Set<string> {
   if (!shouldShowCoherencyIssues(state)) return new Set();
   const unitIds = new Set<string>();
   for (const list of coherencyModelLists(state)) {
-    if (modelListIsCoherent(list.models)) continue;
+    if (modelListIsCoherent(list.models, coherencyEditionForState(state))) continue;
     list.models.forEach(model => unitIds.add(model.unit.id));
   }
   return unitIds;
@@ -4721,7 +4725,7 @@ export function battleModelIdsWithCoherencyIssues(state: BattleState): Set<strin
   if (!shouldShowCoherencyIssues(state)) return new Set();
   const modelIds = new Set<string>();
   for (const list of coherencyModelLists(state)) {
-    const issueIndices = modelIndicesWithCoherencyIssues(list.models);
+    const issueIndices = modelIndicesWithCoherencyIssues(list.models, coherencyEditionForState(state));
     issueIndices.forEach(index => {
       const model = list.models[index];
       if (model) modelIds.add(`${model.unit.id}:${model.modelIndex}`);
@@ -4734,7 +4738,7 @@ export function battleCoherencyIssues(state: BattleState, side?: Side): string[]
   const issues: string[] = [];
   for (const list of coherencyModelLists(state)) {
     if (side !== undefined && !list.models.some(model => model.unit.side === side)) continue;
-    if (modelListIsCoherent(list.models)) continue;
+    if (modelListIsCoherent(list.models, coherencyEditionForState(state))) continue;
     issues.push(`${list.label} (${list.models.length} models) is out of coherency.`);
   }
   return issues;
@@ -5514,7 +5518,7 @@ export function completePlayScoutMove(state: BattleState, unitId: string, side: 
     return !playMoveHasNoBaseOverlap(state, component, moving) || !playMoveHasNoWallOverlap(state, component, moving);
   })) return state;
   for (const list of coherencyModelLists(state)) {
-    if (list.models.some(model => components.some(component => component.id === model.unit.id)) && !modelListIsCoherent(list.models)) return state;
+    if (list.models.some(model => components.some(component => component.id === model.unit.id)) && !modelListIsCoherent(list.models, coherencyEditionForState(state))) return state;
   }
   const s = clone(state);
   const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
@@ -6447,7 +6451,7 @@ export function playDeploymentIssues(state: BattleState): string[] {
   if (unplacedCount > 0) issues.push(`${unplacedCount} unit${unplacedCount === 1 ? '' : 's'} still undeployed.`);
 
   for (const list of coherencyModelLists(state)) {
-    if (!modelListIsCoherent(list.models)) {
+    if (!modelListIsCoherent(list.models, coherencyEditionForState(state))) {
       issues.push(`${list.label} (${list.models.length} models) is out of coherency.`);
     }
   }

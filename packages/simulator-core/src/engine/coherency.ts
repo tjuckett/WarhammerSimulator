@@ -2,7 +2,9 @@ import type { BattleUnit, Position } from '../types/battle';
 import { modelBaseRadiusInches } from './baseSizes';
 
 export const COHERENCY_RANGE = 2;
+export const COHERENCY_MAX_PAIR_RANGE = 9;
 export const COHERENCY_VERTICAL_RANGE = 5;
+export type CoherencyEdition = '10e' | '11e';
 
 export type CoherencyModel = {
   unit: BattleUnit;
@@ -20,6 +22,10 @@ export function verticalDistance(a: Position, b: Position): number {
 
 export function coherencyDistanceForRadii(aRadius: number, bRadius: number): number {
   return aRadius + bRadius + COHERENCY_RANGE;
+}
+
+export function maximumCoherencyDistanceForRadii(aRadius: number, bRadius: number): number {
+  return aRadius + bRadius + COHERENCY_MAX_PAIR_RANGE;
 }
 
 export function positionsAreWithinCoherency(
@@ -85,7 +91,7 @@ function coherentComponents(models: CoherencyModel[]): number[][] {
   return components;
 }
 
-export function modelIndicesWithCoherencyIssues(models: CoherencyModel[]): Set<number> {
+export function modelIndicesWithCoherencyIssues(models: CoherencyModel[], edition: CoherencyEdition = '10e'): Set<number> {
   const issues = new Set<number>();
   if (models.length <= 1) return issues;
 
@@ -93,6 +99,20 @@ export function modelIndicesWithCoherencyIssues(models: CoherencyModel[]): Set<n
   models.forEach((_, modelIndex) => {
     if (coherencyNeighborCount(models, modelIndex) < requiredNeighbors) issues.add(modelIndex);
   });
+
+  if (edition === '11e') {
+    models.forEach((model, modelIndex) => {
+      models.forEach((other, otherIndex) => {
+        if (modelIndex === otherIndex || issues.has(modelIndex)) return;
+        if (distance(model.model, other.model) > maximumCoherencyDistanceForRadii(
+          modelBaseRadiusInches(model.unit.profile, model.modelIndex),
+          modelBaseRadiusInches(other.unit.profile, other.modelIndex),
+        ) || verticalDistance(model.model, other.model) > COHERENCY_VERTICAL_RANGE) {
+          issues.add(modelIndex);
+        }
+      });
+    });
+  }
 
   const components = coherentComponents(models);
   if (components.length > 1) {
@@ -108,6 +128,6 @@ export function modelIndicesWithCoherencyIssues(models: CoherencyModel[]): Set<n
   return issues;
 }
 
-export function modelListIsCoherent(models: CoherencyModel[]): boolean {
-  return modelIndicesWithCoherencyIssues(models).size === 0;
+export function modelListIsCoherent(models: CoherencyModel[], edition: CoherencyEdition = '10e'): boolean {
+  return modelIndicesWithCoherencyIssues(models, edition).size === 0;
 }
