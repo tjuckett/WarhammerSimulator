@@ -7,6 +7,14 @@ export interface AiArmyGenerationOptions {
   maxUnits?: number;
 }
 
+export type AiMissionFocus = 'balanced' | 'objectives' | 'attrition';
+
+export interface AiArmyScenario {
+  id: string;
+  focus: AiMissionFocus;
+  opponent?: ImportedArmy;
+}
+
 export interface AiArmyGenerationResult {
   army: ImportedArmy;
   explanation: string;
@@ -19,6 +27,18 @@ export interface AiArmyEvaluation {
   score: number;
   unitCount: number;
   explanation: string;
+}
+
+export interface AiArmyScenarioEvaluation {
+  scenarioId: string;
+  strategy: AiArmyStrategy;
+  score: number;
+  explanation: string;
+}
+
+export interface AiArmyScenarioResult extends AiArmyGenerationResult {
+  scenarioId: string;
+  evaluations: AiArmyScenarioEvaluation[];
 }
 
 function hasKeyword(unit: UnitProfile, keyword: string): boolean {
@@ -53,6 +73,64 @@ export function evaluateAiArmyCandidate(army: ImportedArmy, strategy: AiArmyStra
     score,
     unitCount: army.units.length,
     explanation: `${army.units.length} units scored ${score} using the ${strategy} heuristic.`,
+  };
+}
+
+function scenarioScore(army: ImportedArmy, scenario: AiArmyScenario, candidateScore: number): number {
+  const objectiveControl = army.units.reduce((total, unit) => total + unit.oc * unit.baseModelCount, 0);
+  const durability = army.units.reduce((total, unit) => total + unit.toughness * unit.wounds * unit.baseModelCount, 0);
+  const rangedPower = army.units.reduce((total, unit) => total + unit.weapons.filter(weapon => !weapon.isMelee).reduce((sum, weapon) => sum + weapon.strength, 0), 0);
+  const opponentToughness = scenario.opponent?.units.reduce((total, unit) => total + unit.toughness, 0) ?? 0;
+  const opponentCount = scenario.opponent?.units.length ?? 0;
+  const opponentAverageToughness = opponentCount ? opponentToughness / opponentCount : 0;
+  const focusBonus = scenario.focus === 'objectives'
+    ? objectiveControl * 2
+    : scenario.focus === 'attrition'
+      ? durability + rangedPower * (opponentAverageToughness >= 6 ? 1.5 : 1)
+      : objectiveControl + durability * 0.5;
+  return Math.round((candidateScore + focusBonus) * 10) / 10;
+}
+
+/**
+ * Compares the three lightweight strategy candidates for one mission/opponent
+ * context. It is intentionally heuristic; official mission scoring and army
+ * construction data remain outside this boundary.
+ */
+export function selectAiArmyForScenario(
+  source: ImportedArmy,
+  scenario: AiArmyScenario,
+  options: Omit<AiArmyGenerationOptions, 'strategy'> = {},
+): AiArmyScenarioResult {
+  const strategies: AiArmyStrategy[] = ['balanced', 'aggressive', 'objective'];
+  const candidates = strategies.map(strategy => {
+    const candidate = generateAiArmy(source, { ...options, strategy });
+    const score = scenarioScore(candidate.army, scenario, candidate.heuristicScore);
+    return {
+      candidate,
+      evaluation: {
+        scenarioId: scenario.id,
+        strategy,
+        score,
+        explanation: `${strategy} scores ${score} for ${scenario.focus} scenario ${scenario.id}.`,
+      },
+    };
+  });
+  const best = candidates.reduce((current, next) => next.evaluation.score > current.evaluation.score ? next : current);
+  const scenarioExplanation = `Scenario ${scenario.id} selected the ${best.evaluation.strategy} plan at ${best.evaluation.score}.`;
+  const army = {
+    ...best.candidate.army,
+    generation: {
+      ...best.candidate.army.generation!,
+      scenarioId: scenario.id,
+      explanation: `${best.candidate.explanation} ${scenarioExplanation}`,
+    },
+  };
+  return {
+    ...best.candidate,
+    army,
+    explanation: `${best.candidate.explanation} ${scenarioExplanation}`,
+    scenarioId: scenario.id,
+    evaluations: candidates.map(candidate => candidate.evaluation),
   };
 }
 

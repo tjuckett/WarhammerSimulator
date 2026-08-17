@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import type { ImportedArmy, UnitProfile } from '../src/types/army';
-import { evaluateAiArmyCandidate, generateAiArmy } from '../src/engine/armyGeneration';
+import { evaluateAiArmyCandidate, generateAiArmy, selectAiArmyForScenario } from '../src/engine/armyGeneration';
 
 function unit(overrides: Partial<UnitProfile> = {}): UnitProfile {
   return {
@@ -46,6 +46,14 @@ test('AI candidate evaluation returns a deterministic heuristic score', () => {
   assert.equal(evaluation.unitCount, 3);
   assert.ok(evaluation.score > 0);
   assert.match(evaluation.explanation, /balanced heuristic/);
+});
+
+test('AI scenario selection compares mission-focused strategy candidates', () => {
+  const result = selectAiArmyForScenario(source, { id: 'hold-objectives', focus: 'objectives' }, { maxUnits: 2 });
+  assert.equal(result.scenarioId, 'hold-objectives');
+  assert.equal(result.evaluations.length, 3);
+  assert.equal(result.army.generation?.scenarioId, 'hold-objectives');
+  assert.match(result.explanation, /Scenario hold-objectives selected/);
 });
 
 test('AI army generation clears stale deployment relationships', () => {

@@ -94,6 +94,7 @@ export interface ArmyGenerationMetadata {
   sourceArmyName: string;
   explanation: string;
   heuristicScore: number;
+  scenarioId?: string;
 }
 
 export const UNIT_DEPLOYMENT_MODE = {
