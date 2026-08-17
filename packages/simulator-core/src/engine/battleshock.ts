@@ -42,6 +42,11 @@ export function resolveDesperateEscapeTests(
     if (roll <= 1) failedModelIndices.push(modelIndex);
   }
 
+  const destroysUnit = failedModelIndices.length >= unit.modelPositions.length;
+  if (destroysUnit) {
+    unit.lastDestroyedPosition = { ...unit.position };
+    unit.lastDestroyedModelPositions = unit.modelPositions.map(position => ({ ...position }));
+  }
   if (failedModelIndices.length > 0) {
     const sortedFailedModelIndices = failedModelIndices.sort((a, b) => b - a);
     onModelsDestroyed?.(unit, sortedFailedModelIndices);

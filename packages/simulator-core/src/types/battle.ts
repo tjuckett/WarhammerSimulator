@@ -58,6 +58,9 @@ export interface BattleUnit {
   }>;
   position: Position;          // centroid of modelPositions; display and coarse AI positioning
   modelPositions: Position[];  // one entry per remaining model
+  /** Last known formation retained after the unit is destroyed for later measurements. */
+  lastDestroyedPosition?: Position;
+  lastDestroyedModelPositions?: Position[];
   modelRosterIndexes?: number[]; // original roster-model index for each current model position
   modelRotations?: number[];   // facing for each model footprint in degrees
   facingDeg: number;

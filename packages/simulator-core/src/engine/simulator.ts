@@ -537,6 +537,17 @@ function aliveWeaponModelCount(
   return aliveWeaponModelIndexes(unit, weaponIndex, defender, terrain).length;
 }
 
+function rememberDestroyedPositions(unit: BattleUnit): void {
+  if (unit.lastDestroyedPosition || unit.lastDestroyedModelPositions) return;
+  unit.lastDestroyedPosition = { ...unit.position };
+  unit.lastDestroyedModelPositions = unit.modelPositions.map(position => ({ ...position }));
+}
+
+function markUnitDestroyed(unit: BattleUnit): void {
+  rememberDestroyedPositions(unit);
+  unit.destroyed = true;
+}
+
 function aliveWeaponModelIndexes(
   unit: BattleUnit,
   weaponIndex: number,
@@ -1326,6 +1337,7 @@ export function applyDamage(
     unit.woundsOnLeadModel = simulatedModels > 0 ? simulatedLeadWounds : 0;
     unit.woundedModelIndex = unit.woundsOnLeadModel > 0 && unit.woundsOnLeadModel < unit.profile.wounds ? 0 : undefined;
     unit.pendingWoundAssignment = undefined;
+    if (killed > 0 && simulatedModels <= 0) rememberDestroyedPositions(unit);
     if (killed > 0) trimUnitModelState(unit);
   }
 
@@ -1333,7 +1345,7 @@ export function applyDamage(
     ? unit.remainingModels - (unit.pendingCasualties ?? 0)
     : unit.remainingModels;
   if (killed > 0 && effectiveRemaining <= 0 && !options.deferCasualties) {
-    unit.destroyed = true;
+    markUnitDestroyed(unit);
     recordDestroyedUnitMissionEvent(state, unit, attackerSide, {
       destroyedByUnitId: options.sourceUnitId,
       destroyingUnitObjectiveIndexesWithinRange: options.sourceObjectiveIndexesWithinRange,
@@ -1459,7 +1471,7 @@ function destroyPassengerModels(unit: BattleUnit, destroyedModels: number): void
   unit.movementAllowanceTotalByModel = unit.movementAllowanceTotalByModel?.slice(0, unit.remainingModels);
   unit.movementStartPositionsByModel = unit.movementStartPositionsByModel?.slice(0, unit.remainingModels);
   if (unit.remainingModels <= 0 || unit.modelPositions.length <= 0) {
-    unit.destroyed = true;
+    markUnitDestroyed(unit);
     unit.remainingModels = 0;
     unit.modelPositions = [];
     unit.modelRotations = [];
@@ -1506,7 +1518,7 @@ function emergencyDisembarkDestroyedTransport(
         attackerSide,
       );
       unit.embarkedInUnitId = undefined;
-      unit.destroyed = true;
+      markUnitDestroyed(unit);
       unit.remainingModels = 0;
       unit.modelPositions = [];
       if (!existingPassenger) state.units.push(unit);
@@ -5955,7 +5967,7 @@ export function removePlayCasualtyModels(
   unit.pendingCasualties = Math.max(0, (unit.pendingCasualties ?? 0) - uniqueIndices.length);
   if (unit.pendingCasualties <= 0) unit.pendingCasualties = undefined;
   if (unit.remainingModels <= 0 || unit.modelPositions.length <= 0) {
-    unit.destroyed = true;
+    markUnitDestroyed(unit);
     unit.remainingModels = 0;
     unit.woundsOnLeadModel = 0;
     unit.woundedModelIndex = undefined;
@@ -6051,7 +6063,7 @@ export function allocatePlayDamageToModel(
     unit.woundedModelIndex = undefined;
     unit.woundsOnLeadModel = unit.remainingModels > 0 ? unit.profile.wounds : 0;
     if (unit.remainingModels <= 0 || unit.modelPositions.length <= 0) {
-      unit.destroyed = true;
+      markUnitDestroyed(unit);
       unit.remainingModels = 0;
       unit.modelPositions = [];
       unit.modelRotations = [];
