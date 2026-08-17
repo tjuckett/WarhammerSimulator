@@ -6001,6 +6001,9 @@ test('11th shooting types prevent an action after a partial shooting activation'
   assert.equal(afterShotUnit.activated, false);
   assert.deepEqual(afterShotUnit.firedWeaponIndices, [0]);
   assert.equal(playUnitCanStartAction(afterShot, shooter.id, 0, rules40K11th), false);
+  const chargeState = { ...afterShot, phase: 'charge' as Phase };
+  assert.deepEqual(playChargeTargetOptions(chargeState, shooter.id, 0, rules40K11th), []);
+  assert.equal(chargePlayUnitTarget(chargeState, shooter.id, 0, target.id, rules40K11th), chargeState);
 });
 
 test('11th Fly only bypasses paths and vertical distance after Take to the Skies at -2"', () => {

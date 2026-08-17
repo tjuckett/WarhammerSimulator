@@ -3136,7 +3136,7 @@ export function lockPlayUnitShooting(state: BattleState, unitId: string, side: S
 
 function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
   if (unit.performingAction) return [];
-  if (unit.destroyed || unit.embarkedInUnitId || unitSurgedThisPhase(state, unit) || isAircraft(unit) || unit.inCombat || unit.fellBack || unit.arrivedFromReinforcements || unit.emergencyDisembarkedThisTurn || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return [];
+  if (unit.destroyed || unit.embarkedInUnitId || unitSurgedThisPhase(state, unit) || isAircraft(unit) || unit.inCombat || unit.fellBack || unit.arrivedFromReinforcements || unit.emergencyDisembarkedThisTurn || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced' || (unit.firedWeaponIndices?.length ?? 0) > 0) return [];
   const foes = enemies(state, unit.side).filter(
     e => unitCanChargeTarget(unit, e) && dist(unit.position, e.position) <= rules.chargeRange(),
   );
@@ -3225,7 +3225,8 @@ function unitCanDeclareCharge(unit: BattleUnit): boolean {
     && !unit.combatDisembarkedThisTurn
     && !unit.rapidDisembarkedThisTurn
     && unit.movementAction !== 'fellBack'
-    && unit.movementAction !== 'advanced';
+    && unit.movementAction !== 'advanced'
+    && (unit.firedWeaponIndices?.length ?? 0) === 0;
 }
 
 function sideCanDeclareCharge(state: BattleState, side: Side, unit: BattleUnit): boolean {
