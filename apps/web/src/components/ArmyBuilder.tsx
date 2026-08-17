@@ -169,6 +169,13 @@ export function ArmyBuilder({ armies, sampleArmies, savedSlot, onSavedSlotChange
         {validation.warnings.slice(0, 2).map(item => <span key={`${item.code}:${item.unitIndex ?? 'army'}`}>{item.message}</span>)}
         {(validation.errors.length > 3 || validation.warnings.length > 2) && <span>Additional issues are shown in the exported/inspected roster data.</span>}
         {army.generation?.explanation && <span>AI plan: {army.generation.explanation}</span>}
+        {army.generation?.scenarioEvaluations?.length ? (
+          <span>
+            AI candidates: {army.generation.scenarioEvaluations
+              .map(evaluation => `${evaluation.strategy} ${evaluation.score}`)
+              .join(' · ')}
+          </span>
+        ) : null}
       </div>
 
       <div className="army-builder-columns">
