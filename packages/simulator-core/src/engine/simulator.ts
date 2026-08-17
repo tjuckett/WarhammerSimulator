@@ -1759,6 +1759,8 @@ function unitIsEligibleToStartAction(
   if (components.some(component => component.battleshocked)) return false;
   if (components.reduce((total, component) => total + component.profile.oc, 0) <= 0) return false;
   if (components.some(component => (!ignoreActionStartedThisTurn && component.actionStartedThisTurn) || component.performingAction)) return false;
+  if (rules.metadata.edition === '11e' && state.phase === 'shooting'
+    && components.some(component => component.activated || (component.firedWeaponIndices?.length ?? 0) > 0)) return false;
   if (components.some(component => component.movementAction === 'advanced' || component.movementAction === 'fellBack' || component.fellBack)) return false;
   const canActWhileEngaged = attachedUnitKeywordSet(state, unit).has('vehicle') || attachedUnitKeywordSet(state, unit).has('monster');
   if (!canActWhileEngaged && components.some(component => inEngagement(component, enemies(state, unit.side), rules.engagementRange()))) return false;

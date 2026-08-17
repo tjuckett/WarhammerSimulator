@@ -5765,6 +5765,23 @@ test('play Movement with Fly can move over enemy models and blocking terrain', (
   assert.ok((illegalEnd.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x ?? 0) < 13);
 });
 
+test('11th shooting types prevent an action after a partial shooting activation', () => {
+  const battle = state('shooting');
+  const shooter = losTestUnit('partial-shooter', 0, { x: 10, y: 10 });
+  shooter.profile.weapons = [
+    { name: 'Rifle A', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    { name: 'Rifle B', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+  ];
+  const target = losTestUnit('partial-target', 1, { x: 14, y: 10 });
+  battle.units = [shooter, target];
+
+  const afterShot = shootPlayUnitWeapon(battle, shooter.id, 0, target.id, 0, rules40K11th);
+  const afterShotUnit = afterShot.units.find(unit => unit.id === shooter.id)!;
+  assert.equal(afterShotUnit.activated, false);
+  assert.deepEqual(afterShotUnit.firedWeaponIndices, [0]);
+  assert.equal(playUnitCanStartAction(afterShot, shooter.id, 0, rules40K11th), false);
+});
+
 test('11th Fly only bypasses paths and vertical distance after Take to the Skies at -2"', () => {
   const battle = state('movement');
   battle.ruleset = rulesetMetadataForState(rules40K11th);
