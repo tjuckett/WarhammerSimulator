@@ -965,11 +965,17 @@ test('simulated turns reset action state before running the active player turn',
   const battle = state('command');
   const unit = losTestUnit('simulated-unit', 0, { x: 10, y: 10 });
   unit.actionStartedThisTurn = true;
+  unit.firedWeaponIndices = [0];
+  unit.takingToSkies = true;
+  unit.heroicInterventionMode = 'into-the-fray';
   battle.units = [unit];
 
   const next = simulatePlayerTurn(battle, rules40K10th);
 
   assert.equal(next.units.find(candidate => candidate.id === unit.id)?.actionStartedThisTurn, undefined);
+  assert.equal(next.units.find(candidate => candidate.id === unit.id)?.firedWeaponIndices, undefined);
+  assert.equal(next.units.find(candidate => candidate.id === unit.id)?.takingToSkies, undefined);
+  assert.equal(next.units.find(candidate => candidate.id === unit.id)?.heroicInterventionMode, undefined);
 });
 
 test('play Command reset clears per-turn shooting and disembark restrictions', () => {
