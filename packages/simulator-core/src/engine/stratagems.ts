@@ -28,6 +28,11 @@ function phaseAllowed(stratagem: StratagemDefinition, phase: Phase): boolean {
   return stratagem.phases === 'any' || stratagem.phases.includes(phase);
 }
 
+function timingAllowed(state: BattleState, stratagem: StratagemDefinition): boolean {
+  return stratagem.id !== 'fire-overwatch'
+    || (state.phase === 'movement' && state.movementStep === 'reinforcements');
+}
+
 function turnAllowed(state: BattleState, side: Side, stratagem: StratagemDefinition): boolean {
   if (!stratagem.turn || stratagem.turn === 'either') return true;
   return stratagem.turn === 'own'
@@ -412,6 +417,7 @@ export function availableStratagems(
 ): StratagemDefinition[] {
   return rules.stratagems.filter(stratagem =>
     phaseAllowed(stratagem, state.phase)
+    && timingAllowed(state, stratagem)
     && turnAllowed(state, side, stratagem)
     && battleRoundAllowed(state, stratagem)
     && canSpendCommandPoints(state, side, stratagem.cost)
@@ -439,6 +445,7 @@ export function useStratagem(
   const stratagem = stratagemById(rules, stratagemId);
   if (!stratagem) return state;
   if (!phaseAllowed(stratagem, state.phase)) return state;
+  if (!timingAllowed(state, stratagem)) return state;
   if (!turnAllowed(state, side, stratagem)) return state;
   if (!battleRoundAllowed(state, stratagem)) return state;
   if (alreadyUsedThisPhase(state, side, stratagem)) return state;

@@ -2899,9 +2899,9 @@ export function playSnapShootingWeaponOptions(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): PlayShootingWeaponOption[] {
-  if (state.phase !== 'movement' || state.activeArmy === side) return [];
+  if (state.phase !== 'movement' || state.movementStep !== 'reinforcements' || state.activeArmy === side) return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || unit.activated) return [];
+  if (!unit || unit.activated || !unitHasActiveStratagem(state, unit, 'fire-overwatch', 'movement')) return [];
   return eligibleShootingWeapons(unit, state, rules)
     .map(weapon => {
       const weaponIndex = unit.profile.weapons.indexOf(weapon);
@@ -2993,11 +2993,11 @@ export function snapShootPlayUnitWeapon(
   weaponIndex: number | 'all',
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
-  if (state.phase !== 'movement' || state.activeArmy === side) return state;
+  if (state.phase !== 'movement' || state.movementStep !== 'reinforcements' || state.activeArmy === side) return state;
   const s = clone(state);
   const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   const target = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || !target || unit.activated) return state;
+  if (!unit || !target || unit.activated || !unitHasActiveStratagem(s, unit, 'fire-overwatch', 'movement')) return state;
 
   const eligibleWeapons = eligibleShootingWeapons(unit, s, rules)
     .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))

@@ -797,6 +797,7 @@ test('11th edition preview Insane Bravery clears Battle-shock on its target', ()
 
 test('11th Fire Overwatch is only available in the opponent Movement phase', () => {
   const battle = state('movement');
+  battle.movementStep = 'reinforcements';
   battle.activeArmy = 0;
   battle.commandPoints = [1, 1];
   const overwatcher = losTestUnit('overwatcher', 1, { x: 10, y: 10 });
@@ -811,6 +812,10 @@ test('11th Fire Overwatch is only available in the opponent Movement phase', () 
   );
   assert.equal(
     availableStratagems({ ...battle, activeArmy: 1 }, 1, rules40K11th, overwatcher.id).some(stratagem => stratagem.id === 'fire-overwatch'),
+    false,
+  );
+  assert.equal(
+    availableStratagems({ ...battle, movementStep: 'moveUnits' }, 1, rules40K11th, overwatcher.id).some(stratagem => stratagem.id === 'fire-overwatch'),
     false,
   );
 
@@ -1017,6 +1022,7 @@ test('11th battle round flow ends the battle after the second player turn of the
 test('11th out-of-phase snap shooting does not consume normal shooting-phase weapon state', () => {
   const battle = state('movement');
   battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.movementStep = 'reinforcements';
   battle.activeArmy = 0;
   battle.commandPoints = [1, 1];
   const overwatcher = losTestUnit('overwatcher', 1, { x: 10, y: 10 });
@@ -1036,8 +1042,7 @@ test('11th out-of-phase snap shooting does not consume normal shooting-phase wea
   assert.equal(snappedUnit.actionStartedThisTurn, true);
   assert.equal(snappedUnit.firedWeaponIndices, undefined);
 
-  const reinforcements = simulateNextPhase(snapped, rules40K11th);
-  const shooting = simulateNextPhase(reinforcements, rules40K11th);
+  const shooting = simulateNextPhase(snapped, rules40K11th);
   const charge = simulateNextPhase(shooting, rules40K11th);
   const fight = simulateNextPhase(charge, rules40K11th);
   const redSetup = simulateNextPhase(fight, rules40K11th);
@@ -1097,6 +1102,7 @@ test('11th core stratagems enforce target keyword and reserve restrictions', () 
 
 test('11th Rapid Ingress lets a non-Aircraft unit return from Strategic Reserves in the opponent Movement phase', () => {
   const battle = state('movement');
+  battle.movementStep = 'reinforcements';
   battle.activeArmy = 0;
   battle.battleRound = 2;
   battle.turn = 2;
@@ -4940,7 +4946,9 @@ test('11th actions are cancelled by movement and complete at end of turn', () =>
 
 test('11th snap shooting targets one visible enemy within 24 inches and hits only on 6s', () => {
   const battle = state('movement');
+  battle.movementStep = 'reinforcements';
   battle.activeArmy = 0;
+  battle.commandPoints = [0, 1];
   const shooter = losTestUnit('overwatcher', 1, { x: 10, y: 10 });
   shooter.profile.weapons = [
     { name: 'Overwatch Rifle', range: 48, attacks: '2', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
@@ -4948,6 +4956,17 @@ test('11th snap shooting targets one visible enemy within 24 inches and hits onl
   const visibleTarget = losTestUnit('visible-target', 0, { x: 20, y: 10 });
   const farTarget = losTestUnit('far-target', 0, { x: 40, y: 10 });
   battle.units = [shooter, visibleTarget, farTarget];
+
+  battle.stratagemUses = [{
+    id: 'fire-overwatch-test',
+    stratagemId: 'fire-overwatch',
+    name: 'Fire Overwatch',
+    side: 1,
+    phase: 'movement',
+    battleRound: 1,
+    targetUnitId: shooter.id,
+    commandPointsSpent: 1,
+  }];
 
   assert.deepEqual(playSnapShootingWeaponOptions(battle, shooter.id, 1, rules40K11th)[0].targetIds, ['visible-target']);
   assert.deepEqual(playSnapShootingWeaponOptions({ ...battle, activeArmy: 1 }, shooter.id, 1, rules40K11th), []);
