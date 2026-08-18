@@ -254,6 +254,21 @@ test('army validation accepts valid army generation metadata', () => {
   assert.equal(result.valid, true);
 });
 
+test('army validation rejects malformed optional saves and roster IDs', () => {
+  const result = validateImportedArmy(army([
+    unit({ rosterId: ' ', invulnSave: 0 }),
+    unit({ rosterId: 7 as unknown as string, invulnSave: Number.NaN }),
+  ]));
+  assert.equal(result.valid, false);
+  assert.equal(result.errors.filter(error => error.code === 'roster-id-invalid').length, 2);
+  assert.equal(result.errors.filter(error => error.code === 'invulnerable-save-invalid').length, 2);
+});
+
+test('army validation accepts valid optional saves and roster IDs', () => {
+  const result = validateImportedArmy(army([unit({ rosterId: 'unit-unique', invulnSave: 4 })]));
+  assert.equal(result.valid, true);
+});
+
 test('army validation allows a transport assignment only when capacity exists', () => {
   const transport = unit({ rosterId: 'transport', name: 'Transport', transportCapacity: 10 });
   const passenger = unit({ rosterId: 'passenger', name: 'Passenger', deployment: { mode: 'transport', transportUnitId: 'transport' } });

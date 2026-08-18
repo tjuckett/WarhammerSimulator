@@ -370,8 +370,15 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
     ] as const) {
       if (!finitePositive(value)) errors.push(issue('error', 'stat-invalid', `${label} has an invalid ${characteristic} characteristic.`, index));
     }
+    if (unit.invulnSave !== undefined && !finitePositive(unit.invulnSave)) {
+      errors.push(issue('error', 'invulnerable-save-invalid', `${label} has an invalid invulnerable save.`, index));
+    }
 
-    if (unit.rosterId) {
+    if (unit.rosterId !== undefined
+      && (typeof unit.rosterId !== 'string' || !unit.rosterId.trim())) {
+      errors.push(issue('error', 'roster-id-invalid', `${label} has an invalid roster ID.`, index));
+    }
+    if (typeof unit.rosterId === 'string' && unit.rosterId.trim()) {
       const previousIndex = explicitRosterIds.get(unit.rosterId);
       if (previousIndex !== undefined) {
         errors.push(issue('error', 'roster-id-duplicate', `${label} reuses roster ID "${unit.rosterId}" from unit ${previousIndex + 1}.`, index));
