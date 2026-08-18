@@ -222,6 +222,7 @@ export function explosivesTargetAllowed(
         targetPosition,
         battleUnitMaxBaseRadiusInches(target),
         state.terrain,
+        rules.metadata.edition,
       )
   );
 }

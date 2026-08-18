@@ -896,7 +896,7 @@ export default function App() {
     if (!battleState || !selectedShootingUnit || battleState.phase !== 'shooting') return [];
     return battleState.units
       .filter(unit => unit.side !== selectedShootingUnit.side && !unit.destroyed && !unit.embarkedInUnitId)
-      .flatMap(unit => shootingLOSRays(selectedShootingUnit, unit, battleState.terrain));
+      .flatMap(unit => shootingLOSRays(selectedShootingUnit, unit, battleState.terrain, battleState.ruleset?.edition));
   }, [battleState, selectedShootingUnit]);
   const visibleOutOfRangeUnitIds = useMemo<Set<string>>(() => {
     if (!battleState || !selectedShootingUnit || battleState.phase !== 'shooting') return new Set();

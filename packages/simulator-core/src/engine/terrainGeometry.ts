@@ -165,12 +165,18 @@ export function linePassesThroughTerrain(from: Position, to: Position, t: RectSh
 //   • Ruin/area terrain mats do NOT block by themselves; models inside can see out
 //     through gaps in features.
 //   • Any feature with blocksLOS:true blocks regardless of terrain type.
-export function hasLOS(from: Position, to: Position, terrain: Terrain[]): boolean {
+export function hasLOS(
+  from: Position,
+  to: Position,
+  terrain: Terrain[],
+  obscuringTerrain: Terrain[] = [],
+): boolean {
   for (const t of terrain) {
     if (t.type === 'impassable' && lineIntersectsTerrain(from, to, t)) return false;
     if (t.type === 'ruin' && linePassesThroughTerrain(from, to, t)) return false;
     if (t.features.some(f => f.blocksLOS && lineIntersectsTerrain(from, to, f))) return false;
   }
+  if (obscuringTerrain.some(t => linePassesThroughTerrain(from, to, t))) return false;
   return true;
 }
 
@@ -181,6 +187,7 @@ export function findUnblockedLOSRay(
   fromCenter: Position, fromRadius: number,
   toCenter: Position, toRadius: number,
   terrain: Terrain[],
+  edition?: '10e' | '11e',
 ): { from: Position; to: Position } | null {
   const dx = toCenter.x - fromCenter.x;
   const dy = toCenter.y - fromCenter.y;
@@ -203,9 +210,12 @@ export function findUnblockedLOSRay(
     { x: toCenter.x + dir.x  * toRadius, y: toCenter.y + dir.y  * toRadius, z: toCenter.z },
   ];
 
+  const obscuringTerrain = edition === '11e'
+    ? terrain.filter(t => t.features.some(feature => feature.category === 'light' || feature.category === 'dense'))
+    : [];
   for (const fp of fromPoints) {
     for (const tp of toPoints) {
-      if (hasLOS(fp, tp, terrain)) return { from: fp, to: tp };
+      if (hasLOS(fp, tp, terrain, obscuringTerrain)) return { from: fp, to: tp };
     }
   }
   return null;
@@ -216,8 +226,9 @@ export function hasLOSEdgeToEdge(
   fromCenter: Position, fromRadius: number,
   toCenter: Position, toRadius: number,
   terrain: Terrain[],
+  edition?: '10e' | '11e',
 ): boolean {
-  return findUnblockedLOSRay(fromCenter, fromRadius, toCenter, toRadius, terrain) !== null;
+  return findUnblockedLOSRay(fromCenter, fromRadius, toCenter, toRadius, terrain, edition) !== null;
 }
 
 export function axisAlignedBoxIntersectsTerrain(

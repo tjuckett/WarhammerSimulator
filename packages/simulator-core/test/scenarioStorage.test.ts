@@ -8535,6 +8535,39 @@ test('woods footprints grant cover without blocking LOS', () => {
   assert.equal(targetHasCoverFrom(shooter.position, target, terrain), true);
 });
 
+test('11th Obscuring terrain areas block LOS through light or dense features', () => {
+  const shooter = losTestUnit('shooter-1', 0, { x: 0, y: 10 });
+  const target = losTestUnit('target-1', 1, { x: 12, y: 10 });
+  const terrain = [terrainMat({
+    id: 'light-area',
+    name: 'Light Area',
+    type: 'area',
+    x: 5,
+    y: 8,
+    width: 3,
+    height: 4,
+    providesCover: false,
+    features: [{
+      id: 'light-feature',
+      name: 'Light Feature',
+      x: 6,
+      y: 9,
+      width: 1,
+      height: 2,
+      featureHeight: 'mid',
+      category: 'light',
+      blocksLOS: false,
+      blocksMovement: false,
+      difficult: false,
+    }],
+  })];
+
+  assert.equal(hasLOSEdgeToEdge(shooter.position, 0.5, target.position, 0.5, terrain, '10e'), true);
+  assert.equal(hasLOSEdgeToEdge(shooter.position, 0.5, target.position, 0.5, terrain, '11e'), false);
+  const targetInside = { ...target, position: { x: 6, y: 10 }, modelPositions: [{ x: 6, y: 10 }] };
+  assert.equal(hasLOSEdgeToEdge(shooter.position, 0.5, targetInside.position, 0.5, terrain, '11e'), true);
+});
+
 test('elevated models can see over low and mid blocking features', () => {
   const shooter = losTestUnit('shooter-1', 0, { x: 0, y: 10, z: 6 });
   const target = losTestUnit('target-1', 1, { x: 12, y: 10, z: 6 });

@@ -569,7 +569,7 @@ function aliveWeaponModelIndexes(
       const fromRadius = modelBaseRadius(unit, modelIndex);
       const canSee = defender.modelPositions.some((toCenter, ti) =>
         (!state || !modelIsHiddenFrom(state, unit, modelIndex, defender, ti))
-          && hasLOSEdgeToEdge(fromCenter, fromRadius, toCenter, modelBaseRadius(defender, ti), terrain),
+          && hasLOSEdgeToEdge(fromCenter, fromRadius, toCenter, modelBaseRadius(defender, ti), terrain, state?.ruleset?.edition),
       );
       if (!canSee) continue;
     }
@@ -605,9 +605,10 @@ function hasAnyModelLOS(
   fromCenter: Position, fromRadius: number,
   target: BattleUnit,
   terrain: Terrain[],
+  edition?: '10e' | '11e',
 ): boolean {
   return target.modelPositions.some((toCenter, i) =>
-    hasLOSEdgeToEdge(fromCenter, fromRadius, toCenter, modelBaseRadius(target, i), terrain),
+    hasLOSEdgeToEdge(fromCenter, fromRadius, toCenter, modelBaseRadius(target, i), terrain, edition),
   );
 }
 
@@ -652,7 +653,7 @@ function hasAnyModelLOSConsideringHidden(state: BattleState, source: BattleUnit,
   return source.modelPositions.some((from, sourceModelIndex) =>
     target.modelPositions.some((to, targetModelIndex) =>
       !modelIsHiddenFrom(state, source, sourceModelIndex, target, targetModelIndex)
-      && hasLOSEdgeToEdge(from, modelBaseRadius(source, sourceModelIndex), to, modelBaseRadius(target, targetModelIndex), state.terrain),
+      && hasLOSEdgeToEdge(from, modelBaseRadius(source, sourceModelIndex), to, modelBaseRadius(target, targetModelIndex), state.terrain, state.ruleset?.edition),
     ),
   );
 }
@@ -1143,7 +1144,7 @@ function resolveAttacks(
       : participatingModelIndexes.reduce((total, modelIndex, index) => {
         const position = attacker.modelPositions[modelIndex];
         const visible = position
-          ? hasAnyModelLOS(position, modelBaseRadius(attacker, modelIndex), defender, state.terrain)
+          ? hasAnyModelLOS(position, modelBaseRadius(attacker, modelIndex), defender, state.terrain, state.ruleset?.edition)
           : false;
         return total + (attackingModelHasPlungingFire(state, attacker, modelIndex, defender, visible)
           ? perModelAttackCounts[index]
@@ -2726,11 +2727,12 @@ function shootingWeaponCanTarget(
       target.modelPositions[epicChallengeModelIndex],
       modelBaseRadius(target, epicChallengeModelIndex),
       state.terrain,
+      state.ruleset?.edition,
     ));
   const precisionCharacter = (weaponHasKeyword(weapon, 'Precision') || epicChallengeModelIndex !== undefined)
     && unitHasKeyword(target, 'Character')
     && (epicChallengeModelIndex === undefined
-      ? unit.modelPositions.some((from, modelIndex) => hasAnyModelLOS(from, modelBaseRadius(unit, modelIndex), target, state.terrain))
+      ? unit.modelPositions.some((from, modelIndex) => hasAnyModelLOS(from, modelBaseRadius(unit, modelIndex), target, state.terrain, state.ruleset?.edition))
       : epicChallengeVisible);
   if (representative?.id !== target.id && !precisionCharacter) return false;
 
@@ -2757,7 +2759,7 @@ function shootingWeaponCanTarget(
 }
 
 function unitHasVisibleModelToTarget(state: BattleState, unit: BattleUnit, target: BattleUnit): boolean {
-  return unit.modelPositions.some((from, i) => hasAnyModelLOS(from, modelBaseRadius(unit, i), target, state.terrain));
+  return unit.modelPositions.some((from, i) => hasAnyModelLOS(from, modelBaseRadius(unit, i), target, state.terrain, state.ruleset?.edition));
 }
 
 function snapShootingWeaponCanTarget(
@@ -3211,6 +3213,7 @@ export function shootingLOSRays(
   shooter: BattleUnit,
   target: BattleUnit,
   terrain: Terrain[],
+  edition?: '10e' | '11e',
 ): LOSRay[] {
   const fromModels = shooter.modelPositions;
   const toModels = target.modelPositions;
@@ -3218,7 +3221,7 @@ export function shootingLOSRays(
     const fromRadius = modelBaseRadius(shooter, fromIdx);
     return toModels.map((toCenter, toIdx) => {
       const toRadius = modelBaseRadius(target, toIdx);
-      const ray = findUnblockedLOSRay(fromCenter, fromRadius, toCenter, toRadius, terrain);
+      const ray = findUnblockedLOSRay(fromCenter, fromRadius, toCenter, toRadius, terrain, edition);
       // Unblocked: draw the actual edge-to-edge ray that has clear sight.
       // Blocked: fall back to center-to-center so the red dashed line shows the obstructed path.
       return ray
