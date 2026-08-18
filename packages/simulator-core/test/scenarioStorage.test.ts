@@ -8598,7 +8598,7 @@ test('11th Hidden limits visibility of quiet infantry inside covered terrain', (
   const battle = state('shooting');
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.objectiveControl = rules40K11th.objectiveControl;
-  const shooter = losTestUnit('shooter', 0, { x: 16, y: 20 });
+  const shooter = losTestUnit('shooter', 0, { x: 12, y: 20 });
   shooter.profile.weapons = [{ name: 'Rifle', range: 48, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false }];
   const target = losTestUnit('target', 1, { x: 30, y: 20 });
   battle.units = [shooter, target];
@@ -8614,7 +8614,7 @@ test('11th Hidden limits visibility of quiet infantry inside covered terrain', (
   const lightTerrainBattle = structuredClone(battle);
   lightTerrainBattle.units.find(unit => unit.id === target.id)!.rangedAttacksMadePreviousTurn = undefined;
   lightTerrainBattle.terrain[0].features[0].category = 'light';
-  assert.deepEqual(playShootingWeaponOptions(lightTerrainBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, [target.id]);
+  assert.deepEqual(playShootingWeaponOptions(lightTerrainBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);
 });
 
 test('11th Hidden also blocks Indirect Fire beyond the detection range', () => {

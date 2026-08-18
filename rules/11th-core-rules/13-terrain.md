@@ -24,7 +24,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 
 - Terrain placement data, cover behavior, movement blocking, feature/wall collision, LOS blocking, Hidden/Obscuring/Solid-style visibility hooks, and Benefit of Cover interactions are represented.
 - Benefit of Cover is aggregated per attack only when every model in the targeted unit meets a cover condition; mixed exposed/covered units do not receive the bonus.
-- Hidden visibility is implemented for 11th: Infantry/Beasts/Swarm models inside a covered terrain area containing a dense feature are limited to a 15-inch detection range unless their unit made ranged attacks this or the previous turn.
+- Hidden visibility is implemented for 11th: Infantry/Beasts/Swarm models inside a covered terrain area containing a light or dense feature are limited to a 15-inch detection range unless their unit made ranged attacks this or the previous turn.
 - Gone to Ground applies the 12-inch detection range when a Hidden model is behind an intervening tall, LOS-blocking feature.
 - Terrain features now carry an explicit `light` or `dense` category for these visibility checks; legacy layouts without the field receive deterministic compatibility inference (`ruin` non-low features are dense, other features are light).
 - Terrain layouts load from JSON through the shared registry.
