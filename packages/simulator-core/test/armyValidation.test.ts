@@ -132,6 +132,32 @@ test('army validation accepts valid typed movement and damaged profiles', () => 
   assert.equal(result.valid, true);
 });
 
+test('army validation rejects malformed weapon profiles', () => {
+  const result = validateImportedArmy(army([unit({
+    weapons: [{
+      name: ' ', profileGroup: ' ', range: -1, attacks: '', skill: Number.NaN, strength: 4, ap: Number.POSITIVE_INFINITY,
+      damage: '', keywords: [' ', 3 as unknown as string], isMelee: 'false' as unknown as boolean,
+    }],
+  })]));
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.code === 'weapon-name-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'weapon-profile-group-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'weapon-stat-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'weapon-expression-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'weapon-keywords-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'weapon-melee-flag-invalid'));
+});
+
+test('army validation accepts valid weapon profiles', () => {
+  const result = validateImportedArmy(army([unit({
+    weapons: [{
+      name: 'Rifle', profileGroup: 'rifle', range: 24, attacks: 'D6', skill: 4, strength: 4, ap: -1,
+      damage: '2', keywords: ['Rapid Fire 1'], isMelee: false,
+    }],
+  })]));
+  assert.equal(result.valid, true);
+});
+
 test('army validation allows a transport assignment only when capacity exists', () => {
   const transport = unit({ rosterId: 'transport', name: 'Transport', transportCapacity: 10 });
   const passenger = unit({ rosterId: 'passenger', name: 'Passenger', deployment: { mode: 'transport', transportUnitId: 'transport' } });

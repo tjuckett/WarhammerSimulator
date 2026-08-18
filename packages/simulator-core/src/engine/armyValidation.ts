@@ -69,6 +69,7 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
 
   army.units.forEach((unit, index) => {
     const label = unit.name.trim() || `Unit ${index + 1}`;
+    const weapons = Array.isArray(unit.weapons) ? unit.weapons : [];
 
     if (catalog) {
       if (army.faction.trim().toLowerCase() !== catalog.faction.trim().toLowerCase()) {
@@ -99,6 +100,43 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
       }
     }
     if (!unit.name.trim()) errors.push(issue('error', 'unit-name-missing', `${label} has no name.`, index));
+    if (!Array.isArray(unit.weapons)) {
+      errors.push(issue('error', 'weapon-list-shape-invalid', `${label} has an invalid weapon list.`, index));
+    } else {
+      weapons.forEach((weapon, weaponIndex) => {
+        const weaponLabel = `${label} weapon ${weaponIndex + 1}`;
+        if (!weapon || typeof weapon.name !== 'string' || !weapon.name.trim()) {
+          errors.push(issue('error', 'weapon-name-invalid', `${weaponLabel} has no name.`, index));
+        }
+        if (weapon?.profileGroup !== undefined
+          && (typeof weapon.profileGroup !== 'string' || !weapon.profileGroup.trim())) {
+          errors.push(issue('error', 'weapon-profile-group-invalid', `${weaponLabel} has an invalid profile group.`, index));
+        }
+        if (!Number.isFinite(weapon?.range) || (weapon?.range ?? -1) < 0) {
+          errors.push(issue('error', 'weapon-stat-invalid', `${weaponLabel} has an invalid range.`, index));
+        }
+        if (typeof weapon?.attacks !== 'string' || !weapon.attacks.trim()
+          || typeof weapon?.damage !== 'string' || !weapon.damage.trim()) {
+          errors.push(issue('error', 'weapon-expression-invalid', `${weaponLabel} has an invalid attacks or damage expression.`, index));
+        }
+        for (const [characteristic, value] of [
+          ['Skill', weapon?.skill],
+          ['Strength', weapon?.strength],
+          ['AP', weapon?.ap],
+        ] as const) {
+          if (!Number.isFinite(value)) {
+            errors.push(issue('error', 'weapon-stat-invalid', `${weaponLabel} has an invalid ${characteristic} characteristic.`, index));
+          }
+        }
+        if (!Array.isArray(weapon?.keywords)
+          || weapon.keywords.some(keyword => typeof keyword !== 'string' || !keyword.trim())) {
+          errors.push(issue('error', 'weapon-keywords-invalid', `${weaponLabel} has an invalid keyword list.`, index));
+        }
+        if (typeof weapon?.isMelee !== 'boolean') {
+          errors.push(issue('error', 'weapon-melee-flag-invalid', `${weaponLabel} has an invalid melee flag.`, index));
+        }
+      });
+    }
     if (!Number.isInteger(unit.baseModelCount) || unit.baseModelCount < 1) {
       errors.push(issue('error', 'model-count-invalid', `${label} must contain at least one model.`, index));
     }
@@ -119,7 +157,7 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
         }
         const seenWeapons = new Set<number>();
         loadout.forEach(weaponIndex => {
-          if (!Number.isInteger(weaponIndex) || weaponIndex < 0 || weaponIndex >= unit.weapons.length) {
+          if (!Number.isInteger(weaponIndex) || weaponIndex < 0 || weaponIndex >= weapons.length) {
             errors.push(issue('error', 'model-loadout-weapon-invalid', `${label} model ${modelIndex + 1} references an invalid weapon index.`, index));
           } else if (seenWeapons.has(weaponIndex)) {
             errors.push(issue('error', 'model-loadout-weapon-duplicate', `${label} model ${modelIndex + 1} references the same weapon more than once.`, index));
