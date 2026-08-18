@@ -11697,6 +11697,47 @@ test('Aircraft charge restrictions require Fly to charge Aircraft', () => {
   }
 });
 
+test('11th edition Aircraft cannot use the normal movement or pivot controls', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const aircraftProfile = {
+    name: 'Aircraft',
+    move: 20,
+    toughness: 9,
+    save: 3,
+    wounds: 10,
+    leadership: 7,
+    oc: 0,
+    baseModelCount: 1,
+    keywords: ['Aircraft', 'Vehicle', 'Fly'],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+  };
+  const aircraft: BattleUnit = {
+    id: 'aircraft-1',
+    side: 0,
+    profile: aircraftProfile,
+    remainingModels: 1,
+    woundsOnLeadModel: 10,
+    position: { x: 20, y: 20 },
+    modelPositions: [{ x: 20, y: 20 }],
+    facingDeg: 0,
+    charged: false,
+    inCombat: false,
+    battleshocked: false,
+    activated: false,
+    destroyed: false,
+  };
+  battle.units = [aircraft];
+
+  const moved = movePlayModels(battle, aircraft.id, 0, [0], 5, 0);
+  assert.deepEqual(moved.units[0].position, aircraft.position);
+  const rotated = rotatePlayModels(battle, aircraft.id, 0, [0], 90);
+  assert.equal(rotated.units[0].facingDeg, 0);
+  assert.equal(simulateNextUnit(battle, rules40K11th).units[0].position.x, aircraft.position.x);
+});
+
 test('Aircraft fight restrictions only allow melee with Fly units', () => {
   const battle = state('charge');
   const meleeWeapon = { name: 'Claws', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true };

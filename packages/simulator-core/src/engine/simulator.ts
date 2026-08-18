@@ -112,6 +112,10 @@ function isAircraft(unit: BattleUnit): boolean {
   return hasKeyword(unit, 'aircraft');
 }
 
+function aircraftCanMakeNormalMove(rules: RulesEdition): boolean {
+  return rules.metadata.edition !== '11e';
+}
+
 function isFortification(unit: BattleUnit): boolean {
   return hasKeyword(unit, 'fortification');
 }
@@ -1644,6 +1648,7 @@ function resolveCombatDisembarkHazards(state: BattleState, unit: BattleUnit): Lo
 
 function runMovement(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
   if (unit.destroyed || unit.embarkedInUnitId || unitSurgedThisPhase(state, unit)) return [];
+  if (isAircraft(unit) && !aircraftCanMakeNormalMove(rules)) return [];
   const eng = rules.engagementRange();
   const foes = enemies(state, unit.side);
   if (inEngagement(unit, foes, eng)) {
@@ -6036,6 +6041,7 @@ export function movePlayModels(
       || existingUnit.movementAction === 'fellBack'
       || existingUnit.movementAction === 'remainedStationary'
     ) return state;
+    if (isAircraft(existingUnit) && !aircraftCanMakeNormalMove(rulesEditionForRuleset(state.ruleset))) return state;
     if (!isAircraft(existingUnit) && nonAircraftEngagedEnemies(state, existingUnit, rulesEditionForRuleset(state.ruleset)).length > 0) return state;
   }
 
@@ -6651,6 +6657,7 @@ export function rotatePlayModels(
   if (uniqueIndices.length < 1) return s;
   if (s.phase === 'movement') {
     if (s.activeArmy !== side || unit.movementComplete || unit.movementAction === 'remainedStationary') return state;
+    if (isAircraft(unit) && !aircraftCanMakeNormalMove(rulesEditionForRuleset(s.ruleset))) return state;
     ensureModelMovementStartPositions(unit);
     ensureModelMovementStartRotations(unit);
     ensureModelMovementAllowanceTotals(unit);
