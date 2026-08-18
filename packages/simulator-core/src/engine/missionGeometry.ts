@@ -70,6 +70,23 @@ function segmentsIntersect(a: Position, b: Position, c: Position, d: Position): 
     && ((cdA > epsilon) !== (cdB > epsilon));
 }
 
+function distanceToSegment(point: Position, start: Position, end: Position): number {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const lengthSquared = dx * dx + dy * dy;
+  if (lengthSquared <= 0.00000001) return Math.hypot(point.x - start.x, point.y - start.y);
+  const projection = Math.max(0, Math.min(1,
+    ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared));
+  return Math.hypot(point.x - (start.x + projection * dx), point.y - (start.y + projection * dy));
+}
+
+function circleWithinPolygon(center: Position, radius: number, polygon: Position[]): boolean {
+  if (!pointInPolygon(center, polygon)) return false;
+  return polygon.every((start, index) =>
+    distanceToSegment(center, start, polygon[(index + 1) % polygon.length]) >= radius - 0.0001
+  );
+}
+
 export function pointWithinMissionTerritory(
   state: BattleState,
   point: Position,
@@ -270,7 +287,16 @@ export function unitWhollyWithinMissionTerritory(
   territorySide: Side,
 ): boolean | undefined {
   if (!state.setup?.territoryZones) return undefined;
-  return unitWhollyWithinRegion(unit, point => pointWithinMissionTerritory(state, point, territorySide) === true);
+  const polygons = state.setup.territoryZones.sides[territorySide].polygons;
+  return unit.modelPositions.length > 0
+    && unit.modelPositions.every((position, modelIndex) => {
+      const footprint = modelFootprint(unit, modelIndex);
+      if (footprint.shape === 'circle') {
+        return polygons.some(polygon => circleWithinPolygon(position, footprint.radius, polygon));
+      }
+      const points = modelTestPoints(unit, modelIndex);
+      return polygons.some(polygon => points.every(point => pointInPolygon(point, polygon)));
+    });
 }
 
 export function unitWhollyWithinFriendlyTerritory(

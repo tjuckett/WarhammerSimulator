@@ -47,6 +47,7 @@ import {
   unitWhollyWithinDeploymentZone,
   unitWhollyWithinEnemyTerritory,
   unitWhollyWithinFriendlyTerritory,
+  unitWhollyWithinMissionTerritory,
   unitWhollyWithinNoMansLand,
   unitWhollyWithinTerrainArea,
   unitWithinBattlefieldCentre,
@@ -2206,6 +2207,43 @@ test('mission territory overlap detects a thin diagonal boundary crossing a terr
   const terrain = terrainMat({ type: 'ruin', x: 10, y: 10, width: 10, height: 10 });
 
   assert.equal(terrainWithinMissionTerritory(battle, terrain, 0), true);
+});
+
+test('round model territory containment checks the full circle against polygon edges', () => {
+  const battle = state('fight');
+  const angle = 42.5 * Math.PI / 180;
+  const normal = { x: Math.cos(angle), y: Math.sin(angle) };
+  const tangent = { x: -normal.y, y: normal.x };
+  const centre = { x: 30, y: 20 };
+  const boundaryDistance = 1.18;
+  const span = 100;
+  const boundaryStart = {
+    x: centre.x - tangent.x * span + normal.x * boundaryDistance,
+    y: centre.y - tangent.y * span + normal.y * boundaryDistance,
+  };
+  const boundaryEnd = {
+    x: centre.x + tangent.x * span + normal.x * boundaryDistance,
+    y: centre.y + tangent.y * span + normal.y * boundaryDistance,
+  };
+  battle.setup = {
+    ...battle.setup!,
+    territoryZones: {
+      sides: [
+        { polygons: [[
+          boundaryStart,
+          boundaryEnd,
+          { x: boundaryEnd.x - normal.x * span, y: boundaryEnd.y - normal.y * span },
+          { x: boundaryStart.x - normal.x * span, y: boundaryStart.y - normal.y * span },
+        ]] },
+        { polygons: [[{ x: 0, y: 0 }, { x: 60, y: 0 }, { x: 60, y: 44 }, { x: 0, y: 44 }]] },
+      ],
+    },
+  };
+  const unit = losTestUnit('round-territory', 0, centre);
+  unit.profile.modelBases = [{ shape: 'round', diameterMm: 60 }];
+  battle.units = [unit];
+
+  assert.equal(unitWhollyWithinMissionTerritory(battle, unit, 0), false);
 });
 
 test('mission geometry setup and start-of-turn source facts replay and persist through practice saves', async () => {
