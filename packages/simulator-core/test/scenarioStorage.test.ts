@@ -8610,6 +8610,11 @@ test('11th Hidden limits visibility of quiet infantry inside covered terrain', (
   assert.deepEqual(playShootingWeaponOptions(battle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);
   target.rangedAttacksMadePreviousTurn = true;
   assert.deepEqual(playShootingWeaponOptions(battle, shooter.id, 0, rules40K11th)[0]?.targetIds, [target.id]);
+
+  const lightTerrainBattle = structuredClone(battle);
+  lightTerrainBattle.units.find(unit => unit.id === target.id)!.rangedAttacksMadePreviousTurn = undefined;
+  lightTerrainBattle.terrain[0].features[0].category = 'light';
+  assert.deepEqual(playShootingWeaponOptions(lightTerrainBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, [target.id]);
 });
 
 test('11th Hidden also blocks Indirect Fire beyond the detection range', () => {
