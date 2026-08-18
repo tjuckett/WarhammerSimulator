@@ -11678,7 +11678,7 @@ test('play Movement sends Aircraft that cross the battlefield edge into Strategi
     facingDeg: 0,
     charged: false,
     inCombat: false,
-    battleshocked: false,
+    battleshocked: true,
     activated: false,
     destroyed: false,
   };
@@ -11688,6 +11688,7 @@ test('play Movement sends Aircraft that cross the battlefield edge into Strategi
   const reserve = moved.units.find(candidate => candidate.id === 'aircraft-1')!;
   assert.equal(reserve.inStrategicReserves, true);
   assert.deepEqual(reserve.modelPositions, []);
+  assert.equal(reserve.battleshocked, true);
   assert.match(moved.log.at(-1)?.message ?? '', /Strategic Reserves/);
 });
 
@@ -11730,7 +11731,7 @@ test('play Reinforcements can return Aircraft from Strategic Reserves at a battl
     facingDeg: 0,
     charged: false,
     inCombat: false,
-    battleshocked: false,
+    battleshocked: true,
     activated: false,
     destroyed: false,
     inStrategicReserves: true,
@@ -11758,6 +11759,7 @@ test('play Reinforcements can return Aircraft from Strategic Reserves at a battl
   const returnedAircraft = returned.units.find(unit => unit.id === 'aircraft-1')!;
   assert.equal(returned.units.filter(unit => unit.id === 'aircraft-1').length, 1);
   assert.equal(returnedAircraft.inStrategicReserves, false);
+  assert.equal(returnedAircraft.battleshocked, true);
   assert.equal(returnedAircraft.arrivedFromReinforcements, true);
   assert.equal(returnedAircraft.movementComplete, true);
   assert.deepEqual(returnedAircraft.modelPositions, [{ x: 3, y: 10 }]);
