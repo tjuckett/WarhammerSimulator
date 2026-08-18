@@ -235,6 +235,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: final Core 05.04.02 damage handling now clamps weapon damage to the minimum characteristic value of 1 before allocation, with regression coverage.
   - Progress: charge/stratagem proximity and engagement checks now use model base-edge distance consistently, including Heroic Intervention boundary coverage.
   - Progress: final Core 23.01-23.02 and 20.04 Aircraft handling now stages 11th Aircraft in Strategic Reserves, permits ingress-only return from the battlefield edge, returns opponent Aircraft to reserves at turn end, and keeps legacy 20-inch Aircraft movement isolated to 10th Edition.
+  - Progress: final Core 13.09 Hidden now tracks current/previous-turn ranged attacks and limits quiet Infantry/Beasts/Swarm visibility to the 15-inch detection range; Gone to Ground and exact terrain-category classification remain open.
 - [ ] Remove or narrow the 11th preview notice once final 11th rules are fully modeled.
   - Progress: the ruleset now identifies the tracked final-source implementation as source-audited and partial, with remaining unsupported mechanics described explicitly instead of presenting the whole edition as an unavailable preview.
 - [x] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.

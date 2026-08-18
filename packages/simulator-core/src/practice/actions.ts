@@ -466,6 +466,8 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
     startMissionEventsForNewTurn(next, rules);
     for (const unit of next.units) {
       if (unit.side !== next.activeArmy || unit.destroyed) continue;
+      unit.rangedAttacksMadePreviousTurn = unit.rangedAttacksMadeThisTurn ?? false;
+      unit.rangedAttacksMadeThisTurn = false;
       unit.activated = false;
       unit.charged = false;
       unit.piledIn = undefined;

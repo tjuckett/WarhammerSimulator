@@ -23,6 +23,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 ## Implementation Notes
 
 - Terrain placement data, cover behavior, movement blocking, feature/wall collision, LOS blocking, Hidden/Obscuring/Solid-style visibility hooks, and Benefit of Cover interactions are represented.
+- Hidden visibility is implemented for 11th: Infantry/Beasts/Swarm models inside covered ruin/feature areas are limited to a 15-inch detection range unless their unit made ranged attacks this or the previous turn.
 - Terrain layouts load from JSON through the shared registry.
 - `11e-event-layouts.json` currently contains 45 layout entries, but they still need exact validation/finalization against the Event Companion source.
 
@@ -30,5 +31,5 @@ Source: https://gdmissions.app/11th/rules/core-rules
 
 - Validate and finalize the 45 11th Event Companion terrain layouts already present in `11e-event-layouts.json`.
 - Replace any mirrored-half/template placeholder descriptions or coordinates with exact full-layout data where needed.
-- Re-audit terrain footprints, walls/features, Hidden units, cover, LOS, and Gone to Ground behavior.
+- Re-audit terrain footprints, walls/features, terrain-category classification, cover, LOS, and Gone to Ground behavior.
 - Keep walls in saved terrain mat templates where needed.

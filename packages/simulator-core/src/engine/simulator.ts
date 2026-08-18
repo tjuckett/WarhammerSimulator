@@ -557,6 +557,7 @@ function aliveWeaponModelIndexes(
   weaponIndex: number,
   defender?: BattleUnit,
   terrain?: Terrain[],
+  state?: BattleState,
 ): number[] {
   const indexes: number[] = [];
   for (let modelIndex = 0; modelIndex < unit.remainingModels; modelIndex++) {
@@ -567,7 +568,8 @@ function aliveWeaponModelIndexes(
       if (!fromCenter) continue;
       const fromRadius = modelBaseRadius(unit, modelIndex);
       const canSee = defender.modelPositions.some((toCenter, ti) =>
-        hasLOSEdgeToEdge(fromCenter, fromRadius, toCenter, modelBaseRadius(defender, ti), terrain),
+        (!state || !modelIsHiddenFrom(state, unit, modelIndex, defender, ti))
+          && hasLOSEdgeToEdge(fromCenter, fromRadius, toCenter, modelBaseRadius(defender, ti), terrain),
       );
       if (!canSee) continue;
     }
@@ -609,16 +611,60 @@ function hasAnyModelLOS(
   );
 }
 
+function terrainCanHideModels(terrain: Terrain): boolean {
+  return terrain.providesCover
+    && (terrain.type === 'ruin' || terrain.features.some(feature => feature.featureHeight !== 'low'));
+}
+
+function modelIsHiddenFrom(
+  state: BattleState,
+  source: BattleUnit,
+  sourceModelIndex: number,
+  target: BattleUnit,
+  targetModelIndex: number,
+): boolean {
+  if (state.ruleset?.edition !== '11e') return false;
+  if (!hasKeyword(target, 'infantry') && !hasKeyword(target, 'beasts') && !hasKeyword(target, 'swarm')) return false;
+  if (target.rangedAttacksMadeThisTurn || target.rangedAttacksMadePreviousTurn) return false;
+  const targetModel = target.modelPositions[targetModelIndex];
+  const sourceModel = source.modelPositions[sourceModelIndex];
+  if (!targetModel || !sourceModel) return false;
+  if (!state.terrain.some(terrain =>
+    terrainCanHideModels(terrain)
+      && circleFullyInTerrain(targetModel, modelBaseRadius(target, targetModelIndex), terrain),
+  )) return false;
+  return modelBaseEdgeDistance3d(
+    sourceModel,
+    modelFootprint(source, sourceModelIndex),
+    targetModel,
+    modelFootprint(target, targetModelIndex),
+  ) > 15;
+}
+
+function hasAnyModelLOSConsideringHidden(state: BattleState, source: BattleUnit, target: BattleUnit): boolean {
+  return source.modelPositions.some((from, sourceModelIndex) =>
+    target.modelPositions.some((to, targetModelIndex) =>
+      !modelIsHiddenFrom(state, source, sourceModelIndex, target, targetModelIndex)
+      && hasLOSEdgeToEdge(from, modelBaseRadius(source, sourceModelIndex), to, modelBaseRadius(target, targetModelIndex), state.terrain),
+    ),
+  );
+}
+
+function markRangedAttackMade(unit: BattleUnit): void {
+  unit.rangedAttacksMadeThisTurn = true;
+}
+
 function participatingWeaponModelIndexes(
   attacker: BattleUnit,
   defender: BattleUnit,
   weapon: WeaponProfile,
   weaponIndex: number,
   terrain: Terrain[],
+  state?: BattleState,
 ): number[] {
   const needsLOS = !weapon.isMelee && !weaponHasKeyword(weapon, 'Indirect Fire');
   return needsLOS
-    ? aliveWeaponModelIndexes(attacker, weaponIndex, defender, terrain)
+    ? aliveWeaponModelIndexes(attacker, weaponIndex, defender, terrain, state)
     : aliveWeaponModelIndexes(attacker, weaponIndex);
 }
 
@@ -684,8 +730,9 @@ function participatingWeaponModelCount(
   weapon: WeaponProfile,
   weaponIndex: number,
   terrain: Terrain[],
+  state?: BattleState,
 ): number {
-  return participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, terrain).length;
+  return participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, terrain, state).length;
 }
 
 function terrainIsWoods(t: Terrain): boolean {
@@ -999,7 +1046,7 @@ function resolveAttacks(
     ? options
     : { ...options, targetModelIndex: epicChallengeModelIndex };
 
-  const participatingModelIndexes = participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, state.terrain);
+  const participatingModelIndexes = participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, state.terrain, state);
   const weaponModelCount = participatingModelIndexes.length;
   if (weaponModelCount <= 0) return logs;
   const isVariableAttacks = !/^\d+$/i.test(String(weapon.attacks).trim());
@@ -2167,9 +2214,7 @@ export function surveilTargetOptions(
       && !target.inStrategicReserves
       && !alreadySurveilledUnitIds.has(target.id)
       && battleUnitsWithinBaseEdgeRange(unit, target, 18)
-      && unit.modelPositions.some((model, modelIndex) =>
-        hasAnyModelLOS(model, modelBaseRadius(unit, modelIndex), target, state.terrain)
-      )
+      && hasAnyModelLOSConsideringHidden(state, unit, target)
     )
     .map(target => target.id);
 }
@@ -2719,9 +2764,7 @@ function battleUnitToAttachedUnitDistance(state: BattleState, source: BattleUnit
 
 function battleUnitHasLosToAttachedUnit(state: BattleState, source: BattleUnit, target: BattleUnit): boolean {
   return attachedUnitComponents(state, target).some(component =>
-    source.modelPositions.some((from, modelIndex) =>
-      hasAnyModelLOS(from, modelBaseRadius(source, modelIndex), component, state.terrain),
-    ),
+    hasAnyModelLOSConsideringHidden(state, source, component),
   );
 }
 
@@ -2735,7 +2778,7 @@ function shootingWeaponModifiers(
   const foes = enemies(state, unit.side);
   const bigGunsNeverTire = inEngagement(unit, foes, rules.engagementRange()) && unitCanUseBigGunsNeverTire(unit);
   const usesIndirectFirePenalty = weaponHasKeyword(weapon, 'Indirect Fire')
-    && !unit.modelPositions.some((from, i) => hasAnyModelLOS(from, modelBaseRadius(unit, i), target, state.terrain));
+    && !hasAnyModelLOSConsideringHidden(state, unit, target);
   const usesSmokescreen = unitHasActiveStratagem(state, target, 'smokescreen', 'shooting')
     || targetIsScreenedBySmoke(state, unit, target);
   const cover = targetHasTerrainCoverFrom(unit.modelPositions, target, state.terrain) || usesIndirectFirePenalty || usesSmokescreen;
@@ -2782,13 +2825,16 @@ function resolveShootingWeaponIntoTarget(
     snapShooting ? '' : modifiers.hitModifierNotes,
     options,
   );
-  if (logs.length > 0) markOneShotWeaponSpent(unit, weapon, weaponIndex);
+  if (logs.length > 0) {
+    markRangedAttackMade(unit);
+    markOneShotWeaponSpent(unit, weapon, weaponIndex);
+  }
   logs.push(...resolveHazardousTests(
     unit,
     weapon,
     weaponIndex,
     state,
-    participatingWeaponModelCount(unit, target, weapon, weaponIndex, state.terrain),
+    participatingWeaponModelCount(unit, target, weapon, weaponIndex, state.terrain, state),
   ));
   return logs;
 }
@@ -4104,6 +4150,8 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
   });
   s.units.filter(u => u.side === side && !u.destroyed).forEach(u => { u.actionStartedThisTurn = undefined; });
   activeUnits(s, side).forEach(u => {
+    u.rangedAttacksMadePreviousTurn = u.rangedAttacksMadeThisTurn ?? false;
+    u.rangedAttacksMadeThisTurn = false;
     u.activated = false;
     u.charged = false;
     u.piledIn = undefined;
@@ -7111,7 +7159,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   s.firingDeckLockedUnitIds = undefined;
   s.units.forEach(clearFiringDeckWeapons);
   s.units.forEach(u => { u.overrunFightSelected = undefined; u.overrunPiledIn = undefined; });
-  myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.firedWeaponIndices = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.takingToSkies = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; u.heroicInterventionMode = undefined; u.actionStartedThisTurn = undefined; u.embarkedThisTurn = undefined; u.disembarkedThisTurn = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.combatDisembarkedThisTurn = undefined; u.rapidDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
+  myUnits().forEach(u => { u.rangedAttacksMadePreviousTurn = u.rangedAttacksMadeThisTurn ?? false; u.rangedAttacksMadeThisTurn = false; u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.firedWeaponIndices = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.takingToSkies = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; u.heroicInterventionMode = undefined; u.actionStartedThisTurn = undefined; u.embarkedThisTurn = undefined; u.disembarkedThisTurn = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.combatDisembarkedThisTurn = undefined; u.rapidDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
 
   // Command
   newLogs.push(...runSimulatedCommandPhase(s, side, rules));

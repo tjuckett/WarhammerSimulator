@@ -114,6 +114,10 @@ export interface BattleUnit {
   actionStartedThisTurn?: boolean;
   fellBack?: boolean;
   firedWeaponIndices?: number[];
+  /** 11e Core 13.09: whether this unit made ranged attacks during the current turn. */
+  rangedAttacksMadeThisTurn?: boolean;
+  /** 11e Core 13.09: whether this unit made ranged attacks during the previous turn. */
+  rangedAttacksMadePreviousTurn?: boolean;
   oneShotSpentWeaponIndices?: number[];
   firingDeckBaseWeaponCount?: number;
   firingDeckGrantedWeaponIndices?: number[];

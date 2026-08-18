@@ -8336,6 +8336,24 @@ test('elevated models can see over low and mid blocking features', () => {
   assert.equal(targetHasCoverFrom(shooter.position, target, terrain), false);
 });
 
+test('11th Hidden limits visibility of quiet infantry inside covered terrain', () => {
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  const shooter = losTestUnit('shooter', 0, { x: 10, y: 20 });
+  shooter.profile.weapons = [{ name: 'Rifle', range: 48, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false }];
+  const target = losTestUnit('target', 1, { x: 30, y: 20 });
+  battle.units = [shooter, target];
+  battle.terrain = [terrainMat({
+    id: 'ruin', type: 'ruin', x: 28, y: 18, width: 5, height: 4,
+    features: [{ id: 'ruin-wall', name: 'Wall', x: 28, y: 18, width: 0.5, height: 4, featureHeight: 'tall', blocksLOS: false, blocksMovement: false, difficult: false }],
+  })];
+
+  assert.deepEqual(playShootingWeaponOptions(battle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);
+  target.rangedAttacksMadePreviousTurn = true;
+  assert.deepEqual(playShootingWeaponOptions(battle, shooter.id, 0, rules40K11th)[0]?.targetIds, [target.id]);
+});
+
 test('Heavy weapons get +1 to Hit when the shooter Remained Stationary', () => {
   const battle = state('movement');
   battle.movementStep = 'reinforcements';
