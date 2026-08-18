@@ -8340,13 +8340,13 @@ test('11th Hidden limits visibility of quiet infantry inside covered terrain', (
   const battle = state('shooting');
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.objectiveControl = rules40K11th.objectiveControl;
-  const shooter = losTestUnit('shooter', 0, { x: 10, y: 20 });
+  const shooter = losTestUnit('shooter', 0, { x: 16, y: 20 });
   shooter.profile.weapons = [{ name: 'Rifle', range: 48, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false }];
   const target = losTestUnit('target', 1, { x: 30, y: 20 });
   battle.units = [shooter, target];
   battle.terrain = [terrainMat({
     id: 'ruin', type: 'ruin', x: 28, y: 18, width: 5, height: 4,
-    features: [{ id: 'ruin-wall', name: 'Wall', x: 28, y: 18, width: 0.5, height: 4, featureHeight: 'tall', blocksLOS: false, blocksMovement: false, difficult: false }],
+    features: [{ id: 'ruin-wall', name: 'Dense screen', x: 22, y: 19.9, width: 0.2, height: 0.2, featureHeight: 'tall', blocksLOS: true, blocksMovement: false, difficult: false }],
   })];
 
   assert.deepEqual(playShootingWeaponOptions(battle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);

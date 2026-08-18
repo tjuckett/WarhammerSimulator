@@ -633,12 +633,19 @@ function modelIsHiddenFrom(
     terrainCanHideModels(terrain)
       && circleFullyInTerrain(targetModel, modelBaseRadius(target, targetModelIndex), terrain),
   )) return false;
+  const goneToGround = state.terrain.some(terrain =>
+    terrain.features.some(feature =>
+      feature.featureHeight === 'tall'
+      && feature.blocksLOS
+      && linePassesThroughTerrain(sourceModel, targetModel, feature),
+    ),
+  );
   return modelBaseEdgeDistance3d(
     sourceModel,
     modelFootprint(source, sourceModelIndex),
     targetModel,
     modelFootprint(target, targetModelIndex),
-  ) > 15;
+  ) > (goneToGround ? 12 : 15);
 }
 
 function hasAnyModelLOSConsideringHidden(state: BattleState, source: BattleUnit, target: BattleUnit): boolean {
