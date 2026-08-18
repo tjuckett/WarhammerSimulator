@@ -505,6 +505,15 @@ test('battle-shocked units cannot receive stratagems and have zero objective con
   assert.equal(objectiveControlValue(unit), 0);
 });
 
+test('11th Insane Bravery cannot target a healthy unit outside the Battle-shock step', () => {
+  const battle = state('command');
+  battle.commandPoints = [1, 0];
+  const healthy = losTestUnit('healthy', 0, { x: 10, y: 10 });
+  battle.units = [healthy];
+
+  assert.equal(useStratagem(battle, 0, 'insane-bravery', rules40K11th, healthy.id), battle);
+});
+
 test('terrain objective control and action eligibility use damaged-profile objective control', () => {
   const battle = state('command');
   battle.ruleset = rulesetMetadataForState(rules40K11th);
@@ -803,6 +812,7 @@ test('11th edition Insane Bravery can only be used once per battle', () => {
   const battle = state('command');
   battle.commandPoints = [2, 0];
   const unit = losTestUnit('blue-1', 0, { x: 10, y: 10 });
+  unit.battleshocked = true;
   battle.units = [unit];
 
   const first = useStratagem(battle, 0, 'insane-bravery', rules40K11th, unit.id);

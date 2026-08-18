@@ -4290,6 +4290,12 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
   });
   s.phase = 'command';
   s.movementStep = undefined;
+  s.battleshockEligibleUnitIds = s.units
+    .filter(unit => unit.side === side
+      && !unit.destroyed
+      && attachedUnitTargetRepresentative(s, unit)?.id === unit.id
+      && (unit.battleshocked || isBelowHalfStrength(s, unit)))
+    .map(unit => unit.id);
   autoSelectPunishmentCondemnedUnits(s, side, rules);
   const nextCommandPoints = gainCommandPhaseCommandPoints(s);
   const logs = [

@@ -482,6 +482,8 @@ export interface BattleState {
     battleRound?: number;
     targetUnitId?: string;
   };
+  /** Command-phase units that are eligible for the current Battle-shock step. */
+  battleshockEligibleUnitIds?: string[];
   abilityUses?: UnitAbilityUse[];
   missionEvents?: MissionEvents;
   missionState?: MissionState;

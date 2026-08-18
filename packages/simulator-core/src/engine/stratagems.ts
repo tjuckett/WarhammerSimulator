@@ -151,6 +151,11 @@ function targetRestrictionsAllowed(
   if (stratagem.targetMustHaveCharged && !target.charged) return false;
   if (stratagem.targetMustNotHaveAdvanced && target.movementAction === 'advanced') return false;
   if (
+    stratagem.id === 'insane-bravery'
+    && !target.battleshocked
+    && !state.battleshockEligibleUnitIds?.includes(target.id)
+  ) return false;
+  if (
     stratagem.targetWithinEnemyDistance !== undefined
     && !enemies(state, side).some(enemy => battleUnitsBaseEdgeDistance(target, enemy) <= stratagem.targetWithinEnemyDistance!)
   ) return false;

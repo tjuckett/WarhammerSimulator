@@ -33,6 +33,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 - Counteroffensive is restricted to after an enemy attack resolution and serializes the targeted unit as the forced next fight while its phase-scoped Fights First effect remains active.
 - Command Re-roll records the eligible roll type and rerolls one die, except that Charge rolls are rerolled in full; practice replay carries that type through the action.
 - Epic Challenge records the selected Character model and applies temporary melee Precision, including model-constrained damage allocation, through replayable legal actions and the play UI.
+- Insane Bravery is limited to units eligible for the current Command-phase Battle-shock step; healthy units cannot be selected merely because the phase is Command.
 - Command Re-roll, Rapid Ingress, Heroic Intervention, and Counteroffensive have resolution/test coverage.
 - Tactics panel exposes direct stratagem action buttons and pending follow-up labels for key flows; Command Re-roll has a simple UI resolution path.
 
