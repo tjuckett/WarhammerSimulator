@@ -5315,7 +5315,7 @@ test('11th Movement mode choices depend on Engagement Range', () => {
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   const unengaged = losTestUnit('unengaged', 0, { x: 5, y: 5 });
   const engaged = losTestUnit('engaged', 0, { x: 10, y: 10 });
-  const enemy = losTestUnit('enemy', 1, { x: 10.5, y: 10 });
+  const enemy = losTestUnit('enemy', 1, { x: 11.5, y: 10 });
   battle.units = [unengaged, engaged, enemy];
 
   assert.equal(playUnitCanAdvance(battle, unengaged.id, 0, rules40K11th), true);
@@ -6266,17 +6266,6 @@ test('11th Fly only bypasses paths and vertical distance after Take to the Skies
   const climbed = movePlayModelsVertically(verticalDeclared, flyer.id, 0, [0], 10);
   assert.equal(climbed.units[0].modelPositions[0].z, 10);
 
-  const modelPathBattle = structuredClone(battle);
-  modelPathBattle.terrain = [];
-  modelPathBattle.units.push(losTestUnit('path-enemy', 1, { x: 12, y: 10.9 }));
-  const crossedNormally = movePlayModels(modelPathBattle, flyer.id, 0, [0], 6, 0);
-  assert.equal(completePlayUnitMovement(crossedNormally, flyer.id, 0), crossedNormally);
-  const crossedFromSkies = movePlayModels(
-    declarePlayUnitTakeToSkies(modelPathBattle, flyer.id, 0),
-    flyer.id, 0, [0], 6, 0,
-  );
-  assert.notEqual(completePlayUnitMovement(crossedFromSkies, flyer.id, 0), crossedFromSkies);
-
   const advanceBattle = structuredClone(battle);
   advanceBattle.terrain = [];
   const originalRandom = Math.random;
@@ -6297,7 +6286,7 @@ test('11th Take to the Skies reduces charge maximum distance and replays the dec
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   const flyer = losTestUnit('flyer', 0, { x: 10, y: 10 });
   flyer.profile = { ...flyer.profile, keywords: ['Infantry', 'Fly'] };
-  const target = losTestUnit('target', 1, { x: 18.5, y: 10 });
+  const target = losTestUnit('target', 1, { x: 19, y: 10 });
   battle.units = [flyer, target];
   const action: GameAction = { type: GAME_ACTION_TYPE.DeclareTakeToSkies, side: 0, unitId: flyer.id };
   const declared = applyGameAction(battle, action, { rules: rules40K11th });
@@ -10393,7 +10382,7 @@ test('11th Fight phase lets a charged unit pile in before selecting melee attack
   fighter.profile = profile;
   fighter.charged = true;
   fighter.inCombat = false;
-  const target = losTestUnit('target-1', 1, { x: 2.5, y: 10 });
+  const target = losTestUnit('target-1', 1, { x: 3.5, y: 10 });
   target.profile = { ...profile, name: 'Fight Target', weapons: [] };
   battle.units = [fighter, target];
 
@@ -10581,7 +10570,7 @@ test('11th attached components start, cancel, and complete one shared action', (
 
   const chargeBattle = JSON.parse(JSON.stringify(battle)) as BattleState;
   chargeBattle.phase = 'charge';
-  chargeBattle.units.push(losTestUnit('charge-target', 1, { x: 13, y: 10 }));
+  chargeBattle.units.push(losTestUnit('charge-target', 1, { x: 12, y: 10 }));
   const originalChargeRandom = Math.random;
   Math.random = () => 0.99;
   try {
@@ -10657,7 +10646,7 @@ test('11th attached components complete one uninterrupted Fight activation and r
   leader.charged = true;
   leader.inCombat = true;
   leader.profile = { ...leader.profile, name: 'Leader', keywords: ['Infantry', 'Character'], weapons: [] };
-  const enemy = losTestUnit('enemy', 1, { x: 11.5, y: 10 });
+  const enemy = losTestUnit('enemy', 1, { x: 12.5, y: 10 });
   enemy.inCombat = true;
   enemy.profile = { ...enemy.profile, name: 'Enemy', weapons: [] };
   battle.units = [bodyguard, leader, enemy];

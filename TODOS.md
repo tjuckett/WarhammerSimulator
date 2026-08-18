@@ -255,7 +255,8 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: final Core 15.03 Epic Challenge now requires the Fight step to have begun before its selected Character model can gain Precision.
   - Progress: final Core 15.12 Counteroffensive now requires the active Fight step and waits until any attached enemy fight activation has fully resolved before opening the response window.
   - Progress: final Core 13.08 Benefit of Cover now requires every model in the targeted unit to meet a cover condition; mixed exposed/covered units no longer receive Cover.
-  - Progress: final Core 13.09 Hidden now requires a dense terrain feature; light-only terrain areas no longer hide quiet Infantry/Beasts/Swarm models.
+  - Progress: final Core 13.09 Hidden now applies to quiet Infantry/Beasts/Swarm models inside areas containing light or dense terrain features; Gone to Ground retains the dense-feature detection-range reduction.
+  - Progress: final Core 03.04 now uses a 2-inch Engagement Range in 11th Edition while retaining 10th Edition's 1-inch value.
 - [x] Narrow the 11th preview notice while final-source implementation remains partial.
   - Progress: the ruleset and UI now present 11th Edition as source-audited and partial; stable preview-era metadata IDs remain only for saved-game compatibility, and the complete final-source re-audit remains tracked separately above.
 - [x] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.

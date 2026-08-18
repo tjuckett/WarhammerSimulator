@@ -263,6 +263,7 @@ export const rules40K11th: RulesEdition = {
     compatibilitySourceId: rules40K10th.id,
   },
   objectiveControl: ELEVENTH_EDITION_TERRAIN_OBJECTIVE_PLACEHOLDER,
+  engagementRange(): number { return 2; },
   reinforcementRange(): number { return 8; },
   stratagems: [
     {
