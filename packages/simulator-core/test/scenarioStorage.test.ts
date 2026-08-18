@@ -1324,6 +1324,7 @@ test('11th Smokescreen applies cover and a hit penalty for the phase', () => {
 
 test('11th Counteroffensive lets only the targeted defender fight next', () => {
   const battle = state('fight');
+  battle.fightStepStarted = true;
   battle.activeArmy = 0;
   battle.lastFightSelectionSide = 0;
   battle.commandPoints = [0, 2];
@@ -1630,6 +1631,7 @@ test('11th Crushing Impact uses the selected engaged model Toughness', () => {
 
 test('Counteroffensive can target an engaged unit without melee weapons', () => {
   const battle = state('fight');
+  battle.fightStepStarted = true;
   battle.activeArmy = 0;
   battle.lastFightSelectionSide = 0;
   battle.commandPoints = [0, 2];
@@ -1641,6 +1643,20 @@ test('Counteroffensive can target an engaged unit without melee weapons', () => 
   const countered = useStratagem(battle, 1, 'counteroffensive', rules40K11th, defender.id);
   assert.equal(countered.commandPoints?.[1], 0);
   assert.equal(countered.forcedFightUnitId, defender.id);
+});
+
+test('11th Counteroffensive waits until the opponent attached fight activation is complete', () => {
+  const battle = state('fight');
+  battle.fightStepStarted = true;
+  battle.activeArmy = 0;
+  battle.lastFightSelectionSide = 0;
+  battle.activeAttachedFightUnitId = 'attached-enemy';
+  battle.commandPoints = [0, 2];
+  const attacker = losTestUnit('counter-attacker', 0, { x: 10, y: 10 });
+  const defender = losTestUnit('counter-defender', 1, { x: 10.5, y: 10 });
+  battle.units = [attacker, defender];
+
+  assert.equal(useStratagem(battle, 1, 'counteroffensive', rules40K11th, defender.id), battle);
 });
 
 test('Heroic Intervention proximity uses base-edge distance for large-base units', () => {

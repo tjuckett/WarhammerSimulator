@@ -253,6 +253,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: final Core 15.06 Crushing Impact now records an engaged source model and uses that model's Toughness for the mortal-wound roll, including mixed-model profiles.
   - Progress: final Core 15.05 Explosives now rejects partially resolved Shooting activations, matching the requirement that the target be eligible to shoot before the stratagem is used.
   - Progress: final Core 15.03 Epic Challenge now requires the Fight step to have begun before its selected Character model can gain Precision.
+  - Progress: final Core 15.12 Counteroffensive now requires the active Fight step and waits until any attached enemy fight activation has fully resolved before opening the response window.
 - [x] Narrow the 11th preview notice while final-source implementation remains partial.
   - Progress: the ruleset and UI now present 11th Edition as source-audited and partial; stable preview-era metadata IDs remain only for saved-game compatibility, and the complete final-source re-audit remains tracked separately above.
 - [x] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.

@@ -33,6 +33,8 @@ function timingAllowed(state: BattleState, stratagem: StratagemDefinition, side:
   if (stratagem.id === 'rapid-ingress') return state.phase === 'movement' && state.movementStep === 'reinforcements';
   if (stratagem.id === 'counteroffensive') {
     return state.phase === 'fight'
+      && state.fightStepStarted === true
+      && state.activeAttachedFightUnitId === undefined
       && state.lastFightSelectionSide !== undefined
       && state.lastFightSelectionSide !== side;
   }

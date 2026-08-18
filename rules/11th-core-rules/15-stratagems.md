@@ -33,6 +33,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 - Smokescreen grants Benefit of Cover to the Smoke unit and to units screened by it for the rest of the Shooting phase; it does not add a separate hit modifier.
 - Heroic Intervention records the selected Leap to Defend or Into the Fray mode; Into the Fray costs an additional CP, limits targets to 6 inches, caps the charge roll at 6, and intervention charges do not receive Charge bonuses.
 - Counteroffensive is restricted to after an enemy attack resolution and serializes the targeted unit as the forced next fight while its phase-scoped Fights First effect remains active.
+- Counteroffensive also requires the Fight step to be active and any attached enemy fight activation to have fully resolved.
 - Command Re-roll records the eligible roll type and rerolls one die, except that Charge rolls are rerolled in full; practice replay carries that type through the action.
 - Epic Challenge records the selected Character model and applies temporary melee Precision, including model-constrained damage allocation, through replayable legal actions and the play UI.
 - Epic Challenge is available only after the 11th Fight step has begun and a Character unit is eligible to fight, matching its post-selection timing.
