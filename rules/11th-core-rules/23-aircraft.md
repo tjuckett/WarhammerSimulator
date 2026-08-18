@@ -12,6 +12,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 ## Implementation Notes
 
 - Aircraft deployment/movement, battlefield-edge Strategic Reserves exit, return placement, shooting/charge/fight restrictions, Fly interactions, and Aircraft engagement exceptions are represented.
+- Automatic movement now matches the 11th Aircraft exception: ordinary units engaged only with Aircraft remain eligible to make their normal movement instead of being treated as locked in combat.
 
 ## TODO
 

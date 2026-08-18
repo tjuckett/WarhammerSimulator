@@ -11998,6 +11998,18 @@ test('Aircraft fight restrictions only allow melee with Fly units', () => {
   }
 });
 
+test('11th simulation movement is not locked by Aircraft-only engagement', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const infantry = losTestUnit('infantry', 0, { x: 10, y: 10 });
+  const aircraft = losTestUnit('aircraft', 1, { x: 10.5, y: 10 });
+  aircraft.profile = { ...aircraft.profile, keywords: ['Aircraft', 'Fly'] };
+  battle.units = [infantry, aircraft];
+
+  const moved = simulateNextUnit(battle, rules40K11th);
+  assert.equal(moved.units.find(unit => unit.id === infantry.id)?.inCombat, false);
+});
+
 test('play Movement reports coherency issues without clamping model movement', () => {
   const battle = state('movement');
   const profile = {

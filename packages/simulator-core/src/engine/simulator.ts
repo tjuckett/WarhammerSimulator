@@ -1714,7 +1714,10 @@ function runMovement(unit: BattleUnit, state: BattleState, rules: RulesEdition):
   if (isAircraft(unit) && !aircraftCanMakeNormalMove(rules)) return [];
   const eng = rules.engagementRange();
   const foes = enemies(state, unit.side);
-  if (inEngagement(unit, foes, eng)) {
+  const engagedWithNonAircraft = rules.metadata.edition === '11e'
+    ? nonAircraftEngagedEnemies(state, unit, rules).length > 0
+    : inEngagement(unit, foes, eng);
+  if (engagedWithNonAircraft) {
     unit.inCombat = true;
     return [log(state, unit.side, unit.profile.name,
       `  📍 ${unit.profile.name} holds (already in melee)`,

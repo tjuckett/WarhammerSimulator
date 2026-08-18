@@ -236,6 +236,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: Rapid Disembark is also available during the Reinforcements step when the transport arrived via Ingress; ordinary disembark remains restricted to the Movement Units step.
   - Progress: final Core 05.04.02 damage handling now clamps weapon damage to the minimum characteristic value of 1 before allocation, with regression coverage.
   - Progress: final Core 18.04 now selects Tactical versus Combat Disembark per passenger based on whether a valid 3-inch non-engaged setup exists; stale/replayed Combat flags are revalidated, while Rapid Disembark remains tied to Normal/Ingress movement.
+  - Progress: final Core 23.02 now applies the Aircraft-only Engagement Range exception to automatic movement as well as manual legality, so non-Aircraft units are not incorrectly locked in place.
   - Progress: final Core 08.03 now retests already Battle-shocked units even after they recover above half-strength, and treats exact half-strength as eligible; a unit clears Battle-shock only when that single command-step roll succeeds.
   - Progress: charge/stratagem proximity and engagement checks now use model base-edge distance consistently, including Heroic Intervention boundary coverage.
   - Progress: final Core 23.01-23.02 and 20.04 Aircraft handling now stages 11th Aircraft in Strategic Reserves, permits ingress-only return from the battlefield edge, returns opponent Aircraft to reserves at turn end, and keeps legacy 20-inch Aircraft movement isolated to 10th Edition.
