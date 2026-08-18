@@ -90,6 +90,7 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
         errors.push(issue('error', 'catalog-unit-list-invalid', 'Army catalog units must be an array.'));
         catalogShapeValid = false;
       } else {
+        const catalogUnitIds = new Set<string>();
         rawCatalog.units.forEach((catalogUnit, catalogUnitIndex) => {
           if (!catalogUnit || typeof catalogUnit !== 'object' || Array.isArray(catalogUnit)
             || typeof catalogUnit.id !== 'string' || !catalogUnit.id.trim()) {
@@ -97,6 +98,11 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
             catalogShapeValid = false;
             return;
           }
+          if (catalogUnitIds.has(catalogUnit.id)) {
+            errors.push(issue('error', 'catalog-unit-id-duplicate', `Catalog unit ID "${catalogUnit.id}" is duplicated.`));
+            catalogShapeValid = false;
+          }
+          catalogUnitIds.add(catalogUnit.id);
           if (catalogUnit.names !== undefined
             && (!Array.isArray(catalogUnit.names)
               || catalogUnit.names.some(name => typeof name !== 'string' || !name.trim()))) {
@@ -109,6 +115,15 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
               || Object.values(catalogUnit.modelCountPoints).some(points => typeof points !== 'number' || !Number.isFinite(points) || points < 0))) {
             errors.push(issue('error', 'catalog-points-shape-invalid', `Catalog unit ${catalogUnit.id} has invalid points data.`));
             catalogShapeValid = false;
+          }
+          if (catalogUnit.modelCountPoints && typeof catalogUnit.modelCountPoints === 'object'
+            && !Array.isArray(catalogUnit.modelCountPoints)) {
+            const invalidModelCountKey = Object.keys(catalogUnit.modelCountPoints)
+              .find(modelCount => !/^[1-9]\d*$/.test(modelCount));
+            if (invalidModelCountKey) {
+              errors.push(issue('error', 'catalog-model-count-key-invalid', `Catalog unit ${catalogUnit.id} has an invalid model-count points key.`));
+              catalogShapeValid = false;
+            }
           }
           for (const [field, value] of [
             ['minimumModels', catalogUnit.minimumModels],
@@ -131,6 +146,7 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
         errors.push(issue('error', 'catalog-battle-size-list-invalid', 'Catalog battle sizes must be an array.'));
         catalogShapeValid = false;
       } else {
+        const battleSizeIds = new Set<string>();
         rawCatalog.battleSizes?.forEach((battleSize, battleSizeIndex) => {
           if (!battleSize || typeof battleSize !== 'object' || Array.isArray(battleSize)
             || typeof battleSize.id !== 'string' || !battleSize.id.trim()
@@ -139,6 +155,11 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
             catalogShapeValid = false;
             return;
           }
+          if (battleSizeIds.has(battleSize.id)) {
+            errors.push(issue('error', 'catalog-battle-size-id-duplicate', `Catalog battle size ID "${battleSize.id}" is duplicated.`));
+            catalogShapeValid = false;
+          }
+          battleSizeIds.add(battleSize.id);
           if (battleSize.minimumPoints !== undefined
             && (typeof battleSize.minimumPoints !== 'number' || !Number.isFinite(battleSize.minimumPoints) || battleSize.minimumPoints < 0)
             || battleSize.maximumPoints !== undefined

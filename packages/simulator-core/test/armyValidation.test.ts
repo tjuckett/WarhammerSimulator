@@ -295,6 +295,22 @@ test('army validation accepts a structurally valid catalog boundary', () => {
   assert.equal(result.valid, true);
 });
 
+test('army validation rejects duplicate catalog IDs and invalid model-count keys', () => {
+  const result = validateImportedArmy(army([unit()]), {
+    catalog: {
+      id: 'test-catalog', faction: 'Test', units: [
+        { id: 'unit-1', modelCountPoints: { '0': 50, 'five': 100 } },
+        { id: 'unit-1' },
+      ],
+      battleSizes: [{ id: 'patrol', label: 'Patrol' }, { id: 'patrol', label: 'Patrol duplicate' }],
+    },
+  });
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.code === 'catalog-unit-id-duplicate'));
+  assert.ok(result.errors.some(error => error.code === 'catalog-model-count-key-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'catalog-battle-size-id-duplicate'));
+});
+
 test('army validation allows a transport assignment only when capacity exists', () => {
   const transport = unit({ rosterId: 'transport', name: 'Transport', transportCapacity: 10 });
   const passenger = unit({ rosterId: 'passenger', name: 'Passenger', deployment: { mode: 'transport', transportUnitId: 'transport' } });
