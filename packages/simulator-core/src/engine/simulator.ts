@@ -4049,7 +4049,8 @@ function runBattleshock(state: BattleState, side: Side): LogEntry[] {
     if (unit.destroyed || unit.side !== side) continue;
     if (attachedUnitTargetRepresentative(state, unit)?.id !== unit.id) continue;
     const components = attachedUnitComponents(state, unit);
-    if (isBelowHalfStrength(state, unit)) {
+    const belowHalfStrength = isBelowHalfStrength(state, unit);
+    if (unit.battleshocked || belowHalfStrength) {
       if (unitHasInsaneBraveryForCurrentBattleshock(state, unit)) {
         for (const component of components) component.battleshocked = false;
         logs.push(log(state, unit.side, unit.profile.name,

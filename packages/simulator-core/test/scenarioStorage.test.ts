@@ -1022,7 +1022,7 @@ test('play Command reset clears per-turn shooting and disembark restrictions', (
   assert.equal(resetUnit.heroicInterventionMode, undefined);
 });
 
-test('11th battle-shock step tests damaged active units and clears healthy units', () => {
+test('11th battle-shock step retests already-shocked units and clears healthy units that pass', () => {
   const battle = state('setup', 1);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   const failing = losTestUnit('failing', 0, { x: 10, y: 10 });
@@ -1036,15 +1036,15 @@ test('11th battle-shock step tests damaged active units and clears healthy units
   battle.units = [failing, passing, healthy];
 
   const originalRandom = Math.random;
-  const rolls = [0, 0, 0.99, 0.99];
+  const rolls = [0, 0, 0.99, 0.99, 0, 0];
   Math.random = () => rolls.shift() ?? 0.99;
   try {
     const command = simulateNextPhase(battle, rules40K11th);
 
     assert.equal(command.units.find(unit => unit.id === failing.id)?.battleshocked, true);
     assert.equal(command.units.find(unit => unit.id === passing.id)?.battleshocked, false);
-    assert.equal(command.units.find(unit => unit.id === healthy.id)?.battleshocked, false);
-    assert.equal(command.log.filter(entry => entry.message.includes('Battle-shock')).length, 2);
+    assert.equal(command.units.find(unit => unit.id === healthy.id)?.battleshocked, true);
+    assert.equal(command.log.filter(entry => entry.message.includes('Battle-shock')).length, 3);
   } finally {
     Math.random = originalRandom;
   }
