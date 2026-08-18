@@ -10517,7 +10517,9 @@ test('play Movement can embark a nearby unit into a transport', () => {
   const embarked = embarkPlayUnit(battle, 'unit-1', 0, 'transport-1');
   const passenger = embarked.units.find(unit => unit.id === 'unit-1')!;
   assert.equal(passenger.embarkedInUnitId, 'transport-1');
+  assert.equal(passenger.embarkedThisTurn, true);
   assert.equal(passenger.movementComplete, true);
+  assert.equal(playUnitCanDisembark(embarked, 0, 'transport-1', passenger.id), false);
   assert.equal(transportCapacityRemaining(embarked, 'transport-1'), 2);
   assert.equal(playTransportPassengers(embarked, 'transport-1').map(unit => unit.id).join(','), 'unit-1');
 

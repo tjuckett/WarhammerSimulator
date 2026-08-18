@@ -4748,6 +4748,7 @@ export function embarkPlayUnit(
   cancelUnitAction(s, unit, 'it left the battlefield');
   recordUnitLeftBattlefieldMissionEvent(s, unit.id);
   unit.embarkedInUnitId = transport.id;
+  unit.embarkedThisTurn = true;
   unit.position = { ...transport.position };
   unit.modelPositions = transport.modelPositions.map(position => ({ ...position })).slice(0, Math.max(1, unit.remainingModels));
   while (unit.modelPositions.length < unit.remainingModels) unit.modelPositions.push({ ...transport.position });
@@ -4815,6 +4816,7 @@ export function playUnitCanDisembark(
   const passenger = passengerUnitId
     ? state.units.find(candidate => candidate.id === passengerUnitId && candidate.side === side && !candidate.destroyed && candidate.embarkedInUnitId === transportUnitId)
     : null;
+  if (passenger?.embarkedThisTurn) return false;
   const profile = passenger?.profile ?? (typeof armyUnitIndex === 'number' ? state.armies[side].army.units[armyUnitIndex] : undefined);
   if (!profile || (armyUnitIndex !== undefined && !unitAssignedToTransport(profile, transport))) return false;
   if (state.units.some(unit => unit.side === side && !unit.destroyed && !unit.embarkedInUnitId && unitRosterId(unit.profile) === unitRosterId(profile))) return false;
@@ -7041,7 +7043,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   s.firingDeckLockedUnitIds = undefined;
   s.units.forEach(clearFiringDeckWeapons);
   s.units.forEach(u => { u.overrunFightSelected = undefined; u.overrunPiledIn = undefined; });
-  myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.firedWeaponIndices = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.takingToSkies = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; u.heroicInterventionMode = undefined; u.actionStartedThisTurn = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.combatDisembarkedThisTurn = undefined; u.rapidDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
+  myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.firedWeaponIndices = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.takingToSkies = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; u.heroicInterventionMode = undefined; u.actionStartedThisTurn = undefined; u.embarkedThisTurn = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.combatDisembarkedThisTurn = undefined; u.rapidDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
 
   // Command
   newLogs.push(...runSimulatedCommandPhase(s, side, rules));
