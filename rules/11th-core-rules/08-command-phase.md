@@ -17,7 +17,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 
 - Command starts reset active-player turn state.
 - Both players gain core CP.
-- Battle-shock tests run for active units that are below half-strength or already Battle-shocked; an already-shocked unit must pass its roll to clear the condition.
+- Battle-shock tests run for active units that are at or below half-strength or already Battle-shocked; an already-shocked unit must pass its roll to clear the condition.
 - Insane Bravery is represented as the auto-pass stratagem.
 - Command-phase abilities are timing-gated.
 - Command-end transition advances to Movement after primary scoring.

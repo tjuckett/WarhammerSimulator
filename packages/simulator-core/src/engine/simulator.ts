@@ -4027,10 +4027,10 @@ function isBelowHalfStrength(state: BattleState, unit: BattleUnit): boolean {
   const startingStrength = attachedUnitComponents(state, unit, true)
     .reduce((total, component) => total + component.profile.baseModelCount, 0);
   if (startingStrength === 1) {
-    return unit.woundsOnLeadModel < unit.profile.wounds / 2;
+    return unit.woundsOnLeadModel <= unit.profile.wounds / 2;
   }
 
-  return attachedUnitRemainingModels(state, unit) < startingStrength / 2;
+  return attachedUnitRemainingModels(state, unit) <= startingStrength / 2;
 }
 
 function unitHasInsaneBraveryForCurrentBattleshock(state: BattleState, unit: BattleUnit): boolean {

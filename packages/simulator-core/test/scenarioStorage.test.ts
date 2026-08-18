@@ -1022,12 +1022,12 @@ test('play Command reset clears per-turn shooting and disembark restrictions', (
   assert.equal(resetUnit.heroicInterventionMode, undefined);
 });
 
-test('11th battle-shock step retests already-shocked units and clears healthy units that pass', () => {
+test('11th battle-shock step handles at-or-below-half strength and retests already-shocked units', () => {
   const battle = state('setup', 1);
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   const failing = losTestUnit('failing', 0, { x: 10, y: 10 });
   failing.profile.wounds = 4;
-  failing.woundsOnLeadModel = 1;
+  failing.woundsOnLeadModel = 2;
   const passing = losTestUnit('passing', 0, { x: 12, y: 10 });
   passing.profile.wounds = 4;
   passing.woundsOnLeadModel = 1;
