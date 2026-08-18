@@ -6454,6 +6454,60 @@ test('play Movement can set up Reinforcements more than 9 inches from enemies', 
   assert.match(placed.log.at(-1)?.message ?? '', /sets up Reserve Unit as Reinforcements/);
 });
 
+test('Strategic Reserve placement rejects an impossible enemy-range setup', () => {
+  const battle = state('movement', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.movementStep = 'reinforcements';
+  const reserveProfile = {
+    name: 'Reserve Unit',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+    deployment: { mode: 'strategicReserve' as const },
+  };
+  const enemy = losTestUnit('enemy-1', 1, { x: 10, y: 3 });
+  battle.armies[0].army = { ...battle.armies[0].army, units: [reserveProfile] };
+  battle.units = [enemy];
+
+  assert.equal(placePlayReinforcement(battle, 0, 0, { x: 3, y: 3 }), battle);
+});
+
+test('Strategic Reserve placement keeps a large model fully inside the edge band', () => {
+  const battle = state('movement', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.movementStep = 'reinforcements';
+  const reserveProfile = {
+    name: 'Large Reserve Unit',
+    move: 6,
+    toughness: 9,
+    save: 3,
+    wounds: 10,
+    leadership: 7,
+    oc: 0,
+    baseModelCount: 1,
+    modelBases: [{ shape: 'hull' as const, widthMm: 120, lengthMm: 92, footprint: 'rectangle' as const }],
+    keywords: ['Vehicle'],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+    deployment: { mode: 'strategicReserve' as const },
+  };
+  battle.armies[0].army = { ...battle.armies[0].army, units: [reserveProfile] };
+
+  assert.equal(placePlayReinforcement(battle, 0, 0, { x: 4.5, y: 10 }), battle);
+  const placed = placePlayReinforcement(battle, 0, 0, { x: 3, y: 10 });
+  assert.notEqual(placed, battle);
+  assert.deepEqual(placed.units[0].modelPositions, [{ x: 3, y: 10 }]);
+});
+
 test('play Movement advances to Reinforcements before Shooting', () => {
   const battle = state('movement');
   const profile = {
