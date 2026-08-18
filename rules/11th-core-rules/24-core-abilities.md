@@ -51,6 +51,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 ## Implementation Notes
 
 - Covered or partially covered: Anti, Assault, Blast, Devastating Wounds, Feel No Pain, Fights First, Hazardous, Heavy, Ignores Cover, Indirect Fire, Lethal Hits, Lone Operative, Melta, One Shot, Pistol/Sidearm, Precision, Rapid Fire, Stealth, Sustained Hits, Torrent, and Twin-linked.
+- `[CLOSE-QUARTERS]` is implemented through the 10.06 Close-Quarters shooting path; its ingress exception remains dependent on the existing Deep Strike/reinforcement setup flow.
 
 ## TODO
 

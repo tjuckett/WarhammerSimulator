@@ -228,6 +228,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: the first final-source movement audit slice now applies 11th Core 03.03's 9-inch every-model coherency limit while preserving the 2-inch neighbor and 5-inch vertical requirements; regression coverage distinguishes 10th and 11th behavior.
   - Progress: 11th Core 10.04-10.07 now prevents a unit from starting an action after any shooting activation, including a partially resolved activation with remaining weapons.
   - Progress: 11th Hidden now remains a target-eligibility restriction for Indirect Fire; Indirect can bypass ordinary blocked LOS but not Hidden detection limits.
+  - Progress: 11th Core 10.06/17.03 now recognizes Close-Quarters shooting: engaged non-Monster/Vehicle units can select only Close-Quarters weapons against engaged enemies, while Close-Quarters attacks avoid the engaged-target hit penalty.
   - Progress: the final-source attack audit now has matching Fight-panel coverage for fixed-Attacks melee split declarations, including serialized undo/replay; variable-Attacks and multi-profile split cases remain fail-closed.
   - Progress: 11th Core 18.04 Tactical Disembark now remains available when a transport has been explicitly marked stationary.
   - Progress: 11th Core 09.07 now applies the required post-move Battle-shock roll when a non-shocked unit uses Desperate Escape.

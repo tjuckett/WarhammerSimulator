@@ -1841,6 +1841,16 @@ function unitCanUseBigGunsNeverTire(unit: BattleUnit): boolean {
   return unitHasKeyword(unit, 'Vehicle') || unitHasKeyword(unit, 'Monster');
 }
 
+function weaponIsCloseQuarters(weapon: WeaponProfile): boolean {
+  return weaponHasKeyword(weapon, 'Close-Quarters');
+}
+
+function unitCanUseCloseQuartersShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean {
+  if (rules.metadata.edition !== '11e' || unit.movementAction === 'advanced') return false;
+  if (!inEngagement(unit, enemies(state, unit.side), rules.engagementRange())) return false;
+  return unitCanUseBigGunsNeverTire(unit) || unit.profile.weapons.some(weapon => weaponIsCloseQuarters(weapon));
+}
+
 function resolveHazardousTests(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number, state: BattleState, testCount = aliveWeaponModelCount(unit, weaponIndex)): LogEntry[] {
   if (!weaponHasKeyword(weapon, 'Hazardous') || unit.destroyed) return [];
   if (testCount <= 0) return [];
@@ -2639,6 +2649,8 @@ function eligibleShootingWeapons(unit: BattleUnit, state: BattleState, rules: Ru
   const engaged = inEngagement(unit, foes, rules.engagementRange());
   const bigGunsNeverTire = engaged && unitCanUseBigGunsNeverTire(unit);
   const advanced = unit.movementAction === 'advanced';
+  const closeQuartersShooting = unitCanUseCloseQuartersShooting(unit, state, rules);
+  const nonMonsterVehicle = rules.metadata.edition === '11e' && !unitCanUseBigGunsNeverTire(unit);
   return unit.profile.weapons.filter((w, idx) =>
     !w.isMelee
     && w.range > 0
@@ -2646,7 +2658,10 @@ function eligibleShootingWeapons(unit: BattleUnit, state: BattleState, rules: Ru
     && !(weaponHasKeyword(w, 'One Shot') && oneShotSpentSet.has(idx))
     && !firedProfileGroups.has(weaponProfileGroup(w) ?? '')
     && (!advanced || weaponHasKeyword(w, 'Assault'))
-    && (!engaged || weaponIsSidearm(w) || bigGunsNeverTire),
+    && (!engaged
+      || bigGunsNeverTire
+      || (closeQuartersShooting && weaponIsCloseQuarters(w))
+      || (!nonMonsterVehicle && weaponIsSidearm(w))),
   ).filter(w =>
     (!firedSidearm || weaponIsSidearm(w))
     && (!firedNonSidearm || !weaponIsSidearm(w))
@@ -2678,6 +2693,7 @@ function shootingWeaponCanTarget(
   const foes = enemies(state, unit.side);
   const engaged = inEngagement(unit, foes, eng);
   const bigGunsNeverTire = engaged && unitCanUseBigGunsNeverTire(unit);
+  const closeQuarters = weaponIsCloseQuarters(weapon);
   const targetPool = engaged && !bigGunsNeverTire ? engagedEnemies(state, unit, rules) : foes;
   if (!targetPool.some(candidate => candidate.id === target.id && candidate.side === target.side)) return false;
 
@@ -2699,6 +2715,8 @@ function shootingWeaponCanTarget(
       : epicChallengeVisible);
   if (representative?.id !== target.id && !precisionCharacter) return false;
 
+  if (engaged && !bigGunsNeverTire && rules.metadata.edition === '11e' && !closeQuarters) return false;
+
   const targetEngagedWithFriendly = targetWithinFriendlyEngagement(state, target, unit.side, rules);
   const targetEngagedWithShooter = inEngagement(unit, [target], eng);
   if (unitHasDatasheetRule(target, 'Lone Operative') && battleUnitsBaseEdgeDistance(unit, target) > 12) return false;
@@ -2706,6 +2724,7 @@ function shootingWeaponCanTarget(
   if (
     targetEngagedWithFriendly
     && !(weaponIsSidearm(weapon) && targetEngagedWithShooter)
+    && !(rules.metadata.edition === '11e' && closeQuarters && targetEngagedWithShooter)
     && !(bigGunsNeverTire && targetEngagedWithShooter)
     && !unitCanUseBigGunsNeverTire(target)
   ) return false;
@@ -2799,12 +2818,16 @@ function shootingWeaponModifiers(
 ): { cover: boolean; hitModifier: number; hitModifierNotes: string } {
   const foes = enemies(state, unit.side);
   const bigGunsNeverTire = inEngagement(unit, foes, rules.engagementRange()) && unitCanUseBigGunsNeverTire(unit);
+  const closeQuartersTarget = rules.metadata.edition === '11e'
+    && weaponIsCloseQuarters(weapon)
+    && inEngagement(unit, [target], rules.engagementRange());
   const usesIndirectFirePenalty = weaponHasKeyword(weapon, 'Indirect Fire')
     && !hasAnyModelLOSConsideringHidden(state, unit, target);
   const usesSmokescreen = unitHasActiveStratagem(state, target, 'smokescreen', 'shooting')
     || targetIsScreenedBySmoke(state, unit, target);
   const cover = targetHasTerrainCoverFrom(unit.modelPositions, target, state.terrain) || usesIndirectFirePenalty || usesSmokescreen;
   const usesBigGunsPenalty = (bigGunsNeverTire || targetWithinFriendlyEngagement(state, target, unit.side, rules))
+    && !closeQuartersTarget
     && !weaponIsSidearm(weapon);
   const usesHeavyBonus = weaponHasKeyword(weapon, 'Heavy') && unit.movementAction === 'remainedStationary';
   const usesStealth = attachedUnitHasRule(state, target, 'Stealth');

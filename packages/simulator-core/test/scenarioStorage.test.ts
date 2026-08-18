@@ -7716,6 +7716,26 @@ test('Engaged units without Pistols cannot shoot', () => {
   assert.equal(shooting.log.some(entry => entry.message.includes('Bolt Rifle')), false);
 });
 
+test('11th engaged Infantry can use Close-Quarters weapons against engaged enemies', () => {
+  const battle = state('shooting');
+  const shooter = losTestUnit('close-shooter', 0, { x: 10, y: 10 });
+  shooter.profile.weapons = [
+    { name: 'Close-Quarters Blaster', range: 12, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: ['Close-Quarters'], isMelee: false },
+    { name: 'Long Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+  ];
+  const target = losTestUnit('close-target', 1, { x: 10.5, y: 10 }, 7);
+  target.profile.weapons = [];
+  target.profile.wounds = 99;
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  assert.deepEqual(playShootingWeaponOptions(battle, shooter.id, 0, rules40K11th), [
+    { weaponIndex: 0, name: 'Close-Quarters Blaster', targetIds: [target.id] },
+  ]);
+  const shot = shootPlayUnitWeapon(battle, shooter.id, 0, target.id, 'all', rules40K11th);
+  assert.equal(shot.units.find(unit => unit.id === shooter.id)?.activated, true);
+});
+
 test('Engaged Vehicles can shoot non-Pistol weapons with Big Guns Never Tire', () => {
   const battle = state('movement');
   battle.movementStep = 'reinforcements';
