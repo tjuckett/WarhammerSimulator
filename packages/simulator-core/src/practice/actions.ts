@@ -13,6 +13,7 @@ import {
   assignPlayWoundedModel,
   beginPlayBattle,
   chargePlayUnitTarget,
+  chargePlayUnitTargets,
   completePlayUnitMovement,
   completeEndOfTurnActions,
   consecrateObjective,
@@ -287,7 +288,8 @@ export type GameAction =
       type: typeof GAME_ACTION_TYPE.ChargeUnitTarget;
       side: Side;
       unitId: string;
-      targetUnitId: string;
+      targetUnitId?: string;
+      targetUnitIds?: string[];
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.FightUnitWeapon;
@@ -719,7 +721,13 @@ export function applyGameAction(
       return lockPlayUnitShooting(state, normalizedAction.unitId, normalizedAction.side);
 
     case GAME_ACTION_TYPE.ChargeUnitTarget:
-      return chargePlayUnitTarget(state, normalizedAction.unitId, normalizedAction.side, normalizedAction.targetUnitId, context.rules);
+      return chargePlayUnitTargets(
+        state,
+        normalizedAction.unitId,
+        normalizedAction.side,
+        normalizedAction.targetUnitIds ?? (normalizedAction.targetUnitId ? [normalizedAction.targetUnitId] : []),
+        context.rules,
+      );
 
     case GAME_ACTION_TYPE.FightUnitWeapon:
       return fightPlayUnitWeapon(

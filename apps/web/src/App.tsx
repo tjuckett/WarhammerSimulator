@@ -25,7 +25,7 @@ import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simu
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
   battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, completePlayScoutMove, createDeploymentState, declarePlaySuperHeavyMobile, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playDisembarkModes, playPhaseCoherencyIssues, playScoutMoveAllowance, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels, startPlayScoutMove,
-  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTarget, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightPhaseHasPendingActivations, playFightStepNeedsStart, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type FiringDeckSelection, type LOSRay,
+  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTargets, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightPhaseHasPendingActivations, playFightStepNeedsStart, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type FiringDeckSelection, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -277,8 +277,8 @@ export default function App() {
       setSelectedShootingTargetId,
       selectedShootingWeaponIndex,
       setSelectedShootingWeaponIndex,
-      selectedChargeTargetId,
-      setSelectedChargeTargetId,
+      selectedChargeTargetIds,
+      setSelectedChargeTargetIds,
       selectedFightTargetId,
       setSelectedFightTargetId,
       selectedFightWeaponIndex,
@@ -1191,16 +1191,16 @@ export default function App() {
 
   useEffect(() => {
     if (!battleState || battleState.phase !== 'charge' || !selectedChargeUnit) {
-      setSelectedChargeTargetId('');
+      setSelectedChargeTargetIds([]);
       return;
     }
     if (
-      !selectedChargeTargetId
-      || !selectedPlayChargeOptions.some(option => option.targetId === selectedChargeTargetId)
+      !selectedChargeTargetIds.length
+      || selectedChargeTargetIds.some(targetId => !selectedPlayChargeOptions.some(option => option.targetId === targetId))
     ) {
-      setSelectedChargeTargetId(selectedPlayChargeOptions[0]?.targetId ?? '');
+      setSelectedChargeTargetIds(selectedPlayChargeOptions[0]?.targetId ? [selectedPlayChargeOptions[0].targetId] : []);
     }
-  }, [battleState?.phase, battleState?.units, selectedChargeUnit?.id, selectedChargeTargetId, selectedPlayChargeOptions, battleState, selectedChargeUnit, setSelectedChargeTargetId]);
+  }, [battleState?.phase, battleState?.units, selectedChargeUnit?.id, selectedChargeTargetIds, selectedPlayChargeOptions, battleState, selectedChargeUnit, setSelectedChargeTargetIds]);
 
   useEffect(() => {
     if (!battleState || battleState.phase !== 'fight' || !selectedFightUnit) {
@@ -1663,17 +1663,21 @@ export default function App() {
       const options = playChargeTargetOptions(battleState, unitId, side, activeRulesForBattle);
       if (options.length > 0 || side === battleState.activeArmy) {
         selectPlacedPlayUnit(unitId, side);
-        setSelectedChargeTargetId(options[0]?.targetId ?? '');
+        setSelectedChargeTargetIds(options[0]?.targetId ? [options[0].targetId] : []);
         setTargetErrorMsg(options.length ? null : `${clickedUnit.profile.name} has no eligible charge targets`);
         return;
       }
 
-      setSelectedChargeTargetId(unitId);
       if (!selectedChargeUnit) {
         setTargetErrorMsg('Select one of the active army units as the charger first');
         return;
       }
       const canCharge = selectedPlayChargeOptions.some(option => option.targetId === unitId);
+      if (canCharge) {
+        setSelectedChargeTargetIds(current => current.includes(unitId)
+          ? current.filter(targetId => targetId !== unitId)
+          : [...current, unitId]);
+      }
       setTargetErrorMsg(canCharge ? null : `${clickedUnit.profile.name} is not an eligible charge target`);
       return;
     }
@@ -2033,14 +2037,15 @@ export default function App() {
   function resolveSelectedPlayCharge() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
-    if (!prev || prev.phase !== 'charge' || !selection || !selectedChargeTargetId) return;
-    const next = chargePlayUnitTarget(prev, selection.unitId, selection.side, selectedChargeTargetId, activeRulesForBattle);
+    if (!prev || prev.phase !== 'charge' || !selection || !selectedChargeTargetIds.length) return;
+    const next = chargePlayUnitTargets(prev, selection.unitId, selection.side, selectedChargeTargetIds, activeRulesForBattle);
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
       type: GAME_ACTION_TYPE.ChargeUnitTarget,
       unitId: selection.unitId,
       side: selection.side,
-      targetUnitId: selectedChargeTargetId,
+      targetUnitId: selectedChargeTargetIds[0],
+      targetUnitIds: selectedChargeTargetIds,
     });
     setTargetErrorMsg(null);
     commitBattleState(next);
@@ -2881,8 +2886,8 @@ export default function App() {
             selectedUnitIds={isPlayMode
               ? (battleState?.phase === 'shooting' && selectedShootingTargetId
                   ? [selectedShootingTargetId]
-                  : battleState?.phase === 'charge' && selectedChargeTargetId
-                    ? [selectedChargeTargetId]
+                  : battleState?.phase === 'charge' && selectedChargeTargetIds.length
+                    ? selectedChargeTargetIds
                     : battleState?.phase === 'fight' && selectedFightTargetId
                       ? [selectedFightTargetId]
                       : [])
@@ -2900,7 +2905,7 @@ export default function App() {
               ? battleState?.phase === 'shooting'
                 ? selectedShootingTargetId
                 : battleState?.phase === 'charge'
-                  ? selectedChargeTargetId
+                  ? selectedChargeTargetIds[0] ?? null
                   : battleState?.phase === 'fight'
                     ? selectedFightTargetId
                     : null
@@ -3178,9 +3183,9 @@ export default function App() {
                 <PlayChargePanel
                   charger={selectedChargeUnit}
                   targets={selectedPlayChargeTargets}
-                  selectedTargetId={selectedChargeTargetId}
+                  selectedTargetIds={selectedChargeTargetIds}
                   options={selectedPlayChargeOptions}
-                  onTargetChange={setSelectedChargeTargetId}
+                  onTargetChange={setSelectedChargeTargetIds}
                   onResolve={resolveSelectedPlayCharge}
                 />
               )}

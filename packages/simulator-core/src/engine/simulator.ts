@@ -3324,29 +3324,48 @@ export function chargePlayUnitTarget(
   targetUnitId: string,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
+  return chargePlayUnitTargets(state, unitId, side, [targetUnitId], rules);
+}
+
+export function chargePlayUnitTargets(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  targetUnitIds: string[],
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): BattleState {
   if (state.phase !== 'charge') return state;
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  const target = state.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const uniqueTargetIds = [...new Set(targetUnitIds)];
+  const targets = uniqueTargetIds
+    .map(targetId => state.units.find(candidate => candidate.id === targetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId))
+    .filter((target): target is BattleUnit => !!target);
+  const target = targets[0];
   if (!unit
     || attachedUnitComponents(state, unit).some(component => component.activated)
     || attachedUnitComponents(state, unit).some(component => unitSurgedThisPhase(state, component))
     || !target
+    || targets.length !== uniqueTargetIds.length
+    || uniqueTargetIds.length === 0
     || !sideCanDeclareCharge(state, side, unit)
     || !unitCanDeclareCharge(unit)
-    || !unitCanChargeTarget(unit, target)
+    || targets.some(candidate => !unitCanChargeTarget(unit, candidate))
     || (state.activeArmy !== side
       && (unit.heroicInterventionMode === 'leap-to-defend'
-        ? !target.charged
+        ? targets.some(candidate => !candidate.charged)
         : unit.heroicInterventionMode === 'into-the-fray'
-          ? battleUnitsBaseEdgeDistance(unit, target) > 6
+          ? targets.some(candidate => battleUnitsBaseEdgeDistance(unit, candidate) > 6)
           : true))) return state;
-  const needed = chargeNeededDistance(unit, target, rules);
+  const needed = Math.max(...targets.map(candidate => chargeNeededDistance(unit, candidate, rules)));
   if (needed > rules.chargeRange()) return state;
 
   const s = clone(state);
   const chargingUnit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  const chargeTarget = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!chargingUnit || !chargeTarget) return state;
+  const chargeTargets = uniqueTargetIds
+    .map(targetId => s.units.find(candidate => candidate.id === targetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId))
+    .filter((candidate): candidate is BattleUnit => !!candidate);
+  const chargeTarget = chargeTargets[0];
+  if (!chargingUnit || !chargeTarget || chargeTargets.length !== uniqueTargetIds.length) return state;
 
   const r1 = d6();
   const r2 = d6();
@@ -3358,7 +3377,7 @@ export function chargePlayUnitTarget(
   const maximumDistance = Math.max(0, roll - takeToSkiesDistanceCost(chargingUnit));
   const logs: LogEntry[] = [
     log(s, side, chargingUnit.profile.name,
-      `${chargingUnit.profile.name} declares a charge against ${chargeTarget.profile.name} (${needed.toFixed(1)}" needed, rolled ${r1}+${r2}=${roll}${roll !== rawRoll ? ` (capped from ${rawRoll})` : ''}).`,
+      `${chargingUnit.profile.name} declares a charge against ${chargeTargets.map(candidate => candidate.profile.name).join(', ')} (${needed.toFixed(1)}" maximum needed, rolled ${r1}+${r2}=${roll}${roll !== rawRoll ? ` (capped from ${rawRoll})` : ''}).`,
       'charge',
     ),
   ];
@@ -3394,7 +3413,7 @@ export function chargePlayUnitTarget(
   resolveInternalModelOverlaps(chargingUnit);
   chargingUnit.position = centroid(chargingUnit.modelPositions);
 
-  if (!inEngagement(chargingUnit, [chargeTarget], rules.engagementRange())) {
+  if (chargeTargets.some(candidate => !inEngagement(chargingUnit, [candidate], rules.engagementRange()))) {
     const failed = clone(state);
     const failedUnit = failed.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
     for (const component of attachedUnitComponents(failed, failedUnit)) {
@@ -3409,7 +3428,7 @@ export function chargePlayUnitTarget(
   }
 
   const declaredTargetComponentIds = new Set(
-    attachedUnitComponents(s, chargeTarget).map(component => component.id),
+    chargeTargets.flatMap(candidate => attachedUnitComponents(s, candidate).map(component => component.id)),
   );
   const undeclaredEnemyInEngagement = enemies(s, side).some(enemy =>
     !declaredTargetComponentIds.has(enemy.id)
@@ -3442,7 +3461,7 @@ export function chargePlayUnitTarget(
     component.lastMoveTurn = s.turn;
     component.takingToSkies = undefined;
   }
-  chargeTarget.inCombat = true;
+  for (const target of chargeTargets) target.inCombat = true;
   logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} makes a successful${state.activeArmy !== side ? ' Heroic Intervention' : ''} charge.`, 'charge'));
   s.log = [...s.log, ...logs];
   return s;

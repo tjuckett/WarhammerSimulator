@@ -18,9 +18,10 @@ Source: https://gdmissions.app/11th/rules/core-rules
 - Charge restrictions after Advance, Fall Back, Reinforcements, and actions are covered.
 - Aircraft restrictions and Heroic Intervention hooks exist.
 - Charge resolution rejects a move that would end in engagement with an undeclared enemy unit; attached components of the declared target remain valid declared targets.
+- Play charge actions and the UI can serialize multiple declared targets and require engagement with each one.
 
 ## TODO
 
 - Re-audit exact charge timing and Heroic Intervention wording.
-- Full multi-target declaration and selection remains to be added; the current action flow supports one declared target and fail-closes undeclared engagements.
+- The legal-action generator still emits one action per target rather than enumerating multi-target combinations.
 

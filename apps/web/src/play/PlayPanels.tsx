@@ -342,16 +342,16 @@ export function PlayShootingPanel({
 export function PlayChargePanel({
   charger,
   targets,
-  selectedTargetId,
+  selectedTargetIds,
   options,
   onTargetChange,
   onResolve,
 }: {
   charger: BattleUnit | null;
   targets: BattleUnit[];
-  selectedTargetId: string;
+  selectedTargetIds: string[];
   options: PlayChargeTargetOption[];
-  onTargetChange: (value: string) => void;
+  onTargetChange: (values: string[]) => void;
   onResolve: () => void;
 }) {
   if (!charger) {
@@ -362,8 +362,9 @@ export function PlayChargePanel({
       </Box>
     );
   }
-  const selectedOption = options.find(option => option.targetId === selectedTargetId) ?? null;
-  const canResolve = !!selectedOption && !charger.activated;
+  const canResolve = selectedTargetIds.length > 0
+    && selectedTargetIds.every(targetId => options.some(option => option.targetId === targetId))
+    && !charger.activated;
   return (
     <Box sx={playPanelSx}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
@@ -382,8 +383,12 @@ export function PlayChargePanel({
         <Select
           labelId="play-charge-target-label"
           label={PLAY_PANEL_LABELS.target}
-          value={selectedTargetId}
-          onChange={(event: SelectChangeEvent) => onTargetChange(event.target.value)}
+          multiple
+          value={selectedTargetIds}
+          onChange={(event: SelectChangeEvent<string[]>) => onTargetChange(event.target.value as string[])}
+          renderValue={(selected) => (selected as string[])
+            .map(targetId => targets.find(target => target.id === targetId)?.profile.name ?? targetId)
+            .join(', ')}
         >
           {targets.map(target => {
             const needed = options.find(option => option.targetId === target.id)?.needed ?? 0;

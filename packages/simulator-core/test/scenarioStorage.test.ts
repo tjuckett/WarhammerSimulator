@@ -9638,6 +9638,32 @@ test('play Charge resolves a selected charger into a selected target', () => {
   }
 });
 
+test('play Charge supports multiple declared targets and marks each target in combat', () => {
+  const battle = state('charge');
+  const charger = losTestUnit('charger-multi', 0, { x: 0, y: 10 });
+  const targetOne = losTestUnit('target-one', 1, { x: 6, y: 10 });
+  const targetTwo = losTestUnit('target-two', 1, { x: 6, y: 11 });
+  battle.units = [charger, targetOne, targetTwo];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const charged = applyGameAction(battle, {
+      type: GAME_ACTION_TYPE.ChargeUnitTarget,
+      side: 0,
+      unitId: charger.id,
+      targetUnitId: targetOne.id,
+      targetUnitIds: [targetOne.id, targetTwo.id],
+    }, { rules: rules40K10th });
+    assert.equal(charged.units.find(unit => unit.id === charger.id)?.charged, true);
+    assert.equal(charged.units.find(unit => unit.id === targetOne.id)?.inCombat, true);
+    assert.equal(charged.units.find(unit => unit.id === targetTwo.id)?.inCombat, true);
+    assert.match(charged.log.at(-2)?.message ?? '', /target-one, target-two/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('11th Charge phase gates charge declarations and failed charges activate the unit without moving', () => {
   const battle = state('charge');
   battle.ruleset = rulesetMetadataForState(rules40K11th);

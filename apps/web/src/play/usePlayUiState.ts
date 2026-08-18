@@ -22,7 +22,7 @@ export function usePlayUiState() {
   const [playModelSelection, setPlayModelSelection] = useState<PlayModelSelection | null>(null);
   const [selectedShootingTargetId, setSelectedShootingTargetId] = useState('');
   const [selectedShootingWeaponIndex, setSelectedShootingWeaponIndex] = useState<'all' | string>('all');
-  const [selectedChargeTargetId, setSelectedChargeTargetId] = useState('');
+  const [selectedChargeTargetIds, setSelectedChargeTargetIds] = useState<string[]>([]);
   const [selectedFightTargetId, setSelectedFightTargetId] = useState('');
   const [selectedFightWeaponIndex, setSelectedFightWeaponIndex] = useState<'all' | string>('all');
   const [fightAttackSplits, setFightAttackSplits] = useState<Record<string, number>>({});
@@ -55,8 +55,8 @@ export function usePlayUiState() {
       setSelectedShootingTargetId,
       selectedShootingWeaponIndex,
       setSelectedShootingWeaponIndex,
-      selectedChargeTargetId,
-      setSelectedChargeTargetId,
+      selectedChargeTargetIds,
+      setSelectedChargeTargetIds,
       selectedFightTargetId,
       setSelectedFightTargetId,
       selectedFightWeaponIndex,
