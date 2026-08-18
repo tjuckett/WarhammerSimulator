@@ -29,9 +29,8 @@ Source: https://gdmissions.app/11th/rules/core-rules
 - Sidearms/Pistols are handled separately from other ranged weapons.
 - Alternate weapon profiles can be grouped so only one profile is used.
 - Weapon-scoped modifiers and abilities stay with the selected attack sequence.
-- Core supports melee split attacks and invalid/unviable target handling; current app controls still mostly use single-target fight flow.
+- Core and the Fight panel support serialized melee split attacks across multiple engaged targets, with fixed-Attacks validation and deterministic replay; variable-Attacks and multi-profile cases remain single-target fail-closed flows.
 
 ## TODO
 
-- Add UI controls for declaring split melee attack counts across multiple engaged targets.
 - Re-audit invalid/unviable target and activation-consumption behavior against final source wording.
