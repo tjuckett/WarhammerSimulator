@@ -353,7 +353,6 @@ export const rules40K11th: RulesEdition = {
       target: 'friendly-unit',
       targetMustBeUnengaged: true,
       targetForbiddenKeywordsAny: ['Titanic'],
-      targetMustBeEligibleToShoot: true,
       oncePerPhase: true,
       targetOncePerPhase: ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE,
       description: 'An unengaged non-Titanic unit uses snap shooting at the end of the opponent movement phase.',

@@ -248,6 +248,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: Heroic Intervention's Into the Fray surcharge is now reflected in both command-point state and the serialized battle log.
   - Progress: Rapid Ingress availability and direct use are now restricted to the opponent's Movement/Reinforcements step, matching the modeled end-of-Movement placement flow; impossible-placement and large-model setup coverage is covered by focused placement tests.
   - Progress: 11th `[CLOSE-QUARTERS]` ingress now lets Strategic Reserve units whose every model carries a Close-Quarters weapon set up outside the normal six-inch edge band and inside the opponent deployment zone, while retaining the more-than-8-inch enemy restriction.
+  - Progress: final Core 15.08 Fire Overwatch now permits an already activated 11th-edition unit to use remaining eligible weapons, matching its explicit unengaged/non-TITANIC target restriction; 10th-edition normal eligibility remains unchanged.
 - [x] Narrow the 11th preview notice while final-source implementation remains partial.
   - Progress: the ruleset and UI now present 11th Edition as source-audited and partial; stable preview-era metadata IDs remain only for saved-game compatibility, and the complete final-source re-audit remains tracked separately above.
 - [x] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.

@@ -2642,8 +2642,13 @@ export function completeEndOfTurnActions(state: BattleState, side: Side): void {
   }
 }
 
-function eligibleShootingWeapons(unit: BattleUnit, state: BattleState, rules: RulesEdition): WeaponProfile[] {
-  if (unit.destroyed || unit.embarkedInUnitId || unit.activated || state.firingDeckLockedUnitIds?.includes(unit.id)) return [];
+function eligibleShootingWeapons(
+  unit: BattleUnit,
+  state: BattleState,
+  rules: RulesEdition,
+  allowActivated = false,
+): WeaponProfile[] {
+  if (unit.destroyed || unit.embarkedInUnitId || (!allowActivated && unit.activated) || state.firingDeckLockedUnitIds?.includes(unit.id)) return [];
   if (unit.performingAction && !unitCanUseBigGunsNeverTire(unit)) return [];
   if (unit.fellBack || unit.movementAction === 'fellBack') return [];
   const firedSet = new Set(unit.firedWeaponIndices ?? []);
@@ -3053,8 +3058,8 @@ export function playSnapShootingWeaponOptions(
 ): PlayShootingWeaponOption[] {
   if (state.phase !== 'movement' || state.movementStep !== 'reinforcements' || state.activeArmy === side) return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || unit.activated || !unitHasActiveStratagem(state, unit, 'fire-overwatch', 'movement')) return [];
-  return eligibleShootingWeapons(unit, state, rules)
+  if (!unit || (unit.activated && rules.metadata.edition !== '11e') || !unitHasActiveStratagem(state, unit, 'fire-overwatch', 'movement')) return [];
+  return eligibleShootingWeapons(unit, state, rules, rules.metadata.edition === '11e')
     .map(weapon => {
       const weaponIndex = unit.profile.weapons.indexOf(weapon);
       return {
@@ -3149,9 +3154,9 @@ export function snapShootPlayUnitWeapon(
   const s = clone(state);
   const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   const target = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || !target || unit.activated || !unitHasActiveStratagem(s, unit, 'fire-overwatch', 'movement')) return state;
+  if (!unit || !target || !unitHasActiveStratagem(s, unit, 'fire-overwatch', 'movement')) return state;
 
-  const eligibleWeapons = eligibleShootingWeapons(unit, s, rules)
+  const eligibleWeapons = eligibleShootingWeapons(unit, s, rules, rules.metadata.edition === '11e')
     .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
     .filter(option =>
       option.weaponIndex >= 0

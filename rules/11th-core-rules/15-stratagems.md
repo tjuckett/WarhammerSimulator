@@ -27,6 +27,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 - Crushing Impact selects an explicit engaged enemy after the charge, rolls up to six dice from the charging unit's Toughness, deals mortal wounds on 5+, and applies one mortal wound back for each unmodified 1.
 - Explosives selects an explicit EXPLOSIVES/GRENADES model and a visible unengaged enemy target within 8 inches; both selections are carried through legal, replay, and manual-play paths.
 - Fire Overwatch is restricted to the opponent's Reinforcements/end-of-Movement step, and snap shooting requires the recorded Fire Overwatch use.
+- 11th Fire Overwatch targets any friendly unengaged non-TITANIC unit; it does not impose ordinary once-per-turn Shooting eligibility, so an already activated unit may use any remaining eligible weapons.
 - Smokescreen grants Benefit of Cover to the Smoke unit and to units screened by it for the rest of the Shooting phase; it does not add a separate hit modifier.
 - Heroic Intervention records the selected Leap to Defend or Into the Fray mode; Into the Fray costs an additional CP, limits targets to 6 inches, caps the charge roll at 6, and intervention charges do not receive Charge bonuses.
 - Counteroffensive is restricted to after an enemy attack resolution and serializes the targeted unit as the forced next fight while its phase-scoped Fights First effect remains active.

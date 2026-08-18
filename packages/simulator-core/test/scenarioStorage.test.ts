@@ -6057,6 +6057,27 @@ test('play Movement with Fly can move over enemy models and blocking terrain', (
   assert.ok((illegalEnd.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x ?? 0) < 13);
 });
 
+test('11th Fire Overwatch can use an already activated unit when it still has an unfired weapon', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.movementStep = 'reinforcements';
+  battle.activeArmy = 0;
+  battle.commandPoints = [0, 1];
+  const shooter = losTestUnit('already-shot', 1, { x: 10, y: 10 });
+  shooter.activated = true;
+  shooter.firedWeaponIndices = [0];
+  shooter.profile.weapons = [
+    { name: 'Already Fired', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    { name: 'Overwatch Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+  ];
+  const target = losTestUnit('target', 0, { x: 18, y: 10 });
+  battle.units = [shooter, target];
+
+  const used = useStratagem(battle, 1, 'fire-overwatch', rules40K11th, shooter.id);
+  assert.equal(used.commandPoints?.[1], 0);
+  assert.equal(playSnapShootingWeaponOptions(used, shooter.id, 1, rules40K11th).length, 1);
+});
+
 test('11th Desperate Escape applies a Battle-shock roll after a non-shocked unit falls back through enemies', () => {
   const battle = state('movement');
   battle.ruleset = rulesetMetadataForState(rules40K11th);
