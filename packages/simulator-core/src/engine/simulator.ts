@@ -613,7 +613,7 @@ function hasAnyModelLOS(
 
 function terrainCanHideModels(terrain: Terrain): boolean {
   return terrain.providesCover
-    && (terrain.type === 'ruin' || terrain.features.some(feature => feature.featureHeight !== 'low'));
+    && terrain.features.some(feature => feature.category === 'light' || feature.category === 'dense');
 }
 
 function modelIsHiddenFrom(
@@ -636,6 +636,7 @@ function modelIsHiddenFrom(
   const goneToGround = state.terrain.some(terrain =>
     terrain.features.some(feature =>
       feature.featureHeight === 'tall'
+      && feature.category === 'dense'
       && feature.blocksLOS
       && linePassesThroughTerrain(sourceModel, targetModel, feature),
     ),

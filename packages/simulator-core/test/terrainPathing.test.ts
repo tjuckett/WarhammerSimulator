@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { BattleUnit, Terrain } from '../src/types/battle';
 import { findReachablePosition } from '../src/engine/simulator';
+import { terrainLayoutFromData } from '../src/engine/terrain';
 
 test('terrain pathing helper is reusable and respects movement distance', () => {
   const unit = {
@@ -40,4 +41,21 @@ test('terrain pathing permits a unit already inside blocking terrain to exit', (
 
   assert.equal(destination.x, 12.5);
   assert.equal(destination.y, 5);
+});
+
+test('terrain conversion preserves explicit light and dense feature categories', () => {
+  const layout = terrainLayoutFromData({
+    id: 'categories',
+    name: 'Categories',
+    description: 'category test',
+    terrain: [{
+      kind: 'ruin', x: 0, y: 0, width: 10, height: 10,
+      features: [
+        { x: 1, y: 1, width: 1, height: 1, featureHeight: 'low', category: 'light' },
+        { x: 2, y: 2, width: 1, height: 1, featureHeight: 'tall', category: 'dense' },
+      ],
+    }],
+  });
+
+  assert.deepEqual(layout.terrain[0].features.map(feature => feature.category), ['light', 'dense']);
 });

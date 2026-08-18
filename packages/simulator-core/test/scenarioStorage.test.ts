@@ -8346,7 +8346,7 @@ test('11th Hidden limits visibility of quiet infantry inside covered terrain', (
   battle.units = [shooter, target];
   battle.terrain = [terrainMat({
     id: 'ruin', type: 'ruin', x: 28, y: 18, width: 5, height: 4,
-    features: [{ id: 'ruin-wall', name: 'Dense screen', x: 22, y: 19.9, width: 0.2, height: 0.2, featureHeight: 'tall', blocksLOS: true, blocksMovement: false, difficult: false }],
+    features: [{ id: 'ruin-wall', name: 'Dense screen', x: 22, y: 19.9, width: 0.2, height: 0.2, featureHeight: 'tall', category: 'dense', blocksLOS: true, blocksMovement: false, difficult: false }],
   })];
 
   assert.deepEqual(playShootingWeaponOptions(battle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);

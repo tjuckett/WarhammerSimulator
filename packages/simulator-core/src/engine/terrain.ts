@@ -41,7 +41,18 @@ function isRuntimeTerrainLayout(layout: TerrainLayoutData | TerrainLayout): layo
 }
 
 export function terrainLayoutFromData(layout: TerrainLayoutData | TerrainLayout): TerrainLayout {
-  if (isRuntimeTerrainLayout(layout)) return layout;
+  if (isRuntimeTerrainLayout(layout)) {
+    return {
+      ...layout,
+      terrain: layout.terrain.map(terrain => ({
+        ...terrain,
+        features: terrain.features.map(feature => ({
+          ...feature,
+          category: feature.category ?? inferFeatureCategory(terrain, feature.featureHeight),
+        })),
+      })),
+    };
+  }
   return {
     id: layout.id,
     name: layout.name,
@@ -64,11 +75,16 @@ function featureFromSpec(parent: Terrain, spec: NonNullable<TerrainSpec['feature
     height: spec.height,
     rotationDeg: spec.rotationDeg ?? parent.rotationDeg,
     featureHeight: spec.featureHeight,
+    category: spec.category ?? inferFeatureCategory(parent, spec.featureHeight),
     blocksLOS,
     blocksMovement,
     difficult: spec.difficult ?? (spec.featureHeight === 'low' || spec.featureHeight === 'mid'),
     color: spec.color ?? featureColor(spec.featureHeight),
   };
+}
+
+function inferFeatureCategory(parent: Terrain, featureHeight: TerrainFeature['featureHeight']): NonNullable<TerrainFeature['category']> {
+  return parent.type === 'ruin' && featureHeight !== 'low' ? 'dense' : 'light';
 }
 
 function featuresFromSpec(parent: Terrain, spec: TerrainSpec): TerrainFeature[] {

@@ -384,6 +384,7 @@ export interface TerrainFeature {
   height: number;
   rotationDeg?: number;
   featureHeight: 'low' | 'mid' | 'tall';
+  category?: 'light' | 'dense';
   blocksLOS: boolean;
   blocksMovement: boolean;
   difficult: boolean;

@@ -8,6 +8,7 @@ export interface TerrainFeatureSpec {
   height: number;
   rotationDeg?: number;
   featureHeight: TerrainFeature['featureHeight'];
+  category?: NonNullable<TerrainFeature['category']>;
   blocksLOS?: boolean;
   blocksMovement?: boolean;
   difficult?: boolean;
