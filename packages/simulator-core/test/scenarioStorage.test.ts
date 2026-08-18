@@ -1208,6 +1208,27 @@ test('11th Rapid Ingress lets a non-Aircraft unit return from Strategic Reserves
   assert.match(returned.log.at(-1)?.message ?? '', /using Rapid Ingress/);
 });
 
+test('Strategic Reserve arrivals are blocked in battle round one while Deep Strike remains available', () => {
+  const battle = state('movement');
+  battle.movementStep = 'reinforcements';
+  battle.activeArmy = 0;
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const strategicReserve = {
+    ...losTestUnit('strategic-profile', 0, { x: 0, y: 0 }).profile,
+    name: 'Strategic Reserve Unit',
+    deployment: { mode: 'strategicReserve' as const },
+  };
+  const deepStrike = {
+    ...strategicReserve,
+    name: 'Deep Strike Unit',
+    deployment: { mode: 'deepStrike' as const },
+  };
+  battle.armies[0].army = { ...battle.armies[0].army, units: [strategicReserve, deepStrike] };
+
+  assert.equal(placePlayReinforcement(battle, 0, 0, { x: 3, y: 10 }), battle);
+  assert.notEqual(placePlayReinforcement(battle, 0, 1, { x: 20, y: 20 }), battle);
+});
+
 test('11th Heroic Intervention lets the targeted defender declare a charge in the opponent Charge phase', () => {
   const battle = state('charge');
   battle.activeArmy = 0;
@@ -6521,6 +6542,7 @@ test('play Reinforcements step blocks normal movement but allows multiple Reinfo
 
 test('Reinforcements can shoot but cannot charge that turn', () => {
   const battle = state('movement');
+  battle.battleRound = 2;
   const reserveProfile = {
     name: 'Reserve Shooter',
     move: 6,

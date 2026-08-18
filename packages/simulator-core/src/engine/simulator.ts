@@ -4616,6 +4616,7 @@ export function placePlayReinforcement(state: BattleState, side: Side, armyUnitI
   if (state.phase !== 'movement' || movementStep(state) !== 'reinforcements' || state.activeArmy !== side) return state;
   const profile = state.armies[side].army.units[armyUnitIndex];
   if (!profile || !unitIsStagedReinforcement(profile)) return state;
+  if (profile.deployment?.mode === UNIT_DEPLOYMENT_MODE.StrategicReserve && battleRound(state) === 1) return state;
   if (profile.deployment?.mode === UNIT_DEPLOYMENT_MODE.DeepStrike && !profileDropHasDeepStrike(state, side, profile)) return state;
 
   const profileKey = unitRosterId(profile);
