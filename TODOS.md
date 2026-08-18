@@ -353,13 +353,13 @@ Use this section as the next-session pickup point for the rules implementation w
 - [x] Keep edition-specific behavior behind the rules engine so 10th and 11th can share common concepts but diverge cleanly. Stateful play helpers now derive rules from `BattleState`; state-less battle/deployment constructors retain explicit 10th-edition defaults.
   - Progress: interactive movement, transport disembark, model-drag legality, mission-action completion, Command-phase coherency, legal-action generation, the core action gate, generic action start, shooting action helpers, Charge/Fight action helpers, and movement-action helpers all resolve rules from the battle state's ruleset.
 - [x] Treat 11th edition as a separate ruleset with source-backed behavior; do not guess unsupported 11th rules from 10th. Remaining unmodeled mechanics stay explicit fail-closed/source-dependent TODOs.
-- [ ] Shared concepts likely worth keeping edition-neutral: battle rounds, active army, phase/step cursor, unit/model positions, dice helpers, objective ownership scaffolding.
+- [x] Shared concepts remain edition-neutral: battle rounds, active army, phase/step cursor, unit/model positions, dice helpers, and objective ownership scaffolding are shared while edition-specific rules stay behind `RulesEdition` helpers.
 
 ### Known Rules/UI Followups
 - [x] Review whether "practice game" naming should be changed to a more future-proof term before multiplayer features are added. Decision: use game/session language going forward; existing `practice` code paths can be migrated in a focused rename later.
 - [x] Improve selected-model action placement/UI — the action HUD now stays within the scrollable board bounds and repositions after viewport resize.
-- [ ] Add tests when each rule is implemented in `packages/simulator-core/test/`.
-  - Progress: the edition-boundary audit now has regression coverage proving Take to the Skies resolves omitted rules from an 11th-edition BattleState.
+- [x] Add tests when each rule is implemented in `packages/simulator-core/test/`.
+  - Progress: implemented final-source slices have focused regression coverage, including edition boundaries, terrain visibility, deployment screening, and Take to the Skies; source-dependent rules remain explicitly unimplemented.
 - [x] Re-run `npx tsc -p apps/web/tsconfig.json --noEmit`, `npm run lint`, and root `npm run build` after frontend/rules changes. Latest verification passes with zero TypeScript, lint, or build errors/warnings.
 
 ## Done
