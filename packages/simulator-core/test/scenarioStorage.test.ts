@@ -1193,14 +1193,14 @@ test('11th Rapid Ingress lets a non-Aircraft unit return from Strategic Reserves
   reserve.modelPositions = [];
   battle.units = [reserve];
 
-  const blocked = placePlayStrategicReserveUnit(battle, 1, reserve.id, { x: 3, y: 10 });
+  const blocked = placePlayStrategicReserveUnit(battle, 1, reserve.id, { x: 3, y: 38 });
   assert.equal(blocked, battle);
 
   const ingress = useStratagem(battle, 1, 'rapid-ingress', rules40K11th, reserve.id);
   assert.equal(ingress.commandPoints?.[1], 0);
   assert.equal(ingress.units[0].rapidIngressThisPhase, true);
 
-  const returned = placePlayStrategicReserveUnit(ingress, 1, reserve.id, { x: 3, y: 10 });
+  const returned = placePlayStrategicReserveUnit(ingress, 1, reserve.id, { x: 3, y: 38 });
   const returnedReserve = returned.units.find(unit => unit.id === reserve.id)!;
   assert.equal(returnedReserve.inStrategicReserves, false);
   assert.equal(returnedReserve.arrivedFromReinforcements, true);
@@ -1227,6 +1227,9 @@ test('Strategic Reserve arrivals are blocked in battle round one while Deep Stri
 
   assert.equal(placePlayReinforcement(battle, 0, 0, { x: 3, y: 10 }), battle);
   assert.notEqual(placePlayReinforcement(battle, 0, 1, { x: 20, y: 20 }), battle);
+  battle.battleRound = 2;
+  assert.equal(placePlayReinforcement(battle, 0, 0, { x: 57, y: 38 }), battle);
+  assert.notEqual(placePlayReinforcement(battle, 0, 0, { x: 3, y: 10 }), battle);
 });
 
 test('11th Heroic Intervention lets the targeted defender declare a charge in the opponent Charge phase', () => {
@@ -11503,6 +11506,7 @@ test('play Movement sends Aircraft that cross the battlefield edge into Strategi
 
 test('play Reinforcements can return Aircraft from Strategic Reserves at a battlefield edge', () => {
   const battle = state('movement');
+  battle.battleRound = 2;
   battle.movementStep = 'reinforcements';
   const aircraftProfile = {
     name: 'Edge Flyer',

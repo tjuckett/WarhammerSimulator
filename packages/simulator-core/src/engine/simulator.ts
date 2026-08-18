@@ -4638,7 +4638,8 @@ export function placePlayReinforcement(state: BattleState, side: Side, armyUnitI
     || !playMoveHasNoWallOverlap(s, unit, movingIndices)
     || (s.ruleset.edition === '11e'
       && profile.deployment?.mode === UNIT_DEPLOYMENT_MODE.StrategicReserve
-      && !reinforcementPlacementIsWithinStrategicReserveEdge(unit, s))
+      && (!reinforcementPlacementIsWithinStrategicReserveEdge(unit, s)
+        || !strategicReservePlacementIsOutsideOpponentDeploymentZone(unit, s)))
   ) return state;
 
   s.log = [...s.log, log(
@@ -4668,6 +4669,7 @@ export function placePlayStrategicReserveUnit(state: BattleState, side: Side, un
   const s = clone(state);
   const board = boardFormatForState(s);
   const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
+  if (battleRound(s) === 1) return state;
   unit.modelPositions = playGridFormation(unit.profile, position, side).slice(0, unit.remainingModels);
   unit.modelRotations = unit.modelPositions.map(() => side === 0 ? 0 : 180);
   unit.facingDeg = side === 0 ? 0 : 180;
@@ -4681,6 +4683,7 @@ export function placePlayStrategicReserveUnit(state: BattleState, side: Side, un
   if (
     !reinforcementPlacementIsOutsideEnemyRange(s, side, unit.profile, unit.modelPositions)
     || !reinforcementPlacementIsWithinStrategicReserveEdge(unit, s)
+    || !strategicReservePlacementIsOutsideOpponentDeploymentZone(unit, s)
     || !playMoveHasNoBaseOverlap(s, unit, movingIndices)
     || !playMoveHasNoWallOverlap(s, unit, movingIndices)
   ) return state;
@@ -5507,6 +5510,16 @@ export function playFiringDeckOptions(state: BattleState, transportUnitId: strin
           : [];
       }),
     ).flat(),
+  );
+}
+
+function strategicReservePlacementIsOutsideOpponentDeploymentZone(unit: BattleUnit, state: BattleState): boolean {
+  if (battleRound(state) > 2) return true;
+  const board = boardFormatForState(state);
+  const deployment = setupDeploymentZoneSource(state.setup);
+  const opponentZone = zoneFor((1 - unit.side) as Side, deployment, board);
+  return unit.modelPositions.every((model, modelIndex) =>
+    !pointInDeploymentZone(model, opponentZone, modelBaseRadius(unit, modelIndex)),
   );
 }
 
