@@ -27,6 +27,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 - Hidden visibility is implemented for 11th: Infantry/Beasts/Swarm models inside a terrain area containing a light or dense feature are limited to a 15-inch detection range unless their unit made ranged attacks this or the previous turn.
 - Obscuring visibility is implemented for 11th: terrain areas containing light or dense features block model LOS drawn through the area, while models inside the area can draw LOS through it.
 - Gone to Ground applies the 12-inch detection range only when an intervening dense terrain feature conceals the model from the attacking model; the check uses full model-footprint LOS.
+- Solid terrain uses the available feature height and LOS-blocking geometry; exact enclosed-gap/opening behavior remains dependent on richer terrain feature data than the current rectangular layout schema stores.
 - Terrain features now carry an explicit `light` or `dense` category for these visibility checks; legacy layouts without the field receive deterministic compatibility inference (`ruin` non-low features are dense, other features are light).
 - Terrain layouts load from JSON through the shared registry.
 - `11e-event-layouts.json` currently contains 45 layout entries, but they still need exact validation/finalization against the Event Companion source.
