@@ -114,6 +114,24 @@ test('army validation accepts model base fallback geometry', () => {
   assert.equal(result.valid, true);
 });
 
+test('army validation rejects malformed typed movement and damaged profiles', () => {
+  const result = validateImportedArmy(army([unit({
+    movementOverrides: { moveModifier: Number.NaN, advanceModifier: Number.POSITIVE_INFINITY, advanceRoll: ' ' },
+    damagedProfile: { maxRemainingWounds: 0, hitRollModifier: Number.NaN, objectiveControlModifier: Number.POSITIVE_INFINITY },
+  })]));
+  assert.equal(result.valid, false);
+  assert.equal(result.errors.filter(error => error.code === 'movement-override-invalid').length, 3);
+  assert.equal(result.errors.filter(error => error.code === 'damaged-profile-invalid').length, 3);
+});
+
+test('army validation accepts valid typed movement and damaged profiles', () => {
+  const result = validateImportedArmy(army([unit({
+    movementOverrides: { moveModifier: 2, advanceModifier: 1, advanceRoll: 'D6' },
+    damagedProfile: { maxRemainingWounds: 1, hitRollModifier: 1, objectiveControlModifier: -1 },
+  })]));
+  assert.equal(result.valid, true);
+});
+
 test('army validation allows a transport assignment only when capacity exists', () => {
   const transport = unit({ rosterId: 'transport', name: 'Transport', transportCapacity: 10 });
   const passenger = unit({ rosterId: 'passenger', name: 'Passenger', deployment: { mode: 'transport', transportUnitId: 'transport' } });

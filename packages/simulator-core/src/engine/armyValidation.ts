@@ -184,6 +184,37 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
         }
       });
     }
+    if (unit.movementOverrides !== undefined
+      && (!unit.movementOverrides || typeof unit.movementOverrides !== 'object' || Array.isArray(unit.movementOverrides))) {
+      errors.push(issue('error', 'movement-override-shape-invalid', `${label} has an invalid movement override shape.`, index));
+    } else if (unit.movementOverrides) {
+      const movement = unit.movementOverrides;
+      if (movement.moveModifier !== undefined && !Number.isFinite(movement.moveModifier)) {
+        errors.push(issue('error', 'movement-override-invalid', `${label} has an invalid Move modifier.`, index));
+      }
+      if (movement.advanceModifier !== undefined && !Number.isFinite(movement.advanceModifier)) {
+        errors.push(issue('error', 'movement-override-invalid', `${label} has an invalid Advance modifier.`, index));
+      }
+      if (movement.advanceRoll !== undefined
+        && (typeof movement.advanceRoll !== 'string' || !movement.advanceRoll.trim())) {
+        errors.push(issue('error', 'movement-override-invalid', `${label} has an invalid Advance roll override.`, index));
+      }
+    }
+    if (unit.damagedProfile !== undefined
+      && (!unit.damagedProfile || typeof unit.damagedProfile !== 'object' || Array.isArray(unit.damagedProfile))) {
+      errors.push(issue('error', 'damaged-profile-shape-invalid', `${label} has an invalid damaged profile shape.`, index));
+    } else if (unit.damagedProfile) {
+      const damaged = unit.damagedProfile;
+      if (!Number.isInteger(damaged.maxRemainingWounds) || damaged.maxRemainingWounds < 1) {
+        errors.push(issue('error', 'damaged-profile-invalid', `${label} has an invalid damaged-profile wound threshold.`, index));
+      }
+      if (damaged.hitRollModifier !== undefined && !Number.isFinite(damaged.hitRollModifier)) {
+        errors.push(issue('error', 'damaged-profile-invalid', `${label} has an invalid damaged-profile Hit modifier.`, index));
+      }
+      if (damaged.objectiveControlModifier !== undefined && !Number.isFinite(damaged.objectiveControlModifier)) {
+        errors.push(issue('error', 'damaged-profile-invalid', `${label} has an invalid damaged-profile Objective Control modifier.`, index));
+      }
+    }
     for (const [characteristic, value] of [
       ['Move', unit.move],
       ['Toughness', unit.toughness],
