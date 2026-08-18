@@ -42,6 +42,17 @@ test('army validation catches duplicate IDs and invalid transport references', (
   assert.ok(result.errors.some(error => error.code === 'transport-target-invalid'));
 });
 
+test('army validation rejects malformed deployment modes and transport capacities', () => {
+  const malformedDeployment = { mode: 'teleport' } as unknown as UnitProfile['deployment'];
+  const result = validateImportedArmy(army([
+    unit({ deployment: malformedDeployment }),
+    unit({ rosterId: 'transport', transportCapacity: 0 }),
+  ]));
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.code === 'deployment-mode-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'transport-capacity-invalid'));
+});
+
 test('army validation allows a transport assignment only when capacity exists', () => {
   const transport = unit({ rosterId: 'transport', name: 'Transport', transportCapacity: 10 });
   const passenger = unit({ rosterId: 'passenger', name: 'Passenger', deployment: { mode: 'transport', transportUnitId: 'transport' } });

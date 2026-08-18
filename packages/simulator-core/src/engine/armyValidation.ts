@@ -21,6 +21,8 @@ export interface ArmyValidationOptions {
   battleSizeId?: string;
 }
 
+const DEPLOYMENT_MODES = new Set<string>(Object.values(UNIT_DEPLOYMENT_MODE));
+
 function issue(
   severity: ArmyValidationSeverity,
   code: string,
@@ -100,6 +102,10 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
     if (!Number.isInteger(unit.baseModelCount) || unit.baseModelCount < 1) {
       errors.push(issue('error', 'model-count-invalid', `${label} must contain at least one model.`, index));
     }
+    if (unit.transportCapacity !== undefined
+      && (!Number.isInteger(unit.transportCapacity) || unit.transportCapacity < 1)) {
+      errors.push(issue('error', 'transport-capacity-invalid', `${label} has an invalid transport capacity.`, index));
+    }
     for (const [characteristic, value] of [
       ['Move', unit.move],
       ['Toughness', unit.toughness],
@@ -121,6 +127,9 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
     }
 
     const deployment = unit.deployment;
+    if (deployment && !DEPLOYMENT_MODES.has(deployment.mode)) {
+      errors.push(issue('error', 'deployment-mode-invalid', `${label} uses an unsupported deployment mode.`, index));
+    }
     if (deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport) {
       if (!deployment.transportUnitId && !deployment.transportName) {
         errors.push(issue('error', 'transport-target-missing', `${label} is assigned to a transport but has no transport target.`, index));
