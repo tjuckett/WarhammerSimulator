@@ -4717,6 +4717,7 @@ export function playUnitCanEmbark(
     !unit
     || unit.embarkedInUnitId
     || unitIsTransportProfile(unit.profile)
+    || unit.disembarkedThisTurn
     || unit.movementComplete
     || unit.movementAction === 'fellBack'
     || unit.fellBack
@@ -4848,6 +4849,7 @@ export function disembarkPlayUnit(
 
   const unit = existingPassenger ?? makeBattleUnit(profile, side, positions);
   unit.embarkedInUnitId = undefined;
+  unit.disembarkedThisTurn = true;
   unit.modelPositions = positions;
   unit.modelRotations = positions.map(() => side === 0 ? 0 : 180);
   unit.position = centroid(positions);
@@ -7043,7 +7045,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   s.firingDeckLockedUnitIds = undefined;
   s.units.forEach(clearFiringDeckWeapons);
   s.units.forEach(u => { u.overrunFightSelected = undefined; u.overrunPiledIn = undefined; });
-  myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.firedWeaponIndices = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.takingToSkies = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; u.heroicInterventionMode = undefined; u.actionStartedThisTurn = undefined; u.embarkedThisTurn = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.combatDisembarkedThisTurn = undefined; u.rapidDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
+  myUnits().forEach(u => { u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.firedWeaponIndices = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.takingToSkies = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; u.heroicInterventionMode = undefined; u.actionStartedThisTurn = undefined; u.embarkedThisTurn = undefined; u.disembarkedThisTurn = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.combatDisembarkedThisTurn = undefined; u.rapidDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
 
   // Command
   newLogs.push(...runSimulatedCommandPhase(s, side, rules));

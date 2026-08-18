@@ -94,6 +94,8 @@ export interface BattleUnit {
   embarkedInUnitId?: string;
   /** Core 18.04: a unit that embarked this turn cannot disembark this phase. */
   embarkedThisTurn?: boolean;
+  /** Core 18.02: a unit that disembarked this turn cannot embark again this phase. */
+  disembarkedThisTurn?: boolean;
   emergencyDisembarkedThisTurn?: boolean;
   /** 11e Core 18.04 Combat Disembark restriction for the current turn. */
   combatDisembarkedThisTurn?: boolean;

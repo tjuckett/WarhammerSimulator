@@ -10580,6 +10580,8 @@ test('play Movement disembarks a staged transport passenger before the transport
   const passenger = disembarked.units.find(unit => unit.profile.name === 'Passengers')!;
   assert.ok(passenger);
   assert.equal(passenger.embarkedInUnitId, undefined);
+  assert.equal(passenger.disembarkedThisTurn, true);
+  assert.equal(playUnitCanEmbark(disembarked, passenger.id, 0, 'transport-1'), false);
   assert.equal(passenger.movementComplete, false);
   assert.deepEqual(passenger.movementAllowanceRemainingByModel, [6, 6]);
   assert.match(disembarked.log.at(-1)?.message ?? '', /disembarks from Transport/);
