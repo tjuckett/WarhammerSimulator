@@ -8659,6 +8659,21 @@ test('11th Hidden also blocks Indirect Fire beyond the detection range', () => {
   assert.deepEqual(playShootingWeaponOptions(battle, shooter.id, 0, rules40K11th)[0]?.targetIds, [target.id]);
 });
 
+test('11th Gone to Ground requires the whole model to be concealed by dense terrain', () => {
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const shooter = losTestUnit('gone-to-ground-shooter', 0, { x: 15, y: 20 });
+  shooter.profile.weapons = [{ name: 'Indirect Rifle', range: 48, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: ['Indirect Fire'], isMelee: false }];
+  const target = losTestUnit('gone-to-ground-target', 1, { x: 30, y: 20 });
+  battle.units = [shooter, target];
+  battle.terrain = [terrainMat({
+    id: 'narrow-dense-screen', type: 'ruin', x: 28, y: 18, width: 5, height: 4,
+    features: [{ id: 'narrow-screen', name: 'Narrow Dense Screen', x: 22, y: 19.9, width: 0.2, height: 0.2, featureHeight: 'tall', category: 'dense', blocksLOS: true, blocksMovement: false, difficult: false }],
+  })];
+
+  assert.deepEqual(playShootingWeaponOptions(battle, shooter.id, 0, rules40K11th)[0]?.targetIds, [target.id]);
+});
+
 test('Heavy weapons get +1 to Hit when the shooter Remained Stationary', () => {
   const battle = state('movement');
   battle.movementStep = 'reinforcements';

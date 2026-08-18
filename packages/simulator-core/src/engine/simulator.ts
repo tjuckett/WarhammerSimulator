@@ -616,6 +616,30 @@ function terrainCanHideModels(terrain: Terrain): boolean {
   return terrain.features.some(feature => feature.category === 'light' || feature.category === 'dense');
 }
 
+function modelIsGoneToGroundFromDenseTerrain(
+  state: BattleState,
+  source: BattleUnit,
+  sourceModelIndex: number,
+  target: BattleUnit,
+  targetModelIndex: number,
+): boolean {
+  const denseTerrain = state.terrain
+    .map(terrain => ({
+      ...terrain,
+      features: terrain.features.filter(feature => feature.category === 'dense'),
+    }))
+    .filter(terrain => terrain.features.length > 0);
+  if (!denseTerrain.length) return false;
+  return !hasLOSEdgeToEdge(
+    source.modelPositions[sourceModelIndex],
+    modelBaseRadius(source, sourceModelIndex),
+    target.modelPositions[targetModelIndex],
+    modelBaseRadius(target, targetModelIndex),
+    denseTerrain,
+    state.ruleset?.edition,
+  );
+}
+
 function modelIsHiddenFrom(
   state: BattleState,
   source: BattleUnit,
@@ -633,13 +657,12 @@ function modelIsHiddenFrom(
     terrainCanHideModels(terrain)
       && circleFullyInTerrain(targetModel, modelBaseRadius(target, targetModelIndex), terrain),
   )) return false;
-  const goneToGround = state.terrain.some(terrain =>
-    terrain.features.some(feature =>
-      feature.featureHeight === 'tall'
-      && feature.category === 'dense'
-      && feature.blocksLOS
-      && linePassesThroughTerrain(sourceModel, targetModel, feature),
-    ),
+  const goneToGround = modelIsGoneToGroundFromDenseTerrain(
+    state,
+    source,
+    sourceModelIndex,
+    target,
+    targetModelIndex,
   );
   return modelBaseEdgeDistance3d(
     sourceModel,
