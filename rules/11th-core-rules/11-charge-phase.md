@@ -17,9 +17,10 @@ Source: https://gdmissions.app/11th/rules/core-rules
 - Successful charge moves and failed charge activation are represented.
 - Charge restrictions after Advance, Fall Back, Reinforcements, and actions are covered.
 - Aircraft restrictions and Heroic Intervention hooks exist.
+- Charge resolution rejects a move that would end in engagement with an undeclared enemy unit; attached components of the declared target remain valid declared targets.
 
 ## TODO
 
 - Re-audit exact charge timing and Heroic Intervention wording.
-- Add tests for edge cases around failed charges and multiple targets.
+- Full multi-target declaration and selection remains to be added; the current action flow supports one declared target and fail-closes undeclared engagements.
 

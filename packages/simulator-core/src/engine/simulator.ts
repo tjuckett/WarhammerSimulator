@@ -3408,6 +3408,30 @@ export function chargePlayUnitTarget(
     return failed;
   }
 
+  const declaredTargetComponentIds = new Set(
+    attachedUnitComponents(s, chargeTarget).map(component => component.id),
+  );
+  const undeclaredEnemyInEngagement = enemies(s, side).some(enemy =>
+    !declaredTargetComponentIds.has(enemy.id)
+      && inEngagement(chargingUnit, [enemy], rules.engagementRange()),
+  );
+  if (undeclaredEnemyInEngagement) {
+    const failed = clone(state);
+    const failedUnit = failed.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
+    for (const component of attachedUnitComponents(failed, failedUnit)) {
+      component.activated = true;
+      component.heroicInterventionThisPhase = undefined;
+      component.heroicInterventionMode = undefined;
+      component.takingToSkies = undefined;
+    }
+    logs.push(log(failed, side, failedUnit.profile.name,
+      `${failedUnit.profile.name} cannot complete the charge while engaging an undeclared enemy unit.`,
+      'charge',
+    ));
+    failed.log = [...failed.log, ...logs];
+    return failed;
+  }
+
   for (const component of attachedUnitComponents(s, chargingUnit)) {
     component.activated = true;
     component.charged = !heroicIntervention;

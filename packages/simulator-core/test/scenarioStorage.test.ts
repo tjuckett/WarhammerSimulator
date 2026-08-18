@@ -6202,6 +6202,25 @@ test('11th Take to the Skies reduces charge maximum distance and replays the dec
   }
 });
 
+test('charge fails when the move would engage an undeclared enemy unit', () => {
+  const battle = state('charge');
+  const charger = losTestUnit('charger', 0, { x: 10, y: 10 });
+  const declaredTarget = losTestUnit('declared-target', 1, { x: 16, y: 10 });
+  const undeclaredTarget = losTestUnit('undeclared-target', 1, { x: 16, y: 11 });
+  battle.units = [charger, declaredTarget, undeclaredTarget];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const failed = chargePlayUnitTarget(battle, charger.id, 0, declaredTarget.id, rules40K10th);
+    assert.equal(failed.units.find(unit => unit.id === charger.id)?.position.x, charger.position.x);
+    assert.equal(failed.units.find(unit => unit.id === charger.id)?.charged, false);
+    assert.match(failed.log.at(-1)?.message ?? '', /undeclared enemy unit/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('11th Surge Move validates trigger state, closest target, movement lock, replay and save', async () => {
   installStorage();
   const battle = state('shooting');
