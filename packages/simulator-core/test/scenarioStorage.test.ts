@@ -4,7 +4,7 @@ import type { BattleState, BattleUnit, Phase, Position, PrimaryMissionScoringRec
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
 import { simulatePlayerTurn } from '../src/engine/simulator';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayScoutMove, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, decoyObjectiveOptions, declarePlaySuperHeavyMobile, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playDisembarkModes, playFightActivationUnitIds, playFightWeaponOptions, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playScoutMoveAllowance, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, resolvePendingDeadlyDemises, resolvePlaySurgeMove, rotatePlayModels, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, simulateNextUnit, simulationNextUnitId, snapShootPlayUnitWeapon, startPlayFightStep, startPlayScoutMove, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayScoutMove, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, createDeploymentState, decoyObjectiveOptions, declarePlaySuperHeavyMobile, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playDisembarkModes, playFightActivationUnitIds, playFightWeaponOptions, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playScoutMoveAllowance, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, resolvePendingDeadlyDemises, resolvePlaySurgeMove, rotatePlayModels, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, simulateNextUnit, simulationNextUnitId, snapShootPlayUnitWeapon, startPlayFightStep, startPlayScoutMove, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -11736,6 +11736,37 @@ test('11th edition Aircraft cannot use the normal movement or pivot controls', (
   const rotated = rotatePlayModels(battle, aircraft.id, 0, [0], 90);
   assert.equal(rotated.units[0].facingDeg, 0);
   assert.equal(simulateNextUnit(battle, rules40K11th).units[0].position.x, aircraft.position.x);
+});
+
+test('11th edition Aircraft start in Strategic Reserves during deployment', () => {
+  const aircraftProfile = {
+    name: 'Aircraft',
+    move: 20,
+    toughness: 9,
+    save: 3,
+    wounds: 10,
+    leadership: 7,
+    oc: 0,
+    baseModelCount: 1,
+    keywords: ['Aircraft', 'Vehicle', 'Fly'],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+  };
+  const aircraftArmy: ImportedArmy = { ...emptyArmy, units: [aircraftProfile] };
+
+  const deployment = createDeploymentState(aircraftArmy, '#00f', emptyArmy, '#f00', [], 'balanced', 'balanced', undefined, undefined, rules40K11th);
+  assert.equal(deployment.unplacedUnits[0].length, 0);
+  assert.equal(deployment.units.length, 1);
+  assert.equal(deployment.units[0].inStrategicReserves, true);
+
+  const legacyDeployment = createDeploymentState(aircraftArmy, '#00f', emptyArmy, '#f00', [], 'balanced', 'balanced', undefined, undefined, rules40K10th);
+  assert.equal(legacyDeployment.unplacedUnits[0].length, 1);
+  assert.equal(legacyDeployment.units.length, 0);
+
+  const battle = createBattleState(aircraftArmy, '#00f', emptyArmy, '#f00', [], 'balanced', 'balanced', undefined, undefined, rules40K11th);
+  assert.equal(battle.units.filter(unit => unit.profile.name === 'Aircraft').length, 1);
+  assert.equal(battle.units[0].inStrategicReserves, true);
 });
 
 test('Aircraft fight restrictions only allow melee with Fly units', () => {

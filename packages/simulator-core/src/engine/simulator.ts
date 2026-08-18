@@ -4223,6 +4223,37 @@ function unitIsStagedReinforcement(unit: UnitProfile): boolean {
     || unit.deployment?.mode === UNIT_DEPLOYMENT_MODE.StrategicReserve;
 }
 
+function profileIsAircraft(profile: UnitProfile): boolean {
+  return profile.keywords.some(keyword => keyword.toLowerCase() === 'aircraft');
+}
+
+function deployableProfilesForRules(army: ImportedArmy, rules: RulesEdition): UnitProfile[] {
+  const profiles = deployableDrops(army);
+  return rules.metadata.edition === '11e'
+    ? profiles.filter(profile => !profileIsAircraft(profile))
+    : profiles;
+}
+
+function add11eAircraftStrategicReserves(
+  units: BattleUnit[],
+  army: ImportedArmy,
+  side: Side,
+  board: ReturnType<typeof boardFormatForId>,
+): void {
+  if (!army.units.length) return;
+  deployableDrops(army).filter(profileIsAircraft).forEach(profile => {
+    const reservePosition = { x: side === 0 ? -100 : board.width + 100, y: board.height / 2 };
+    const unit = makeBattleUnit(profile, side, Array.from({ length: profile.baseModelCount }, () => ({ ...reservePosition })));
+    unit.inStrategicReserves = true;
+    units.push(unit);
+    attachedFollowersFor(army, profile).forEach(leader => {
+      const leaderUnit = makeBattleUnit(leader, side, Array.from({ length: leader.baseModelCount }, () => ({ ...reservePosition })), unit.id, unit.tabletopUnitId);
+      leaderUnit.inStrategicReserves = true;
+      units.push(leaderUnit);
+    });
+  });
+}
+
 function reinforcementPlacementIsOutsideEnemyRange(
   state: BattleState,
   side: Side,
@@ -4359,8 +4390,8 @@ export function createBattleState(
   const objectives: Position[] = clone(objectivesOverride ?? DEFAULT_OBJECTIVES);
 
   const deployment = setupDeploymentZoneSource(setup);
-  const army1Deployable = deployableDrops(army1);
-  const army2Deployable = deployableDrops(army2);
+  const army1Deployable = deployableProfilesForRules(army1, rules);
+  const army2Deployable = deployableProfilesForRules(army2, rules);
   const positions1 = deployArmy(army1Deployable, 0, strategy1, terrain, objectives, deployment, board);
   const positions2 = deployArmy(army2Deployable, 1, strategy2, terrain, objectives, deployment, board);
 
@@ -4369,7 +4400,7 @@ export function createBattleState(
   const allPlacedModelRadii: number[] = [];
 
   const place = (army: ImportedArmy, side: Side, positions: Position[], terrain: Terrain[]) => {
-    deployableDrops(army).forEach((profile, i) => {
+    deployableProfilesForRules(army, rules).forEach((profile, i) => {
       const startPos = positions[i];
       const modelPositions = deployModelFormation(
         startPos, profile.baseModelCount, unitRole(profile), side as 0 | 1,
@@ -4407,6 +4438,10 @@ export function createBattleState(
 
   place(army1, 0, positions1, terrain);
   place(army2, 1, positions2, terrain);
+  if (rules.metadata.edition === '11e') {
+    add11eAircraftStrategicReserves(units, army1, 0, board);
+    add11eAircraftStrategicReserves(units, army2, 1, board);
+  }
 
   return {
     ruleset: rulesetMetadataForState(rules),
@@ -4480,10 +4515,15 @@ export function createDeploymentState(
     commandPoints: [0, 0],
     stratagemUses: [],
     abilityUses: [],
-    unplacedUnits: [deployableDrops(army1), deployableDrops(army2)],
+    unplacedUnits: [deployableProfilesForRules(army1, rules), deployableProfilesForRules(army2, rules)],
     deployStrategies: [strategy1, strategy2],
     setup: setup ? { ...setup, boardFormat: board.id } : setup,
   };
+
+  if (rules.metadata.edition === '11e') {
+    add11eAircraftStrategicReserves(state.units, army1, 0, board);
+    add11eAircraftStrategicReserves(state.units, army2, 1, board);
+  }
 
   state.log = [log(state, 0, '', '═══ DEPLOYMENT PHASE ═══', 'phase')];
   return state;
@@ -4505,7 +4545,7 @@ export function placeNextUnit(state: BattleState): BattleState {
     return s;
   }
 
-  const totalUnits = deployableDrops(s.armies[side].army).length;
+  const totalUnits = deployableProfilesForRules(s.armies[side].army, rulesEditionForRuleset(s.ruleset)).length;
   const dropsCompleted = totalUnits - unplaced.length;
 
   const unitIdx = selectUnitToDrop(unplaced, dropsCompleted, totalUnits);
@@ -4897,7 +4937,7 @@ function coherencyListLabel(units: BattleUnit[]): string {
 }
 
 function coherencyModelLists(state: BattleState): Array<{ label: string; models: CoherencyModel[] }> {
-  const deployedUnits = state.units.filter(unit => !unit.destroyed && !unit.embarkedInUnitId);
+  const deployedUnits = state.units.filter(unit => !unit.destroyed && !unit.embarkedInUnitId && !unit.inStrategicReserves);
   const handled = new Set<string>();
   const lists: Array<{ label: string; models: CoherencyModel[] }> = [];
 
@@ -6710,7 +6750,7 @@ export function playDeploymentIssues(state: BattleState): string[] {
   }
 
   for (const unit of state.units) {
-    if (unit.destroyed) continue;
+    if (unit.destroyed || unit.inStrategicReserves) continue;
     if (unitHasBaseOverlap(state, unit)) issues.push(`${unit.profile.name} has overlapping bases.`);
 
     const board = boardFormatForState(state);
