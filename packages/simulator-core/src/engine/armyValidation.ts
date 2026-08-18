@@ -22,6 +22,8 @@ export interface ArmyValidationOptions {
 }
 
 const DEPLOYMENT_MODES = new Set<string>(Object.values(UNIT_DEPLOYMENT_MODE));
+const RULE_TAGS = new Set(['Aura', 'Psychic']);
+const RULE_CATEGORIES = new Set(['datasheet', 'faction', 'wargear']);
 
 function issue(
   severity: ArmyValidationSeverity,
@@ -70,6 +72,14 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
   army.units.forEach((unit, index) => {
     const label = unit.name.trim() || `Unit ${index + 1}`;
     const weapons = Array.isArray(unit.weapons) ? unit.weapons : [];
+    for (const [keywordType, keywords] of [
+      ['unit', unit.keywords],
+      ['faction', unit.factionKeywords],
+    ] as const) {
+      if (!Array.isArray(keywords) || keywords.some(keyword => typeof keyword !== 'string' || !keyword.trim())) {
+        errors.push(issue('error', 'keyword-list-invalid', `${label} has an invalid ${keywordType} keyword list.`, index));
+      }
+    }
 
     if (catalog) {
       if (army.faction.trim().toLowerCase() !== catalog.faction.trim().toLowerCase()) {
@@ -137,6 +147,51 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
         }
       });
     }
+    const validateRules = (value: unknown, ruleType: string): void => {
+      if (!Array.isArray(value)) {
+        errors.push(issue('error', 'rule-list-shape-invalid', `${label} has an invalid ${ruleType} rule list.`, index));
+        return;
+      }
+      value.forEach((rule, ruleIndex) => {
+        const ruleLabel = `${label} ${ruleType} rule ${ruleIndex + 1}`;
+        if (!rule || typeof rule !== 'object' || Array.isArray(rule)) {
+          errors.push(issue('error', 'rule-shape-invalid', `${ruleLabel} has an invalid shape.`, index));
+          return;
+        }
+        const candidate = rule as Record<string, unknown>;
+        if (typeof candidate.name !== 'string' || !candidate.name.trim()) {
+          errors.push(issue('error', 'rule-name-invalid', `${ruleLabel} has no name.`, index));
+        }
+        if (typeof candidate.description !== 'string') {
+          errors.push(issue('error', 'rule-description-invalid', `${ruleLabel} has an invalid description.`, index));
+        }
+        if (candidate.tags !== undefined
+          && (!Array.isArray(candidate.tags)
+            || candidate.tags.some(tag => typeof tag !== 'string' || !RULE_TAGS.has(tag)))) {
+          errors.push(issue('error', 'rule-tags-invalid', `${ruleLabel} has unsupported tags.`, index));
+        }
+        if (candidate.category !== undefined
+          && (typeof candidate.category !== 'string' || !RULE_CATEGORIES.has(candidate.category))) {
+          errors.push(issue('error', 'rule-category-invalid', `${ruleLabel} has an unsupported category.`, index));
+        }
+        if (candidate.range !== undefined
+          && (typeof candidate.range !== 'number' || !finitePositive(candidate.range) && candidate.range !== 0)) {
+          errors.push(issue('error', 'rule-range-invalid', `${ruleLabel} has an invalid range.`, index));
+        }
+        if (candidate.bearerModelIndex !== undefined
+          && (typeof candidate.bearerModelIndex !== 'number'
+            || !Number.isInteger(candidate.bearerModelIndex)
+            || candidate.bearerModelIndex < 0)) {
+          errors.push(issue('error', 'rule-bearer-index-invalid', `${ruleLabel} has an invalid bearer model index.`, index));
+        }
+        if (candidate.appliesAcrossArmyFactions !== undefined
+          && typeof candidate.appliesAcrossArmyFactions !== 'boolean') {
+          errors.push(issue('error', 'rule-scope-invalid', `${ruleLabel} has an invalid army-faction scope flag.`, index));
+        }
+      });
+    };
+    validateRules(unit.abilities, 'ability');
+    if (unit.rules !== undefined) validateRules(unit.rules, 'datasheet');
     if (!Number.isInteger(unit.baseModelCount) || unit.baseModelCount < 1) {
       errors.push(issue('error', 'model-count-invalid', `${label} must contain at least one model.`, index));
     }

@@ -158,6 +158,38 @@ test('army validation accepts valid weapon profiles', () => {
   assert.equal(result.valid, true);
 });
 
+test('army validation rejects malformed rule and keyword profiles', () => {
+  const result = validateImportedArmy(army([unit({
+    keywords: ['Infantry', ' '],
+    factionKeywords: [3 as unknown as string],
+    abilities: [{
+      name: '', description: 3 as unknown as string, tags: ['Unknown'] as unknown as ['Aura'], category: 'unknown' as 'datasheet',
+      range: -1, bearerModelIndex: -1, appliesAcrossArmyFactions: 'yes' as unknown as boolean,
+    }],
+    rules: [null as unknown as { name: string; description: string }],
+  })]));
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.code === 'keyword-list-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'rule-name-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'rule-description-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'rule-tags-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'rule-category-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'rule-range-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'rule-bearer-index-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'rule-scope-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'rule-shape-invalid'));
+});
+
+test('army validation accepts valid rule and keyword profiles', () => {
+  const result = validateImportedArmy(army([unit({
+    keywords: ['Infantry'],
+    factionKeywords: ['Test'],
+    abilities: [{ name: 'Aura', description: 'Friendly units within range gain a benefit.', tags: ['Aura'], range: 6, category: 'faction' }],
+    rules: [{ name: 'Wargear', description: 'A source-defined rule.', category: 'wargear', bearerModelIndex: 0 }],
+  })]));
+  assert.equal(result.valid, true);
+});
+
 test('army validation allows a transport assignment only when capacity exists', () => {
   const transport = unit({ rosterId: 'transport', name: 'Transport', transportCapacity: 10 });
   const passenger = unit({ rosterId: 'passenger', name: 'Passenger', deployment: { mode: 'transport', transportUnitId: 'transport' } });
