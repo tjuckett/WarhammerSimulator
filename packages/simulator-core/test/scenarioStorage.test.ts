@@ -707,7 +707,7 @@ test('11th secondary mission rules track transcribed scoring text', () => {
   assert.match(secureNoMansLand?.scoring[0].sourceText ?? '', /two or more objectives/);
 });
 
-test('11th edition preview blocks multiple stratagems targeting the same unit in a phase', () => {
+test('11th edition blocks multiple stratagems targeting the same unit in a phase', () => {
   const battle = state('fight');
   battle.commandPoints = [3, 0];
   const character = losTestUnit('character-1', 0, { x: 10, y: 10 });
@@ -799,7 +799,7 @@ test('11th Epic Challenge constrains melee damage allocation to the selected Cha
   assert.match(screenedShooting.log.map(entry => entry.message).join(' '), /Smokescreen: target has Benefit of Cover/);
 });
 
-test('11th edition preview Insane Bravery can only be used once per battle', () => {
+test('11th edition Insane Bravery can only be used once per battle', () => {
   const battle = state('command');
   battle.commandPoints = [2, 0];
   const unit = losTestUnit('blue-1', 0, { x: 10, y: 10 });
@@ -816,7 +816,7 @@ test('11th edition preview Insane Bravery can only be used once per battle', () 
   assert.deepEqual(second.commandPoints, [1, 0]);
 });
 
-test('11th edition preview Insane Bravery clears Battle-shock on its target', () => {
+test('11th edition Insane Bravery clears Battle-shock on its target', () => {
   const battle = state('command');
   battle.commandPoints = [1, 0];
   const unit = losTestUnit('blue-1', 0, { x: 10, y: 10 });

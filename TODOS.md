@@ -240,8 +240,8 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: final Core 13.09 Hidden now tracks current/previous-turn ranged attacks and limits quiet Infantry/Beasts/Swarm visibility to the 15-inch detection range; Core 13.11.01 Gone to Ground reduces that detection range to 12 inches behind an intervening tall blocking feature. Terrain features now carry explicit light/dense categories with deterministic inference for legacy layouts; exact source tagging for imported Event Companion layouts remains open.
   - Progress: charge resolution and legal-action generation now support serialized singleton and multi-target declarations, require engagement with every declared target, and fail closed for undeclared enemies.
   - Progress: Heroic Intervention's Into the Fray surcharge is now reflected in both command-point state and the serialized battle log.
-- [ ] Remove or narrow the 11th preview notice once final 11th rules are fully modeled.
-  - Progress: the ruleset now identifies the tracked final-source implementation as source-audited and partial, with remaining unsupported mechanics described explicitly instead of presenting the whole edition as an unavailable preview.
+- [x] Narrow the 11th preview notice while final-source implementation remains partial.
+  - Progress: the ruleset and UI now present 11th Edition as source-audited and partial; stable preview-era metadata IDs remain only for saved-game compatibility, and the complete final-source re-audit remains tracked separately above.
 - [x] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.
   - Progress: pile-in and consolidation availability, plus Fight-step start/end gating, now rely on focused core rules helpers rather than duplicating edition checks in React; phase-specific labels remain presentation concerns.
   - Progress: shared disembark-mode resolution now owns 11th Combat/Rapid Disembark flags in simulator-core and is reused by legal actions and the play UI, including Reinforcements-step Rapid Disembark.

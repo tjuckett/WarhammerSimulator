@@ -245,7 +245,7 @@ export const rules40K10th: RulesEdition = {
   reinforcementRange(): number { return 9; },
 };
 
-// ─── 40K 11th Edition (stub) ──────────────────────────────────────────────────
+// ─── 40K 11th Edition (source-audited, partial) ──────────────────────────────
 const ELEVENTH_EDITION_TARGET_ONCE_PER_PHASE = true;
 
 export const rules40K11th: RulesEdition = {
