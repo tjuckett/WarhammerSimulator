@@ -92,6 +92,28 @@ test('army validation accepts valid grouped model stat profiles', () => {
   assert.equal(result.valid, true);
 });
 
+test('army validation rejects malformed model base geometry', () => {
+  const result = validateImportedArmy(army([unit({
+    modelBases: [
+      { shape: 'round', diameterMm: 0 },
+      { shape: 'oval', widthMm: 40, lengthMm: Number.NaN },
+      { shape: 'hull', widthMm: 50, lengthMm: 75, footprint: 'triangle' as 'square' },
+      { shape: 'other', label: ' ' },
+    ],
+  })]));
+  assert.equal(result.valid, false);
+  assert.equal(result.errors.filter(error => error.code === 'model-base-dimension-invalid').length, 2);
+  assert.ok(result.errors.some(error => error.code === 'model-base-footprint-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'model-base-label-invalid'));
+});
+
+test('army validation accepts model base fallback geometry', () => {
+  const result = validateImportedArmy(army([unit({
+    modelBases: [{ shape: 'hull', widthMm: 50, lengthMm: 75, footprint: 'rectangle' }],
+  })]));
+  assert.equal(result.valid, true);
+});
+
 test('army validation allows a transport assignment only when capacity exists', () => {
   const transport = unit({ rosterId: 'transport', name: 'Transport', transportCapacity: 10 });
   const passenger = unit({ rosterId: 'passenger', name: 'Passenger', deployment: { mode: 'transport', transportUnitId: 'transport' } });

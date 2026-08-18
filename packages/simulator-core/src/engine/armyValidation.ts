@@ -153,6 +153,37 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
         }
       });
     }
+    if (unit.modelBases !== undefined && !Array.isArray(unit.modelBases)) {
+      errors.push(issue('error', 'model-base-shape-invalid', `${label} has an invalid model base shape.`, index));
+    } else {
+      unit.modelBases?.forEach((base, baseIndex) => {
+        const baseLabel = `${label} model base ${baseIndex + 1}`;
+        if (!base || typeof base.shape !== 'string') {
+          errors.push(issue('error', 'model-base-shape-invalid', `${baseLabel} has an invalid shape.`, index));
+          return;
+        }
+        if (base.shape === 'round') {
+          if (!finitePositive(base.diameterMm)) {
+            errors.push(issue('error', 'model-base-dimension-invalid', `${baseLabel} has an invalid diameter.`, index));
+          }
+        } else if (base.shape === 'oval' || base.shape === 'hull') {
+          if (!finitePositive(base.widthMm) || !finitePositive(base.lengthMm)) {
+            errors.push(issue('error', 'model-base-dimension-invalid', `${baseLabel} has invalid dimensions.`, index));
+          }
+          if (base.shape === 'hull'
+            && base.footprint !== undefined
+            && !['square', 'rectangle', 'circle'].includes(base.footprint)) {
+            errors.push(issue('error', 'model-base-footprint-invalid', `${baseLabel} has an unsupported hull footprint.`, index));
+          }
+        } else if (base.shape === 'other') {
+          if (typeof base.label !== 'string' || !base.label.trim()) {
+            errors.push(issue('error', 'model-base-label-invalid', `${baseLabel} needs a label.`, index));
+          }
+        } else {
+          errors.push(issue('error', 'model-base-shape-invalid', `${baseLabel} has an unsupported shape.`, index));
+        }
+      });
+    }
     for (const [characteristic, value] of [
       ['Move', unit.move],
       ['Toughness', unit.toughness],
