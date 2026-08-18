@@ -64,6 +64,34 @@ test('army validation rejects invalid model weapon loadout references', () => {
   assert.ok(result.errors.some(error => error.code === 'model-loadout-weapon-invalid'));
 });
 
+test('army validation rejects malformed model stat profiles', () => {
+  const result = validateImportedArmy(army([unit({
+    modelProfiles: [{
+      name: '',
+      count: 0,
+      move: 0,
+      toughness: Number.NaN,
+      save: 4,
+      wounds: 1,
+      leadership: 7,
+      oc: -1,
+    }],
+  })]));
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.code === 'model-profile-name-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'model-profile-count-invalid'));
+  assert.equal(result.errors.filter(error => error.code === 'model-profile-stat-invalid').length, 3);
+});
+
+test('army validation accepts valid grouped model stat profiles', () => {
+  const result = validateImportedArmy(army([unit({
+    modelProfiles: [{
+      name: 'Battleline', count: 5, move: 6, toughness: 4, save: 4, wounds: 2, leadership: 7, oc: 1,
+    }],
+  })]));
+  assert.equal(result.valid, true);
+});
+
 test('army validation allows a transport assignment only when capacity exists', () => {
   const transport = unit({ rosterId: 'transport', name: 'Transport', transportCapacity: 10 });
   const passenger = unit({ rosterId: 'passenger', name: 'Passenger', deployment: { mode: 'transport', transportUnitId: 'transport' } });

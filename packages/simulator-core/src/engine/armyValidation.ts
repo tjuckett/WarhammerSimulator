@@ -128,6 +128,31 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
         });
       });
     }
+    if (unit.modelProfiles !== undefined && !Array.isArray(unit.modelProfiles)) {
+      errors.push(issue('error', 'model-profile-shape-invalid', `${label} has an invalid model stat profile shape.`, index));
+    } else {
+      unit.modelProfiles?.forEach((profile, profileIndex) => {
+        const profileLabel = `${label} model profile ${profileIndex + 1}`;
+        if (!profile || typeof profile.name !== 'string' || !profile.name.trim()) {
+          errors.push(issue('error', 'model-profile-name-invalid', `${profileLabel} has no name.`, index));
+        }
+        if (!Number.isInteger(profile?.count) || profile.count < 1) {
+          errors.push(issue('error', 'model-profile-count-invalid', `${profileLabel} must contain at least one model.`, index));
+        }
+        for (const [characteristic, value] of [
+          ['Move', profile?.move],
+          ['Toughness', profile?.toughness],
+          ['Save', profile?.save],
+          ['Wounds', profile?.wounds],
+          ['Leadership', profile?.leadership],
+          ['Objective Control', profile?.oc],
+        ] as const) {
+          if (!finitePositive(value)) {
+            errors.push(issue('error', 'model-profile-stat-invalid', `${profileLabel} has an invalid ${characteristic} characteristic.`, index));
+          }
+        }
+      });
+    }
     for (const [characteristic, value] of [
       ['Move', unit.move],
       ['Toughness', unit.toughness],
