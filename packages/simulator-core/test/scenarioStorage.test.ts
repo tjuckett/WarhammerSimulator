@@ -505,6 +505,26 @@ test('battle-shocked units cannot receive stratagems and have zero objective con
   assert.equal(objectiveControlValue(unit), 0);
 });
 
+test('terrain objective control and action eligibility use damaged-profile objective control', () => {
+  const battle = state('command');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  battle.objectives = [{ x: 10, y: 10 }];
+  battle.objectiveOwners = [null];
+  battle.terrain = [terrainMat({ id: 'objective-area', type: 'ruin', x: 8, y: 8, width: 4, height: 4 })];
+  const damaged = losTestUnit('damaged', 0, { x: 10, y: 10 });
+  damaged.profile.wounds = 3;
+  damaged.profile.damagedProfile = { maxRemainingWounds: 2, objectiveControlModifier: -2 };
+  damaged.remainingModels = 1;
+  damaged.woundsOnLeadModel = 2;
+  battle.units = [damaged];
+
+  const result = updateObjectiveControl(battle, rules40K11th);
+
+  assert.deepEqual(result?.[0].oc, [0, 0]);
+  assert.equal(playUnitCanStartAction(battle, damaged.id, 0, rules40K11th), false);
+});
+
 test('stratagem framework spends command points and records the use once per phase', () => {
   const battle = state('shooting');
   battle.commandPoints = [2, 0];

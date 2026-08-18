@@ -71,9 +71,8 @@ function modelWithinTerrainObjective(unit: BattleUnit, modelIndex: number, terra
 }
 
 function terrainObjectiveControlValue(unit: BattleUnit, terrain: NonNullable<ReturnType<typeof terrainObjectiveForPoint>>): number {
-  if (unit.battleshocked) return 0;
   return unit.modelPositions.reduce((total, _model, modelIndex) =>
-    total + (modelWithinTerrainObjective(unit, modelIndex, terrain) ? unit.profile.oc : 0),
+    total + (modelWithinTerrainObjective(unit, modelIndex, terrain) ? objectiveControlValue(unit) : 0),
   0);
 }
 
