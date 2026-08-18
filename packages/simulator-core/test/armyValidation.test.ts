@@ -190,6 +190,33 @@ test('army validation accepts valid rule and keyword profiles', () => {
   assert.equal(result.valid, true);
 });
 
+test('army validation rejects malformed deployment and attachment relationships', () => {
+  const malformedDeployment = {
+    mode: 'battlefield', transportName: ' ',
+  } as unknown as UnitProfile['deployment'];
+  const malformedAttachment = {
+    attachedToUnitId: 'unit-1', attachedToName: 'Unit',
+  };
+  const result = validateImportedArmy(army([unit({
+    deployment: malformedDeployment,
+    leaderAttachment: malformedAttachment,
+  })]));
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.code === 'deployment-target-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'deployment-target-mode-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'leader-target-ambiguous'));
+  assert.ok(result.errors.some(error => error.code === 'leader-self-reference'));
+});
+
+test('army validation requires targets for transport and leader relationships', () => {
+  const result = validateImportedArmy(army([
+    unit({ deployment: { mode: 'transport' }, leaderAttachment: {} }),
+  ]));
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.code === 'transport-target-missing'));
+  assert.ok(result.errors.some(error => error.code === 'leader-target-missing'));
+});
+
 test('army validation allows a transport assignment only when capacity exists', () => {
   const transport = unit({ rosterId: 'transport', name: 'Transport', transportCapacity: 10 });
   const passenger = unit({ rosterId: 'passenger', name: 'Passenger', deployment: { mode: 'transport', transportUnitId: 'transport' } });

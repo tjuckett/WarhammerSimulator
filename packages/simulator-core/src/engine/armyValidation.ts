@@ -329,10 +329,35 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
     }
 
     const deployment = unit.deployment;
-    if (deployment && !DEPLOYMENT_MODES.has(deployment.mode)) {
+    const deploymentIsObject = deployment !== undefined
+      && deployment !== null
+      && typeof deployment === 'object'
+      && !Array.isArray(deployment);
+    if (deployment !== undefined && !deploymentIsObject) {
+      errors.push(issue('error', 'deployment-shape-invalid', `${label} has an invalid deployment assignment shape.`, index));
+    }
+    if (deploymentIsObject && !DEPLOYMENT_MODES.has(deployment.mode)) {
       errors.push(issue('error', 'deployment-mode-invalid', `${label} uses an unsupported deployment mode.`, index));
     }
-    if (deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport) {
+    if (deploymentIsObject) {
+      for (const [field, value] of [
+        ['transport unit ID', deployment.transportUnitId],
+        ['transport name', deployment.transportName],
+      ] as const) {
+        if (value !== undefined && (typeof value !== 'string' || !value.trim())) {
+          errors.push(issue('error', 'deployment-target-invalid', `${label} has an invalid ${field}.`, index));
+        }
+      }
+      if (deployment.mode !== UNIT_DEPLOYMENT_MODE.Transport
+        && (deployment.transportUnitId !== undefined || deployment.transportName !== undefined)) {
+        errors.push(issue('error', 'deployment-target-mode-invalid', `${label} has a transport target without transport deployment mode.`, index));
+      }
+      if (deployment.mode === UNIT_DEPLOYMENT_MODE.Transport
+        && deployment.transportUnitId && deployment.transportName) {
+        errors.push(issue('error', 'transport-target-ambiguous', `${label} specifies both a transport ID and a transport name.`, index));
+      }
+    }
+    if (deploymentIsObject && deployment.mode === UNIT_DEPLOYMENT_MODE.Transport) {
       if (!deployment.transportUnitId && !deployment.transportName) {
         errors.push(issue('error', 'transport-target-missing', `${label} is assigned to a transport but has no transport target.`, index));
       } else {
@@ -347,7 +372,33 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
       }
     }
 
-    const leaderTarget = unit.leaderAttachment?.attachedToUnitId ?? unit.leaderAttachment?.attachedToName;
+    const attachment = unit.leaderAttachment;
+    const attachmentIsObject = attachment !== undefined
+      && attachment !== null
+      && typeof attachment === 'object'
+      && !Array.isArray(attachment);
+    if (attachment !== undefined && !attachmentIsObject) {
+      errors.push(issue('error', 'leader-attachment-shape-invalid', `${label} has an invalid leader attachment shape.`, index));
+    }
+    if (attachmentIsObject) {
+      for (const [field, value] of [
+        ['attached unit ID', attachment.attachedToUnitId],
+        ['attached unit name', attachment.attachedToName],
+      ] as const) {
+        if (value !== undefined && (typeof value !== 'string' || !value.trim())) {
+          errors.push(issue('error', 'leader-target-invalid', `${label} has an invalid ${field}.`, index));
+        }
+      }
+      if (attachment.attachedToUnitId && attachment.attachedToName) {
+        errors.push(issue('error', 'leader-target-ambiguous', `${label} specifies both an attached unit ID and name.`, index));
+      }
+    }
+    const leaderTarget = attachmentIsObject
+      ? attachment.attachedToUnitId ?? attachment.attachedToName
+      : undefined;
+    if (attachmentIsObject && !leaderTarget) {
+      errors.push(issue('error', 'leader-target-missing', `${label} has no attached unit target.`, index));
+    }
     if (leaderTarget) {
       const target = referencedUnit(army, leaderTarget);
       if (!target) errors.push(issue('error', 'leader-target-invalid', `${label} references an attached unit that is not in this army.`, index));
