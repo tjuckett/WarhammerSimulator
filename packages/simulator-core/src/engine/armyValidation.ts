@@ -63,6 +63,7 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
   const errors: ArmyValidationIssue[] = [];
   const warnings: ArmyValidationIssue[] = [];
   const explicitRosterIds = new Map<string, number>();
+  const armyFaction = typeof army?.faction === 'string' ? army.faction : '';
 
   const rawCatalog = options?.catalog;
   let catalog: ArmyCatalog | undefined = rawCatalog;
@@ -85,6 +86,12 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
       if (typeof rawCatalog.faction !== 'string' || !rawCatalog.faction.trim()) {
         errors.push(issue('error', 'catalog-faction-invalid', 'Army catalog needs a non-empty faction.'));
         catalogShapeValid = false;
+      }
+      if (armyFaction.trim()
+        && typeof rawCatalog.faction === 'string'
+        && rawCatalog.faction.trim()
+        && armyFaction.trim().toLowerCase() !== rawCatalog.faction.trim().toLowerCase()) {
+        errors.push(issue('error', 'catalog-faction-mismatch', `Army faction "${armyFaction}" does not match catalog faction "${rawCatalog.faction}".`));
       }
       if (!Array.isArray(rawCatalog.units)) {
         errors.push(issue('error', 'catalog-unit-list-invalid', 'Army catalog units must be an array.'));
@@ -180,7 +187,6 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
   const catalogUnitCounts = new Map<string, number>();
   let catalogPoints = 0;
   const armyName = typeof army?.name === 'string' ? army.name : '';
-  const armyFaction = typeof army?.faction === 'string' ? army.faction : '';
   const units = Array.isArray(army?.units) ? army.units : [];
 
   if (typeof army?.name !== 'string') errors.push(issue('error', 'army-name-invalid', 'Army name must be a string.'));
@@ -246,9 +252,7 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
     }
 
     if (catalog) {
-      if (armyFaction.trim().toLowerCase() !== catalog.faction.trim().toLowerCase()) {
-        if (index === 0) errors.push(issue('error', 'catalog-faction-mismatch', `Army faction "${armyFaction}" does not match catalog faction "${catalog.faction}".`));
-      } else {
+      if (armyFaction.trim().toLowerCase() === catalog.faction.trim().toLowerCase()) {
         const catalogUnit = catalogUnitFor(unit, catalog);
         if (!catalogUnit) {
           errors.push(issue('error', 'catalog-unit-unknown', `${label} is not present in catalog ${catalog.id}.`, index));

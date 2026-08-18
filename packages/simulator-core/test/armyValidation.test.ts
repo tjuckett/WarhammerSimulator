@@ -311,6 +311,14 @@ test('army validation rejects duplicate catalog IDs and invalid model-count keys
   assert.ok(result.errors.some(error => error.code === 'catalog-battle-size-id-duplicate'));
 });
 
+test('army validation rejects a catalog faction mismatch even for an empty army', () => {
+  const result = validateImportedArmy({ ...army([]), faction: 'Other' }, {
+    catalog: { id: 'test-catalog', faction: 'Test', units: [] },
+  });
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.code === 'catalog-faction-mismatch'));
+});
+
 test('army validation allows a transport assignment only when capacity exists', () => {
   const transport = unit({ rosterId: 'transport', name: 'Transport', transportCapacity: 10 });
   const passenger = unit({ rosterId: 'passenger', name: 'Passenger', deployment: { mode: 'transport', transportUnitId: 'transport' } });
