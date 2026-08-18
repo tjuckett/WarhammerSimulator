@@ -718,6 +718,7 @@ test('11th secondary mission rules track transcribed scoring text', () => {
 
 test('11th edition blocks multiple stratagems targeting the same unit in a phase', () => {
   const battle = state('fight');
+  battle.fightStepStarted = true;
   battle.commandPoints = [3, 0];
   const character = losTestUnit('character-1', 0, { x: 10, y: 10 });
   character.profile.keywords = ['Character', 'Infantry'];
@@ -743,6 +744,18 @@ test('11th edition blocks multiple stratagems targeting the same unit in a phase
   );
   const counteredSameTarget = useStratagem(challenged, 0, 'counteroffensive', rules40K11th, character.id);
   assert.equal(counteredSameTarget, challenged);
+});
+
+test('11th Epic Challenge cannot be used before the Fight step has begun', () => {
+  const battle = state('fight');
+  battle.commandPoints = [1, 0];
+  const character = losTestUnit('unselected-character', 0, { x: 10, y: 10 });
+  character.profile.keywords = ['Character', 'Infantry'];
+  character.profile.weapons = [{ name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true }];
+  const enemy = losTestUnit('fight-enemy', 1, { x: 10.5, y: 10 });
+  battle.units = [character, enemy];
+
+  assert.equal(useStratagem(battle, 0, 'epic-challenge', rules40K11th, character.id), battle);
 });
 
 test('11th Epic Challenge constrains melee damage allocation to the selected Character model', () => {
@@ -1144,6 +1157,7 @@ test('11th out-of-phase snap shooting does not consume normal shooting-phase wea
 
 test('11th core stratagems enforce target keyword and reserve restrictions', () => {
   const fight = state('fight');
+  fight.fightStepStarted = true;
   fight.commandPoints = [3, 0];
   const character = losTestUnit('captain', 0, { x: 10, y: 10 });
   character.profile.keywords = ['Character', 'Infantry'];
