@@ -9509,6 +9509,29 @@ test('Indirect Fire weapons can target without LOS with hit penalty and cover', 
   }
 });
 
+test('11th Indirect Fire uses the stationary visibility threshold and always grants Cover', () => {
+  const battle = state('shooting');
+  const shooter = losTestUnit('11e-indirect-shooter', 0, { x: 0, y: 10 });
+  shooter.movementAction = 'remainedStationary';
+  shooter.profile.weapons = [{ name: '11e Mortar', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: ['Indirect Fire'], isMelee: false }];
+  const target = losTestUnit('11e-indirect-target', 1, { x: 12, y: 10 }, 4);
+  target.profile = { ...target.profile, wounds: 3, weapons: [] };
+  target.woundsOnLeadModel = 3;
+  battle.units = [shooter, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const shooting = shootPlayUnitWeapon(battle, shooter.id, 0, target.id, 'all', rules40K11th);
+    const messages = shooting.log.map(entry => entry.message).join(' ');
+    assert.match(messages, /Indirect Fire: unmodified 4\+ hit while stationary/);
+    assert.match(messages, /Save rolls \(3\+, cover \+1\)/);
+    assert.equal(messages.includes('Indirect Fire -1 to Hit'), false);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('Lethal Hits critical hits automatically wound', () => {
   const battle = state('movement');
   battle.movementStep = 'reinforcements';

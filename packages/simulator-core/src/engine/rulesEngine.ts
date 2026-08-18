@@ -180,7 +180,7 @@ export const rules40K10th: RulesEdition = {
 
     for (const r of rolls) {
       if (r === 1) continue;
-      if (r >= skill) {
+      if (r >= skill || (skill > 6 && r === 6)) {
         hits++;
         if (r === 6 && sustainedVal > 0) {
           hits += sustainedVal;

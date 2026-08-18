@@ -20,6 +20,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 - LOS/range target validity, cover, Heavy, Hazardous, and selected weapon activation semantics are covered by tests.
 - Shooting target UI distinguishes visible, out-of-range, and no-ranged-weapon target states.
 - Indirect Fire can bypass ordinary blocked LOS, but it cannot bypass 11th Hidden detection limits.
+- 11th Indirect Fire grants the target Benefit of Cover and normally allows only unmodified 6s to hit; if the firing unit remained stationary and the target is visible to a friendly unit, unmodified 4+ hits instead. The legacy 10th-edition -1 to Hit behavior remains edition-gated.
 - Close-Quarters shooting is modeled for engaged units: non-Monster/Vehicle models select only `[CLOSE-QUARTERS]` weapons and engaged targets, while eligible Close-Quarters attacks avoid the engaged-target hit penalty.
 
 ## TODO

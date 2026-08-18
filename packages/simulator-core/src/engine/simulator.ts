@@ -970,6 +970,10 @@ function targetWithinFriendlyEngagement(state: BattleState, target: BattleUnit, 
   return inEngagement(target, activeUnits(state, side), eng);
 }
 
+function targetVisibleToFriendlyUnit(state: BattleState, target: BattleUnit, side: Side): boolean {
+  return activeUnits(state, side).some(unit => battleUnitHasLosToAttachedUnit(state, unit, target));
+}
+
 function unitCanChargeTarget(unit: BattleUnit, target: BattleUnit): boolean {
   if (isAircraft(unit)) return false;
   if (isAircraft(target) && !hasKeyword(unit, 'fly')) return false;
@@ -1149,8 +1153,19 @@ function resolveAttacks(
     const hitRolls = rollMultiple(numAttacks);
     const plungingRolls = hitRolls.slice(0, plungingAttackCount);
     const normalRolls = hitRolls.slice(plungingAttackCount);
-    const normalTarget = options.snapShooting ? 6 : Math.min(6, Math.max(2, weapon.skill + hitModifier));
-    const plungingTarget = Math.min(6, Math.max(2, weapon.skill - 1 + hitModifier));
+    const indirectHitTarget = rules.metadata.edition === '11e' && weaponHasKeyword(weapon, 'Indirect Fire')
+      ? (attacker.movementAction === 'remainedStationary' && targetVisibleToFriendlyUnit(state, defender, attacker.side) ? 4 : 7)
+      : undefined;
+    const normalTarget = indirectHitTarget ?? (options.snapShooting ? 6 : Math.min(6, Math.max(2, weapon.skill + hitModifier)));
+    const plungingTarget = indirectHitTarget ?? Math.min(6, Math.max(2, weapon.skill - 1 + hitModifier));
+    if (indirectHitTarget !== undefined) {
+      logs.push(log(state, attacker.side, attacker.profile.name,
+        indirectHitTarget === 4
+          ? '     Indirect Fire: unmodified 4+ hit while stationary and target is visible to a friendly unit'
+          : '     Indirect Fire: only unmodified 6s hit',
+        'info',
+      ));
+    }
     const hitPools = [
       ...(plungingRolls.length ? [{ rolls: plungingRolls, target: plungingTarget, plunging: true }] : []),
       ...(normalRolls.length ? [{ rolls: normalRolls, target: normalTarget, plunging: false }] : []),
@@ -2822,10 +2837,13 @@ function shootingWeaponModifiers(
     && weaponIsCloseQuarters(weapon)
     && inEngagement(unit, [target], rules.engagementRange());
   const usesIndirectFirePenalty = weaponHasKeyword(weapon, 'Indirect Fire')
+    && rules.metadata.edition !== '11e'
     && !hasAnyModelLOSConsideringHidden(state, unit, target);
+  const usesIndirectFireCover = weaponHasKeyword(weapon, 'Indirect Fire')
+    && (rules.metadata.edition === '11e' || usesIndirectFirePenalty);
   const usesSmokescreen = unitHasActiveStratagem(state, target, 'smokescreen', 'shooting')
     || targetIsScreenedBySmoke(state, unit, target);
-  const cover = targetHasTerrainCoverFrom(unit.modelPositions, target, state.terrain) || usesIndirectFirePenalty || usesSmokescreen;
+  const cover = targetHasTerrainCoverFrom(unit.modelPositions, target, state.terrain) || usesIndirectFireCover || usesSmokescreen;
   const usesBigGunsPenalty = (bigGunsNeverTire || targetWithinFriendlyEngagement(state, target, unit.side, rules))
     && !closeQuartersTarget
     && !weaponIsSidearm(weapon);
@@ -2836,6 +2854,7 @@ function shootingWeaponModifiers(
     usesBigGunsPenalty ? 'Big Guns Never Tire -1 to Hit' : '',
     usesHeavyBonus ? 'Heavy +1 to Hit' : '',
     usesIndirectFirePenalty ? 'Indirect Fire -1 to Hit; target has Benefit of Cover' : '',
+    rules.metadata.edition === '11e' && weaponHasKeyword(weapon, 'Indirect Fire') ? 'Indirect Fire: target has Benefit of Cover' : '',
     usesSmokescreen ? 'Smokescreen: target has Benefit of Cover' : '',
     usesStealth ? 'Stealth -1 to Hit' : '',
   ].filter(Boolean).join('; ');
