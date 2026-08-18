@@ -2192,6 +2192,22 @@ test('11th mission territory geometry supports shared boundaries and diagonal po
   assert.equal(terrainWithinMissionTerritory(battle, crossingTerrain, 1), undefined);
 });
 
+test('mission territory overlap detects a thin diagonal boundary crossing a terrain area', () => {
+  const battle = state('fight');
+  battle.setup = {
+    ...battle.setup!,
+    territoryZones: {
+      sides: [
+        { polygons: [[{ x: 0, y: 9 }, { x: 0, y: 11 }, { x: 30, y: 23 }, { x: 30, y: 21 }]] },
+        { polygons: [[{ x: 0, y: 0 }, { x: 60, y: 0 }, { x: 60, y: 44 }, { x: 0, y: 44 }]] },
+      ],
+    },
+  };
+  const terrain = terrainMat({ type: 'ruin', x: 10, y: 10, width: 10, height: 10 });
+
+  assert.equal(terrainWithinMissionTerritory(battle, terrain, 0), true);
+});
+
 test('mission geometry setup and start-of-turn source facts replay and persist through practice saves', async () => {
   installStorage();
   const initial = state('setup');

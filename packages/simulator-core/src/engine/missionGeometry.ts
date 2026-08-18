@@ -42,6 +42,34 @@ function pointInPolygon(point: Position, polygon: Position[]): boolean {
   return inside;
 }
 
+function polygonsIntersect(first: Position[], second: Position[]): boolean {
+  if (first.length < 3 || second.length < 3) return false;
+  if (first.some(point => pointInPolygon(point, second))
+    || second.some(point => pointInPolygon(point, first))) return true;
+  return first.some((start, index) => {
+    const end = first[(index + 1) % first.length];
+    return second.some((otherStart, otherIndex) =>
+      segmentsIntersect(start, end, otherStart, second[(otherIndex + 1) % second.length])
+    );
+  });
+}
+
+function segmentsIntersect(a: Position, b: Position, c: Position, d: Position): boolean {
+  const cross = (first: Position, second: Position, third: Position) =>
+    (second.x - first.x) * (third.y - first.y) - (second.y - first.y) * (third.x - first.x);
+  const abC = cross(a, b, c);
+  const abD = cross(a, b, d);
+  const cdA = cross(c, d, a);
+  const cdB = cross(c, d, b);
+  const epsilon = 0.0001;
+  if (Math.abs(abC) <= epsilon && pointOnSegment(c, a, b)) return true;
+  if (Math.abs(abD) <= epsilon && pointOnSegment(d, a, b)) return true;
+  if (Math.abs(cdA) <= epsilon && pointOnSegment(a, c, d)) return true;
+  if (Math.abs(cdB) <= epsilon && pointOnSegment(b, c, d)) return true;
+  return ((abC > epsilon) !== (abD > epsilon))
+    && ((cdA > epsilon) !== (cdB > epsilon));
+}
+
 export function pointWithinMissionTerritory(
   state: BattleState,
   point: Position,
@@ -58,8 +86,10 @@ export function terrainWithinMissionTerritory(
   territorySide: Side,
 ): boolean | undefined {
   if (!state.setup?.territoryZones) return undefined;
-  const samples = [terrainCenter(terrain), ...terrainCorners(terrain)];
-  return samples.some(point => pointWithinMissionTerritory(state, point, territorySide));
+  const terrainPolygon = terrainCorners(terrain);
+  return state.setup.territoryZones.sides[territorySide].polygons.some(territoryPolygon =>
+    polygonsIntersect(terrainPolygon, territoryPolygon)
+  );
 }
 
 function modelFootprint(unit: BattleUnit, modelIndex: number) {
