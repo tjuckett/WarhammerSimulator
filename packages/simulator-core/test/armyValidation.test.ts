@@ -269,6 +269,32 @@ test('army validation accepts valid optional saves and roster IDs', () => {
   assert.equal(result.valid, true);
 });
 
+test('army validation rejects malformed catalog and battle-size options', () => {
+  const result = validateImportedArmy(army([unit()]), {
+    battleSizeId: ' ' as string,
+    catalog: {
+      id: '', faction: 'Test', units: [{ id: 'unit-1', minimumModels: 10, maximumModels: 5 }],
+      battleSizes: [{ id: 'patrol', label: '', minimumPoints: 200, maximumPoints: 100 }],
+    },
+  });
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.code === 'catalog-battle-size-option-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'catalog-id-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'catalog-model-range-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'catalog-battle-size-invalid'));
+});
+
+test('army validation accepts a structurally valid catalog boundary', () => {
+  const result = validateImportedArmy(army([unit()]), {
+    battleSizeId: 'patrol',
+    catalog: {
+      id: 'test-catalog', faction: 'Test', units: [{ id: 'unit-1', names: ['Unit'], modelCountPoints: { '5': 100 }, minimumModels: 1, maximumModels: 10, maximumCopies: 3 }],
+      battleSizes: [{ id: 'patrol', label: 'Patrol', minimumPoints: 100, maximumPoints: 200 }],
+    },
+  });
+  assert.equal(result.valid, true);
+});
+
 test('army validation allows a transport assignment only when capacity exists', () => {
   const transport = unit({ rosterId: 'transport', name: 'Transport', transportCapacity: 10 });
   const passenger = unit({ rosterId: 'passenger', name: 'Passenger', deployment: { mode: 'transport', transportUnitId: 'transport' } });

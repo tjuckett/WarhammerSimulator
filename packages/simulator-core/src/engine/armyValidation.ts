@@ -64,7 +64,98 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
   const warnings: ArmyValidationIssue[] = [];
   const explicitRosterIds = new Map<string, number>();
 
-  const catalog = options.catalog;
+  const rawCatalog = options?.catalog;
+  let catalog: ArmyCatalog | undefined = rawCatalog;
+  let catalogShapeValid = true;
+  const battleSizeId = typeof options?.battleSizeId === 'string' && options.battleSizeId.trim()
+    ? options.battleSizeId.trim()
+    : undefined;
+  if (options?.battleSizeId !== undefined && !battleSizeId) {
+    errors.push(issue('error', 'catalog-battle-size-option-invalid', 'Battle size ID must be a non-empty string.'));
+  }
+  if (rawCatalog !== undefined) {
+    if (!rawCatalog || typeof rawCatalog !== 'object' || Array.isArray(rawCatalog)) {
+      errors.push(issue('error', 'catalog-shape-invalid', 'Army catalog has an invalid shape.'));
+      catalogShapeValid = false;
+    } else {
+      if (typeof rawCatalog.id !== 'string' || !rawCatalog.id.trim()) {
+        errors.push(issue('error', 'catalog-id-invalid', 'Army catalog needs a non-empty ID.'));
+        catalogShapeValid = false;
+      }
+      if (typeof rawCatalog.faction !== 'string' || !rawCatalog.faction.trim()) {
+        errors.push(issue('error', 'catalog-faction-invalid', 'Army catalog needs a non-empty faction.'));
+        catalogShapeValid = false;
+      }
+      if (!Array.isArray(rawCatalog.units)) {
+        errors.push(issue('error', 'catalog-unit-list-invalid', 'Army catalog units must be an array.'));
+        catalogShapeValid = false;
+      } else {
+        rawCatalog.units.forEach((catalogUnit, catalogUnitIndex) => {
+          if (!catalogUnit || typeof catalogUnit !== 'object' || Array.isArray(catalogUnit)
+            || typeof catalogUnit.id !== 'string' || !catalogUnit.id.trim()) {
+            errors.push(issue('error', 'catalog-unit-shape-invalid', `Catalog unit ${catalogUnitIndex + 1} has an invalid shape.`));
+            catalogShapeValid = false;
+            return;
+          }
+          if (catalogUnit.names !== undefined
+            && (!Array.isArray(catalogUnit.names)
+              || catalogUnit.names.some(name => typeof name !== 'string' || !name.trim()))) {
+            errors.push(issue('error', 'catalog-unit-names-invalid', `Catalog unit ${catalogUnit.id} has invalid names.`));
+            catalogShapeValid = false;
+          }
+          if (catalogUnit.modelCountPoints !== undefined
+            && (!catalogUnit.modelCountPoints || typeof catalogUnit.modelCountPoints !== 'object'
+              || Array.isArray(catalogUnit.modelCountPoints)
+              || Object.values(catalogUnit.modelCountPoints).some(points => typeof points !== 'number' || !Number.isFinite(points) || points < 0))) {
+            errors.push(issue('error', 'catalog-points-shape-invalid', `Catalog unit ${catalogUnit.id} has invalid points data.`));
+            catalogShapeValid = false;
+          }
+          for (const [field, value] of [
+            ['minimumModels', catalogUnit.minimumModels],
+            ['maximumModels', catalogUnit.maximumModels],
+            ['maximumCopies', catalogUnit.maximumCopies],
+          ] as const) {
+            if (value !== undefined && (!Number.isInteger(value) || value < 1)) {
+              errors.push(issue('error', 'catalog-constraint-invalid', `Catalog unit ${catalogUnit.id} has an invalid ${field}.`));
+              catalogShapeValid = false;
+            }
+          }
+          if (catalogUnit.minimumModels !== undefined && catalogUnit.maximumModels !== undefined
+            && catalogUnit.minimumModels > catalogUnit.maximumModels) {
+            errors.push(issue('error', 'catalog-model-range-invalid', `Catalog unit ${catalogUnit.id} has a reversed model range.`));
+            catalogShapeValid = false;
+          }
+        });
+      }
+      if (rawCatalog.battleSizes !== undefined && !Array.isArray(rawCatalog.battleSizes)) {
+        errors.push(issue('error', 'catalog-battle-size-list-invalid', 'Catalog battle sizes must be an array.'));
+        catalogShapeValid = false;
+      } else {
+        rawCatalog.battleSizes?.forEach((battleSize, battleSizeIndex) => {
+          if (!battleSize || typeof battleSize !== 'object' || Array.isArray(battleSize)
+            || typeof battleSize.id !== 'string' || !battleSize.id.trim()
+            || typeof battleSize.label !== 'string' || !battleSize.label.trim()) {
+            errors.push(issue('error', 'catalog-battle-size-invalid', `Catalog battle size ${battleSizeIndex + 1} has invalid identity fields.`));
+            catalogShapeValid = false;
+            return;
+          }
+          if (battleSize.minimumPoints !== undefined
+            && (typeof battleSize.minimumPoints !== 'number' || !Number.isFinite(battleSize.minimumPoints) || battleSize.minimumPoints < 0)
+            || battleSize.maximumPoints !== undefined
+            && (typeof battleSize.maximumPoints !== 'number' || !Number.isFinite(battleSize.maximumPoints) || battleSize.maximumPoints < 0)) {
+            errors.push(issue('error', 'catalog-battle-size-points-invalid', `Catalog battle size ${battleSize.id} has invalid points limits.`));
+            catalogShapeValid = false;
+          }
+          if (battleSize.minimumPoints !== undefined && battleSize.maximumPoints !== undefined
+            && battleSize.minimumPoints > battleSize.maximumPoints) {
+            errors.push(issue('error', 'catalog-battle-size-range-invalid', `Catalog battle size ${battleSize.id} has reversed points limits.`));
+            catalogShapeValid = false;
+          }
+        });
+      }
+    }
+    if (!catalogShapeValid) catalog = undefined;
+  }
   const catalogUnitCounts = new Map<string, number>();
   let catalogPoints = 0;
   const armyName = typeof army?.name === 'string' ? army.name : '';
@@ -465,10 +556,10 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
     }
   });
 
-  if (catalog && options.battleSizeId) {
-    const battleSize = catalog.battleSizes?.find(candidate => candidate.id === options.battleSizeId);
+  if (catalog && battleSizeId) {
+    const battleSize = catalog.battleSizes?.find(candidate => candidate.id === battleSizeId);
     if (!battleSize) {
-      errors.push(issue('error', 'catalog-battle-size-unknown', `Battle size "${options.battleSizeId}" is not present in catalog ${catalog.id}.`));
+      errors.push(issue('error', 'catalog-battle-size-unknown', `Battle size "${battleSizeId}" is not present in catalog ${catalog.id}.`));
     } else {
       if (battleSize.minimumPoints !== undefined && catalogPoints < battleSize.minimumPoints) {
         errors.push(issue('error', 'catalog-points-low', `Army has ${catalogPoints} catalog points but requires at least ${battleSize.minimumPoints}.`));
