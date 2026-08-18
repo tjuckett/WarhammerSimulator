@@ -18,5 +18,5 @@ Source: https://gdmissions.app/11th/rules/core-rules
 ## TODO
 
 - Re-audit final reserves and datasheet-specific repositioning; modeled Aircraft now preserve ongoing Battle-shock state when removed to Strategic Reserves, while Rapid Ingress timing is restricted to the opponent's Movement/Reinforcements step in core availability and direct application.
-- Add tests for impossible placement and large-model setup.
+- 11th Close-Quarters ingress and impossible/large-model placement boundaries are covered; remaining work is source-dependent repositioning behavior.
 

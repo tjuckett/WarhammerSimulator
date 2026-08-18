@@ -4417,6 +4417,19 @@ function profileDropHasDeepStrike(state: BattleState, side: Side, profile: UnitP
   );
 }
 
+function profileHasCloseQuartersOnEveryModel(profile: UnitProfile): boolean {
+  return profile.baseModelCount > 0
+    && Array.from({ length: profile.baseModelCount }, (_, modelIndex) =>
+      modelWeaponLoadout(profile, modelIndex).some(weaponIndex => weaponIsCloseQuarters(profile.weapons[weaponIndex])),
+    ).every(Boolean);
+}
+
+function strategicReserveUnitHasCloseQuartersIngress(state: BattleState, side: Side, profile: UnitProfile): boolean {
+  return state.ruleset.edition === '11e'
+    && profile.deployment?.mode === UNIT_DEPLOYMENT_MODE.StrategicReserve
+    && attachedUnitProfilesFor(state.armies[side].army, profile).every(profileHasCloseQuartersOnEveryModel);
+}
+
 const STRATEGIC_RESERVES_EDGE_RANGE = 6;
 
 function reinforcementPlacementIsWithinStrategicReserveEdge(unit: BattleUnit, state: BattleState): boolean {
@@ -4827,6 +4840,7 @@ export function placePlayReinforcement(state: BattleState, side: Side, armyUnitI
     || !playMoveHasNoWallOverlap(s, unit, movingIndices)
     || (s.ruleset.edition === '11e'
       && profile.deployment?.mode === UNIT_DEPLOYMENT_MODE.StrategicReserve
+      && !strategicReserveUnitHasCloseQuartersIngress(s, side, profile)
       && (!reinforcementPlacementIsWithinStrategicReserveEdge(unit, s)
         || !strategicReservePlacementIsOutsideOpponentDeploymentZone(unit, s)))
   ) return state;

@@ -6508,6 +6508,38 @@ test('Strategic Reserve placement keeps a large model fully inside the edge band
   assert.deepEqual(placed.units[0].modelPositions, [{ x: 3, y: 10 }]);
 });
 
+test('11th Close-Quarters units can ingress from Strategic Reserves into the opponent deployment zone', () => {
+  const closeQuartersProfile = {
+    name: 'Close Reserve Unit',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [{ name: 'Close Blaster', range: 12, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: ['Close-Quarters'], isMelee: false }],
+    abilities: [],
+    deployment: { mode: 'strategicReserve' as const },
+  };
+  const ordinaryReserveProfile = { ...closeQuartersProfile, name: 'Ordinary Reserve Unit', weapons: [{ ...closeQuartersProfile.weapons[0], keywords: [] }] };
+  const battle = state('movement', 2);
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.movementStep = 'reinforcements';
+  battle.armies[0].army = { ...battle.armies[0].army, units: [closeQuartersProfile] };
+
+  const closeQuartersPlacement = placePlayReinforcement(battle, 0, 0, { x: 20, y: 40 });
+  assert.notEqual(closeQuartersPlacement, battle);
+
+  const ordinaryBattle = state('movement', 2);
+  ordinaryBattle.ruleset = rulesetMetadataForState(rules40K11th);
+  ordinaryBattle.movementStep = 'reinforcements';
+  ordinaryBattle.armies[0].army = { ...ordinaryBattle.armies[0].army, units: [ordinaryReserveProfile] };
+  assert.equal(placePlayReinforcement(ordinaryBattle, 0, 0, { x: 20, y: 40 }), ordinaryBattle);
+});
+
 test('play Movement advances to Reinforcements before Shooting', () => {
   const battle = state('movement');
   const profile = {
