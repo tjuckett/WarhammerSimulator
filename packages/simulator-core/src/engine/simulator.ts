@@ -5358,6 +5358,21 @@ function moveAircraftToStrategicReserves(state: BattleState, unit: BattleUnit): 
   )];
 }
 
+export function returnOpponentAircraftToStrategicReserves(state: BattleState, activeSide: Side, rules: RulesEdition): void {
+  if (rules.metadata.edition !== '11e') return;
+  const aircraft = state.units.filter(unit =>
+    unit.side !== activeSide && isAircraft(unit) && !unit.destroyed && !unit.inStrategicReserves,
+  );
+  for (const unit of aircraft) {
+    const group = state.units.filter(candidate =>
+      candidate.id === unit.id || candidate.attachedToUnitId === unit.id,
+    );
+    group.forEach(component => {
+      if (!component.destroyed && !component.inStrategicReserves) moveAircraftToStrategicReserves(state, component);
+    });
+  }
+}
+
 function unitHasWallOverlap(state: BattleState, unit: BattleUnit): boolean {
   return !playMoveHasNoWallOverlap(state, unit, new Set(unit.modelPositions.map((_, modelIndex) => modelIndex)));
 }
@@ -6870,6 +6885,7 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
     completeEndOfTurnActions(s, side);
     newLogs.push(...scoreEndOfTurnSecondaryMissionLogs(s, side, rules));
     newLogs.push(...scoreEndOfTurnPrimaryMissionLogs(s, side, rules));
+    returnOpponentAircraftToStrategicReserves(s, side, rules);
     advanceTurnInPlace(s);
     if ((s.phase as Phase) === 'end') newLogs.push(...scoreEndOfBattlePrimaryMissionLogs(s, rules));
   }
@@ -6952,6 +6968,7 @@ function advanceSimulationUnitPhase(state: BattleState, rules: RulesEdition): vo
     completeEndOfTurnActions(state, side);
     logs.push(...scoreEndOfTurnSecondaryMissionLogs(state, side, rules));
     logs.push(...scoreEndOfTurnPrimaryMissionLogs(state, side, rules));
+    returnOpponentAircraftToStrategicReserves(state, side, rules);
     advanceTurnInPlace(state);
     if ((state.phase as Phase) === 'end') logs.push(...scoreEndOfBattlePrimaryMissionLogs(state, rules));
   }
@@ -7124,6 +7141,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   completeEndOfTurnActions(s, side);
   newLogs.push(...scoreEndOfTurnSecondaryMissionLogs(s, side, rules));
   newLogs.push(...scoreEndOfTurnPrimaryMissionLogs(s, side, rules));
+  returnOpponentAircraftToStrategicReserves(s, side, rules);
 
   s.log = [...s.log, ...newLogs];
   return s;

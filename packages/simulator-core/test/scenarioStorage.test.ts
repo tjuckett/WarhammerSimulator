@@ -11769,6 +11769,57 @@ test('11th edition Aircraft start in Strategic Reserves during deployment', () =
   assert.equal(battle.units[0].inStrategicReserves, true);
 });
 
+test('11th edition returns the opponent Aircraft to Strategic Reserves at turn end', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const aircraftProfile = {
+    name: 'Aircraft',
+    move: 20,
+    toughness: 9,
+    save: 3,
+    wounds: 10,
+    leadership: 7,
+    oc: 0,
+    baseModelCount: 1,
+    keywords: ['Aircraft', 'Vehicle', 'Fly'],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+  };
+  const aircraft: BattleUnit = {
+    id: 'aircraft-1',
+    side: 1,
+    profile: aircraftProfile,
+    remainingModels: 1,
+    woundsOnLeadModel: 10,
+    position: { x: 20, y: 20 },
+    modelPositions: [{ x: 20, y: 20 }],
+    facingDeg: 180,
+    charged: false,
+    inCombat: false,
+    battleshocked: false,
+    activated: false,
+    destroyed: false,
+  };
+  const friendly = {
+    ...aircraft,
+    id: 'friendly-1',
+    side: 0 as const,
+    profile: { ...aircraftProfile, name: 'Friendly', keywords: ['Vehicle'] },
+    position: { x: 10, y: 20 },
+    modelPositions: [{ x: 10, y: 20 }],
+    facingDeg: 0,
+  };
+  battle.units = [friendly, aircraft];
+
+  const endedPhase = simulateNextPhase(battle, rules40K11th);
+  assert.equal(endedPhase.units[1].inStrategicReserves, true);
+  assert.equal(endedPhase.units[1].modelPositions.length, 0);
+
+  const simulatedTurn = simulatePlayerTurn({ ...battle, phase: 'command' }, rules40K11th);
+  assert.equal(simulatedTurn.units[1].inStrategicReserves, true);
+});
+
 test('Aircraft fight restrictions only allow melee with Fly units', () => {
   const battle = state('charge');
   const meleeWeapon = { name: 'Claws', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true };
