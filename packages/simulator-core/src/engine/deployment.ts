@@ -325,9 +325,13 @@ export function screenedFromOpponentDeployment(
   terrain: Terrain[],
   deployment: DeploymentZoneSource = 'Default',
   board: BoardFormat = DEFAULT_BOARD_FORMAT,
+  edition?: '10e' | '11e',
 ): boolean {
   const to = { x, y };
-  return opponentDeploymentSamples(side, deployment, board).every(from => !hasLOS(from, to, terrain));
+  const obscuringTerrain = edition === '11e'
+    ? terrain.filter(t => t.features.some(feature => feature.category === 'light' || feature.category === 'dense'))
+    : [];
+  return opponentDeploymentSamples(side, deployment, board).every(from => !hasLOS(from, to, terrain, obscuringTerrain));
 }
 
 // Returns true if (x,y) lies inside a cover-providing terrain mat

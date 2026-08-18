@@ -19,6 +19,7 @@ import { applyGameAction, GAME_ACTION_TYPE, type GameAction } from '../src/pract
 import { getLegalActions } from '../src/engine/legalActions';
 import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
+import { screenedFromOpponentDeployment } from '../src/engine/deployment';
 import { formatPrimaryMissionScoringRecord, formatPrimaryScoringResult, primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn, securePlayObjective, updateObjectiveControl } from '../src/engine/missionScoring';
 import {
   completeMissionEventsForCurrentTurn,
@@ -8566,6 +8567,33 @@ test('11th Obscuring terrain areas block LOS through light or dense features', (
   assert.equal(hasLOSEdgeToEdge(shooter.position, 0.5, target.position, 0.5, terrain, '11e'), false);
   const targetInside = { ...target, position: { x: 6, y: 10 }, modelPositions: [{ x: 6, y: 10 }] };
   assert.equal(hasLOSEdgeToEdge(shooter.position, 0.5, targetInside.position, 0.5, terrain, '11e'), true);
+});
+
+test('11th deployment screening uses Obscuring terrain areas', () => {
+  const terrain = [terrainMat({
+    id: 'deployment-screen',
+    type: 'area',
+    x: 20,
+    y: 0,
+    width: 4,
+    height: 60,
+    features: [{
+      id: 'deployment-light',
+      name: 'Deployment Light Feature',
+      x: 21,
+      y: 20,
+      width: 1,
+      height: 2,
+      featureHeight: 'mid',
+      category: 'light',
+      blocksLOS: false,
+      blocksMovement: false,
+      difficult: false,
+    }],
+  })];
+
+  assert.equal(screenedFromOpponentDeployment(10, 30, 0, terrain, 'Default', undefined, '10e'), false);
+  assert.equal(screenedFromOpponentDeployment(10, 30, 0, terrain, 'Default', undefined, '11e'), true);
 });
 
 test('elevated models can see over low and mid blocking features', () => {

@@ -203,7 +203,7 @@ function scorePlacement(
   // (which also scale with oc). Without this, cover gives +1 vs objective giving +280.)
   const unitOC = unit.oc * unit.baseModelCount;
   const inCover = modelFullyInTerrainCover(pos.x, pos.y, unitMaxBaseRadiusInches(unit), state.terrain);
-  const screened = screenedFromOpponentDeployment(pos.x, pos.y, side, state.terrain, state.setup?.deployment);
+  const screened = screenedFromOpponentDeployment(pos.x, pos.y, side, state.terrain, state.setup?.deployment, undefined, state.ruleset?.edition);
 
   if (inCover) {
     // Being inside terrain = cover save on every model — very strong advantage
@@ -326,6 +326,7 @@ export function deployModelFormation(
   existingModels: Position[] = [],
   modelRadii: number[] = [],
   existingModelRadii: number[] = [],
+  edition?: '10e' | '11e',
 ): Position[] {
   if (count <= 1) return [{ ...unitCenter }];
 
@@ -388,7 +389,7 @@ export function deployModelFormation(
           }
 
           // LOS fully blocked from all sampled points in the opponent deployment zone.
-          const screenedModel = screenedFromOpponentDeployment(px, py, side, terrain, zone.deployment);
+          const screenedModel = screenedFromOpponentDeployment(px, py, side, terrain, zone.deployment, undefined, edition);
           if (screenedModel) {
             score += role === 'ranged' ? 20 : 14;
           }

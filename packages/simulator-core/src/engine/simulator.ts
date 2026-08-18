@@ -4624,6 +4624,7 @@ export function createBattleState(
         terrain, zoneFor(side as 0 | 1, deployment, board), allPlacedModels,
         modelRadiiForProfile(profile),
         allPlacedModelRadii,
+        rules.metadata.edition,
       );
       const unit = makeBattleUnit(profile, side, modelPositions);
       unit.position = startPos;
@@ -4641,6 +4642,7 @@ export function createBattleState(
           terrain, zoneFor(side as 0 | 1, deployment, board), allPlacedModels,
           modelRadiiForProfile(leader),
           allPlacedModelRadii,
+          rules.metadata.edition,
         );
         const leaderUnit = makeBattleUnit(leader, side, leaderPositions, unit.id, unit.tabletopUnitId);
         resolveInternalModelOverlaps(leaderUnit, zoneFor(side as 0 | 1, deployment, board), board);
@@ -4784,6 +4786,7 @@ export function placeNextUnit(state: BattleState): BattleState {
     pos, profile.baseModelCount, unitRole(profile), side, s.terrain, zone, allDeployedModels,
     modelRadiiForProfile(profile),
     allDeployedModelRadii,
+    s.ruleset?.edition,
   );
 
   const unit = makeBattleUnit(profile, side, modelPos);
@@ -4803,6 +4806,7 @@ export function placeNextUnit(state: BattleState): BattleState {
       anchor, leader.baseModelCount, unitRole(leader), side, s.terrain, zone, deployedModels,
       modelRadiiForProfile(leader),
       deployedRadii,
+      s.ruleset?.edition,
     );
     const leaderUnit = makeBattleUnit(leader, side, leaderModelPos, unit.id, unit.tabletopUnitId);
     resolveInternalModelOverlaps(leaderUnit, zone, board);

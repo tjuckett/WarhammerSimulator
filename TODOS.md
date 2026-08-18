@@ -258,6 +258,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: final Core 13.09 Hidden now applies to quiet Infantry/Beasts/Swarm models inside areas containing light or dense terrain features; Gone to Ground retains the dense-feature detection-range reduction.
   - Progress: final Core 13.10 now treats 11th terrain areas containing light or dense features as Obscuring for model LOS, while preserving 10th-edition terrain behavior.
   - Progress: final Core 13.11.01 Gone to Ground now applies the 12-inch detection range only when dense terrain blocks every sampled model-footprint LOS ray; narrow screens can be seen around and retain the 15-inch range.
+  - Progress: 11th Obscuring terrain is also honored by deployment-screening and AI placement LOS evaluation; 10th deployment screening remains unchanged.
   - Progress: final Core 03.04 now uses a 2-inch Engagement Range in 11th Edition while retaining 10th Edition's 1-inch value.
 - [x] Narrow the 11th preview notice while final-source implementation remains partial.
   - Progress: the ruleset and UI now present 11th Edition as source-audited and partial; stable preview-era metadata IDs remain only for saved-game compatibility, and the complete final-source re-audit remains tracked separately above.
