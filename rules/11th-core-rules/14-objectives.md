@@ -22,5 +22,5 @@ Source: https://gdmissions.app/11th/rules/core-rules
 ## TODO
 
 - Encode each layout's territory boundary geometry so territory-dependent mission clauses do not rely on deployment-zone approximations.
-- Complete the remaining mission action and secondary-mission state tracking.
-- Add tests for every implemented 11th primary and secondary mission scoring rule.
+- Cleanse, Plunder, and the currently sourced secondary-mission state paths are implemented and covered by simulator-core tests; newly sourced mission actions remain an explicit follow-up.
+- The primary clause coverage harness and focused secondary/action tests cover the currently implemented source-backed scoring rules. Source-dependent or layout-dependent cases remain fail-closed.
