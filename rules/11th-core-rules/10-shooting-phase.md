@@ -19,9 +19,10 @@ Source: https://gdmissions.app/11th/rules/core-rules
 - Normal, Assault, Close-Quarters/engaged vehicle-style shooting, and Indirect behavior are represented.
 - LOS/range target validity, cover, Heavy, Hazardous, and selected weapon activation semantics are covered by tests.
 - Shooting target UI distinguishes visible, out-of-range, and no-ranged-weapon target states.
+- Indirect Fire can bypass ordinary blocked LOS, but it cannot bypass 11th Hidden detection limits.
 
 ## TODO
 
-- Re-audit target eligibility, cover, LOS, and weapon keyword changes.
+- Re-audit remaining target eligibility, cover, LOS, and weapon keyword changes.
 - Expand tests for terrain/cover combinations and engaged shooting.
 

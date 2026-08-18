@@ -658,6 +658,14 @@ function hasAnyModelLOSConsideringHidden(state: BattleState, source: BattleUnit,
   );
 }
 
+function hasAnyHiddenModelPair(state: BattleState, source: BattleUnit, target: BattleUnit): boolean {
+  return source.modelPositions.some((_from, sourceModelIndex) =>
+    target.modelPositions.some((_to, targetModelIndex) =>
+      modelIsHiddenFrom(state, source, sourceModelIndex, target, targetModelIndex),
+    ),
+  );
+}
+
 function markRangedAttackMade(unit: BattleUnit): void {
   unit.rangedAttacksMadeThisTurn = true;
 }
@@ -2700,8 +2708,11 @@ function shootingWeaponCanTarget(
   ) return false;
   const targetVisible = precisionCharacter
     || battleUnitHasLosToAttachedUnit(state, unit, target);
+  const targetHidden = !targetVisible && attachedUnitComponents(state, target).some(component =>
+    hasAnyHiddenModelPair(state, unit, component),
+  );
   return battleUnitToAttachedUnitDistance(state, unit, target) <= weapon.range
-    && (targetVisible || weaponHasKeyword(weapon, 'Indirect Fire'));
+    && (targetVisible || (weaponHasKeyword(weapon, 'Indirect Fire') && !targetHidden));
 }
 
 function unitHasVisibleModelToTarget(state: BattleState, unit: BattleUnit, target: BattleUnit): boolean {
