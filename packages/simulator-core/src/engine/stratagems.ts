@@ -147,6 +147,7 @@ function targetRestrictionsAllowed(
   if (stratagem.targetMustBeUnengaged && unitIsEngaged(state, target, rules)) return false;
   if (stratagem.targetMustBeEngaged && !unitIsEngaged(state, target, rules)) return false;
   if (stratagem.targetMustBeEligibleToShoot && !unitEligibleToShoot(state, target, rules)) return false;
+  if (stratagem.id === 'explosives' && (target.firedWeaponIndices?.length ?? 0) > 0) return false;
   if (stratagem.targetMustBeEligibleToFight && !unitEligibleToFight(state, target, rules)) return false;
   if (stratagem.targetMustHaveCharged && !target.charged) return false;
   if (stratagem.targetMustNotHaveAdvanced && target.movementAction === 'advanced') return false;

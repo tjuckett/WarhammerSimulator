@@ -1565,6 +1565,22 @@ test('11th Inescapable Dominion scores fixed objective conditions from mission d
   assert.deepEqual(battle.scores, [9, 0]);
 });
 
+test('11th Explosives cannot target a unit after it has begun shooting', () => {
+  const battle = state('shooting');
+  battle.activeArmy = 0;
+  battle.commandPoints = [1, 0];
+  const grenadier = losTestUnit('partial-grenadier', 0, { x: 10, y: 10 });
+  grenadier.profile.keywords = ['Infantry', 'Explosives'];
+  grenadier.profile.weapons = [
+    { name: 'Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+  ];
+  grenadier.firedWeaponIndices = [0];
+  const target = losTestUnit('target', 1, { x: 16, y: 10 });
+  battle.units = [grenadier, target];
+
+  assert.equal(useStratagem(battle, 0, 'explosives', rules40K11th, grenadier.id, undefined, target.id, 0), battle);
+});
+
 test('11th Crushing Impact uses the selected engaged model Toughness', () => {
   const battle = state('charge');
   battle.activeArmy = 0;
