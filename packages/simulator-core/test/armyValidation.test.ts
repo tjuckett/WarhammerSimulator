@@ -217,6 +217,43 @@ test('army validation requires targets for transport and leader relationships', 
   assert.ok(result.errors.some(error => error.code === 'leader-target-missing'));
 });
 
+test('army validation rejects malformed army metadata', () => {
+  const result = validateImportedArmy({
+    name: 7 as unknown as string,
+    faction: null as unknown as string,
+    units: [null as unknown as UnitProfile],
+    generation: {
+      strategy: 'rush' as 'balanced', sourceArmyName: ' ', explanation: 7 as unknown as string,
+      heuristicScore: Number.NaN, scenarioId: ' ', scenarioEvaluations: [{
+        scenarioId: '', strategy: 'rush' as 'balanced', score: Number.POSITIVE_INFINITY, explanation: 7 as unknown as string,
+      }],
+    },
+  });
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.code === 'army-name-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'army-faction-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'unit-shape-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'generation-strategy-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'generation-source-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'generation-explanation-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'generation-score-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'generation-scenario-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'generation-evaluation-invalid'));
+});
+
+test('army validation accepts valid army generation metadata', () => {
+  const result = validateImportedArmy({
+    ...army([unit()]),
+    generation: {
+      strategy: 'balanced', sourceArmyName: 'Source Army', explanation: 'Selected a balanced roster.', heuristicScore: 12.5,
+      scenarioId: 'balanced-objectives', scenarioEvaluations: [{
+        scenarioId: 'balanced-objectives', strategy: 'balanced', score: 12.5, explanation: 'Balanced score.',
+      }],
+    },
+  });
+  assert.equal(result.valid, true);
+});
+
 test('army validation allows a transport assignment only when capacity exists', () => {
   const transport = unit({ rosterId: 'transport', name: 'Transport', transportCapacity: 10 });
   const passenger = unit({ rosterId: 'passenger', name: 'Passenger', deployment: { mode: 'transport', transportUnitId: 'transport' } });

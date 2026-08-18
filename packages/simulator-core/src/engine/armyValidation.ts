@@ -24,6 +24,7 @@ export interface ArmyValidationOptions {
 const DEPLOYMENT_MODES = new Set<string>(Object.values(UNIT_DEPLOYMENT_MODE));
 const RULE_TAGS = new Set(['Aura', 'Psychic']);
 const RULE_CATEGORIES = new Set(['datasheet', 'faction', 'wargear']);
+const GENERATION_STRATEGIES = new Set(['balanced', 'aggressive', 'objective']);
 
 function issue(
   severity: ArmyValidationSeverity,
@@ -39,7 +40,9 @@ function finitePositive(value: number): boolean {
 }
 
 function referencedUnit(army: ImportedArmy, reference: string): UnitProfile | undefined {
-  return army.units.find(unit => unitRosterId(unit) === reference || unit.name === reference);
+  return Array.isArray(army.units)
+    ? army.units.find(unit => unit && (unitRosterId(unit) === reference || unit.name === reference))
+    : undefined;
 }
 
 function catalogUnitFor(unit: UnitProfile, catalog: ArmyCatalog): ArmyCatalogUnit | undefined {
@@ -64,13 +67,62 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
   const catalog = options.catalog;
   const catalogUnitCounts = new Map<string, number>();
   let catalogPoints = 0;
+  const armyName = typeof army?.name === 'string' ? army.name : '';
+  const armyFaction = typeof army?.faction === 'string' ? army.faction : '';
+  const units = Array.isArray(army?.units) ? army.units : [];
 
-  if (!army.name.trim()) warnings.push(issue('warning', 'army-name-missing', 'Army name is empty.'));
-  if (!army.faction.trim()) warnings.push(issue('warning', 'army-faction-missing', 'Army faction is empty.'));
-  if (army.units.length === 0) warnings.push(issue('warning', 'army-empty', 'Army has no units.'));
+  if (typeof army?.name !== 'string') errors.push(issue('error', 'army-name-invalid', 'Army name must be a string.'));
+  else if (!armyName.trim()) warnings.push(issue('warning', 'army-name-missing', 'Army name is empty.'));
+  if (typeof army?.faction !== 'string') errors.push(issue('error', 'army-faction-invalid', 'Army faction must be a string.'));
+  else if (!armyFaction.trim()) warnings.push(issue('warning', 'army-faction-missing', 'Army faction is empty.'));
+  if (!Array.isArray(army?.units)) errors.push(issue('error', 'unit-list-shape-invalid', 'Army units must be an array.'));
+  else if (units.length === 0) warnings.push(issue('warning', 'army-empty', 'Army has no units.'));
 
-  army.units.forEach((unit, index) => {
-    const label = unit.name.trim() || `Unit ${index + 1}`;
+  const generation = army?.generation;
+  if (generation !== undefined && (!generation || typeof generation !== 'object' || Array.isArray(generation))) {
+    errors.push(issue('error', 'generation-shape-invalid', 'Army generation metadata has an invalid shape.'));
+  } else if (generation) {
+    if (typeof generation.strategy !== 'string' || !GENERATION_STRATEGIES.has(generation.strategy)) {
+      errors.push(issue('error', 'generation-strategy-invalid', 'Army generation metadata has an invalid strategy.'));
+    }
+    if (typeof generation.sourceArmyName !== 'string' || !generation.sourceArmyName.trim()) {
+      errors.push(issue('error', 'generation-source-invalid', 'Army generation metadata has an invalid source army name.'));
+    }
+    if (typeof generation.explanation !== 'string') {
+      errors.push(issue('error', 'generation-explanation-invalid', 'Army generation metadata has an invalid explanation.'));
+    }
+    if (typeof generation.heuristicScore !== 'number' || !Number.isFinite(generation.heuristicScore)) {
+      errors.push(issue('error', 'generation-score-invalid', 'Army generation metadata has an invalid heuristic score.'));
+    }
+    if (generation.scenarioId !== undefined
+      && (typeof generation.scenarioId !== 'string' || !generation.scenarioId.trim())) {
+      errors.push(issue('error', 'generation-scenario-invalid', 'Army generation metadata has an invalid scenario ID.'));
+    }
+    if (generation.scenarioEvaluations !== undefined && !Array.isArray(generation.scenarioEvaluations)) {
+      errors.push(issue('error', 'generation-evaluations-shape-invalid', 'Army generation evaluations must be an array.'));
+    } else {
+      generation.scenarioEvaluations?.forEach((evaluation, evaluationIndex) => {
+        const evaluationLabel = `Army generation evaluation ${evaluationIndex + 1}`;
+        if (!evaluation || typeof evaluation !== 'object' || Array.isArray(evaluation)) {
+          errors.push(issue('error', 'generation-evaluation-invalid', `${evaluationLabel} has an invalid shape.`));
+          return;
+        }
+        if (typeof evaluation.scenarioId !== 'string' || !evaluation.scenarioId.trim()
+          || typeof evaluation.strategy !== 'string' || !GENERATION_STRATEGIES.has(evaluation.strategy)
+          || typeof evaluation.score !== 'number' || !Number.isFinite(evaluation.score)
+          || typeof evaluation.explanation !== 'string') {
+          errors.push(issue('error', 'generation-evaluation-invalid', `${evaluationLabel} has invalid fields.`));
+        }
+      });
+    }
+  }
+
+  units.forEach((unit, index) => {
+    if (!unit || typeof unit !== 'object' || Array.isArray(unit)) {
+      errors.push(issue('error', 'unit-shape-invalid', `Unit ${index + 1} has an invalid shape.`, index));
+      return;
+    }
+    const label = typeof unit.name === 'string' && unit.name.trim() ? unit.name.trim() : `Unit ${index + 1}`;
     const weapons = Array.isArray(unit.weapons) ? unit.weapons : [];
     for (const [keywordType, keywords] of [
       ['unit', unit.keywords],
@@ -82,8 +134,8 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
     }
 
     if (catalog) {
-      if (army.faction.trim().toLowerCase() !== catalog.faction.trim().toLowerCase()) {
-        if (index === 0) errors.push(issue('error', 'catalog-faction-mismatch', `Army faction "${army.faction}" does not match catalog faction "${catalog.faction}".`));
+      if (armyFaction.trim().toLowerCase() !== catalog.faction.trim().toLowerCase()) {
+        if (index === 0) errors.push(issue('error', 'catalog-faction-mismatch', `Army faction "${armyFaction}" does not match catalog faction "${catalog.faction}".`));
       } else {
         const catalogUnit = catalogUnitFor(unit, catalog);
         if (!catalogUnit) {
@@ -109,7 +161,7 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
         }
       }
     }
-    if (!unit.name.trim()) errors.push(issue('error', 'unit-name-missing', `${label} has no name.`, index));
+    if (typeof unit.name !== 'string' || !unit.name.trim()) errors.push(issue('error', 'unit-name-missing', `${label} has no name.`, index));
     if (!Array.isArray(unit.weapons)) {
       errors.push(issue('error', 'weapon-list-shape-invalid', `${label} has an invalid weapon list.`, index));
     } else {
