@@ -1565,6 +1565,39 @@ test('11th Inescapable Dominion scores fixed objective conditions from mission d
   assert.deepEqual(battle.scores, [9, 0]);
 });
 
+test('11th Crushing Impact uses the selected engaged model Toughness', () => {
+  const battle = state('charge');
+  battle.activeArmy = 0;
+  battle.commandPoints = [1, 0];
+  const crusher = losTestUnit('mixed-crusher', 0, { x: 10, y: 10 });
+  crusher.charged = true;
+  crusher.profile = {
+    ...crusher.profile,
+    keywords: ['Monster'],
+    toughness: 4,
+    baseModelCount: 2,
+    modelProfiles: [
+      { name: 'Heavy model', count: 1, move: 8, toughness: 8, save: 3, wounds: 5, leadership: 6, oc: 2 },
+      { name: 'Light model', count: 1, move: 8, toughness: 4, save: 4, wounds: 2, leadership: 7, oc: 1 },
+    ],
+  };
+  crusher.remainingModels = 2;
+  crusher.modelPositions = [{ x: 10, y: 10 }, { x: 20, y: 20 }];
+  crusher.modelRosterIndexes = [0, 1];
+  const target = losTestUnit('impact-target', 1, { x: 10.5, y: 10 });
+  battle.units = [crusher, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const impacted = useStratagem(battle, 0, 'crushing-impact', rules40K11th, crusher.id, undefined, target.id);
+    assert.match(impacted.log.map(entry => entry.message).join(' '), /using model 1/);
+    assert.match(impacted.log.map(entry => entry.message).join(' '), /\[6, 6, 6, 6, 6, 6\]/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('Counteroffensive can target an engaged unit without melee weapons', () => {
   const battle = state('fight');
   battle.activeArmy = 0;

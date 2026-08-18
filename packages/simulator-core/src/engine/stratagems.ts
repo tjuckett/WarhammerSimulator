@@ -6,7 +6,7 @@ import { unitCanBeAffectedByStratagem } from './battleshock';
 import { countSuccesses, rollMultiple } from './dice';
 import { hasLOSEdgeToEdge } from './terrainGeometry';
 import { battleUnitMaxBaseRadiusInches } from './baseSizes';
-import { applyDamage, battleUnitsBaseEdgeDistance } from './simulator';
+import { applyDamage, battleModelBaseEdgeDistance, battleUnitsBaseEdgeDistance } from './simulator';
 import type { RulesEdition } from './rulesEngine';
 import { unitHasRule } from './armyUnits';
 
@@ -192,8 +192,9 @@ function heroicInterventionModeAllowed(stratagem: StratagemDefinition, mode?: He
 }
 
 function sourceModelIndexAllowed(source: BattleUnit | null, stratagem: StratagemDefinition, sourceModelIndex?: number): boolean {
-  if (stratagem.id !== 'explosives') return sourceModelIndex === undefined;
+  if (stratagem.id !== 'explosives' && stratagem.id !== 'crushing-impact') return sourceModelIndex === undefined;
   if (!source) return false;
+  if (stratagem.id === 'crushing-impact' && sourceModelIndex === undefined) return true;
   return Number.isInteger(sourceModelIndex)
     && sourceModelIndex! >= 0
     && !!source.modelPositions[sourceModelIndex!];
@@ -238,10 +239,34 @@ function secondaryTargetAllowed(
       && !!target
       && explosivesTargetAllowed(state, source, target, sourceModelIndex, rules);
   }
-  if (sourceModelIndex !== undefined) return false;
+  if (!target) return false;
+  if (sourceModelIndex !== undefined) {
+    return target.modelPositions.some((_position, targetModelIndex) =>
+      battleModelBaseEdgeDistance(source, sourceModelIndex, target, targetModelIndex) <= rules.engagementRange(),
+    );
+  }
   return !!target
     && target.side !== side
     && battleUnitsBaseEdgeDistance(source, target) <= rules.engagementRange();
+}
+
+function firstEngagedModelIndex(source: BattleUnit, target: BattleUnit, rules: RulesEdition): number | undefined {
+  for (let sourceModelIndex = 0; sourceModelIndex < source.modelPositions.length; sourceModelIndex++) {
+    if (target.modelPositions.some((_targetPosition, targetModelIndex) =>
+      battleModelBaseEdgeDistance(source, sourceModelIndex, target, targetModelIndex) <= rules.engagementRange(),
+    )) return sourceModelIndex;
+  }
+  return undefined;
+}
+
+function modelToughness(source: BattleUnit, modelIndex: number): number {
+  const rosterIndex = source.modelRosterIndexes?.[modelIndex] ?? modelIndex;
+  let offset = 0;
+  for (const profile of source.profile.modelProfiles ?? []) {
+    if (rosterIndex < offset + profile.count) return profile.toughness;
+    offset += profile.count;
+  }
+  return source.profile.toughness;
 }
 
 function applyInsaneBraveryStratagemEffect(
@@ -356,6 +381,7 @@ function applyMortalWoundStratagemEffect(
   state: BattleState,
   side: Side,
   stratagem: StratagemDefinition,
+  rules: RulesEdition,
   targetUnitId?: string,
   secondaryTargetUnitId?: string,
   sourceModelIndex?: number,
@@ -374,15 +400,20 @@ function applyMortalWoundStratagemEffect(
     return;
   }
 
+  const selectedModelIndex = stratagem.id === 'crushing-impact'
+    ? sourceModelIndex ?? firstEngagedModelIndex(unit, enemy, rules) ?? 0
+    : undefined;
   const diceCount = stratagem.id === 'crushing-impact'
-    ? Math.min(6, Math.max(0, Math.floor(unit.profile.toughness)))
+    ? Math.min(6, Math.max(0, Math.floor(modelToughness(unit, selectedModelIndex!))))
     : 6;
   const rolls = rollMultiple(diceCount);
   const mortalWounds = countSuccesses(rolls, stratagem.id === 'crushing-impact' ? 5 : 4);
   const returnedMortalWounds = stratagem.id === 'crushing-impact'
     ? rolls.filter(roll => roll === 1).length
     : 0;
-  appendStratagemEffectLog(state, side, unit.profile.name, `${stratagem.name} targets ${enemy.profile.name}.`, 'info');
+  appendStratagemEffectLog(state, side, unit.profile.name,
+    `${stratagem.name} targets ${enemy.profile.name}${selectedModelIndex === undefined ? '' : ` using model ${selectedModelIndex + 1}`}.`,
+    'info');
   appendStratagemEffectLog(state, side, unit.profile.name, `${stratagem.name} rolls: [${rolls.join(', ')}] -> ${mortalWounds} mortal wound(s).`, 'roll');
   if (mortalWounds > 0) {
     state.log = [
@@ -479,8 +510,12 @@ export function useStratagem(
   const target = targetUnitFor(state, targetUnitId);
   if (stratagem.id === 'epic-challenge' && (!target || !targetModelIndexAllowed(target, stratagem, targetModelIndex))) return state;
   if (stratagem.id !== 'epic-challenge' && targetModelIndex !== undefined) return state;
-  if (!sourceModelIndexAllowed(target!, stratagem, sourceModelIndex)) return state;
-  if (!secondaryTargetAllowed(state, side, stratagem, target, secondaryTargetUnitId, sourceModelIndex, rules)) return state;
+  const secondaryTarget = targetUnitFor(state, secondaryTargetUnitId);
+  const effectiveSourceModelIndex = stratagem.id === 'crushing-impact'
+    ? sourceModelIndex ?? (target && secondaryTarget ? firstEngagedModelIndex(target, secondaryTarget, rules) : undefined)
+    : sourceModelIndex;
+  if (!sourceModelIndexAllowed(target!, stratagem, effectiveSourceModelIndex)) return state;
+  if (!secondaryTargetAllowed(state, side, stratagem, target, secondaryTargetUnitId, effectiveSourceModelIndex, rules)) return state;
 
   const next: BattleState = JSON.parse(JSON.stringify(state));
   const commandPointsSpent = stratagem.cost + (heroicInterventionMode === 'into-the-fray' ? 1 : 0);
@@ -496,7 +531,7 @@ export function useStratagem(
     targetUnitId,
     ...(stratagem.id === 'epic-challenge' ? { targetModelIndex: targetModelIndex ?? 0 } : {}),
     ...(secondaryTargetUnitId ? { secondaryTargetUnitId } : {}),
-    ...(sourceModelIndex !== undefined ? { sourceModelIndex } : {}),
+    ...(effectiveSourceModelIndex !== undefined ? { sourceModelIndex: effectiveSourceModelIndex } : {}),
     ...(heroicInterventionMode ? { heroicInterventionMode } : {}),
     commandPointsSpent,
   };
@@ -516,6 +551,6 @@ export function useStratagem(
   applyRapidIngressStratagemEffect(next, side, stratagem, targetUnitId);
   applyHeroicInterventionStratagemEffect(next, side, stratagem, targetUnitId, heroicInterventionMode);
   applyCounteroffensiveStratagemEffect(next, stratagem, targetUnitId);
-  applyMortalWoundStratagemEffect(next, side, stratagem, targetUnitId, secondaryTargetUnitId, sourceModelIndex);
+  applyMortalWoundStratagemEffect(next, side, stratagem, rules, targetUnitId, secondaryTargetUnitId, effectiveSourceModelIndex);
   return next;
 }

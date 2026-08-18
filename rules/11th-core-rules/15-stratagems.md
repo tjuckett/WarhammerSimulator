@@ -25,6 +25,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 - Core stratagem definitions, CP spending, timing/target restrictions, once-per-phase/battle limits, affected-target restrictions, and current effects are represented.
 - Rapid Ingress also enforces its final restriction against use during the first battle round.
 - Crushing Impact selects an explicit engaged enemy after the charge, rolls up to six dice from the charging unit's Toughness, deals mortal wounds on 5+, and applies one mortal wound back for each unmodified 1.
+- Crushing Impact records the engaged source model used for the roll and uses that model's Toughness when mixed-model profiles provide distinct characteristics.
 - Explosives selects an explicit EXPLOSIVES/GRENADES model and a visible unengaged enemy target within 8 inches; both selections are carried through legal, replay, and manual-play paths.
 - Fire Overwatch is restricted to the opponent's Reinforcements/end-of-Movement step, and snap shooting requires the recorded Fire Overwatch use.
 - 11th Fire Overwatch targets any friendly unengaged non-TITANIC unit; it does not impose ordinary once-per-turn Shooting eligibility, so an already activated unit may use any remaining eligible weapons.

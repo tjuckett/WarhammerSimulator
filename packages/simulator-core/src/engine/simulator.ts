@@ -2805,6 +2805,18 @@ export function battleUnitsBaseEdgeDistance(a: BattleUnit, b: BattleUnit): numbe
   return closest;
 }
 
+export function battleModelBaseEdgeDistance(
+  a: BattleUnit,
+  aModelIndex: number,
+  b: BattleUnit,
+  bModelIndex: number,
+): number {
+  const aModel = a.modelPositions[aModelIndex];
+  const bModel = b.modelPositions[bModelIndex];
+  if (!aModel || !bModel) return Infinity;
+  return modelBaseEdgeDistance3d(aModel, modelFootprint(a, aModelIndex), bModel, modelFootprint(b, bModelIndex));
+}
+
 export function battleUnitsWithinBaseEdgeRange(a: BattleUnit, b: BattleUnit, range: number): boolean {
   return battleUnitsBaseEdgeDistance(a, b) <= range;
 }
