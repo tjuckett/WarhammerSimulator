@@ -4290,6 +4290,7 @@ function disembarkPositions(
   transport: BattleUnit,
   profile: UnitProfile,
   combatDisembark = false,
+  rapidDisembark = false,
 ): Position[] | null {
   const side = transport.side;
   const forward = side === 0 ? 1 : -1;
@@ -4318,6 +4319,11 @@ function disembarkPositions(
     if (combatDisembark && engagedEnemyIds.some(enemyId => !transportEngagedEnemyIds.has(enemyId))) continue;
     if (!playMoveHasNoBaseOverlap(state, candidateUnit, new Set(candidateUnit.modelPositions.map((_, index) => index)))) continue;
     if (!playMoveHasNoWallOverlap(state, candidateUnit, new Set(candidateUnit.modelPositions.map((_, index) => index)))) continue;
+    if (rapidDisembark && transport.arrivedFromReinforcements === true && (
+      !reinforcementPlacementIsOutsideEnemyRange(state, transport.side, profile, positions)
+      || !reinforcementPlacementIsWithinStrategicReserveEdge(candidateUnit, state)
+      || !strategicReservePlacementIsOutsideOpponentDeploymentZone(candidateUnit, state)
+    )) continue;
     return positions;
   }
 
@@ -4811,7 +4817,7 @@ export function playUnitCanDisembark(
   const profile = passenger?.profile ?? (typeof armyUnitIndex === 'number' ? state.armies[side].army.units[armyUnitIndex] : undefined);
   if (!profile || (armyUnitIndex !== undefined && !unitAssignedToTransport(profile, transport))) return false;
   if (state.units.some(unit => unit.side === side && !unit.destroyed && !unit.embarkedInUnitId && unitRosterId(unit.profile) === unitRosterId(profile))) return false;
-  return !!disembarkPositions(state, transport, profile, useCombatDisembark);
+  return !!disembarkPositions(state, transport, profile, useCombatDisembark, useRapidDisembark);
 }
 
 export function disembarkPlayUnit(
@@ -4834,7 +4840,7 @@ export function disembarkPlayUnit(
   const defaultDisembarkModes = playDisembarkModes(s, transportUnitId);
   const useRapidDisembark = rapidDisembark ?? defaultDisembarkModes.rapidDisembark;
   const useCombatDisembark = combatDisembark ?? defaultDisembarkModes.combatDisembark;
-  const positions = disembarkPositions(s, transport, profile, useCombatDisembark);
+  const positions = disembarkPositions(s, transport, profile, useCombatDisembark, useRapidDisembark);
   if (!positions) return state;
 
   const unit = existingPassenger ?? makeBattleUnit(profile, side, positions);

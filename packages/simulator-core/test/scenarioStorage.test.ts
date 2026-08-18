@@ -10760,9 +10760,37 @@ test('11th Rapid Disembark is available after a completed Normal move and cannot
 
   const ingress = structuredClone(completed);
   ingress.movementStep = 'reinforcements';
-  ingress.units.find(unit => unit.id === transport.id)!.arrivedFromReinforcements = true;
+  const ingressTransport = ingress.units.find(unit => unit.id === transport.id)!;
+  ingressTransport.arrivedFromReinforcements = true;
+  ingressTransport.position = { x: 1, y: 10 };
+  ingressTransport.modelPositions = [{ x: 1, y: 10 }];
   assert.deepEqual(playDisembarkModes(ingress, transport.id), { combatDisembark: false, rapidDisembark: true });
   assert.equal(playUnitCanDisembark(ingress, 0, transport.id, undefined, 1), true);
+});
+
+test('11th Rapid Disembark rejects passenger setups that violate the transport ingress restrictions', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.movementStep = 'reinforcements';
+  battle.battleRound = 2;
+  const transportProfile = {
+    name: 'Ingress Transport', move: 10, toughness: 8, save: 3, wounds: 10, leadership: 7, oc: 0,
+    baseModelCount: 1, keywords: ['Transport'], factionKeywords: [], weapons: [], abilities: [], transportCapacity: 2,
+  };
+  const passengerProfile = {
+    name: 'Ingress Passengers', move: 6, toughness: 4, save: 4, wounds: 1, leadership: 7, oc: 2,
+    baseModelCount: 1, keywords: ['Infantry'], factionKeywords: [], weapons: [], abilities: [],
+    deployment: { mode: 'transport' as const, transportName: 'Ingress Transport' },
+  };
+  const transport = losTestUnit('ingress-transport', 0, { x: 20, y: 20 });
+  transport.profile = transportProfile;
+  transport.movementAction = 'normalMove';
+  transport.movementComplete = true;
+  transport.arrivedFromReinforcements = true;
+  battle.units = [transport];
+  battle.armies[0].army = { ...battle.armies[0].army, units: [transportProfile, passengerProfile] };
+
+  assert.equal(playUnitCanDisembark(battle, 0, transport.id, undefined, 1), false);
 });
 
 test('destroyed transports force embarked passengers to emergency disembark', () => {
