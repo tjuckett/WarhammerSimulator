@@ -6,9 +6,9 @@ import { zoneFor } from '@warhammer-simulator/core/engine/deployment';
 import { battleRound, maxBattleRounds } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import { battleModelIdsWithCoherencyIssues, movePlayModels, type LOSRay } from '@warhammer-simulator/core/engine/simulator';
+import { rulesEditionForRuleset } from '@warhammer-simulator/core/engine/rulesEngine';
 import { boardFormatForState } from '@warhammer-simulator/core/data/boardFormats';
 import {
-  TENTH_EDITION_MARKER_OBJECTIVE_CONTROL,
   objectiveControlRadius,
 } from '@warhammer-simulator/core/engine/objectiveGeometry';
 import type { DeploymentZoneShape } from '@warhammer-simulator/core/data/deploymentZoneTypes';
@@ -829,9 +829,9 @@ function draw(
   }
 
   // ── Objectives ────────────────────────────────────────────────────────────
-  const objectiveControl = state.objectiveControl ?? TENTH_EDITION_MARKER_OBJECTIVE_CONTROL;
+  const objectiveControl = state.objectiveControl ?? rulesEditionForRuleset(state.ruleset).objectiveControl;
   const objectiveMarkerRadius = objectiveControl.kind === 'marker'
-    ? objectiveControl.markerRadius ?? TENTH_EDITION_MARKER_OBJECTIVE_CONTROL.markerRadius ?? 0
+    ? objectiveControl.markerRadius ?? 0
     : 0;
   const objectiveRange = objectiveControlRadius(objectiveControl);
   for (let i = 0; i < state.objectives.length; i++) {
