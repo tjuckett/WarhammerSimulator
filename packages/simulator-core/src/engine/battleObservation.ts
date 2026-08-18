@@ -1,5 +1,6 @@
 import type { BattleState, Phase, Position, Side } from '../types/battle';
 import { battleRound } from './battleRound';
+import { objectiveControlValue } from './battleshock';
 import { battleUnitsBaseEdgeDistance } from './simulator';
 
 export interface UnitObservation {
@@ -77,7 +78,7 @@ function observeUnit(state: BattleState, unit: BattleState['units'][number]): Un
     models: unit.remainingModels,
     startingModels: unit.profile.baseModelCount,
     woundsRemainingEstimate: woundsRemainingEstimate(unit),
-    objectiveControl: unit.profile.oc * unit.remainingModels,
+    objectiveControl: objectiveControlValue(unit) * unit.remainingModels,
     destroyed: unit.destroyed,
     battleshocked: unit.battleshocked,
     inCombat: unit.inCombat,
@@ -98,7 +99,7 @@ function observeSide(state: BattleState, side: Side): SideObservation {
     unitsAlive: alive.length,
     unitsDestroyed: units.length - alive.length,
     modelsAlive: alive.reduce((sum, unit) => sum + unit.remainingModels, 0),
-    objectiveControlTotal: alive.reduce((sum, unit) => sum + unit.profile.oc * unit.remainingModels, 0),
+    objectiveControlTotal: alive.reduce((sum, unit) => sum + objectiveControlValue(unit) * unit.remainingModels, 0),
   };
 }
 

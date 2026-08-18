@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import type { BattleState } from '../src/types/battle';
+import type { BattleState, BattleUnit } from '../src/types/battle';
 import { rules40K10th } from '../src/engine/rulesEngine';
+import { observeBattleState } from '../src/engine/battleObservation';
 import {
   applyAiAction,
   applyControllerAction,
@@ -60,4 +61,44 @@ test('controller seats observe legal actions and apply only intended GameActions
     () => applyControllerAction(state, { side: 0, action: { type: 'play.stepPhase', side: 1 } as never }, rules40K10th),
     /Illegal action/,
   );
+});
+
+test('battle observations use effective objective control for Battle-shocked units', () => {
+  const state = controllerState();
+  const shocked: BattleUnit = {
+    id: 'shocked',
+    side: 0,
+    profile: {
+      name: 'Shocked Squad',
+      move: 6,
+      toughness: 4,
+      save: 4,
+      wounds: 1,
+      leadership: 7,
+      oc: 2,
+      baseModelCount: 2,
+      keywords: [],
+      factionKeywords: [],
+      weapons: [],
+      abilities: [],
+    },
+    remainingModels: 2,
+    woundsOnLeadModel: 1,
+    position: { x: 10, y: 10 },
+    modelPositions: [{ x: 10, y: 10 }, { x: 11, y: 10 }],
+    facingDeg: 0,
+    charged: false,
+    inCombat: false,
+    battleshocked: true,
+    activated: false,
+    destroyed: false,
+  };
+  const healthy: BattleUnit = { ...shocked, id: 'healthy', battleshocked: false, position: { x: 20, y: 10 }, modelPositions: [{ x: 20, y: 10 }, { x: 21, y: 10 }] };
+  state.units = [shocked, healthy];
+
+  const observation = observeBattleState(state);
+
+  assert.equal(observation.units.find(unit => unit.id === shocked.id)?.objectiveControl, 0);
+  assert.equal(observation.units.find(unit => unit.id === healthy.id)?.objectiveControl, 4);
+  assert.equal(observation.sides[0].objectiveControlTotal, 4);
 });
