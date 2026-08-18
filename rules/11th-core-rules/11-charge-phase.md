@@ -23,5 +23,5 @@ Source: https://gdmissions.app/11th/rules/core-rules
 ## TODO
 
 - Re-audit exact charge timing and Heroic Intervention wording.
-- The legal-action generator still emits one action per target rather than enumerating multi-target combinations.
+- Legal-action generation enumerates singleton and multi-target combinations; final charge success still depends on the rolled movement and resulting geometry.
 

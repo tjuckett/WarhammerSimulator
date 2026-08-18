@@ -9664,6 +9664,22 @@ test('play Charge supports multiple declared targets and marks each target in co
   }
 });
 
+test('legal charge actions include singleton and multi-target declarations', () => {
+  const battle = state('charge');
+  const charger = losTestUnit('charger-legal', 0, { x: 0, y: 10 });
+  const targetOne = losTestUnit('legal-target-one', 1, { x: 6, y: 10 });
+  const targetTwo = losTestUnit('legal-target-two', 1, { x: 6, y: 11 });
+  battle.units = [charger, targetOne, targetTwo];
+
+  const chargeActions = getLegalActions(battle, 0, rules40K10th)
+    .filter(action => action.category === 'charge');
+  assert.deepEqual(chargeActions.map(action => action.targetUnitIds ?? [action.targetUnitId]), [
+    [targetOne.id],
+    [targetTwo.id],
+    [targetOne.id, targetTwo.id],
+  ]);
+});
+
 test('11th Charge phase gates charge declarations and failed charges activate the unit without moving', () => {
   const battle = state('charge');
   battle.ruleset = rulesetMetadataForState(rules40K11th);

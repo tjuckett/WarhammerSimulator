@@ -39,6 +39,7 @@ import {
   surveilTargetOptions,
   triangulateObjectiveOptions,
   vanguardOperationTerrainOptions,
+  type PlayChargeTargetOption,
 } from './simulator';
 import type { BattleState, BattleUnit } from '../types/battle';
 import type { AbilityTiming } from '../types/ability';
@@ -61,6 +62,7 @@ export interface LegalAction {
   side: Side;
   unitId?: string;
   targetUnitId?: string;
+  targetUnitIds?: string[];
   label: string;
 }
 
@@ -304,14 +306,31 @@ function addSnapShootingActions(actions: LegalAction[], state: BattleState, side
 function addChargeActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
   if (state.phase !== 'charge' || state.activeArmy !== side) return;
   for (const unit of activeUnits(state, side)) {
-    for (const option of playChargeTargetOptions(state, unit.id, side, rules)) {
+    const options = playChargeTargetOptions(state, unit.id, side, rules);
+    const selections = options.reduce<Array<PlayChargeTargetOption[]>>(
+      (all, option) => [...all, ...all.map(selection => [...selection, option])],
+      [[]],
+    ).filter(selection => selection.length > 0);
+    for (const selected of selections) {
+      const targetUnitIds = selected.map(option => option.targetId);
+      const targetUnitId = targetUnitIds[0];
+      const needed = Math.max(...selected.map(option => option.needed));
+      if (needed > rules.chargeRange() || !targetUnitId) continue;
+      const targetNames = targetUnitIds.map(targetId => state.units.find(target => target.id === targetId)?.profile.name ?? targetId);
       actions.push({
-        action: { type: 'play.chargeUnitTarget', side, unitId: unit.id, targetUnitId: option.targetId },
+        action: {
+          type: 'play.chargeUnitTarget',
+          side,
+          unitId: unit.id,
+          targetUnitId,
+          ...(targetUnitIds.length > 1 ? { targetUnitIds } : {}),
+        },
         category: 'charge',
         side,
         unitId: unit.id,
-        targetUnitId: option.targetId,
-        label: `${unit.profile.name}: Charge (${option.needed.toFixed(1)}" needed)`,
+        targetUnitId,
+        ...(targetUnitIds.length > 1 ? { targetUnitIds } : {}),
+        label: `${unit.profile.name}: Charge ${targetNames.join(' + ')} (${needed.toFixed(1)}" maximum needed)`,
       });
     }
   }
