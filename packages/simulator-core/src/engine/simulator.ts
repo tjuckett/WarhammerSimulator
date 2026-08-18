@@ -612,8 +612,7 @@ function hasAnyModelLOS(
 }
 
 function terrainCanHideModels(terrain: Terrain): boolean {
-  return terrain.providesCover
-    && terrain.features.some(feature => feature.category === 'light' || feature.category === 'dense');
+  return terrain.features.some(feature => feature.category === 'light' || feature.category === 'dense');
 }
 
 function modelIsHiddenFrom(
