@@ -50,12 +50,13 @@ Source: https://gdmissions.app/11th/rules/core-rules
 
 ## Implementation Notes
 
-- Covered or partially covered: Anti, Assault, Blast, Devastating Wounds, Feel No Pain, Fights First, Hazardous, Heavy, Ignores Cover, Indirect Fire, Lethal Hits, Lone Operative, Melta, One Shot, Pistol/Sidearm, Precision, Rapid Fire, Stealth, Sustained Hits, Torrent, and Twin-linked.
+- Covered or partially covered: Anti, Assault, Blast, Cleave, Damaged, Deadly Demise, Deep Strike, Devastating Wounds, Extra Attacks, Feel No Pain, Fights First, Firing Deck, Hazardous, Heavy, Hover, Ignores Cover, Indirect Fire, Infiltrators, Lethal Hits, Lone Operative, Melta, One Shot, Pistol/Sidearm, Precision, Rapid Fire, Scouts, Stealth, Super-heavy Walker, Sustained Hits, Torrent, Twin-linked, and [LANCE].
 - `[CLOSE-QUARTERS]` is implemented through the 10.06 Close-Quarters shooting path and its 20.04 Strategic Reserve ingress exception.
+- Leader attachment, Precision targeting, and Support remain generic foundations; exact datasheet aura and faction effects remain source-dependent.
 
 ## TODO
 
-- Add/finalize Cleave, Deadly Demise, Deep Strike, Extra Attacks, Firing Deck, Hover, Infiltrators, Lance, Leader, Scouts, Support, Super-heavy Walker, and Damaged.
+- Add exact Leader and Support effects when typed datasheet/ability source data is available.
 - Re-audit duplicated abilities and X-value abilities.
-- Add tests as each remaining ability becomes implemented.
+- Keep regression coverage aligned with each implemented generic ability.
 

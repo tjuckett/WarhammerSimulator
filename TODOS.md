@@ -257,6 +257,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: the remaining Aircraft movement legality edition check now reuses the focused `aircraftCanMakeNormalMove` helper; React edition branches remain presentation/setup selection concerns.
 - [ ] Continue datasheet/character ability support beyond the first passive hooks: Leader aura/attached-unit modifiers, Precision interactions beyond targeting, and faction-specific abilities as source text/data becomes available.
   - Progress: structured Aura range/eligibility and attached-unit/Precision foundations are implemented; effect execution remains fail-closed until imported source data provides typed modifiers.
+  - Progress: the generic 11th Core 24 abilities that can be represented without faction data are implemented and regression-tested, including Cleave, Deadly Demise, Deep Strike, Extra Attacks, Firing Deck, Hover, Infiltrators, Lance, Scouts, Super-heavy Walker, and Damaged.
 
 ### 11th Primary Missions To Implement
 - [x] Battlefield Dominance
