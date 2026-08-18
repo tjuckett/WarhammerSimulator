@@ -1590,9 +1590,10 @@ test('11th Heroic Intervention Into the Fray costs 2CP, allows a nearby target, 
   const defender = losTestUnit('into-defender', 1, { x: 16, y: 10 });
   battle.units = [attacker, defender];
 
-  const intervening = useStratagem(battle, 1, 'heroic-intervention', rules40K11th, defender.id, undefined, undefined, undefined, 'into-the-fray');
-  assert.deepEqual(intervening.commandPoints, [0, 0]);
-  assert.equal(intervening.units.find(unit => unit.id === defender.id)?.heroicInterventionMode, 'into-the-fray');
+    const intervening = useStratagem(battle, 1, 'heroic-intervention', rules40K11th, defender.id, undefined, undefined, undefined, 'into-the-fray');
+    assert.deepEqual(intervening.commandPoints, [0, 0]);
+    assert.equal(intervening.units.find(unit => unit.id === defender.id)?.heroicInterventionMode, 'into-the-fray');
+    assert.match(intervening.log.map(entry => entry.message).join(' '), /uses Heroic Intervention for 2CP/);
   assert.deepEqual(playChargeTargetOptions(intervening, defender.id, 1, rules40K11th).map(option => option.targetId), [attacker.id]);
 
   const originalRandom = Math.random;

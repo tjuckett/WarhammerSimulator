@@ -502,7 +502,7 @@ export function useStratagem(
     phase: next.phase,
     side,
     unitName: next.armies[side].name,
-    message: `${next.armies[side].name} uses ${stratagem.name} for ${stratagem.cost}CP.`,
+    message: `${next.armies[side].name} uses ${stratagem.name} for ${commandPointsSpent}CP.`,
     type: 'info',
   }];
   applyCommandRerollStratagemEffect(next, side, use);

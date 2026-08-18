@@ -19,6 +19,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 - Aircraft restrictions and Heroic Intervention hooks exist.
 - Charge resolution rejects a move that would end in engagement with an undeclared enemy unit; attached components of the declared target remain valid declared targets.
 - Play charge actions and the UI can serialize multiple declared targets and require engagement with each one.
+- Heroic Intervention's Into the Fray surcharge is recorded consistently in command points and the battle log.
 
 ## TODO
 
