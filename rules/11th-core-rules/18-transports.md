@@ -14,6 +14,7 @@ Source: https://gdmissions.app/11th/rules/core-rules
 ## Implementation Notes
 
 - Capacity, embark, disembark before transport movement, destroyed transport emergency disembark, passenger restrictions, and emergency Battle-shock reset are represented.
+- Passenger-aware 11th mode selection now prefers Tactical Disembark whenever a valid 3-inch setup avoids Engagement Range; Combat Disembark is reserved for cases where every valid setup remains engaged, with replayed mode flags revalidated.
 
 ## TODO
 

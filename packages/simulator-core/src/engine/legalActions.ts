@@ -149,11 +149,11 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
         label: `${unit.profile.name}: Embark in ${transport.profile.name}`,
       })));
     if (unit.profile.transportCapacity) {
-      const disembarkModes = playDisembarkModes(state, unit.id);
       actions.push(...playTransportPassengers(state, unit.id)
-        .filter(passenger => playUnitCanDisembark(state, side, unit.id, passenger.id, undefined, disembarkModes.combatDisembark, disembarkModes.rapidDisembark))
-        .map((passenger): LegalAction => ({
-          action: { type: 'play.disembarkUnit', side, transportUnitId: unit.id, passengerUnitId: passenger.id, combatDisembark: disembarkModes.combatDisembark, rapidDisembark: disembarkModes.rapidDisembark },
+        .map(passenger => ({ passenger, modes: playDisembarkModes(state, unit.id, passenger.id) }))
+        .filter(({ passenger, modes }) => playUnitCanDisembark(state, side, unit.id, passenger.id, undefined, modes.combatDisembark, modes.rapidDisembark))
+        .map(({ passenger, modes }): LegalAction => ({
+          action: { type: 'play.disembarkUnit', side, transportUnitId: unit.id, passengerUnitId: passenger.id, combatDisembark: modes.combatDisembark, rapidDisembark: modes.rapidDisembark },
           category: 'movement',
           side,
           unitId: passenger.id,

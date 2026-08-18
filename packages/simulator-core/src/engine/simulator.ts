@@ -4932,15 +4932,30 @@ export type PlayDisembarkModes = {
   rapidDisembark: boolean;
 };
 
-export function playDisembarkModes(state: BattleState, transportUnitId: string): PlayDisembarkModes {
+export function playDisembarkModes(
+  state: BattleState,
+  transportUnitId: string,
+  passengerUnitId?: string,
+  passengerProfile?: UnitProfile,
+): PlayDisembarkModes {
   const transport = state.units.find(candidate => candidate.id === transportUnitId);
   const rapidDisembark = state.ruleset.edition === '11e'
     && transport?.movementComplete === true
     && transport.movementAction === 'normalMove'
     && (movementStep(state) === 'moveUnits' || transport.arrivedFromReinforcements === true);
+  const passenger = passengerUnitId
+    ? state.units.find(candidate => candidate.id === passengerUnitId && candidate.embarkedInUnitId === transportUnitId)
+    : undefined;
+  const profile = passenger?.profile ?? passengerProfile;
+  const canTacticalDisembark = !!transport
+    && !!profile
+    && !!disembarkPositions(state, transport, profile, false, false);
   return {
     rapidDisembark,
-    combatDisembark: state.ruleset.edition === '11e' && !!transport?.inCombat && !rapidDisembark,
+    combatDisembark: state.ruleset.edition === '11e'
+      && !!transport?.inCombat
+      && !rapidDisembark
+      && !canTacticalDisembark,
   };
 }
 
@@ -4960,9 +4975,19 @@ export function playUnitCanDisembark(
   if (!transport || !unitIsTransportProfile(transport.profile)
     || transport.movementAction === 'advanced'
     || transport.movementAction === 'fellBack') return false;
-  const defaultDisembarkModes = playDisembarkModes(state, transportUnitId);
+  const passenger = passengerUnitId
+    ? state.units.find(candidate => candidate.id === passengerUnitId && candidate.side === side && !candidate.destroyed && candidate.embarkedInUnitId === transportUnitId)
+    : null;
+  if (passenger?.embarkedThisTurn) return false;
+  const profile = passenger?.profile ?? (typeof armyUnitIndex === 'number' ? state.armies[side].army.units[armyUnitIndex] : undefined);
+  if (!profile || (armyUnitIndex !== undefined && !unitAssignedToTransport(profile, transport))) return false;
+  const defaultDisembarkModes = playDisembarkModes(state, transportUnitId, passengerUnitId, profile);
   const useRapidDisembark = rapidDisembark ?? defaultDisembarkModes.rapidDisembark;
-  const useCombatDisembark = combatDisembark ?? defaultDisembarkModes.combatDisembark;
+  const requestedCombatDisembark = combatDisembark ?? defaultDisembarkModes.combatDisembark;
+  const useCombatDisembark = requestedCombatDisembark
+    && !(state.ruleset.edition === '11e'
+      && !useRapidDisembark
+      && !!disembarkPositions(state, transport, profile, false, false));
   if (useCombatDisembark && state.ruleset.edition !== '11e') return false;
   if (useRapidDisembark && state.ruleset.edition !== '11e') return false;
   const transportCanDisembarkBeforeMovement = !transport.movementAction
@@ -4970,12 +4995,6 @@ export function playUnitCanDisembark(
   if (!useRapidDisembark && !useCombatDisembark && !transportCanDisembarkBeforeMovement) return false;
   if (useRapidDisembark && (transport.movementAction !== 'normalMove' || !transport.movementComplete)) return false;
   if (currentMovementStep === 'reinforcements' && !useRapidDisembark) return false;
-  const passenger = passengerUnitId
-    ? state.units.find(candidate => candidate.id === passengerUnitId && candidate.side === side && !candidate.destroyed && candidate.embarkedInUnitId === transportUnitId)
-    : null;
-  if (passenger?.embarkedThisTurn) return false;
-  const profile = passenger?.profile ?? (typeof armyUnitIndex === 'number' ? state.armies[side].army.units[armyUnitIndex] : undefined);
-  if (!profile || (armyUnitIndex !== undefined && !unitAssignedToTransport(profile, transport))) return false;
   if (state.units.some(unit => unit.side === side && !unit.destroyed && !unit.embarkedInUnitId && unitRosterId(unit.profile) === unitRosterId(profile))) return false;
   return !!disembarkPositions(state, transport, profile, useCombatDisembark, useRapidDisembark);
 }
@@ -4997,9 +5016,13 @@ export function disembarkPlayUnit(
     : null;
   const profile = existingPassenger?.profile ?? (typeof armyUnitIndex === 'number' ? s.armies[side].army.units[armyUnitIndex] : undefined);
   if (!profile) return state;
-  const defaultDisembarkModes = playDisembarkModes(s, transportUnitId);
+  const defaultDisembarkModes = playDisembarkModes(s, transportUnitId, existingPassenger?.id, profile);
   const useRapidDisembark = rapidDisembark ?? defaultDisembarkModes.rapidDisembark;
-  const useCombatDisembark = combatDisembark ?? defaultDisembarkModes.combatDisembark;
+  const requestedCombatDisembark = combatDisembark ?? defaultDisembarkModes.combatDisembark;
+  const useCombatDisembark = requestedCombatDisembark
+    && !(s.ruleset.edition === '11e'
+      && !useRapidDisembark
+      && !!disembarkPositions(s, transport, profile, false, false));
   const positions = disembarkPositions(s, transport, profile, useCombatDisembark, useRapidDisembark);
   if (!positions) return state;
 

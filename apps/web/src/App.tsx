@@ -1055,16 +1055,16 @@ export default function App() {
   const selectedPlayDisembarkOptions = useMemo(() => {
     if (!isPlayMode || !battleState || !primaryPlaySelection || !selectedPlayBattleUnit) return [];
     const side = primaryPlaySelection.side;
-    const { combatDisembark, rapidDisembark } = playDisembarkModes(battleState, selectedPlayBattleUnit.id);
     const runtimePassengers = playTransportPassengers(battleState, selectedPlayBattleUnit.id)
-      .filter(passenger => playUnitCanDisembark(battleState, side, selectedPlayBattleUnit.id, passenger.id, undefined, combatDisembark, rapidDisembark))
+      .map(passenger => ({ passenger, modes: playDisembarkModes(battleState, selectedPlayBattleUnit.id, passenger.id) }))
+      .filter(({ passenger, modes }) => playUnitCanDisembark(battleState, side, selectedPlayBattleUnit.id, passenger.id, undefined, modes.combatDisembark, modes.rapidDisembark))
       .map(passenger => ({
-        key: `passenger-${passenger.id}`,
-        label: passenger.profile.name,
-        passengerUnitId: passenger.id,
+        key: `passenger-${passenger.passenger.id}`,
+        label: passenger.passenger.profile.name,
+        passengerUnitId: passenger.passenger.id,
         armyUnitIndex: undefined as number | undefined,
-        combatDisembark,
-        rapidDisembark,
+        combatDisembark: passenger.modes.combatDisembark,
+        rapidDisembark: passenger.modes.rapidDisembark,
       }));
     const transportRosterId = unitRosterId(selectedPlayBattleUnit.profile);
     const stagedPassengers = battleState.armies[side].army.units
@@ -1083,14 +1083,15 @@ export default function App() {
           && unitRosterId(candidate.profile) === unitRosterId(unit),
         )
       )
-      .filter(({ armyUnitIndex }) => playUnitCanDisembark(battleState, side, selectedPlayBattleUnit.id, undefined, armyUnitIndex, combatDisembark, rapidDisembark))
-      .map(({ unit, armyUnitIndex }) => ({
+      .map(({ unit, armyUnitIndex }) => ({ unit, armyUnitIndex, modes: playDisembarkModes(battleState, selectedPlayBattleUnit.id, undefined, unit) }))
+      .filter(({ armyUnitIndex, modes }) => playUnitCanDisembark(battleState, side, selectedPlayBattleUnit.id, undefined, armyUnitIndex, modes.combatDisembark, modes.rapidDisembark))
+      .map(({ unit, armyUnitIndex, modes }) => ({
         key: `army-${armyUnitIndex}`,
         label: unit.name,
         passengerUnitId: undefined as string | undefined,
         armyUnitIndex,
-        combatDisembark,
-        rapidDisembark,
+        combatDisembark: modes.combatDisembark,
+        rapidDisembark: modes.rapidDisembark,
       }));
     return [...runtimePassengers, ...stagedPassengers];
   }, [isPlayMode, battleState, primaryPlaySelection, selectedPlayBattleUnit]);

@@ -10738,7 +10738,7 @@ test('11th Tactical Disembark remains available after a transport is marked stat
   assert.equal(disembarked.units.some(unit => unit.profile.name === 'Stationary Passengers'), true);
 });
 
-test('11th Combat Disembark uses the 6-inch setup mode, hazard rolls, Battle-shock, and charge restriction', () => {
+test('11th Disembark prefers a safe Tactical setup over Combat Disembark', () => {
   const battle = state('movement');
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   const passengerProfile = {
@@ -10791,12 +10791,12 @@ test('11th Combat Disembark uses the 6-inch setup mode, hazard rolls, Battle-sho
     assert.equal(playUnitCanDisembark(battle, 0, transport.id, undefined, 1), true);
     const disembarked = disembarkPlayUnit(battle, 0, transport.id, undefined, 1);
     const passenger = disembarked.units.find(unit => unit.profile.name === 'Combat Passengers')!;
-    assert.equal(passenger.combatDisembarkedThisTurn, true);
-    assert.equal(passenger.battleshocked, true);
+    assert.equal(passenger.combatDisembarkedThisTurn, undefined);
+    assert.equal(passenger.battleshocked, false);
     assert.equal(passenger.remainingModels, 2);
-    assert.ok(passenger.position.x > 26 && passenger.position.x < 28);
+    assert.ok(passenger.position.x > 23 && passenger.position.x < 25);
     assert.deepEqual(playChargeTargetOptions(disembarked, passenger.id, 0, rules40K11th), []);
-    assert.match(disembarked.log.at(-1)?.message ?? '', /Combat Disembark hazard rolls: 6, 6; no models destroyed/);
+    assert.equal(disembarked.log.some(entry => entry.message.includes('Combat Disembark hazard rolls')), false);
   } finally {
     Math.random = originalRandom;
   }
