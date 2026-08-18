@@ -5456,7 +5456,9 @@ function monsterVehicleMovedOverFriendlyMonsterVehicle(state: BattleState, unit:
 function playMovementUnitLegalityIssues(state: BattleState, unit: BattleUnit): string[] {
   if (unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves) return [];
   const issues: string[] = [];
-  if (isAircraft(unit) && !aircraftMovedMinimumDistance(unit)) {
+  if (isAircraft(unit)
+    && rulesEditionForRuleset(state.ruleset).metadata.edition !== '11e'
+    && !aircraftMovedMinimumDistance(unit)) {
     issues.push(`${unit.profile.name} is an Aircraft and must make a Normal move of at least 20".`);
   }
   if (unitHasModelOutsideBattlefield(unit, state)) issues.push(`${unit.profile.name} has a model across the battlefield edge.`);

@@ -11736,6 +11736,9 @@ test('11th edition Aircraft cannot use the normal movement or pivot controls', (
   const rotated = rotatePlayModels(battle, aircraft.id, 0, [0], 90);
   assert.equal(rotated.units[0].facingDeg, 0);
   assert.equal(simulateNextUnit(battle, rules40K11th).units[0].position.x, aircraft.position.x);
+
+  const onBattlefield = { ...battle, units: [{ ...aircraft, movementAction: undefined }] };
+  assert.equal(playPhaseCoherencyIssues(onBattlefield).some(issue => issue.includes('Normal move of at least 20')), false);
 });
 
 test('11th edition Aircraft start in Strategic Reserves during deployment', () => {
