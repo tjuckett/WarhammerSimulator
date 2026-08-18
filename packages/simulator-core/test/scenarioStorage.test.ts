@@ -8575,6 +8575,25 @@ test('elevated models can see over low and mid blocking features', () => {
   assert.equal(targetHasCoverFrom(shooter.position, target, terrain), false);
 });
 
+test('Benefit of Cover requires every target model to meet a cover condition', () => {
+  const shooter = losTestUnit('cover-shooter', 0, { x: 0, y: 10 });
+  const target = losTestUnit('mixed-cover-target', 1, { x: 6, y: 10 });
+  target.profile.baseModelCount = 2;
+  target.remainingModels = 2;
+  target.modelPositions = [{ x: 6, y: 10 }, { x: 12, y: 10 }];
+  const terrain = [terrainMat({
+    id: 'partial-cover',
+    name: 'Partial Cover',
+    type: 'area',
+    x: 5,
+    y: 8,
+    width: 2,
+    height: 4,
+  })];
+
+  assert.equal(targetHasCoverFrom(shooter.position, target, terrain), false);
+});
+
 test('11th Hidden limits visibility of quiet infantry inside covered terrain', () => {
   const battle = state('shooting');
   battle.ruleset = rulesetMetadataForState(rules40K11th);

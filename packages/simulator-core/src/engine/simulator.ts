@@ -790,7 +790,7 @@ function modelHasTerrainCoverFrom(from: Position, target: BattleUnit, modelIndex
 }
 
 function targetHasTerrainCoverFrom(shooterPositions: Position[], target: BattleUnit, terrain: Terrain[]): boolean {
-  return target.modelPositions.some((_, modelIndex) =>
+  return target.modelPositions.every((_, modelIndex) =>
     shooterPositions.some(from => modelHasTerrainCoverFrom(from, target, modelIndex, terrain)),
   );
 }
