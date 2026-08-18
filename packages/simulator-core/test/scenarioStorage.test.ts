@@ -10876,6 +10876,7 @@ test('destroyed transports force embarked passengers to emergency disembark', ()
     assert.equal(disembarkedPassenger.emergencyDisembarkedThisTurn, true);
     assert.equal(disembarkedPassenger.destroyed, false);
     assert.equal(disembarkedPassenger.remainingModels, 2);
+    assert.ok(Math.abs(disembarkedPassenger.position.x - destroyedTransport.position.x) > 6);
     assert.equal(shooting.log.some(entry => entry.message.includes('emergency disembarks from Transport')), true);
 
     const charge = simulateNextPhase({ ...shooting, activeArmy: 1 }, rules40K10th);

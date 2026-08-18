@@ -1553,7 +1553,7 @@ function emergencyDisembarkDestroyedTransport(
   for (const passenger of passengers) {
     const existingPassenger = state.units.find(unit => unit.id === passenger.id);
     const unit = existingPassenger ?? passenger;
-    const positions = disembarkPositions(state, transport, unit.profile);
+    const positions = disembarkPositions(state, transport, unit.profile, false, false, true);
     if (!positions) {
       recordDestroyedModelMissionEvents(
         state,
@@ -4291,10 +4291,11 @@ function disembarkPositions(
   profile: UnitProfile,
   combatDisembark = false,
   rapidDisembark = false,
+  emergencyDisembark = false,
 ): Position[] | null {
   const side = transport.side;
   const forward = side === 0 ? 1 : -1;
-  const accessRange = combatDisembark ? COMBAT_DISEMBARK_RANGE : TRANSPORT_ACCESS_RANGE;
+  const accessRange = combatDisembark || emergencyDisembark ? COMBAT_DISEMBARK_RANGE : TRANSPORT_ACCESS_RANGE;
   const offsets: Position[] = [
     { x: forward * (accessRange + 0.5), y: 0 },
     { x: -forward * (accessRange + 0.5), y: 0 },
