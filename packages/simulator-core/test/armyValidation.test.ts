@@ -53,6 +53,17 @@ test('army validation rejects malformed deployment modes and transport capacitie
   assert.ok(result.errors.some(error => error.code === 'transport-capacity-invalid'));
 });
 
+test('army validation rejects invalid model weapon loadout references', () => {
+  const weapon = { name: 'Gun', range: 24, attacks: '1', skill: 4, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false };
+  const result = validateImportedArmy(army([
+    unit({ weapons: [weapon], modelWeaponLoadouts: [[0, 0], [1]], baseModelCount: 1 }),
+  ]));
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.code === 'model-loadout-count-invalid'));
+  assert.ok(result.errors.some(error => error.code === 'model-loadout-weapon-duplicate'));
+  assert.ok(result.errors.some(error => error.code === 'model-loadout-weapon-invalid'));
+});
+
 test('army validation allows a transport assignment only when capacity exists', () => {
   const transport = unit({ rosterId: 'transport', name: 'Transport', transportCapacity: 10 });
   const passenger = unit({ rosterId: 'passenger', name: 'Passenger', deployment: { mode: 'transport', transportUnitId: 'transport' } });

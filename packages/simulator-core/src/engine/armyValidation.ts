@@ -106,6 +106,28 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
       && (!Number.isInteger(unit.transportCapacity) || unit.transportCapacity < 1)) {
       errors.push(issue('error', 'transport-capacity-invalid', `${label} has an invalid transport capacity.`, index));
     }
+    if (unit.modelWeaponLoadouts && !Array.isArray(unit.modelWeaponLoadouts)) {
+      errors.push(issue('error', 'model-loadout-shape-invalid', `${label} has an invalid model weapon loadout shape.`, index));
+    } else if (unit.modelWeaponLoadouts) {
+      if (unit.modelWeaponLoadouts.length > unit.baseModelCount) {
+        errors.push(issue('error', 'model-loadout-count-invalid', `${label} has more weapon loadouts than models.`, index));
+      }
+      unit.modelWeaponLoadouts.forEach((loadout, modelIndex) => {
+        if (!Array.isArray(loadout)) {
+          errors.push(issue('error', 'model-loadout-shape-invalid', `${label} model ${modelIndex + 1} has an invalid weapon loadout shape.`, index));
+          return;
+        }
+        const seenWeapons = new Set<number>();
+        loadout.forEach(weaponIndex => {
+          if (!Number.isInteger(weaponIndex) || weaponIndex < 0 || weaponIndex >= unit.weapons.length) {
+            errors.push(issue('error', 'model-loadout-weapon-invalid', `${label} model ${modelIndex + 1} references an invalid weapon index.`, index));
+          } else if (seenWeapons.has(weaponIndex)) {
+            errors.push(issue('error', 'model-loadout-weapon-duplicate', `${label} model ${modelIndex + 1} references the same weapon more than once.`, index));
+          }
+          seenWeapons.add(weaponIndex);
+        });
+      });
+    }
     for (const [characteristic, value] of [
       ['Move', unit.move],
       ['Toughness', unit.toughness],
