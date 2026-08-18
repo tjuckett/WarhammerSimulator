@@ -5457,7 +5457,7 @@ function playMovementUnitLegalityIssues(state: BattleState, unit: BattleUnit): s
   if (unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves) return [];
   const issues: string[] = [];
   if (isAircraft(unit)
-    && rulesEditionForRuleset(state.ruleset).metadata.edition !== '11e'
+    && aircraftCanMakeNormalMove(rulesEditionForRuleset(state.ruleset))
     && !aircraftMovedMinimumDistance(unit)) {
     issues.push(`${unit.profile.name} is an Aircraft and must make a Normal move of at least 20".`);
   }
