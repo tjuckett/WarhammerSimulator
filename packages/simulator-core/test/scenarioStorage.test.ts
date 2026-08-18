@@ -1171,8 +1171,11 @@ test('11th core stratagems enforce target keyword and reserve restrictions', () 
 
   assert.equal(availableStratagems(movement, 1, rules40K11th, reserve.id).some(stratagem => stratagem.id === 'rapid-ingress'), false);
   assert.equal(useStratagem(movement, 1, 'rapid-ingress', rules40K11th, reserve.id), movement);
+  movement.movementStep = 'moveUnits';
   movement.battleRound = 2;
   movement.turn = 2;
+  assert.equal(availableStratagems(movement, 1, rules40K11th, reserve.id).some(stratagem => stratagem.id === 'rapid-ingress'), false);
+  movement.movementStep = 'reinforcements';
   assert.equal(availableStratagems(movement, 1, rules40K11th, reserve.id).some(stratagem => stratagem.id === 'rapid-ingress'), true);
   assert.equal(availableStratagems(movement, 1, rules40K11th, aircraft.id).some(stratagem => stratagem.id === 'rapid-ingress'), false);
 });

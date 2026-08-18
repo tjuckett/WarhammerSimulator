@@ -30,6 +30,7 @@ function phaseAllowed(stratagem: StratagemDefinition, phase: Phase): boolean {
 
 function timingAllowed(state: BattleState, stratagem: StratagemDefinition, side: Side): boolean {
   if (stratagem.id === 'fire-overwatch') return state.phase === 'movement' && state.movementStep === 'reinforcements';
+  if (stratagem.id === 'rapid-ingress') return state.phase === 'movement' && state.movementStep === 'reinforcements';
   if (stratagem.id === 'counteroffensive') {
     return state.phase === 'fight'
       && state.lastFightSelectionSide !== undefined
