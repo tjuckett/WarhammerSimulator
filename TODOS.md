@@ -237,10 +237,11 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: final Core 23.01-23.02 and 20.04 Aircraft handling now stages 11th Aircraft in Strategic Reserves, permits ingress-only return from the battlefield edge, returns opponent Aircraft to reserves at turn end, and keeps legacy 20-inch Aircraft movement isolated to 10th Edition.
 - [ ] Remove or narrow the 11th preview notice once final 11th rules are fully modeled.
   - Progress: the ruleset now identifies the tracked final-source implementation as source-audited and partial, with remaining unsupported mechanics described explicitly instead of presenting the whole edition as an unavailable preview.
-- [ ] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.
+- [x] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.
   - Progress: pile-in and consolidation availability, plus Fight-step start/end gating, now rely on focused core rules helpers rather than duplicating edition checks in React; phase-specific labels remain presentation concerns.
   - Progress: shared disembark-mode resolution now owns 11th Combat/Rapid Disembark flags in simulator-core and is reused by legal actions and the play UI, including Reinforcements-step Rapid Disembark.
   - Progress: edition-specific Reinforcements enemy-distance thresholds now come from `RulesEdition.reinforcementRange()` instead of duplicated simulator branches.
+  - Progress: the remaining Aircraft movement legality edition check now reuses the focused `aircraftCanMakeNormalMove` helper; React edition branches remain presentation/setup selection concerns.
 - [ ] Continue datasheet/character ability support beyond the first passive hooks: Leader aura/attached-unit modifiers, Precision interactions beyond targeting, and faction-specific abilities as source text/data becomes available.
   - Progress: structured Aura range/eligibility and attached-unit/Precision foundations are implemented; effect execution remains fail-closed until imported source data provides typed modifiers.
 
