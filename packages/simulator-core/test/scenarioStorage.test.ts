@@ -28,7 +28,7 @@ import {
   startMissionEventsForNewTurn,
 } from '../src/engine/missionEvents';
 import { availableStratagems, resolveCommandReroll, useStratagem } from '../src/engine/stratagems';
-import { availableUnitAbilities, useUnitAbility } from '../src/engine/unitAbilities';
+import { availableUnitAbilities, runAutomaticCommandUnitAbilities, useUnitAbility } from '../src/engine/unitAbilities';
 import { eleventhSetupLabel, TOURNAMENT_MISSIONS } from '../src/engine/missions';
 import { ELEVENTH_PRIMARY_MISSION_RULES, ELEVENTH_SECONDARY_MISSION_RULES, eleventhSecondaryMissionRuleForName, type MissionScoringClause } from '../src/data/missionRules';
 import { configureSecondaryMissions, discardSecondaryMission, drawSecondaryMission, selectBeaconUnit, selectBurdenOfTrustGuards, selectTemptingTargetObjective } from '../src/engine/secondaryMissions';
@@ -1508,6 +1508,21 @@ test('11th Ork Waaagh! records a typed active army ability window', () => {
 
   used.activeArmyAbilities = [[], []];
   assert.deepEqual(playChargeTargetOptions(used, ork.id, 0, rules40K11th), []);
+});
+
+test('11th Ork Grot Riggers restores one wound at Command', () => {
+  const battle = state('command');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const trukk = losTestUnit('trukk', 0, { x: 10, y: 10 });
+  trukk.profile.abilities = [{ name: 'Grot Riggers', description: 'At the start of your Command phase, this model regains 1 lost wound.' }];
+  trukk.profile.wounds = 10;
+  trukk.woundsOnLeadModel = 7;
+  battle.units = [trukk];
+
+  runAutomaticCommandUnitAbilities(battle, 0, rules40K11th);
+  assert.equal(battle.units[0].woundsOnLeadModel, 8);
+  assert.equal(battle.abilityUses?.[0]?.abilityId, 'grot-riggers');
+  assert.match(battle.log.at(-1)?.message ?? '', /Grot Riggers/);
 });
 
 test('unit ability framework exposes end-of-phase abilities and replays use actions', () => {

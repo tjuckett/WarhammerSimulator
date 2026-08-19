@@ -4,7 +4,7 @@ import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRo
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
 import { primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, securePlayObjective, unsupportedPrimaryMissionScoringLogs, updateObjectiveControl } from '../engine/missionScoring';
 import { resolveCommandReroll, useStratagem } from '../engine/stratagems';
-import { useUnitAbility } from '../engine/unitAbilities';
+import { runAutomaticCommandUnitAbilities, useUnitAbility } from '../engine/unitAbilities';
 import type { AbilityTiming } from '../types/ability';
 import type { CommandRerollRollType, HeroicInterventionMode } from '../types/stratagem';
 import {
@@ -496,6 +496,7 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
       unit.inCombat = false;
     }
     gainCommandPhaseCommandPoints(next);
+    runAutomaticCommandUnitAbilities(next, next.activeArmy, rules);
   };
 
   const phaseBeforeStep = next.phase;

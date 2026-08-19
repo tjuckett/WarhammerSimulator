@@ -123,6 +123,12 @@ export function useUnitAbility(
     active[side] = [...new Set([...active[side], ability.id])];
     next.activeArmyAbilities = active;
   }
+  if (ability.id === 'grot-riggers') {
+    const target = next.units.find(candidate => candidate.id === unitId);
+    if (target && target.remainingModels > 0 && target.woundsOnLeadModel < target.profile.wounds) {
+      target.woundsOnLeadModel = Math.min(target.profile.wounds, target.woundsOnLeadModel + 1);
+    }
+  }
   next.log = [...next.log, {
     id: nextLogId(next, 'ability'),
     battleRound: battleRound(next),
@@ -150,6 +156,21 @@ export function runAutomaticUnitAbilities(
   for (const unitId of unitIds) {
     for (const ability of abilities) {
       const next = useUnitAbility(state, unitId, side, ability.id, timing, rules);
+      if (next !== state) Object.assign(state, next);
+    }
+  }
+}
+
+/** Resolve automatic command-phase datasheet abilities without auto-using player-declared abilities. */
+export function runAutomaticCommandUnitAbilities(
+  state: BattleState,
+  side: Side,
+  rules: RulesEdition,
+): void {
+  const automaticIds = new Set(['grot-riggers']);
+  for (const unit of state.units.filter(candidate => candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)) {
+    for (const ability of rules.unitAbilities.filter(candidate => candidate.timing === 'command-phase' && automaticIds.has(candidate.id))) {
+      const next = useUnitAbility(state, unit.id, side, ability.id, 'command-phase', rules);
       if (next !== state) Object.assign(state, next);
     }
   }

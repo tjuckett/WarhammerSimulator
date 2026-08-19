@@ -19,7 +19,7 @@ import {
   startMissionEventsForNewTurn,
 } from './missionEvents';
 import { gainCommandPhaseCommandPoints } from './commandPoints';
-import { runAutomaticUnitAbilities } from './unitAbilities';
+import { runAutomaticCommandUnitAbilities, runAutomaticUnitAbilities } from './unitAbilities';
 import { objectiveControlValue, resolveDesperateEscapeTests } from './battleshock';
 import { circleFullyInTerrain, findUnblockedLOSRay, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, pointInTerrain, terrainCorners } from './terrainGeometry';
 import { COHERENCY_VERTICAL_RANGE, distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, verticalDistance, type CoherencyModel } from './coherency';
@@ -4348,6 +4348,7 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
       && (unit.battleshocked || isBelowHalfStrength(s, unit)))
     .map(unit => unit.id);
   autoSelectPunishmentCondemnedUnits(s, side, rules);
+  runAutomaticCommandUnitAbilities(s, side, rules);
   const nextCommandPoints = gainCommandPhaseCommandPoints(s);
   const logs = [
     phaseLog(s, side, armyName, `\n=== BATTLE ROUND ${battleRound(s)} - ${armyName.toUpperCase()} - ${rules.name.toUpperCase()} ===`),

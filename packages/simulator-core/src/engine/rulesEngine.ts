@@ -406,6 +406,13 @@ export const rules40K11th: RulesEdition = {
       oncePerBattle: true,
       description: 'Imported Orks army ability: while active, units with Waaagh! can declare charges after Advancing. Other typed Waaagh! modifiers remain source-scoped and fail closed.',
     },
+    {
+      id: 'grot-riggers',
+      name: 'Grot Riggers',
+      timing: 'command-phase',
+      target: 'self',
+      description: 'Imported Orks datasheet ability: at the start of the Command phase, this model regains 1 lost wound.',
+    },
   ],
   description: 'Warhammer 40,000 11th Edition using the tracked 2026 Core Rules source. Supported core phases, terrain objectives, actions, aircraft/vertical movement, stratagems, missions, and generic abilities are implemented; remaining source-dependent or unmodeled mechanics are explicit and fail closed.',
 };
