@@ -165,6 +165,30 @@ function crate(x: number, y: number, name = 'Crates'): Terrain {
   return terrainFromSpec({ kind: 'crate', x, y, width: 2.5, height: 2, name });
 }
 
+function keepGeneratedTerrainOnBoard(terrain: Terrain): Terrain {
+  const boardWidth = 60;
+  const boardHeight = 44;
+  const rotation = (terrain.rotationDeg ?? 0) * Math.PI / 180;
+  const halfWidth = (Math.abs(Math.cos(rotation)) * terrain.width
+    + Math.abs(Math.sin(rotation)) * terrain.height) / 2;
+  const halfHeight = (Math.abs(Math.sin(rotation)) * terrain.width
+    + Math.abs(Math.cos(rotation)) * terrain.height) / 2;
+  const centreX = Math.max(halfWidth, Math.min(boardWidth - halfWidth, terrain.x + terrain.width / 2));
+  const centreY = Math.max(halfHeight, Math.min(boardHeight - halfHeight, terrain.y + terrain.height / 2));
+  const dx = centreX - (terrain.x + terrain.width / 2);
+  const dy = centreY - (terrain.y + terrain.height / 2);
+  return {
+    ...terrain,
+    x: terrain.x + dx,
+    y: terrain.y + dy,
+    features: terrain.features.map(feature => ({
+      ...feature,
+      x: feature.x + dx,
+      y: feature.y + dy,
+    })),
+  };
+}
+
 export function generateRandomLayout(): TerrainLayout {
   const savedId = _id;
   _id = 2000;
@@ -206,6 +230,6 @@ export function generateRandomLayout(): TerrainLayout {
     id: 'random',
     name: 'Random Layout',
     description: 'Procedurally generated terrain - different every time',
-    terrain,
+    terrain: terrain.map(keepGeneratedTerrainOnBoard),
   };
 }

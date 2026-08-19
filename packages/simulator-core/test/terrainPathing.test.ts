@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { BattleUnit, Terrain } from '../src/types/battle';
 import { findReachablePosition } from '../src/engine/simulator';
-import { terrainLayoutFromData } from '../src/engine/terrain';
+import { generateRandomLayout, terrainLayoutFromData } from '../src/engine/terrain';
+import { terrainCorners } from '../src/engine/terrainGeometry';
 
 test('terrain pathing helper is reusable and respects movement distance', () => {
   const unit = {
@@ -58,4 +59,16 @@ test('terrain conversion preserves explicit light and dense feature categories',
   });
 
   assert.deepEqual(layout.terrain[0].features.map(feature => feature.category), ['light', 'dense']);
+});
+
+test('random terrain layout keeps rotated mats and features within the Strike Force board', () => {
+  const layout = generateRandomLayout();
+  const points = layout.terrain.flatMap(terrain => [
+    ...terrainCorners(terrain),
+    ...terrain.features.flatMap(feature => terrainCorners(feature)),
+  ]);
+
+  assert.ok(points.length > 0);
+  assert.ok(points.every(point => point.x >= -0.0001 && point.x <= 60.0001
+    && point.y >= -0.0001 && point.y <= 44.0001));
 });
