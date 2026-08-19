@@ -1092,10 +1092,14 @@ function resolveAttacks(
   const participatingModelIndexes = participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, state.terrain, state);
   const weaponModelCount = participatingModelIndexes.length;
   if (weaponModelCount <= 0) return logs;
+  const waaaghActive = rules.metadata.edition === '11e'
+    && state.activeArmyAbilities?.[attacker.side]?.includes('waaagh') === true
+    && unitHasRule(attacker.profile, 'Waaagh!');
+  const waaaghMeleeBonus = waaaghActive && weapon.isMelee ? 1 : 0;
   const isVariableAttacks = !/^\d+$/i.test(String(weapon.attacks).trim());
   const perModelRolls: number[] = [];
   for (let i = 0; i < weaponModelCount; i++) {
-    perModelRolls.push(rollExpression(weapon.attacks).total);
+    perModelRolls.push(rollExpression(weapon.attacks).total + waaaghMeleeBonus);
   }
   let perModelAttackCounts = [...perModelRolls];
   let numAttacks = options.attackCountOverride ?? perModelAttackCounts.reduce((a, b) => a + b, 0);
@@ -1130,8 +1134,9 @@ function resolveAttacks(
     `  ${weapon.isMelee ? '⚔️' : '🔫'} ${weapon.name} — ${weaponModelCount} model(s) × ${weapon.attacks} = ${numAttacks} attacks vs ${defender.profile.name}`,
     weapon.isMelee ? 'fight' : 'shoot',
   ));
+  const effectiveStrength = weapon.strength + waaaghMeleeBonus;
   logs.push(log(state, attacker.side, attacker.profile.name,
-    `[combat-stats] skill=${weapon.skill} s=${weapon.strength} ap=${weapon.ap} d=${weapon.damage} t=${attachedUnitToughness(state, defender)}${hasCover ? ' cover=1' : ''}`,
+    `[combat-stats] skill=${weapon.skill} s=${effectiveStrength} ap=${weapon.ap} d=${weapon.damage} t=${attachedUnitToughness(state, defender)}${hasCover ? ' cover=1' : ''}`,
     'info',
   ));
   if (options.attackCountOverride !== undefined) {
@@ -1226,7 +1231,7 @@ function resolveAttacks(
     && weapon.isMelee
     && weaponHasKeyword(weapon, 'Lance')
     && attachedUnitComponents(state, attacker).some(component => component.charged);
-  const wt = Math.max(2, rules.woundTarget(weapon.strength, targetToughness) - (lanceApplies ? 1 : 0));
+  const wt = Math.max(2, rules.woundTarget(effectiveStrength, targetToughness) - (lanceApplies ? 1 : 0));
   let woundCount = 0;
   if (lanceApplies) {
     logs.push(log(state, attacker.side, attacker.profile.name, '     Lance: +1 to wound rolls after a charge move', 'info'));
@@ -1245,7 +1250,7 @@ function resolveAttacks(
     const woundResult = processWoundsAgainstDefender(woundRolls, wt, weapon, defender, rules, state);
     const noteWound = woundResult.logNote ? ` [${woundResult.logNote}]` : '';
     logs.push(log(state, attacker.side, attacker.profile.name,
-      `     Wound rolls (S${weapon.strength} vs T${targetToughness}, ${wt}+): [${woundRolls.join(', ')}] → ${woundResult.wounds} wounds${noteWound}`,
+      `     Wound rolls (S${effectiveStrength} vs T${targetToughness}, ${wt}+): [${woundRolls.join(', ')}] → ${woundResult.wounds} wounds${noteWound}`,
       'roll',
     ));
     woundCount += woundResult.wounds;
@@ -1272,7 +1277,15 @@ function resolveAttacks(
     const coverBonus = hasCover && !weaponHasKeyword(weapon, 'Ignores Cover')
       ? rules.coverSaveBonus(defender)
       : 0;
-    const rawSave = rules.saveTarget(defender.profile.save, weapon.ap, defender.profile.invulnSave);
+    const waaaghInvulnSave = rules.metadata.edition === '11e'
+      && state.activeArmyAbilities?.[defender.side]?.includes('waaagh') === true
+      && unitHasRule(defender.profile, 'Waaagh!')
+      ? 5
+      : undefined;
+    const effectiveInvulnSave = waaaghInvulnSave === undefined
+      ? defender.profile.invulnSave
+      : Math.min(defender.profile.invulnSave ?? 7, waaaghInvulnSave);
+    const rawSave = rules.saveTarget(defender.profile.save, weapon.ap, effectiveInvulnSave);
     const effectiveSave = rawSave - coverBonus;
     const coverNote = coverBonus > 0 ? `, cover +${coverBonus}` : '';
 

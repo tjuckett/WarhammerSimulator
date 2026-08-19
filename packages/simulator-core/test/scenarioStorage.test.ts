@@ -1489,6 +1489,23 @@ test('11th Ork Waaagh! records a typed active army ability window', () => {
     [target.id],
   );
 
+  advanced.profile = {
+    ...advanced.profile,
+    weapons: [{ name: 'Choppa', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true }],
+  };
+  advanced.position = { x: 10, y: 10 };
+  target.position = { x: 11.2, y: 10 };
+  used.phase = 'fight';
+  advanced.movementAction = undefined;
+  advanced.charged = true;
+  advanced.inCombat = true;
+  target.inCombat = true;
+  target.profile = { ...target.profile, toughness: 99 };
+  const fought = fightPlayUnitWeapon(used, ork.id, 0, target.id, 0, rules40K11th);
+  const combatLog = fought.log.map(entry => entry.message).join(' ');
+  assert.match(combatLog, /Choppa .* = 2 attacks/);
+  assert.match(combatLog, /\[combat-stats\] skill=3 s=5 /);
+
   used.activeArmyAbilities = [[], []];
   assert.deepEqual(playChargeTargetOptions(used, ork.id, 0, rules40K11th), []);
 });
