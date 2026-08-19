@@ -28,6 +28,6 @@ Source: https://gdmissions.app/11th/rules/core-rules
 ## TODO
 
 - Add Fight On Death support once timing/source data exists.
-- Add destroyed model/unit last-position tracking only when a sourced rule needs measurement after removal.
+- Destroyed model/unit last-position tracking is implemented and covered; it preserves the final formation and centroid for sourced post-destruction measurements.
 - Re-audit damage modifiers and allocation against final wording.
 
