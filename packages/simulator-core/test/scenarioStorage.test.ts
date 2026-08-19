@@ -1536,7 +1536,7 @@ test('11th Ghazghkull Prophet grants attached melee hit and wound bonuses during
   const bodyguard = losTestUnit('bodyguard', 0, { x: 10, y: 10 });
   bodyguard.inCombat = true;
   bodyguard.charged = true;
-  bodyguard.profile.weapons = [{ name: 'Choppa', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true }];
+  bodyguard.profile.weapons = [{ name: 'Choppa', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: ['Sustained Hits 1'], isMelee: true }];
   const ghaz = losTestUnit('ghazghkull', 0, { x: 10, y: 10 });
   ghaz.attachedToUnitId = bodyguard.id;
   ghaz.inCombat = true;
@@ -1552,11 +1552,41 @@ test('11th Ghazghkull Prophet grants attached melee hit and wound bonuses during
   battle.units = [bodyguard, ghaz, target];
 
   const originalRandom = Math.random;
-  Math.random = () => 0.2;
+    Math.random = () => 0.7;
   try {
     const fought = fightPlayUnitWeapon(battle, bodyguard.id, 0, target.id, 'all', rules40K11th);
     const messages = fought.log.map(entry => entry.message).join(' ');
     assert.match(messages, /Hit rolls \(2\+\)/);
+    assert.match(messages, /crit→\+1 \(Sustained Hits\)/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('11th Ork Get Stuck In grants Sustained Hits 1 to melee attacks', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = true;
+  battle.armies[0].army.catalog = {
+    id: 'orks-war-horde', faction: 'Orks', units: [],
+    rules: [{ name: 'Get Stuck In', description: 'Each time an Orks unit fights, its melee weapons have Sustained Hits 1.' }],
+  };
+  const ork = losTestUnit('ork', 0, { x: 10, y: 10 });
+  ork.inCombat = true;
+  ork.charged = true;
+  ork.profile.factionKeywords = ['Faction: Orks'];
+  ork.profile.weapons = [{ name: 'Choppa', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true }];
+  const target = losTestUnit('target', 1, { x: 11.2, y: 10 });
+  target.inCombat = true;
+  target.profile = { ...target.profile, toughness: 99 };
+  battle.units = [ork, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const fought = fightPlayUnitWeapon(battle, ork.id, 0, target.id, 0, rules40K11th);
+    const messages = fought.log.map(entry => entry.message).join(' ');
+    assert.match(messages, /crit→\+1 \(Sustained Hits\)/);
   } finally {
     Math.random = originalRandom;
   }
