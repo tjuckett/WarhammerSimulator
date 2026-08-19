@@ -58,7 +58,7 @@ import {
   modelBaseFootprintInches,
   modelBaseRadiusInches,
 } from './baseSizes';
-import { attackingModelHasPlungingFire } from './otherRules';
+import { attackingModelHasPlungingFire, auraAbilitiesInRange } from './otherRules';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -1110,14 +1110,7 @@ function resolveAttacks(
   const bannerAuraActive = rules.metadata.edition === '11e'
     && state.activeArmyAbilities?.[attacker.side]?.includes('waaagh') === true
     && attacker.profile.factionKeywords.some(keyword => keyword.toLowerCase().replace(/^faction:\s*/, '') === 'orks')
-    && state.units.some(source => source.side === attacker.side
-      && !source.destroyed
-      && dist(source.position, attacker.position) <= 12
-      && source.profile.abilities.some(rule => {
-        const name = rule.name.trim().toLowerCase();
-        const description = rule.description.toLowerCase();
-        return name.includes('banner') || (description.includes('within 12') && description.includes('lethal hits'));
-      }));
+    && auraAbilitiesInRange(state, attacker).some(application => application.rule.name.toLowerCase().includes('banner'));
   const ghazghkullWeapon = prophetActive
     ? { ...resolutionWeapon, keywords: [...resolutionWeapon.keywords, 'Critical Hits 5+'] }
     : resolutionWeapon;
