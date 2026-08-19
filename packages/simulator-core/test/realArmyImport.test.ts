@@ -18,6 +18,8 @@ test('BattleScribe parser imports the real rosters stored in lists/', () => {
 
     assert.ok(army.name, `${filename} should provide a roster name`);
     assert.ok(army.units.length > 0, `${filename} should contain units`);
+    const expectedEdition = filename.startsWith('Orks') ? '11e' : '10e';
+    assert.equal(army.sourceEdition, expectedEdition, `${filename} should preserve the roster edition`);
     assert.ok(army.units.every(unit => unit.name && unit.baseModelCount > 0), `${filename} should produce usable unit profiles`);
     assert.equal(new Set(rosterIds).size, rosterIds.length, `${filename} should preserve unique roster IDs`);
   }

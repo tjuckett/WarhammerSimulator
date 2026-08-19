@@ -86,6 +86,8 @@ export interface ImportedArmy {
   name: string;
   faction: string;
   units: UnitProfile[];
+  /** Source roster edition, when the importer can identify it. */
+  sourceEdition?: '10e' | '11e' | 'unknown';
   generation?: ArmyGenerationMetadata;
 }
 

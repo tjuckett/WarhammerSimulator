@@ -39,6 +39,7 @@ interface BSForce {
 
 interface BSRoster {
   name?: string;
+  gameSystemName?: string;
   forces?: BSForce[];
 }
 
@@ -377,6 +378,11 @@ export function parseBattleScribeJSON(raw: unknown): ImportedArmy {
 
   const faction = force.catalogueName ?? 'Unknown';
   const name = roster.name ?? faction;
+  const sourceEdition = roster.gameSystemName?.match(/11(?:th|e)/i)
+    ? '11e' as const
+    : roster.gameSystemName?.match(/10(?:th|e)/i)
+      ? '10e' as const
+      : 'unknown' as const;
 
   const units: UnitProfile[] = [];
   for (const sel of force.selections ?? []) {
@@ -388,5 +394,5 @@ export function parseBattleScribeJSON(raw: unknown): ImportedArmy {
 
   if (units.length === 0) throw new Error('No units could be parsed from this roster');
 
-  return applyBaseSizesToArmy({ name, faction, units });
+  return applyBaseSizesToArmy({ name, faction, units, sourceEdition });
 }
