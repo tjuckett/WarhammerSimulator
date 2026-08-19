@@ -1525,6 +1525,23 @@ test('11th Ork Grot Riggers restores one wound at Command', () => {
   assert.match(battle.log.at(-1)?.message ?? '', /Grot Riggers/);
 });
 
+test('11th Ork Kunnin Infiltrator places an unengaged unit into temporary Deep Strike reserves', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.activeArmy = 0;
+  const snikrot = losTestUnit('snikrot', 0, { x: 10, y: 10 });
+  snikrot.profile.abilities = [{ name: 'Kunnin’ Infiltrator (Once per battle, per army)', description: 'In your Movement phase, if this unit is unengaged, you can use this ability.' }];
+  snikrot.inCombat = false;
+  battle.units = [snikrot];
+
+  assert.equal(availableUnitAbilities(battle, snikrot.id, 0, 'manual', rules40K11th).some(ability => ability.id === 'kunnin-infiltrator'), true);
+  const used = useUnitAbility(battle, snikrot.id, 0, 'kunnin-infiltrator', 'manual', rules40K11th);
+  assert.equal(used.units[0].inStrategicReserves, true);
+  assert.equal(used.units[0].deepStrikeUntilPhase, 'movement');
+  assert.deepEqual(used.units[0].position, { x: -100, y: 22 });
+  assert.equal(availableUnitAbilities(used, snikrot.id, 0, 'manual', rules40K11th).some(ability => ability.id === 'kunnin-infiltrator'), false);
+});
+
 test('11th Ghazghkull Prophet grants attached melee hit and wound bonuses during Waaagh!', () => {
   const battle = state('fight');
   battle.ruleset = rulesetMetadataForState(rules40K11th);

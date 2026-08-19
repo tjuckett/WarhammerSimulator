@@ -88,6 +88,8 @@ export interface BattleUnit {
   surgeMoveTurn?: number;
   arrivedFromReinforcements?: boolean;
   inStrategicReserves?: boolean;
+  /** Temporary Deep Strike granted by a datasheet ability until the current phase ends. */
+  deepStrikeUntilPhase?: Phase;
   rapidIngressThisPhase?: boolean;
   heroicInterventionThisPhase?: boolean;
   heroicInterventionMode?: 'leap-to-defend' | 'into-the-fray';

@@ -410,6 +410,14 @@ export const rules40K11th: RulesEdition = {
       description: 'Imported Orks army ability: while active, units with Waaagh! can declare charges after Advancing. Other typed Waaagh! modifiers remain source-scoped and fail closed.',
     },
     {
+      id: 'kunnin-infiltrator',
+      name: 'Kunnin’ Infiltrator (Once per battle, per army)',
+      timing: 'manual',
+      target: 'self',
+      oncePerBattle: true,
+      description: 'In your Movement phase, if this unit is unengaged, place it in Strategic Reserves. It has Deep Strike until the end of the phase.',
+    },
+    {
       id: 'grot-riggers',
       name: 'Grot Riggers',
       timing: 'command-phase',

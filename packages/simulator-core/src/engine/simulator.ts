@@ -4510,6 +4510,9 @@ function reinforcementPlacementIsOutsideEnemyRange(
 }
 
 function profileDropHasDeepStrike(state: BattleState, side: Side, profile: UnitProfile): boolean {
+  if (state.units.some(unit => unit.side === side && unit.inStrategicReserves && unit.deepStrikeUntilPhase === state.phase && unitRosterId(unit.profile) === unitRosterId(profile))) {
+    return true;
+  }
   return attachedUnitProfilesFor(state.armies[side].army, profile).every(candidate =>
     candidate.deployment?.mode === UNIT_DEPLOYMENT_MODE.DeepStrike || unitHasRule(candidate, 'Deep Strike'),
   );
@@ -4965,7 +4968,7 @@ export function placePlayStrategicReserveUnit(state: BattleState, side: Side, un
     && !unit.destroyed
     && unit.inStrategicReserves
     && (
-      (state.activeArmy === side && isAircraft(unit))
+      (state.activeArmy === side && (isAircraft(unit) || unit.deepStrikeUntilPhase === state.phase))
       || (state.activeArmy !== side && unit.rapidIngressThisPhase)
     )
   );
@@ -4987,8 +4990,8 @@ export function placePlayStrategicReserveUnit(state: BattleState, side: Side, un
   const movingIndices = new Set(unit.modelPositions.map((_, modelIndex) => modelIndex));
   if (
     !reinforcementPlacementIsOutsideEnemyRange(s, side, unit.profile, unit.modelPositions)
-    || !reinforcementPlacementIsWithinStrategicReserveEdge(unit, s)
-    || !strategicReservePlacementIsOutsideOpponentDeploymentZone(unit, s)
+    || (unit.deepStrikeUntilPhase !== state.phase && !reinforcementPlacementIsWithinStrategicReserveEdge(unit, s))
+    || (unit.deepStrikeUntilPhase !== state.phase && !strategicReservePlacementIsOutsideOpponentDeploymentZone(unit, s))
     || !playMoveHasNoBaseOverlap(s, unit, movingIndices)
     || !playMoveHasNoWallOverlap(s, unit, movingIndices)
   ) return state;
