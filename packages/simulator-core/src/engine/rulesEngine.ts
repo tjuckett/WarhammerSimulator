@@ -177,12 +177,15 @@ export const rules40K10th: RulesEdition = {
     const notes: string[] = [];
 
     const sustainedVal = weaponHasKeyword(weapon,'Sustained Hits') ? weaponKeywordValue(weapon,'Sustained Hits') : 0;
+    const criticalHitThreshold = weaponHasKeyword(weapon, 'Critical Hits')
+      ? weaponKeywordValue(weapon, 'Critical Hits')
+      : 6;
 
     for (const r of rolls) {
       if (r === 1) continue;
       if (r >= skill || (skill > 6 && r === 6)) {
         hits++;
-        if (r === 6 && sustainedVal > 0) {
+        if (r >= criticalHitThreshold && sustainedVal > 0) {
           hits += sustainedVal;
           notes.push(`crit→+${sustainedVal} (Sustained Hits)`);
         }

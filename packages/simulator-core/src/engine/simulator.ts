@@ -1103,6 +1103,14 @@ function resolveAttacks(
   const resolutionWeapon = getStuckIn
     ? { ...weapon, keywords: [...weapon.keywords, 'Sustained Hits 1'] }
     : weapon;
+  const prophetActive = rules.metadata.edition === '11e'
+    && state.activeArmyAbilities?.[attacker.side]?.includes('waaagh') === true
+    && attachedUnitIsFormed(state, attacker)
+    && attachedUnitHasRule(state, attacker, 'Prophet of Da Great Waaagh!');
+  const ghazghkullWeapon = prophetActive
+    ? { ...resolutionWeapon, keywords: [...resolutionWeapon.keywords, 'Critical Hits 5+'] }
+    : resolutionWeapon;
+  if (prophetActive) hitModifier += 1;
   const isVariableAttacks = !/^\d+$/i.test(String(weapon.attacks).trim());
   const perModelRolls: number[] = [];
   for (let i = 0; i < weaponModelCount; i++) {
@@ -1205,7 +1213,7 @@ function resolveAttacks(
       ...(plungingRolls.length ? [{ rolls: plungingRolls, target: plungingTarget, plunging: true }] : []),
       ...(normalRolls.length ? [{ rolls: normalRolls, target: normalTarget, plunging: false }] : []),
     ];
-    const results = hitPools.map(pool => ({ ...pool, result: rules.processHits(pool.rolls, pool.target, resolutionWeapon) }));
+    const results = hitPools.map(pool => ({ ...pool, result: rules.processHits(pool.rolls, pool.target, ghazghkullWeapon) }));
     hitResult = {
       hits: results.reduce((total, pool) => total + pool.result.hits, 0),
       rolls: hitRolls,
@@ -1238,7 +1246,8 @@ function resolveAttacks(
     && weapon.isMelee
     && weaponHasKeyword(weapon, 'Lance')
     && attachedUnitComponents(state, attacker).some(component => component.charged);
-  const wt = Math.max(2, rules.woundTarget(effectiveStrength, targetToughness) - (lanceApplies ? 1 : 0));
+  const prophetWoundBonus = prophetActive ? 1 : 0;
+  const wt = Math.max(2, rules.woundTarget(effectiveStrength, targetToughness) - (lanceApplies ? 1 : 0) - prophetWoundBonus);
   let woundCount = 0;
   if (lanceApplies) {
     logs.push(log(state, attacker.side, attacker.profile.name, '     Lance: +1 to wound rolls after a charge move', 'info'));
