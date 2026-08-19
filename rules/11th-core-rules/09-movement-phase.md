@@ -27,5 +27,5 @@ Source: https://gdmissions.app/11th/rules/core-rules
 ## TODO
 
 - Confirm final Reinforcements-step wording and edge cases.
-- Continue tests around movement legality, terrain collision, and coherency.
+- [x] Regression coverage now exercises movement legality, terrain collision, and coherency gating; remaining Reinforcements-step work is limited to final-wording and edge-case audit.
 
