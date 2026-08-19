@@ -13,5 +13,5 @@ Source: https://gdmissions.app/11th/rules/core-rules
 
 ## TODO
 
-- The currently modeled Cleanse and Plunder action state is complete: eligibility, unique target tracking, cancellation, end-of-turn completion, replay/save persistence, and dependent scoring are covered in simulator-core tests.
+- [x] The currently modeled Cleanse and Plunder action state is complete: eligibility, unique target tracking, cancellation, end-of-turn completion, replay/save persistence, and dependent scoring are covered in simulator-core tests.
 - Remaining mission-action work is limited to any newly sourced action definitions and exact layout-dependent behavior; do not infer those without authoritative mission data.

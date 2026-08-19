@@ -25,5 +25,5 @@ Source: https://gdmissions.app/11th/rules/core-rules
 ## TODO
 
 - Add exact command abilities when datasheet/ability source data exists.
-- Core 08.03 and 08.03.01 are covered: already-shocked units are retested even when healthy, and the command-step path makes at most one Battle-shock roll per unit.
+- [x] Core 08.03 and 08.03.01 are covered: already-shocked units are retested even when healthy, and the command-step path makes at most one Battle-shock roll per unit.
 
