@@ -1107,9 +1107,23 @@ function resolveAttacks(
     && state.activeArmyAbilities?.[attacker.side]?.includes('waaagh') === true
     && attachedUnitIsFormed(state, attacker)
     && attachedUnitHasRule(state, attacker, 'Prophet of Da Great Waaagh!');
+  const bannerAuraActive = rules.metadata.edition === '11e'
+    && state.activeArmyAbilities?.[attacker.side]?.includes('waaagh') === true
+    && attacker.profile.factionKeywords.some(keyword => keyword.toLowerCase().replace(/^faction:\s*/, '') === 'orks')
+    && state.units.some(source => source.side === attacker.side
+      && !source.destroyed
+      && dist(source.position, attacker.position) <= 12
+      && source.profile.abilities.some(rule => {
+        const name = rule.name.trim().toLowerCase();
+        const description = rule.description.toLowerCase();
+        return name.includes('banner') || (description.includes('within 12') && description.includes('lethal hits'));
+      }));
   const ghazghkullWeapon = prophetActive
     ? { ...resolutionWeapon, keywords: [...resolutionWeapon.keywords, 'Critical Hits 5+'] }
     : resolutionWeapon;
+  const bannerWeapon = bannerAuraActive
+    ? { ...ghazghkullWeapon, keywords: [...ghazghkullWeapon.keywords, 'Lethal Hits'] }
+    : ghazghkullWeapon;
   if (prophetActive) hitModifier -= 1;
   const isVariableAttacks = !/^\d+$/i.test(String(weapon.attacks).trim());
   const perModelRolls: number[] = [];
@@ -1213,14 +1227,14 @@ function resolveAttacks(
       ...(plungingRolls.length ? [{ rolls: plungingRolls, target: plungingTarget, plunging: true }] : []),
       ...(normalRolls.length ? [{ rolls: normalRolls, target: normalTarget, plunging: false }] : []),
     ];
-    const results = hitPools.map(pool => ({ ...pool, result: rules.processHits(pool.rolls, pool.target, ghazghkullWeapon) }));
+    const results = hitPools.map(pool => ({ ...pool, result: rules.processHits(pool.rolls, pool.target, bannerWeapon) }));
     hitResult = {
       hits: results.reduce((total, pool) => total + pool.result.hits, 0),
       rolls: hitRolls,
       mortalsFromCrits: results.reduce((total, pool) => total + pool.result.mortalsFromCrits, 0),
       logNote: results.map(pool => pool.result.logNote).filter(Boolean).join('; '),
     };
-    lethalAutoWounds = weaponHasKeyword(weapon, 'Lethal Hits')
+    lethalAutoWounds = weaponHasKeyword(bannerWeapon, 'Lethal Hits')
       ? hitRolls.filter(roll => roll === 6).length
       : 0;
     for (const pool of results) {

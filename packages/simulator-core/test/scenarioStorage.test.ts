@@ -1553,6 +1553,7 @@ test('11th Ghazghkull Prophet grants attached melee hit and wound bonuses during
   const bodyguard = losTestUnit('bodyguard', 0, { x: 10, y: 10 });
   bodyguard.inCombat = true;
   bodyguard.charged = true;
+  bodyguard.profile.factionKeywords = ['Faction: Orks'];
   bodyguard.profile.weapons = [{ name: 'Choppa', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: ['Sustained Hits 1'], isMelee: true }];
   const ghaz = losTestUnit('ghazghkull', 0, { x: 10, y: 10 });
   ghaz.attachedToUnitId = bodyguard.id;
@@ -1560,7 +1561,10 @@ test('11th Ghazghkull Prophet grants attached melee hit and wound bonuses during
   ghaz.profile = {
     ...bodyguard.profile,
     name: 'Ghazghkull Thraka',
-    abilities: [{ name: 'Prophet of Da Great Waaagh!', description: 'While this unit is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Hit roll and add 1 to the Wound roll and if the Waaagh! is active for your army, a Critical Hit is scored on a successful unmodified Hit roll of 5+.' }],
+    abilities: [
+      { name: 'Prophet of Da Great Waaagh!', description: 'While this unit is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Hit roll and add 1 to the Wound roll and if the Waaagh! is active for your army, a Critical Hit is scored on a successful unmodified Hit roll of 5+.' },
+      { name: 'Ghazghkull’s Waaagh! Banner (Aura)', description: 'While a friendly ORKS unit is within 12" of Makari, if the Waaagh! is active for your army, melee weapons equipped by models in that unit have the Lethal Hits ability.' },
+    ],
     weapons: [],
   };
   const target = losTestUnit('target', 1, { x: 11.2, y: 10 });
@@ -1569,12 +1573,13 @@ test('11th Ghazghkull Prophet grants attached melee hit and wound bonuses during
   battle.units = [bodyguard, ghaz, target];
 
   const originalRandom = Math.random;
-    Math.random = () => 0.7;
+    Math.random = () => 0.99;
   try {
     const fought = fightPlayUnitWeapon(battle, bodyguard.id, 0, target.id, 'all', rules40K11th);
     const messages = fought.log.map(entry => entry.message).join(' ');
     assert.match(messages, /Hit rolls \(2\+\)/);
     assert.match(messages, /crit→\+1 \(Sustained Hits\)/);
+    assert.match(messages, /Lethal Hits: 1 critical hit\(s\) auto-wound/);
   } finally {
     Math.random = originalRandom;
   }
