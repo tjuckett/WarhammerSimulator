@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "build": "npm --workspace @warhammer-simulator/web run build",
+    "data:sync:11e": "node scripts/sync-bsdata-11e.mjs",
     "db:generate": "npm --workspace @warhammer-simulator/web run db:generate",
     "db:migrate": "npm --workspace @warhammer-simulator/web run db:migrate",
     "db:migrate:deploy": "npm --workspace @warhammer-simulator/web run db:migrate:deploy",

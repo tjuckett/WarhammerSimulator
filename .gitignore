@@ -17,6 +17,9 @@ packages/*/.test-dist
 # Logs
 *.log
 
+# Downloaded community-maintained 11th-edition catalogues
+lists/bsdata-11e/
+
 # Local/editor files
 .env
 .env*.local
