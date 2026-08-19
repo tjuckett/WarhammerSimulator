@@ -1525,6 +1525,43 @@ test('11th Ork Grot Riggers restores one wound at Command', () => {
   assert.match(battle.log.at(-1)?.message ?? '', /Grot Riggers/);
 });
 
+test('11th Ghazghkull Prophet grants attached melee hit and wound bonuses during Waaagh!', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = true;
+  battle.activeArmyAbilities = [['waaagh'], []];
+  battle.armies[0].army.catalog = {
+    id: 'orks-war-horde', faction: 'Orks', units: [],
+  };
+  const bodyguard = losTestUnit('bodyguard', 0, { x: 10, y: 10 });
+  bodyguard.inCombat = true;
+  bodyguard.charged = true;
+  bodyguard.profile.weapons = [{ name: 'Choppa', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true }];
+  const ghaz = losTestUnit('ghazghkull', 0, { x: 10, y: 10 });
+  ghaz.attachedToUnitId = bodyguard.id;
+  ghaz.inCombat = true;
+  ghaz.profile = {
+    ...bodyguard.profile,
+    name: 'Ghazghkull Thraka',
+    abilities: [{ name: 'Prophet of Da Great Waaagh!', description: 'While this unit is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Hit roll and add 1 to the Wound roll and if the Waaagh! is active for your army, a Critical Hit is scored on a successful unmodified Hit roll of 5+.' }],
+    weapons: [],
+  };
+  const target = losTestUnit('target', 1, { x: 11.2, y: 10 });
+  target.profile = { ...target.profile, toughness: 99 };
+  target.inCombat = true;
+  battle.units = [bodyguard, ghaz, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.2;
+  try {
+    const fought = fightPlayUnitWeapon(battle, bodyguard.id, 0, target.id, 'all', rules40K11th);
+    const messages = fought.log.map(entry => entry.message).join(' ');
+    assert.match(messages, /Hit rolls \(2\+\)/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('unit ability framework exposes end-of-phase abilities and replays use actions', () => {
   const battle = state('fight');
   const overlord = losTestUnit('overlord-1', 0, { x: 10, y: 10 });

@@ -1110,7 +1110,7 @@ function resolveAttacks(
   const ghazghkullWeapon = prophetActive
     ? { ...resolutionWeapon, keywords: [...resolutionWeapon.keywords, 'Critical Hits 5+'] }
     : resolutionWeapon;
-  if (prophetActive) hitModifier += 1;
+  if (prophetActive) hitModifier -= 1;
   const isVariableAttacks = !/^\d+$/i.test(String(weapon.attacks).trim());
   const perModelRolls: number[] = [];
   for (let i = 0; i < weaponModelCount; i++) {
