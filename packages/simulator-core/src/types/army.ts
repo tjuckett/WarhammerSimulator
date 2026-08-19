@@ -88,6 +88,8 @@ export interface ImportedArmy {
   units: UnitProfile[];
   /** Source roster edition, when the importer can identify it. */
   sourceEdition?: '10e' | '11e' | 'unknown';
+  /** Catalog constraints recovered from an authoritative roster export, when present. */
+  catalog?: ArmyCatalog;
   generation?: ArmyGenerationMetadata;
 }
 

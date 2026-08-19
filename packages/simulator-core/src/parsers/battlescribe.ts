@@ -1,5 +1,6 @@
 import type { ImportedArmy, ModelStatProfile, RuleText, UnitProfile, WeaponProfile } from '../types/army';
 import { applyBaseSizesToArmy } from '../data/unitBaseSizes';
+import type { ArmyCatalog, ArmyCatalogBattleSize } from '../types/army';
 
 // ─── Raw BattleScribe JSON shape ──────────────────────────────────────────────
 
@@ -10,6 +11,8 @@ interface BSProfile {
   typeName: string;
   characteristics: BSChar[];
 }
+
+interface BSCost { name: string; value?: number }
 
 interface BSRule { name: string; description: string }
 
@@ -24,6 +27,7 @@ interface BSSelection {
   selections?: BSSelection[];
   rules?: BSRule[];
   categories?: BSCategory[];
+  costs?: BSCost[];
 }
 
 interface ParsedWeaponEntry {
@@ -83,6 +87,40 @@ function collectModelSelections(sel: BSSelection): BSSelection[] {
 
 function hasModelSelection(sel: BSSelection): boolean {
   return collectModelSelections(sel).length > 0;
+}
+
+function findBattleSize(selections: BSSelection[]): ArmyCatalogBattleSize | undefined {
+  for (const selection of selections) {
+    const match = selection.name.match(/^(.*?)[\s(]+([\d,]+)\s*Point limit\)?$/i);
+    if (match) {
+      const maximumPoints = Number(match[2].replace(/,/g, ''));
+      if (Number.isFinite(maximumPoints)) {
+        return { id: selection.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'), label: selection.name, maximumPoints };
+      }
+    }
+    const nested = findBattleSize(selection.selections ?? []);
+    if (nested) return nested;
+  }
+  return undefined;
+}
+
+function catalogFromRoster(force: BSForce, units: Array<{ selection: BSSelection; unit: UnitProfile }>): ArmyCatalog | undefined {
+  const catalogUnits = units.map(({ selection, unit }) => {
+    const points = selection.costs?.find(cost => cost.name.toLowerCase() === 'pts')?.value;
+    return {
+      id: unit.rosterId ?? unit.name,
+      names: [unit.name],
+      ...(points === undefined ? {} : { modelCountPoints: { [String(unit.baseModelCount)]: points } }),
+    };
+  });
+  const battleSize = findBattleSize(force.selections ?? []);
+  if (!catalogUnits.length && !battleSize) return undefined;
+  return {
+    id: (force.catalogueName ?? 'imported-roster').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    faction: force.catalogueName ?? 'Unknown',
+    units: catalogUnits,
+    ...(battleSize ? { battleSizes: [battleSize] } : {}),
+  };
 }
 
 function modelIndexRange(start: number, count: number): number[] {
@@ -384,15 +422,16 @@ export function parseBattleScribeJSON(raw: unknown): ImportedArmy {
       ? '10e' as const
       : 'unknown' as const;
 
-  const units: UnitProfile[] = [];
+  const parsedUnits: Array<{ selection: BSSelection; unit: UnitProfile }> = [];
   for (const sel of force.selections ?? []) {
     if (isUnit(sel)) {
       const unit = parseUnit(sel);
-      if (unit) units.push(unit);
+      if (unit) parsedUnits.push({ selection: sel, unit });
     }
   }
 
-  if (units.length === 0) throw new Error('No units could be parsed from this roster');
+  if (parsedUnits.length === 0) throw new Error('No units could be parsed from this roster');
 
-  return applyBaseSizesToArmy({ name, faction, units, sourceEdition });
+  const units = parsedUnits.map(entry => entry.unit);
+  return applyBaseSizesToArmy({ name, faction, units, sourceEdition, catalog: catalogFromRoster(force, parsedUnits) });
 }
