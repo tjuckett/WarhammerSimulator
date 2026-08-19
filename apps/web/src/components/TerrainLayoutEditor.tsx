@@ -961,7 +961,7 @@ export function TerrainLayoutEditor({
                       featureHeight,
                       blocksLOS: featureHeight !== 'low',
                       blocksMovement: featureHeight !== 'low',
-                      color: featureColor(featureHeight),
+                      color: featureColor(featureHeight, feature.category),
                     });
                   }}
                   disabled={disabled}

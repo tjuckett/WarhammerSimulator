@@ -804,7 +804,7 @@ function draw(
       ctx.save();
       ctx.translate(featureCenter.x * scale, featureCenter.y * scale);
       ctx.rotate(((feature.rotationDeg ?? 0) * Math.PI) / 180);
-      ctx.fillStyle = featureColor(feature.featureHeight);
+      ctx.fillStyle = featureColor(feature.featureHeight, feature.category);
       ctx.fillRect((-feature.width / 2) * scale, (-feature.height / 2) * scale, feature.width * scale, feature.height * scale);
       ctx.strokeStyle = 'rgba(255,255,255,0.22)';
       ctx.lineWidth = Math.max(0.5, Math.min(0.75, scale * 0.04));

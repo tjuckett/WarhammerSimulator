@@ -79,7 +79,7 @@ function featureFromSpec(parent: Terrain, spec: NonNullable<TerrainSpec['feature
     blocksLOS,
     blocksMovement,
     difficult: spec.difficult ?? (spec.featureHeight === 'low' || spec.featureHeight === 'mid'),
-    color: spec.color ?? featureColor(spec.featureHeight),
+    color: spec.color ?? featureColor(spec.featureHeight, spec.category ?? inferFeatureCategory(parent, spec.featureHeight)),
   };
 }
 
@@ -137,7 +137,15 @@ function inferFeatureHeight(spec: TerrainSpec): TerrainFeature['featureHeight'] 
     : 'tall';
 }
 
-export function featureColor(height: TerrainFeature['featureHeight']): string {
+export function featureColor(
+  height: TerrainFeature['featureHeight'],
+  category: TerrainFeature['category'] = 'dense',
+): string {
+  if (category === 'light') {
+    if (height === 'low') return 'rgba(30,110,140,0.85)';
+    if (height === 'mid') return 'rgba(110,105,90,0.85)';
+    return 'rgba(80,75,65,0.85)';
+  }
   if (height === 'low') return 'rgba(5,65,95,0.95)';
   if (height === 'mid') return 'rgba(70,70,70,0.95)';
   return 'rgba(20,20,20,0.9)';

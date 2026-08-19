@@ -59,6 +59,7 @@ test('terrain conversion preserves explicit light and dense feature categories',
   });
 
   assert.deepEqual(layout.terrain[0].features.map(feature => feature.category), ['light', 'dense']);
+  assert.notEqual(layout.terrain[0].features[0].color, layout.terrain[0].features[1].color);
 });
 
 test('random terrain layout keeps rotated mats and features within the Strike Force board', () => {
