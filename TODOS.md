@@ -409,6 +409,7 @@ The current runtime now has both terrain mats and terrain features. Continue sou
 - [x] **Cover eligibility verification** - reviewed against the 10th Core Rules PDF; ruins, woods, obstacle mats, and blocking features now have separate LOS/cover behavior.
 - [x] **Terrain pathing extraction** - expose `findReachablePosition` as a reusable simulator-core helper and cover its movement-distance contract with a focused test.
 - [ ] **Terrain tuning** - tune generated feature placement and colors once the rules behavior is stable.
+  - Progress: generated rotated mats and their child features are now clamped inside the 60x44 Strike Force board; palette tuning and manual Event Companion layout validation remain open.
 
 ### Other
 - [x] **Unit abilities** — simulation now resolves modeled end-of-command-phase abilities through the shared ability framework, with once-per-turn guards and fail-closed unsupported effects
