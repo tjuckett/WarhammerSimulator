@@ -62,6 +62,7 @@ interface Props {
 
 const terrainTypes: Terrain['type'][] = ['ruin', 'obstacle', 'area', 'impassable'];
 const featureHeights: TerrainFeature['featureHeight'][] = ['low', 'mid', 'tall'];
+const featureCategories: Array<NonNullable<TerrainFeature['category']>> = ['light', 'dense'];
 const objectiveRoles: Array<{ value: Terrain['objectiveRole'] | ''; label: string }> = [
   { value: '', label: 'no objective' },
   { value: 'home-0', label: 'blue home' },
@@ -389,7 +390,8 @@ export function TerrainLayoutEditor({
             blocksLOS: true,
             blocksMovement: true,
             difficult: false,
-            color: featureColor('tall'),
+            category: 'dense',
+            color: featureColor('tall', 'dense'),
           },
         ],
       } : terrain),
@@ -967,6 +969,19 @@ export function TerrainLayoutEditor({
                   disabled={disabled}
                 >
                   {featureHeights.map(height => <option key={height} value={height}>{height}</option>)}
+                </select>
+                <select
+                  value={feature.category ?? 'dense'}
+                  onChange={e => {
+                    const category = e.target.value as NonNullable<TerrainFeature['category']>;
+                    updateFeature(terrainIndex, featureIndex, {
+                      category,
+                      color: featureColor(feature.featureHeight, category),
+                    });
+                  }}
+                  disabled={disabled}
+                >
+                  {featureCategories.map(category => <option key={category} value={category}>{category}</option>)}
                 </select>
                 <NumberField label="x" value={cleanNumber(feature.x - terrain.x)} onChange={x => updateFeature(terrainIndex, featureIndex, { x: cleanNumber(terrain.x + x) }, false)} disabled={disabled} />
                 <NumberField label="y" value={cleanNumber(feature.y - terrain.y)} onChange={y => updateFeature(terrainIndex, featureIndex, { y: cleanNumber(terrain.y + y) }, false)} disabled={disabled} />
