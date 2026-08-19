@@ -334,9 +334,7 @@ Use this section as the next-session pickup point for the rules implementation w
 
 ### Next Rules Feature
 - [ ] Continue extracting 10th edition Core Rules from `rules/Warhammer_10th_Core_Rules.pdf`.
-  - Progress: the repository's existing `pdfjs-dist` extraction path reads the local PDF successfully; the first reviewable slice is Movement phase pages 13–15 (Move Units, Advance, Fall Back, Desperate Escape, and terrain movement).
 - [ ] Review one rule at a time with the user before implementing it.
-  - Handoff: Movement phase pages 13–15 are ready for the next rule-by-rule review; no implementation is inferred from extraction alone.
 - [x] Next likely rule area: tighten Movement phase legality around terrain/collision/coherency now that model-level movement exists. Movement legality, terrain pathing, collision UX, and coherency gating are implemented and tested.
 - [x] Coherency enforcement policy implemented: allow temporary incoherency during movement editing, but block Movement phase advance until all active-army units are coherent.
 - [x] Move or expose `findReachablePosition` from `simulator.ts` for reuse/testing; it is now an exported simulator-core pathing helper.
