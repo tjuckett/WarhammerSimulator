@@ -457,6 +457,7 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
 
   const startCommand = (): void => {
     next.phase = BATTLE_PHASE.Command;
+    if (next.activeArmyAbilities) next.activeArmyAbilities[next.activeArmy] = next.activeArmyAbilities[next.activeArmy].filter(id => id !== 'waaagh');
     next.movementStep = undefined;
     next.fightStepStarted = undefined;
     next.engagedUnitIdsAtFightStepStart = undefined;

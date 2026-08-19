@@ -3369,7 +3369,7 @@ function chargeNeededDistance(unit: BattleUnit, target: BattleUnit, rules: Rules
   return Math.max(0, battleUnitsBaseEdgeDistance(unit, target) - rules.engagementRange());
 }
 
-function unitCanDeclareCharge(unit: BattleUnit): boolean {
+function unitCanDeclareCharge(state: BattleState, unit: BattleUnit): boolean {
   return !unit.destroyed
     && !unit.embarkedInUnitId
     && !unit.performingAction
@@ -3382,7 +3382,7 @@ function unitCanDeclareCharge(unit: BattleUnit): boolean {
     && !unit.combatDisembarkedThisTurn
     && !unit.rapidDisembarkedThisTurn
     && unit.movementAction !== 'fellBack'
-    && unit.movementAction !== 'advanced'
+    && (unit.movementAction !== 'advanced' || state.activeArmyAbilities?.[unit.side]?.includes('waaagh') === true)
     && (unit.firedWeaponIndices?.length ?? 0) === 0;
 }
 
@@ -3402,7 +3402,7 @@ export function playChargeTargetOptions(
     || attachedUnitComponents(state, unit).some(component => component.activated)
     || attachedUnitComponents(state, unit).some(component => unitSurgedThisPhase(state, component))
     || !sideCanDeclareCharge(state, side, unit)
-    || !unitCanDeclareCharge(unit)) return [];
+    || !unitCanDeclareCharge(state, unit)) return [];
   return enemies(state, side)
     .filter(target => unitCanChargeTarget(unit, target)
       && (state.activeArmy === side
@@ -3446,7 +3446,7 @@ export function chargePlayUnitTargets(
     || targets.length !== uniqueTargetIds.length
     || uniqueTargetIds.length === 0
     || !sideCanDeclareCharge(state, side, unit)
-    || !unitCanDeclareCharge(unit)
+    || !unitCanDeclareCharge(state, unit)
     || targets.some(candidate => !unitCanChargeTarget(unit, candidate))
     || (state.activeArmy !== side
       && (unit.heroicInterventionMode === 'leap-to-defend'
@@ -4289,6 +4289,7 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
   s.activeAttachedFightUnitId = undefined;
   s.firingDeckLockedUnitIds = undefined;
   s.preBattleAbilitiesResolved = true;
+  if (s.activeArmyAbilities) s.activeArmyAbilities[side] = s.activeArmyAbilities[side].filter(id => id !== 'waaagh');
   s.units.forEach(clearFiringDeckWeapons);
   s.units.forEach(unit => {
     unit.overrunFightSelected = undefined;
@@ -5965,7 +5966,7 @@ export function playUnitCanTakeToSkies(
   }
   return state.phase === 'charge'
     && sideCanDeclareCharge(state, side, unit)
-    && unitCanDeclareCharge(unit)
+    && unitCanDeclareCharge(state, unit)
     && attachedUnitComponents(state, unit).every(component => !component.activated && !component.charged);
 }
 

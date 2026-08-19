@@ -485,6 +485,8 @@ export interface BattleState {
   /** Command-phase units that are eligible for the current Battle-shock step. */
   battleshockEligibleUnitIds?: string[];
   abilityUses?: UnitAbilityUse[];
+  /** Active typed army abilities, keyed by side; effects expire at that side's next Command phase. */
+  activeArmyAbilities?: [string[], string[]];
   missionEvents?: MissionEvents;
   missionState?: MissionState;
   // Deployment phase: units not yet placed on the board

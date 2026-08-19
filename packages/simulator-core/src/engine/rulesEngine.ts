@@ -397,7 +397,16 @@ export const rules40K11th: RulesEdition = {
       description: 'An eligible friendly unit gains Fights First and must be selected to fight next.',
     },
   ],
-  unitAbilities: [],
+  unitAbilities: [
+    {
+      id: 'waaagh',
+      name: 'Waaagh!',
+      timing: 'command-phase',
+      target: 'none',
+      oncePerBattle: true,
+      description: 'Imported Orks army ability: while active, units with Waaagh! can declare charges after Advancing. Other typed Waaagh! modifiers remain source-scoped and fail closed.',
+    },
+  ],
   description: 'Warhammer 40,000 11th Edition using the tracked 2026 Core Rules source. Supported core phases, terrain objectives, actions, aircraft/vertical movement, stratagems, missions, and generic abilities are implemented; remaining source-dependent or unmodeled mechanics are explicit and fail closed.',
 };
 

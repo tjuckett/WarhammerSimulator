@@ -118,6 +118,11 @@ export function useUnitAbility(
     targetUnitId: ability.target === 'self' ? unitId : targetUnitId,
   };
   next.abilityUses = [...(next.abilityUses ?? []), use];
+  if (ability.id === 'waaagh') {
+    const active = next.activeArmyAbilities ?? [[], []];
+    active[side] = [...new Set([...active[side], ability.id])];
+    next.activeArmyAbilities = active;
+  }
   next.log = [...next.log, {
     id: nextLogId(next, 'ability'),
     battleRound: battleRound(next),

@@ -1462,6 +1462,37 @@ test('unit ability framework matches profile ability text and records once-per-b
   assert.deepEqual(availableUnitAbilities(used, warboss.id, 0, 'manual', rules40K10th), []);
 });
 
+test('11th Ork Waaagh! records a typed active army ability window', () => {
+  const battle = state('command');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const ork = losTestUnit('ork', 0, { x: 10, y: 10 });
+  ork.profile.abilities = [{ name: 'Waaagh!', description: '' }];
+  battle.units = [ork];
+
+  const available = availableUnitAbilities(battle, ork.id, 0, 'command-phase', rules40K11th);
+  assert.equal(available.some(ability => ability.id === 'waaagh'), true);
+
+  const used = useUnitAbility(battle, ork.id, 0, 'waaagh', 'command-phase', rules40K11th);
+  assert.deepEqual(used.activeArmyAbilities, [['waaagh'], []]);
+  assert.equal(used.abilityUses?.[0]?.abilityId, 'waaagh');
+
+  const target = losTestUnit('target', 1, { x: 8.4, y: 10 });
+  used.phase = 'charge';
+  used.activeArmy = 0;
+  used.units.push(target);
+  const advanced = used.units.find(unit => unit.id === ork.id)!;
+  advanced.movementAction = 'advanced';
+  advanced.inCombat = false;
+  target.inCombat = false;
+  assert.deepEqual(
+    playChargeTargetOptions(used, ork.id, 0, rules40K11th).map(option => option.targetId),
+    [target.id],
+  );
+
+  used.activeArmyAbilities = [[], []];
+  assert.deepEqual(playChargeTargetOptions(used, ork.id, 0, rules40K11th), []);
+});
+
 test('unit ability framework exposes end-of-phase abilities and replays use actions', () => {
   const battle = state('fight');
   const overlord = losTestUnit('overlord-1', 0, { x: 10, y: 10 });
