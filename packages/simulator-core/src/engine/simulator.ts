@@ -1096,6 +1096,13 @@ function resolveAttacks(
     && state.activeArmyAbilities?.[attacker.side]?.includes('waaagh') === true
     && unitHasRule(attacker.profile, 'Waaagh!');
   const waaaghMeleeBonus = waaaghActive && weapon.isMelee ? 1 : 0;
+  const getStuckIn = rules.metadata.edition === '11e'
+    && weapon.isMelee
+    && attacker.profile.factionKeywords.some(keyword => keyword.toLowerCase().replace(/^faction:\s*/, '') === 'orks')
+    && state.armies[attacker.side].army.catalog?.rules?.some(rule => rule.name === 'Get Stuck In') === true;
+  const resolutionWeapon = getStuckIn
+    ? { ...weapon, keywords: [...weapon.keywords, 'Sustained Hits 1'] }
+    : weapon;
   const isVariableAttacks = !/^\d+$/i.test(String(weapon.attacks).trim());
   const perModelRolls: number[] = [];
   for (let i = 0; i < weaponModelCount; i++) {
@@ -1198,7 +1205,7 @@ function resolveAttacks(
       ...(plungingRolls.length ? [{ rolls: plungingRolls, target: plungingTarget, plunging: true }] : []),
       ...(normalRolls.length ? [{ rolls: normalRolls, target: normalTarget, plunging: false }] : []),
     ];
-    const results = hitPools.map(pool => ({ ...pool, result: rules.processHits(pool.rolls, pool.target, weapon) }));
+    const results = hitPools.map(pool => ({ ...pool, result: rules.processHits(pool.rolls, pool.target, resolutionWeapon) }));
     hitResult = {
       hits: results.reduce((total, pool) => total + pool.result.hits, 0),
       rolls: hitRolls,

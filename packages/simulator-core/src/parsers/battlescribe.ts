@@ -38,6 +38,7 @@ interface ParsedWeaponEntry {
 
 interface BSForce {
   catalogueName?: string;
+  rules?: BSRule[];
   selections?: BSSelection[];
 }
 
@@ -104,6 +105,13 @@ function findBattleSize(selections: BSSelection[]): ArmyCatalogBattleSize | unde
   return undefined;
 }
 
+function findRules(selections: BSSelection[]): BSRule[] {
+  return selections.flatMap(selection => [
+    ...(selection.rules ?? []),
+    ...findRules(selection.selections ?? []),
+  ]);
+}
+
 function catalogFromRoster(force: BSForce, units: Array<{ selection: BSSelection; unit: UnitProfile }>): ArmyCatalog | undefined {
   const catalogUnitMap = new Map<string, { id: string; names: string[]; modelCountPoints: Record<string, number> }>();
   units.forEach(({ selection, unit }) => {
@@ -119,12 +127,19 @@ function catalogFromRoster(force: BSForce, units: Array<{ selection: BSSelection
     ...(Object.keys(unit.modelCountPoints).length ? {} : { modelCountPoints: undefined }),
   }));
   const battleSize = findBattleSize(force.selections ?? []);
+  const catalogRules = [
+    ...(force.rules ?? []),
+    ...findRules(force.selections ?? []),
+  ]
+    .filter(rule => rule.name === 'Get Stuck In')
+    .map(rule => ({ name: rule.name, description: rule.description, category: 'faction' as const }));
   if (!catalogUnits.length && !battleSize) return undefined;
   return {
     id: (force.catalogueName ?? 'imported-roster').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
     faction: force.catalogueName ?? 'Unknown',
     units: catalogUnits,
     ...(battleSize ? { battleSizes: [battleSize] } : {}),
+    ...(catalogRules.length ? { rules: catalogRules } : {}),
   };
 }
 

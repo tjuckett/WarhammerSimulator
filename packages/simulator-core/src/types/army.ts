@@ -119,6 +119,7 @@ export interface ArmyCatalog {
   faction: string;
   units: ArmyCatalogUnit[];
   battleSizes?: ArmyCatalogBattleSize[];
+  rules?: RuleText[];
 }
 
 export interface ArmyGenerationScenarioEvaluation {
