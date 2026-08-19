@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseBattleScribeJSON } from '../src/parsers/battlescribe';
+import { parseBattleScribeCatalogueJSON, parseBattleScribeJSON } from '../src/parsers/battlescribe';
 import { validateImportedArmy } from '../src/engine/armyValidation';
 
 const rosterPaths = [
@@ -31,4 +31,33 @@ test('BattleScribe parser imports the real rosters stored in lists/', () => {
       assert.equal(validateImportedArmy(army).valid, true);
     }
   }
+});
+
+test('BSData catalogue imports a selectable unit library without selecting the units', () => {
+  const catalogue = parseBattleScribeCatalogueJSON({
+    catalogue: {
+      name: 'Orks',
+      sharedSelectionEntries: [{
+        id: 'boyz-id',
+        name: 'Boyz',
+        type: 'unit',
+        costs: [{ name: 'pts', value: 75 }],
+        categories: [{ name: 'Infantry' }, { name: 'Faction: Orks' }],
+        selectionEntryGroups: [{ selectionEntries: [{
+          name: 'Boy', type: 'model', number: 5,
+          profiles: [{ name: 'Boy', typeName: 'Unit', characteristics: [
+            { name: 'M', $text: '6"' }, { name: 'T', $text: '5' }, { name: 'Sv', $text: '5+' },
+            { name: 'W', $text: '1' }, { name: 'Ld', $text: '7+' }, { name: 'OC', $text: '2' },
+          ] }],
+        }] }],
+      }],
+    },
+  });
+
+  assert.equal(catalogue.sourceEdition, '11e');
+  assert.equal(catalogue.units.length, 0);
+  assert.equal(catalogue.catalog?.units.length, 1);
+  assert.equal(catalogue.catalog?.units[0].profile?.name, 'Boyz');
+  assert.equal(catalogue.catalog?.units[0].profile?.baseModelCount, 5);
+  assert.equal(catalogue.catalog?.units[0].modelCountPoints?.['5'], 75);
 });

@@ -18,6 +18,8 @@ interface BSRule { name: string; description: string }
 
 interface BSCategory { name: string; primary?: boolean }
 
+interface BSConstraint { type: string; value?: number; field?: string; scope?: string }
+
 interface BSSelection {
   id?: string;
   name: string;
@@ -28,6 +30,9 @@ interface BSSelection {
   rules?: BSRule[];
   categories?: BSCategory[];
   costs?: BSCost[];
+  constraints?: BSConstraint[];
+  selectionEntries?: BSSelection[];
+  selectionEntryGroups?: Array<{ selectionEntries?: BSSelection[] }>;
 }
 
 interface ParsedWeaponEntry {
@@ -46,6 +51,20 @@ interface BSRoster {
   name?: string;
   gameSystemName?: string;
   forces?: BSForce[];
+}
+
+interface BSCatalogue {
+  name?: string;
+  sharedSelectionEntries?: BSSelection[];
+  selectionEntries?: BSSelection[];
+}
+
+function childSelections(sel: BSSelection): BSSelection[] {
+  return [
+    ...(sel.selections ?? []),
+    ...(sel.selectionEntries ?? []),
+    ...(sel.selectionEntryGroups ?? []).flatMap(group => group.selectionEntries ?? []),
+  ];
 }
 
 // ─── Parsing helpers ──────────────────────────────────────────────────────────
@@ -77,13 +96,13 @@ function parseNum(s: string): number {
 // Recursively collect all profiles from a selection tree
 function collectProfiles(sel: BSSelection): BSProfile[] {
   const out: BSProfile[] = [...(sel.profiles ?? [])];
-  for (const sub of sel.selections ?? []) out.push(...collectProfiles(sub));
+  for (const sub of childSelections(sel)) out.push(...collectProfiles(sub));
   return out;
 }
 
 function collectModelSelections(sel: BSSelection): BSSelection[] {
   if (sel.type === 'model') return [sel];
-  return (sel.selections ?? []).flatMap(collectModelSelections);
+  return childSelections(sel).flatMap(collectModelSelections);
 }
 
 function hasModelSelection(sel: BSSelection): boolean {
@@ -99,7 +118,7 @@ function findBattleSize(selections: BSSelection[]): ArmyCatalogBattleSize | unde
         return { id: selection.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'), label: selection.name, maximumPoints };
       }
     }
-    const nested = findBattleSize(selection.selections ?? []);
+    const nested = findBattleSize(childSelections(selection));
     if (nested) return nested;
   }
   return undefined;
@@ -108,7 +127,7 @@ function findBattleSize(selections: BSSelection[]): ArmyCatalogBattleSize | unde
 function findRules(selections: BSSelection[]): BSRule[] {
   return selections.flatMap(selection => [
     ...(selection.rules ?? []),
-    ...findRules(selection.selections ?? []),
+    ...findRules(childSelections(selection)),
   ]);
 }
 
@@ -162,7 +181,7 @@ function collectWeaponEntries(sel: BSSelection): ParsedWeaponEntry[] {
   }
 
   const allModelIndexes = modelIndexRange(0, modelStart);
-  for (const sub of sel.selections ?? []) {
+  for (const sub of childSelections(sel)) {
     if (!hasModelSelection(sub)) {
       out.push(...collectSelectionWeaponEntries(sub, allModelIndexes));
     }
@@ -179,7 +198,7 @@ function collectSelectionWeaponEntries(sel: BSSelection, ownerModelIndexes: numb
     else if (profile.typeName === 'Melee Weapons') out.push({ profile, isMelee: true, modelIndexes });
   }
 
-  for (const sub of sel.selections ?? []) {
+  for (const sub of childSelections(sel)) {
     out.push(...collectSelectionWeaponEntries(sub, modelIndexes));
   }
   return out;
@@ -188,7 +207,7 @@ function collectSelectionWeaponEntries(sel: BSSelection, ownerModelIndexes: numb
 // Recursively collect all rules
 function collectRules(sel: BSSelection): BSRule[] {
   const out: BSRule[] = [...(sel.rules ?? [])];
-  for (const sub of sel.selections ?? []) out.push(...collectRules(sub));
+  for (const sub of childSelections(sel)) out.push(...collectRules(sub));
   return out;
 }
 
@@ -454,4 +473,51 @@ export function parseBattleScribeJSON(raw: unknown): ImportedArmy {
 
   const units = parsedUnits.map(entry => entry.unit);
   return applyBaseSizesToArmy({ name, faction, units, sourceEdition, catalog: catalogFromRoster(force, parsedUnits) });
+}
+
+/** Parse a BSData/NewRecruit catalogue into a selectable Army Builder library. */
+export function parseBattleScribeCatalogueJSON(raw: unknown): ImportedArmy {
+  const catalogue = (raw as { catalogue?: BSCatalogue })?.catalogue;
+  if (!catalogue) throw new Error('Not a valid BattleScribe catalogue JSON file (missing "catalogue" key)');
+
+  const faction = catalogue.name ?? 'Imported 11th Edition Catalogue';
+  const entries = [...(catalogue.sharedSelectionEntries ?? []), ...(catalogue.selectionEntries ?? [])];
+  const parsedUnits = entries
+    .filter(isUnit)
+    .map(entry => ({ entry, profile: parseUnit(entry) }))
+    .filter((entry): entry is { entry: BSSelection; profile: UnitProfile } => entry.profile !== null);
+
+  if (!parsedUnits.length) throw new Error('No unit datasheets could be parsed from this catalogue');
+
+  const catalogUnits = parsedUnits.map(({ entry, profile }) => {
+    const points = entry.costs?.find(cost => cost.name.toLowerCase() === 'pts')?.value;
+    const modelConstraints = (entry.constraints ?? [])
+      .filter(constraint => constraint.field === 'selections' && constraint.scope === 'self');
+    const maximumCopies = (entry.constraints ?? [])
+      .find(constraint => constraint.field === 'selections' && constraint.scope === 'force' && constraint.type === 'max')?.value;
+    profile.rosterId = entry.id ?? profile.name;
+    return {
+      id: profile.rosterId,
+      names: [profile.name],
+      ...(points !== undefined ? { modelCountPoints: { [String(profile.baseModelCount)]: points } } : {}),
+      ...(modelConstraints.find(constraint => constraint.type === 'min')?.value !== undefined
+        ? { minimumModels: modelConstraints.find(constraint => constraint.type === 'min')?.value } : {}),
+      ...(modelConstraints.find(constraint => constraint.type === 'max')?.value !== undefined
+        ? { maximumModels: modelConstraints.find(constraint => constraint.type === 'max')?.value } : {}),
+      ...(maximumCopies !== undefined ? { maximumCopies } : {}),
+      profile,
+    };
+  });
+
+  return {
+    name: `${faction} Catalogue`,
+    faction,
+    units: [],
+    sourceEdition: '11e',
+    catalog: {
+      id: faction.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      faction,
+      units: catalogUnits,
+    },
+  };
 }

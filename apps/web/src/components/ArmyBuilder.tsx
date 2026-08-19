@@ -6,7 +6,7 @@ import { validateImportedArmy } from '@warhammer-simulator/core/engine/armyValid
 import { generateAiArmy, selectAiArmyForScenario } from '@warhammer-simulator/core/engine/armyGeneration';
 import type { AiArmyScenario, AiArmyStrategy, AiMissionFocus } from '@warhammer-simulator/core/engine/armyGeneration';
 import type { DeploymentStrategy } from '@warhammer-simulator/core/engine/deployment';
-import { parseBattleScribeJSON } from '@warhammer-simulator/core/parsers/battlescribe';
+import { parseBattleScribeCatalogueJSON, parseBattleScribeJSON } from '@warhammer-simulator/core/parsers/battlescribe';
 import { ArmyPanel } from './ArmyPanel';
 import { uiTokens } from '../theme/uiTokens';
 
@@ -46,6 +46,14 @@ function uniqueLibraryUnits(armies: ImportedArmy[]): UnitProfile[] {
       seen.add(key);
       units.push(unit);
     }
+    for (const catalogUnit of army.catalog?.units ?? []) {
+      const unit = catalogUnit.profile;
+      if (!unit) continue;
+      const key = displayUnitId(unit);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      units.push(unit);
+    }
   }
   return units;
 }
@@ -80,7 +88,11 @@ export function ArmyBuilder({ armies, sampleArmies, savedSlot, onSavedSlotChange
     reader.onload = event => {
       try {
         const value: unknown = JSON.parse(String(event.target?.result ?? ''));
-        const imported = isImportedArmy(value) ? value : parseBattleScribeJSON(value);
+        const imported = isImportedArmy(value)
+          ? value
+          : (value && typeof value === 'object' && 'catalogue' in value)
+            ? parseBattleScribeCatalogueJSON(value)
+            : parseBattleScribeJSON(value);
         updateArmy(applyBaseSizesToArmy(imported));
         setSelectedUnitId(null);
       } catch (error) {

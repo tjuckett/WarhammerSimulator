@@ -105,6 +105,8 @@ export interface ArmyCatalogUnit {
   minimumModels?: number;
   maximumModels?: number;
   maximumCopies?: number;
+  /** Optional full profile when the catalog was imported from a public data source. */
+  profile?: UnitProfile;
 }
 
 export interface ArmyCatalogBattleSize {
