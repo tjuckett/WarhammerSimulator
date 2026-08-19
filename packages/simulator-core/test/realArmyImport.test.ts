@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseBattleScribeJSON } from '../src/parsers/battlescribe';
+import { validateImportedArmy } from '../src/engine/armyValidation';
 
 const rosterPaths = [
   ['necrons', 'Necron - 5_23_26.json'],
@@ -24,8 +25,9 @@ test('BattleScribe parser imports the real rosters stored in lists/', () => {
     assert.equal(new Set(rosterIds).size, rosterIds.length, `${filename} should preserve unique roster IDs`);
     if (expectedEdition === '11e') {
       assert.equal(army.catalog?.battleSizes?.[0]?.maximumPoints, 2000);
-      assert.equal(army.catalog?.units.length, army.units.length);
+      assert.equal(army.catalog?.units.length, new Set(army.units.map(unit => unit.rosterId ?? unit.name)).size);
       assert.ok(army.catalog?.units.every(unit => unit.modelCountPoints));
+      assert.equal(validateImportedArmy(army).valid, true);
     }
   }
 });

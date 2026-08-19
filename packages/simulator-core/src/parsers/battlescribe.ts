@@ -105,14 +105,19 @@ function findBattleSize(selections: BSSelection[]): ArmyCatalogBattleSize | unde
 }
 
 function catalogFromRoster(force: BSForce, units: Array<{ selection: BSSelection; unit: UnitProfile }>): ArmyCatalog | undefined {
-  const catalogUnits = units.map(({ selection, unit }) => {
+  const catalogUnitMap = new Map<string, { id: string; names: string[]; modelCountPoints: Record<string, number> }>();
+  units.forEach(({ selection, unit }) => {
     const points = selection.costs?.find(cost => cost.name.toLowerCase() === 'pts')?.value;
-    return {
-      id: unit.rosterId ?? unit.name,
-      names: [unit.name],
-      ...(points === undefined ? {} : { modelCountPoints: { [String(unit.baseModelCount)]: points } }),
-    };
+    const id = unit.rosterId ?? unit.name;
+    const existing = catalogUnitMap.get(id) ?? { id, names: [], modelCountPoints: {} };
+    if (!existing.names.includes(unit.name)) existing.names.push(unit.name);
+    if (points !== undefined) existing.modelCountPoints[String(unit.baseModelCount)] = points;
+    catalogUnitMap.set(id, existing);
   });
+  const catalogUnits = [...catalogUnitMap.values()].map(unit => ({
+    ...unit,
+    ...(Object.keys(unit.modelCountPoints).length ? {} : { modelCountPoints: undefined }),
+  }));
   const battleSize = findBattleSize(force.selections ?? []);
   if (!catalogUnits.length && !battleSize) return undefined;
   return {

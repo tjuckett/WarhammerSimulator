@@ -65,7 +65,7 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
   const explicitRosterIds = new Map<string, number>();
   const armyFaction = typeof army?.faction === 'string' ? army.faction : '';
 
-  const rawCatalog = options?.catalog;
+  const rawCatalog = options?.catalog ?? army.catalog;
   let catalog: ArmyCatalog | undefined = rawCatalog;
   let catalogShapeValid = true;
   const battleSizeId = typeof options?.battleSizeId === 'string' && options.battleSizeId.trim()
