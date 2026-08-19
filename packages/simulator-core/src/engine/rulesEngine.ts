@@ -407,6 +407,7 @@ export const rules40K11th: RulesEdition = {
       timing: 'command-phase',
       target: 'none',
       oncePerBattle: true,
+      armyWideOncePerBattle: true,
       description: 'Imported Orks army ability: while active, units with Waaagh! can declare charges after Advancing. Other typed Waaagh! modifiers remain source-scoped and fail closed.',
     },
     {
@@ -415,6 +416,7 @@ export const rules40K11th: RulesEdition = {
       timing: 'manual',
       target: 'self',
       oncePerBattle: true,
+      armyWideOncePerBattle: true,
       description: 'In your Movement phase, if this unit is unengaged, place it in Strategic Reserves. It has Deep Strike until the end of the phase.',
     },
     {

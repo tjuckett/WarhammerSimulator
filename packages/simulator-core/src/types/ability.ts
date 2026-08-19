@@ -10,6 +10,8 @@ export interface UnitAbilityDefinition {
   timing: AbilityTiming;
   target: AbilityTargetKind;
   oncePerBattle?: boolean;
+  /** Once-per-battle use shared by every source unit on the same army side. */
+  armyWideOncePerBattle?: boolean;
   oncePerTurn?: boolean;
   description: string;
 }

@@ -1475,6 +1475,10 @@ test('11th Ork Waaagh! records a typed active army ability window', () => {
   const used = useUnitAbility(battle, ork.id, 0, 'waaagh', 'command-phase', rules40K11th);
   assert.deepEqual(used.activeArmyAbilities, [['waaagh'], []]);
   assert.equal(used.abilityUses?.[0]?.abilityId, 'waaagh');
+  const secondOrk = losTestUnit('second-ork', 0, { x: 12, y: 10 });
+  secondOrk.profile.abilities = [{ name: 'Waaagh!', description: '' }];
+  used.units.push(secondOrk);
+  assert.deepEqual(availableUnitAbilities(used, secondOrk.id, 0, 'command-phase', rules40K11th), []);
 
   const target = losTestUnit('target', 1, { x: 8.4, y: 10 });
   used.phase = 'charge';

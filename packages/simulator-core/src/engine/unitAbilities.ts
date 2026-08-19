@@ -33,7 +33,8 @@ function unitHasAbility(unit: BattleUnit, ability: UnitAbilityDefinition): boole
 function abilityUsed(state: BattleState, unit: BattleUnit, ability: UnitAbilityDefinition): boolean {
   if (!ability.oncePerBattle && !ability.oncePerTurn) return false;
   return (state.abilityUses ?? []).some(use => {
-    if (use.sourceUnitId !== unit.id || use.abilityId !== ability.id) return false;
+    if (use.abilityId !== ability.id || use.side !== unit.side) return false;
+    if (!ability.armyWideOncePerBattle && use.sourceUnitId !== unit.id) return false;
     if (ability.oncePerBattle) return true;
     return use.battleRound === battleRound(state);
   });
