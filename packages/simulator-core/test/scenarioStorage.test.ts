@@ -1540,6 +1540,11 @@ test('11th Ork Kunnin Infiltrator places an unengaged unit into temporary Deep S
   assert.equal(used.units[0].deepStrikeUntilPhase, 'movement');
   assert.deepEqual(used.units[0].position, { x: -100, y: 22 });
   assert.equal(availableUnitAbilities(used, snikrot.id, 0, 'manual', rules40K11th).some(ability => ability.id === 'kunnin-infiltrator'), false);
+
+  used.movementStep = 'reinforcements';
+  const arrived = placePlayStrategicReserveUnit(used, 0, snikrot.id, { x: 30, y: 22 });
+  assert.equal(arrived.units[0].inStrategicReserves, false);
+  assert.deepEqual(arrived.units[0].position, { x: 30, y: 22, z: 0 });
 });
 
 test('11th Ghazghkull Prophet grants attached melee hit and wound bonuses during Waaagh!', () => {

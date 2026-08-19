@@ -4991,7 +4991,7 @@ export function placePlayStrategicReserveUnit(state: BattleState, side: Side, un
   const s = clone(state);
   const board = boardFormatForState(s);
   const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
-  if (battleRound(s) === 1) return state;
+  if (battleRound(s) === 1 && unit.deepStrikeUntilPhase !== state.phase) return state;
   unit.modelPositions = playGridFormation(unit.profile, position, side).slice(0, unit.remainingModels);
   unit.modelRotations = unit.modelPositions.map(() => side === 0 ? 0 : 180);
   unit.facingDeg = side === 0 ? 0 : 180;
