@@ -1107,21 +1107,31 @@ function resolveAttacks(
     && state.activeArmyAbilities?.[attacker.side]?.includes('waaagh') === true
     && attachedUnitIsFormed(state, attacker)
     && attachedUnitHasRule(state, attacker, 'Prophet of Da Great Waaagh!');
+  const leadingModifiers = rules.metadata.edition === '11e'
+    ? leadingAttackModifiers(state, attacker, weapon)
+    : { hit: 0, wound: 0, strength: 0, attacks: 0 };
+  const derivedLeadingKeywords = rules.metadata.edition === '11e'
+    ? leadingWeaponKeywords(state, attacker, weapon)
+    : [];
   const bannerAuraActive = rules.metadata.edition === '11e'
     && state.activeArmyAbilities?.[attacker.side]?.includes('waaagh') === true
     && attacker.profile.factionKeywords.some(keyword => keyword.toLowerCase().replace(/^faction:\s*/, '') === 'orks')
     && auraAbilitiesInRange(state, attacker).some(application => application.rule.name.toLowerCase().includes('banner'));
-  const ghazghkullWeapon = prophetActive
-    ? { ...resolutionWeapon, keywords: [...resolutionWeapon.keywords, 'Critical Hits 5+'] }
+  const leadingWeapon = derivedLeadingKeywords.length
+    ? { ...resolutionWeapon, keywords: [...resolutionWeapon.keywords, ...derivedLeadingKeywords] }
     : resolutionWeapon;
+  const ghazghkullWeapon = prophetActive
+    ? { ...leadingWeapon, keywords: [...leadingWeapon.keywords, 'Critical Hits 5+'] }
+    : leadingWeapon;
   const bannerWeapon = bannerAuraActive
     ? { ...ghazghkullWeapon, keywords: [...ghazghkullWeapon.keywords, 'Lethal Hits'] }
     : ghazghkullWeapon;
+  hitModifier += leadingModifiers.hit;
   if (prophetActive) hitModifier -= 1;
   const isVariableAttacks = !/^\d+$/i.test(String(weapon.attacks).trim());
   const perModelRolls: number[] = [];
   for (let i = 0; i < weaponModelCount; i++) {
-    perModelRolls.push(rollExpression(weapon.attacks).total + waaaghMeleeBonus);
+    perModelRolls.push(rollExpression(weapon.attacks).total + waaaghMeleeBonus + (weapon.isMelee ? leadingModifiers.attacks : 0));
   }
   let perModelAttackCounts = [...perModelRolls];
   let numAttacks = options.attackCountOverride ?? perModelAttackCounts.reduce((a, b) => a + b, 0);
@@ -1156,7 +1166,7 @@ function resolveAttacks(
     `  ${weapon.isMelee ? '⚔️' : '🔫'} ${weapon.name} — ${weaponModelCount} model(s) × ${weapon.attacks} = ${numAttacks} attacks vs ${defender.profile.name}`,
     weapon.isMelee ? 'fight' : 'shoot',
   ));
-  const effectiveStrength = weapon.strength + waaaghMeleeBonus;
+  const effectiveStrength = weapon.strength + waaaghMeleeBonus + (weapon.isMelee ? leadingModifiers.strength : 0);
   logs.push(log(state, attacker.side, attacker.profile.name,
     `[combat-stats] skill=${weapon.skill} s=${effectiveStrength} ap=${weapon.ap} d=${weapon.damage} t=${attachedUnitToughness(state, defender)}${hasCover ? ' cover=1' : ''}`,
     'info',
@@ -1254,7 +1264,7 @@ function resolveAttacks(
     && weaponHasKeyword(weapon, 'Lance')
     && attachedUnitComponents(state, attacker).some(component => component.charged);
   const prophetWoundBonus = prophetActive ? 1 : 0;
-  const wt = Math.max(2, rules.woundTarget(effectiveStrength, targetToughness) - (lanceApplies ? 1 : 0) - prophetWoundBonus);
+  const wt = Math.max(2, rules.woundTarget(effectiveStrength, targetToughness) - (lanceApplies ? 1 : 0) - prophetWoundBonus - leadingModifiers.wound);
   let woundCount = 0;
   if (lanceApplies) {
     logs.push(log(state, attacker.side, attacker.profile.name, '     Lance: +1 to wound rolls after a charge move', 'info'));
@@ -1305,8 +1315,11 @@ function resolveAttacks(
       && unitHasRule(defender.profile, 'Waaagh!')
       ? 5
       : undefined;
+    const derivedInvulnSave = attachedInvulnerableSave(state, defender, weapon);
     const effectiveInvulnSave = waaaghInvulnSave === undefined
-      ? defender.profile.invulnSave
+      ? Math.min(defender.profile.invulnSave ?? 7, derivedInvulnSave ?? 7) === 7
+        ? undefined
+        : Math.min(defender.profile.invulnSave ?? 7, derivedInvulnSave ?? 7)
       : Math.min(defender.profile.invulnSave ?? 7, waaaghInvulnSave);
     const rawSave = rules.saveTarget(defender.profile.save, weapon.ap, effectiveInvulnSave);
     const effectiveSave = rawSave - coverBonus;
@@ -1875,6 +1888,66 @@ function datasheetRuleText(unit: BattleUnit): string[] {
     ...(unit.profile.abilities ?? []).flatMap(rule => [rule.name, rule.description]),
     ...(unit.profile.rules ?? []).flatMap(rule => [rule.name, rule.description]),
   ].filter(Boolean);
+}
+
+function attachedLeadingRules(state: BattleState, unit: BattleUnit): Array<{ name: string; description: string }> {
+  if (!attachedUnitIsFormed(state, unit)) return [];
+  return attachedUnitComponents(state, unit).flatMap(component =>
+    [...component.profile.abilities, ...(component.profile.rules ?? [])].filter(rule =>
+      /\bwhile\s+(?:this model|the bearer|a .+ model)\s+is leading\b/i.test(rule.description)
+      || /\bwhile\s+(?:this|that|the bearer'?s) unit is led\b/i.test(rule.description),
+    ),
+  );
+}
+
+function leadingWeaponKeywords(state: BattleState, unit: BattleUnit, weapon: WeaponProfile): string[] {
+  const keywords: string[] = [];
+  for (const rule of attachedLeadingRules(state, unit)) {
+    if (/prophet of da great waaagh/i.test(rule.name)) continue;
+    const text = `${rule.name} ${rule.description}`;
+    if (weapon.isMelee === /melee/i.test(text) || /weapons? equipped by models in (?:this|that|the bearer'?s) unit/i.test(text)) {
+      for (const keyword of ['Lethal Hits', 'Devastating Wounds', 'Precision', 'Ignores Cover', 'Torrent']) {
+        if (new RegExp(`\\[?${keyword.replace(' ', '\\s+')}\\]?`, 'i').test(text)) keywords.push(keyword);
+      }
+      const sustained = text.match(/Sustained Hits\s*(?:\[?)(D?\d+)(?:\]?)/i);
+      if (sustained) keywords.push(`Sustained Hits ${sustained[1]}`);
+      const critical = text.match(/Critical Hits?\s*(?:on\s+)?(?:a\s+)?(?:successful\s+)?(?:unmodified\s+)?(?:Hit roll of\s+)?([2-6])\+/i);
+      if (critical) keywords.push(`Critical Hits ${critical[1]}+`);
+    }
+  }
+  return keywords;
+}
+
+function leadingAttackModifiers(state: BattleState, unit: BattleUnit, weapon: WeaponProfile): { hit: number; wound: number; strength: number; attacks: number } {
+  let hit = 0;
+  let wound = 0;
+  let strength = 0;
+  let attacks = 0;
+  for (const rule of attachedLeadingRules(state, unit)) {
+    if (/prophet of da great waaagh/i.test(rule.name)) continue;
+    const text = `${rule.name} ${rule.description}`;
+    if (/add\s+1\s+to\s+(?:the\s+)?hit roll/i.test(text)) hit -= 1;
+    if (/add\s+1\s+to\s+(?:the\s+)?wound roll/i.test(text)) wound += 1;
+    if (weapon.isMelee && /melee (?:attacks|weapons).*?add\s+1\s+to\s+(?:the\s+)?strength/i.test(text)) strength += 1;
+    if (weapon.isMelee && /melee (?:attacks|weapons).*?add\s+1\s+to\s+(?:the\s+)?attacks/i.test(text)) attacks += 1;
+  }
+  return { hit, wound, strength, attacks };
+}
+
+function attachedInvulnerableSave(state: BattleState, unit: BattleUnit, weapon: WeaponProfile): number | undefined {
+  const saves = attachedUnitComponents(state, unit).flatMap(component => {
+    const isSameComponent = component.id === unit.id;
+    return [...component.profile.abilities, ...(component.profile.rules ?? [])].flatMap(rule => {
+      const text = `${rule.name} ${rule.description}`;
+      if (!/invulnerable save/i.test(text)) return [];
+      if (!isSameComponent && !/\b(?:this|that|the bearer'?s) unit\b/i.test(text)) return [];
+      if (weapon.isMelee && /ranged attacks?/i.test(text)) return [];
+      if (!weapon.isMelee && /melee attacks?/i.test(text)) return [];
+      const match = text.match(/([2-6])\+\s+invulnerable save/i);
+      return match ? [Number(match[1])] : [];
+    });
+  });
+  return saves.length ? Math.min(...saves) : undefined;
 }
 
 function feelNoPainTargets(unit: BattleUnit): Array<{ target: number; sharesWithAttachedUnit: boolean }> {

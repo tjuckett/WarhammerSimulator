@@ -1623,6 +1623,43 @@ test('11th Ork Get Stuck In grants Sustained Hits 1 to melee attacks', () => {
   }
 });
 
+test('11th attached leader abilities apply typed melee effects to the bodyguard unit', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = true;
+  const bodyguard = losTestUnit('generic-bodyguard', 0, { x: 10, y: 10 });
+  bodyguard.inCombat = true;
+  bodyguard.charged = true;
+  bodyguard.profile.weapons = [{ name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true }];
+  const leader = losTestUnit('generic-leader', 0, { x: 10, y: 10 });
+  leader.attachedToUnitId = bodyguard.id;
+  leader.inCombat = true;
+  leader.profile = {
+    ...leader.profile,
+    name: 'Generic Leader',
+    weapons: [],
+    abilities: [{
+      name: 'Leader Aura',
+      description: 'While this model is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Hit roll and add 1 to the Wound roll.',
+    }],
+  };
+  const target = losTestUnit('generic-target', 1, { x: 11.2, y: 10 });
+  target.inCombat = true;
+  target.profile = { ...target.profile, toughness: 7 };
+  battle.units = [bodyguard, leader, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const fought = fightPlayUnitWeapon(battle, bodyguard.id, 0, target.id, 0, rules40K11th);
+    const messages = fought.log.map(entry => entry.message).join(' ');
+    assert.match(messages, /Hit rolls \(2\+\)/);
+    assert.match(messages, /Wound rolls \(S4 vs T7, 4\+\)/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('unit ability framework exposes end-of-phase abilities and replays use actions', () => {
   const battle = state('fight');
   const overlord = losTestUnit('overlord-1', 0, { x: 10, y: 10 });
