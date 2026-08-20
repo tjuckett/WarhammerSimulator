@@ -18,13 +18,26 @@ const catalogs = files
 if (!catalogs.length) throw new Error('The BSData repository did not return any JSON catalogues.');
 
 await mkdir(outputDirectory, { recursive: true });
+const mergedEntries = new Map();
 for (const file of catalogs) {
   const catalogResponse = await fetch(file.download_url, {
     headers: { 'User-Agent': 'warhammer-simulator-data-sync' },
   });
   if (!catalogResponse.ok) throw new Error(`Unable to download ${file.name}: ${catalogResponse.status}`);
-  await writeFile(join(outputDirectory, file.name), await catalogResponse.arrayBuffer());
+  const contents = await catalogResponse.arrayBuffer();
+  await writeFile(join(outputDirectory, file.name), contents);
+  const catalogue = JSON.parse(new TextDecoder().decode(contents)).catalogue;
+  for (const entry of catalogue?.sharedSelectionEntries ?? []) {
+    if (entry.id && !mergedEntries.has(entry.id)) mergedEntries.set(entry.id, entry);
+  }
   console.log(`Downloaded ${file.name}`);
 }
 
+await writeFile(join(outputDirectory, 'all-11e.json'), JSON.stringify({
+  catalogue: {
+    name: 'Warhammer 40,000 11th Edition - All Public Catalogues',
+    sharedSelectionEntries: [...mergedEntries.values()],
+  },
+}, null, 2));
 console.log(`Downloaded ${catalogs.length} BSData 11th-edition catalogues to ${outputDirectory}`);
+console.log(`Wrote merged catalogue with ${mergedEntries.size} shared entries.`);
