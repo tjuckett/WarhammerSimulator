@@ -8,6 +8,11 @@ const nextConfig = {
   output: 'standalone',
   outputFileTracingRoot: path.resolve(__dirname, '../..'),
   transpilePackages: ['@warhammer-simulator/core'],
+  experimental: {
+    // Checkpoint saves include the replay timeline and can legitimately be
+    // several megabytes once a battle has progressed through many actions.
+    proxyClientMaxBodySize: '50mb',
+  },
   turbopack: {
     root: path.resolve(__dirname, '../..'),
   },
