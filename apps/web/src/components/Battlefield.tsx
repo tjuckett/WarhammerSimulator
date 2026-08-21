@@ -54,6 +54,8 @@ interface Props {
   visibleOutOfRangeUnitIds?: Set<string>;
   showTerrainLabels?: boolean;
   showUnitLabels?: boolean;
+  unitWarningUnitId?: string | null;
+  unitWarning?: string | null;
   onSelectUnit?: (unitId: string, side: 0 | 1) => void;
   deployer?: {
     enabled: boolean;
@@ -85,7 +87,7 @@ const ZOOM_STEP = 0.25;
 const NO_MANS_LAND_FILL = 'rgb(240, 240, 232)';
 const ALIGN_VERTEX_PICK_RADIUS = 0.22;
 
-export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], activeSimulationUnitId = null, shooterUnitId = null, targetUnitId = null, shootingReadyUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showTerrainLabels = true, showUnitLabels = false, onSelectUnit, deployer, editor }: Props) {
+export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], activeSimulationUnitId = null, shooterUnitId = null, targetUnitId = null, shootingReadyUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showTerrainLabels = true, showUnitLabels = false, unitWarningUnitId = null, unitWarning = null, onSelectUnit, deployer, editor }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedActionsRef = useRef<HTMLDivElement>(null);
@@ -163,6 +165,8 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       visibleOutOfRangeUnitIds,
       showTerrainLabels,
       showUnitLabels,
+      unitWarningUnitId,
+      unitWarning,
     );
     return true;
   }
@@ -175,7 +179,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     updateSelectedActionsPositionEvent();
     window.addEventListener('resize', updateSelectedActionsPositionEvent);
     return () => window.removeEventListener('resize', updateSelectedActionsPositionEvent);
-  }, [state, editor?.selected, hoverGridPoint, zoom, deployer?.selectedModel, deployer?.selectedModelActions, hideSelectedActions, selectedUnitId, selectedUnitIds, activeSimulationUnitId, shooterUnitId, targetUnitId, shootingReadyUnitIds, boxSelect, hoveredTransport, hoveredUnitId, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showTerrainLabels, showUnitLabels, renderCanvasEvent, updateSelectedActionsPositionEvent]);
+  }, [state, editor?.selected, hoverGridPoint, zoom, deployer?.selectedModel, deployer?.selectedModelActions, hideSelectedActions, selectedUnitId, selectedUnitIds, activeSimulationUnitId, shooterUnitId, targetUnitId, shootingReadyUnitIds, boxSelect, hoveredTransport, hoveredUnitId, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showTerrainLabels, showUnitLabels, unitWarningUnitId, unitWarning, renderCanvasEvent, updateSelectedActionsPositionEvent]);
 
   useEffect(() => {
     setHideSelectedActions(false);
@@ -767,6 +771,8 @@ function draw(
   visibleOutOfRangeUnitIds: Set<string> = new Set(),
   showTerrainLabels = true,
   showUnitLabels = false,
+  unitWarningUnitId: string | null = null,
+  unitWarning: string | null = null,
 ) {
   // ── Background ───────────────────────────────────────────────────────────
   const board = boardFormatForState(state);
@@ -951,7 +957,7 @@ function draw(
     const shootingRole = unit.id === shooterUnitId
       ? state.phase === 'charge' ? 'charger' : 'shooter'
       : unit.id === targetUnitId ? 'target' : null;
-    drawUnit(ctx, previewUnit, state, scale, selectedModelIndices, showUnitLabels || hoveredUnitId === unit.id, coherencyIssueModelIds, !!modelDragPreview, coverUnitIds?.has(unit.id) ?? false, losModelStates, shootingRole, shootingReadyUnitIds.has(unit.id), activeSimulationUnitId === unit.id);
+    drawUnit(ctx, previewUnit, state, scale, selectedModelIndices, showUnitLabels || hoveredUnitId === unit.id, coherencyIssueModelIds, !!modelDragPreview, coverUnitIds?.has(unit.id) ?? false, losModelStates, shootingRole, shootingReadyUnitIds.has(unit.id), activeSimulationUnitId === unit.id, unitWarningUnitId === unit.id ? unitWarning : null);
   }
 
   if (hoveredTransport) drawTransportTooltip(ctx, hoveredTransport, scale, W, H);
@@ -1427,6 +1433,7 @@ function drawUnit(
   shootingRole: 'shooter' | 'charger' | 'target' | null = null,
   shootingReady = false,
   activeSimulationUnit = false,
+  unitWarning: string | null = null,
 ) {
   const board = boardFormatForState(state);
   const color = state.armies[unit.side].color;
@@ -1551,6 +1558,24 @@ function drawUnit(
     drawShootingReadyOutline(ctx, leftX, topY, rightX, bottomY, scale);
   }
 
+  if (unitWarning) {
+    const warningFontSize = Math.max(5.5, scale * 0.52);
+    ctx.font = `bold ${warningFontSize}px monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    const warningLabel = unitWarning.length > 42 ? `${unitWarning.substring(0, 40)}..` : unitWarning;
+    const warningWidth = Math.min(board.width * scale - 8, Math.max(80, ctx.measureText(warningLabel).width + 10));
+    const warningY = topY - 5;
+    const warningHeight = warningFontSize + 6;
+    ctx.fillStyle = 'rgba(35, 23, 8, 0.94)';
+    ctx.fillRect(cx - warningWidth / 2, warningY - warningHeight - 2, warningWidth, warningHeight);
+    ctx.strokeStyle = 'rgba(255, 190, 75, 0.9)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(cx - warningWidth / 2, warningY - warningHeight - 2, warningWidth, warningHeight);
+    ctx.fillStyle = '#ffd27a';
+    ctx.fillText(warningLabel, cx, warningY - 4);
+  }
+
   // Unit name — centred above formation, small dark pill background
   if (showName) {
     const fontSize = Math.max(6, scale * 0.65);
@@ -1594,22 +1619,14 @@ function drawUnit(
     ctx.fillText(label, badgeX, badgeY + 0.5);
   }
 
-  const pct = unit.remainingModels / unit.profile.baseModelCount;
-  const barW = Math.max(scale * 1.8, formW * 0.85);
-  const barH = 4;
-  const bx = cx - barW / 2;
-  const by = bottomY + 3;
-  ctx.fillStyle = 'rgba(0,0,0,0.6)';
-  ctx.fillRect(bx, by, barW, barH);
-  ctx.fillStyle = pct > 0.6 ? '#44ee44' : pct > 0.3 ? '#ffaa00' : '#ee3333';
-  ctx.fillRect(bx, by, barW * pct, barH);
-
-  // Model count
-  ctx.fillStyle = 'rgba(255,255,255,0.75)';
-  ctx.font = `${Math.max(6, scale * 0.55)}px monospace`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  ctx.fillText(`${unit.remainingModels}/${unit.profile.baseModelCount}`, cx, by + barH + 1);
+  // Model count — single-model units need no extra count label.
+  if (unit.profile.baseModelCount > 1) {
+    ctx.fillStyle = 'rgba(18, 24, 30, 0.92)';
+    ctx.font = `${Math.max(6, scale * 0.55)}px monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(`${unit.remainingModels}/${unit.profile.baseModelCount}`, cx, bottomY + 5);
+  }
 
   // Cover indicator — teal dashed ring around formation + shield badge
   if (hasCover) {

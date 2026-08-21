@@ -2990,6 +2990,8 @@ export default function App() {
             visibleOutOfRangeUnitIds={isPlayMode ? visibleOutOfRangeUnitIds : undefined}
             showTerrainLabels={!isPlayMode}
             showUnitLabels={isPlayMode}
+            unitWarningUnitId={selectedPlayChargeActive ? selectedChargeUnit?.id : null}
+            unitWarning={selectedPlayChargeActive ? selectedPlayChargeBlocker : null}
             onSelectUnit={inspectBattleUnit}
             deployer={isPlayMode && battleState && battleState.phase !== 'end' ? {
               enabled: true,
