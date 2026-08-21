@@ -472,6 +472,12 @@ export interface BattleState {
     side: Side;
     maximumDistance: number;
   };
+  pendingChargeMovement?: {
+    unitId: string;
+    side: Side;
+    targetUnitIds: string[];
+    maximumDistance: number;
+  };
   winner: null | Side | 'draw';
   log: LogEntry[];
   units: BattleUnit[];

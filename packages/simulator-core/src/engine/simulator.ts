@@ -3723,6 +3723,26 @@ export function chargePlayUnitTargets(
     ),
   ];
 
+  // Play resolves the rolled charge with a manual model-by-model move.
+  if (pendingRoll) {
+    for (const component of attachedUnitComponents(s, chargingUnit)) {
+      component.movementAction = 'normalMove';
+      component.movementAllowanceRemaining = maximumDistance;
+      component.movementAllowanceRemainingByModel = component.modelPositions.map(() => maximumDistance);
+      component.movementAllowanceTotalByModel = component.modelPositions.map(() => maximumDistance);
+      component.movementStartPositionsByModel = component.modelPositions.map(position => ({ ...position }));
+      component.movementStartRotationsByModel = component.modelPositions.map((_, modelIndex) => modelRotation(component, modelIndex));
+      component.movementPathByModel = component.modelPositions.map(position => [{ ...position }]);
+      component.movementComplete = false;
+    }
+    s.pendingChargeMovement = { unitId, side, targetUnitIds: uniqueTargetIds, maximumDistance };
+    s.pendingChargeRoll = undefined;
+    s.log = [...s.log, ...logs, log(s, side, chargingUnit.profile.name,
+      `${chargingUnit.profile.name} must now make its charge move (${maximumDistance.toFixed(1)}" maximum).`,
+      'charge')];
+    return s;
+  }
+
   if (maximumDistance + 0.001 < needed) {
     for (const component of attachedUnitComponents(s, chargingUnit)) {
       component.activated = true;
@@ -3809,6 +3829,45 @@ export function chargePlayUnitTargets(
   logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} makes a successful${state.activeArmy !== side ? ' Heroic Intervention' : ''} charge.`, 'charge'));
   s.log = [...s.log, ...logs];
   s.pendingChargeRoll = undefined;
+  return s;
+}
+
+export function completePlayChargeMovement(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): BattleState {
+  const pending = state.pendingChargeMovement;
+  if (state.phase !== 'charge' || !pending || pending.unitId !== unitId || pending.side !== side) return state;
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const targets = pending.targetUnitIds
+    .map(targetId => state.units.find(candidate => candidate.id === targetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId))
+    .filter((target): target is BattleUnit => !!target);
+  if (!unit || targets.length !== pending.targetUnitIds.length || !targets.length) return state;
+  if (targets.some(target => !inEngagement(unit, [target], rules.engagementRange()))) return state;
+  const declaredTargetIds = new Set(targets.flatMap(target => attachedUnitComponents(state, target).map(component => component.id)));
+  if (enemies(state, side).some(enemy => !declaredTargetIds.has(enemy.id) && inEngagement(unit, [enemy], rules.engagementRange()))) return state;
+
+  const s = clone(state);
+  const movedUnit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
+  for (const component of attachedUnitComponents(s, movedUnit)) {
+    component.activated = true;
+    component.charged = state.activeArmy === side;
+    component.inCombat = true;
+    component.movementComplete = true;
+    component.lastMovePhase = s.phase;
+    component.lastMoveTurn = s.turn;
+    component.movementAllowanceRemaining = 0;
+    component.movementAllowanceRemainingByModel = component.modelPositions.map(() => 0);
+    component.heroicInterventionThisPhase = undefined;
+    component.heroicInterventionMode = undefined;
+  }
+  for (const target of targets) target.inCombat = true;
+  s.pendingChargeMovement = undefined;
+  s.log = [...s.log, log(s, side, movedUnit.profile.name,
+    `${movedUnit.profile.name} completes its charge against ${targets.map(target => target.profile.name).join(', ')}.`,
+    'charge')];
   return s;
 }
 
@@ -6726,7 +6785,10 @@ export function movePlayModels(
   dy: number,
   collide = false,
 ): BattleState {
-  if (!PLAY_MODEL_EDIT_PHASES.includes(state.phase)) return state;
+  const chargeMovement = state.phase === 'charge'
+    && state.pendingChargeMovement?.unitId === unitId
+    && state.pendingChargeMovement.side === side;
+  if (!PLAY_MODEL_EDIT_PHASES.includes(state.phase) && !chargeMovement) return state;
   if (state.phase === 'movement' && movementStep(state) !== 'moveUnits') return state;
 
   const existingUnit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
@@ -6761,7 +6823,7 @@ export function movePlayModels(
     ensureModelMovementPaths(unit);
   }
 
-  const budgetMove = (s.phase === 'movement' || s.phase === 'setup') && !isAircraft(unit)
+  const budgetMove = (s.phase === 'movement' || s.phase === 'setup' || chargeMovement) && !isAircraft(unit)
     ? budgetAdjustedPlayMove(unit, uniqueIndices, dx, dy)
     : { dx, dy };
   if (Math.hypot(budgetMove.dx, budgetMove.dy) < 0.001) return state;
@@ -6800,6 +6862,7 @@ export function movePlayModels(
     updateModelMovementAllowances(unit);
   }
   if (s.phase === 'setup') updateModelMovementAllowances(unit);
+  if (s.phase === 'charge') updateModelMovementAllowances(unit);
   return s;
 }
 

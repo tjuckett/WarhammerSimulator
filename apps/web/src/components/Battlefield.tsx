@@ -235,7 +235,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     collide: boolean,
   ): BattleState {
     return selection.parts.reduce(
-      (next, part) => movePlayModels(next, part.unitId, part.side, part.modelIndices, dx, dy, collide || next.phase === 'movement'),
+      (next, part) => movePlayModels(next, part.unitId, part.side, part.modelIndices, dx, dy, collide || next.phase === 'movement' || !!next.pendingChargeMovement),
       sourceState,
     );
   }

@@ -25,7 +25,7 @@ import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simu
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
   battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, completePlayScoutMove, createDeploymentState, declarePlaySuperHeavyMobile, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playDisembarkModes, playPhaseCoherencyIssues, playScoutMoveAllowance, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels, startPlayScoutMove,
-  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTargets, playChargeEligibilityReason, playChargeRoll, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightPhaseHasPendingActivations, playFightStepNeedsStart, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undoPlayUnitMovement, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type FiringDeckSelection, type LOSRay,
+  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTargets, completePlayChargeMovement, playChargeEligibilityReason, playChargeRoll, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightPhaseHasPendingActivations, playFightStepNeedsStart, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undoPlayUnitMovement, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type FiringDeckSelection, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -504,7 +504,7 @@ export default function App() {
   const canEditTerrain = isEditorMode && !battleState;
   const playMovementStep = battleState?.phase === BATTLE_PHASE.Movement ? movementStep(battleState) : null;
   const isPlayReinforcementsStep = playMovementStep === MOVEMENT_STEP.Reinforcements;
-  const canEditPlayModelsNow = canEditPlayModels(battleState);
+  const canEditPlayModelsNow = canEditPlayModels(battleState) || !!battleState?.pendingChargeMovement;
   const selectedPlayUnit = playDeploySelection
     ? playDeploySelection.kind === PLAY_DEPLOY_SELECTION_KIND.Deployment && battleState?.phase === BATTLE_PHASE.Deployment
       ? battleState.unplacedUnits[playDeploySelection.side][playDeploySelection.unitIndex] ?? null
@@ -683,6 +683,7 @@ export default function App() {
     () => (
       isPlayMode
       && battleState?.phase === 'charge'
+      && !battleState.pendingChargeMovement
       && selectedChargeUnit
         ? playChargeTargetOptions(battleState, selectedChargeUnit.id, selectedChargeUnit.side, activeRulesForBattle)
         : []
@@ -706,6 +707,11 @@ export default function App() {
     && battleState?.phase === 'charge'
     && selectedChargeUnit
   );
+  const pendingPlayChargeMovement = battleState?.phase === 'charge'
+    && battleState.pendingChargeMovement?.unitId === selectedChargeUnit?.id
+    && battleState.pendingChargeMovement.side === selectedChargeUnit?.side
+    ? battleState.pendingChargeMovement
+    : null;
   const selectedPlayChargeBlocker = useMemo(
     () => selectedPlayChargeActive && selectedChargeUnit && battleState
       ? playChargeEligibilityReason(battleState, selectedChargeUnit.id, selectedChargeUnit.side, activeRulesForBattle)
@@ -1902,7 +1908,7 @@ export default function App() {
     const normalized = normalizePlaySelectionForState(prev, selection);
     if (!normalized) return;
     const next = transformPlayModelSelection(prev, normalized, (current, part) =>
-      movePlayModels(current, part.unitId, part.side, part.modelIndices, dx, dy, collide || current.phase === BATTLE_PHASE.Movement),
+      movePlayModels(current, part.unitId, part.side, part.modelIndices, dx, dy, collide || current.phase === BATTLE_PHASE.Movement || !!current.pendingChargeMovement),
     );
     if (next === prev) return;
 
@@ -2086,6 +2092,24 @@ export default function App() {
       side: selection.side,
       targetUnitId: selectedChargeTargetIds[0],
       targetUnitIds: selectedChargeTargetIds,
+    });
+    setTargetErrorMsg(null);
+    commitBattleState(next);
+  }
+
+  function completeSelectedPlayChargeMovement() {
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || prev.phase !== 'charge' || !selection) return;
+    const next = completePlayChargeMovement(prev, selection.unitId, selection.side, activeRulesForBattle);
+    if (next === prev) {
+      setTargetErrorMsg('Move every model into Engagement Range of each declared charge target before completing the charge.');
+      return;
+    }
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: GAME_ACTION_TYPE.CompleteChargeMovement,
+      unitId: selection.unitId,
+      side: selection.side,
     });
     setSelectedChargeTargetIds([]);
     setPlayModelSelection(null);
@@ -2706,6 +2730,7 @@ export default function App() {
     setPlayPhaseWarning('');
     const next = clone(prev);
     next.pendingChargeRoll = undefined;
+    next.pendingChargeMovement = undefined;
     if (next.phase !== BATTLE_PHASE.Movement || movementStep(next) === MOVEMENT_STEP.Reinforcements) {
       updateObjectiveControl(next, activeRulesForBattle);
     }
@@ -2797,6 +2822,19 @@ export default function App() {
       setBattleRound(next, battleRound(next) + 1);
       if (battleRound(next) > maxBattleRounds(next)) next.phase = BATTLE_PHASE.End;
       else startCommand();
+    }
+
+    // Keep the play UI's shooting gate scoped to the current turn. A unit can
+    // still carry its previous turn's activation marker when a battle state
+    // was advanced through a mixed simulation/play flow, so normalize it at
+    // the phase boundary as well as at the start of Command.
+    if (next.phase === BATTLE_PHASE.Shooting) {
+      for (const unit of next.units) {
+        if (unit.side !== next.activeArmy || unit.destroyed || unit.embarkedInUnitId) continue;
+        unit.activated = false;
+        unit.firedWeaponIndices = undefined;
+        unit.rangedAttacksMadeThisTurn = false;
+      }
     }
 
     if (next.phase === BATTLE_PHASE.End) {
@@ -3011,7 +3049,7 @@ export default function App() {
               onRotateModel: canEditPlayModelsNow
                 ? (_selection, degrees, batched) => rotateSelectedPlayModels(degrees, batched)
                 : undefined,
-              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayScoutAllowance !== null || selectedPlayScoutMoveStarted || selectedPlayCanDeclareMobile || selectedPlayCanAdvance || selectedPlayCanRollCharge || !!pendingChargeRoll || !!selectedPlayChargeResult || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanUndoMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
+              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayScoutAllowance !== null || selectedPlayScoutMoveStarted || selectedPlayCanDeclareMobile || selectedPlayCanAdvance || selectedPlayCanRollCharge || !!pendingChargeRoll || !!pendingPlayChargeMovement || !!selectedPlayChargeResult || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanUndoMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
                 <>
                   {pendingDamageAllocationUnit && (
                     <PendingDamageAllocationHud unit={pendingDamageAllocationUnit} />
@@ -3053,6 +3091,11 @@ export default function App() {
                   )}
                   {selectedPlayChargeActive && (
                     <>
+                      {pendingPlayChargeMovement && (
+                        <Button size="small" color="primary" variant="contained" onClick={completeSelectedPlayChargeMovement}>
+                          Complete Charge
+                        </Button>
+                      )}
                       {selectedPlayCanRollCharge && (
                         <Button size="small" color="warning" variant="contained" onClick={rollSelectedPlayCharge}>
                           Roll Charge
