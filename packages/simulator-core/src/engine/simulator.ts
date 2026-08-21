@@ -5803,10 +5803,11 @@ function playMoveHasNoEndCollision(
   state: BattleState,
   movingUnit: BattleUnit,
   movingIndices: Set<number>,
+  allowEngagement = false,
 ): boolean {
   return playMoveHasNoBaseOverlap(state, movingUnit, movingIndices)
     && playMoveHasNoWallOverlap(state, movingUnit, movingIndices)
-    && !inEngagement(movingUnit, enemies(state, movingUnit.side), rulesEditionForRuleset(state.ruleset).engagementRange());
+    && (allowEngagement || !inEngagement(movingUnit, enemies(state, movingUnit.side), rulesEditionForRuleset(state.ruleset).engagementRange()));
 }
 
 function distancePointToSegment(point: Position, from: Position, to: Position): number {
@@ -6165,7 +6166,7 @@ function collisionAdjustedPlayMove(
   modelIndices: number[],
   dx: number,
   dy: number,
-  options: { ignoreEnemyModelPath?: boolean } = {},
+  options: { allowEngagement?: boolean; ignoreEnemyModelPath?: boolean } = {},
 ): { dx: number; dy: number } {
   const movingIndices = new Set(modelIndices);
   const candidate = clone(state);
@@ -6175,7 +6176,7 @@ function collisionAdjustedPlayMove(
 
   applyPlayModelTranslation(candidateUnit, modelIndices, dx, dy, board);
   if (
-    playMoveHasNoEndCollision(candidate, candidateUnit, movingIndices)
+    playMoveHasNoEndCollision(candidate, candidateUnit, movingIndices, !!options.allowEngagement)
     && playMoveHasNoPathCollision(state, state.units.find(u => u.id === unitId && u.side === side && !u.destroyed)!, movingIndices, dx, dy, {
       ignoreEnemyModelPath: !!options.ignoreEnemyModelPath,
     })
@@ -6192,7 +6193,7 @@ function collisionAdjustedPlayMove(
     if (!testUnit) break;
     applyPlayModelTranslation(testUnit, modelIndices, dx * mid, dy * mid, board);
     if (
-      playMoveHasNoEndCollision(test, testUnit, movingIndices)
+      playMoveHasNoEndCollision(test, testUnit, movingIndices, !!options.allowEngagement)
       && playMoveHasNoPathCollision(state, movingUnit, movingIndices, dx * mid, dy * mid, {
         ignoreEnemyModelPath: !!options.ignoreEnemyModelPath,
       })
@@ -6878,7 +6879,7 @@ export function movePlayModels(
   ) return state;
 
   const move = collide
-    ? collisionAdjustedPlayMove(s, unitId, side, uniqueIndices, budgetMove.dx, budgetMove.dy)
+    ? collisionAdjustedPlayMove(s, unitId, side, uniqueIndices, budgetMove.dx, budgetMove.dy, { allowEngagement: chargeMovement })
     : budgetMove;
   if (Math.hypot(move.dx, move.dy) < 0.001) return state;
 

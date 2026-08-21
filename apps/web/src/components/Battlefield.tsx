@@ -300,7 +300,16 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       const maxTop = Math.max(minTop, container.scrollHeight - actionRect.height / 2 - 4);
       const maxLeft = Math.max(4, container.scrollWidth - actionRect.width - 4);
       if (nextPosition.left + actionRect.width > container.scrollWidth - 4) {
-        nextPosition.left = canvasRect.left - containerRect.left + anchor.x * scale - actionRect.width - 18;
+        const leftPosition = canvasRect.left - containerRect.left + anchor.x * scale - actionRect.width - 18;
+        if (leftPosition >= 4) {
+          nextPosition.left = leftPosition;
+        } else {
+          // Large shooting/charge panels may not fit on either side near a
+          // board edge. Put the panel above the formation instead of
+          // squeezing it over the selected models.
+          nextPosition.left = canvasRect.left - containerRect.left + anchor.x * scale - actionRect.width / 2;
+          nextPosition.top = canvasRect.top - containerRect.top + anchor.y * scale - actionRect.height / 2 - 18;
+        }
       }
       nextPosition.left = Math.max(4, Math.min(maxLeft, nextPosition.left));
       nextPosition.top = Math.max(minTop, Math.min(maxTop, nextPosition.top));
