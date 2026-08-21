@@ -6085,12 +6085,16 @@ function unitMoveCrossedBlockingTerrain(state: BattleState, unit: BattleUnit): b
   return movedModelDeltasFromStart(unit).some(({ modelIndex }) => {
     const from = starts[modelIndex] ?? unit.modelPositions[modelIndex];
     const to = unit.modelPositions[modelIndex];
-    return state.terrain.some(terrain =>
-      (terrainMatBlocksMovementForUnit(terrain, unit) && lineIntersectsTerrain(from, to, terrain))
+    const path = unit.movementPathByModel?.[modelIndex];
+    const segments = path && path.length > 1
+      ? path.slice(1).map((point, index) => ({ from: path[index], to: point }))
+      : [{ from, to }];
+    return segments.some(segment => state.terrain.some(terrain =>
+      (terrainMatBlocksMovementForUnit(terrain, unit) && lineIntersectsTerrain(segment.from, segment.to, terrain))
       || terrain.features.some(feature =>
-        featureBlocksMovementForUnit(feature, terrain, unit) && lineIntersectsTerrain(from, to, feature),
+        featureBlocksMovementForUnit(feature, terrain, unit) && lineIntersectsTerrain(segment.from, segment.to, feature),
       ),
-    );
+    ));
   });
 }
 

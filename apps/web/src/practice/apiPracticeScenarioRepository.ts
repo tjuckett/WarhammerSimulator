@@ -12,8 +12,6 @@ export type PracticeStorageHealth = {
   detail?: string;
 };
 
-let apiDisabled = false;
-
 async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, {
     ...init,
@@ -32,11 +30,12 @@ async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 async function withLocalFallback<T>(apiCall: () => Promise<T>, fallback: () => Promise<T>): Promise<T> {
-  if (apiDisabled) return fallback();
   try {
     return await apiCall();
   } catch {
-    apiDisabled = true;
+    // A database can become available after the initial health check (for
+    // example while the local Postgres container is starting). Do not cache a
+    // transient API failure and permanently route later saves to localStorage.
     return fallback();
   }
 }
@@ -44,10 +43,8 @@ async function withLocalFallback<T>(apiCall: () => Promise<T>, fallback: () => P
 export async function practiceStorageHealth(): Promise<PracticeStorageHealth> {
   try {
     const health = await apiRequest<PracticeStorageHealth>('/api/practice/health');
-    apiDisabled = health.storage !== 'database';
     return health;
   } catch (error) {
-    apiDisabled = true;
     return {
       status: 'unavailable',
       storage: 'local',

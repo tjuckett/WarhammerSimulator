@@ -6722,6 +6722,68 @@ test('play Movement ignores blocking terrain unless collision mode is enabled', 
   assert.ok((collisionDrag.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x ?? 0) < 12);
 });
 
+test('play Movement checks blocking terrain across each recorded movement leg', () => {
+  const battle = state('movement');
+  const profile = {
+    name: 'Vehicle',
+    move: 6,
+    toughness: 8,
+    save: 3,
+    wounds: 10,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Vehicle'],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+  };
+  battle.units = [{
+    id: 'unit-1',
+    side: 0,
+    profile,
+    remainingModels: 1,
+    woundsOnLeadModel: 10,
+    position: { x: 10, y: 10 },
+    modelPositions: [{ x: 10, y: 10 }],
+    facingDeg: 0,
+    charged: false,
+    inCombat: false,
+    battleshocked: false,
+    activated: false,
+    destroyed: false,
+  }];
+  battle.terrain = [{
+    id: 'terrain-1',
+    name: 'Wall',
+    x: 12,
+    y: 8,
+    width: 1,
+    height: 4,
+    type: 'obstacle',
+    providesCover: true,
+    difficult: false,
+    color: '#555',
+    features: [{
+      id: 'feature-1',
+      name: 'Wall',
+      x: 12,
+      y: 8,
+      width: 1,
+      height: 4,
+      featureHeight: 'tall',
+      blocksLOS: true,
+      blocksMovement: true,
+      difficult: false,
+    }],
+  }];
+
+  const firstLeg = movePlayModels(battle, 'unit-1', 0, [0], 1, 0, false);
+  const secondLeg = movePlayModels(firstLeg, 'unit-1', 0, [0], 3, 0, false);
+
+  assert.match(playPhaseCoherencyIssues(secondLeg).join(' '), /moved through blocking terrain/);
+});
+
 test('play Movement lets units deployed inside terrain mats move without collision mode', () => {
   const battle = state('movement');
   const profile = {
