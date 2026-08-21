@@ -701,6 +701,11 @@ export default function App() {
     && !pendingChargeRoll
     && selectedPlayChargeOptions.length > 0
   );
+  const selectedPlayChargeActive = !!(
+    isPlayMode
+    && battleState?.phase === 'charge'
+    && selectedChargeUnit
+  );
   const selectedPlayChargeResult = useMemo(() => {
     if (!battleState || !selectedChargeUnit) return null;
     return [...battleState.log].reverse().find(entry => entry.type === 'charge' && entry.unitName === selectedChargeUnit.profile.name)?.message ?? null;
@@ -2995,7 +3000,7 @@ export default function App() {
               onRotateModel: canEditPlayModelsNow
                 ? (_selection, degrees, batched) => rotateSelectedPlayModels(degrees, batched)
                 : undefined,
-              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayScoutAllowance !== null || selectedPlayScoutMoveStarted || selectedPlayCanDeclareMobile || selectedPlayCanAdvance || selectedPlayCanRollCharge || !!selectedPlayChargeResult || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanUndoMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
+              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayScoutAllowance !== null || selectedPlayScoutMoveStarted || selectedPlayCanDeclareMobile || selectedPlayCanAdvance || selectedPlayChargeActive || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanUndoMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
                 <>
                   {pendingDamageAllocationUnit && (
                     <PendingDamageAllocationHud unit={pendingDamageAllocationUnit} />
@@ -3035,10 +3040,19 @@ export default function App() {
                       Fall Back
                     </Button>
                   )}
-                  {selectedPlayCanRollCharge && (
-                    <Button size="small" color="warning" variant="contained" onClick={rollSelectedPlayCharge}>
-                      Roll Charge
-                    </Button>
+                  {selectedPlayChargeActive && (
+                    <>
+                      {selectedPlayCanRollCharge && (
+                        <Button size="small" color="warning" variant="contained" onClick={rollSelectedPlayCharge}>
+                          Roll Charge
+                        </Button>
+                      )}
+                      {!selectedPlayCanRollCharge && !pendingChargeRoll && !selectedPlayChargeResult && (
+                        <Typography variant="caption" sx={{ color: '#ffcf66', maxWidth: 240 }}>
+                          No eligible charge targets. Check distance, engagement range, aircraft restrictions, or unit restrictions.
+                        </Typography>
+                      )}
+                    </>
                   )}
                   {battleState.phase === 'charge' && selectedChargeUnit && pendingChargeRoll && (
                     <>
