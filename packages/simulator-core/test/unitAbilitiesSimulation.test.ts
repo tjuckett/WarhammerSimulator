@@ -103,3 +103,30 @@ test('11th automatic command text effects grant one CP or restore one wound', ()
   assert.equal(healingUnit.woundsOnLeadModel, 2);
   assert.equal(state.log.length, 2);
 });
+
+test('11th automatic command text effects resolve unconditional D3 self-repair', () => {
+  const unit = {
+    id: 'repair-unit',
+    side: 0,
+    destroyed: false,
+    embarkedInUnitId: undefined,
+    remainingModels: 1,
+    woundsOnLeadModel: 1,
+    profile: {
+      name: 'Repair Unit',
+      wounds: 5,
+      abilities: [{ name: 'Repair Auto-simulacra', description: 'At the end of your Command phase, this model regains up to D3 lost wounds.' }],
+      rules: [],
+    },
+  } as unknown as BattleUnit;
+  const state = { phase: 'command', battleRound: 1, turn: 1, units: [unit], log: [] } as unknown as BattleState;
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    runAutomaticCommandUnitAbilities(state, 0, rules40K11th);
+  } finally {
+    Math.random = originalRandom;
+  }
+  assert.equal(unit.woundsOnLeadModel, 4);
+  assert.match(state.log[0]?.message ?? '', /regains 3 lost wounds/);
+});
