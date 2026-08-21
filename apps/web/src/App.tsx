@@ -3400,11 +3400,6 @@ export default function App() {
 
         {isPlayMode && battleState && !isOver && battleState.phase !== 'deployment' && (
           <>
-            {playCoherencyIssues.length > 0 && (
-              <span className="turn-info coherency-warning" title={playCoherencyIssues.join('\n')}>
-                {phaseAdvanceDisabledReason}
-              </span>
-            )}
             {playPhaseWarning && (
               <span className="turn-info coherency-warning" title={playPhaseWarning}>
                 {playPhaseWarning}
@@ -3426,6 +3421,11 @@ export default function App() {
                 ? isPlayReinforcementsStep ? 'Start Shooting' : 'Start Reinforcements'
                 : 'Next Phase'}
             </Button>
+            {phaseAdvanceDisabledReason && (
+              <span className="turn-info coherency-warning" role="alert">
+                {phaseAdvanceDisabledReason}
+              </span>
+            )}
           </>
         )}
 
