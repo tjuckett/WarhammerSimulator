@@ -25,7 +25,7 @@ import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simu
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
   battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, completePlayScoutMove, createDeploymentState, declarePlaySuperHeavyMobile, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playDisembarkModes, playPhaseCoherencyIssues, playScoutMoveAllowance, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels, startPlayScoutMove,
-  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTargets, completePlayChargeMovement, playChargeEligibilityReason, playChargeRoll, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightPhaseHasPendingActivations, playFightStepNeedsStart, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undoPlayUnitMovement, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type FiringDeckSelection, type LOSRay,
+  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTargets, completePlayChargeMovement, playChargeEligibilityReason, playChargeRoll, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightFirstUnitIds, playFightPhaseHasPendingActivations, playFightStepNeedsStart, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undoPlayUnitMovement, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type FiringDeckSelection, type LOSRay,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -603,6 +603,22 @@ export default function App() {
     ? selectedPlayBattleUnit
     : null;
   const activeRulesForBattle = battleState ? rulesEditionForRuleset(battleState.ruleset) : edition;
+  const fightFirstUnitIds = useMemo(
+    () => battleState?.phase === BATTLE_PHASE.Fight
+      ? new Set([
+        ...playFightFirstUnitIds(battleState, 0, activeRulesForBattle),
+        ...playFightFirstUnitIds(battleState, 1, activeRulesForBattle),
+      ])
+      : new Set<string>(),
+    [battleState, activeRulesForBattle],
+  );
+  useEffect(() => {
+    if (!isPlayMode || !battleState || !playFightStepNeedsStart(battleState, activeRulesForBattle)) return;
+    const next = startPlayFightStep(battleState, activeRulesForBattle);
+    if (next === battleState) return;
+    recordGameSessionAction(battleState, next, { type: GAME_ACTION_TYPE.StartFightStep });
+    commitBattleState(next);
+  }, [isPlayMode, battleState, activeRulesForBattle, recordGameSessionAction]);
   const selectedPlayShootingOptions = useMemo(
     () => (
       isPlayMode
@@ -3034,6 +3050,7 @@ export default function App() {
                     : null
               : null}
             shootingReadyUnitIds={isPlayMode && battleState?.phase === 'shooting' ? shootingReadyUnitIds : undefined}
+            fightFirstUnitIds={isPlayMode && battleState?.phase === BATTLE_PHASE.Fight ? fightFirstUnitIds : undefined}
             coverUnitIds={isPlayMode ? coverUnitIds : undefined}
             losRays={isPlayMode ? losRays : undefined}
             visibleOutOfRangeUnitIds={isPlayMode ? visibleOutOfRangeUnitIds : undefined}
@@ -3606,9 +3623,7 @@ export default function App() {
               disabled={playCoherencyIssues.length > 0}
               title={phaseAdvanceDisabledReason}
             >
-              {playFightStepNeedsStart(battleState, activeRulesForBattle)
-                ? 'Start Fight Step'
-                : battleState.phase === 'movement'
+              {battleState.phase === 'movement'
                 ? isPlayReinforcementsStep ? 'Start Shooting' : 'Start Reinforcements'
                 : 'Next Phase'}
             </Button>

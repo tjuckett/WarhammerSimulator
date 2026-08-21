@@ -4032,6 +4032,17 @@ export function playFightActivationUnitIds(
   return (fightsFirst.length ? fightsFirst : eligible).map(unit => unit.id);
 }
 
+export function playFightFirstUnitIds(
+  state: BattleState,
+  side: Side,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): string[] {
+  if (rules.metadata.edition !== '11e' || state.phase !== 'fight' || state.fightStepStarted !== true) return [];
+  return activeUnits(state, side)
+    .filter(unit => unitEligibleToFight(unit, state, rules) && unitHasFightsFirst(state, unit))
+    .map(unit => unit.id);
+}
+
 export function playOverrunFightUnitIds(
   state: BattleState,
   side: Side,
