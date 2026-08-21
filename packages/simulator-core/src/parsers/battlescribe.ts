@@ -115,7 +115,8 @@ function findBattleSize(selections: BSSelection[]): ArmyCatalogBattleSize | unde
     if (match) {
       const maximumPoints = Number(match[2].replace(/,/g, ''));
       if (Number.isFinite(maximumPoints)) {
-        return { id: selection.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'), label: selection.name, maximumPoints };
+        const id = selection.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        return { id, label: selection.name, maximumPoints };
       }
     }
     const nested = findBattleSize(childSelections(selection));
@@ -472,7 +473,15 @@ export function parseBattleScribeJSON(raw: unknown): ImportedArmy {
   if (parsedUnits.length === 0) throw new Error('No units could be parsed from this roster');
 
   const units = parsedUnits.map(entry => entry.unit);
-  return applyBaseSizesToArmy({ name, faction, units, sourceEdition, catalog: catalogFromRoster(force, parsedUnits) });
+  const battleSizeId = findBattleSize(force.selections ?? [])?.id;
+  return applyBaseSizesToArmy({
+    name,
+    faction,
+    units,
+    sourceEdition,
+    ...(battleSizeId ? { battleSizeId } : {}),
+    catalog: catalogFromRoster(force, parsedUnits),
+  });
 }
 
 /** Parse a BSData/NewRecruit catalogue into a selectable Army Builder library. */

@@ -86,6 +86,8 @@ export interface ImportedArmy {
   name: string;
   faction: string;
   units: UnitProfile[];
+  /** Selected BattleScribe/NewRecruit battle-size option, when the roster provides one. */
+  battleSizeId?: string;
   /** Source roster edition, when the importer can identify it. */
   sourceEdition?: '10e' | '11e' | 'unknown';
   /** Catalog constraints recovered from an authoritative roster export, when present. */

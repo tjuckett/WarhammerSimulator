@@ -66,7 +66,7 @@ export function ArmyBuilder({ armies, sampleArmies, savedSlot, onSavedSlotChange
   const addedUnitSequence = useRef(0);
   const army = armies[side];
   const library = useMemo(() => uniqueLibraryUnits([...sampleArmies, army]), [army, sampleArmies]);
-  const validation = useMemo(() => validateImportedArmy(army), [army]);
+  const validation = useMemo(() => validateImportedArmy(army, { battleSizeId: army.battleSizeId }), [army]);
   const selectedUnit = army.units.find(unit => displayUnitId(unit) === selectedUnitId) ?? army.units[0] ?? null;
 
   function updateArmy(nextArmy: ImportedArmy) {
