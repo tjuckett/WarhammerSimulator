@@ -1624,6 +1624,25 @@ test('11th Ork Get Stuck In grants Sustained Hits 1 to melee attacks', () => {
   }
 });
 
+test('11th imported ranged-save abilities improve only ranged saves', () => {
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const shooter = losTestUnit('shooter', 0, { x: 10, y: 10 });
+  shooter.profile.weapons = [{ name: 'Rifle', range: 24, attacks: '1', skill: 2, strength: 4, ap: -1, damage: '1', keywords: [], isMelee: false }];
+  const target = losTestUnit('snikrot', 1, { x: 12, y: 10 }, 4);
+  target.profile.abilities = [{ name: 'Red Skull Kommandos', description: 'This unit has +1 Sv against ranged attacks.' }];
+  battle.units = [shooter, target];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const shot = shootPlayUnitWeapon(battle, shooter.id, 0, target.id, 0, rules40K11th);
+    assert.equal(shot.units.find(unit => unit.id === target.id)?.woundsOnLeadModel, 1);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('11th attached leader abilities apply typed melee effects to the bodyguard unit', () => {
   const battle = state('fight');
   battle.ruleset = rulesetMetadataForState(rules40K11th);

@@ -1332,7 +1332,8 @@ function resolveAttacks(
         ? undefined
         : Math.min(defender.profile.invulnSave ?? 7, derivedInvulnSave ?? 7)
       : Math.min(defender.profile.invulnSave ?? 7, waaaghInvulnSave);
-    const rawSave = rules.saveTarget(defender.profile.save, weapon.ap, effectiveInvulnSave);
+    const saveModifier = rangedSaveModifier(state, defender, weapon);
+    const rawSave = rules.saveTarget(defender.profile.save - saveModifier, weapon.ap, effectiveInvulnSave);
     const effectiveSave = rawSave - coverBonus;
     const coverNote = coverBonus > 0 ? `, cover +${coverBonus}` : '';
 
@@ -2002,6 +2003,18 @@ function attachedInvulnerableSave(state: BattleState, unit: BattleUnit, weapon: 
     });
   });
   return saves.length ? Math.min(...saves) : undefined;
+}
+
+function rangedSaveModifier(state: BattleState, unit: BattleUnit, weapon: WeaponProfile): number {
+  if (weapon.isMelee) return 0;
+  return attachedUnitComponents(state, unit).flatMap(component =>
+    [...component.profile.abilities, ...(component.profile.rules ?? [])],
+  ).reduce((modifier, rule) => {
+    const text = `${rule.name} ${rule.description}`;
+    return /\+1\s+(?:to\s+)?(?:the\s+)?Sv\b.*ranged attacks?/i.test(text)
+      ? Math.max(modifier, 1)
+      : modifier;
+  }, 0);
 }
 
 function feelNoPainTargets(unit: BattleUnit): Array<{ target: number; sharesWithAttachedUnit: boolean }> {
