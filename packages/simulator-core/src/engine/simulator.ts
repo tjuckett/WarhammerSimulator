@@ -3599,6 +3599,34 @@ function sideCanDeclareCharge(state: BattleState, side: Side, unit: BattleUnit):
   return state.activeArmy === side || (state.activeArmy !== side && unit.heroicInterventionThisPhase === true);
 }
 
+export function playChargeEligibilityReason(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): string | null {
+  if (state.phase !== 'charge') return 'The battle is not in the Charge phase.';
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit) return 'Select a living unit that is on the battlefield.';
+  if (!sideCanDeclareCharge(state, side, unit)) return 'This army cannot declare a charge right now.';
+  if (attachedUnitComponents(state, unit).some(component => unitSurgedThisPhase(state, component))) return 'This unit already surged this phase.';
+  if (isAircraft(unit)) return 'Aircraft cannot declare charges.';
+  if (unit.inCombat) return 'This unit is already in combat.';
+  if (unit.fellBack || unit.movementAction === 'fellBack') return 'A unit that fell back cannot charge this phase.';
+  if (unit.arrivedFromReinforcements) return 'A unit arriving from Reinforcements cannot charge this phase.';
+  if (unit.emergencyDisembarkedThisTurn || unit.combatDisembarkedThisTurn || unit.rapidDisembarkedThisTurn) return 'This unit cannot charge after disembarking this turn.';
+  if (unit.performingAction) return 'This unit is performing an action.';
+  if (unit.movementAction === 'advanced' && state.activeArmyAbilities?.[side]?.includes('waaagh') !== true) return 'A unit that advanced cannot charge this phase.';
+
+  const candidates = enemies(state, side).filter(target => unitCanChargeTarget(unit, target));
+  if (!candidates.length) return 'There are no eligible enemy units to charge.';
+  const needed = candidates.map(target => chargeNeededDistance(unit, target, rules));
+  if (!needed.some(distance => distance <= rules.chargeRange())) {
+    return `The nearest eligible charge requires ${Math.min(...needed).toFixed(1)} inches; the pre-roll charge range is ${rules.chargeRange()} inches.`;
+  }
+  return null;
+}
+
 export function playChargeTargetOptions(
   state: BattleState,
   unitId: string,
