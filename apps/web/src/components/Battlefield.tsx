@@ -52,6 +52,7 @@ interface Props {
   coverUnitIds?: Set<string>;
   losRays?: LOSRay[];
   visibleOutOfRangeUnitIds?: Set<string>;
+  showTerrainLabels?: boolean;
   onSelectUnit?: (unitId: string, side: 0 | 1) => void;
   deployer?: {
     enabled: boolean;
@@ -83,7 +84,7 @@ const ZOOM_STEP = 0.25;
 const NO_MANS_LAND_FILL = 'rgb(240, 240, 232)';
 const ALIGN_VERTEX_PICK_RADIUS = 0.22;
 
-export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], activeSimulationUnitId = null, shooterUnitId = null, targetUnitId = null, shootingReadyUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, onSelectUnit, deployer, editor }: Props) {
+export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], activeSimulationUnitId = null, shooterUnitId = null, targetUnitId = null, shootingReadyUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showTerrainLabels = true, onSelectUnit, deployer, editor }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedActionsRef = useRef<HTMLDivElement>(null);
@@ -159,6 +160,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       coverUnitIds,
       losRays,
       visibleOutOfRangeUnitIds,
+      showTerrainLabels,
     );
     return true;
   }
@@ -761,6 +763,7 @@ function draw(
   coverUnitIds: Set<string> = new Set(),
   losRays?: LOSRay[],
   visibleOutOfRangeUnitIds: Set<string> = new Set(),
+  showTerrainLabels = true,
 ) {
   // ── Background ───────────────────────────────────────────────────────────
   const board = boardFormatForState(state);
@@ -821,11 +824,13 @@ function draw(
       ctx.restore();
     }
 
-    ctx.fillStyle = 'rgba(255,255,255,0.65)';
-    ctx.font = `${Math.max(7, scale * 0.75)}px monospace`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(t.name, center.x * scale, center.y * scale);
+    if (showTerrainLabels) {
+      ctx.fillStyle = 'rgba(255,255,255,0.65)';
+      ctx.font = `${Math.max(7, scale * 0.75)}px monospace`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(t.name, center.x * scale, center.y * scale);
+    }
   }
 
   // ── Objectives ────────────────────────────────────────────────────────────

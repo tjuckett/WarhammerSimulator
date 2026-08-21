@@ -2969,6 +2969,7 @@ export default function App() {
             coverUnitIds={isPlayMode ? coverUnitIds : undefined}
             losRays={isPlayMode ? losRays : undefined}
             visibleOutOfRangeUnitIds={isPlayMode ? visibleOutOfRangeUnitIds : undefined}
+            showTerrainLabels={!isPlayMode}
             onSelectUnit={inspectBattleUnit}
             deployer={isPlayMode && battleState && battleState.phase !== 'end' ? {
               enabled: true,
@@ -3292,7 +3293,7 @@ export default function App() {
                 <div className="log-empty">
                   Select a unit on the left to inspect it, then start play.
                 </div>
-              )}
+              ) : null}
             </>
           ) : (
             <div className="log-empty">
