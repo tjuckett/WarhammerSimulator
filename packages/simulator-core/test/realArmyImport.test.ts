@@ -28,6 +28,7 @@ test('BattleScribe parser imports the real rosters stored in lists/', () => {
       assert.equal(army.catalog?.units.length, new Set(army.units.map(unit => unit.rosterId ?? unit.name)).size);
       assert.ok(army.catalog?.units.every(unit => unit.modelCountPoints));
       assert.equal(army.catalog?.rules?.some(rule => rule.name === 'Get Stuck In'), true);
+      assert.equal(army.catalog?.rules?.some(rule => rule.name === 'Waaagh!'), true);
       assert.equal(army.battleSizeId, 'strike-force-2000-point-limit');
       assert.equal(validateImportedArmy(army, { battleSizeId: army.battleSizeId }).valid, true);
     }

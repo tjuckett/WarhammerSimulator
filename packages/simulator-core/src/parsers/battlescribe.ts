@@ -150,9 +150,11 @@ function catalogFromRoster(force: BSForce, units: Array<{ selection: BSSelection
   const catalogRules = [
     ...(force.rules ?? []),
     ...findRules(force.selections ?? []),
-  ]
-    .filter(rule => rule.name === 'Get Stuck In')
-    .map(rule => ({ name: rule.name, description: rule.description, category: 'faction' as const }));
+  ].reduce<RuleText[]>((rules, rule) => {
+    if (rules.some(existing => existing.name === rule.name && existing.description === rule.description)) return rules;
+    rules.push({ name: rule.name, description: rule.description });
+    return rules;
+  }, []);
   if (!catalogUnits.length && !battleSize) return undefined;
   return {
     id: (force.catalogueName ?? 'imported-roster').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
