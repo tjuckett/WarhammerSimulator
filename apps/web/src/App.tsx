@@ -1908,7 +1908,7 @@ export default function App() {
 
   function beginPlayModelMove(selection: PlayModelSelection) {
     const current = battleStateRef.current;
-    if (!canEditPlayModels(current)) return;
+    if (!canEditPlayModels(current) && !current?.pendingChargeMovement) return;
     const normalized = normalizePlaySelectionForState(current, selection);
     if (!normalized) return;
     pendingPlayModelMoveUndoRef.current = {
@@ -1933,7 +1933,7 @@ export default function App() {
 
   function moveSelectedPlayModel(selection: PlayModelSelection, dx: number, dy: number, collide: boolean) {
     const prev = battleStateRef.current;
-    if (!canEditPlayModels(prev)) return;
+    if (!canEditPlayModels(prev) && !prev?.pendingChargeMovement) return;
     const normalized = normalizePlaySelectionForState(prev, selection);
     if (!normalized) return;
     const next = transformPlayModelSelection(prev, normalized, (current, part) =>

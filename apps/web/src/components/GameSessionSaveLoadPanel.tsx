@@ -219,7 +219,7 @@ export function GameSessionControlsPanel({
         <strong>{storageStatus?.storage === 'database' ? 'Database saves' : 'Local saves'}</strong>
         <span>{storageStatus?.message ?? 'Checking game save storage...'}</span>
       </div>
-      {status && <div className="practice-status">{status}</div>}
+      {status && <div className={`practice-status${status.startsWith('Save failed:') ? ' practice-status-error' : ''}`} role={status.startsWith('Save failed:') ? 'alert' : undefined}>{status}</div>}
     </section>
   );
 }
@@ -261,7 +261,7 @@ export function GameSessionSaveModal({
           <strong>{storageStatus?.storage === 'database' ? 'Database saves' : 'Local saves'}</strong>
           <span>{storageStatus?.message ?? 'Checking game save storage...'}</span>
         </div>
-        {status && <div className="practice-status">{status}</div>}
+        {status && <div className={`practice-status${status.startsWith('Save failed:') ? ' practice-status-error' : ''}`} role={status.startsWith('Save failed:') ? 'alert' : undefined}>{status}</div>}
         <div className="practice-seek">
           {hasTimelineEntries ? (
             <input

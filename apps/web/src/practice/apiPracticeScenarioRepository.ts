@@ -22,8 +22,20 @@ async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
   });
 
   if (!response.ok) {
-    const body = await response.json().catch(() => null) as { error?: string; detail?: string } | null;
-    throw new Error(body?.detail ?? body?.error ?? `Practice API request failed: ${response.status}`);
+    const responseText = await response.text().catch(() => '');
+    let body: { error?: string; detail?: string } | null = null;
+    try {
+      body = responseText ? JSON.parse(responseText) as { error?: string; detail?: string } : null;
+    } catch {
+      // Keep the HTTP status as the useful error when the server returned HTML
+      // or another non-JSON error page.
+    }
+    throw new Error(
+      body?.detail
+      ?? body?.error
+      ?? (responseText.trim() || undefined)
+      ?? `Practice API request failed: ${response.status}`,
+    );
   }
 
   return response.json() as Promise<T>;
@@ -39,11 +51,17 @@ async function compressedJsonBody(value: unknown): Promise<{ body: BodyInit; com
 async function withLocalFallback<T>(apiCall: () => Promise<T>, fallback: () => Promise<T>): Promise<T> {
   try {
     return await apiCall();
-  } catch {
+  } catch (apiError) {
     // A database can become available after the initial health check (for
     // example while the local Postgres container is starting). Do not cache a
     // transient API failure and permanently route later saves to localStorage.
-    return fallback();
+    try {
+      return await fallback();
+    } catch (fallbackError) {
+      const apiMessage = apiError instanceof Error ? apiError.message : String(apiError);
+      const fallbackMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
+      throw new Error(`Database request failed: ${apiMessage}. Browser storage fallback also failed: ${fallbackMessage}`);
+    }
   }
 }
 

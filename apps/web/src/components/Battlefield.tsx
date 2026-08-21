@@ -253,13 +253,11 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
   }
 
   function selectedModelActionAnchor(sourceState: BattleState, selection: PlayModelSelection): Position | null {
-    const selectedModels = selection.parts.flatMap(part => {
-      const unit = sourceState.units.find(candidate =>
-        candidate.id === part.unitId && candidate.side === part.side && !candidate.destroyed,
-      );
-      if (!unit) return [];
-      return part.modelIndices.flatMap(modelIndex => {
-        const model = unit.modelPositions[modelIndex];
+    const selectedUnitIds = new Set(selection.parts.map(part => `${part.side}:${part.unitId}`));
+    const selectedModels = sourceState.units.filter(unit =>
+      selectedUnitIds.has(`${unit.side}:${unit.id}`) && !unit.destroyed,
+    ).flatMap(unit => {
+      return unit.modelPositions.flatMap((model, modelIndex) => {
         if (!model) return [];
         return [{
           ...model,
@@ -269,10 +267,10 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     });
     if (!selectedModels.length) return null;
     return {
-      // Anchor from the formation edge, not the model centre, so a wide
-      // shooting/charge panel always starts outside the selected bases.
+      // Anchor from the complete formation edge, not the clicked model, so a
+      // wide shooting/charge panel always starts outside the selected unit.
       x: Math.max(...selectedModels.map(model => model.rightEdge)),
-      y: selectedModels.reduce((sum, model) => sum + model.y, 0) / selectedModels.length,
+      y: (Math.min(...selectedModels.map(model => model.y)) + Math.max(...selectedModels.map(model => model.y))) / 2,
     };
   }
 

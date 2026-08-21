@@ -729,6 +729,17 @@ html, body, #root {
   font-size: 10px;
 }
 
+.practice-status-error {
+  margin: 0 8px 8px;
+  border: 1px solid #9b4545;
+  border-radius: 4px;
+  background: #321919;
+  padding: 7px 8px;
+  color: #ffb4b4;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .practice-storage {
   display: flex;
   flex-direction: column;
