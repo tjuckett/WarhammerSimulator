@@ -130,3 +130,38 @@ test('11th automatic command text effects resolve unconditional D3 self-repair',
   assert.equal(unit.woundsOnLeadModel, 4);
   assert.match(state.log[0]?.message ?? '', /regains 3 lost wounds/);
 });
+
+test('11th automatic command text effects secure controlled objectives', () => {
+  const unit = {
+    id: 'objective-unit',
+    side: 0,
+    destroyed: false,
+    embarkedInUnitId: undefined,
+    remainingModels: 1,
+    position: { x: 10, y: 10 },
+    modelPositions: [{ x: 10, y: 10 }],
+    profile: {
+      name: 'Objective Unit',
+      keywords: [],
+      factionKeywords: [],
+      abilities: [{ name: 'Stormblades', description: 'At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control until your opponent controls it.' }],
+      rules: [],
+    },
+  } as unknown as BattleUnit;
+  const state = {
+    phase: 'command',
+    battleRound: 1,
+    turn: 1,
+    units: [unit],
+    objectives: [{ x: 10, y: 10 }],
+    objectiveOwners: [0],
+    securedObjectiveOwners: [null],
+    objectiveControl: { id: 'marker', label: 'Marker', kind: 'marker', description: '', markerRadius: 0, controlDistance: 3 },
+    log: [],
+  } as unknown as BattleState;
+
+  runAutomaticCommandUnitAbilities(state, 0, rules40K11th);
+
+  assert.deepEqual(state.securedObjectiveOwners, [0]);
+  assert.match(state.log[0]?.message ?? '', /secures objective 1/);
+});

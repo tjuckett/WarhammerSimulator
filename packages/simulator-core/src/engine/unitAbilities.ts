@@ -4,6 +4,7 @@ import { battleRound } from './battleRound';
 import type { RulesEdition } from './rulesEngine';
 import { attachedUnitComponents } from './attachedUnits';
 import { d3 } from './dice';
+import { objectiveIndexesWithinRange, securePlayObjective } from './missionScoring';
 
 let _abilityUseId = 0;
 
@@ -81,6 +82,12 @@ function automaticCommandTextEffect(unit: BattleUnit): Array<{ kind: 'cp' | 'hea
     else if (/this model regains? up to D3 lost wounds/i.test(text)) effects.push({ kind: 'heal', name: rule.name, amount: d3() });
   }
   return effects;
+}
+
+function retainsControlledObjectivesAtCommand(unit: BattleUnit): boolean {
+  return [...unit.profile.abilities, ...(unit.profile.rules ?? [])].some(rule =>
+    /objective marker remains under (?:your|you) control/i.test(`${rule.name} ${rule.description}`),
+  );
 }
 
 export function availableUnitAbilities(
@@ -233,6 +240,25 @@ export function runAutomaticCommandUnitAbilities(
           message: `${unit.profile.name} uses ${effect.name} and regains ${effect.amount ?? 1} lost wound${(effect.amount ?? 1) === 1 ? '' : 's'}.`,
           type: 'info',
         }];
+      }
+    }
+    if (rules.metadata.edition === '11e' && retainsControlledObjectivesAtCommand(unit)) {
+      for (const objectiveIndex of objectiveIndexesWithinRange(state, unit, rules)) {
+        if (state.objectiveOwners[objectiveIndex] !== side) continue;
+        const next = securePlayObjective(state, objectiveIndex, side, rules);
+        if (next !== state) {
+          Object.assign(state, next);
+          state.log = [...state.log, {
+            id: nextLogId(state, 'ability'),
+            battleRound: battleRound(state),
+            turn: state.turn,
+            phase: state.phase,
+            side,
+            unitName: unit.profile.name,
+            message: `${unit.profile.name} secures objective ${objectiveIndex + 1} through its Command ability.`,
+            type: 'info',
+          }];
+        }
       }
     }
   }
