@@ -345,6 +345,7 @@ export function PlayChargePanel({
   selectedTargetIds,
   options,
   chargeRolled,
+  resultMessage,
   onTargetChange,
   onRoll,
   onResolve,
@@ -354,6 +355,7 @@ export function PlayChargePanel({
   selectedTargetIds: string[];
   options: PlayChargeTargetOption[];
   chargeRolled: boolean;
+  resultMessage: string | null;
   onTargetChange: (values: string[]) => void;
   onRoll: () => void;
   onResolve: () => void;
@@ -381,6 +383,11 @@ export function PlayChargePanel({
           {chargeRolled ? PLAY_PANEL_LABELS.resolve : PLAY_PANEL_LABELS.roll}
         </Button>
       </Box>
+      {resultMessage && (
+        <Typography variant="caption" sx={{ display: 'block', mt: 0.75, color: uiTokens.color.status.warning }}>
+          {resultMessage}
+        </Typography>
+      )}
       <FormControl size="small" fullWidth disabled={!chargeRolled || !targets.length}>
         <InputLabel id="play-charge-target-label">{PLAY_PANEL_LABELS.target}</InputLabel>
         <Select

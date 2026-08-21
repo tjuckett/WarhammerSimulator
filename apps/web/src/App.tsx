@@ -694,6 +694,10 @@ export default function App() {
     const targetIds = new Set(selectedPlayChargeOptions.map(option => option.targetId));
     return battleState.units.filter(unit => unit.side !== selectedChargeUnit.side && !unit.destroyed && !unit.embarkedInUnitId && targetIds.has(unit.id));
   }, [battleState, selectedChargeUnit, selectedPlayChargeOptions]);
+  const selectedPlayChargeResult = useMemo(() => {
+    if (!battleState || !selectedChargeUnit) return null;
+    return [...battleState.log].reverse().find(entry => entry.type === 'charge' && entry.unitName === selectedChargeUnit.profile.name)?.message ?? null;
+  }, [battleState?.log, selectedChargeUnit?.id, selectedChargeUnit?.profile.name]);
   const selectedPlayFightOptions = useMemo(
     () => (
       isPlayMode
@@ -3241,6 +3245,7 @@ export default function App() {
                   selectedTargetIds={selectedChargeTargetIds}
                   options={selectedPlayChargeOptions}
                   chargeRolled={!!pendingChargeRoll}
+                  resultMessage={selectedPlayChargeResult}
                   onTargetChange={setSelectedChargeTargetIds}
                   onRoll={rollSelectedPlayCharge}
                   onResolve={resolveSelectedPlayCharge}
