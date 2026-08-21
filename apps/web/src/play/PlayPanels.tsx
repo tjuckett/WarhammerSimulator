@@ -344,14 +344,18 @@ export function PlayChargePanel({
   targets,
   selectedTargetIds,
   options,
+  chargeRolled,
   onTargetChange,
+  onRoll,
   onResolve,
 }: {
   charger: BattleUnit | null;
   targets: BattleUnit[];
   selectedTargetIds: string[];
   options: PlayChargeTargetOption[];
+  chargeRolled: boolean;
   onTargetChange: (values: string[]) => void;
+  onRoll: () => void;
   onResolve: () => void;
 }) {
   if (!charger) {
@@ -374,11 +378,11 @@ export function PlayChargePanel({
             {charger.profile.name}{charger.activated ? ' - done' : ''}
           </Typography>
         </Box>
-        <Button size="small" variant="contained" startIcon={<CasinoOutlinedIcon />} disabled={!canResolve} onClick={onResolve}>
-          {PLAY_PANEL_LABELS.roll}
+        <Button size="small" variant="contained" startIcon={<CasinoOutlinedIcon />} disabled={chargeRolled ? !canResolve : charger.activated} onClick={chargeRolled ? onResolve : onRoll}>
+          {chargeRolled ? PLAY_PANEL_LABELS.resolve : PLAY_PANEL_LABELS.roll}
         </Button>
       </Box>
-      <FormControl size="small" fullWidth disabled={!targets.length || charger.activated}>
+      <FormControl size="small" fullWidth disabled={!chargeRolled || !targets.length || charger.activated}>
         <InputLabel id="play-charge-target-label">{PLAY_PANEL_LABELS.target}</InputLabel>
         <Select
           labelId="play-charge-target-label"
@@ -401,7 +405,7 @@ export function PlayChargePanel({
         </Select>
       </FormControl>
       {!options.length && (
-        <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noChargeTargets}</Typography>
+        <Typography variant="caption" sx={disabledTextSx}>{chargeRolled ? PLAY_PANEL_MESSAGES.noChargeTargets : 'Roll the charge to see reachable targets.'}</Typography>
       )}
     </Box>
   );

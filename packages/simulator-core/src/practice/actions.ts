@@ -30,6 +30,7 @@ import {
   grantPlaySurgeMove,
   type PlayMeleeAttackSplit,
   lockPlayUnitShooting,
+  playChargeRoll,
   markRemainingStationaryUnits,
   movementStep,
   movePlayModels,
@@ -104,6 +105,7 @@ export const GAME_ACTION_TYPE = {
   CompleteScoutMove: 'play.completeScoutMove',
   SnapShootUnitWeapon: 'play.snapShootUnitWeapon',
   LockUnitShooting: 'play.lockUnitShooting',
+  RollCharge: 'play.rollCharge',
   ChargeUnitTarget: 'play.chargeUnitTarget',
   FightUnitWeapon: 'play.fightUnitWeapon',
   FightOnDeath: 'play.fightOnDeath',
@@ -285,6 +287,11 @@ export type GameAction =
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.LockUnitShooting;
+      side: Side;
+      unitId: string;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.RollCharge;
       side: Side;
       unitId: string;
     })
@@ -736,6 +743,9 @@ export function applyGameAction(
     case GAME_ACTION_TYPE.LockUnitShooting:
       return lockPlayUnitShooting(state, normalizedAction.unitId, normalizedAction.side);
 
+    case GAME_ACTION_TYPE.RollCharge:
+      return playChargeRoll(state, normalizedAction.unitId, normalizedAction.side, context.rules);
+
     case GAME_ACTION_TYPE.ChargeUnitTarget:
       return chargePlayUnitTargets(
         state,
@@ -891,6 +901,7 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
     case GAME_ACTION_TYPE.StartAction:
     case GAME_ACTION_TYPE.CompleteUnitMovement:
     case GAME_ACTION_TYPE.EmbarkUnit:
+    case GAME_ACTION_TYPE.RollCharge:
     case GAME_ACTION_TYPE.ChargeUnitTarget:
     case GAME_ACTION_TYPE.PileInUnit:
     case GAME_ACTION_TYPE.ConsolidateUnit:

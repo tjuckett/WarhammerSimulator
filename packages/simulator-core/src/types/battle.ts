@@ -465,6 +465,11 @@ export interface BattleState {
     source: string;
     triggeredPhase: Phase;
   };
+  pendingChargeRoll?: {
+    unitId: string;
+    side: Side;
+    maximumDistance: number;
+  };
   winner: null | Side | 'draw';
   log: LogEntry[];
   units: BattleUnit[];
