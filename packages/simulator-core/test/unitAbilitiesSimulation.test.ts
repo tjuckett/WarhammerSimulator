@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { BattleState, BattleUnit } from '../src/types/battle';
-import { rules40K10th } from '../src/engine/rulesEngine';
-import { runAutomaticUnitAbilities } from '../src/engine/unitAbilities';
+import { rules40K10th, rules40K11th } from '../src/engine/rulesEngine';
+import { runAutomaticCommandUnitAbilities, runAutomaticUnitAbilities } from '../src/engine/unitAbilities';
 import { chooseSimulationMovementTarget } from '../src/engine/simulator';
 
 function abilityState(): BattleState {
@@ -57,4 +57,49 @@ test('simulation movement can prioritize an uncontested objective over a distant
 
   const target = chooseSimulationMovementTarget(state, unit);
   assert.deepEqual(target, { kind: 'objective', index: 0, position: { x: 8, y: 5 } });
+});
+
+test('11th automatic command text effects grant one CP or restore one wound', () => {
+  const cpUnit = {
+    id: 'cp-unit',
+    side: 0,
+    destroyed: false,
+    embarkedInUnitId: undefined,
+    remainingModels: 1,
+    woundsOnLeadModel: 3,
+    profile: {
+      name: 'CP Unit',
+      wounds: 3,
+      abilities: [{ name: 'Command Grant', description: 'At the start of your Command phase, if this model is on the battlefield, you gain 1CP.' }],
+      rules: [],
+    },
+  } as unknown as BattleUnit;
+  const healingUnit = {
+    id: 'healing-unit',
+    side: 0,
+    destroyed: false,
+    embarkedInUnitId: undefined,
+    remainingModels: 1,
+    woundsOnLeadModel: 1,
+    profile: {
+      name: 'Healing Unit',
+      wounds: 3,
+      abilities: [{ name: 'Self Repair', description: 'At the start of your Command phase, this model regains 1 lost wound.' }],
+      rules: [],
+    },
+  } as unknown as BattleUnit;
+  const state = {
+    phase: 'command',
+    battleRound: 1,
+    turn: 1,
+    commandPoints: [0, 0],
+    units: [cpUnit, healingUnit],
+    log: [],
+  } as unknown as BattleState;
+
+  runAutomaticCommandUnitAbilities(state, 0, rules40K11th);
+
+  assert.deepEqual(state.commandPoints, [1, 0]);
+  assert.equal(healingUnit.woundsOnLeadModel, 2);
+  assert.equal(state.log.length, 2);
 });

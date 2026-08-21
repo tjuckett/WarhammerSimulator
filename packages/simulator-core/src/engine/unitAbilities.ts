@@ -68,6 +68,19 @@ function abilityCanBeUsed(state: BattleState, unit: BattleUnit, ability: UnitAbi
     && attachedUnitComponents(state, unit).every(component => !component.inCombat);
 }
 
+function automaticCommandTextEffect(unit: BattleUnit): Array<{ kind: 'cp' | 'heal'; name: string }> {
+  const effects: Array<{ kind: 'cp' | 'heal'; name: string }> = [];
+  for (const rule of [...unit.profile.abilities, ...(unit.profile.rules ?? [])]) {
+    const text = `${rule.name} ${rule.description}`;
+    if (/grot riggers/i.test(rule.name)) continue;
+    if (!/(?:at the start|at the end|in) (?:of )?(?:your|each player's) Command phase/i.test(text)) continue;
+    if (/\bcan\b|\bon a \d|\broll\b|once per|select|spend/i.test(text)) continue;
+    if (/gain 1\s*CP/i.test(text)) effects.push({ kind: 'cp', name: rule.name });
+    else if (/regains? 1 lost wound/i.test(text)) effects.push({ kind: 'heal', name: rule.name });
+  }
+  return effects;
+}
+
 export function availableUnitAbilities(
   state: BattleState,
   unitId: string,
@@ -190,6 +203,35 @@ export function runAutomaticCommandUnitAbilities(
     for (const ability of rules.unitAbilities.filter(candidate => candidate.timing === 'command-phase' && automaticIds.has(candidate.id))) {
       const next = useUnitAbility(state, unit.id, side, ability.id, 'command-phase', rules);
       if (next !== state) Object.assign(state, next);
+    }
+    for (const effect of automaticCommandTextEffect(unit)) {
+      if (effect.kind === 'cp') {
+        const points = state.commandPoints ?? [0, 0];
+        points[side] += 1;
+        state.commandPoints = points;
+        state.log = [...state.log, {
+          id: nextLogId(state, 'ability'),
+          battleRound: battleRound(state),
+          turn: state.turn,
+          phase: state.phase,
+          side,
+          unitName: unit.profile.name,
+          message: `${unit.profile.name} uses ${effect.name} and gains 1CP.`,
+          type: 'info',
+        }];
+      } else if (unit.remainingModels > 0 && unit.woundsOnLeadModel < unit.profile.wounds) {
+        unit.woundsOnLeadModel = Math.min(unit.profile.wounds, unit.woundsOnLeadModel + 1);
+        state.log = [...state.log, {
+          id: nextLogId(state, 'ability'),
+          battleRound: battleRound(state),
+          turn: state.turn,
+          phase: state.phase,
+          side,
+          unitName: unit.profile.name,
+          message: `${unit.profile.name} uses ${effect.name} and regains 1 lost wound.`,
+          type: 'info',
+        }];
+      }
     }
   }
 }
