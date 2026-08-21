@@ -1198,14 +1198,14 @@ export default function App() {
 
   useEffect(() => {
     if (!battleState || battleState.phase !== 'charge' || !selectedChargeUnit) {
-      setSelectedChargeTargetIds([]);
+      if (selectedChargeTargetIds.length) setSelectedChargeTargetIds([]);
       return;
     }
-    if (
-      !selectedChargeTargetIds.length
-      || selectedChargeTargetIds.some(targetId => !selectedPlayChargeOptions.some(option => option.targetId === targetId))
-    ) {
-      setSelectedChargeTargetIds(selectedPlayChargeOptions[0]?.targetId ? [selectedPlayChargeOptions[0].targetId] : []);
+    const validTargetIds = selectedChargeTargetIds.filter(targetId => selectedPlayChargeOptions.some(option => option.targetId === targetId));
+    if (validTargetIds.length !== selectedChargeTargetIds.length) {
+      setSelectedChargeTargetIds(validTargetIds.length ? validTargetIds : (selectedPlayChargeOptions[0]?.targetId ? [selectedPlayChargeOptions[0].targetId] : []));
+    } else if (!selectedChargeTargetIds.length && selectedPlayChargeOptions[0]?.targetId) {
+      setSelectedChargeTargetIds([selectedPlayChargeOptions[0].targetId]);
     }
   }, [battleState?.phase, battleState?.units, selectedChargeUnit?.id, selectedChargeTargetIds, selectedPlayChargeOptions, battleState, selectedChargeUnit, setSelectedChargeTargetIds]);
 
