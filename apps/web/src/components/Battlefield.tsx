@@ -256,11 +256,20 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
         candidate.id === part.unitId && candidate.side === part.side && !candidate.destroyed,
       );
       if (!unit) return [];
-      return part.modelIndices.flatMap(modelIndex => unit.modelPositions[modelIndex] ?? []);
+      return part.modelIndices.flatMap(modelIndex => {
+        const model = unit.modelPositions[modelIndex];
+        if (!model) return [];
+        return [{
+          ...model,
+          rightEdge: model.x + modelBaseRadiusInches(unit.profile, modelIndex),
+        }];
+      });
     });
     if (!selectedModels.length) return null;
     return {
-      x: Math.max(...selectedModels.map(model => model.x)),
+      // Anchor from the formation edge, not the model centre, so a wide
+      // shooting/charge panel always starts outside the selected bases.
+      x: Math.max(...selectedModels.map(model => model.rightEdge)),
       y: selectedModels.reduce((sum, model) => sum + model.y, 0) / selectedModels.length,
     };
   }
