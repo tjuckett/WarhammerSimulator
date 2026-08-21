@@ -58,33 +58,33 @@ export function useGameSessionController({
 
   async function saveCheckpoint(kind: GameSessionCheckpointKind) {
     const timeline = gameSessionTimelineRef.current;
-    if (!timeline) return null;
-    const state = currentTimelineState(timeline);
-    const label = checkpointLabelForState(state, kind);
-    const gameId = activeGameIdRef.current ?? timeline.metadata.id;
-    const scenario = scenarioFromTimeline(timeline, {
-      name: label,
-      gameId,
-      branchId: checkpointBranchIdRef.current,
-      parentCheckpointId: activeCheckpointIdRef.current ?? undefined,
-      checkpointKind: kind,
-      checkpointLabel: label,
-      sequence: await nextCheckpointSequence(gameSessionRepository, gameId),
-      timelineCursor: timeline.cursor,
-    });
-
-    let summaries: GameSessionScenarioSummary[];
     try {
-      summaries = await gameSessionRepository.saveScenario(scenario);
-    } catch {
-      setSaveStatus('Save failed: browser storage is full. Delete older checkpoints or export a backup.');
+      if (!timeline) {
+        setSaveStatus('Save failed: no active game session is available. Start a battle first.');
+        return null;
+      }
+      const state = currentTimelineState(timeline);
+      const label = checkpointLabelForState(state, kind);
+      const gameId = activeGameIdRef.current ?? timeline.metadata.id;
+      const scenario = scenarioFromTimeline(timeline, {
+        name: label,
+        gameId,
+        branchId: checkpointBranchIdRef.current,
+        parentCheckpointId: activeCheckpointIdRef.current ?? undefined,
+        checkpointKind: kind,
+        checkpointLabel: label,
+        sequence: await nextCheckpointSequence(gameSessionRepository, gameId),
+        timelineCursor: timeline.cursor,
+      });
+      const summaries = await gameSessionRepository.saveScenario(scenario);
+      setSavedScenarios(summaries);
+      setActiveCheckpointId(scenario.metadata.id);
+      setSaveStatus(`${CHECKPOINT_KIND_SAVED_LABELS[kind]} ${scenario.metadata.name}.`);
+      return scenario;
+    } catch (error) {
+      setSaveStatus(`Save failed: ${error instanceof Error ? error.message : 'unknown storage error'}`);
       return null;
     }
-
-    setSavedScenarios(summaries);
-    setActiveCheckpointId(scenario.metadata.id);
-    setSaveStatus(`${CHECKPOINT_KIND_SAVED_LABELS[kind]} ${scenario.metadata.name}.`);
-    return scenario;
   }
 
   async function saveActiveScenarioAndClose() {

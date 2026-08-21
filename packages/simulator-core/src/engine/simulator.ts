@@ -4671,6 +4671,7 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
     u.movementAllowanceTotalByModel = undefined;
     u.movementStartPositionsByModel = undefined;
     u.movementStartRotationsByModel = undefined;
+    u.movementPathByModel = undefined;
     u.movementComplete = undefined;
     u.takingToSkies = undefined;
     u.arrivedFromReinforcements = undefined;
@@ -6427,6 +6428,7 @@ export function completePlayScoutMove(state: BattleState, unitId: string, side: 
     component.movementAllowanceTotalByModel = undefined;
     component.movementStartPositionsByModel = undefined;
     component.movementStartRotationsByModel = undefined;
+    component.movementPathByModel = undefined;
   }
   s.log = [...s.log, log(s, side, unit.profile.name, `${unit.profile.name} completes its Scouts move.`, 'move')];
   return s;
@@ -6549,6 +6551,26 @@ function ensureModelMovementStartRotations(unit: BattleUnit): number[] {
   return unit.movementStartRotationsByModel;
 }
 
+function ensureModelMovementPaths(unit: BattleUnit): Position[][] {
+  if (!unit.movementPathByModel || unit.movementPathByModel.length !== unit.modelPositions.length) {
+    unit.movementPathByModel = unit.modelPositions.map(position => [{ ...position }]);
+  }
+  return unit.movementPathByModel;
+}
+
+function appendModelMovementWaypoints(unit: BattleUnit, modelIndices: number[]): void {
+  const paths = ensureModelMovementPaths(unit);
+  for (const modelIndex of modelIndices) {
+    const position = unit.modelPositions[modelIndex];
+    if (!position) continue;
+    const path = paths[modelIndex] ?? (paths[modelIndex] = []);
+    const previous = path[path.length - 1];
+    if (!previous || Math.hypot(position.x - previous.x, position.y - previous.y) > 0.0001 || Math.abs((position.z ?? 0) - (previous.z ?? 0)) > 0.0001) {
+      path.push({ ...position });
+    }
+  }
+}
+
 function ensureModelMovementAllowanceTotals(unit: BattleUnit): number[] {
   const allowance = movementAllowanceForPlayMove(unit);
   if (!unit.movementAllowanceTotalByModel || unit.movementAllowanceTotalByModel.length !== unit.modelPositions.length) {
@@ -6559,6 +6581,20 @@ function ensureModelMovementAllowanceTotals(unit: BattleUnit): number[] {
 
 function modelMovementDistanceFromStart(unit: BattleUnit, modelIndex: number): number {
   const position = unit.modelPositions[modelIndex];
+  const path = unit.movementPathByModel?.[modelIndex];
+  if (path && path.length > 1) {
+    let distance = 0;
+    for (let index = 1; index < path.length; index++) {
+      distance += Math.hypot(path[index].x - path[index - 1].x, path[index].y - path[index - 1].y)
+        + (unit.takingToSkies && hasKeyword(unit, 'fly') ? 0 : verticalDistance(path[index - 1], path[index]));
+    }
+    const last = path[path.length - 1];
+    if (Math.hypot(position.x - last.x, position.y - last.y) > 0.0001 || Math.abs((position.z ?? 0) - (last.z ?? 0)) > 0.0001) {
+      distance += Math.hypot(position.x - last.x, position.y - last.y)
+        + (unit.takingToSkies && hasKeyword(unit, 'fly') ? 0 : verticalDistance(last, position));
+    }
+    return distance;
+  }
   const start = unit.movementStartPositionsByModel?.[modelIndex] ?? position;
   const startRotation = unit.movementStartRotationsByModel?.[modelIndex] ?? modelRotation(unit, modelIndex);
   const currentRotation = modelRotation(unit, modelIndex);
@@ -6721,6 +6757,10 @@ export function movePlayModels(
     if (!aircraftMoveIsStraightForward(unit, uniqueIndices, dx, dy)) return state;
   }
 
+  if (s.phase === 'movement') {
+    ensureModelMovementPaths(unit);
+  }
+
   const budgetMove = (s.phase === 'movement' || s.phase === 'setup') && !isAircraft(unit)
     ? budgetAdjustedPlayMove(unit, uniqueIndices, dx, dy)
     : { dx, dy };
@@ -6750,6 +6790,7 @@ export function movePlayModels(
   }
 
   applyPlayModelTranslation(unit, uniqueIndices, move.dx, move.dy, boardFormatForState(s));
+  if (s.phase === 'movement') appendModelMovementWaypoints(unit, uniqueIndices);
   cancelUnitAction(s, unit, 'it made a move');
   if ((s.phase === 'movement' || s.phase === 'setup') && inEngagement(unit, enemies(s, side), rulesEditionForRuleset(s.ruleset).engagementRange())) return state;
 
@@ -6794,12 +6835,14 @@ export function movePlayModelsVertically(
   ensureModelMovementStartPositions(unit);
   ensureModelMovementStartRotations(unit);
   ensureModelMovementAllowanceTotals(unit);
+  if (s.phase === 'movement') ensureModelMovementPaths(unit);
 
   const before = unit.modelPositions.map(position => ({ ...position }));
   applyPlayModelVerticalTranslation(unit, uniqueIndices, dz);
   if (uniqueIndices.every(modelIndex => Math.abs((unit.modelPositions[modelIndex].z ?? 0) - (before[modelIndex].z ?? 0)) < 0.001)) return state;
 
   const totals = ensureModelMovementAllowanceTotals(unit);
+  if (s.phase === 'movement') appendModelMovementWaypoints(unit, uniqueIndices);
   if (uniqueIndices.some(modelIndex => modelMovementDistanceFromStart(unit, modelIndex) > (totals[modelIndex] ?? 0) + 0.001)) return state;
   if (inEngagement(unit, enemies(s, side), rulesEditionForRuleset(s.ruleset).engagementRange())) return state;
 
@@ -6833,6 +6876,7 @@ export function undoPlayUnitMovement(state: BattleState, unitId: string, side: S
     component.movementAllowanceTotalByModel = undefined;
     component.movementStartPositionsByModel = undefined;
     component.movementStartRotationsByModel = undefined;
+    component.movementPathByModel = undefined;
     component.takingToSkies = undefined;
   }
   return s;
@@ -7749,7 +7793,7 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   s.firingDeckLockedUnitIds = undefined;
   s.units.forEach(clearFiringDeckWeapons);
   s.units.forEach(u => { u.overrunFightSelected = undefined; u.overrunPiledIn = undefined; });
-  myUnits().forEach(u => { u.rangedAttacksMadePreviousTurn = u.rangedAttacksMadeThisTurn ?? false; u.rangedAttacksMadeThisTurn = false; u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.firedWeaponIndices = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementComplete = undefined; u.takingToSkies = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; u.heroicInterventionMode = undefined; u.actionStartedThisTurn = undefined; u.embarkedThisTurn = undefined; u.disembarkedThisTurn = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.combatDisembarkedThisTurn = undefined; u.rapidDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
+  myUnits().forEach(u => { u.rangedAttacksMadePreviousTurn = u.rangedAttacksMadeThisTurn ?? false; u.rangedAttacksMadeThisTurn = false; u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.firedWeaponIndices = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementPathByModel = undefined; u.movementComplete = undefined; u.takingToSkies = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; u.heroicInterventionMode = undefined; u.actionStartedThisTurn = undefined; u.embarkedThisTurn = undefined; u.disembarkedThisTurn = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.combatDisembarkedThisTurn = undefined; u.rapidDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
 
   // Command
   newLogs.push(...runSimulatedCommandPhase(s, side, rules));

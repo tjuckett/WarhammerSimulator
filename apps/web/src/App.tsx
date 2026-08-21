@@ -1902,7 +1902,7 @@ export default function App() {
     const normalized = normalizePlaySelectionForState(prev, selection);
     if (!normalized) return;
     const next = transformPlayModelSelection(prev, normalized, (current, part) =>
-      movePlayModels(current, part.unitId, part.side, part.modelIndices, dx, dy, collide),
+      movePlayModels(current, part.unitId, part.side, part.modelIndices, dx, dy, collide || current.phase === BATTLE_PHASE.Movement),
     );
     if (next === prev) return;
 
@@ -2087,6 +2087,9 @@ export default function App() {
       targetUnitId: selectedChargeTargetIds[0],
       targetUnitIds: selectedChargeTargetIds,
     });
+    setSelectedChargeTargetIds([]);
+    setPlayModelSelection(null);
+    setInspectedSelection(null);
     setTargetErrorMsg(null);
     commitBattleState(next);
   }

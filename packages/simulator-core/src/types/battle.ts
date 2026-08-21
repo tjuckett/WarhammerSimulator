@@ -72,6 +72,8 @@ export interface BattleUnit {
   movementAllowanceTotalByModel?: number[];
   movementStartPositionsByModel?: Position[];
   movementStartRotationsByModel?: number[];
+  /** Waypoints traversed by each model during its current move. */
+  movementPathByModel?: Position[][];
   movementComplete?: boolean;
   /** 11e Core 21.03 declaration for the move currently being resolved. */
   takingToSkies?: boolean;

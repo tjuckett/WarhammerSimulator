@@ -235,7 +235,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     collide: boolean,
   ): BattleState {
     return selection.parts.reduce(
-      (next, part) => movePlayModels(next, part.unitId, part.side, part.modelIndices, dx, dy, collide),
+      (next, part) => movePlayModels(next, part.unitId, part.side, part.modelIndices, dx, dy, collide || next.phase === 'movement'),
       sourceState,
     );
   }
@@ -290,6 +290,9 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       const minTop = actionRect.height / 2 + 4;
       const maxTop = Math.max(minTop, container.scrollHeight - actionRect.height / 2 - 4);
       const maxLeft = Math.max(4, container.scrollWidth - actionRect.width - 4);
+      if (nextPosition.left + actionRect.width > container.scrollWidth - 4) {
+        nextPosition.left = canvasRect.left - containerRect.left + anchor.x * scale - actionRect.width - 18;
+      }
       nextPosition.left = Math.max(4, Math.min(maxLeft, nextPosition.left));
       nextPosition.top = Math.max(minTop, Math.min(maxTop, nextPosition.top));
     }
@@ -1565,7 +1568,9 @@ function drawUnit(
     ctx.textBaseline = 'bottom';
     const warningLabel = unitWarning.length > 42 ? `${unitWarning.substring(0, 40)}..` : unitWarning;
     const warningWidth = Math.min(board.width * scale - 8, Math.max(80, ctx.measureText(warningLabel).width + 10));
-    const warningY = topY - 5;
+    const nameFontSize = Math.max(6, scale * 0.65);
+    const namePillHeight = nameFontSize + 3;
+    const warningY = topY - 3 - namePillHeight - 6;
     const warningHeight = warningFontSize + 6;
     ctx.fillStyle = 'rgba(35, 23, 8, 0.94)';
     ctx.fillRect(cx - warningWidth / 2, warningY - warningHeight - 2, warningWidth, warningHeight);
@@ -1595,7 +1600,7 @@ function drawUnit(
   }
 
   // Health bar — below formation
-  if (shootingRole) {
+  if (false && shootingRole) {
     const isActingUnit = shootingRole === 'shooter' || shootingRole === 'charger';
     const label = shootingRole === 'charger' ? 'CHARGER' : shootingRole === 'shooter' ? 'SHOOTER' : 'TARGET';
     const fill = isActingUnit ? 'rgba(80, 150, 255, 0.94)' : 'rgba(255, 186, 73, 0.96)';
