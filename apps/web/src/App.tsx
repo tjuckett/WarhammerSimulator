@@ -709,7 +709,7 @@ export default function App() {
   );
   const pendingPlayChargeMovement = battleState?.phase === 'charge'
     && battleState.pendingChargeMovement?.unitId === selectedChargeUnit?.id
-    && battleState.pendingChargeMovement.side === selectedChargeUnit?.side
+    && battleState.pendingChargeMovement?.side === selectedChargeUnit?.side
     ? battleState.pendingChargeMovement
     : null;
   const selectedPlayChargeBlocker = useMemo(

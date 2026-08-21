@@ -6832,7 +6832,7 @@ export function movePlayModels(
 ): BattleState {
   const chargeMovement = state.phase === 'charge'
     && state.pendingChargeMovement?.unitId === unitId
-    && state.pendingChargeMovement.side === side;
+    && state.pendingChargeMovement?.side === side;
   if (!PLAY_MODEL_EDIT_PHASES.includes(state.phase) && !chargeMovement) return state;
   if (state.phase === 'movement' && movementStep(state) !== 'moveUnits') return state;
 
