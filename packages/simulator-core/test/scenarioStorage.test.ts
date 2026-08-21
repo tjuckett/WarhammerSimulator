@@ -1640,7 +1640,7 @@ test('11th attached leader abilities apply typed melee effects to the bodyguard 
     weapons: [],
     abilities: [{
       name: 'Leader Aura',
-      description: 'While this model is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Hit roll and add 1 to the Wound roll.',
+      description: 'While this model is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Hit roll and add 1 to the Wound roll and re-roll failed Hit rolls and failed Wound rolls.',
     }],
   };
   const target = losTestUnit('generic-target', 1, { x: 11.2, y: 10 });
@@ -1649,12 +1649,13 @@ test('11th attached leader abilities apply typed melee effects to the bodyguard 
   battle.units = [bodyguard, leader, target];
 
   const originalRandom = Math.random;
-  Math.random = () => 0.99;
+  const rolls = [0.01, 0.99, 0.01, 0.99, 0.99];
+  Math.random = () => rolls.shift() ?? 0.99;
   try {
     const fought = fightPlayUnitWeapon(battle, bodyguard.id, 0, target.id, 0, rules40K11th);
     const messages = fought.log.map(entry => entry.message).join(' ');
-    assert.match(messages, /Hit rolls \(2\+\)/);
-    assert.match(messages, /Wound rolls \(S4 vs T7, 4\+\)/);
+    assert.match(messages, /Hit rolls \(2\+\): \[6\]/);
+    assert.match(messages, /Wound rolls \(S4 vs T7, 4\+\): \[6\]/);
   } finally {
     Math.random = originalRandom;
   }

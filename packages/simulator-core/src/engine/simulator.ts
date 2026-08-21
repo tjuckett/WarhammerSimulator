@@ -1110,6 +1110,9 @@ function resolveAttacks(
   const leadingModifiers = rules.metadata.edition === '11e'
     ? leadingAttackModifiers(state, attacker, weapon)
     : { hit: 0, wound: 0, strength: 0, attacks: 0 };
+  const leadingRerollRules = rules.metadata.edition === '11e'
+    ? leadingRerolls(state, attacker)
+    : { hit: false, wound: false };
   const derivedLeadingKeywords = rules.metadata.edition === '11e'
     ? leadingWeaponKeywords(state, attacker, weapon)
     : [];
@@ -1230,7 +1233,12 @@ function resolveAttacks(
       ...(plungingRolls.length ? [{ rolls: plungingRolls, target: plungingTarget, plunging: true }] : []),
       ...(normalRolls.length ? [{ rolls: normalRolls, target: normalTarget, plunging: false }] : []),
     ];
-    const results = hitPools.map(pool => ({ ...pool, result: rules.processHits(pool.rolls, pool.target, bannerWeapon) }));
+    const results = hitPools.map(pool => {
+      const rolls = leadingRerollRules.hit
+        ? pool.rolls.map(roll => roll < pool.target ? d6() : roll)
+        : pool.rolls;
+      return { ...pool, rolls, result: rules.processHits(rolls, pool.target, bannerWeapon) };
+    });
     hitResult = {
       hits: results.reduce((total, pool) => total + pool.result.hits, 0),
       rolls: hitRolls,
@@ -1279,7 +1287,10 @@ function resolveAttacks(
   const woundRollCount = Math.max(0, hitResult.hits - lethalAutoWounds);
 
   if (woundRollCount > 0) {
-    const woundRolls = rollMultiple(woundRollCount);
+    const initialWoundRolls = rollMultiple(woundRollCount);
+    const woundRolls = leadingRerollRules.wound
+      ? initialWoundRolls.map(roll => roll < wt ? d6() : roll)
+      : initialWoundRolls;
     const woundResult = processWoundsAgainstDefender(woundRolls, wt, weapon, defender, rules, state);
     const noteWound = woundResult.logNote ? ` [${woundResult.logNote}]` : '';
     logs.push(log(state, attacker.side, attacker.profile.name,
@@ -1932,6 +1943,19 @@ function leadingAttackModifiers(state: BattleState, unit: BattleUnit, weapon: We
     if (weapon.isMelee && /melee (?:attacks|weapons).*?add\s+1\s+to\s+(?:the\s+)?attacks/i.test(text)) attacks += 1;
   }
   return { hit, wound, strength, attacks };
+}
+
+function leadingRerolls(state: BattleState, unit: BattleUnit): { hit: boolean; wound: boolean } {
+  let hit = false;
+  let wound = false;
+  for (const rule of attachedLeadingRules(state, unit)) {
+    if (/prophet of da great waaagh/i.test(rule.name)) continue;
+    const text = `${rule.name} ${rule.description}`;
+    if (!/re-?roll/i.test(text) || /one\s+(?:such\s+)?roll/i.test(text)) continue;
+    if (/re-?roll/i.test(text) && /(?:failed\s+)?hit rolls?/i.test(text)) hit = true;
+    if (/re-?roll/i.test(text) && /(?:failed\s+)?wound rolls?/i.test(text)) wound = true;
+  }
+  return { hit, wound };
 }
 
 function attachedInvulnerableSave(state: BattleState, unit: BattleUnit, weapon: WeaponProfile): number | undefined {
