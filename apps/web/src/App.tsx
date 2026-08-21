@@ -973,6 +973,9 @@ export default function App() {
     )
   );
   const playCoherencyIssues = isPlayMode && battleState ? playPhaseCoherencyIssues(battleState) : [];
+  const phaseAdvanceDisabledReason = playCoherencyIssues.length
+    ? `Cannot advance phase: ${playCoherencyIssues.join(' ')}`
+    : '';
   const selectedPlayCoherencyIssueModelIds = useMemo(
     () => battleState ? battleModelIdsWithCoherencyIssues(battleState) : new Set<string>(),
     [battleState],
@@ -3399,7 +3402,7 @@ export default function App() {
           <>
             {playCoherencyIssues.length > 0 && (
               <span className="turn-info coherency-warning" title={playCoherencyIssues.join('\n')}>
-                Coherency issue: fix highlighted models before Next Phase.
+                {phaseAdvanceDisabledReason}
               </span>
             )}
             {playPhaseWarning && (
@@ -3415,7 +3418,7 @@ export default function App() {
               startIcon={<PlayArrowIcon />}
               onClick={stepPlayPhase}
               disabled={playCoherencyIssues.length > 0}
-              title={playCoherencyIssues.join('\n')}
+              title={phaseAdvanceDisabledReason}
             >
               {playFightStepNeedsStart(battleState, activeRulesForBattle)
                 ? 'Start Fight Step'
