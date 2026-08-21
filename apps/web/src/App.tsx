@@ -582,6 +582,9 @@ export default function App() {
   const selectedShootingUnit = battleState?.phase === 'shooting' && casualtyRemovalShooterId
     ? battleState.units.find(unit => unit.id === casualtyRemovalShooterId && unit.side === battleState.activeArmy && !unit.destroyed && !unit.embarkedInUnitId) ?? selectedPlayBattleUnit
     : selectedPlayBattleUnit;
+  const activeSelectedShootingUnit = selectedShootingUnit?.side === battleState?.activeArmy
+    ? selectedShootingUnit
+    : null;
   const selectedChargeUnit = battleState?.phase === 'charge' && selectedPlayBattleUnit?.side === battleState.activeArmy
     ? selectedPlayBattleUnit
     : null;
@@ -3049,11 +3052,11 @@ export default function App() {
               onRotateModel: canEditPlayModelsNow
                 ? (_selection, degrees, batched) => rotateSelectedPlayModels(degrees, batched)
                 : undefined,
-              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || (battleState.phase === BATTLE_PHASE.Shooting && !!selectedShootingUnit) || selectedPlayScoutAllowance !== null || selectedPlayScoutMoveStarted || selectedPlayCanDeclareMobile || selectedPlayCanAdvance || selectedPlayCanRollCharge || !!pendingChargeRoll || !!pendingPlayChargeMovement || !!selectedPlayChargeResult || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanUndoMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
+              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || (battleState.phase === BATTLE_PHASE.Shooting && !!activeSelectedShootingUnit) || selectedPlayScoutAllowance !== null || selectedPlayScoutMoveStarted || selectedPlayCanDeclareMobile || selectedPlayCanAdvance || selectedPlayCanRollCharge || !!pendingChargeRoll || !!pendingPlayChargeMovement || !!selectedPlayChargeResult || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanUndoMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
                 <>
-                  {battleState.phase === BATTLE_PHASE.Shooting && selectedShootingUnit && (
+                  {battleState.phase === BATTLE_PHASE.Shooting && activeSelectedShootingUnit && (
                     <PlayShootingPanel
-                      shooter={selectedShootingUnit}
+                      shooter={activeSelectedShootingUnit}
                       targets={selectedPlayShootingTargets}
                       selectedTarget={selectedShootingTargetUnit}
                       targetIsValid={selectedShootingTargetIsValid}
@@ -3346,9 +3349,9 @@ export default function App() {
                   onResolveCommandReroll={resolvePendingCommandReroll}
                 />
               )}
-              {isPlayMode && battleState?.phase === 'shooting' && !selectedShootingUnit && (
+              {isPlayMode && battleState?.phase === 'shooting' && !activeSelectedShootingUnit && (
                 <PlayShootingPanel
-                  shooter={selectedShootingUnit}
+                  shooter={activeSelectedShootingUnit}
                   targets={selectedPlayShootingTargets}
                   selectedTarget={selectedShootingTargetUnit}
                   targetIsValid={selectedShootingTargetIsValid}
