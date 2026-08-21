@@ -1282,6 +1282,19 @@ html, body, #root {
   font-weight: 700;
 }
 
+.phase-blocker {
+  flex-basis: 100%;
+  max-width: min(720px, 100%);
+  padding: 5px 9px;
+  border: 1px solid #806523;
+  border-radius: 4px;
+  background: #211e13;
+  color: #ffcf66;
+  font-size: 11px;
+  line-height: 1.35;
+  white-space: normal;
+}
+
 .winner-banner {
   padding: 4px 12px;
   background: #2a2a0a;

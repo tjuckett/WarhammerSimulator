@@ -35,6 +35,7 @@ import {
   movementStep,
   movePlayModels,
   movePlayModelsVertically,
+  undoPlayUnitMovement,
   pileInPlayUnit,
   placePlayReinforcement,
   placePlayStrategicReserveUnit,
@@ -84,6 +85,7 @@ export const GAME_ACTION_TYPE = {
   UndeployUnit: 'play.undeployUnit',
   MoveModels: 'play.moveModels',
   MoveModelsVertically: 'play.moveModelsVertically',
+  UndoUnitMovement: 'play.undoUnitMovement',
   DeclareTakeToSkies: 'play.declareTakeToSkies',
   DeclareSuperHeavyMobile: 'play.declareSuperHeavyMobile',
   GrantSurgeMove: 'play.grantSurgeMove',
@@ -171,6 +173,11 @@ export type GameAction =
       type: typeof GAME_ACTION_TYPE.MoveModelsVertically;
       parts: ModelSelectionPart[];
       dz: number;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.UndoUnitMovement;
+      side: Side;
+      unitId: string;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.DeclareTakeToSkies;
@@ -628,6 +635,9 @@ export function applyGameAction(
         state,
       );
 
+    case GAME_ACTION_TYPE.UndoUnitMovement:
+      return undoPlayUnitMovement(state, normalizedAction.unitId, normalizedAction.side);
+
     case GAME_ACTION_TYPE.DeclareTakeToSkies:
       return declarePlayUnitTakeToSkies(state, normalizedAction.unitId, normalizedAction.side, context.rules);
 
@@ -927,6 +937,8 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
     case GAME_ACTION_TYPE.ReorganizeModels:
     case GAME_ACTION_TYPE.RemoveModels:
       return normalizedAction.parts.some(part => part.unitId === unitId);
+    case GAME_ACTION_TYPE.UndoUnitMovement:
+      return normalizedAction.unitId === unitId;
     default:
       return false;
   }

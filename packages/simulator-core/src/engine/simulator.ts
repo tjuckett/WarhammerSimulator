@@ -6782,6 +6782,34 @@ export function movePlayModelsVertically(
   return s;
 }
 
+export function undoPlayUnitMovement(state: BattleState, unitId: string, side: Side): BattleState {
+  if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return state;
+  const existingUnit = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
+  if (!existingUnit) return state;
+  const components = attachedUnitComponents(state, existingUnit);
+  if (!components.some(unit => unit.movementStartPositionsByModel?.length === unit.modelPositions.length)) return state;
+
+  const s = clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
+  for (const component of attachedUnitComponents(s, unit)) {
+    if (component.movementStartPositionsByModel?.length !== component.modelPositions.length) continue;
+    component.modelPositions = component.movementStartPositionsByModel.map(position => ({ ...position }));
+    component.modelRotations = component.movementStartRotationsByModel
+      ? [...component.movementStartRotationsByModel]
+      : undefined;
+    component.position = centroid(component.modelPositions);
+    component.movementAction = undefined;
+    component.movementComplete = undefined;
+    component.movementAllowanceRemaining = undefined;
+    component.movementAllowanceRemainingByModel = undefined;
+    component.movementAllowanceTotalByModel = undefined;
+    component.movementStartPositionsByModel = undefined;
+    component.movementStartRotationsByModel = undefined;
+    component.takingToSkies = undefined;
+  }
+  return s;
+}
+
 export function removePlayModels(
   state: BattleState,
   unitId: string,
