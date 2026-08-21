@@ -256,6 +256,7 @@ export default function App() {
   const [strategy1, setStrategy1] = useState<DeploymentStrategy>(() => suggestStrategy(loadBrain(), 0));
   const [strategy2, setStrategy2] = useState<DeploymentStrategy>(() => suggestStrategy(loadBrain(), 1));
   const [autoRunning, setAutoRunning] = useState(false);
+  const [battleLogVisible, setBattleLogVisible] = useState(true);
   const [autoDeploying, setAutoDeploying] = useState(false);
   const [simSpeedMs, setSimSpeedMs] = useState(600);
   const [simulationGranularity, setSimulationGranularity] = useState<SimulationGranularity>('phase');
@@ -3125,7 +3126,19 @@ export default function App() {
 
         {/* Right: Battle log */}
         <div className="log-panel">
-          <div className="log-header">{isEditorMode ? 'Terrain Editor' : isPlayMode ? 'Play' : 'Battle Log'}</div>
+          <div className="log-header">
+            <span>{isEditorMode ? 'Terrain Editor' : isPlayMode ? 'Play' : 'Battle Log'}</span>
+            {!isEditorMode && (
+              <button
+                type="button"
+                className="log-visibility-toggle"
+                aria-pressed={!battleLogVisible}
+                onClick={() => setBattleLogVisible(visible => !visible)}
+              >
+                {battleLogVisible ? 'Hide Log' : 'Show Log'}
+              </button>
+            )}
+          </div>
           {!isEditorMode && (
             <GameSessionControlsPanel
               timeline={gameSessionTimeline}
@@ -3271,11 +3284,11 @@ export default function App() {
                 />
               )}
               <UnitStatsPanel inspected={inspectedUnit} onClear={() => setInspectedSelection(null)} />
-              {battleState ? (
+              {battleLogVisible && battleState ? (
                 <div style={{ flex: '1 1 0', minHeight: 0 }}>
                   <BattleLog entries={battleState.log} army0Color={ARMY_COLORS[0]} army1Color={ARMY_COLORS[1]} />
                 </div>
-              ) : (
+              ) : battleLogVisible ? (
                 <div className="log-empty">
                   Select a unit on the left to inspect it, then start play.
                 </div>

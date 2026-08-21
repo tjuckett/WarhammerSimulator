@@ -525,6 +525,8 @@ html, body, #root {
 }
 
 .log-header {
+  display: flex;
+  align-items: center;
   padding: 5px 8px;
   background: #13132a;
   border-bottom: 1px solid #1e1e2e;
@@ -1267,6 +1269,23 @@ html, body, #root {
   gap: 6px;
   font-size: 11px;
   color: #777;
+}
+
+.log-visibility-toggle {
+  margin-left: auto;
+  padding: 2px 7px;
+  border: 1px solid #45456e;
+  border-radius: 3px;
+  background: #1b1b35;
+  color: #aaaadd;
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.log-visibility-toggle:hover {
+  background: #292950;
+  color: #eeeeff;
 }
 
 .controller-seat-controls {
