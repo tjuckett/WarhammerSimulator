@@ -1114,7 +1114,7 @@ function resolveAttacks(
     ? leadingRerolls(state, attacker)
     : { hit: false, wound: false };
   const derivedLeadingKeywords = rules.metadata.edition === '11e'
-    ? leadingWeaponKeywords(state, attacker, weapon)
+    ? [...leadingWeaponKeywords(state, attacker, weapon), ...unitGrantedWeaponKeywords(state, attacker, weapon)]
     : [];
   const bannerAuraActive = rules.metadata.edition === '11e'
     && state.activeArmyAbilities?.[attacker.side]?.includes('waaagh') === true
@@ -1917,6 +1917,26 @@ function leadingWeaponKeywords(state: BattleState, unit: BattleUnit, weapon: Wea
     if (/prophet of da great waaagh/i.test(rule.name)) continue;
     const text = `${rule.name} ${rule.description}`;
     if (weapon.isMelee === /melee/i.test(text) || /weapons? equipped by models in (?:this|that|the bearer'?s) unit/i.test(text)) {
+      for (const keyword of ['Lethal Hits', 'Devastating Wounds', 'Precision', 'Ignores Cover', 'Torrent']) {
+        if (new RegExp(`\\[?${keyword.replace(' ', '\\s+')}\\]?`, 'i').test(text)) keywords.push(keyword);
+      }
+      const sustained = text.match(/Sustained Hits\s*(?:\[?)(D?\d+)(?:\]?)/i);
+      if (sustained) keywords.push(`Sustained Hits ${sustained[1]}`);
+      const critical = text.match(/Critical Hits?\s*(?:on\s+)?(?:a\s+)?(?:successful\s+)?(?:unmodified\s+)?(?:Hit roll of\s+)?([2-6])\+/i);
+      if (critical) keywords.push(`Critical Hits ${critical[1]}+`);
+    }
+  }
+  return keywords;
+}
+
+function unitGrantedWeaponKeywords(state: BattleState, unit: BattleUnit, weapon: WeaponProfile): string[] {
+  const keywords: string[] = [];
+  for (const component of attachedUnitComponents(state, unit)) {
+    for (const rule of [...component.profile.abilities, ...(component.profile.rules ?? [])]) {
+      const text = `${rule.name} ${rule.description}`;
+      if (/select(?: either| one of)?/i.test(text) || !/weapons? equipped by models in (?:this|that) unit/i.test(text)) continue;
+      if (weapon.isMelee && !/melee weapons?|weapons? equipped/i.test(text)) continue;
+      if (!weapon.isMelee && /melee weapons?/i.test(text)) continue;
       for (const keyword of ['Lethal Hits', 'Devastating Wounds', 'Precision', 'Ignores Cover', 'Torrent']) {
         if (new RegExp(`\\[?${keyword.replace(' ', '\\s+')}\\]?`, 'i').test(text)) keywords.push(keyword);
       }
