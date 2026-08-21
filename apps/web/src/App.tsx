@@ -256,6 +256,7 @@ export default function App() {
   const [strategy2, setStrategy2] = useState<DeploymentStrategy>(() => suggestStrategy(loadBrain(), 1));
   const [autoRunning, setAutoRunning] = useState(false);
   const [battleLogVisible, setBattleLogVisible] = useState(true);
+  const [saveErrorOpen, setSaveErrorOpen] = useState(false);
   const [autoDeploying, setAutoDeploying] = useState(false);
   const [simSpeedMs, setSimSpeedMs] = useState(600);
   const [simulationGranularity, setSimulationGranularity] = useState<SimulationGranularity>('phase');
@@ -464,6 +465,10 @@ export default function App() {
     restoreTimelineResult: restoreGameSessionTimelineResult,
     createBranchId: () => makeGameSessionId('checkpoint-branch'),
   });
+
+  useEffect(() => {
+    setSaveErrorOpen(gameSessionSaveStatus.startsWith('Save failed:'));
+  }, [gameSessionSaveStatus]);
 
   const previewState: BattleState = useMemo(() => ({
     ruleset: rulesetMetadataForState(edition),
@@ -3463,6 +3468,16 @@ export default function App() {
       >
         <Alert severity="warning" onClose={() => setTargetErrorMsg(null)} sx={{ width: '100%' }}>
           {targetErrorMsg}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={saveErrorOpen}
+        onClose={() => setSaveErrorOpen(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert severity="error" onClose={() => setSaveErrorOpen(false)} sx={{ width: '100%', maxWidth: 520 }}>
+          {gameSessionSaveStatus}
         </Alert>
       </Snackbar>
 

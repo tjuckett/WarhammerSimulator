@@ -3,6 +3,15 @@ import type { PracticeScenario } from '@warhammer-simulator/core/practice/scenar
 import { prismaPracticeScenarioRepository } from '../../../../server/practice/prismaPracticeScenarioRepository';
 import { practiceApiError } from '../../../../server/apiErrors';
 
+async function requestJson<T>(request: Request): Promise<T> {
+  if (request.headers.get('content-encoding')?.toLowerCase() !== 'gzip') {
+    return request.json() as Promise<T>;
+  }
+  const compressed = await request.arrayBuffer();
+  const stream = new Blob([compressed]).stream().pipeThrough(new DecompressionStream('gzip'));
+  return JSON.parse(await new Response(stream).text()) as T;
+}
+
 export async function GET() {
   try {
     return NextResponse.json(await prismaPracticeScenarioRepository.listSummaries());
@@ -13,7 +22,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json() as { scenario?: PracticeScenario };
+    const body = await requestJson<{ scenario?: PracticeScenario }>(request);
     if (!body.scenario) {
       return NextResponse.json({ error: 'Missing scenario.' }, { status: 400 });
     }

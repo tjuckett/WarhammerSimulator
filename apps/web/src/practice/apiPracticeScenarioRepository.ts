@@ -29,6 +29,13 @@ async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
   return response.json() as Promise<T>;
 }
 
+async function compressedJsonBody(value: unknown): Promise<{ body: BodyInit; compressed: boolean }> {
+  const json = JSON.stringify(value);
+  if (typeof CompressionStream === 'undefined') return { body: json, compressed: false };
+  const compressed = new Blob([json]).stream().pipeThrough(new CompressionStream('gzip'));
+  return { body: await new Response(compressed).blob(), compressed: true };
+}
+
 async function withLocalFallback<T>(apiCall: () => Promise<T>, fallback: () => Promise<T>): Promise<T> {
   try {
     return await apiCall();
@@ -71,10 +78,14 @@ export const apiPracticeScenarioRepository: PracticeScenarioRepository = {
 
   saveScenario(scenario: PracticeScenario) {
     return withLocalFallback(
-      () => apiRequest<PracticeScenarioSummary[]>('/api/practice/scenarios', {
-        method: 'POST',
-        body: JSON.stringify({ scenario }),
-      }),
+      async () => {
+        const requestBody = await compressedJsonBody({ scenario });
+        return apiRequest<PracticeScenarioSummary[]>('/api/practice/scenarios', {
+          method: 'POST',
+          body: requestBody.body,
+          headers: requestBody.compressed ? { 'content-encoding': 'gzip' } : undefined,
+        });
+      },
       () => localPracticeScenarioRepository.saveScenario(scenario),
     );
   },
