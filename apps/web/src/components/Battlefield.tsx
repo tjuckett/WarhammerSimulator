@@ -1526,7 +1526,7 @@ function drawUnit(
     }
   }
 
-  drawSelectedModelMovementHud(ctx, unit, state, scale, selectedModelIndices, modelRadii, board.width);
+  drawSelectedModelMovementHud(ctx, unit, state, scale, selectedModelIndices, modelRadii, board.width, board.height);
 
   const passengers = transportPassengersForUnit(state, unit);
   if (passengers.length) {
@@ -1813,6 +1813,7 @@ function drawSelectedModelMovementHud(
   selectedModelIndices: number[],
   modelRadii: number[],
   boardWidth: number,
+  boardHeight: number,
 ) {
   if (!selectedModelIndices.length || unit.movementAction === 'fellBack' || unit.fellBack) return;
   if (state.phase !== 'movement') return;
@@ -1823,6 +1824,11 @@ function drawSelectedModelMovementHud(
     || !!unit.movementAllowanceRemainingByModel
     || activeMovementUnit;
   if (!shouldShow) return;
+
+  const topY = unit.modelPositions.reduce((min, position, index) =>
+    Math.min(min, position.y * scale - (modelRadii[index] ?? scale * 0.48)), Infinity);
+  const bottomY = unit.modelPositions.reduce((max, position, index) =>
+    Math.max(max, position.y * scale + (modelRadii[index] ?? scale * 0.48)), -Infinity);
 
   const defaultAllowance = unit.movementAllowanceRemaining ?? unit.profile.move;
   for (const modelIndex of selectedModelIndices) {
@@ -1852,12 +1858,22 @@ function drawSelectedModelMovementHud(
     ctx.textBaseline = 'middle';
     const textW = ctx.measureText(remainingLabel).width;
     const labelX = Math.max(textW / 2 + 4, Math.min(boardWidth * scale - textW / 2 - 4, mx));
-    const labelY = Math.max(fontSize + 5, my - baseRadius - fontSize - 7);
+    const boxHeight = fontSize + 6;
+    const nameFontSize = Math.max(6, scale * 0.65);
+    const nameTop = topY - 3 - (nameFontSize + 3);
+    const preferredY = my - baseRadius - fontSize - 7;
+    const aboveNameY = nameTop - boxHeight / 2 - 4;
+    let labelY = Math.min(preferredY, aboveNameY);
+    const minY = boxHeight / 2 + 4;
+    if (labelY < minY) {
+      labelY = Math.min(boardHeight * scale - boxHeight / 2 - 4, bottomY + boxHeight / 2 + 8);
+    }
+    labelY = Math.max(minY, labelY);
     ctx.fillStyle = 'rgba(8, 12, 18, 0.86)';
-    ctx.fillRect(labelX - textW / 2 - 4, labelY - fontSize / 2 - 3, textW + 8, fontSize + 6);
+    ctx.fillRect(labelX - textW / 2 - 4, labelY - boxHeight / 2, textW + 8, boxHeight);
     ctx.strokeStyle = unit.movementAction === 'advanced' ? 'rgba(124,255,155,0.82)' : 'rgba(255,224,102,0.82)';
     ctx.lineWidth = 1;
-    ctx.strokeRect(labelX - textW / 2 - 4, labelY - fontSize / 2 - 3, textW + 8, fontSize + 6);
+    ctx.strokeRect(labelX - textW / 2 - 4, labelY - boxHeight / 2, textW + 8, boxHeight);
     ctx.fillStyle = '#f7f4df';
     ctx.fillText(remainingLabel, labelX, labelY);
   }

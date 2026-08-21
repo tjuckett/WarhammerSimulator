@@ -11848,6 +11848,47 @@ test('play Movement keeps individual models editable until the unit is locked', 
   assert.equal(movedUnit.movementComplete, undefined);
 });
 
+test('play Movement counts the full path across multiple legs', () => {
+  const battle = state('movement');
+  const profile = {
+    name: 'Path Unit',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: [],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+  };
+  battle.units = [{
+    id: 'unit-1',
+    side: 0,
+    profile,
+    remainingModels: 1,
+    woundsOnLeadModel: 1,
+    position: { x: 10, y: 10 },
+    modelPositions: [{ x: 10, y: 10 }],
+    facingDeg: 0,
+    charged: false,
+    inCombat: false,
+    battleshocked: false,
+    activated: false,
+    destroyed: false,
+  }];
+
+  const firstLeg = movePlayModels(battle, 'unit-1', 0, [0], 4, 0);
+  const secondLeg = movePlayModels(firstLeg, 'unit-1', 0, [0], 0, 4);
+  const unit = secondLeg.units[0];
+
+  assert.equal(unit.modelPositions[0].x, 14);
+  assert.equal(unit.modelPositions[0].y, 12);
+  assert.deepEqual(unit.movementAllowanceRemainingByModel, [0]);
+});
+
 test('play Movement tracks vertical movement allowance per model', () => {
   const battle = state('movement');
   const profile = {
