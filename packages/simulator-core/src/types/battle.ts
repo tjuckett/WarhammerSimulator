@@ -223,6 +223,15 @@ export interface DestroyedModelMissionEvent {
   phase: Phase;
 }
 
+/** A serialized interrupt opened when a unit with Fight On Death is destroyed. */
+export interface PendingFightOnDeath {
+  unit: BattleUnit;
+  side: Side;
+  destroyedBySide: Side;
+  phase: Phase;
+  battleRound: number;
+}
+
 export interface StartOfTurnMissionSnapshot {
   activeSide: Side;
   battleRound: number;
@@ -460,6 +469,7 @@ export interface BattleState {
   log: LogEntry[];
   units: BattleUnit[];
   pendingDeadlyDemises?: PendingDeadlyDemise[];
+  pendingFightOnDeath?: PendingFightOnDeath[];
   firingDeckLockedUnitIds?: string[];
   /** Set after the first Command phase begins; Scouts are only legal before this. */
   preBattleAbilitiesResolved?: boolean;

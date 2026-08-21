@@ -24,6 +24,8 @@ import {
   embarkPlayUnit,
   fallBackPlayUnit,
   fightPlayUnitWeapon,
+  fightOnDeathUnitWeapon,
+  declineFightOnDeath,
   type FiringDeckSelection,
   grantPlaySurgeMove,
   type PlayMeleeAttackSplit,
@@ -104,6 +106,8 @@ export const GAME_ACTION_TYPE = {
   LockUnitShooting: 'play.lockUnitShooting',
   ChargeUnitTarget: 'play.chargeUnitTarget',
   FightUnitWeapon: 'play.fightUnitWeapon',
+  FightOnDeath: 'play.fightOnDeath',
+  DeclineFightOnDeath: 'play.declineFightOnDeath',
   StartFightStep: 'play.startFightStep',
   SelectOverrunFight: 'play.selectOverrunFight',
   PileInUnit: 'play.pileInUnit',
@@ -298,6 +302,16 @@ export type GameAction =
       targetUnitId: string;
       weaponIndex: number | 'all';
       targetSplits?: PlayMeleeAttackSplit[];
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.FightOnDeath;
+      side: Side;
+      targetUnitId: string;
+      weaponIndex: number;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.DeclineFightOnDeath;
+      side: Side;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.StartFightStep;
@@ -741,6 +755,12 @@ export function applyGameAction(
         context.rules,
         normalizedAction.targetSplits,
       );
+
+    case GAME_ACTION_TYPE.FightOnDeath:
+      return fightOnDeathUnitWeapon(state, normalizedAction.side, normalizedAction.targetUnitId, normalizedAction.weaponIndex, context.rules);
+
+    case GAME_ACTION_TYPE.DeclineFightOnDeath:
+      return declineFightOnDeath(state, normalizedAction.side, context.rules);
 
     case GAME_ACTION_TYPE.StartFightStep:
       return startPlayFightStep(state, context.rules);

@@ -1,4 +1,4 @@
-import { MOVEMENT_STEP, type BattleSetup, type BattleState, type BattleUnit, type LogEntry, type MovementStep, type Phase, type Position, type Side, type Terrain, type TerrainFeature } from '../types/battle';
+import { MOVEMENT_STEP, type BattleSetup, type BattleState, type BattleUnit, type LogEntry, type MovementStep, type PendingFightOnDeath, type Phase, type Position, type Side, type Terrain, type TerrainFeature } from '../types/battle';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile, type WeaponProfile } from '../types/army';
 import { rules40K10th, rulesEditionForRuleset, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
@@ -1508,6 +1508,13 @@ export function applyDamage(
     }
   }
 
+  const destroyedModelPositions = killed > 0
+    ? unit.modelPositions.slice(Math.max(0, simulatedModels)).map(position => ({ ...position }))
+    : [];
+  const destroyedModelRosterIndexes = killed > 0
+    ? Array.from({ length: killed }, (_, index) => unit.modelRosterIndexes?.[simulatedModels + index] ?? simulatedModels + index)
+    : [];
+
   if (options.deferCasualties) {
     if (killed > 0) unit.pendingCasualties = (unit.pendingCasualties ?? 0) + killed;
     if (simulatedModels <= 0) {
@@ -1548,6 +1555,9 @@ export function applyDamage(
     unit.pendingWoundAssignment = undefined;
     if (killed > 0 && simulatedModels <= 0) rememberDestroyedPositions(unit);
     if (killed > 0) trimUnitModelState(unit);
+    if (killed > 0) {
+      queueFightOnDeathWindow(state, unit, attackerSide, destroyedModelPositions, destroyedModelRosterIndexes);
+    }
   }
 
   const effectiveRemaining = options.deferCasualties
@@ -4178,6 +4188,116 @@ export function fightPlayUnitWeapon(
   return s;
 }
 
+function unitHasFightOnDeath(unit: BattleUnit): boolean {
+  return [...unit.profile.abilities, ...(unit.profile.rules ?? [])].some(rule =>
+    /fight\s+on\s+death|fight\s+before\s+(?:it|being)\s+removed|can\s+fight\s+before\s+it\s+is\s+removed/i.test(`${rule.name} ${rule.description}`),
+  );
+}
+
+function queueFightOnDeathWindow(
+  state: BattleState,
+  unit: BattleUnit,
+  destroyedBySide: Side,
+  modelPositions: Position[],
+  modelRosterIndexes?: number[],
+): void {
+  if (state.ruleset?.edition !== '11e' || !unitHasFightOnDeath(unit) || !modelPositions.length) return;
+  const fighter = clone(unit);
+  fighter.destroyed = false;
+  fighter.remainingModels = modelPositions.length;
+  fighter.modelPositions = modelPositions.map(position => ({ ...position }));
+  fighter.position = centroid(fighter.modelPositions);
+  fighter.modelRosterIndexes = modelRosterIndexes?.length
+    ? [...modelRosterIndexes]
+    : fighter.modelRosterIndexes?.slice(0, modelPositions.length);
+  fighter.modelRotations = fighter.modelRotations?.slice(0, modelPositions.length);
+  fighter.activated = false;
+  fighter.pendingDamageAllocations = undefined;
+  fighter.pendingCasualties = undefined;
+  fighter.pendingWoundAssignment = undefined;
+  state.pendingFightOnDeath = [
+    ...(state.pendingFightOnDeath ?? []),
+    {
+      unit: fighter,
+      side: unit.side,
+      destroyedBySide,
+      phase: state.phase,
+      battleRound: battleRound(state),
+    },
+  ];
+}
+
+function currentFightOnDeathWindow(state: BattleState, side: Side): PendingFightOnDeath | undefined {
+  return state.pendingFightOnDeath?.[0]?.side === side ? state.pendingFightOnDeath[0] : undefined;
+}
+
+export function fightOnDeathTargetIds(
+  state: BattleState,
+  side: Side,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): string[] {
+  const pending = currentFightOnDeathWindow(state, side);
+  if (!pending || !['shooting', 'fight'].includes(state.phase)) return [];
+  return state.units
+    .filter(target => target.side !== side && !target.destroyed && !target.embarkedInUnitId
+      && unitCanFightTarget(pending.unit, target)
+      && inEngagement(pending.unit, [target], rules.engagementRange()))
+    .map(target => target.id);
+}
+
+export function fightOnDeathWeaponOptions(
+  state: BattleState,
+  side: Side,
+  targetUnitId: string,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): Array<{ weaponIndex: number; name: string }> {
+  const pending = currentFightOnDeathWindow(state, side);
+  if (!pending || !fightOnDeathTargetIds(state, side, rules).includes(targetUnitId)) return [];
+  return pending.unit.profile.weapons
+    .map((weapon, weaponIndex) => ({ weapon, weaponIndex }))
+    .filter(option => option.weapon.isMelee && aliveWeaponModelCount(pending.unit, option.weaponIndex) > 0)
+    .map(option => ({ weaponIndex: option.weaponIndex, name: option.weapon.name }));
+}
+
+export function fightOnDeathUnitWeapon(
+  state: BattleState,
+  side: Side,
+  targetUnitId: string,
+  weaponIndex: number,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): BattleState {
+  const pending = currentFightOnDeathWindow(state, side);
+  const target = state.units.find(unit => unit.id === targetUnitId && unit.side !== side && !unit.destroyed && !unit.embarkedInUnitId);
+  if (!pending || !target || !fightOnDeathWeaponOptions(state, side, targetUnitId, rules).some(option => option.weaponIndex === weaponIndex)) return state;
+
+  const s = clone(state);
+  const selected = s.pendingFightOnDeath?.shift();
+  const fightTarget = s.units.find(unit => unit.id === targetUnitId && unit.side !== side && !unit.destroyed && !unit.embarkedInUnitId);
+  if (!selected || !fightTarget) return state;
+  const fighter = selected.unit;
+  s.units = s.units.filter(unit => unit.id !== fighter.id);
+  s.units.push(fighter);
+  const weapon = fighter.profile.weapons[weaponIndex];
+  const logs = [log(s, side, fighter.profile.name, `${fighter.profile.name} makes a Fight On Death attack against ${fightTarget.profile.name}:`, 'fight')];
+  logs.push(...resolveAttacks(fighter, fightTarget, weapon, weaponIndex, rules, s, false, 0, '', { deferCasualties: true }));
+  s.units = s.units.filter(unit => unit !== fighter);
+  s.log = [...s.log, ...logs, ...resolvePendingDeadlyDemisesInPlace(s)];
+  return s;
+}
+
+export function declineFightOnDeath(
+  state: BattleState,
+  side: Side,
+  _rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): BattleState {
+  const pending = currentFightOnDeathWindow(state, side);
+  if (!pending) return state;
+  const s = clone(state);
+  s.pendingFightOnDeath?.shift();
+  s.log = [...s.log, log(s, side, pending.unit.profile.name, `${pending.unit.profile.name} declines its Fight On Death attack.`, 'fight')];
+  return s;
+}
+
 function runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
   if (unit.destroyed || unit.embarkedInUnitId) return [];
   const eng = rules.engagementRange();
@@ -6671,10 +6791,13 @@ export function removePlayCasualtyModels(
     .sort((a, b) => b - a)
     .slice(0, pendingCasualties);
   if (!uniqueIndices.length) return state;
+  const destroyedModelPositions = uniqueIndices.map(modelIndex => ({ ...unit.modelPositions[modelIndex] }));
+  const destroyedModelRosterIndexes = uniqueIndices.map(modelIndex => unit.modelRosterIndexes?.[modelIndex] ?? modelIndex);
 
   queueDeadlyDemiseForModels(s, unit, uniqueIndices, state.activeArmy);
   recordDestroyedModelMissionEvents(s, unit, uniqueIndices, state.activeArmy);
   spliceModelIndices(unit, uniqueIndices);
+  queueFightOnDeathWindow(s, unit, state.activeArmy, destroyedModelPositions, destroyedModelRosterIndexes);
 
   unit.remainingModels = Math.max(0, unit.remainingModels - uniqueIndices.length);
   unit.pendingCasualties = Math.max(0, (unit.pendingCasualties ?? 0) - uniqueIndices.length);

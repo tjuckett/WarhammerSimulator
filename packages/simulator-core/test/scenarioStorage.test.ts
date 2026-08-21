@@ -4,6 +4,7 @@ import type { BattleState, BattleUnit, Phase, Position, PrimaryMissionScoringRec
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
 import { simulatePlayerTurn } from '../src/engine/simulator';
+import { fightOnDeathTargetIds, fightOnDeathWeaponOptions } from '../src/engine/simulator';
 import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayScoutMove, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, createDeploymentState, decoyObjectiveOptions, declarePlaySuperHeavyMobile, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playDisembarkModes, playFightActivationUnitIds, playFightWeaponOptions, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playScoutMoveAllowance, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, resolvePendingDeadlyDemises, resolvePlaySurgeMove, rotatePlayModels, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, simulateNextUnit, simulationNextUnitId, snapShootPlayUnitWeapon, startPlayFightStep, startPlayScoutMove, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
@@ -13070,6 +13071,46 @@ test('11th Deadly Demise is a destroyed-model event, not a weapon critical-hit e
     assert.equal(resolved.pendingDeadlyDemises, undefined);
     assert.ok(resolved.units[0].woundsOnLeadModel < 6);
     assert.match(resolved.log.map(entry => entry.message).join(' '), /Deadly Demise/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('11th Fight On Death opens a serialized interrupt and resolves through legal actions', () => {
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const attacker = losTestUnit('attacker', 0, { x: 11.4, y: 10 }, 7);
+  attacker.profile = { ...attacker.profile, toughness: 4, wounds: 3 };
+  attacker.woundsOnLeadModel = 3;
+  const doomed = losTestUnit('doomed-fighter', 1, { x: 10, y: 10 });
+  doomed.profile = {
+    ...doomed.profile,
+    weapons: [{ name: 'Death Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true }],
+    abilities: [{ name: 'Fight On Death', description: 'Fight On Death: this model can fight before being removed.' }],
+  };
+  battle.units = [attacker, doomed];
+
+  applyDamage(doomed, 1, battle, attacker.side);
+  assert.equal(doomed.destroyed, true);
+  assert.deepEqual(fightOnDeathTargetIds(battle, doomed.side, rules40K11th), [attacker.id]);
+  assert.deepEqual(fightOnDeathWeaponOptions(battle, doomed.side, attacker.id, rules40K11th).map(option => option.name), ['Death Blade']);
+
+  const legal = getLegalActions(battle, attacker.side, rules40K11th);
+  assert.deepEqual(legal, []);
+  const interrupt = getLegalActions(battle, doomed.side, rules40K11th).find(option => option.action.type === GAME_ACTION_TYPE.FightOnDeath);
+  assert.ok(interrupt);
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const fought = applyGameAction(battle, interrupt.action, { rules: rules40K11th });
+    assert.equal(fought.pendingFightOnDeath?.length ?? 0, 0);
+    assert.equal(fought.units.find(unit => unit.id === attacker.id)?.pendingDamageAllocations?.length, 1);
+
+    const replayed = replayTimeline(
+      appendTimelineAction(createPracticeTimeline(battle), battle, interrupt.action, { rules: rules40K11th }).timeline,
+      { rules: rules40K11th }, false,
+    );
+    assert.equal(replayed.pendingFightOnDeath?.length ?? 0, 0);
   } finally {
     Math.random = originalRandom;
   }

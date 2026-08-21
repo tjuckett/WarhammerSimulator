@@ -18,6 +18,8 @@ import {
   playDeploymentIssues,
   playDisembarkModes,
   playFightActivationUnitIds,
+  fightOnDeathTargetIds,
+  fightOnDeathWeaponOptions,
   playFightWeaponOptions,
   playOverrunFightUnitIds,
   playPhaseCoherencyIssues,
@@ -418,6 +420,28 @@ function addDamageActions(actions: LegalAction[], state: BattleState, side: Side
   }
 }
 
+function addFightOnDeathActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
+  const pending = state.pendingFightOnDeath?.[0];
+  if (!pending || pending.side !== side) return;
+  for (const targetUnitId of fightOnDeathTargetIds(state, side, rules)) {
+    for (const option of fightOnDeathWeaponOptions(state, side, targetUnitId, rules)) {
+      actions.push({
+        action: { type: 'play.fightOnDeath', side, targetUnitId, weaponIndex: option.weaponIndex },
+        category: 'fight',
+        side,
+        targetUnitId,
+        label: `${pending.unit.profile.name}: Fight On Death with ${option.name}`,
+      });
+    }
+  }
+  actions.push({
+    action: { type: 'play.declineFightOnDeath', side },
+    category: 'fight',
+    side,
+    label: `${pending.unit.profile.name}: Decline Fight On Death`,
+  });
+}
+
 function timingsForPhase(state: BattleState): AbilityTiming[] {
   const timings: AbilityTiming[] = ['manual', 'end-of-phase'];
   if (state.phase === 'command') timings.push('command-phase');
@@ -554,6 +578,9 @@ export function getLegalActions(
   const includeStratagems = options.includeStratagems ?? true;
   const includeAbilities = options.includeAbilities ?? true;
   const actions: LegalAction[] = [];
+
+  addFightOnDeathActions(actions, state, side, rules);
+  if (state.pendingFightOnDeath?.length) return actions;
 
   addDamageActions(actions, state, side);
   if (actions.length) return actions;
