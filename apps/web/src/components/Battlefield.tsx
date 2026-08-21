@@ -948,7 +948,9 @@ function draw(
       : highlightedUnitIds.has(unit.id) && !unitHasLosTint
         ? unit.modelPositions.map((_, index) => index)
         : [];
-    const shootingRole = unit.id === shooterUnitId ? 'shooter' : unit.id === targetUnitId ? 'target' : null;
+    const shootingRole = unit.id === shooterUnitId
+      ? state.phase === 'charge' ? 'charger' : 'shooter'
+      : unit.id === targetUnitId ? 'target' : null;
     drawUnit(ctx, previewUnit, state, scale, selectedModelIndices, showUnitLabels || hoveredUnitId === unit.id, coherencyIssueModelIds, !!modelDragPreview, coverUnitIds?.has(unit.id) ?? false, losModelStates, shootingRole, shootingReadyUnitIds.has(unit.id), activeSimulationUnitId === unit.id);
   }
 
@@ -1422,7 +1424,7 @@ function drawUnit(
   skipWarnings = false,
   hasCover = false,
   losModelStates: Map<string, ModelVisualState> = new Map(),
-  shootingRole: 'shooter' | 'target' | null = null,
+  shootingRole: 'shooter' | 'charger' | 'target' | null = null,
   shootingReady = false,
   activeSimulationUnit = false,
 ) {
@@ -1569,9 +1571,10 @@ function drawUnit(
 
   // Health bar — below formation
   if (shootingRole) {
-    const label = shootingRole === 'shooter' ? 'SHOOTER' : 'TARGET';
-    const fill = shootingRole === 'shooter' ? 'rgba(80, 150, 255, 0.94)' : 'rgba(255, 186, 73, 0.96)';
-    const stroke = shootingRole === 'shooter' ? 'rgba(190, 220, 255, 0.95)' : 'rgba(255, 236, 170, 0.95)';
+    const isActingUnit = shootingRole === 'shooter' || shootingRole === 'charger';
+    const label = shootingRole === 'charger' ? 'CHARGER' : shootingRole === 'shooter' ? 'SHOOTER' : 'TARGET';
+    const fill = isActingUnit ? 'rgba(80, 150, 255, 0.94)' : 'rgba(255, 186, 73, 0.96)';
+    const stroke = isActingUnit ? 'rgba(190, 220, 255, 0.95)' : 'rgba(255, 236, 170, 0.95)';
     const fontSize = Math.max(6, scale * 0.58);
     ctx.font = `bold ${fontSize}px monospace`;
     ctx.textAlign = 'center';
@@ -1705,7 +1708,7 @@ function drawLeadModelWoundBadge(
 
 function drawShootingRoleOutline(
   ctx: CanvasRenderingContext2D,
-  role: 'shooter' | 'target',
+  role: 'shooter' | 'charger' | 'target',
   leftX: number,
   topY: number,
   rightX: number,
@@ -1718,9 +1721,10 @@ function drawShootingRoleOutline(
   const w = Math.max(rightX - leftX + pad * 2, scale * 1.8);
   const h = Math.max(bottomY - topY + pad * 2, scale * 1.8);
   const radius = Math.min(Math.max(4, scale * 0.3), Math.min(w, h) / 4);
-  const stroke = role === 'shooter' ? 'rgba(80, 160, 255, 0.96)' : 'rgba(255, 190, 75, 0.98)';
-  const glow = role === 'shooter' ? 'rgba(60, 135, 255, 0.55)' : 'rgba(255, 175, 45, 0.58)';
-  const fill = role === 'shooter' ? 'rgba(50, 130, 255, 0.07)' : 'rgba(255, 178, 40, 0.08)';
+  const isActingUnit = role === 'shooter' || role === 'charger';
+  const stroke = isActingUnit ? 'rgba(80, 160, 255, 0.96)' : 'rgba(255, 190, 75, 0.98)';
+  const glow = isActingUnit ? 'rgba(60, 135, 255, 0.55)' : 'rgba(255, 175, 45, 0.58)';
+  const fill = isActingUnit ? 'rgba(50, 130, 255, 0.07)' : 'rgba(255, 178, 40, 0.08)';
 
   ctx.save();
   roundedRectPath(ctx, x, y, w, h, radius);
@@ -1734,7 +1738,7 @@ function drawShootingRoleOutline(
   ctx.shadowBlur = 0;
   ctx.setLineDash([Math.max(5, scale * 0.42), Math.max(3, scale * 0.24)]);
   roundedRectPath(ctx, x + 3, y + 3, Math.max(0, w - 6), Math.max(0, h - 6), Math.max(0, radius - 2));
-  ctx.strokeStyle = role === 'shooter' ? 'rgba(205, 230, 255, 0.72)' : 'rgba(255, 241, 185, 0.78)';
+  ctx.strokeStyle = isActingUnit ? 'rgba(205, 230, 255, 0.72)' : 'rgba(255, 241, 185, 0.78)';
   ctx.lineWidth = 1;
   ctx.stroke();
   ctx.restore();
