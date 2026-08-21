@@ -367,8 +367,7 @@ export function PlayChargePanel({
     );
   }
   const canResolve = selectedTargetIds.length > 0
-    && selectedTargetIds.every(targetId => options.some(option => option.targetId === targetId))
-    && !charger.activated;
+    && selectedTargetIds.every(targetId => options.some(option => option.targetId === targetId));
   return (
     <Box sx={playPanelSx}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
@@ -378,11 +377,11 @@ export function PlayChargePanel({
             {charger.profile.name}{charger.activated ? ' - done' : ''}
           </Typography>
         </Box>
-        <Button size="small" variant="contained" startIcon={<CasinoOutlinedIcon />} disabled={chargeRolled ? !canResolve : charger.activated} onClick={chargeRolled ? onResolve : onRoll}>
+        <Button size="small" variant="contained" startIcon={<CasinoOutlinedIcon />} disabled={chargeRolled ? !canResolve : false} onClick={chargeRolled ? onResolve : onRoll}>
           {chargeRolled ? PLAY_PANEL_LABELS.resolve : PLAY_PANEL_LABELS.roll}
         </Button>
       </Box>
-      <FormControl size="small" fullWidth disabled={!chargeRolled || !targets.length || charger.activated}>
+      <FormControl size="small" fullWidth disabled={!chargeRolled || !targets.length}>
         <InputLabel id="play-charge-target-label">{PLAY_PANEL_LABELS.target}</InputLabel>
         <Select
           labelId="play-charge-target-label"

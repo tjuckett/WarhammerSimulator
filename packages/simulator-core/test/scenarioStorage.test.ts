@@ -6490,7 +6490,7 @@ test('11th Desperate Escape applies a Battle-shock roll after a non-shocked unit
   }
 });
 
-test('11th shooting types prevent an action after a partial shooting activation', () => {
+test('11th shooting types prevent an action but still allow a charge after partial shooting', () => {
   const battle = state('shooting');
   const shooter = losTestUnit('partial-shooter', 0, { x: 10, y: 10 });
   shooter.profile.weapons = [
@@ -6506,8 +6506,8 @@ test('11th shooting types prevent an action after a partial shooting activation'
   assert.deepEqual(afterShotUnit.firedWeaponIndices, [0]);
   assert.equal(playUnitCanStartAction(afterShot, shooter.id, 0, rules40K11th), false);
   const chargeState = { ...afterShot, phase: 'charge' as Phase };
-  assert.deepEqual(playChargeTargetOptions(chargeState, shooter.id, 0, rules40K11th), []);
-  assert.equal(chargePlayUnitTarget(chargeState, shooter.id, 0, target.id, rules40K11th), chargeState);
+  assert.equal(playChargeTargetOptions(chargeState, shooter.id, 0, rules40K11th).length, 1);
+  assert.notEqual(chargePlayUnitTarget(chargeState, shooter.id, 0, target.id, rules40K11th), chargeState);
 });
 
 test('11th Fly only bypasses paths and vertical distance after Take to the Skies at -2"', () => {

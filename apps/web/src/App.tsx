@@ -1555,7 +1555,7 @@ export default function App() {
     if (isPlayMode && (battleState?.phase === 'charge' || battleState?.phase === 'fight')) {
       const unit = battleState.units.find(u => u.id === primary.unitId && u.side === primary.side && !u.destroyed);
       if (!unit) return;
-      if (primary.side !== battleState.activeArmy || unit.activated) return;
+      if (primary.side !== battleState.activeArmy || (battleState.phase === 'fight' && unit.activated)) return;
     }
     setPlayDeploySelection(null);
     setInspectedSelection({ kind: 'battle', side: primary.side, unitId: primary.unitId });

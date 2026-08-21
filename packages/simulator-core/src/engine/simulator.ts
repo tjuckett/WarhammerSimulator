@@ -3550,7 +3550,6 @@ export function playChargeRoll(
   if (state.phase !== 'charge' || state.pendingChargeRoll) return state;
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit
-    || attachedUnitComponents(state, unit).some(component => component.activated)
     || attachedUnitComponents(state, unit).some(component => unitSurgedThisPhase(state, component))
     || !sideCanDeclareCharge(state, side, unit)
     || !unitCanDeclareCharge(state, unit)) return state;
@@ -3585,7 +3584,6 @@ function unitCanDeclareCharge(state: BattleState, unit: BattleUnit): boolean {
   return !unit.destroyed
     && !unit.embarkedInUnitId
     && !unit.performingAction
-    && !unit.activated
     && !isAircraft(unit)
     && !unit.inCombat
     && !unit.fellBack
@@ -3594,8 +3592,7 @@ function unitCanDeclareCharge(state: BattleState, unit: BattleUnit): boolean {
     && !unit.combatDisembarkedThisTurn
     && !unit.rapidDisembarkedThisTurn
     && unit.movementAction !== 'fellBack'
-    && (unit.movementAction !== 'advanced' || state.activeArmyAbilities?.[unit.side]?.includes('waaagh') === true)
-    && (unit.firedWeaponIndices?.length ?? 0) === 0;
+    && (unit.movementAction !== 'advanced' || state.activeArmyAbilities?.[unit.side]?.includes('waaagh') === true);
 }
 
 function sideCanDeclareCharge(state: BattleState, side: Side, unit: BattleUnit): boolean {
@@ -3611,7 +3608,6 @@ export function playChargeTargetOptions(
   if (state.phase !== 'charge') return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit
-    || attachedUnitComponents(state, unit).some(component => component.activated)
     || attachedUnitComponents(state, unit).some(component => unitSurgedThisPhase(state, component))
     || !sideCanDeclareCharge(state, side, unit)
     || !unitCanDeclareCharge(state, unit)) return [];
@@ -3655,7 +3651,6 @@ export function chargePlayUnitTargets(
     .filter((target): target is BattleUnit => !!target);
   const target = targets[0];
   if (!unit
-    || attachedUnitComponents(state, unit).some(component => component.activated)
     || attachedUnitComponents(state, unit).some(component => unitSurgedThisPhase(state, component))
     || !target
     || targets.length !== uniqueTargetIds.length
