@@ -53,6 +53,7 @@ interface Props {
   losRays?: LOSRay[];
   visibleOutOfRangeUnitIds?: Set<string>;
   showTerrainLabels?: boolean;
+  showUnitLabels?: boolean;
   onSelectUnit?: (unitId: string, side: 0 | 1) => void;
   deployer?: {
     enabled: boolean;
@@ -84,7 +85,7 @@ const ZOOM_STEP = 0.25;
 const NO_MANS_LAND_FILL = 'rgb(240, 240, 232)';
 const ALIGN_VERTEX_PICK_RADIUS = 0.22;
 
-export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], activeSimulationUnitId = null, shooterUnitId = null, targetUnitId = null, shootingReadyUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showTerrainLabels = true, onSelectUnit, deployer, editor }: Props) {
+export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], activeSimulationUnitId = null, shooterUnitId = null, targetUnitId = null, shootingReadyUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showTerrainLabels = true, showUnitLabels = false, onSelectUnit, deployer, editor }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedActionsRef = useRef<HTMLDivElement>(null);
@@ -161,6 +162,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       losRays,
       visibleOutOfRangeUnitIds,
       showTerrainLabels,
+      showUnitLabels,
     );
     return true;
   }
@@ -173,7 +175,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     updateSelectedActionsPositionEvent();
     window.addEventListener('resize', updateSelectedActionsPositionEvent);
     return () => window.removeEventListener('resize', updateSelectedActionsPositionEvent);
-  }, [state, editor?.selected, hoverGridPoint, zoom, deployer?.selectedModel, deployer?.selectedModelActions, hideSelectedActions, selectedUnitId, selectedUnitIds, activeSimulationUnitId, shooterUnitId, targetUnitId, shootingReadyUnitIds, boxSelect, hoveredTransport, hoveredUnitId, coverUnitIds, losRays, visibleOutOfRangeUnitIds, renderCanvasEvent, updateSelectedActionsPositionEvent]);
+  }, [state, editor?.selected, hoverGridPoint, zoom, deployer?.selectedModel, deployer?.selectedModelActions, hideSelectedActions, selectedUnitId, selectedUnitIds, activeSimulationUnitId, shooterUnitId, targetUnitId, shootingReadyUnitIds, boxSelect, hoveredTransport, hoveredUnitId, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showTerrainLabels, showUnitLabels, renderCanvasEvent, updateSelectedActionsPositionEvent]);
 
   useEffect(() => {
     setHideSelectedActions(false);
@@ -764,6 +766,7 @@ function draw(
   losRays?: LOSRay[],
   visibleOutOfRangeUnitIds: Set<string> = new Set(),
   showTerrainLabels = true,
+  showUnitLabels = false,
 ) {
   // ── Background ───────────────────────────────────────────────────────────
   const board = boardFormatForState(state);
@@ -946,7 +949,7 @@ function draw(
         ? unit.modelPositions.map((_, index) => index)
         : [];
     const shootingRole = unit.id === shooterUnitId ? 'shooter' : unit.id === targetUnitId ? 'target' : null;
-    drawUnit(ctx, previewUnit, state, scale, selectedModelIndices, hoveredUnitId === unit.id, coherencyIssueModelIds, !!modelDragPreview, coverUnitIds?.has(unit.id) ?? false, losModelStates, shootingRole, shootingReadyUnitIds.has(unit.id), activeSimulationUnitId === unit.id);
+    drawUnit(ctx, previewUnit, state, scale, selectedModelIndices, showUnitLabels || hoveredUnitId === unit.id, coherencyIssueModelIds, !!modelDragPreview, coverUnitIds?.has(unit.id) ?? false, losModelStates, shootingRole, shootingReadyUnitIds.has(unit.id), activeSimulationUnitId === unit.id);
   }
 
   if (hoveredTransport) drawTransportTooltip(ctx, hoveredTransport, scale, W, H);

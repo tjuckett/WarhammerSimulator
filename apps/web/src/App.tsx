@@ -695,6 +695,13 @@ export default function App() {
     const targetIds = new Set(selectedPlayChargeOptions.map(option => option.targetId));
     return battleState.units.filter(unit => unit.side !== selectedChargeUnit.side && !unit.destroyed && !unit.embarkedInUnitId && targetIds.has(unit.id));
   }, [battleState, selectedChargeUnit, selectedPlayChargeOptions]);
+  const selectedPlayCanRollCharge = !!(
+    isPlayMode
+    && battleState?.phase === 'charge'
+    && selectedChargeUnit
+    && !pendingChargeRoll
+    && selectedPlayChargeOptions.length > 0
+  );
   const selectedPlayChargeResult = useMemo(() => {
     if (!battleState || !selectedChargeUnit) return null;
     return [...battleState.log].reverse().find(entry => entry.type === 'charge' && entry.unitName === selectedChargeUnit.profile.name)?.message ?? null;
@@ -2941,11 +2948,13 @@ export default function App() {
             selectedUnitIds={isPlayMode
               ? (battleState?.phase === 'shooting' && selectedShootingTargetId
                   ? [selectedShootingTargetId]
-                  : battleState?.phase === 'charge' && selectedChargeTargetIds.length
-                    ? selectedChargeTargetIds
+                  : battleState?.phase === 'charge' && pendingChargeRoll
+                    ? selectedPlayChargeTargets.map(unit => unit.id)
                     : battleState?.phase === 'fight' && selectedFightTargetId
                       ? [selectedFightTargetId]
-                      : [])
+                      : battleState?.phase === 'charge'
+                        ? selectedChargeTargetIds
+                        : [])
               : inspectedBattleUnitIds}
             shooterUnitId={isPlayMode
               ? battleState?.phase === 'shooting'
@@ -2970,6 +2979,7 @@ export default function App() {
             losRays={isPlayMode ? losRays : undefined}
             visibleOutOfRangeUnitIds={isPlayMode ? visibleOutOfRangeUnitIds : undefined}
             showTerrainLabels={!isPlayMode}
+            showUnitLabels={isPlayMode}
             onSelectUnit={inspectBattleUnit}
             deployer={isPlayMode && battleState && battleState.phase !== 'end' ? {
               enabled: true,
@@ -2986,7 +2996,7 @@ export default function App() {
               onRotateModel: canEditPlayModelsNow
                 ? (_selection, degrees, batched) => rotateSelectedPlayModels(degrees, batched)
                 : undefined,
-              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayScoutAllowance !== null || selectedPlayScoutMoveStarted || selectedPlayCanDeclareMobile || selectedPlayCanAdvance || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanUndoMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
+              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayScoutAllowance !== null || selectedPlayScoutMoveStarted || selectedPlayCanDeclareMobile || selectedPlayCanAdvance || selectedPlayCanRollCharge || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanUndoMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
                 <>
                   {pendingDamageAllocationUnit && (
                     <PendingDamageAllocationHud unit={pendingDamageAllocationUnit} />
@@ -3024,6 +3034,11 @@ export default function App() {
                   {selectedPlayCanFallBack && (
                     <Button size="small" color="secondary" variant="contained" startIcon={<DirectionsRunIcon />} onClick={fallBackSelectedPlayUnit}>
                       Fall Back
+                    </Button>
+                  )}
+                  {selectedPlayCanRollCharge && (
+                    <Button size="small" color="warning" variant="contained" onClick={rollSelectedPlayCharge}>
+                      Roll Charge
                     </Button>
                   )}
                   {selectedPlayCanTakeToSkies && (
