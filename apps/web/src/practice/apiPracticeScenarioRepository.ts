@@ -95,17 +95,19 @@ export const apiPracticeScenarioRepository: PracticeScenarioRepository = {
   },
 
   saveScenario(scenario: PracticeScenario) {
-    return withLocalFallback(
-      async () => {
+    return (async () => {
+      const saveToApi = async () => {
         const requestBody = await compressedJsonBody({ scenario });
         return apiRequest<PracticeScenarioSummary[]>('/api/practice/scenarios', {
           method: 'POST',
           body: requestBody.body,
           headers: requestBody.compressed ? { 'content-encoding': 'gzip' } : undefined,
         });
-      },
-      () => localPracticeScenarioRepository.saveScenario(scenario),
-    );
+      };
+      const health = await practiceStorageHealth();
+      if (health.storage === 'database') return saveToApi();
+      return localPracticeScenarioRepository.saveScenario(scenario);
+    })();
   },
 
   deleteScenarios(ids: string[]) {
