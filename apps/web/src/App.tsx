@@ -111,7 +111,6 @@ import {
 } from './play/playDeploymentHelpers';
 import {
   PendingDamageAllocationHud,
-  PlayChargePanel,
   PlayFightPanel,
   PlayShootingPanel,
   PlayTacticsPanel,
@@ -2996,7 +2995,7 @@ export default function App() {
               onRotateModel: canEditPlayModelsNow
                 ? (_selection, degrees, batched) => rotateSelectedPlayModels(degrees, batched)
                 : undefined,
-              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayScoutAllowance !== null || selectedPlayScoutMoveStarted || selectedPlayCanDeclareMobile || selectedPlayCanAdvance || selectedPlayCanRollCharge || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanUndoMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
+              selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || selectedPlayScoutAllowance !== null || selectedPlayScoutMoveStarted || selectedPlayCanDeclareMobile || selectedPlayCanAdvance || selectedPlayCanRollCharge || !!selectedPlayChargeResult || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanUndoMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
                 <>
                   {pendingDamageAllocationUnit && (
                     <PendingDamageAllocationHud unit={pendingDamageAllocationUnit} />
@@ -3040,6 +3039,42 @@ export default function App() {
                     <Button size="small" color="warning" variant="contained" onClick={rollSelectedPlayCharge}>
                       Roll Charge
                     </Button>
+                  )}
+                  {battleState.phase === 'charge' && selectedChargeUnit && pendingChargeRoll && (
+                    <>
+                      {selectedPlayChargeResult && (
+                        <Typography variant="caption" sx={{ color: '#ffcf66', maxWidth: 240 }}>
+                          {selectedPlayChargeResult}
+                        </Typography>
+                      )}
+                      <select
+                        aria-label="Charge targets"
+                        multiple
+                        size={Math.min(4, Math.max(2, selectedPlayChargeTargets.length))}
+                        value={selectedChargeTargetIds}
+                        onChange={event => setSelectedChargeTargetIds(Array.from(event.currentTarget.selectedOptions, option => option.value))}
+                        style={{ minWidth: 190, maxWidth: 260, minHeight: 48, color: '#f4f1ff', background: '#202838', border: '1px solid #71809b', borderRadius: 4, padding: '3px 5px' }}
+                      >
+                        {selectedPlayChargeTargets.map(target => {
+                          const needed = selectedPlayChargeOptions.find(option => option.targetId === target.id)?.needed ?? 0;
+                          return <option key={target.id} value={target.id}>{target.profile.name} ({needed.toFixed(1)}&quot;)</option>;
+                        })}
+                      </select>
+                      <Button
+                        size="small"
+                        color="primary"
+                        variant="contained"
+                        disabled={!selectedChargeTargetIds.length || !selectedChargeTargetIds.every(targetId => selectedPlayChargeOptions.some(option => option.targetId === targetId))}
+                        onClick={resolveSelectedPlayCharge}
+                      >
+                        Resolve Charge
+                      </Button>
+                    </>
+                  )}
+                  {battleState.phase === 'charge' && selectedChargeUnit && !pendingChargeRoll && !selectedPlayCanRollCharge && selectedPlayChargeResult && (
+                    <Typography variant="caption" sx={{ color: '#ffcf66', maxWidth: 240 }}>
+                      {selectedPlayChargeResult}
+                    </Typography>
                   )}
                   {selectedPlayCanTakeToSkies && (
                     <Button size="small" color="info" variant="contained" onClick={takeSelectedPlayUnitToSkies}>
@@ -3265,19 +3300,6 @@ export default function App() {
                   onWeaponChange={setSelectedShootingWeaponIndex}
                   coverUnitIds={coverUnitIds}
                   onResolve={resolveSelectedPlayOverwatch}
-                />
-              )}
-              {isPlayMode && battleState?.phase === 'charge' && (
-                <PlayChargePanel
-                  charger={selectedChargeUnit}
-                  targets={selectedPlayChargeTargets}
-                  selectedTargetIds={selectedChargeTargetIds}
-                  options={selectedPlayChargeOptions}
-                  chargeRolled={!!pendingChargeRoll}
-                  resultMessage={selectedPlayChargeResult}
-                  onTargetChange={setSelectedChargeTargetIds}
-                  onRoll={rollSelectedPlayCharge}
-                  onResolve={resolveSelectedPlayCharge}
                 />
               )}
               {isPlayMode && battleState?.phase === 'fight' && (
