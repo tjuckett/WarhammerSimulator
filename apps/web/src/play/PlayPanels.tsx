@@ -500,7 +500,7 @@ export function PlayShootingPanel({
                   const saveFailureChance = allocationSaveWithCover === null || allocationSaveWithCover > 6
                     ? 1
                     : Math.max(0, (allocationSaveWithCover - 1) / 6);
-                  const expectedDamage = allocatedModelCount > 0 && averageAttacks !== null && averageDamage !== null
+                  const expectedDamage = averageAttacks !== null && averageDamage !== null
                     ? allocatedModelCount * averageAttacks * hitChance * woundChance * saveFailureChance * averageDamage
                     : null;
                   const estimatedModelsLost = expectedDamage !== null && target
@@ -543,7 +543,7 @@ export function PlayShootingPanel({
                           <Tooltip title="Approximate expected model losses from average attacks, hit/wound/save probabilities, and average damage. Actual dice results may vary.">
                             <Box sx={{ px: 0.8, py: 0.35, borderTop: `1px solid ${uiTokens.border.statCard}`, cursor: 'help' }}>
                               <Typography variant="caption" sx={{ color: estimatedModelsLost === null ? uiTokens.color.text.muted : uiTokens.color.status.warning, fontWeight: 900 }}>
-                                {estimatedModelsLost === null ? 'Est. assign models to calculate deaths' : `Est. ~${estimatedModelsLost.toFixed(1)} models die`}
+                                {estimatedModelsLost === null ? 'Est. unavailable for this weapon profile' : `Est. ~${estimatedModelsLost.toFixed(1)} models die`}
                               </Typography>
                             </Box>
                           </Tooltip>
