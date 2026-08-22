@@ -82,6 +82,26 @@ export function circleFullyInTerrain(p: Position, radius: number, t: RectShape):
     && local.y + radius <= t.y + t.height;
 }
 
+function distanceSquaredToSegment(p: Position, a: Position, b: Position): number {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const lengthSquared = dx * dx + dy * dy;
+  if (lengthSquared < 0.0001) return (p.x - a.x) ** 2 + (p.y - a.y) ** 2;
+  const projection = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / lengthSquared));
+  const closest = { x: a.x + projection * dx, y: a.y + projection * dy };
+  return (p.x - closest.x) ** 2 + (p.y - closest.y) ** 2;
+}
+
+/** True when any part of a model's circular footprint overlaps the terrain. */
+export function circleIntersectsTerrain(p: Position, radius: number, t: RectShape): boolean {
+  if (pointInTerrain(p, t)) return true;
+  const corners = terrainCorners(t);
+  if (corners.some(corner => (corner.x - p.x) ** 2 + (corner.y - p.y) ** 2 <= radius * radius)) return true;
+  return corners.some((corner, index) =>
+    distanceSquaredToSegment(p, corner, corners[(index + 1) % corners.length]) <= radius * radius,
+  );
+}
+
 function ccw(a: Position, b: Position, c: Position): boolean {
   return (c.y - a.y) * (b.x - a.x) > (b.y - a.y) * (c.x - a.x);
 }

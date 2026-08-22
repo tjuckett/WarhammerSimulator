@@ -21,7 +21,7 @@ import {
 import { gainCommandPhaseCommandPoints } from './commandPoints';
 import { runAutomaticCommandUnitAbilities, runAutomaticUnitAbilities } from './unitAbilities';
 import { objectiveControlValue, resolveDesperateEscapeTests } from './battleshock';
-import { circleFullyInTerrain, findUnblockedLOSRay, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, pointInTerrain, terrainCorners } from './terrainGeometry';
+import { circleFullyInTerrain, circleIntersectsTerrain, findUnblockedLOSRay, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, pointInTerrain, terrainCorners } from './terrainGeometry';
 import { COHERENCY_VERTICAL_RANGE, distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, verticalDistance, type CoherencyModel } from './coherency';
 import { secondaryMissionStateFor } from './secondaryMissions';
 import { objectiveRoleForIndex, terrainTerritoryRelation, terrainWithinMissionTerritory } from './missionGeometry';
@@ -655,7 +655,7 @@ function modelIsHiddenFrom(
   if (!targetModel || !sourceModel) return false;
   if (!state.terrain.some(terrain =>
     terrainCanHideModels(terrain)
-      && circleFullyInTerrain(targetModel, modelBaseRadius(target, targetModelIndex), terrain),
+      && circleIntersectsTerrain(targetModel, modelBaseRadius(target, targetModelIndex), terrain),
   )) return false;
   const goneToGround = modelIsGoneToGroundFromDenseTerrain(
     state,
