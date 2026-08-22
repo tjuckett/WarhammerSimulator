@@ -148,7 +148,7 @@ function ShootingResultSummary({ entries, section = 'all' }: { entries: LogEntry
   const result = shootingResultSummary(entries, section);
   if (!result.groups.length) return null;
   return (
-    <Box sx={{ display: 'grid', gap: 0.5, pt: 0.75, borderTop: `1px solid ${uiTokens.border.control}` }}>
+    <Box sx={{ display: 'grid', gap: 0.5, pt: 0.75, pb: 0.5, mb: 0.5, borderTop: `1px solid ${uiTokens.border.control}` }}>
       <Typography variant="caption" sx={{ color: uiTokens.color.text.secondary, fontWeight: 800 }}>Latest shooting result</Typography>
       {result.groups.map(group => (
         <Box key={group.label} sx={{ display: 'flex', gap: 0.75, alignItems: 'baseline', flexWrap: 'wrap' }}>
