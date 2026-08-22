@@ -304,10 +304,12 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     const actionRect = selectedActionsRef.current?.getBoundingClientRect();
     const canvasLeft = canvasRect.left - containerRect.left;
     const canvasTop = canvasRect.top - containerRect.top;
+    const boardTop = canvasTop + 4;
+    const boardBottom = canvasTop + canvasRect.height - 4;
     if (!actionRect) {
       setSelectedActionsPosition({
         left: Math.max(4, canvasLeft + anchor.x * scale + 18),
-        top: Math.max(4, canvasTop + anchor.y * scale),
+        top: Math.max(boardTop, canvasTop + anchor.y * scale),
       });
       return;
     }
@@ -328,13 +330,13 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     ];
     const fitsContainer = (candidate: { left: number; top: number }) => (
       candidate.left >= 4
-      && candidate.top >= 4
+      && candidate.top >= boardTop
       && candidate.left + actionRect.width <= container.scrollWidth - 4
-      && candidate.top + actionRect.height <= container.scrollHeight - 4
+      && candidate.top + actionRect.height <= Math.min(container.scrollHeight - 4, boardBottom)
     );
     const nextPosition = candidates.find(fitsContainer) ?? candidates[0];
     nextPosition.left = Math.max(4, Math.min(container.scrollWidth - actionRect.width - 4, nextPosition.left));
-    nextPosition.top = Math.max(4, Math.min(container.scrollHeight - actionRect.height - 4, nextPosition.top));
+    nextPosition.top = Math.max(boardTop, Math.min(Math.min(container.scrollHeight - actionRect.height - 4, boardBottom - actionRect.height), nextPosition.top));
     setSelectedActionsPosition(current =>
       current
         && Math.abs(current.left - nextPosition.left) < 0.5
