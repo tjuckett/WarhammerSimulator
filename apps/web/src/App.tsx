@@ -2562,6 +2562,7 @@ export default function App() {
 
   const undoPlayAction = useCallback(() => {
     if (!isPlayMode) return;
+    setShootingResultEntries([]);
     if (pendingPlayRotationUndoRef.current) {
       const entry = pendingPlayRotationUndoRef.current;
       clearPendingPlayRotation();
@@ -2597,8 +2598,14 @@ export default function App() {
 
   const redoPlayAction = useCallback(() => {
     if (!isPlayMode) return;
+    setShootingResultEntries([]);
     redoGameSessionTimelineAction();
-  }, [isPlayMode, redoGameSessionTimelineAction]);
+  }, [isPlayMode, redoGameSessionTimelineAction, setShootingResultEntries]);
+
+  const undoDisplayedTimeline = useCallback(() => {
+    setShootingResultEntries([]);
+    undoGameSessionTimelineAction();
+  }, [setShootingResultEntries, undoGameSessionTimelineAction]);
 
   useEffect(() => {
     if (!isPlayMode) return;
@@ -3302,7 +3309,7 @@ export default function App() {
               status={gameSessionSaveStatus}
               saveInProgress={gameSessionSaveInProgress}
               storageStatus={gameSessionStorageStatus}
-              onUndo={undoGameSessionTimelineAction}
+              onUndo={undoDisplayedTimeline}
               onRedo={redoGameSessionTimelineAction}
               onSeek={seekGameSessionTimelineAction}
               onOpenSave={() => setGameSessionSaveModalOpen(true)}
@@ -3499,7 +3506,7 @@ export default function App() {
         status={gameSessionSaveStatus}
         saveInProgress={gameSessionSaveInProgress}
         storageStatus={gameSessionStorageStatus}
-        onUndo={undoGameSessionTimelineAction}
+        onUndo={undoDisplayedTimeline}
         onRedo={redoGameSessionTimelineAction}
         onSeek={seekGameSessionTimelineAction}
         onSave={saveActiveGameSessionScenarioAndClose}
