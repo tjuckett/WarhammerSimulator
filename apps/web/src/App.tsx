@@ -25,7 +25,7 @@ import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simu
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
   battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, completePlayScoutMove, createDeploymentState, declarePlaySuperHeavyMobile, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playDisembarkModes, playPhaseCoherencyIssues, playScoutMoveAllowance, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels, startPlayScoutMove,
-  allocatePlayDamageToModel, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTargets, completePlayChargeMovement, playChargeEligibilityReason, playChargeRoll, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightFirstUnitIds, playFightPhaseHasPendingActivations, playFightStepNeedsStart, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponAttackCount, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, shootPlayUnitWeapons, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undoPlayUnitMovement, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type FiringDeckSelection, type LOSRay, type PlayShootingAttackAllocation,
+  allocatePlayDamageToModel, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTargets, completePlayChargeMovement, playChargeEligibilityReason, playChargeRoll, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, fightPlayUnitWeapons, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightFirstUnitIds, playFightPhaseHasPendingActivations, playFightStepNeedsStart, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponAttackCount, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, shootPlayUnitWeapons, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undoPlayUnitMovement, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type FiringDeckSelection, type LOSRay, type PlayShootingAttackAllocation, type PlayMeleeAttackAllocation,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -287,6 +287,8 @@ export default function App() {
       setSelectedFightWeaponIndex,
       fightAttackSplits,
       setFightAttackSplits,
+      fightAttackAllocations,
+      setFightAttackAllocations,
       overwatchUnitId,
       setOverwatchUnitId,
       casualtyRemovalShooterId,
@@ -1315,7 +1317,7 @@ export default function App() {
       selectedFightWeaponIndex === 'all'
       || !selectedPlayFightOptions.some(option => String(option.weaponIndex) === selectedFightWeaponIndex)
     ) {
-      setSelectedFightWeaponIndex(selectedPlayFightOptions[0] ? String(selectedPlayFightOptions[0].weaponIndex) : 'all');
+      setSelectedFightWeaponIndex('all');
       return;
     }
     if (
@@ -1341,6 +1343,30 @@ export default function App() {
   useEffect(() => {
     setFightAttackSplits({});
   }, [battleState?.phase, selectedFightUnit?.id, selectedFightWeaponIndex, setFightAttackSplits]);
+
+  useEffect(() => {
+    if (!battleState || battleState.phase !== 'fight' || !selectedFightUnit) {
+      setFightAttackAllocations({});
+      return;
+    }
+    setFightAttackAllocations(current => {
+      const next: Record<string, Record<string, number>> = {};
+      const groups = new Set<string>();
+      for (const option of selectedPlayFightOptions) {
+        const weapon = selectedFightUnit.profile.weapons[option.weaponIndex];
+        const group = weapon?.profileGroup?.trim().toLowerCase() || `weapon:${option.weaponIndex}`;
+        if (groups.has(group)) continue;
+        groups.add(group);
+        const targetId = option.targetIds[0];
+        if (!targetId) continue;
+        const attacks = weapon && /^\d+$/.test(String(weapon.attacks).trim())
+          ? Number(weapon.attacks) * selectedFightUnit.remainingModels
+          : 1;
+        next[String(option.weaponIndex)] = { [targetId]: attacks };
+      }
+      return Object.keys(current).length ? current : next;
+    });
+  }, [battleState?.phase, selectedFightUnit?.id, selectedPlayFightOptions, selectedFightUnit, setFightAttackAllocations]);
 
   const selectedFightTargetKey = selectedPlayFightTargets.map(target => target.id).join('|');
   useEffect(() => {
@@ -1797,7 +1823,7 @@ export default function App() {
       if (side === battleState.activeArmy) {
         const options = playFightWeaponOptions(battleState, unitId, side, activeRulesForBattle);
         selectPlacedPlayUnit(unitId, side);
-        setSelectedFightWeaponIndex(options[0] ? String(options[0].weaponIndex) : 'all');
+        setSelectedFightWeaponIndex('all');
         setSelectedFightTargetId(options.flatMap(option => option.targetIds)[0] ?? '');
         setTargetErrorMsg(options.length ? null : `${clickedUnit.profile.name} is not eligible to fight`);
         return;
@@ -2187,12 +2213,51 @@ export default function App() {
     return true;
   }
 
+  function updateFightAttackAllocation(weaponIndex: number, targetId: string, attacks: number) {
+    setFightAttackAllocations(current => ({
+      ...current,
+      [String(weaponIndex)]: {
+        ...(current[String(weaponIndex)] ?? {}),
+        [targetId]: attacks,
+      },
+    }));
+  }
+
   function resolveSelectedPlayFight() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'fight' || !selection) return;
     if (damageAllocationLocked) {
       setTargetErrorMsg('Allocate pending damage before fighting again');
+      return;
+    }
+    const meleeAllocations: PlayMeleeAttackAllocation[] = Object.entries(fightAttackAllocations).flatMap(([weaponIndexText, targets]) => {
+      const weaponIndex = Number(weaponIndexText);
+      const entries = Object.entries(targets).filter(([, attacks]) => attacks > 0);
+      return entries.map(([targetUnitId, attacks]) => ({
+        weaponIndex,
+        targetUnitId,
+        ...(entries.length > 1 ? { attackCount: attacks } : {}),
+      }));
+    });
+    if (meleeAllocations.length) {
+      const next = fightPlayUnitWeapons(prev, selection.unitId, selection.side, meleeAllocations, activeRulesForBattle);
+      if (next === prev) {
+        setTargetErrorMsg('Allocate every selected melee weapon to valid engaged targets before rolling.');
+        return;
+      }
+      setShootingResultEntries(next.log.slice(prev.log.length));
+      const hasPendingDamage = selectPendingDamageUnit(next, selection.unitId);
+      if (!hasPendingDamage) setTargetErrorMsg(null);
+      setFightAttackAllocations({});
+      pushPlayUndo(playUndoEntry(prev), next, {
+        type: GAME_ACTION_TYPE.FightUnitWeapon,
+        unitId: selection.unitId,
+        side: selection.side,
+        targetUnitId: meleeAllocations[0].targetUnitId,
+        weaponIndex: 'all',
+      });
+      commitBattleState(next);
       return;
     }
     const weaponIndex = selectedFightWeaponIndex === 'all' ? 'all' : Number(selectedFightWeaponIndex);
@@ -3468,11 +3533,13 @@ export default function App() {
                   weaponOptions={selectedPlayFightOptions}
                   fixedAttackCount={selectedFightAttackCount}
                   attackSplits={fightAttackSplits}
+                  attackAllocations={fightAttackAllocations}
                   damageAllocationLocked={damageAllocationLocked}
                   pendingDamageLabel={pendingDamageText}
                   onTargetChange={setSelectedFightTargetId}
                   onWeaponChange={setSelectedFightWeaponIndex}
                   onAttackSplitChange={(targetId, attacks) => setFightAttackSplits(current => ({ ...current, [targetId]: attacks }))}
+                  onAttackAllocationChange={updateFightAttackAllocation}
                   onClearAttackSplits={() => setFightAttackSplits({})}
                   onResolve={resolveSelectedPlayFight}
                 />
