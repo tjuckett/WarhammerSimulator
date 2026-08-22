@@ -302,9 +302,15 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     const containerRect = container.getBoundingClientRect();
     const scale = sizeRef.current.scale;
     const actionRect = selectedActionsRef.current?.getBoundingClientRect();
-    if (!actionRect) return;
     const canvasLeft = canvasRect.left - containerRect.left;
     const canvasTop = canvasRect.top - containerRect.top;
+    if (!actionRect) {
+      setSelectedActionsPosition({
+        left: canvasLeft + anchor.x * scale + 18,
+        top: canvasTop + anchor.y * scale,
+      });
+      return;
+    }
     const unitBounds = {
       left: canvasLeft + bounds.left * scale,
       right: canvasLeft + bounds.right * scale,
