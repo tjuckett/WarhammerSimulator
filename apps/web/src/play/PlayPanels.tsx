@@ -131,6 +131,13 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
   let currentWeapon = '';
   let currentTarget = '';
   let currentAp: string | null = null;
+  const addWoundSummary = (count: number) => {
+    if (!count || !currentTarget) return;
+    const byAp = woundSummary.get(currentTarget) ?? new Map<string, number>();
+    const apLabel = currentAp === null ? 'AP unknown' : `AP${Number(currentAp) > 0 ? '+' : ''}${currentAp}`;
+    byAp.set(apLabel, (byAp.get(apLabel) ?? 0) + count);
+    woundSummary.set(currentTarget, byAp);
+  };
   for (const entry of entries) {
     const message = entry.message;
     const normalizedMessage = message.trim();
@@ -142,6 +149,9 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
     if (targetFromHeader) currentTarget = targetFromHeader.trim();
     const apFromStats = normalizedMessage.match(/\bap=(-?\d+)/)?.[1];
     if (apFromStats) currentAp = apFromStats;
+    const lethalWounds = normalizedMessage.match(/^Lethal Hits:\s*(\d+)/)?.[1];
+    const devastatingWounds = normalizedMessage.match(/^Devastating Wounds:\s*(\d+) wound/)?.[1];
+    addWoundSummary(Number(lethalWounds ?? devastatingWounds ?? 0));
     const weaponMatch = normalizedMessage.match(/^.+?\s+(.+?)\s+[—-]\s+\d+\s+model/);
     if (weaponMatch) currentWeapon = weaponMatch[1].trim();
     const rolls = message.match(/\[([^\]]*)\]/)?.[1]
@@ -168,12 +178,7 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
       targets.set(key, normalizedMessage.match(/(?:^|[(,\s])(\d+)\+/)?.[1]);
       const resultCount = normalizedMessage.match(/\]\s*(?:→|->)\s*(\d+)\s+(hits|wounds|saved|ignored)/)?.[1];
       if (resultCount) successes.set(key, (successes.get(key) ?? 0) + Number(resultCount));
-      if (group === 'Wound rolls' && resultCount && currentTarget) {
-        const byAp = woundSummary.get(currentTarget) ?? new Map<string, number>();
-        const apLabel = currentAp === null ? 'AP unknown' : `AP${Number(currentAp) > 0 ? '+' : ''}${currentAp}`;
-        byAp.set(apLabel, (byAp.get(apLabel) ?? 0) + Number(resultCount));
-        woundSummary.set(currentTarget, byAp);
-      }
+      if (group === 'Wound rolls' && resultCount) addWoundSummary(Number(resultCount));
     }
   }
   return {
