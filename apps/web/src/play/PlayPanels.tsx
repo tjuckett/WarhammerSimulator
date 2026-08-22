@@ -345,14 +345,12 @@ export function PlayShootingPanel({
   const displayedWeaponIndex = resultWeaponIndex >= 0 && resultSection === 'attacker'
     ? String(resultWeaponIndex)
     : selectedWeaponIndex;
-  const displayedWeapons = !selectedTarget
-    ? []
-    : resultSection === 'attacker' && resultWeapons.length
-      ? resultWeapons
-      : availableWeapons.length
-        ? availableWeapons
-        : refWeapons.length || !resultWeapon
-          ? refWeapons
+  const displayedWeapons = resultSection === 'attacker' && resultEntries.length > 0 && resultWeapons.length
+    ? resultWeapons
+    : availableWeapons.length
+      ? availableWeapons
+      : refWeapons.length || !resultWeapon
+        ? refWeapons
         : [resultWeapon];
   const resultWeaponTargets = resultEntries.flatMap(entry => {
     const targetName = entry.message.trim().match(/attacks vs\s+(.+)$/)?.[1]?.trim();
