@@ -47,7 +47,6 @@ import { armyRepository } from './army/armyRepository';
 import { UnitStatsPanel } from './components/UnitStatsPanel';
 import { TerrainLayoutEditor } from './components/TerrainLayoutEditor';
 import { GameSessionControlsPanel, GameSessionLoadModal, GameSessionSaveModal } from './components/GameSessionSaveLoadPanel';
-import { CombatResultDialog } from './components/CombatResultDialog';
 import { isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
 import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
 import {
@@ -1693,6 +1692,7 @@ export default function App() {
       if (side === battleState.activeArmy) {
         setInspectedSelection({ kind: 'battle', side, unitId });
         setCasualtyRemovalShooterId(null);
+        setShootingResultEntries([]);
         const name = clickedUnit.profile.name;
         if (clickedUnit.activated) {
           setTargetErrorMsg(`${name} has already shot this phase`);
@@ -3086,6 +3086,7 @@ export default function App() {
                     <PlayShootingPanel
                       shooter={activeSelectedShootingUnit}
                       popup
+                      resultEntries={shootingResultEntries}
                       targets={selectedPlayShootingTargets}
                       selectedTarget={selectedShootingTargetUnit}
                       targetIsValid={selectedShootingTargetIsValid}
@@ -3477,13 +3478,6 @@ export default function App() {
       )}
 
       {/* ── Controls bar ─────────────────────────────────────────────────── */}
-      <CombatResultDialog
-        open={shootingResultEntries.length > 0}
-        entries={shootingResultEntries}
-        hasPendingCasualties={battleState?.units.some(unit => (unit.pendingDamageAllocations?.length ?? 0) > 0) ?? false}
-        onClose={() => setShootingResultEntries([])}
-      />
-
       <Snackbar
         open={!!targetErrorMsg}
         onClose={(_, reason) => {

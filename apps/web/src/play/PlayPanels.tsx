@@ -3,6 +3,7 @@ import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typo
 import type { SelectChangeEvent } from '@mui/material/Select';
 import CasinoOutlinedIcon from '@mui/icons-material/CasinoOutlined';
 import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
+import type { LogEntry } from '@warhammer-simulator/core/types/battle';
 import type { CommandRerollRollType, HeroicInterventionMode, StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import { battleUnitsBaseEdgeDistance, type FiringDeckSelection, type PlayChargeTargetOption, type PlayFightWeaponOption, type PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
@@ -105,9 +106,58 @@ const popupPanelSx = {
   gap: 1,
 };
 
+function shootingResultSummary(entries: LogEntry[]) {
+  const groups = new Map<string, number[]>();
+  let modelsKilled = 0;
+  let woundsLost = 0;
+  for (const entry of entries) {
+    const message = entry.message;
+    const rolls = message.match(/\[([^\]]*)\]/)?.[1]
+      ?.split(',').map(value => Number(value.trim())).filter(Number.isFinite) ?? [];
+    const group = message.startsWith('Hit rolls')
+      ? 'Hit rolls'
+      : message.startsWith('Wound rolls') || message.startsWith('Twin-linked wound rerolls')
+        ? 'Wound rolls'
+        : message.startsWith('Save rolls') ? 'Save rolls' : null;
+    if (group && rolls.length) groups.set(group, [...(groups.get(group) ?? []), ...rolls]);
+    if (entry.type === 'damage') {
+      modelsKilled += Number(message.match(/(\d+) model\(s\) slain/)?.[1] ?? 0);
+      woundsLost += Number(message.match(/(\d+) damage absorbed/)?.[1] ?? 0);
+    }
+  }
+  return {
+    groups: ['Hit rolls', 'Wound rolls', 'Save rolls']
+      .map(label => ({ label, rolls: [...(groups.get(label) ?? [])].sort((a, b) => b - a) }))
+      .filter(group => group.rolls.length),
+    modelsKilled,
+    woundsLost,
+  };
+}
+
+function ShootingResultSummary({ entries }: { entries: LogEntry[] }) {
+  if (!entries.length) return null;
+  const result = shootingResultSummary(entries);
+  if (!result.groups.length && !result.modelsKilled && !result.woundsLost) return null;
+  return (
+    <Box sx={{ display: 'grid', gap: 0.5, pt: 0.75, borderTop: `1px solid ${uiTokens.border.control}` }}>
+      <Typography variant="caption" sx={{ color: uiTokens.color.text.secondary, fontWeight: 800 }}>Latest shooting result</Typography>
+      {result.groups.map(group => (
+        <Box key={group.label} sx={{ display: 'flex', gap: 0.75, alignItems: 'baseline', flexWrap: 'wrap' }}>
+          <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, minWidth: 74 }}>{group.label}</Typography>
+          <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700 }}>{group.rolls.join(', ')}</Typography>
+        </Box>
+      ))}
+      <Typography variant="caption" sx={{ color: uiTokens.color.text.secondary }}>
+        {result.modelsKilled} unit model{result.modelsKilled === 1 ? '' : 's'} killed · {result.woundsLost} wound{result.woundsLost === 1 ? '' : 's'} lost on surviving models
+      </Typography>
+    </Box>
+  );
+}
+
 export function PlayShootingPanel({
   shooter,
   popup = false,
+  resultEntries = [],
   title = PLAY_PANEL_LABELS.shooting,
   actionLabel = PLAY_PANEL_LABELS.resolve,
   targets,
@@ -128,6 +178,7 @@ export function PlayShootingPanel({
 }: {
   shooter: BattleUnit | null;
   popup?: boolean;
+  resultEntries?: LogEntry[];
   title?: string;
   actionLabel?: string;
   targets: BattleUnit[];
@@ -347,6 +398,7 @@ export function PlayShootingPanel({
           })}
         </div>
       ) : null}
+      <ShootingResultSummary entries={resultEntries} />
     </Box>
   );
 }
