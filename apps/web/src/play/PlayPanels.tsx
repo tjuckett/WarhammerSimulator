@@ -177,9 +177,11 @@ function ShootingResultSummary({ entries, section = 'all' }: { entries: LogEntry
           </Box>
         </Box>
       ))}
-      <Typography variant="caption" sx={{ color: uiTokens.color.text.secondary }}>
-        {result.modelsKilled} unit model{result.modelsKilled === 1 ? '' : 's'} killed · {result.woundsLost} wound{result.woundsLost === 1 ? '' : 's'} lost on surviving models
-      </Typography>
+      {section !== 'attacker' && (
+        <Typography variant="caption" sx={{ color: uiTokens.color.text.secondary }}>
+          {result.modelsKilled} unit model{result.modelsKilled === 1 ? '' : 's'} killed · {result.woundsLost} wound{result.woundsLost === 1 ? '' : 's'} lost on surviving models
+        </Typography>
+      )}
     </Box>
   );
 }
