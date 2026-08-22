@@ -2139,8 +2139,8 @@ export default function App() {
       return;
     }
     setShootingResultEntries(next.log.slice(prev.log.length));
-    const pendingDamageUnit = next.units.find(unit => !unit.destroyed && !unit.embarkedInUnitId && (unit.pendingDamageAllocations?.length ?? 0) > 0);
-    setCasualtyRemovalShooterId(pendingDamageUnit ? selection.unitId : null);
+    const hasPendingDamage = selectPendingDamageUnit(next, selection.unitId);
+    if (!hasPendingDamage) setCasualtyRemovalShooterId(null);
     setTargetErrorMsg(null);
     setShootingAttackAllocations({});
 

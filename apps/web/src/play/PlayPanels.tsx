@@ -486,7 +486,11 @@ export function PlayShootingPanel({
                 <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700 }}>
                   {option.name} — {Object.values(weaponTargets).reduce((total, models) => total + (Number(models) || 0), 0)}/{weaponModelCount} assigned
                 </Typography>
-                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.statCard, overflow: 'hidden', background: uiTokens.surface.statCard }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.statCard, overflow: 'hidden', background: uiTokens.surface.statCard }}>
+                  <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
+                    <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 9 }}>Range</Typography>
+                    <Typography variant="caption" sx={{ color: uiTokens.color.combat.hit, fontWeight: 900 }}>{weapon.range}&quot;</Typography>
+                  </Box>
                   <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
                     <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 9 }}>Attacks</Typography>
                     <Typography variant="caption" sx={{ color: uiTokens.color.combat.attacks, fontWeight: 900 }}>{weapon.attacks}</Typography>
