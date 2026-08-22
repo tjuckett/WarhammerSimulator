@@ -87,13 +87,10 @@ function bestFeelNoPain(unit: BattleUnit): number | null {
 export function PendingDamageAllocationHud({ unit, resultEntries = [], weaponNames = [] }: { unit: BattleUnit; resultEntries?: LogEntry[]; weaponNames?: string[] }) {
   const label = pendingDamageLabel(unit);
   if (!label) return null;
-  const damageByWeapon = new Map<string, { hits: number; damage: number }>();
+  const damageByWeapon = new Map<string, number[]>();
   for (const allocation of unit.pendingDamageAllocations ?? []) {
     const weapon = allocation.source ?? 'Unattributed attack';
-    const current = damageByWeapon.get(weapon) ?? { hits: 0, damage: 0 };
-    current.hits += 1;
-    current.damage += allocation.damage;
-    damageByWeapon.set(weapon, current);
+    damageByWeapon.set(weapon, [...(damageByWeapon.get(weapon) ?? []), allocation.damage]);
   }
   const forcedModel = unit.woundedModelIndex !== undefined
     ? `Model ${unit.woundedModelIndex + 1} is already wounded and must take this.`
@@ -114,10 +111,19 @@ export function PendingDamageAllocationHud({ unit, resultEntries = [], weaponNam
       <Typography variant="caption" sx={{ color: uiTokens.color.status.pending, fontWeight: 800, textTransform: 'uppercase', lineHeight: 1 }}>
         Damage to apply
       </Typography>
-      {[...damageByWeapon.entries()].map(([weapon, summary]) => (
-        <Typography key={weapon} variant="body2" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 800, lineHeight: 1.15 }}>
-          {weapon}: {summary.hits} hit{summary.hits === 1 ? '' : 's'} × {summary.damage} damage
-        </Typography>
+      {[...damageByWeapon.entries()].map(([weapon, damages]) => (
+        <Box key={weapon} sx={{ display: 'grid', gap: 0.25 }}>
+          <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 800, lineHeight: 1.15 }}>
+            {weapon}
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 0.4, flexWrap: 'wrap' }}>
+            {damages.map((damage, index) => (
+              <Box key={`${weapon}-${index}`} sx={{ minWidth: 25, height: 25, px: 0.45, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${uiTokens.color.combat.damage}`, borderRadius: 0.75, background: 'rgba(155, 143, 212, 0.18)', color: uiTokens.color.combat.damage, fontWeight: 900, fontSize: 13 }}>
+                {damage}
+              </Box>
+            ))}
+          </Box>
+        </Box>
       ))}
       {!damageByWeapon.size && (
         <Typography variant="body2" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 800, lineHeight: 1.15 }}>
