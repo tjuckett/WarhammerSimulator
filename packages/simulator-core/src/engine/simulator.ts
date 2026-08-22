@@ -3219,16 +3219,20 @@ export function shootPlayUnitWeapons(
       const declaredModels = weaponAllocations.reduce((total, allocation) => total + (allocation.modelCount ?? 0), 0);
       if (declaredModels !== availableModelIndexes.length) return state;
     }
-    for (const allocation of weaponAllocations) {
+    const allocationCandidates = weaponAllocations.map(allocation => {
+      const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
+      const eligibleModelIndexes = participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, s.terrain, s);
+      return { allocation, eligibleModelIndexes };
+    }).sort((a, b) => a.eligibleModelIndexes.length - b.eligibleModelIndexes.length);
+    for (const { allocation, eligibleModelIndexes } of allocationCandidates) {
       if (allocation.modelCount !== undefined && (!Number.isInteger(allocation.modelCount) || allocation.modelCount < 1)) return state;
       if (s.attachedShootingTargetUnitId && allocation.targetUnitId !== s.attachedShootingTargetUnitId) return state;
       const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
       if (!shootingWeaponCanTarget(s, unit, target, selected.weapon, rules)) return state;
-      const eligibleModelIndexes = participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, s.terrain, s)
-        .filter(modelIndex => !assignedModelIndexes.has(modelIndex));
-      const modelCount = allocation.modelCount ?? eligibleModelIndexes.length;
-      if (modelCount > eligibleModelIndexes.length) return state;
-      eligibleModelIndexes.slice(0, modelCount).forEach(modelIndex => assignedModelIndexes.add(modelIndex));
+      const remainingModelIndexes = eligibleModelIndexes.filter(modelIndex => !assignedModelIndexes.has(modelIndex));
+      const modelCount = allocation.modelCount ?? remainingModelIndexes.length;
+      if (modelCount > remainingModelIndexes.length) return state;
+      remainingModelIndexes.slice(0, modelCount).forEach(modelIndex => assignedModelIndexes.add(modelIndex));
     }
   }
 
@@ -3238,7 +3242,13 @@ export function shootPlayUnitWeapons(
   for (const selected of selectableWeapons) {
     const weaponAllocations = allocationByWeapon.get(selected.weaponIndex)!;
     const assignedModelIndexes = new Set<number>();
-    for (const allocation of weaponAllocations) {
+    const orderedWeaponAllocations = [...weaponAllocations].sort((a, b) => {
+      const targetA = s.units.find(candidate => candidate.id === a.targetUnitId && !candidate.destroyed)!;
+      const targetB = s.units.find(candidate => candidate.id === b.targetUnitId && !candidate.destroyed)!;
+      return participatingWeaponModelIndexes(unit, targetA, selected.weapon, selected.weaponIndex, s.terrain, s).length
+        - participatingWeaponModelIndexes(unit, targetB, selected.weapon, selected.weaponIndex, s.terrain, s).length;
+    });
+    for (const allocation of orderedWeaponAllocations) {
       const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
       const eligibleModelIndexes = participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, s.terrain, s)
         .filter(modelIndex => !assignedModelIndexes.has(modelIndex));
