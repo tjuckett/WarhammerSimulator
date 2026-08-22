@@ -110,9 +110,13 @@ const popupPanelSx = {
 function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defender' | 'all' = 'all') {
   const groups = new Map<string, number[]>();
   const successes = new Map<string, number>();
+  const targets = new Map<string, string | undefined>();
+  let currentWeapon = '';
   for (const entry of entries) {
     const message = entry.message;
     const normalizedMessage = message.trim();
+    const weaponMatch = normalizedMessage.match(/^.+?\s+(.+?)\s+[—-]\s+\d+\s+model/);
+    if (weaponMatch) currentWeapon = weaponMatch[1].trim();
     const rolls = message.match(/\[([^\]]*)\]/)?.[1]
       ?.split(',').map(value => Number(value.trim())).filter(Number.isFinite) ?? [];
     const group = normalizedMessage.startsWith('Hit rolls')
@@ -126,20 +130,24 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
     const isDefenderGroup = group === 'Save rolls' || group === 'Feel No Pain';
     if ((section === 'attacker' && !isAttackerGroup) || (section === 'defender' && !isDefenderGroup)) continue;
     if (group) {
-      if (rolls.length) groups.set(group, [...(groups.get(group) ?? []), ...rolls]);
+      const key = `${currentWeapon}::${group}`;
+      if (rolls.length) groups.set(key, [...(groups.get(key) ?? []), ...rolls]);
+      targets.set(key, normalizedMessage.match(/(?:^|[(,\s])(\d+)\+/)?.[1]);
       const resultCount = normalizedMessage.match(/\]\s*(?:→|->)\s*(\d+)\s+(hits|wounds|saved|ignored)/)?.[1];
-      if (resultCount) successes.set(group, (successes.get(group) ?? 0) + Number(resultCount));
+      if (resultCount) successes.set(key, (successes.get(key) ?? 0) + Number(resultCount));
     }
   }
   return {
-    groups: ['Hit rolls', 'Wound rolls', 'Save rolls', 'Feel No Pain']
-      .map(label => ({
-        label,
-        target: entries.find(entry => entry.message.trim().startsWith(label))?.message.match(/(?:^|[(,\s])(\d+)\+/)?.[1],
-        rolls: [...(groups.get(label) ?? [])].sort((a, b) => b - a),
-        successCount: successes.get(label),
-      }))
-      .filter(group => group.rolls.length),
+    groups: [...groups.entries()].map(([key, rolls]) => {
+      const [weaponName, label] = key.split('::');
+      return {
+        label: weaponName ? `${weaponName} · ${label}` : label,
+        baseLabel: label,
+        target: targets.get(key),
+        rolls: [...rolls].sort((a, b) => b - a),
+        successCount: successes.get(key),
+      };
+    }).filter(group => group.rolls.length),
   };
 }
 
@@ -154,21 +162,21 @@ function ShootingResultSummary({ entries, section = 'all' }: { entries: LogEntry
         <Box key={group.label} sx={{ display: 'flex', gap: 0.75, alignItems: 'baseline', flexWrap: 'wrap' }}>
           <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, width: '100%' }}>
             {group.label}
-            {group.successCount !== undefined && ` - ${group.rolls.length} roll${group.rolls.length === 1 ? '' : 's'} - ${group.successCount} ${group.label === 'Hit rolls' ? 'hit' : group.label === 'Wound rolls' ? 'wound' : group.label === 'Save rolls' ? 'saved' : 'ignored'}${group.successCount === 1 ? '' : 's'}`}
+            {group.successCount !== undefined && ` - ${group.rolls.length} roll${group.rolls.length === 1 ? '' : 's'} - ${group.successCount} ${group.baseLabel === 'Hit rolls' ? 'hit' : group.baseLabel === 'Wound rolls' ? 'wound' : group.baseLabel === 'Save rolls' ? 'saved' : 'ignored'}${group.successCount === 1 ? '' : 's'}`}
           </Typography>
           <Box sx={{ display: 'flex', gap: 0.35, flexWrap: 'wrap' }}>
             {group.rolls.map((roll, index) => {
               const target = Number(group.target ?? 7);
               const success = roll >= target;
-              const critical = group.label !== 'Save rolls' && group.label !== 'Feel No Pain' && roll === 6;
+              const critical = group.baseLabel !== 'Save rolls' && group.baseLabel !== 'Feel No Pain' && roll === 6;
               return (
                 <Box key={`${group.label}-${index}`} sx={{
                   minWidth: 18,
                   px: 0.35,
-                  border: `1px solid ${critical ? '#7040a0' : success ? '#2a5c2a' : group.label === 'Save rolls' ? '#6b3800' : '#3a1818'}`,
+                  border: `1px solid ${critical ? '#7040a0' : success ? '#2a5c2a' : group.baseLabel === 'Save rolls' ? '#6b3800' : '#3a1818'}`,
                   borderRadius: 0.75,
-                  background: critical ? '#241238' : success ? '#0d260d' : group.label === 'Save rolls' ? '#2a1500' : '#1a0d0d',
-                  color: critical ? '#d5a6ff' : success ? '#78d786' : group.label === 'Save rolls' || group.label === 'Feel No Pain' ? '#d07030' : '#664444',
+                  background: critical ? '#241238' : success ? '#0d260d' : group.baseLabel === 'Save rolls' ? '#2a1500' : '#1a0d0d',
+                  color: critical ? '#d5a6ff' : success ? '#78d786' : group.baseLabel === 'Save rolls' || group.baseLabel === 'Feel No Pain' ? '#d07030' : '#664444',
                   textAlign: 'center',
                   fontSize: 11,
                   fontWeight: 700,
@@ -262,6 +270,7 @@ export function PlayShootingPanel({
   const resultWeapon = resultEntries
     .map(entry => shooter.profile.weapons.find(weapon => entry.message.includes(weapon.name)))
     .find((weapon): weapon is BattleUnit['profile']['weapons'][number] => !!weapon);
+  const resultWeapons = shooter.profile.weapons.filter(weapon => resultEntries.some(entry => entry.message.includes(weapon.name)));
   const resultWeaponIndex = resultWeapon ? shooter.profile.weapons.indexOf(resultWeapon) : -1;
   const displayedWeaponOptions = resultWeapon && resultWeaponIndex >= 0 && !weaponOptions.some(option => option.weaponIndex === resultWeaponIndex)
     ? [{ weaponIndex: resultWeaponIndex, name: resultWeapon.name, targetIds: [] }, ...weaponOptions]
@@ -269,9 +278,11 @@ export function PlayShootingPanel({
   const displayedWeaponIndex = resultWeaponIndex >= 0 && resultSection === 'attacker'
     ? String(resultWeaponIndex)
     : selectedWeaponIndex;
-  const displayedWeapons = refWeapons.length || !resultWeapon || !selectedTarget
-    ? refWeapons
-    : [resultWeapon];
+  const displayedWeapons = resultSection === 'attacker' && resultWeapons.length
+    ? resultWeapons
+    : refWeapons.length || !resultWeapon || !selectedTarget
+      ? refWeapons
+      : [resultWeapon];
 
   return (
     <Box sx={popup ? popupPanelSx : playPanelSx}>
