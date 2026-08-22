@@ -306,11 +306,13 @@ export function PlayShootingPanel({
   const displayedWeaponIndex = resultWeaponIndex >= 0 && resultSection === 'attacker'
     ? String(resultWeaponIndex)
     : selectedWeaponIndex;
-  const displayedWeapons = resultSection === 'attacker' && resultWeapons.length
-    ? resultWeapons
-    : refWeapons.length || !resultWeapon || !selectedTarget
-      ? refWeapons
-      : [resultWeapon];
+  const displayedWeapons = !selectedTarget
+    ? []
+    : resultSection === 'attacker' && resultWeapons.length
+      ? resultWeapons
+      : refWeapons.length || !resultWeapon
+        ? refWeapons
+        : [resultWeapon];
 
   return (
     <Box sx={popup ? popupPanelSx : playPanelSx}>
