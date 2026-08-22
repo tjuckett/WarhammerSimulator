@@ -9000,6 +9000,9 @@ test('11th Hidden limits visibility of quiet infantry inside covered terrain', (
   partiallyWithinTarget.position = { x: 28.75, y: 20 };
   partiallyWithinTarget.modelPositions = [{ x: 28.75, y: 20 }];
   assert.deepEqual(playShootingWeaponOptions(partiallyWithinTerrainBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);
+  const legacyRuinBattle = structuredClone(partiallyWithinTerrainBattle);
+  legacyRuinBattle.terrain[0].features = [];
+  assert.deepEqual(playShootingWeaponOptions(legacyRuinBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);
   const nonCoverAreaBattle = structuredClone(battle);
   nonCoverAreaBattle.terrain[0].providesCover = false;
   assert.deepEqual(playShootingWeaponOptions(nonCoverAreaBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);

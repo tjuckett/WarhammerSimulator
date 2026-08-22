@@ -613,7 +613,11 @@ function hasAnyModelLOS(
 }
 
 function terrainCanHideModels(terrain: Terrain): boolean {
-  return terrain.features.some(feature => feature.category === 'light' || feature.category === 'dense');
+  if (terrain.features.some(feature => feature.category === 'light' || feature.category === 'dense')) return true;
+  // Older/runtime terrain records may not have generated feature rows. Preserve
+  // the layout defaults used by the terrain importer in that case.
+  if (terrain.type === 'ruin') return true;
+  return terrain.type === 'area' && /woods?|forest/i.test(terrain.name);
 }
 
 function modelIsGoneToGroundFromDenseTerrain(
