@@ -517,15 +517,27 @@ export function PlayShootingPanel({
                         onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.floor(Number(event.target.value) || 0)))}
                       />
                       {target && (
-                        <Box sx={{ display: 'flex', gap: 0.8, pl: 0.5, alignItems: 'center', flexWrap: 'wrap' }}>
-                          <Typography variant="caption" sx={{ color: uiTokens.color.combat.attacks, fontWeight: 800 }}>Attacks {weapon.attacks}</Typography>
-                          <Typography variant="caption" sx={{ color: uiTokens.color.combat.damage, fontWeight: 800 }}>Dmg {weapon.damage}</Typography>
-                          <Typography variant="caption" sx={{ color: uiTokens.color.combat.hit, fontWeight: 800 }}>Hit {allocationHit}+</Typography>
-                          <Typography variant="caption" sx={{ color: allocationWoundColor, fontWeight: 800 }}>Wound {allocationWound}+</Typography>
-                          <Typography variant="caption" sx={{ color: allocationSaveColor, fontWeight: 800 }}>Save {allocationSaveWithCover !== null && allocationSaveWithCover > 6 ? '—' : `${allocationSaveWithCover}+`}</Typography>
+                        <Box sx={{ display: 'flex', gap: 0.5, pl: 0.5, alignItems: 'stretch', flexWrap: 'wrap' }}>
+                          <Box sx={{ px: 0.7, py: 0.25, border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.control, background: uiTokens.surface.statCard }}>
+                            <Typography variant="caption" sx={{ color: uiTokens.color.combat.attacks, fontWeight: 800 }}>Attacks {weapon.attacks}</Typography>
+                          </Box>
+                          <Box sx={{ px: 0.7, py: 0.25, border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.control, background: uiTokens.surface.statCard }}>
+                            <Typography variant="caption" sx={{ color: uiTokens.color.combat.damage, fontWeight: 800 }}>Dmg {weapon.damage}</Typography>
+                          </Box>
+                          <Box sx={{ px: 0.7, py: 0.25, border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.control, background: uiTokens.surface.statCard }}>
+                            <Typography variant="caption" sx={{ color: uiTokens.color.combat.hit, fontWeight: 800 }}>Hit {allocationHit}+</Typography>
+                          </Box>
+                          <Box sx={{ px: 0.7, py: 0.25, border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.control, background: uiTokens.surface.statCard }}>
+                            <Typography variant="caption" sx={{ color: allocationWoundColor, fontWeight: 800 }}>Wound {allocationWound}+</Typography>
+                          </Box>
+                          <Box sx={{ px: 0.7, py: 0.25, border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.control, background: uiTokens.surface.statCard }}>
+                            <Typography variant="caption" sx={{ color: allocationSaveColor, fontWeight: 800 }}>Save {allocationSaveWithCover !== null && allocationSaveWithCover > 6 ? '—' : `${allocationSaveWithCover}+`}</Typography>
+                          </Box>
                           {estimatedModelsLost !== null && (
                             <Tooltip title="Approximate expected model losses from average attacks, hit/wound/save probabilities, and average damage. Actual dice results may vary.">
-                              <Typography variant="caption" sx={{ color: uiTokens.color.status.warning, fontWeight: 800, cursor: 'help' }}>Est. ~{estimatedModelsLost.toFixed(1)} models die</Typography>
+                              <Box sx={{ px: 0.7, py: 0.25, border: `1px solid ${uiTokens.color.status.warning}`, borderRadius: uiTokens.radius.control, background: uiTokens.surface.statCard, cursor: 'help' }}>
+                                <Typography variant="caption" sx={{ color: uiTokens.color.status.warning, fontWeight: 900 }}>Est. ~{estimatedModelsLost.toFixed(1)} models die</Typography>
+                              </Box>
                             </Tooltip>
                           )}
                         </Box>
