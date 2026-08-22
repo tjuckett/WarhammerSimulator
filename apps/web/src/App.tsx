@@ -3240,6 +3240,7 @@ export default function App() {
                       unit={pendingDamageAllocationUnit}
                       resultEntries={shootingResultEntries}
                       weaponNames={battleState?.units.find(unit => unit.id === casualtyRemovalShooterId)?.profile.weapons.map(weapon => weapon.name) ?? []}
+                      onResolve={resolveSelectedPlayShooting}
                     />
                   )}
                   {selectedPlayCanPileIn && (

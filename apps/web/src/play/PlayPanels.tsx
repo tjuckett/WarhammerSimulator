@@ -84,7 +84,7 @@ function bestFeelNoPain(unit: BattleUnit): number | null {
   return targets.length ? Math.min(...targets) : null;
 }
 
-export function PendingDamageAllocationHud({ unit, resultEntries = [], weaponNames = [] }: { unit: BattleUnit; resultEntries?: LogEntry[]; weaponNames?: string[] }) {
+export function PendingDamageAllocationHud({ unit, resultEntries = [], weaponNames = [], onResolve }: { unit: BattleUnit; resultEntries?: LogEntry[]; weaponNames?: string[]; onResolve?: () => void }) {
   const label = pendingDamageLabel(unit);
   if (!label) return null;
   const damageByWeapon = new Map<string, { hits: number; damage: number }>();
@@ -127,6 +127,11 @@ export function PendingDamageAllocationHud({ unit, resultEntries = [], weaponNam
       <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingMuted, lineHeight: 1.2 }}>
         {forcedModel} Each hit's damage applies to one model; excess damage does not carry over.
       </Typography>
+      {onResolve && (
+        <Button size="small" variant="contained" onClick={onResolve}>
+          Resolve
+        </Button>
+      )}
     </Box>
   );
 }
