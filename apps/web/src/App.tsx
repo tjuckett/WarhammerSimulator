@@ -1195,7 +1195,7 @@ export default function App() {
       selectedShootingWeaponIndex === 'all'
       || !selectedPlayShootingOptions.some(option => String(option.weaponIndex) === selectedShootingWeaponIndex)
     ) {
-      setSelectedShootingWeaponIndex(String(selectedPlayShootingOptions[0].weaponIndex));
+      setSelectedShootingWeaponIndex('all');
       return;
     }
     const selectedTargetStillExists = !!(
@@ -1701,7 +1701,7 @@ export default function App() {
 
         const options = playShootingWeaponOptions(battleState, unitId, side, activeRulesForBattle);
         selectPlacedPlayUnit(unitId, side);
-        setSelectedShootingWeaponIndex(options[0] ? String(options[0].weaponIndex) : 'all');
+        setSelectedShootingWeaponIndex('all');
         const firstTargetId = options.flatMap(option => option.targetIds)[0] ?? '';
         setSelectedShootingTargetId(firstTargetId);
         if (!firstTargetId) {

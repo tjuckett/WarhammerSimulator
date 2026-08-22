@@ -323,6 +323,7 @@ export function PlayShootingPanel({
           value={displayedWeaponIndex}
           onChange={(event: SelectChangeEvent) => onWeaponChange(event.target.value as 'all' | string)}
         >
+          <MenuItem value="all">All eligible ranged weapons</MenuItem>
           {displayedWeaponOptions.map(option => (
             <MenuItem key={option.weaponIndex} value={String(option.weaponIndex)}>
               {option.name} ({shooter.profile.weapons[option.weaponIndex]?.range ?? 0}&quot;)
