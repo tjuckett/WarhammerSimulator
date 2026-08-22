@@ -989,9 +989,11 @@ export default function App() {
     return new Set(
       battleState.units
         .filter(unit => unit.side === battleState.activeArmy && !unit.destroyed && !unit.embarkedInUnitId && !unit.activated)
+        .filter(unit => playShootingWeaponOptions(battleState, unit.id, unit.side, activeRulesForBattle)
+          .some(option => option.weaponIndex >= 0))
         .map(unit => unit.id),
     );
-  }, [battleState]);
+  }, [battleState, activeRulesForBattle]);
   const pendingDamageAllocationUnitIds = useMemo<Set<string>>(() => {
     if (!battleState || battleState.phase !== 'shooting') return new Set();
     return new Set(
