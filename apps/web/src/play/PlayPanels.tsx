@@ -56,7 +56,7 @@ const mutedTextSx = { color: uiTokens.color.text.muted };
 const disabledTextSx = { color: uiTokens.color.text.disabled };
 const warningTextSx = { color: uiTokens.color.status.warning };
 
-export function PendingDamageAllocationHud({ unit }: { unit: BattleUnit }) {
+export function PendingDamageAllocationHud({ unit, resultEntries = [] }: { unit: BattleUnit; resultEntries?: LogEntry[] }) {
   const label = pendingDamageLabel(unit);
   if (!label) return null;
   const forcedModel = unit.woundedModelIndex !== undefined
@@ -83,6 +83,7 @@ export function PendingDamageAllocationHud({ unit }: { unit: BattleUnit }) {
       <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingMuted, lineHeight: 1.2 }}>
         {forcedModel}
       </Typography>
+      <ShootingResultSummary entries={resultEntries} section="defender" />
     </Box>
   );
 }
@@ -106,7 +107,7 @@ const popupPanelSx = {
   gap: 1,
 };
 
-function shootingResultSummary(entries: LogEntry[]) {
+function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defender' | 'all' = 'all') {
   const groups = new Map<string, number[]>();
   let modelsKilled = 0;
   let woundsLost = 0;
@@ -119,15 +120,20 @@ function shootingResultSummary(entries: LogEntry[]) {
       ? 'Hit rolls'
       : normalizedMessage.startsWith('Wound rolls') || normalizedMessage.startsWith('Twin-linked wound rerolls')
         ? 'Wound rolls'
-        : normalizedMessage.startsWith('Save rolls') ? 'Save rolls' : null;
+        : normalizedMessage.startsWith('Save rolls')
+          ? 'Save rolls'
+          : normalizedMessage.startsWith('Feel No Pain') ? 'Feel No Pain' : null;
+    const isAttackerGroup = group === 'Hit rolls' || group === 'Wound rolls';
+    const isDefenderGroup = group === 'Save rolls' || group === 'Feel No Pain';
+    if ((section === 'attacker' && !isAttackerGroup) || (section === 'defender' && !isDefenderGroup)) continue;
     if (group && rolls.length) groups.set(group, [...(groups.get(group) ?? []), ...rolls]);
-    if (entry.type === 'damage') {
+    if (entry.type === 'damage' && section !== 'attacker') {
       modelsKilled += Number(message.match(/(\d+) model\(s\) slain/)?.[1] ?? 0);
       woundsLost += Number(message.match(/(\d+) damage absorbed/)?.[1] ?? 0);
     }
   }
   return {
-    groups: ['Hit rolls', 'Wound rolls', 'Save rolls']
+    groups: ['Hit rolls', 'Wound rolls', 'Save rolls', 'Feel No Pain']
       .map(label => ({
         label,
         target: entries.find(entry => entry.message.trim().startsWith(label))?.message.match(/\((\d+)\+/)?.[1],
@@ -139,9 +145,9 @@ function shootingResultSummary(entries: LogEntry[]) {
   };
 }
 
-function ShootingResultSummary({ entries }: { entries: LogEntry[] }) {
+function ShootingResultSummary({ entries, section = 'all' }: { entries: LogEntry[]; section?: 'attacker' | 'defender' | 'all' }) {
   if (!entries.length) return null;
-  const result = shootingResultSummary(entries);
+  const result = shootingResultSummary(entries, section);
   if (!result.groups.length && !result.modelsKilled && !result.woundsLost) return null;
   return (
     <Box sx={{ display: 'grid', gap: 0.5, pt: 0.75, borderTop: `1px solid ${uiTokens.border.control}` }}>
@@ -153,7 +159,7 @@ function ShootingResultSummary({ entries }: { entries: LogEntry[] }) {
             {group.rolls.map((roll, index) => {
               const target = Number(group.target ?? 7);
               const success = roll >= target;
-              const critical = group.label !== 'Save rolls' && roll === 6;
+              const critical = group.label !== 'Save rolls' && group.label !== 'Feel No Pain' && roll === 6;
               return (
                 <Box key={`${group.label}-${index}`} sx={{
                   minWidth: 18,
@@ -161,7 +167,7 @@ function ShootingResultSummary({ entries }: { entries: LogEntry[] }) {
                   border: `1px solid ${critical ? '#a07800' : success ? '#2a5c2a' : group.label === 'Save rolls' ? '#6b3800' : '#3a1818'}`,
                   borderRadius: 0.75,
                   background: critical ? '#2a1e00' : success ? '#0d260d' : group.label === 'Save rolls' ? '#2a1500' : '#1a0d0d',
-                  color: critical ? '#ffd700' : success ? '#78d786' : group.label === 'Save rolls' ? '#d07030' : '#664444',
+                  color: critical ? '#ffd700' : success ? '#78d786' : group.label === 'Save rolls' || group.label === 'Feel No Pain' ? '#d07030' : '#664444',
                   textAlign: 'center',
                   fontSize: 11,
                   fontWeight: 700,
@@ -182,6 +188,7 @@ export function PlayShootingPanel({
   shooter,
   popup = false,
   resultEntries = [],
+  resultSection = 'all',
   title = PLAY_PANEL_LABELS.shooting,
   actionLabel = 'Shoot',
   targets,
@@ -204,6 +211,7 @@ export function PlayShootingPanel({
   shooter: BattleUnit | null;
   popup?: boolean;
   resultEntries?: LogEntry[];
+  resultSection?: 'attacker' | 'defender' | 'all';
   title?: string;
   actionLabel?: string;
   targets: BattleUnit[];
@@ -429,7 +437,7 @@ export function PlayShootingPanel({
           })}
         </div>
       ) : null}
-      <ShootingResultSummary entries={resultEntries} />
+      <ShootingResultSummary entries={resultEntries} section={resultSection} />
     </Box>
   );
 }

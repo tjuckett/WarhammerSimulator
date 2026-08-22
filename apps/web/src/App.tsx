@@ -3069,11 +3069,12 @@ export default function App() {
                 : undefined,
               selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || (battleState.phase === BATTLE_PHASE.Shooting && !!activeSelectedShootingUnit) || selectedPlayScoutAllowance !== null || selectedPlayScoutMoveStarted || selectedPlayCanDeclareMobile || selectedPlayCanAdvance || selectedPlayCanRollCharge || !!pendingChargeRoll || !!pendingPlayChargeMovement || !!selectedPlayChargeResult || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanUndoMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
                 <>
-                  {battleState.phase === BATTLE_PHASE.Shooting && activeSelectedShootingUnit && !pendingDamageAllocationUnit && (
+                  {battleState.phase === BATTLE_PHASE.Shooting && activeSelectedShootingUnit && primaryPlaySelection?.unitId === activeSelectedShootingUnit.id && (
                     <PlayShootingPanel
                       shooter={activeSelectedShootingUnit}
                       popup
                       resultEntries={shootingResultEntries}
+                      resultSection="attacker"
                       actionLabel={shootingResultEntries.length && damageAllocationLocked ? 'Resolve Damage' : 'Shoot'}
                       coverSaveEnabled={activeRulesForBattle.metadata.edition !== '11e'}
                       targets={selectedPlayShootingTargets}
@@ -3093,8 +3094,8 @@ export default function App() {
                       onResolve={resolveSelectedPlayShooting}
                     />
                   )}
-                  {pendingDamageAllocationUnit && (
-                    <PendingDamageAllocationHud unit={pendingDamageAllocationUnit} />
+                  {pendingDamageAllocationUnit && primaryPlaySelection?.unitId !== casualtyRemovalShooterId && (
+                    <PendingDamageAllocationHud unit={pendingDamageAllocationUnit} resultEntries={shootingResultEntries} />
                   )}
                   {selectedPlayCanPileIn && (
                     <Button size="small" color="secondary" variant="contained" onClick={pileInSelectedPlayUnit}>
