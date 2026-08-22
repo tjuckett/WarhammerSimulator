@@ -3208,7 +3208,10 @@ export default function App() {
                 : undefined,
               selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || (battleState.phase === BATTLE_PHASE.Shooting && !!activeSelectedShootingUnit) || selectedPlayScoutAllowance !== null || selectedPlayScoutMoveStarted || selectedPlayCanDeclareMobile || selectedPlayCanAdvance || selectedPlayCanRollCharge || !!pendingChargeRoll || !!pendingPlayChargeMovement || !!selectedPlayChargeResult || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanUndoMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
                 <>
-                  {battleState.phase === BATTLE_PHASE.Shooting && activeSelectedShootingUnit && primaryPlaySelection?.unitId === activeSelectedShootingUnit.id && (
+                  {battleState.phase === BATTLE_PHASE.Shooting && activeSelectedShootingUnit && (
+                    (!damageAllocationLocked && primaryPlaySelection?.unitId === activeSelectedShootingUnit.id)
+                    || (damageAllocationLocked && casualtyRemovalShooterId === activeSelectedShootingUnit.id)
+                  ) && (
                     <PlayShootingPanel
                       shooter={activeSelectedShootingUnit}
                       popup
@@ -3240,7 +3243,6 @@ export default function App() {
                       unit={pendingDamageAllocationUnit}
                       resultEntries={shootingResultEntries}
                       weaponNames={battleState?.units.find(unit => unit.id === casualtyRemovalShooterId)?.profile.weapons.map(weapon => weapon.name) ?? []}
-                      onResolve={resolveSelectedPlayShooting}
                     />
                   )}
                   {selectedPlayCanPileIn && (
