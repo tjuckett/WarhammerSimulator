@@ -133,13 +133,13 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
           : normalizedMessage.startsWith('Feel No Pain') ? 'Feel No Pain' : null;
     const isAttackerGroup = group === 'Hit rolls' || group === 'Wound rolls';
     const isDefenderGroup = group === 'Save rolls' || group === 'Feel No Pain';
-    if ((section === 'attacker' && !isAttackerGroup) || (section === 'defender' && !isDefenderGroup)) continue;
     if (section !== 'attacker' && normalizedMessage.startsWith('No save possible')) {
       const key = `${currentWeapon}::Save rolls`;
       groups.set(key, groups.get(key) ?? []);
       noSave.add(key);
       continue;
     }
+    if ((section === 'attacker' && !isAttackerGroup) || (section === 'defender' && !isDefenderGroup)) continue;
     if (group) {
       const key = `${currentWeapon}::${group}`;
       if (rolls.length) groups.set(key, [...(groups.get(key) ?? []), ...rolls]);
