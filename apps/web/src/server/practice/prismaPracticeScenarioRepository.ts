@@ -52,6 +52,13 @@ type StoredTimelineEntry = {
   createdAt: Date;
 };
 
+function databaseTimelineEntryId(branchId: string, index: number): string {
+  // Timeline entry ids are generated in the browser and can be reused when a
+  // checkpoint is restored or branched. Prisma's entry id is global, so make
+  // the persisted key stable per branch and position instead.
+  return `timeline-entry:${branchId}:${index}`;
+}
+
 function checkpointKindToDb(kind: PracticeScenario['metadata']['checkpointKind']): StoredCheckpointKind {
   return CHECKPOINT_KIND_TO_DB[kind ?? 'play'];
 }
@@ -244,7 +251,7 @@ export const prismaPracticeScenarioRepository: PracticeScenarioRepository = {
       if (scenario.timeline.entries.length) {
         await tx.practiceTimelineEntry.createMany({
           data: scenario.timeline.entries.map((entry, index) => ({
-            id: entry.id,
+            id: databaseTimelineEntryId(branchId, index),
             branchId,
             index,
             action: entry.action,
