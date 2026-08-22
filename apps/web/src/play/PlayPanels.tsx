@@ -502,6 +502,8 @@ export function PlayShootingPanel({
                   const allocatedElsewhere = Object.entries(weaponTargets)
                     .filter(([allocatedTargetId]) => allocatedTargetId !== targetId)
                     .reduce((total, [, models]) => total + (Number(models) || 0), 0);
+                  const allocationCount = Number(weaponTargets[targetId] ?? 0);
+                  const allocationMax = Math.max(0, weaponModelCount - allocatedElsewhere);
                   const targetInCoverForAllocation = !!target && coverUnitIds?.has(target.id);
                   const allocationWound = target ? calcWoundTarget(weapon.strength, target.profile.toughness) : null;
                   const allocationSave = target ? calcEffectiveSave(target.profile.save, weapon.ap, target.profile.invulnSave) : null;
@@ -534,23 +536,37 @@ export function PlayShootingPanel({
                     : null;
                   return (
                     <Box key={`${option.weaponIndex}:${targetId}`} sx={{ display: 'flex', gap: 0.5, alignItems: 'stretch' }}>
-                      <TextField
-                        size="small"
-                        type="number"
-                        label={target?.profile.name ?? targetId}
-                        value={weaponTargets[targetId] ?? 0}
-                        sx={{
-                          minWidth: 120,
-                          flex: '0 0 120px',
-                          '& input::-webkit-inner-spin-button': {
-                            opacity: 1,
-                            transform: 'scale(1.35)',
-                            cursor: 'pointer',
-                          },
-                        }}
-                        slotProps={{ htmlInput: { min: 0, max: Math.max(0, weaponModelCount - allocatedElsewhere), step: 1 } }}
-                        onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.floor(Number(event.target.value) || 0)))}
-                      />
+                      <Box sx={{ minWidth: 120, flex: '0 0 120px', display: 'flex', alignItems: 'center', gap: 0.25 }}>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          aria-label={`Decrease allocation to ${target?.profile.name ?? targetId}`}
+                          disabled={allocationCount <= 0}
+                          onClick={() => onShootingAttackAllocationChange(option.weaponIndex, targetId, allocationCount - 1)}
+                          sx={{ minWidth: 26, width: 26, height: 32, px: 0, lineHeight: 1, fontSize: 16 }}
+                        >
+                          −
+                        </Button>
+                        <TextField
+                          size="small"
+                          type="number"
+                          label={target?.profile.name ?? targetId}
+                          value={allocationCount}
+                          sx={{ flex: 1, '& input::-webkit-inner-spin-button': { appearance: 'none', margin: 0 } }}
+                          slotProps={{ htmlInput: { min: 0, max: allocationMax, step: 1 } }}
+                          onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.min(allocationMax, Math.floor(Number(event.target.value) || 0))))}
+                        />
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          aria-label={`Increase allocation to ${target?.profile.name ?? targetId}`}
+                          disabled={allocationCount >= allocationMax}
+                          onClick={() => onShootingAttackAllocationChange(option.weaponIndex, targetId, allocationCount + 1)}
+                          sx={{ minWidth: 26, width: 26, height: 32, px: 0, lineHeight: 1, fontSize: 16 }}
+                        >
+                          +
+                        </Button>
+                      </Box>
                       {target && (
                         <Box sx={{ flex: 1, minWidth: 0, border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.statCard, overflow: 'hidden', background: uiTokens.surface.statCard }}>
                           <Box sx={{ display: 'grid', gridTemplateColumns: `repeat(${allocationFeelNoPain === null ? 4 : 5}, minmax(0, 1fr))`, height: '100%' }}>
