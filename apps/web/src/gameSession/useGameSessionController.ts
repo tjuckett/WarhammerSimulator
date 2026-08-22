@@ -55,9 +55,11 @@ export function useGameSessionController({
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [loadModalOpen, setLoadModalOpen] = useState(false);
   const [saveStatus, setSaveStatus] = useState('');
+  const [saveInProgress, setSaveInProgress] = useState(false);
 
   async function saveCheckpoint(kind: GameSessionCheckpointKind) {
     const timeline = gameSessionTimelineRef.current;
+    setSaveInProgress(true);
     try {
       if (!timeline) {
         setSaveStatus('Save failed: no active game session is available. Start a battle first.');
@@ -84,6 +86,8 @@ export function useGameSessionController({
     } catch (error) {
       setSaveStatus(`Save failed: ${error instanceof Error ? error.message : 'unknown storage error'}`);
       return null;
+    } finally {
+      setSaveInProgress(false);
     }
   }
 
@@ -176,6 +180,7 @@ export function useGameSessionController({
     },
     status: {
       saveStatus,
+      saveInProgress,
     },
     actions: {
       saveCheckpoint,

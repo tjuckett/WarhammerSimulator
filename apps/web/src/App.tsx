@@ -438,6 +438,7 @@ export default function App() {
     },
     status: {
       saveStatus: gameSessionSaveStatus,
+      saveInProgress: gameSessionSaveInProgress,
     },
     actions: {
       saveCheckpoint: saveGameSessionCheckpoint,
@@ -3307,6 +3308,7 @@ export default function App() {
             <GameSessionControlsPanel
               timeline={gameSessionTimeline}
               status={gameSessionSaveStatus}
+              saveInProgress={gameSessionSaveInProgress}
               storageStatus={gameSessionStorageStatus}
               onUndo={undoGameSessionTimelineAction}
               onRedo={redoGameSessionTimelineAction}
@@ -3507,6 +3509,7 @@ export default function App() {
         open={gameSessionSaveModalOpen}
         timeline={gameSessionTimeline}
         status={gameSessionSaveStatus}
+        saveInProgress={gameSessionSaveInProgress}
         storageStatus={gameSessionStorageStatus}
         onUndo={undoGameSessionTimelineAction}
         onRedo={redoGameSessionTimelineAction}

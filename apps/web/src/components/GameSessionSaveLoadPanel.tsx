@@ -11,6 +11,7 @@ import type { GameSessionStorageHealth } from '../gameSession/gameSessionReposit
 interface ControlsProps {
   timeline: GameSessionTimeline | null;
   status: string;
+  saveInProgress: boolean;
   storageStatus: GameSessionStorageHealth | null;
   onUndo: () => void;
   onRedo: () => void;
@@ -23,6 +24,7 @@ interface SaveModalProps {
   open: boolean;
   timeline: GameSessionTimeline | null;
   status: string;
+  saveInProgress: boolean;
   storageStatus: GameSessionStorageHealth | null;
   onUndo: () => void;
   onRedo: () => void;
@@ -178,6 +180,7 @@ function scoreCpLabel(scenario: GameSessionScenarioSummary): string {
 export function GameSessionControlsPanel({
   timeline,
   status,
+  saveInProgress,
   storageStatus,
   onUndo,
   onRedo,
@@ -201,7 +204,7 @@ export function GameSessionControlsPanel({
       <div className="practice-actions">
         <button type="button" onClick={onUndo} disabled={!hasTimelineEntries || cursor <= 0}>Undo</button>
         <button type="button" onClick={onRedo} disabled={!hasTimelineEntries || cursor >= total}>Redo</button>
-        <button type="button" onClick={onOpenSave} disabled={!timeline}>Save</button>
+        <button type="button" onClick={onOpenSave} disabled={!timeline || saveInProgress}>{saveInProgress ? 'Saving…' : 'Save'}</button>
         <button type="button" onClick={onOpenLoad}>Load</button>
       </div>
       {hasTimelineEntries && (
@@ -228,6 +231,7 @@ export function GameSessionSaveModal({
   open,
   timeline,
   status,
+  saveInProgress,
   storageStatus,
   onUndo,
   onRedo,
@@ -255,7 +259,10 @@ export function GameSessionSaveModal({
         <div className="practice-actions">
           <button type="button" onClick={onUndo} disabled={!hasTimelineEntries || cursor <= 0}>Undo</button>
           <button type="button" onClick={onRedo} disabled={!hasTimelineEntries || cursor >= total}>Redo</button>
-          <button type="button" className="primary" onClick={onSave} disabled={!timeline}>Save Checkpoint</button>
+          <button type="button" className="primary" onClick={onSave} disabled={!timeline || saveInProgress}>
+            {saveInProgress && <span className="practice-save-spinner" aria-hidden="true" />}
+            {saveInProgress ? 'Saving…' : 'Save Checkpoint'}
+          </button>
         </div>
         <div className={`practice-storage practice-storage-${storageStatus?.storage ?? 'unknown'}`}>
           <strong>{storageStatus?.storage === 'database' ? 'Database saves' : 'Local saves'}</strong>
