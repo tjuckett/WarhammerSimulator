@@ -3226,7 +3226,7 @@ export function shootPlayUnitWeapons(
       if (!shootingWeaponCanTarget(s, unit, target, selected.weapon, rules)) return state;
       const eligibleModelIndexes = participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, s.terrain, s)
         .filter(modelIndex => !assignedModelIndexes.has(modelIndex));
-      const modelCount = allocation.modelCount ?? availableModelIndexes.length;
+      const modelCount = allocation.modelCount ?? eligibleModelIndexes.length;
       if (modelCount > eligibleModelIndexes.length) return state;
       eligibleModelIndexes.slice(0, modelCount).forEach(modelIndex => assignedModelIndexes.add(modelIndex));
     }

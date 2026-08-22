@@ -2429,7 +2429,10 @@ export default function App() {
       selectedMissionAction?.targetOperationMarkerId,
       selectedMissionAction?.targetUnitId,
     );
-    if (next === prev) return;
+    if (next === prev) {
+      setTargetErrorMsg('Shooting declaration could not be resolved. Check that every weapon-bearing model is assigned to a valid target and that each target has enough visible models.');
+      return;
+    }
     pushPlayUndo(playUndoEntry(prev), next, {
       type: GAME_ACTION_TYPE.StartAction,
       side: selectedTacticsUnit.side,
