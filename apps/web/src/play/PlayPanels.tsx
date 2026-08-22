@@ -299,6 +299,10 @@ export function PlayShootingPanel({
     .map(entry => shooter.profile.weapons.find(weapon => entry.message.includes(weapon.name)))
     .find((weapon): weapon is BattleUnit['profile']['weapons'][number] => !!weapon);
   const resultWeapons = shooter.profile.weapons.filter(weapon => resultEntries.some(entry => entry.message.includes(weapon.name)));
+  const allocatedWeapons = weaponOptions
+    .filter(option => option.weaponIndex >= 0 && Object.values(shootingAttackAllocations[String(option.weaponIndex)] ?? {}).some(value => value > 0))
+    .map(option => shooter.profile.weapons[option.weaponIndex])
+    .filter((weapon): weapon is BattleUnit['profile']['weapons'][number] => !!weapon);
   const resultWeaponIndex = resultWeapon ? shooter.profile.weapons.indexOf(resultWeapon) : -1;
   const displayedWeaponOptions = resultWeapon && resultWeaponIndex >= 0 && !weaponOptions.some(option => option.weaponIndex === resultWeaponIndex)
     ? [{ weaponIndex: resultWeaponIndex, name: resultWeapon.name, targetIds: [] }, ...weaponOptions]
@@ -310,9 +314,22 @@ export function PlayShootingPanel({
     ? []
     : resultSection === 'attacker' && resultWeapons.length
       ? resultWeapons
-      : refWeapons.length || !resultWeapon
-        ? refWeapons
+      : allocatedWeapons.length
+        ? allocatedWeapons
+        : refWeapons.length || !resultWeapon
+          ? refWeapons
         : [resultWeapon];
+  const displayedWeaponTargets = resultSection === 'attacker' || resultSection === 'defender'
+    ? displayedWeapons.flatMap(weapon => selectedTarget ? [{ weapon, target: selectedTarget }] : [])
+    : displayedWeapons.flatMap(weapon => {
+      const weaponIndex = shooter.profile.weapons.indexOf(weapon);
+      const option = weaponOptions.find(candidate => candidate.weaponIndex === weaponIndex);
+      const allocatedTargetIds = option?.targetIds.filter(targetId => (shootingAttackAllocations[String(weaponIndex)]?.[targetId] ?? 0) > 0) ?? [];
+      return allocatedTargetIds
+        .map(targetId => targets.find(target => target.id === targetId))
+        .filter((target): target is BattleUnit => !!target)
+        .map(target => ({ weapon, target }));
+    });
 
   return (
     <Box sx={popup ? popupPanelSx : playPanelSx}>
@@ -448,16 +465,17 @@ export function PlayShootingPanel({
         <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noRangedWeapons}</Typography>
       ) : !targets.length && !displayedWeapons.length ? (
         <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noValidTargets}</Typography>
-      ) : displayedWeapons.length > 0 ? (
+      ) : displayedWeaponTargets.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {displayedWeapons.map((weapon, i) => {
-            const wt = calcWoundTarget(weapon.strength, selectedTarget!.profile.toughness);
-            const sv = calcEffectiveSave(selectedTarget!.profile.save, weapon.ap, selectedTarget!.profile.invulnSave);
-            const usedInvuln = selectedTarget!.profile.invulnSave !== undefined && sv === selectedTarget!.profile.invulnSave;
+          {displayedWeaponTargets.map(({ weapon, target }, i) => {
+            const targetInCoverForStats = !!coverUnitIds?.has(target.id);
+            const wt = calcWoundTarget(weapon.strength, target.profile.toughness);
+            const sv = calcEffectiveSave(target.profile.save, weapon.ap, target.profile.invulnSave);
+            const usedInvuln = target.profile.invulnSave !== undefined && sv === target.profile.invulnSave;
             const noSave = sv > 6;
             const wtColor = calcWoundTargetColor(wt);
-            const coverBonus = coverSaveEnabled && targetInCover && (selectedTarget!.profile.save <= 6) ? 1 : 0;
-            const hitTarget = Math.min(6, weapon.skill + (targetInCover && !coverSaveEnabled ? 1 : 0));
+            const coverBonus = coverSaveEnabled && targetInCoverForStats && (target.profile.save <= 6) ? 1 : 0;
+            const hitTarget = Math.min(6, weapon.skill + (targetInCoverForStats && !coverSaveEnabled ? 1 : 0));
             const svWithCover = sv - coverBonus;
             const noSaveWithCover = svWithCover > 6;
             return (
@@ -466,7 +484,7 @@ export function PlayShootingPanel({
                 <div style={{
                   padding: '5px 10px', borderBottom: `1px solid ${uiTokens.border.statCard}`,
                 }}>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: uiTokens.color.combat.weaponName }}>{weapon.name}</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: uiTokens.color.combat.weaponName }}>{weapon.name} → {target.profile.name}</span>
                 </div>
                 {/* Threshold grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr' }}>
@@ -480,7 +498,7 @@ export function PlayShootingPanel({
                   <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
                     <div style={{ fontSize: 8, color: uiTokens.color.text.subtle, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Hit</div>
                     <div style={{ fontSize: 22, fontWeight: 800, color: uiTokens.color.combat.hit, lineHeight: 1 }}>{hitTarget}+</div>
-                    {targetInCover && !coverSaveEnabled && (
+                    {targetInCoverForStats && !coverSaveEnabled && (
                       <div style={{ fontSize: 9, color: uiTokens.color.status.warning, marginTop: 3 }}>cover -1 hit</div>
                     )}
                   </div>
@@ -488,7 +506,7 @@ export function PlayShootingPanel({
                   <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
                     <div style={{ fontSize: 8, color: uiTokens.color.text.subtle, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Wound</div>
                     <div style={{ fontSize: 22, fontWeight: 800, color: wtColor, lineHeight: 1 }}>{wt}+</div>
-                    <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, marginTop: 3 }}>S{weapon.strength} v T{selectedTarget!.profile.toughness}</div>
+                    <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, marginTop: 3 }}>S{weapon.strength} v T{target.profile.toughness}</div>
                   </div>
                   {/* Save */}
                   <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
@@ -513,7 +531,7 @@ export function PlayShootingPanel({
                         <div style={{ fontSize: 9, marginTop: 3, color: weapon.ap < 0 ? uiTokens.color.combat.apWarning : uiTokens.color.text.subtle }}>
                           AP{weapon.ap}{usedInvuln ? ' ★inv' : ''}
                         </div>
-                        {targetInCover && coverSaveEnabled && (
+                        {targetInCoverForStats && coverSaveEnabled && (
                           <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, marginTop: 2 }}>
                             ⛨ cover (no save to improve)
                           </div>
