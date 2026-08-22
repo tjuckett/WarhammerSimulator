@@ -427,27 +427,6 @@ export function PlayShootingPanel({
         </Select>
       </FormControl>
 
-      <FormControl size="small" fullWidth disabled={shootingLocked || noAttackSelected || !targets.length || shooter.activated}>
-        <InputLabel id="play-shooting-target-label">{PLAY_PANEL_LABELS.target}</InputLabel>
-        <Select
-          labelId="play-shooting-target-label"
-          label={PLAY_PANEL_LABELS.target}
-          value={selectedTargetId}
-          onChange={(event: SelectChangeEvent) => onTargetChange(event.target.value)}
-        >
-          {selectedTarget && !targetIsValid && (
-            <MenuItem value={selectedTarget.id} disabled>
-              {selectedTarget.profile.name} (not targetable)
-            </MenuItem>
-          )}
-          {targets.map(target => (
-            <MenuItem key={target.id} value={target.id}>
-              {target.profile.name} ({target.remainingModels} model{target.remainingModels === 1 ? '' : 's'}, {target.woundsOnLeadModel}W lead)
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
       {!shootingLocked && !shooter.activated && weaponOptions.some(option => option.weaponIndex >= 0) && (
         <Box sx={{ display: 'grid', gap: 0.75, p: 1, border: `1px solid ${uiTokens.border.control}`, borderRadius: uiTokens.radius.control }}>
           <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, fontWeight: 700 }}>
