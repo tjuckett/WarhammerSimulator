@@ -313,7 +313,7 @@ export function PlayShootingPanel({
           onClick={onResolve}
           disabled={!canResolve}
         >
-          {resolvePendingDamage ? 'Resolve Damage' : actionLabel}
+          {resolvePendingDamage ? 'Resolve' : actionLabel}
         </Button>
       </Box>
 

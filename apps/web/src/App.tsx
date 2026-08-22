@@ -3082,7 +3082,7 @@ export default function App() {
                       popup
                       resultEntries={shootingResultEntries}
                       resultSection="attacker"
-                      actionLabel={shootingResultEntries.length && damageAllocationLocked ? 'Resolve Damage' : 'Shoot'}
+                      actionLabel={shootingResultEntries.length && damageAllocationLocked ? 'Resolve' : 'Shoot'}
                       coverSaveEnabled={activeRulesForBattle.metadata.edition !== '11e'}
                       targets={selectedPlayShootingTargets}
                       selectedTarget={selectedShootingTargetUnit}
