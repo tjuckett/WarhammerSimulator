@@ -470,6 +470,10 @@ export function PlayShootingPanel({
                   const allocationCoverBonus = target && coverSaveEnabled && targetInCoverForAllocation && target.profile.save <= 6 ? 1 : 0;
                   const allocationHit = weapon ? Math.min(6, weapon.skill + (targetInCoverForAllocation && !coverSaveEnabled ? 1 : 0)) : null;
                   const allocationSaveWithCover = allocationSave === null ? null : allocationSave - allocationCoverBonus;
+                  const allocationWoundColor = allocationWound === null ? uiTokens.color.text.muted : calcWoundTargetColor(allocationWound);
+                  const allocationSaveColor = allocationSaveWithCover !== null && allocationSaveWithCover > 6
+                    ? uiTokens.color.combat.noSave
+                    : uiTokens.color.combat.save;
                   return (
                     <Box key={`${option.weaponIndex}:${targetId}`} sx={{ display: 'grid', gap: 0.25 }}>
                       <TextField
@@ -481,9 +485,11 @@ export function PlayShootingPanel({
                         onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.floor(Number(event.target.value) || 0)))}
                       />
                       {target && (
-                        <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, pl: 0.5 }}>
-                          Hit {allocationHit}+ · Wound {allocationWound}+ · Save {allocationSaveWithCover !== null && allocationSaveWithCover > 6 ? '—' : `${allocationSaveWithCover}+`}
-                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 0.8, pl: 0.5, alignItems: 'center', flexWrap: 'wrap' }}>
+                          <Typography variant="caption" sx={{ color: uiTokens.color.combat.hit, fontWeight: 800 }}>Hit {allocationHit}+</Typography>
+                          <Typography variant="caption" sx={{ color: allocationWoundColor, fontWeight: 800 }}>Wound {allocationWound}+</Typography>
+                          <Typography variant="caption" sx={{ color: allocationSaveColor, fontWeight: 800 }}>Save {allocationSaveWithCover !== null && allocationSaveWithCover > 6 ? '—' : `${allocationSaveWithCover}+`}</Typography>
+                        </Box>
                       )}
                     </Box>
                   );
