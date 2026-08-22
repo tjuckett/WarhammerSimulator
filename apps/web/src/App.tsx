@@ -732,8 +732,8 @@ export default function App() {
     isPlayMode
     && battleState?.phase === 'charge'
     && selectedChargeUnit
-    && !selectedChargeUnit.activated
     && !pendingChargeRoll
+    && !selectedPlayChargeResult?.includes('no reachable charge targets')
     && selectedPlayChargeOptions.length > 0
   );
   const selectedPlayChargeActive = !!(
@@ -754,13 +754,16 @@ export default function App() {
   );
   const selectedPlayChargeResult = useMemo(() => {
     if (!battleState || !selectedChargeUnit) return null;
-    const entries = battleState.log.filter(entry => entry.type === 'charge' && entry.unitName === selectedChargeUnit.profile.name);
+    const entries = battleState.log.filter(entry => entry.type === 'charge'
+      && entry.phase === 'charge'
+      && entry.turn === battleState.turn
+      && entry.unitName === selectedChargeUnit.profile.name);
     const roll = entries.find(entry => /rolls a charge:/i.test(entry.message))?.message;
     const outcome = entries[entries.length - 1]?.message;
     return roll && outcome && roll !== outcome ? `${roll} ${outcome}` : roll ?? outcome ?? null;
   }, [battleState?.log, selectedChargeUnit?.id, selectedChargeUnit?.profile.name]);
   const selectedPlayChargeDice = useMemo(() => {
-    const match = selectedPlayChargeResult?.match(/rolled\s+(\d+)\+(\d+)=/i);
+    const match = selectedPlayChargeResult?.match(/rolls a charge:\s*(\d+)\+(\d+)=/i);
     return match ? [Number(match[1]), Number(match[2])] : [];
   }, [selectedPlayChargeResult]);
   const selectedPlayFightOptions = useMemo(
