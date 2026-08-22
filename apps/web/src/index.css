@@ -488,14 +488,22 @@ html, body, #root {
   align-items: stretch;
   justify-items: stretch;
   gap: 8px;
+  width: min(360px, calc(100% - 8px));
   min-width: 220px;
-  max-width: 320px;
+  max-width: 360px;
+  min-height: 0;
+  box-sizing: border-box;
   padding: 10px;
   border: 1px solid rgb(110 110 170 / 0.86);
   border-radius: 6px;
   background: rgb(12 12 24 / 0.92);
   box-shadow: 0 8px 24px rgb(0 0 0 / 0.34);
   transform: translateY(-50%);
+}
+
+.selected-unit-actions > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .board-placeholder {
