@@ -8,7 +8,7 @@ import type { CommandRerollRollType, HeroicInterventionMode, StratagemDefinition
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import { battleUnitsBaseEdgeDistance, playShootingWeaponModelCount, type FiringDeckSelection, type PlayChargeTargetOption, type PlayFightWeaponOption, type PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
 import { explosivesTargetAllowed } from '@warhammer-simulator/core/engine/stratagems';
-import { rulesEditionForRuleset } from '@warhammer-simulator/core/engine/rulesEngine';
+import { rulesEditionForRuleset, weaponHasKeyword } from '@warhammer-simulator/core/engine/rulesEngine';
 import {
   abilityOptionKey,
   abilityTimingLabel,
@@ -528,11 +528,16 @@ export function PlayShootingPanel({
                     ? 1
                     : Math.max(0, (allocationSaveWithCover - 1) / 6);
                   const feelNoPainDamageChance = allocationFeelNoPain === null ? 1 : Math.max(0, (allocationFeelNoPain - 1) / 6);
+                  const targetModelWounds = target?.profile.wounds ?? 1;
+                  const damageCanCarryOver = weapon ? weaponHasKeyword(weapon, 'Devastating Wounds') : false;
+                  const expectedDamagePerUnsavedAttack = averageDamage === null
+                    ? null
+                    : (damageCanCarryOver ? averageDamage : Math.min(averageDamage, targetModelWounds));
                   const expectedDamage = averageAttacks !== null && averageDamage !== null
-                    ? allocatedModelCount * averageAttacks * hitChance * woundChance * saveFailureChance * feelNoPainDamageChance * averageDamage
+                    ? allocatedModelCount * averageAttacks * hitChance * woundChance * saveFailureChance * feelNoPainDamageChance * (expectedDamagePerUnsavedAttack ?? averageDamage)
                     : null;
                   const estimatedModelsLost = expectedDamage !== null && target
-                    ? Math.min(target.remainingModels, expectedDamage / Math.max(1, target.profile.wounds))
+                    ? Math.min(target.remainingModels, expectedDamage / Math.max(1, targetModelWounds))
                     : null;
                   return (
                     <Box key={`${option.weaponIndex}:${targetId}`} sx={{ display: 'grid', gap: 0.25 }}>
@@ -592,7 +597,7 @@ export function PlayShootingPanel({
                               <Typography variant="caption" sx={{ color: uiTokens.color.combat.save, fontWeight: 900 }}>{allocationFeelNoPain}+</Typography>
                             </Box>
                           )}
-                          <Tooltip title="Approximate expected model losses from average attacks, hit/wound/save probabilities, and average damage. Actual dice results may vary.">
+                          <Tooltip title="Approximate expected model losses. Normal weapon damage is capped at the target model's wounds because excess damage does not spill over; mortal-wound damage can carry over. Actual dice results may vary.">
                             <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderLeft: `1px solid ${uiTokens.border.statDivider}`, cursor: 'help', minWidth: 0 }}>
                               <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 9, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Est.</Typography>
                               <Typography variant="caption" sx={{ color: estimatedModelsLost === null ? uiTokens.color.text.muted : uiTokens.color.status.warning, fontWeight: 900 }}>
