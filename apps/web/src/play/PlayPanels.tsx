@@ -232,10 +232,10 @@ function ShootingResultSummary({ entries, section = 'all', weaponNames = [] }: {
         </Box>
       ))}
       {section !== 'defender' && result.woundSummary.length > 0 && (
-        <Box sx={{ display: 'grid', gap: 0.25, mt: 0.35 }}>
-          <Typography variant="caption" sx={{ color: uiTokens.color.text.secondary, fontWeight: 800 }}>Wounds by target</Typography>
+        <Box sx={{ display: 'grid', gap: 0.35, mt: 0.5, p: 0.75, border: `1px solid ${uiTokens.border.warning}`, borderRadius: uiTokens.radius.control, background: uiTokens.surface.pendingHud }}>
+          <Typography variant="caption" sx={{ color: uiTokens.color.status.warning, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Wounds by target</Typography>
           {result.woundSummary.map(summary => (
-            <Typography key={summary.target} variant="caption" sx={{ color: uiTokens.color.text.muted }}>
+            <Typography key={summary.target} variant="body2" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 900, lineHeight: 1.25 }}>
               {summary.target} — {summary.entries.map(entry => `${entry.ap}: ${entry.wounds} wound${entry.wounds === 1 ? '' : 's'}`).join('; ')}
             </Typography>
           ))}
