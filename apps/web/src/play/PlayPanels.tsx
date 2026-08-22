@@ -135,7 +135,7 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
     groups: ['Hit rolls', 'Wound rolls', 'Save rolls', 'Feel No Pain']
       .map(label => ({
         label,
-        target: entries.find(entry => entry.message.trim().startsWith(label))?.message.match(/(?:^|[,\s])(\d+)\+/)?.[1],
+        target: entries.find(entry => entry.message.trim().startsWith(label))?.message.match(/(?:^|[(,\s])(\d+)\+/)?.[1],
         rolls: [...(groups.get(label) ?? [])].sort((a, b) => b - a),
         successCount: successes.get(label),
       }))
