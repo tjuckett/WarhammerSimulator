@@ -980,7 +980,7 @@ export default function App() {
       battleState.units
         .filter(unit => unit.side !== selectedShootingUnit.side && !unit.destroyed && !unit.embarkedInUnitId)
         .filter(unit => visibleUnitIds.has(unit.id))
-        .filter(unit => !battleUnitsWithinBaseEdgeRange(selectedShootingUnit, unit, maxRange))
+        .filter(unit => battleUnitsBaseEdgeDistance(selectedShootingUnit, unit) > maxRange)
         .map(unit => unit.id),
     );
   }, [battleState, selectedShootingUnit, selectedPlayShootingOptions, selectedShootingWeaponIndex, losRays]);
