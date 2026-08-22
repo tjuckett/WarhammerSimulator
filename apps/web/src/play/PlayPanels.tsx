@@ -112,13 +112,14 @@ function shootingResultSummary(entries: LogEntry[]) {
   let woundsLost = 0;
   for (const entry of entries) {
     const message = entry.message;
+    const normalizedMessage = message.trim();
     const rolls = message.match(/\[([^\]]*)\]/)?.[1]
       ?.split(',').map(value => Number(value.trim())).filter(Number.isFinite) ?? [];
-    const group = message.startsWith('Hit rolls')
+    const group = normalizedMessage.startsWith('Hit rolls')
       ? 'Hit rolls'
-      : message.startsWith('Wound rolls') || message.startsWith('Twin-linked wound rerolls')
+      : normalizedMessage.startsWith('Wound rolls') || normalizedMessage.startsWith('Twin-linked wound rerolls')
         ? 'Wound rolls'
-        : message.startsWith('Save rolls') ? 'Save rolls' : null;
+        : normalizedMessage.startsWith('Save rolls') ? 'Save rolls' : null;
     if (group && rolls.length) groups.set(group, [...(groups.get(group) ?? []), ...rolls]);
     if (entry.type === 'damage') {
       modelsKilled += Number(message.match(/(\d+) model\(s\) slain/)?.[1] ?? 0);
@@ -329,6 +330,7 @@ export function PlayShootingPanel({
             const noSave = sv > 6;
             const wtColor = calcWoundTargetColor(wt);
             const coverBonus = coverSaveEnabled && targetInCover && (selectedTarget!.profile.save <= 6) ? 1 : 0;
+            const hitTarget = Math.min(6, weapon.skill + (targetInCover && !coverSaveEnabled ? 1 : 0));
             const svWithCover = sv - coverBonus;
             const noSaveWithCover = svWithCover > 6;
             return (
@@ -350,7 +352,10 @@ export function PlayShootingPanel({
                   {/* Hit */}
                   <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
                     <div style={{ fontSize: 8, color: uiTokens.color.text.subtle, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Hit</div>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: uiTokens.color.combat.hit, lineHeight: 1 }}>{weapon.skill}+</div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: uiTokens.color.combat.hit, lineHeight: 1 }}>{hitTarget}+</div>
+                    {targetInCover && !coverSaveEnabled && (
+                      <div style={{ fontSize: 9, color: uiTokens.color.status.warning, marginTop: 3 }}>cover -1 hit</div>
+                    )}
                   </div>
                   {/* Wound */}
                   <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
@@ -381,11 +386,6 @@ export function PlayShootingPanel({
                         <div style={{ fontSize: 9, marginTop: 3, color: weapon.ap < 0 ? uiTokens.color.combat.apWarning : uiTokens.color.text.subtle }}>
                           AP{weapon.ap}{usedInvuln ? ' ★inv' : ''}
                         </div>
-                        {targetInCover && !coverSaveEnabled && (
-                          <div style={{ fontSize: 9, color: uiTokens.color.status.warning, marginTop: 2 }}>
-                            ⛨ cover: -1 to hit (11th)
-                          </div>
-                        )}
                         {targetInCover && coverSaveEnabled && (
                           <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, marginTop: 2 }}>
                             ⛨ cover (no save to improve)
