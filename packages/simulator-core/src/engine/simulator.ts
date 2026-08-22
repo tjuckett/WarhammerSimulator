@@ -1176,7 +1176,7 @@ function resolveAttacks(
   ));
   if (options.attackCountOverride !== undefined) {
     logs.push(log(state, attacker.side, attacker.profile.name,
-      `     Split melee attacks: ${options.attackCountOverride} attack(s) declared against ${defender.profile.name}`,
+      `     Split ${weapon.isMelee ? 'melee' : 'ranged'} attacks: ${options.attackCountOverride} attack(s) declared against ${defender.profile.name}`,
       'info',
     ));
   }
@@ -3094,7 +3094,7 @@ function resolveShootingWeaponIntoTarget(
   weapon: WeaponProfile,
   weaponIndex: number,
   rules: RulesEdition,
-  options: { deferCasualties?: boolean; snapShooting?: boolean } = {},
+  options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number } = {},
 ): LogEntry[] {
   const modifiers = shootingWeaponModifiers(state, unit, target, weapon, rules);
   const snapShooting = options.snapShooting ?? false;
@@ -3159,6 +3159,88 @@ export type PlayShootingWeaponOption = {
   name: string;
   targetIds: string[];
 };
+
+export type PlayShootingAttackAllocation = {
+  weaponIndex: number;
+  targetUnitId: string;
+  attackCount?: number;
+};
+
+function fixedWeaponAttackCount(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number): number | null {
+  const attacks = Number(String(weapon.attacks).trim());
+  if (!Number.isInteger(attacks) || attacks < 0) return null;
+  return attacks * aliveWeaponModelCount(unit, weaponIndex);
+}
+
+export function playShootingWeaponAttackCount(unit: BattleUnit, weaponIndex: number): number | null {
+  const weapon = unit.profile.weapons[weaponIndex];
+  return weapon ? fixedWeaponAttackCount(unit, weapon, weaponIndex) : null;
+}
+
+/** Resolve a unit's complete shooting declaration only after every weapon target is locked. */
+export function shootPlayUnitWeapons(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  allocations: PlayShootingAttackAllocation[],
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): BattleState {
+  if (state.phase !== 'shooting' || state.activeArmy !== side || !allocations.length) return state;
+  const s = clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || unit.activated) return state;
+  if (s.activeAttachedShootingUnitId && attachedUnitId(unit) !== s.activeAttachedShootingUnitId) return state;
+
+  const eligibleWeapons = eligibleShootingWeapons(unit, s, rules)
+    .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
+    .filter(option => option.weaponIndex >= 0 && aliveWeaponModelCount(unit, option.weaponIndex) > 0);
+  const selectableWeapons = shootingWeaponSelectionForAll(eligibleWeapons);
+  const selectableIndexes = new Set(selectableWeapons.map(option => option.weaponIndex));
+  const allocationByWeapon = new Map<number, PlayShootingAttackAllocation[]>();
+  for (const allocation of allocations) {
+    if (!selectableIndexes.has(allocation.weaponIndex)) return state;
+    if (!s.units.some(candidate => candidate.id === allocation.targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId)) return state;
+    const weaponAllocations = allocationByWeapon.get(allocation.weaponIndex) ?? [];
+    weaponAllocations.push(allocation);
+    allocationByWeapon.set(allocation.weaponIndex, weaponAllocations);
+  }
+  if (allocationByWeapon.size !== selectableIndexes.size) return state;
+
+  for (const selected of selectableWeapons) {
+    const weaponAllocations = allocationByWeapon.get(selected.weaponIndex) ?? [];
+    const fixedCount = fixedWeaponAttackCount(unit, selected.weapon, selected.weaponIndex);
+    if (fixedCount === null && weaponAllocations.length !== 1) return state;
+    const declaredCount = weaponAllocations.reduce((total, allocation) => total + (allocation.attackCount ?? 0), 0);
+    if (fixedCount !== null && weaponAllocations.length > 1 && declaredCount !== fixedCount) return state;
+    if (weaponAllocations.some(allocation => allocation.attackCount !== undefined && (!Number.isInteger(allocation.attackCount) || allocation.attackCount < 0))) return state;
+    for (const allocation of weaponAllocations) {
+      if (s.attachedShootingTargetUnitId && allocation.targetUnitId !== s.attachedShootingTargetUnitId) return state;
+      const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
+      if (!shootingWeaponCanTarget(s, unit, target, selected.weapon, rules)) return state;
+    }
+  }
+
+  const logs: LogEntry[] = [
+    log(s, side, unit.profile.name, `🔫 ${unit.profile.name} locks all ranged targets before rolling:`, 'shoot'),
+  ];
+  for (const selected of selectableWeapons) {
+    const weaponAllocations = allocationByWeapon.get(selected.weaponIndex)!;
+    const split = weaponAllocations.length > 1;
+    for (const allocation of weaponAllocations) {
+      const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
+      logs.push(...resolveShootingWeaponIntoTarget(s, unit, target, selected.weapon, selected.weaponIndex, rules, {
+        deferCasualties: true,
+        ...(split && allocation.attackCount !== undefined ? { attackCountOverride: allocation.attackCount } : {}),
+      }));
+    }
+  }
+  if (!logs.length) return state;
+  unit.firedWeaponIndices = [...new Set([...(unit.firedWeaponIndices ?? []), ...selectableWeapons.map(option => option.weaponIndex)])];
+  unit.activated = true;
+  updateAttachedShootingActivation(s, unit, rules);
+  s.log = [...s.log, ...logs];
+  return s;
+}
 
 export function playShootingWeaponOptions(
   state: BattleState,

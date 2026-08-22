@@ -25,7 +25,7 @@ import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simu
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
   battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, completePlayScoutMove, createDeploymentState, declarePlaySuperHeavyMobile, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playDisembarkModes, playPhaseCoherencyIssues, playScoutMoveAllowance, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels, startPlayScoutMove,
-  allocatePlayDamageToModel, battleUnitsWithinBaseEdgeRange, boobyTrapTerrainOptions, chargePlayUnitTargets, completePlayChargeMovement, playChargeEligibilityReason, playChargeRoll, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightFirstUnitIds, playFightPhaseHasPendingActivations, playFightStepNeedsStart, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undoPlayUnitMovement, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type FiringDeckSelection, type LOSRay,
+  allocatePlayDamageToModel, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTargets, completePlayChargeMovement, playChargeEligibilityReason, playChargeRoll, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightFirstUnitIds, playFightPhaseHasPendingActivations, playFightStepNeedsStart, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponAttackCount, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, shootPlayUnitWeapons, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undoPlayUnitMovement, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type FiringDeckSelection, type LOSRay, type PlayShootingAttackAllocation,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -277,6 +277,8 @@ export default function App() {
       setSelectedShootingTargetId,
       selectedShootingWeaponIndex,
       setSelectedShootingWeaponIndex,
+      shootingAttackAllocations,
+      setShootingAttackAllocations,
       selectedChargeTargetIds,
       setSelectedChargeTargetIds,
       selectedFightTargetId,
@@ -1226,6 +1228,32 @@ export default function App() {
   ]);
 
   useEffect(() => {
+    if (!battleState || battleState.phase !== 'shooting' || !selectedShootingUnit) {
+      setShootingAttackAllocations({});
+      return;
+    }
+    setShootingAttackAllocations(current => {
+      const next: Record<string, Record<string, number>> = {};
+      for (const option of selectedPlayShootingOptions) {
+        const existing = current[String(option.weaponIndex)];
+        const validExisting = existing
+          ? Object.fromEntries(Object.entries(existing).filter(([targetId]) => option.targetIds.includes(targetId)))
+          : {};
+        if (Object.values(validExisting).some(value => value > 0)) {
+          next[String(option.weaponIndex)] = validExisting;
+          continue;
+        }
+        const targetId = option.targetIds[0];
+        if (!targetId) continue;
+        next[String(option.weaponIndex)] = {
+          [targetId]: playShootingWeaponAttackCount(selectedShootingUnit, option.weaponIndex) ?? 1,
+        };
+      }
+      return next;
+    });
+  }, [battleState?.phase, selectedShootingUnit?.id, selectedPlayShootingOptions, selectedShootingUnit, setShootingAttackAllocations]);
+
+  useEffect(() => {
     if (!battleState || battleState.phase !== 'movement' || !overwatchUnit) {
       if (overwatchUnitId) setOverwatchUnitId('');
       return;
@@ -2014,6 +2042,16 @@ export default function App() {
     commitBattleState(result.next);
   }
 
+  function updateShootingAttackAllocation(weaponIndex: number, targetId: string, attacks: number) {
+    setShootingAttackAllocations(current => ({
+      ...current,
+      [String(weaponIndex)]: {
+        ...(current[String(weaponIndex)] ?? {}),
+        [targetId]: attacks,
+      },
+    }));
+  }
+
   function resolveSelectedPlayShooting() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
@@ -2023,40 +2061,37 @@ export default function App() {
       setTargetErrorMsg('Allocate pending damage before shooting again');
       return;
     }
-    const weaponIndex = selectedShootingWeaponIndex === 'all' ? 'all' : Number(selectedShootingWeaponIndex);
-    if (weaponIndex !== 'all' && !Number.isFinite(weaponIndex)) return;
-    const noAttackSelected = weaponIndex !== 'all' && weaponIndex < 0;
-    if (!noAttackSelected && !selectedShootingTargetId) return;
-    if (!noAttackSelected && !selectedPlayShootingTargets.some(target => target.id === selectedShootingTargetId)) {
-      const target = prev.units.find(unit => unit.id === selectedShootingTargetId && !unit.destroyed);
-      if (target && selectedShootingUnit) {
-        setTargetErrorMsg(invalidShootingTargetMessage(target, selectedShootingUnit));
-      }
+    const noRangedWeapons = selectedPlayShootingOptions.length === 1 && selectedPlayShootingOptions[0].weaponIndex < 0;
+    const allocations: PlayShootingAttackAllocation[] = Object.entries(shootingAttackAllocations).flatMap(([weaponIndexText, targets]) => {
+      const weaponIndex = Number(weaponIndexText);
+      const entries = Object.entries(targets).filter(([, attackCount]) => attackCount > 0);
+      return entries.map(([targetUnitId, attackCount]) => ({
+        weaponIndex,
+        targetUnitId,
+        ...(entries.length > 1 ? { attackCount } : {}),
+      }));
+    });
+    if (!allocations.length && !noRangedWeapons) {
+      setTargetErrorMsg('Assign every ranged weapon to at least one valid target before rolling.');
       return;
     }
     const rules = rulesEditionForRuleset(prev.ruleset);
-    const next = shootPlayUnitWeapon(
-      prev,
-      selection.unitId,
-      selection.side,
-      noAttackSelected ? undefined : selectedShootingTargetId,
-      weaponIndex,
-      rules,
-    );
+    const next = noRangedWeapons
+      ? shootPlayUnitWeapon(prev, selection.unitId, selection.side, undefined, -1, rules)
+      : shootPlayUnitWeapons(prev, selection.unitId, selection.side, allocations, rules);
     if (next === prev) return;
     setShootingResultEntries(next.log.slice(prev.log.length));
     const pendingDamageUnit = next.units.find(unit => !unit.destroyed && !unit.embarkedInUnitId && (unit.pendingDamageAllocations?.length ?? 0) > 0);
     setCasualtyRemovalShooterId(pendingDamageUnit ? selection.unitId : null);
     setTargetErrorMsg(null);
-    // After a single-weapon fire the weapon is gone from the options; the effect picks the next available weapon.
-    if (weaponIndex !== 'all') setSelectedShootingWeaponIndex('all');
+    setShootingAttackAllocations({});
 
     pushPlayUndo(playUndoEntry(prev), next, {
       type: GAME_ACTION_TYPE.ShootUnitWeapon,
       unitId: selection.unitId,
       side: selection.side,
-      targetUnitId: noAttackSelected ? '' : selectedShootingTargetId,
-      weaponIndex,
+      targetUnitId: '',
+      weaponIndex: 'all',
     });
     commitBattleState(next);
   }
@@ -3090,6 +3125,8 @@ export default function App() {
                       damageAllocationLocked={damageAllocationLocked}
                       pendingDamageLabel={pendingDamageText}
                       weaponOptions={selectedPlayShootingOptions}
+                      shootingAttackAllocations={shootingAttackAllocations}
+                      onShootingAttackAllocationChange={updateShootingAttackAllocation}
                       firingDeckOptions={selectedFiringDeckOptions}
                       firingDeckCapacity={selectedFiringDeckCapacity}
                       onFiringDeckSelect={selectFiringDeckWeapons}
@@ -3387,6 +3424,8 @@ export default function App() {
                   damageAllocationLocked={damageAllocationLocked}
                   pendingDamageLabel={pendingDamageText}
                   weaponOptions={selectedPlayShootingOptions}
+                  shootingAttackAllocations={shootingAttackAllocations}
+                  onShootingAttackAllocationChange={updateShootingAttackAllocation}
                   firingDeckOptions={selectedFiringDeckOptions}
                   firingDeckCapacity={selectedFiringDeckCapacity}
                   onFiringDeckSelect={selectFiringDeckWeapons}

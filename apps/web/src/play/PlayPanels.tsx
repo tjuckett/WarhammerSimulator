@@ -219,11 +219,13 @@ export function PlayShootingPanel({
   damageAllocationLocked: boolean;
   pendingDamageLabel?: string | null;
   weaponOptions: PlayShootingWeaponOption[];
+  shootingAttackAllocations?: Record<string, Record<string, number>>;
   selectedTargetId: string;
   selectedWeaponIndex: 'all' | string;
   coverUnitIds?: Set<string>;
   onTargetChange: (value: string) => void;
   onWeaponChange: (value: 'all' | string) => void;
+  onShootingAttackAllocationChange?: (weaponIndex: number, targetId: string, attacks: number) => void;
   firingDeckOptions?: FiringDeckSelection[];
   firingDeckCapacity?: number;
   onFiringDeckSelect?: (selections: FiringDeckSelection[]) => void;
@@ -245,10 +247,8 @@ export function PlayShootingPanel({
     && weaponOptions.some(option => String(option.weaponIndex) === selectedWeaponIndex && option.weaponIndex < 0);
   const canResolve = resolvePendingDamage || (!shootingLocked
     && !shooter.activated
-    && (
-      noAttackSelected
-      || (weaponOptions.some(option => option.targetIds.length > 0) && !!selectedTarget && targetIsValid)
-    ));
+    && weaponOptions.length > 0
+    && weaponOptions.every(option => option.weaponIndex < 0 || Object.values(shootingAttackAllocations[String(option.weaponIndex)] ?? {}).some(value => value > 0)));
   const targetInCover = !!(selectedTarget && coverUnitIds?.has(selectedTarget.id));
 
   const refWeapons = selectedTarget && targetIsValid
@@ -352,6 +352,45 @@ export function PlayShootingPanel({
           ))}
         </Select>
       </FormControl>
+
+      {!shootingLocked && !shooter.activated && weaponOptions.some(option => option.weaponIndex >= 0) && (
+        <Box sx={{ display: 'grid', gap: 0.75, p: 1, border: `1px solid ${uiTokens.border.control}`, borderRadius: uiTokens.radius.control }}>
+          <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, fontWeight: 700 }}>
+            Lock every ranged weapon target before rolling
+          </Typography>
+          {weaponOptions.filter(option => option.weaponIndex >= 0).map(option => {
+            const weapon = shooter.profile.weapons[option.weaponIndex];
+            const weaponTargets = shootingAttackAllocations[String(option.weaponIndex)] ?? {};
+            const fixedAttacks = weapon && /^\d+$/.test(String(weapon.attacks).trim())
+              ? Number(weapon.attacks) * shooter.remainingModels
+              : null;
+            return (
+              <Box key={option.weaponIndex} sx={{ display: 'grid', gap: 0.4 }}>
+                <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700 }}>
+                  {option.name}{fixedAttacks !== null ? ` — ${fixedAttacks} attacks` : ' — variable attacks'}
+                </Typography>
+                {option.targetIds.map(targetId => {
+                  const target = targets.find(candidate => candidate.id === targetId);
+                  return (
+                    <TextField
+                      key={`${option.weaponIndex}:${targetId}`}
+                      size="small"
+                      type="number"
+                      label={target?.profile.name ?? targetId}
+                      value={weaponTargets[targetId] ?? 0}
+                      slotProps={{ htmlInput: { min: 0, max: fixedAttacks ?? undefined, step: 1 } }}
+                      onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.floor(Number(event.target.value) || 0)))}
+                    />
+                  );
+                })}
+              </Box>
+            );
+          })}
+          <Typography variant="caption" sx={{ color: uiTokens.color.text.quiet }}>
+            Set attacks to zero for targets that should not receive that weapon. Alternate weapon profiles remain one selectable loadout.
+          </Typography>
+        </Box>
+      )}
 
       {shootingLocked && resultSection !== 'attacker' ? (
         <Typography variant="caption" sx={warningTextSx}>
@@ -541,12 +580,14 @@ export function PlayFightPanel({
   selectedTargetId,
   selectedWeaponIndex,
   weaponOptions,
+  shootingAttackAllocations = {},
   fixedAttackCount,
   attackSplits,
   damageAllocationLocked,
   pendingDamageLabel,
   onTargetChange,
   onWeaponChange,
+  onShootingAttackAllocationChange = () => undefined,
   onAttackSplitChange,
   onClearAttackSplits,
   onResolve,
