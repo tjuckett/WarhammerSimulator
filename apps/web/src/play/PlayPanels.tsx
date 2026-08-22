@@ -593,9 +593,9 @@ export function PlayShootingPanel({
                             </Box>
                           )}
                           <Tooltip title="Approximate expected model losses from average attacks, hit/wound/save probabilities, and average damage. Actual dice results may vary.">
-                            <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderLeft: `1px solid ${uiTokens.border.statDivider}`, cursor: 'help' }}>
-                              <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 8, lineHeight: 1, whiteSpace: 'nowrap' }}>Est. models</Typography>
-                              <Typography variant="caption" sx={{ color: estimatedModelsLost === null ? uiTokens.color.text.muted : uiTokens.color.status.warning, fontWeight: 900 }}>
+                            <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderLeft: `1px solid ${uiTokens.border.statDivider}`, cursor: 'help', display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: 0 }}>
+                              <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 8, lineHeight: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Est.</Typography>
+                              <Typography variant="caption" sx={{ color: estimatedModelsLost === null ? uiTokens.color.text.muted : uiTokens.color.status.warning, fontWeight: 900, lineHeight: 1 }}>
                                 {estimatedModelsLost === null ? '—' : `~${estimatedModelsLost.toFixed(1)}`}
                               </Typography>
                             </Box>
