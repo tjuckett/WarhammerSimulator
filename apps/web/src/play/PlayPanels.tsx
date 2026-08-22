@@ -76,6 +76,14 @@ function averageCharacteristic(value: string): number | null {
   return matched && lastEnd === expression.length ? total : null;
 }
 
+function bestFeelNoPain(unit: BattleUnit): number | null {
+  const targets = [...(unit.profile.abilities ?? []), ...(unit.profile.rules ?? [])]
+    .flatMap(rule => `${rule.name} ${rule.description}`.matchAll(/feel\s+no\s+pain\s*\(?\s*([2-6])\+?/gi))
+    .map(match => Number(match[1]))
+    .filter(value => Number.isFinite(value));
+  return targets.length ? Math.min(...targets) : null;
+}
+
 export function PendingDamageAllocationHud({ unit, resultEntries = [], weaponNames = [] }: { unit: BattleUnit; resultEntries?: LogEntry[]; weaponNames?: string[] }) {
   const label = pendingDamageLabel(unit);
   if (!label) return null;
@@ -499,7 +507,12 @@ export function PlayShootingPanel({
                   const allocationSave = target ? calcEffectiveSave(target.profile.save, weapon.ap, target.profile.invulnSave) : null;
                   const allocationCoverBonus = target && coverSaveEnabled && targetInCoverForAllocation && target.profile.save <= 6 ? 1 : 0;
                   const allocationHit = weapon ? Math.min(6, weapon.skill + (targetInCoverForAllocation && !coverSaveEnabled ? 1 : 0)) : null;
-                  const allocationSaveWithCover = allocationSave === null ? null : allocationSave - allocationCoverBonus;
+                  const allocationNormalSaveWithCover = target ? target.profile.save + Math.abs(weapon.ap) - allocationCoverBonus : null;
+                  const allocationSaveWithCover = allocationSave === null || allocationNormalSaveWithCover === null
+                    ? null
+                    : Math.min(allocationNormalSaveWithCover, target?.profile.invulnSave ?? 7);
+                  const allocationUsesInvuln = !!target?.profile.invulnSave && allocationSaveWithCover === target.profile.invulnSave && target.profile.invulnSave < (allocationNormalSaveWithCover ?? 7);
+                  const allocationFeelNoPain = target ? bestFeelNoPain(target) : null;
                   const allocationWoundColor = allocationWound === null ? uiTokens.color.text.muted : calcWoundTargetColor(allocationWound);
                   const allocationSaveColor = allocationSaveWithCover !== null && allocationSaveWithCover > 6
                     ? uiTokens.color.combat.noSave
@@ -512,25 +525,27 @@ export function PlayShootingPanel({
                   const saveFailureChance = allocationSaveWithCover === null || allocationSaveWithCover > 6
                     ? 1
                     : Math.max(0, (allocationSaveWithCover - 1) / 6);
+                  const feelNoPainDamageChance = allocationFeelNoPain === null ? 1 : Math.max(0, (allocationFeelNoPain - 1) / 6);
                   const expectedDamage = averageAttacks !== null && averageDamage !== null
-                    ? allocatedModelCount * averageAttacks * hitChance * woundChance * saveFailureChance * averageDamage
+                    ? allocatedModelCount * averageAttacks * hitChance * woundChance * saveFailureChance * feelNoPainDamageChance * averageDamage
                     : null;
                   const estimatedModelsLost = expectedDamage !== null && target
                     ? Math.min(target.remainingModels, expectedDamage / Math.max(1, target.profile.wounds))
                     : null;
                   return (
-                    <Box key={`${option.weaponIndex}:${targetId}`} sx={{ display: 'grid', gap: 0.25 }}>
+                    <Box key={`${option.weaponIndex}:${targetId}`} sx={{ display: 'flex', gap: 0.5, alignItems: 'stretch' }}>
                       <TextField
                         size="small"
                         type="number"
                         label={target?.profile.name ?? targetId}
                         value={weaponTargets[targetId] ?? 0}
+                        sx={{ minWidth: 120, flex: '0 0 120px' }}
                         slotProps={{ htmlInput: { min: 0, max: Math.max(0, weaponModelCount - allocatedElsewhere), step: 1 } }}
                         onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.floor(Number(event.target.value) || 0)))}
                       />
                       {target && (
-                        <Box sx={{ mt: 0.35, border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.statCard, overflow: 'hidden', background: uiTokens.surface.statCard }}>
-                          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+                        <Box sx={{ flex: 1, minWidth: 0, border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.statCard, overflow: 'hidden', background: uiTokens.surface.statCard }}>
+                          <Box sx={{ display: 'grid', gridTemplateColumns: `repeat(${allocationFeelNoPain === null ? 4 : 5}, minmax(0, 1fr))`, height: '100%' }}>
                             <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
                               <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 9 }}>Hit</Typography>
                               <Typography variant="caption" sx={{ color: uiTokens.color.combat.hit, fontWeight: 900 }}>{allocationHit}+</Typography>
@@ -540,17 +555,24 @@ export function PlayShootingPanel({
                               <Typography variant="caption" sx={{ color: allocationWoundColor, fontWeight: 900 }}>{allocationWound}+</Typography>
                             </Box>
                             <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center' }}>
-                              <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 9 }}>Save</Typography>
+                              <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 9 }}>Save{allocationUsesInvuln ? ' (inv)' : ''}</Typography>
                               <Typography variant="caption" sx={{ color: allocationSaveColor, fontWeight: 900 }}>{allocationSaveWithCover !== null && allocationSaveWithCover > 6 ? '—' : `${allocationSaveWithCover}+`}</Typography>
                             </Box>
-                          </Box>
+                          {allocationFeelNoPain !== null && (
+                            <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderLeft: `1px solid ${uiTokens.border.statDivider}` }}>
+                              <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 9 }}>FNP</Typography>
+                              <Typography variant="caption" sx={{ color: uiTokens.color.combat.save, fontWeight: 900 }}>{allocationFeelNoPain}+</Typography>
+                            </Box>
+                          )}
                           <Tooltip title="Approximate expected model losses from average attacks, hit/wound/save probabilities, and average damage. Actual dice results may vary.">
-                            <Box sx={{ px: 0.8, py: 0.35, borderTop: `1px solid ${uiTokens.border.statCard}`, cursor: 'help' }}>
+                            <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderLeft: `1px solid ${uiTokens.border.statDivider}`, cursor: 'help' }}>
+                              <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 9 }}>Est. models</Typography>
                               <Typography variant="caption" sx={{ color: estimatedModelsLost === null ? uiTokens.color.text.muted : uiTokens.color.status.warning, fontWeight: 900 }}>
-                                {estimatedModelsLost === null ? 'Est. unavailable for this weapon profile' : `Est. ~${estimatedModelsLost.toFixed(1)} models die`}
+                                {estimatedModelsLost === null ? '—' : `~${estimatedModelsLost.toFixed(1)}`}
                               </Typography>
                             </Box>
                           </Tooltip>
+                          </Box>
                         </Box>
                       )}
                     </Box>
