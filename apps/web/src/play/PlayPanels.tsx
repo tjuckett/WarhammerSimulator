@@ -535,7 +535,11 @@ export function PlayShootingPanel({
                     ? Math.min(target.remainingModels, expectedDamage / Math.max(1, target.profile.wounds))
                     : null;
                   return (
-                    <Box key={`${option.weaponIndex}:${targetId}`} sx={{ display: 'flex', gap: 0.5, alignItems: 'stretch' }}>
+                    <Box key={`${option.weaponIndex}:${targetId}`} sx={{ display: 'grid', gap: 0.25 }}>
+                      <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700, overflowWrap: 'anywhere' }}>
+                        {target?.profile.name ?? targetId}
+                      </Typography>
+                      <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'stretch' }}>
                       <Box sx={{ minWidth: 120, flex: '0 0 120px', display: 'flex', alignItems: 'center', gap: 0.25 }}>
                         <Button
                           size="small"
@@ -550,7 +554,7 @@ export function PlayShootingPanel({
                         <TextField
                           size="small"
                           type="number"
-                          label={target?.profile.name ?? targetId}
+                          hiddenLabel
                           value={allocationCount}
                           sx={{ flex: 1, '& input::-webkit-inner-spin-button': { appearance: 'none', margin: 0 } }}
                           slotProps={{ htmlInput: { min: 0, max: allocationMax, step: 1 } }}
@@ -590,7 +594,7 @@ export function PlayShootingPanel({
                           )}
                           <Tooltip title="Approximate expected model losses from average attacks, hit/wound/save probabilities, and average damage. Actual dice results may vary.">
                             <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderLeft: `1px solid ${uiTokens.border.statDivider}`, cursor: 'help' }}>
-                              <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 9 }}>Est. models</Typography>
+                              <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 8, lineHeight: 1, whiteSpace: 'nowrap' }}>Est. models</Typography>
                               <Typography variant="caption" sx={{ color: estimatedModelsLost === null ? uiTokens.color.text.muted : uiTokens.color.status.warning, fontWeight: 900 }}>
                                 {estimatedModelsLost === null ? '—' : `~${estimatedModelsLost.toFixed(1)}`}
                               </Typography>
@@ -599,6 +603,7 @@ export function PlayShootingPanel({
                           </Box>
                         </Box>
                       )}
+                      </Box>
                     </Box>
                   );
                 })}
