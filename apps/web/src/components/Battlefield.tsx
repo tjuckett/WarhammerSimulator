@@ -1637,14 +1637,22 @@ function drawUnit(
     const name = unit.profile.name.length > 18
       ? unit.profile.name.substring(0, 16) + '..'
       : unit.profile.name;
-    const tw = ctx.measureText(name).width;
-    const pillH = fontSize + 3;
+    const actionLabel = unit.movementAction === 'advanced' ? 'ADVANCED' : unit.fellBack || unit.movementAction === 'fellBack' ? 'FELL BACK' : null;
+    const actionFontSize = Math.max(5.5, scale * 0.5);
+    const actionWidth = actionLabel ? ctx.measureText(actionLabel).width * (actionFontSize / fontSize) : 0;
+    const tw = Math.max(ctx.measureText(name).width, actionWidth);
+    const pillH = fontSize + (actionLabel ? actionFontSize + 2 : 0) + 3;
     const labelY = topY - 3;
     ctx.fillStyle = 'rgba(0,0,0,0.72)';
     ctx.fillRect(cx - tw / 2 - 3, labelY - pillH, tw + 6, pillH);
     ctx.fillStyle = '#fff';
     ctx.textBaseline = 'bottom';
-    ctx.fillText(name, cx, labelY);
+    ctx.fillText(name, cx, labelY - (actionLabel ? actionFontSize + 2 : 0));
+    if (actionLabel) {
+      ctx.font = `bold ${actionFontSize}px monospace`;
+      ctx.fillStyle = actionLabel === 'ADVANCED' ? '#8dffad' : '#8ddfff';
+      ctx.fillText(actionLabel, cx, labelY - 1);
+    }
   }
 
   // Health bar — below formation
