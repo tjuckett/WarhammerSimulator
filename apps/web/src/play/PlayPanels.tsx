@@ -74,16 +74,16 @@ export function PendingDamageAllocationHud({ unit, resultEntries = [] }: { unit:
       display: 'grid',
       gap: 0.35,
     }}>
+      <ShootingResultSummary entries={resultEntries} section="defender" />
       <Typography variant="caption" sx={{ color: uiTokens.color.status.pending, fontWeight: 800, textTransform: 'uppercase', lineHeight: 1 }}>
-        {PLAY_PANEL_LABELS.pendingDamage}
+        Damage to apply
       </Typography>
       <Typography variant="body2" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 800, lineHeight: 1.15 }}>
         {label}
       </Typography>
       <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingMuted, lineHeight: 1.2 }}>
-        {forcedModel}
+        {forcedModel} Each hit's damage applies to one model; excess damage does not carry over.
       </Typography>
-      <ShootingResultSummary entries={resultEntries} section="defender" />
     </Box>
   );
 }
@@ -110,8 +110,6 @@ const popupPanelSx = {
 function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defender' | 'all' = 'all') {
   const groups = new Map<string, number[]>();
   const successes = new Map<string, number>();
-  let modelsKilled = 0;
-  let woundsLost = 0;
   for (const entry of entries) {
     const message = entry.message;
     const normalizedMessage = message.trim();
@@ -132,10 +130,6 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
       const resultCount = normalizedMessage.match(/\]\s*(?:→|->)\s*(\d+)\s+(hits|wounds|saved|ignored)/)?.[1];
       if (resultCount) successes.set(group, (successes.get(group) ?? 0) + Number(resultCount));
     }
-    if (entry.type === 'damage' && section !== 'attacker') {
-      modelsKilled += Number(message.match(/(\d+) model\(s\) slain/)?.[1] ?? 0);
-      woundsLost += Number(message.match(/(\d+) damage absorbed/)?.[1] ?? 0);
-    }
   }
   return {
     groups: ['Hit rolls', 'Wound rolls', 'Save rolls', 'Feel No Pain']
@@ -146,15 +140,13 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
         successCount: successes.get(label),
       }))
       .filter(group => group.rolls.length),
-    modelsKilled,
-    woundsLost,
   };
 }
 
 function ShootingResultSummary({ entries, section = 'all' }: { entries: LogEntry[]; section?: 'attacker' | 'defender' | 'all' }) {
   if (!entries.length) return null;
   const result = shootingResultSummary(entries, section);
-  if (!result.groups.length && !result.modelsKilled && !result.woundsLost) return null;
+  if (!result.groups.length) return null;
   return (
     <Box sx={{ display: 'grid', gap: 0.5, pt: 0.75, borderTop: `1px solid ${uiTokens.border.control}` }}>
       <Typography variant="caption" sx={{ color: uiTokens.color.text.secondary, fontWeight: 800 }}>Latest shooting result</Typography>
@@ -186,11 +178,6 @@ function ShootingResultSummary({ entries, section = 'all' }: { entries: LogEntry
           </Box>
         </Box>
       ))}
-      {section !== 'attacker' && (
-        <Typography variant="caption" sx={{ color: uiTokens.color.text.secondary }}>
-          {result.modelsKilled} unit model{result.modelsKilled === 1 ? '' : 's'} killed · {result.woundsLost} wound{result.woundsLost === 1 ? '' : 's'} lost on surviving models
-        </Typography>
-      )}
     </Box>
   );
 }

@@ -14,11 +14,6 @@ const WOUND_TARGET_COLORS = {
   desperate: '#ff5722',
 } as const;
 
-const DAMAGE_SPILL_LABELS = {
-  noCarryOver: 'no spillover',
-  carryOver: 'can spill over',
-} as const;
-
 const DICE_INPUT_SEPARATOR = /[,\s]+/;
 const COMMAND_REROLL_PENDING_LABEL = 'Command Re-roll pending: choose a roll to reroll.';
 
@@ -54,13 +49,12 @@ export function pendingDamageLabel(unit: BattleUnit | null): string | null {
   const allocation = allocations?.[0];
   if (!unit || !allocation || !allocations?.length) return null;
   const source = allocation.source ? ` from ${allocation.source}` : '';
-  const spill = allocation.noCarryOver ? DAMAGE_SPILL_LABELS.noCarryOver : DAMAGE_SPILL_LABELS.carryOver;
   const damageValues = allocations.map(item => item.damage);
   const sameDamage = damageValues.every(damage => damage === damageValues[0]);
   const hitSummary = sameDamage
     ? `${allocations.length} hit${allocations.length === 1 ? '' : 's'} × ${damageValues[0]} damage`
     : `${allocations.length} hits: ${damageValues.join(', ')} damage`;
-  return `${hitSummary}${source} (${spill})`;
+  return `${hitSummary}${source}`;
 }
 
 export function parseDiceInput(value: string): number[] {
