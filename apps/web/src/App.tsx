@@ -2069,11 +2069,20 @@ export default function App() {
   }
 
   function updateShootingAttackAllocation(weaponIndex: number, targetId: string, attacks: number) {
+    const shooter = selectedShootingUnit;
+    const maxAttacks = shooter ? playShootingWeaponAttackCount(shooter, weaponIndex) : null;
     setShootingAttackAllocations(current => ({
       ...current,
       [String(weaponIndex)]: {
         ...(current[String(weaponIndex)] ?? {}),
-        [targetId]: attacks,
+        [targetId]: maxAttacks === null
+          ? attacks
+          : Math.min(
+            attacks,
+            Math.max(0, maxAttacks - Object.entries(current[String(weaponIndex)] ?? {})
+              .filter(([allocatedTargetId]) => allocatedTargetId !== targetId)
+              .reduce((total, [, allocatedAttacks]) => total + (Number(allocatedAttacks) || 0), 0)),
+          ),
       },
     }));
   }

@@ -412,6 +412,12 @@ export function PlayShootingPanel({
                 </Typography>
                 {option.targetIds.map(targetId => {
                   const target = targets.find(candidate => candidate.id === targetId);
+                  const allocatedElsewhere = Object.entries(weaponTargets)
+                    .filter(([allocatedTargetId]) => allocatedTargetId !== targetId)
+                    .reduce((total, [, attacks]) => total + (Number(attacks) || 0), 0);
+                  const remainingAttacks = fixedAttacks === null
+                    ? undefined
+                    : Math.max(0, fixedAttacks - allocatedElsewhere);
                   return (
                     <TextField
                       key={`${option.weaponIndex}:${targetId}`}
@@ -419,7 +425,7 @@ export function PlayShootingPanel({
                       type="number"
                       label={target?.profile.name ?? targetId}
                       value={weaponTargets[targetId] ?? 0}
-                      slotProps={{ htmlInput: { min: 0, max: fixedAttacks ?? undefined, step: 1 } }}
+                      slotProps={{ htmlInput: { min: 0, max: remainingAttacks, step: 1 } }}
                       onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.floor(Number(event.target.value) || 0)))}
                     />
                   );
