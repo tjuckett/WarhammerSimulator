@@ -235,10 +235,21 @@ export function findUnblockedLOSRay(
       .filter(t => t.features.some(feature => feature.category === 'light' || feature.category === 'dense'))
       .filter(t => !circleIntersectsTerrain(fromCenter, fromRadius, t) && !circleIntersectsTerrain(toCenter, toRadius, t))
     : [];
+  const isRuinFootprint = (t: Terrain): boolean => t.type === 'ruin' || /\bruins?\b/i.test(t.name);
   const rayTerrain = terrain.map(t =>
-    t.type === 'ruin'
-      && (circleIntersectsTerrain(fromCenter, fromRadius, t) || circleIntersectsTerrain(toCenter, toRadius, t))
-      ? { ...t, type: 'area' as const }
+    isRuinFootprint(t)
+      ? {
+        ...t,
+        type: (circleIntersectsTerrain(fromCenter, fromRadius, t) || circleIntersectsTerrain(toCenter, toRadius, t))
+          ? 'area' as const
+          : t.type,
+        // In 11th edition, a model wholly within a ruin can see out through
+        // its walls. Keep wall features blocking for models merely overlapping
+        // the footprint or for lines between models outside the ruin.
+        features: edition === '11e' && circleFullyInTerrain(fromCenter, fromRadius, t)
+          ? t.features.map(feature => ({ ...feature, blocksLOS: false }))
+          : t.features,
+      }
       : t,
   );
   for (const fp of fromPoints) {

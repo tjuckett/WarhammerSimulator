@@ -8909,6 +8909,34 @@ test('11th Obscuring terrain areas block LOS through light or dense features', (
   assert.equal(hasLOSEdgeToEdge(shooterInside.position, 0.5, target.position, 0.5, terrain, '11e'), true);
 });
 
+test('11th models wholly within a ruin can see out through its wall features', () => {
+  const shooterInside = losTestUnit('shooter-1', 0, { x: 6, y: 10 });
+  const targetOutside = losTestUnit('target-1', 1, { x: 12, y: 10 });
+  const terrain = [terrainMat({
+    id: 'ruin-with-walls',
+    name: 'Ruin with Walls',
+    type: 'ruin',
+    x: 5,
+    y: 8,
+    width: 3,
+    height: 4,
+    features: [{
+      id: 'ruin-wall',
+      name: 'Ruin Wall',
+      x: 7.5,
+      y: 8,
+      width: 0.5,
+      height: 4,
+      featureHeight: 'tall',
+      blocksLOS: true,
+      blocksMovement: true,
+      difficult: false,
+    }],
+  })];
+
+  assert.equal(hasLOSEdgeToEdge(shooterInside.position, 0.5, targetOutside.position, 0.5, terrain, '11e'), true);
+});
+
 test('11th deployment screening uses Obscuring terrain areas', () => {
   const terrain = [terrainMat({
     id: 'deployment-screen',
