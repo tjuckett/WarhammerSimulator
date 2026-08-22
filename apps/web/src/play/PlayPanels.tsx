@@ -61,17 +61,19 @@ function averageCharacteristic(value: string): number | null {
   if (/^\d+$/.test(expression)) return Number(expression);
   let total = 0;
   let matched = false;
+  let lastEnd = 0;
   const tokenPattern = /([+-]?)(\d*)d(\d+)|([+-]?\d+)/g;
   let match: RegExpExecArray | null;
   while ((match = tokenPattern.exec(expression))) {
     matched = true;
+    lastEnd = match.index + match[0].length;
     if (match[3]) {
       total += (match[1] === '-' ? -1 : 1) * (Number(match[2] || 1) * (Number(match[3]) + 1) / 2);
     } else {
       total += Number(match[4]);
     }
   }
-  return matched && tokenPattern.lastIndex === expression.length ? total : null;
+  return matched && lastEnd === expression.length ? total : null;
 }
 
 export function PendingDamageAllocationHud({ unit, resultEntries = [], weaponNames = [] }: { unit: BattleUnit; resultEntries?: LogEntry[]; weaponNames?: string[] }) {
