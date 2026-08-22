@@ -3085,6 +3085,7 @@ export default function App() {
                   {battleState.phase === BATTLE_PHASE.Shooting && activeSelectedShootingUnit && (
                     <PlayShootingPanel
                       shooter={activeSelectedShootingUnit}
+                      popup
                       targets={selectedPlayShootingTargets}
                       selectedTarget={selectedShootingTargetUnit}
                       targetIsValid={selectedShootingTargetIsValid}
@@ -3420,6 +3421,7 @@ export default function App() {
               {isPlayMode && battleState?.phase === 'fight' && (!selectedPlayBattleUnit || selectedFightUnitEligible) && (
                 <PlayFightPanel
                   fighter={selectedFightUnitEligible ? selectedFightUnit : null}
+                  popup
                   targets={selectedPlayFightTargets}
                   selectedTarget={selectedFightTargetUnit}
                   selectedTargetId={selectedFightTargetId}

@@ -95,8 +95,19 @@ const playPanelSx = {
   gap: 1,
 };
 
+const popupPanelSx = {
+  border: 0,
+  borderRadius: 0,
+  background: 'transparent',
+  padding: 0,
+  boxShadow: 'none',
+  display: 'grid',
+  gap: 1,
+};
+
 export function PlayShootingPanel({
   shooter,
+  popup = false,
   title = PLAY_PANEL_LABELS.shooting,
   actionLabel = PLAY_PANEL_LABELS.resolve,
   targets,
@@ -116,6 +127,7 @@ export function PlayShootingPanel({
   onResolve,
 }: {
   shooter: BattleUnit | null;
+  popup?: boolean;
   title?: string;
   actionLabel?: string;
   targets: BattleUnit[];
@@ -163,7 +175,7 @@ export function PlayShootingPanel({
     : [];
 
   return (
-    <Box sx={playPanelSx}>
+    <Box sx={popup ? popupPanelSx : playPanelSx}>
       {firingDeckOptions.length > 0 && onFiringDeckSelect && (
         <Box sx={{ display: 'grid', gap: 0.5 }}>
           <Typography variant="caption">Firing Deck: select up to {firingDeckCapacity} embarked model{firingDeckCapacity === 1 ? '' : 's'}.</Typography>
@@ -216,7 +228,7 @@ export function PlayShootingPanel({
         >
           {weaponOptions.map(option => (
             <MenuItem key={option.weaponIndex} value={String(option.weaponIndex)}>
-              {option.name}
+              {option.name} ({shooter.profile.weapons[option.weaponIndex]?.range ?? 0}&quot;)
             </MenuItem>
           ))}
         </Select>
@@ -419,6 +431,7 @@ export function PlayChargePanel({
 
 export function PlayFightPanel({
   fighter,
+  popup = false,
   actionLabel = PLAY_PANEL_LABELS.resolve,
   targets,
   selectedTarget,
@@ -436,6 +449,7 @@ export function PlayFightPanel({
   onResolve,
 }: {
   fighter: BattleUnit | null;
+  popup?: boolean;
   actionLabel?: string;
   targets: BattleUnit[];
   selectedTarget: BattleUnit | null;
@@ -475,7 +489,7 @@ export function PlayFightPanel({
       ? splitAllocationValid
       : !!selectedTarget && selectedOptions.some(option => option.targetIds.includes(selectedTargetId)));
   return (
-    <Box sx={playPanelSx}>
+    <Box sx={popup ? popupPanelSx : playPanelSx}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
         <Box sx={{ minWidth: 0 }}>
           <Typography variant="subtitle2" sx={panelTitleSx}>{PLAY_PANEL_LABELS.fight}</Typography>
