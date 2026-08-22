@@ -2111,6 +2111,12 @@ export default function App() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'shooting' || !selection) return;
+    if (!damageAllocationLocked && shootingResultEntries.length > 0) {
+      setShootingResultEntries([]);
+      setTargetErrorMsg(null);
+      setCasualtyRemovalShooterId(null);
+      return;
+    }
     if (damageAllocationLocked) {
       if (shootingResultEntries.length && selectPendingDamageUnit(prev, casualtyRemovalShooterId)) return;
       setTargetErrorMsg('Allocate pending damage before shooting again');

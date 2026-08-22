@@ -347,7 +347,7 @@ export function PlayShootingPanel({
   const completedWithoutPendingDamage = resultEntries.length > 0 && !shootingLocked;
   const noAttackSelected = selectedWeaponIndex !== 'all'
     && weaponOptions.some(option => String(option.weaponIndex) === selectedWeaponIndex && option.weaponIndex < 0);
-  const canResolve = resolvePendingDamage || (!shootingLocked
+  const canResolve = resolvePendingDamage || completedWithoutPendingDamage || (!shootingLocked
     && !shooter.activated
     && weaponOptions.length > 0
     && weaponOptions.every(option => option.weaponIndex < 0 || (
