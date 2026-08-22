@@ -319,24 +319,24 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       top: canvasTop + bounds.top * scale,
       bottom: canvasTop + bounds.bottom * scale,
     };
-    const centerX = canvasLeft + anchor.x * scale;
     const centerY = canvasTop + anchor.y * scale;
     const gap = 18;
     const candidates = [
-      { left: unitBounds.right + gap, top: centerY - actionRect.height / 2 },
-      { left: unitBounds.left - actionRect.width - gap, top: centerY - actionRect.height / 2 },
-      { left: (unitBounds.left + unitBounds.right - actionRect.width) / 2, top: unitBounds.bottom + gap },
-      { left: (unitBounds.left + unitBounds.right - actionRect.width) / 2, top: unitBounds.top - actionRect.height - gap },
+      { left: unitBounds.right + gap, top: centerY },
+      { left: unitBounds.left - actionRect.width - gap, top: centerY },
+      { left: (unitBounds.left + unitBounds.right - actionRect.width) / 2, top: unitBounds.bottom + gap + actionRect.height / 2 },
+      { left: (unitBounds.left + unitBounds.right - actionRect.width) / 2, top: unitBounds.top - gap - actionRect.height / 2 },
     ];
+    const popupTop = (candidate: { top: number }) => candidate.top - actionRect.height / 2;
     const fitsContainer = (candidate: { left: number; top: number }) => (
       candidate.left >= 4
-      && candidate.top >= boardTop
+      && popupTop(candidate) >= boardTop
       && candidate.left + actionRect.width <= container.scrollWidth - 4
-      && candidate.top + actionRect.height <= Math.min(container.scrollHeight - 4, boardBottom)
+      && popupTop(candidate) + actionRect.height <= Math.min(container.scrollHeight - 4, boardBottom)
     );
     const nextPosition = candidates.find(fitsContainer) ?? candidates[0];
     nextPosition.left = Math.max(4, Math.min(container.scrollWidth - actionRect.width - 4, nextPosition.left));
-    nextPosition.top = Math.max(boardTop, Math.min(Math.min(container.scrollHeight - actionRect.height - 4, boardBottom - actionRect.height), nextPosition.top));
+    nextPosition.top = Math.max(boardTop + actionRect.height / 2, Math.min(Math.min(container.scrollHeight - actionRect.height / 2 - 4, boardBottom - actionRect.height / 2), nextPosition.top));
     setSelectedActionsPosition(current =>
       current
         && Math.abs(current.left - nextPosition.left) < 0.5
