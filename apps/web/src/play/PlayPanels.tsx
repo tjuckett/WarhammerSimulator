@@ -188,11 +188,13 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
       ? 'Hit rolls'
       : normalizedMessage.startsWith('Wound rolls') || normalizedMessage.startsWith('Twin-linked wound rerolls')
         ? 'Wound rolls'
-        : normalizedMessage.startsWith('Save rolls')
+      : normalizedMessage.startsWith('Save rolls')
           ? 'Save rolls'
-          : normalizedMessage.startsWith('Feel No Pain') ? 'Feel No Pain' : null;
+          : normalizedMessage.startsWith('Feel No Pain')
+            ? 'Feel No Pain'
+            : normalizedMessage.startsWith('Damage roll') ? 'Damage rolls' : null;
     const isAttackerGroup = group === 'Hit rolls' || group === 'Wound rolls';
-    const isDefenderGroup = group === 'Save rolls' || group === 'Feel No Pain';
+    const isDefenderGroup = group === 'Save rolls' || group === 'Feel No Pain' || group === 'Damage rolls';
     if (section !== 'attacker' && normalizedMessage.startsWith('No save possible')) {
       const key = `${currentWeapon}::Save rolls`;
       groups.set(key, groups.get(key) ?? []);
@@ -240,7 +242,7 @@ function ShootingResultSummary({ entries, section = 'all', weaponNames = [] }: {
           <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, width: '100%' }}>
             {group.label}
             {group.noSave ? ' - No save possible' : null}
-            {group.successCount !== undefined && ` - ${group.rolls.length} roll${group.rolls.length === 1 ? '' : 's'} - ${group.successCount} ${group.baseLabel === 'Hit rolls' ? 'hit' : group.baseLabel === 'Wound rolls' ? 'wound' : group.baseLabel === 'Save rolls' ? 'saved' : 'ignored'}${group.successCount === 1 ? '' : 's'}`}
+            {group.successCount !== undefined && ` - ${group.rolls.length} roll${group.rolls.length === 1 ? '' : 's'} - ${group.successCount} ${group.baseLabel === 'Hit rolls' ? 'hit' : group.baseLabel === 'Wound rolls' ? 'wound' : group.baseLabel === 'Save rolls' ? 'saved' : group.baseLabel === 'Damage rolls' ? 'damage' : 'ignored'}${group.successCount === 1 ? '' : 's'}`}
           </Typography>
           <Box sx={{ display: 'flex', gap: 0.35, flexWrap: 'wrap' }}>
             {group.rolls.map((roll, index) => {
@@ -254,7 +256,7 @@ function ShootingResultSummary({ entries, section = 'all', weaponNames = [] }: {
                   border: `1px solid ${critical ? '#7040a0' : success ? '#2a5c2a' : group.baseLabel === 'Save rolls' ? '#6b3800' : '#3a1818'}`,
                   borderRadius: 0.75,
                   background: critical ? '#241238' : success ? '#0d260d' : group.baseLabel === 'Save rolls' ? '#2a1500' : '#1a0d0d',
-                  color: critical ? '#d5a6ff' : success ? '#78d786' : group.baseLabel === 'Save rolls' || group.baseLabel === 'Feel No Pain' ? '#d07030' : '#664444',
+                  color: critical ? '#d5a6ff' : success ? '#78d786' : group.baseLabel === 'Save rolls' || group.baseLabel === 'Feel No Pain' ? '#d07030' : group.baseLabel === 'Damage rolls' ? uiTokens.color.combat.damage : '#664444',
                   textAlign: 'center',
                   fontSize: 11,
                   fontWeight: 700,
