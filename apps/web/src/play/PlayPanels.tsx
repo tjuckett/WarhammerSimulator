@@ -620,6 +620,12 @@ export function PlayShootingPanel({
             ? `Allocate ${pendingDamageLabel} before selecting another shooter or target.`
             : 'Allocate pending damage to defender models before selecting another shooter or target.'}
         </Typography>
+      ) : shooter.movementAction === 'advanced' ? (
+        <Typography variant="caption" sx={weaponOptions.length ? warningTextSx : disabledTextSx}>
+          {weaponOptions.length
+            ? 'Advanced — Assault weapons can fire this phase.'
+            : 'Advanced — only weapons with Assault can fire this phase.'}
+        </Typography>
       ) : noAttackSelected ? (
         <Typography variant="caption" sx={disabledTextSx}>This unit can be selected to shoot, but will make no attacks.</Typography>
       ) : !weaponOptions.length && !displayedWeapons.length ? (

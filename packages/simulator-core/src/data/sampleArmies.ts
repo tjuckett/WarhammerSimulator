@@ -124,7 +124,7 @@ const necronUnits: UnitProfile[] = [
     keywords: ['Infantry', 'Battleline'],
     factionKeywords: ['Necrons'],
     weapons: [
-      { name: 'Gauss Reaper', range: 12, attacks: '2', skill: 4, strength: 5, ap: -1, damage: '1', keywords: ['Assault 2'], isMelee: false },
+      { name: 'Gauss Reaper', range: 12, attacks: '2', skill: 4, strength: 5, ap: -1, damage: '1', keywords: ['Assault'], isMelee: false },
       { name: 'Close Combat Weapon', range: 0, attacks: '1', skill: 4, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true },
     ],
     abilities: [],
