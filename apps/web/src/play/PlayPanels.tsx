@@ -518,9 +518,6 @@ export function PlayShootingPanel({
                       />
                       {target && (
                         <Box sx={{ mt: 0.35, border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.statCard, overflow: 'hidden', background: uiTokens.surface.statCard }}>
-                          <Typography variant="caption" sx={{ display: 'block', px: 0.8, py: 0.35, borderBottom: `1px solid ${uiTokens.border.statCard}`, color: uiTokens.color.combat.weaponName, fontWeight: 800 }}>
-                            {weapon.name} → {target.profile.name}
-                          </Typography>
                           <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))' }}>
                             <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
                               <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 9 }}>Attacks</Typography>
