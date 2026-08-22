@@ -50,12 +50,17 @@ export function calcEffectiveSave(save: number, ap: number, invuln?: number): nu
 }
 
 export function pendingDamageLabel(unit: BattleUnit | null): string | null {
-  const allocation = unit?.pendingDamageAllocations?.[0];
-  if (!unit || !allocation) return null;
+  const allocations = unit?.pendingDamageAllocations;
+  const allocation = allocations?.[0];
+  if (!unit || !allocation || !allocations?.length) return null;
   const source = allocation.source ? ` from ${allocation.source}` : '';
   const spill = allocation.noCarryOver ? DAMAGE_SPILL_LABELS.noCarryOver : DAMAGE_SPILL_LABELS.carryOver;
-  const remaining = unit.pendingDamageAllocations?.length ?? 0;
-  return `${allocation.damage} damage${source} (${spill})${remaining > 1 ? `, ${remaining} allocations queued` : ''}`;
+  const damageValues = allocations.map(item => item.damage);
+  const sameDamage = damageValues.every(damage => damage === damageValues[0]);
+  const hitSummary = sameDamage
+    ? `${allocations.length} hit${allocations.length === 1 ? '' : 's'} × ${damageValues[0]} damage`
+    : `${allocations.length} hits: ${damageValues.join(', ')} damage`;
+  return `${hitSummary}${source} (${spill})`;
 }
 
 export function parseDiceInput(value: string): number[] {
