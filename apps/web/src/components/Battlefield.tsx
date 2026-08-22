@@ -306,8 +306,8 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     const canvasTop = canvasRect.top - containerRect.top;
     if (!actionRect) {
       setSelectedActionsPosition({
-        left: canvasLeft + anchor.x * scale + 18,
-        top: canvasTop + anchor.y * scale,
+        left: Math.max(4, canvasLeft + anchor.x * scale + 18),
+        top: Math.max(4, canvasTop + anchor.y * scale),
       });
       return;
     }
@@ -323,8 +323,8 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     const candidates = [
       { left: unitBounds.right + gap, top: centerY - actionRect.height / 2 },
       { left: unitBounds.left - actionRect.width - gap, top: centerY - actionRect.height / 2 },
-      { left: (unitBounds.left + unitBounds.right - actionRect.width) / 2, top: unitBounds.top - actionRect.height - gap },
       { left: (unitBounds.left + unitBounds.right - actionRect.width) / 2, top: unitBounds.bottom + gap },
+      { left: (unitBounds.left + unitBounds.right - actionRect.width) / 2, top: unitBounds.top - actionRect.height - gap },
     ];
     const fitsContainer = (candidate: { left: number; top: number }) => (
       candidate.left >= 4
