@@ -354,8 +354,17 @@ export function PlayShootingPanel({
         : refWeapons.length || !resultWeapon
           ? refWeapons
         : [resultWeapon];
+  const resultWeaponTargets = resultEntries.flatMap(entry => {
+    const targetName = entry.message.trim().match(/attacks vs\s+(.+)$/)?.[1]?.trim();
+    if (!targetName) return [];
+    const weapon = shooter.profile.weapons.find(candidate => entry.message.includes(candidate.name));
+    const target = targets.find(candidate => targetName === candidate.profile.name || targetName.endsWith(candidate.profile.name));
+    return weapon && target ? [{ weapon, target }] : [];
+  });
   const displayedWeaponTargets = resultSection === 'attacker' || resultSection === 'defender'
-    ? displayedWeapons.flatMap(weapon => selectedTarget ? [{ weapon, target: selectedTarget }] : [])
+    ? resultWeaponTargets.length > 0
+      ? resultWeaponTargets
+      : displayedWeapons.flatMap(weapon => selectedTarget ? [{ weapon, target: selectedTarget }] : [])
     : displayedWeapons.flatMap(weapon => {
       const weaponIndex = shooter.profile.weapons.indexOf(weapon);
       const option = weaponOptions.find(candidate => candidate.weaponIndex === weaponIndex);
