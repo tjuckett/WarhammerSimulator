@@ -127,7 +127,10 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
   const successes = new Map<string, number>();
   const targets = new Map<string, string | undefined>();
   const noSave = new Set<string>();
+  const woundSummary = new Map<string, Map<string, number>>();
   let currentWeapon = '';
+  let currentTarget = '';
+  let currentAp: string | null = null;
   for (const entry of entries) {
     const message = entry.message;
     const normalizedMessage = message.trim();
@@ -135,6 +138,10 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
       ? weaponNames.find(name => normalizedMessage.includes(name))
       : undefined;
     if (weaponFromHeader) currentWeapon = weaponFromHeader;
+    const targetFromHeader = normalizedMessage.match(/attacks vs\s+(.+)$/)?.[1];
+    if (targetFromHeader) currentTarget = targetFromHeader.trim();
+    const apFromStats = normalizedMessage.match(/\bap=(-?\d+)/)?.[1];
+    if (apFromStats) currentAp = apFromStats;
     const weaponMatch = normalizedMessage.match(/^.+?\s+(.+?)\s+[—-]\s+\d+\s+model/);
     if (weaponMatch) currentWeapon = weaponMatch[1].trim();
     const rolls = message.match(/\[([^\]]*)\]/)?.[1]
@@ -161,6 +168,12 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
       targets.set(key, normalizedMessage.match(/(?:^|[(,\s])(\d+)\+/)?.[1]);
       const resultCount = normalizedMessage.match(/\]\s*(?:→|->)\s*(\d+)\s+(hits|wounds|saved|ignored)/)?.[1];
       if (resultCount) successes.set(key, (successes.get(key) ?? 0) + Number(resultCount));
+      if (group === 'Wound rolls' && resultCount && currentTarget) {
+        const byAp = woundSummary.get(currentTarget) ?? new Map<string, number>();
+        const apLabel = currentAp === null ? 'AP unknown' : `AP${Number(currentAp) > 0 ? '+' : ''}${currentAp}`;
+        byAp.set(apLabel, (byAp.get(apLabel) ?? 0) + Number(resultCount));
+        woundSummary.set(currentTarget, byAp);
+      }
     }
   }
   return {
@@ -175,6 +188,10 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
         noSave: noSave.has(key),
       };
     }).filter(group => group.rolls.length || group.noSave),
+    woundSummary: [...woundSummary.entries()].map(([target, byAp]) => ({
+      target,
+      entries: [...byAp.entries()].map(([ap, wounds]) => ({ ap, wounds })),
+    })),
   };
 }
 
@@ -214,6 +231,16 @@ function ShootingResultSummary({ entries, section = 'all', weaponNames = [] }: {
           </Box>
         </Box>
       ))}
+      {section !== 'defender' && result.woundSummary.length > 0 && (
+        <Box sx={{ display: 'grid', gap: 0.25, mt: 0.35 }}>
+          <Typography variant="caption" sx={{ color: uiTokens.color.text.secondary, fontWeight: 800 }}>Wounds by target</Typography>
+          {result.woundSummary.map(summary => (
+            <Typography key={summary.target} variant="caption" sx={{ color: uiTokens.color.text.muted }}>
+              {summary.target} — {summary.entries.map(entry => `${entry.ap}: ${entry.wounds} wound${entry.wounds === 1 ? '' : 's'}`).join('; ')}
+            </Typography>
+          ))}
+        </Box>
+      )}
     </Box>
   );
 }
