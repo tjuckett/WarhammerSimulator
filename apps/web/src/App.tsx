@@ -754,7 +754,10 @@ export default function App() {
   );
   const selectedPlayChargeResult = useMemo(() => {
     if (!battleState || !selectedChargeUnit) return null;
-    return [...battleState.log].reverse().find(entry => entry.type === 'charge' && entry.unitName === selectedChargeUnit.profile.name)?.message ?? null;
+    const entries = battleState.log.filter(entry => entry.type === 'charge' && entry.unitName === selectedChargeUnit.profile.name);
+    const roll = entries.find(entry => /rolls a charge:/i.test(entry.message))?.message;
+    const outcome = entries[entries.length - 1]?.message;
+    return roll && outcome && roll !== outcome ? `${roll} ${outcome}` : roll ?? outcome ?? null;
   }, [battleState?.log, selectedChargeUnit?.id, selectedChargeUnit?.profile.name]);
   const selectedPlayChargeDice = useMemo(() => {
     const match = selectedPlayChargeResult?.match(/rolled\s+(\d+)\+(\d+)=/i);
@@ -2569,6 +2572,13 @@ export default function App() {
     commitBattleState(next);
   }
 
+  function dismissSelectedPlayChargeResult() {
+    setSelectedChargeTargetIds([]);
+    setPlayModelSelection(null);
+    setInspectedSelection(null);
+    setTargetErrorMsg(null);
+  }
+
   function takeSelectedPlayUnitToSkies() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
@@ -3321,9 +3331,7 @@ export default function App() {
                     <>
                       {selectedPlayChargeResult && (
                         <>
-                          <Typography variant="caption" sx={{ color: '#ffcf66', maxWidth: 240 }}>
-                            {selectedPlayChargeResult}
-                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#ffcf66', maxWidth: 240 }}>Charge roll</Typography>
                           {selectedPlayChargeDice.length > 0 && (
                             <div style={{ display: 'flex', gap: 4 }}>
                               {selectedPlayChargeDice.map((die, index) => (
@@ -3360,9 +3368,23 @@ export default function App() {
                     </>
                   )}
                   {battleState.phase === 'charge' && selectedChargeUnit && !pendingChargeRoll && !selectedPlayCanRollCharge && selectedPlayChargeResult && (
-                    <Typography variant="caption" sx={{ color: '#ffcf66', maxWidth: 240 }}>
-                      {selectedPlayChargeResult}
-                    </Typography>
+                    <>
+                      <Typography variant="caption" sx={{ color: '#ffcf66', maxWidth: 240 }}>
+                        Charge failed — no reachable targets.
+                      </Typography>
+                      {selectedPlayChargeDice.length > 0 && (
+                        <div style={{ display: 'flex', gap: 4 }}>
+                          {selectedPlayChargeDice.map((die, index) => (
+                            <span key={`${die}-${index}`} style={{ minWidth: 22, height: 22, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e2c16b', borderRadius: 4, background: 'rgba(226, 193, 107, 0.18)', color: '#ffe9a6', fontWeight: 800, fontSize: 12 }}>
+                              {die}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <Button size="small" color="primary" variant="contained" onClick={dismissSelectedPlayChargeResult}>
+                        Done
+                      </Button>
+                    </>
                   )}
                   {selectedPlayCanTakeToSkies && (
                     <Button size="small" color="info" variant="contained" onClick={takeSelectedPlayUnitToSkies}>
