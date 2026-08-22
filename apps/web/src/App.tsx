@@ -25,7 +25,7 @@ import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simu
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
   battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, completePlayScoutMove, createDeploymentState, declarePlaySuperHeavyMobile, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playDisembarkModes, playPhaseCoherencyIssues, playScoutMoveAllowance, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, movePlayModels, movePlayModelsVertically, placeNextUnit, removePlayModels, startPlayScoutMove,
-  allocatePlayDamageToModel, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTargets, completePlayChargeMovement, playChargeEligibilityReason, playChargeRoll, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, fightPlayUnitWeapons, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightFirstUnitIds, playFightPhaseHasPendingActivations, playFightStepNeedsStart, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponAttackCount, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, shootPlayUnitWeapons, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undoPlayUnitMovement, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type FiringDeckSelection, type LOSRay, type PlayShootingAttackAllocation, type PlayMeleeAttackAllocation,
+  allocatePlayDamageToModel, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTargets, completePlayChargeMovement, playChargeEligibilityReason, playChargeRoll, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, fightPlayUnitWeapons, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playFightActivationUnitIds, playFightFirstUnitIds, playFightPhaseHasPendingActivations, playFightStepNeedsStart, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponModelCount, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, shootingLOSRays, reorganizePlayModelsGrid, rotatePlayModels, shootPlayUnitWeapon, shootPlayUnitWeapons, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undoPlayUnitMovement, undeployPlayUnit, vanguardOperationTerrainOptions, type DeploymentStrategy, type FiringDeckSelection, type LOSRay, type PlayShootingAttackAllocation, type PlayMeleeAttackAllocation,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
@@ -1248,7 +1248,7 @@ export default function App() {
         const targetId = selectedPlayShootingTargets.find(targetId => option.targetIds.includes(targetId)) ?? option.targetIds[0];
         if (!targetId) continue;
         next[String(option.weaponIndex)] = {
-          [targetId]: playShootingWeaponAttackCount(selectedShootingUnit, option.weaponIndex) ?? 1,
+          [targetId]: playShootingWeaponModelCount(selectedShootingUnit, option.weaponIndex),
         };
       }
       return next;
@@ -2069,9 +2069,21 @@ export default function App() {
   }
 
   function updateShootingAttackAllocation(weaponIndex: number, targetId: string, attacks: number) {
+    const shooter = selectedShootingUnit;
+    const maxModels = shooter ? playShootingWeaponModelCount(shooter, weaponIndex) : null;
     setShootingAttackAllocations(current => ({
       ...current,
-      [String(weaponIndex)]: attacks > 0 ? { [targetId]: 1 } : {},
+      [String(weaponIndex)]: {
+        ...(current[String(weaponIndex)] ?? {}),
+        [targetId]: maxModels === null
+          ? attacks
+          : Math.min(
+            attacks,
+            Math.max(0, maxModels - Object.entries(current[String(weaponIndex)] ?? {})
+              .filter(([allocatedTargetId]) => allocatedTargetId !== targetId)
+              .reduce((total, [, allocatedModels]) => total + (Number(allocatedModels) || 0), 0)),
+          ),
+      },
     }));
   }
 
@@ -2091,6 +2103,7 @@ export default function App() {
       return entries.map(([targetUnitId, attackCount]) => ({
         weaponIndex,
         targetUnitId,
+        ...(entries.length > 1 ? { modelCount: attackCount } : {}),
       }));
     });
     if (!allocations.length && !noRangedWeapons) {

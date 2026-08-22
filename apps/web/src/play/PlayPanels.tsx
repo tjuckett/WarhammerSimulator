@@ -6,7 +6,7 @@ import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/ba
 import type { LogEntry } from '@warhammer-simulator/core/types/battle';
 import type { CommandRerollRollType, HeroicInterventionMode, StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
-import { battleUnitsBaseEdgeDistance, type FiringDeckSelection, type PlayChargeTargetOption, type PlayFightWeaponOption, type PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
+import { battleUnitsBaseEdgeDistance, playShootingWeaponModelCount, type FiringDeckSelection, type PlayChargeTargetOption, type PlayFightWeaponOption, type PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
 import { explosivesTargetAllowed } from '@warhammer-simulator/core/engine/stratagems';
 import { rulesEditionForRuleset } from '@warhammer-simulator/core/engine/rulesEngine';
 import {
@@ -402,33 +402,34 @@ export function PlayShootingPanel({
           {weaponOptions.filter(option => option.weaponIndex >= 0).map(option => {
             const weapon = shooter.profile.weapons[option.weaponIndex];
             const weaponTargets = shootingAttackAllocations[String(option.weaponIndex)] ?? {};
-            const fixedAttacks = weapon && /^\d+$/.test(String(weapon.attacks).trim())
-              ? Number(weapon.attacks) * shooter.remainingModels
-              : null;
+            const weaponModelCount = weapon ? playShootingWeaponModelCount(shooter, option.weaponIndex) : 0;
             return (
               <Box key={option.weaponIndex} sx={{ display: 'grid', gap: 0.4 }}>
                 <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700 }}>
-                  {option.name}{fixedAttacks !== null ? ` — ${fixedAttacks} attacks` : ' — variable attacks'}
+                  {option.name} — {weaponModelCount} model{weaponModelCount === 1 ? '' : 's'}
                 </Typography>
-                <FormControl size="small" fullWidth>
-                  <InputLabel id={`play-shooting-allocation-${option.weaponIndex}`}>Target</InputLabel>
-                  <Select
-                    labelId={`play-shooting-allocation-${option.weaponIndex}`}
-                    label="Target"
-                    value={option.targetIds.find(targetId => (weaponTargets[targetId] ?? 0) > 0) ?? ''}
-                    onChange={event => onShootingAttackAllocationChange(option.weaponIndex, event.target.value, 1)}
-                  >
-                    {option.targetIds.map(targetId => {
-                      const target = targets.find(candidate => candidate.id === targetId);
-                      return <MenuItem key={targetId} value={targetId}>{target?.profile.name ?? targetId}</MenuItem>;
-                    })}
-                  </Select>
-                </FormControl>
+                {option.targetIds.map(targetId => {
+                  const target = targets.find(candidate => candidate.id === targetId);
+                  const allocatedElsewhere = Object.entries(weaponTargets)
+                    .filter(([allocatedTargetId]) => allocatedTargetId !== targetId)
+                    .reduce((total, [, models]) => total + (Number(models) || 0), 0);
+                  return (
+                    <TextField
+                      key={`${option.weaponIndex}:${targetId}`}
+                      size="small"
+                      type="number"
+                      label={`${target?.profile.name ?? targetId} models`}
+                      value={weaponTargets[targetId] ?? 0}
+                      slotProps={{ htmlInput: { min: 0, max: Math.max(0, weaponModelCount - allocatedElsewhere), step: 1 } }}
+                      onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.floor(Number(event.target.value) || 0)))}
+                    />
+                  );
+                })}
               </Box>
             );
           })}
           <Typography variant="caption" sx={{ color: uiTokens.color.text.quiet }}>
-            Each weapon must be assigned to one target before rolling. The weapon&apos;s attacks are rolled afterward; alternate weapon profiles remain one selectable loadout.
+            Allocate each model&apos;s weapon to one target before rolling. The weapon&apos;s attacks are rolled afterward; alternate weapon profiles remain one selectable loadout.
           </Typography>
         </Box>
       )}

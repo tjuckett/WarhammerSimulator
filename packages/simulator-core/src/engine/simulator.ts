@@ -1064,7 +1064,7 @@ function resolveAttacks(
   hasCover: boolean,
   hitModifier = 0,
   hitModifierNote = '',
-  options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number; selectedTargetCount?: number } = {},
+  options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number; selectedTargetCount?: number; modelIndexes?: number[] } = {},
 ): LogEntry[] {
   const logs: LogEntry[] = [];
   const damagedProfile = attacker.profile.damagedProfile;
@@ -1089,7 +1089,8 @@ function resolveAttacks(
     ? options
     : { ...options, targetModelIndex: epicChallengeModelIndex };
 
-  const participatingModelIndexes = participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, state.terrain, state);
+  const participatingModelIndexes = options.modelIndexes
+    ?? participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, state.terrain, state);
   const weaponModelCount = participatingModelIndexes.length;
   if (weaponModelCount <= 0) return logs;
   const waaaghActive = rules.metadata.edition === '11e'
@@ -3094,7 +3095,7 @@ function resolveShootingWeaponIntoTarget(
   weapon: WeaponProfile,
   weaponIndex: number,
   rules: RulesEdition,
-  options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number } = {},
+  options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number; modelIndexes?: number[] } = {},
 ): LogEntry[] {
   const modifiers = shootingWeaponModifiers(state, unit, target, weapon, rules);
   const snapShooting = options.snapShooting ?? false;
@@ -3119,7 +3120,7 @@ function resolveShootingWeaponIntoTarget(
     weapon,
     weaponIndex,
     state,
-    participatingWeaponModelCount(unit, target, weapon, weaponIndex, state.terrain, state),
+    options.modelIndexes?.length ?? participatingWeaponModelCount(unit, target, weapon, weaponIndex, state.terrain, state),
   ));
   return logs;
 }
@@ -3163,7 +3164,7 @@ export type PlayShootingWeaponOption = {
 export type PlayShootingAttackAllocation = {
   weaponIndex: number;
   targetUnitId: string;
-  attackCount?: number;
+  modelCount?: number;
 };
 
 function fixedWeaponAttackCount(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number): number | null {
@@ -3175,6 +3176,10 @@ function fixedWeaponAttackCount(unit: BattleUnit, weapon: WeaponProfile, weaponI
 export function playShootingWeaponAttackCount(unit: BattleUnit, weaponIndex: number): number | null {
   const weapon = unit.profile.weapons[weaponIndex];
   return weapon ? fixedWeaponAttackCount(unit, weapon, weaponIndex) : null;
+}
+
+export function playShootingWeaponModelCount(unit: BattleUnit, weaponIndex: number): number {
+  return aliveWeaponModelCount(unit, weaponIndex);
 }
 
 /** Resolve a unit's complete shooting declaration only after every weapon target is locked. */
@@ -3208,13 +3213,22 @@ export function shootPlayUnitWeapons(
 
   for (const selected of selectableWeapons) {
     const weaponAllocations = allocationByWeapon.get(selected.weaponIndex) ?? [];
-    const fixedCount = fixedWeaponAttackCount(unit, selected.weapon, selected.weaponIndex);
-    if (weaponAllocations.length !== 1) return state;
-    if (weaponAllocations.some(allocation => allocation.attackCount !== undefined && (!Number.isInteger(allocation.attackCount) || allocation.attackCount < 0))) return state;
+    const availableModelIndexes = aliveWeaponModelIndexes(unit, selected.weaponIndex);
+    const assignedModelIndexes = new Set<number>();
+    if (weaponAllocations.length > 1) {
+      const declaredModels = weaponAllocations.reduce((total, allocation) => total + (allocation.modelCount ?? 0), 0);
+      if (declaredModels !== availableModelIndexes.length) return state;
+    }
     for (const allocation of weaponAllocations) {
+      if (allocation.modelCount !== undefined && (!Number.isInteger(allocation.modelCount) || allocation.modelCount < 1)) return state;
       if (s.attachedShootingTargetUnitId && allocation.targetUnitId !== s.attachedShootingTargetUnitId) return state;
       const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
       if (!shootingWeaponCanTarget(s, unit, target, selected.weapon, rules)) return state;
+      const eligibleModelIndexes = participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, s.terrain, s)
+        .filter(modelIndex => !assignedModelIndexes.has(modelIndex));
+      const modelCount = allocation.modelCount ?? availableModelIndexes.length;
+      if (modelCount > eligibleModelIndexes.length) return state;
+      eligibleModelIndexes.slice(0, modelCount).forEach(modelIndex => assignedModelIndexes.add(modelIndex));
     }
   }
 
@@ -3223,12 +3237,17 @@ export function shootPlayUnitWeapons(
   ];
   for (const selected of selectableWeapons) {
     const weaponAllocations = allocationByWeapon.get(selected.weaponIndex)!;
-    const split = weaponAllocations.length > 1;
+    const assignedModelIndexes = new Set<number>();
     for (const allocation of weaponAllocations) {
       const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
+      const eligibleModelIndexes = participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, s.terrain, s)
+        .filter(modelIndex => !assignedModelIndexes.has(modelIndex));
+      const modelCount = allocation.modelCount ?? eligibleModelIndexes.length;
+      const modelIndexes = eligibleModelIndexes.slice(0, modelCount);
+      modelIndexes.forEach(modelIndex => assignedModelIndexes.add(modelIndex));
       logs.push(...resolveShootingWeaponIntoTarget(s, unit, target, selected.weapon, selected.weaponIndex, rules, {
         deferCasualties: true,
-        ...(split && allocation.attackCount !== undefined ? { attackCountOverride: allocation.attackCount } : {}),
+        modelIndexes,
       }));
     }
   }
