@@ -231,7 +231,9 @@ export function findUnblockedLOSRay(
   ];
 
   const obscuringTerrain = edition === '11e'
-    ? terrain.filter(t => t.features.some(feature => feature.category === 'light' || feature.category === 'dense'))
+    ? terrain
+      .filter(t => t.features.some(feature => feature.category === 'light' || feature.category === 'dense'))
+      .filter(t => !circleIntersectsTerrain(fromCenter, fromRadius, t) && !circleIntersectsTerrain(toCenter, toRadius, t))
     : [];
   for (const fp of fromPoints) {
     for (const tp of toPoints) {

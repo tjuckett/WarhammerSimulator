@@ -8904,6 +8904,8 @@ test('11th Obscuring terrain areas block LOS through light or dense features', (
   assert.equal(hasLOSEdgeToEdge(shooter.position, 0.5, target.position, 0.5, terrain, '11e'), false);
   const targetInside = { ...target, position: { x: 6, y: 10 }, modelPositions: [{ x: 6, y: 10 }] };
   assert.equal(hasLOSEdgeToEdge(shooter.position, 0.5, targetInside.position, 0.5, terrain, '11e'), true);
+  const shooterInside = { ...shooter, position: { x: 6, y: 10 }, modelPositions: [{ x: 6, y: 10 }] };
+  assert.equal(hasLOSEdgeToEdge(shooterInside.position, 0.5, target.position, 0.5, terrain, '11e'), true);
 });
 
 test('11th deployment screening uses Obscuring terrain areas', () => {
