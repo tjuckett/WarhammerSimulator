@@ -464,16 +464,28 @@ export function PlayShootingPanel({
                   const allocatedElsewhere = Object.entries(weaponTargets)
                     .filter(([allocatedTargetId]) => allocatedTargetId !== targetId)
                     .reduce((total, [, models]) => total + (Number(models) || 0), 0);
+                  const targetInCoverForAllocation = !!target && coverUnitIds?.has(target.id);
+                  const allocationWound = target ? calcWoundTarget(weapon.strength, target.profile.toughness) : null;
+                  const allocationSave = target ? calcEffectiveSave(target.profile.save, weapon.ap, target.profile.invulnSave) : null;
+                  const allocationCoverBonus = target && coverSaveEnabled && targetInCoverForAllocation && target.profile.save <= 6 ? 1 : 0;
+                  const allocationHit = weapon ? Math.min(6, weapon.skill + (targetInCoverForAllocation && !coverSaveEnabled ? 1 : 0)) : null;
+                  const allocationSaveWithCover = allocationSave === null ? null : allocationSave - allocationCoverBonus;
                   return (
-                    <TextField
-                      key={`${option.weaponIndex}:${targetId}`}
-                      size="small"
-                      type="number"
-                      label={target?.profile.name ?? targetId}
-                      value={weaponTargets[targetId] ?? 0}
-                      slotProps={{ htmlInput: { min: 0, max: Math.max(0, weaponModelCount - allocatedElsewhere), step: 1 } }}
-                      onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.floor(Number(event.target.value) || 0)))}
-                    />
+                    <Box key={`${option.weaponIndex}:${targetId}`} sx={{ display: 'grid', gap: 0.25 }}>
+                      <TextField
+                        size="small"
+                        type="number"
+                        label={target?.profile.name ?? targetId}
+                        value={weaponTargets[targetId] ?? 0}
+                        slotProps={{ htmlInput: { min: 0, max: Math.max(0, weaponModelCount - allocatedElsewhere), step: 1 } }}
+                        onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.floor(Number(event.target.value) || 0)))}
+                      />
+                      {target && (
+                        <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, pl: 0.5 }}>
+                          Hit {allocationHit}+ · Wound {allocationWound}+ · Save {allocationSaveWithCover !== null && allocationSaveWithCover > 6 ? '—' : `${allocationSaveWithCover}+`}
+                        </Typography>
+                      )}
+                    </Box>
                   );
                 })}
                 </Box>
@@ -495,7 +507,7 @@ export function PlayShootingPanel({
         <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noRangedWeapons}</Typography>
       ) : !targets.length && !displayedWeapons.length ? (
         <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noValidTargets}</Typography>
-      ) : displayedWeaponTargets.length > 0 ? (
+      ) : resultEntries.length > 0 && displayedWeaponTargets.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: displayedWeaponTargets.length > 3 ? 310 : undefined, overflowY: displayedWeaponTargets.length > 3 ? 'auto' : undefined, paddingRight: displayedWeaponTargets.length > 3 ? 4 : undefined }}>
           {displayedWeaponTargets.map(({ weapon, target }, i) => {
             const targetInCoverForStats = !!coverUnitIds?.has(target.id);
