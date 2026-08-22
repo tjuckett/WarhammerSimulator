@@ -456,7 +456,7 @@ export function PlayShootingPanel({
             return (
               <Box key={option.weaponIndex} sx={{ display: 'grid', gap: 0.4 }}>
                 <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700 }}>
-                  {option.name} — {Object.values(weaponTargets).reduce((total, models) => total + (Number(models) || 0), 0)}/{weaponModelCount} model{weaponModelCount === 1 ? '' : 's'} assigned
+                  {option.name} — {Object.values(weaponTargets).reduce((total, models) => total + (Number(models) || 0), 0)}/{weaponModelCount} assigned
                 </Typography>
                 <Box sx={option.targetIds.length > 3 ? { maxHeight: 210, overflowY: 'auto', display: 'grid', gap: 0.6, pr: 0.5 } : { display: 'grid', gap: 0.6 }}>
                 {option.targetIds.map(targetId => {
@@ -469,7 +469,7 @@ export function PlayShootingPanel({
                       key={`${option.weaponIndex}:${targetId}`}
                       size="small"
                       type="number"
-                      label={`${target?.profile.name ?? targetId} models`}
+                      label={target?.profile.name ?? targetId}
                       value={weaponTargets[targetId] ?? 0}
                       slotProps={{ htmlInput: { min: 0, max: Math.max(0, weaponModelCount - allocatedElsewhere), step: 1 } }}
                       onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.floor(Number(event.target.value) || 0)))}
