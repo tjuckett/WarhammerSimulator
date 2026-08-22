@@ -999,7 +999,7 @@ export default function App() {
     return new Set(
       battleState.units
         .filter(unit => unit.side === battleState.activeArmy && !unit.destroyed && !unit.embarkedInUnitId && !unit.activated)
-        .filter(unit => playChargeTargetOptions(battleState, unit.id, unit.side, activeRulesForBattle).length > 0)
+        .filter(unit => playChargeEligibilityReason(battleState, unit.id, unit.side, activeRulesForBattle) === null)
         .map(unit => unit.id),
     );
   }, [battleState, activeRulesForBattle]);
