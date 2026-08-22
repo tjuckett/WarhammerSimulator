@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import CasinoOutlinedIcon from '@mui/icons-material/CasinoOutlined';
 import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
@@ -334,8 +334,8 @@ export function PlayShootingPanel({
     .map(entry => shooter.profile.weapons.find(weapon => entry.message.includes(weapon.name)))
     .find((weapon): weapon is BattleUnit['profile']['weapons'][number] => !!weapon);
   const resultWeapons = shooter.profile.weapons.filter(weapon => resultEntries.some(entry => entry.message.includes(weapon.name)));
-  const allocatedWeapons = weaponOptions
-    .filter(option => option.weaponIndex >= 0 && Object.values(shootingAttackAllocations[String(option.weaponIndex)] ?? {}).some(value => value > 0))
+  const availableWeapons = weaponOptions
+    .filter(option => option.weaponIndex >= 0)
     .map(option => shooter.profile.weapons[option.weaponIndex])
     .filter((weapon): weapon is BattleUnit['profile']['weapons'][number] => !!weapon);
   const resultWeaponIndex = resultWeapon ? shooter.profile.weapons.indexOf(resultWeapon) : -1;
@@ -349,8 +349,8 @@ export function PlayShootingPanel({
     ? []
     : resultSection === 'attacker' && resultWeapons.length
       ? resultWeapons
-      : allocatedWeapons.length
-        ? allocatedWeapons
+      : availableWeapons.length
+        ? availableWeapons
         : refWeapons.length || !resultWeapon
           ? refWeapons
         : [resultWeapon];
@@ -362,9 +362,19 @@ export function PlayShootingPanel({
     return weapon && target ? [{ weapon, target }] : [];
   });
   const displayedWeaponTargets = resultSection === 'attacker' || resultSection === 'defender'
-    ? resultWeaponTargets.length > 0
+    ? resultEntries.length > 0 && resultWeaponTargets.length > 0
       ? resultWeaponTargets
-      : displayedWeapons.flatMap(weapon => selectedTarget ? [{ weapon, target: selectedTarget }] : [])
+      : displayedWeapons.flatMap(weapon => {
+        const weaponIndex = shooter.profile.weapons.indexOf(weapon);
+        const option = weaponOptions.find(candidate => candidate.weaponIndex === weaponIndex);
+        const targetIds = resultEntries.length
+          ? option?.targetIds.filter(targetId => (shootingAttackAllocations[String(weaponIndex)]?.[targetId] ?? 0) > 0) ?? []
+          : option?.targetIds ?? [];
+        return targetIds
+          .map(targetId => targets.find(target => target.id === targetId))
+          .filter((target): target is BattleUnit => !!target)
+          .map(target => ({ weapon, target }));
+      })
     : displayedWeapons.flatMap(weapon => {
       const weaponIndex = shooter.profile.weapons.indexOf(weapon);
       const option = weaponOptions.find(candidate => candidate.weaponIndex === weaponIndex);
@@ -470,9 +480,6 @@ export function PlayShootingPanel({
               </Box>
             );
           })}
-          <Typography variant="caption" sx={{ color: uiTokens.color.text.quiet }}>
-            Allocate each model&apos;s weapon to one target before rolling. The weapon&apos;s attacks are rolled afterward; alternate weapon profiles remain one selectable loadout.
-          </Typography>
         </Box>
       )}
 
@@ -514,8 +521,9 @@ export function PlayShootingPanel({
                   {/* Attacks */}
                   <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
                     <div style={{ fontSize: 8, color: uiTokens.color.text.subtle, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Attacks</div>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: uiTokens.color.combat.attacks, lineHeight: 1 }}>{weapon.attacks}</div>
-                    <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, marginTop: 3 }}>per model</div>
+                    <Tooltip title="Attacks characteristic for each model assigned to this target">
+                      <div style={{ fontSize: 22, fontWeight: 800, color: uiTokens.color.combat.attacks, lineHeight: 1, cursor: 'help' }}>{weapon.attacks}</div>
+                    </Tooltip>
                   </div>
                   {/* Hit */}
                   <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
@@ -528,8 +536,9 @@ export function PlayShootingPanel({
                   {/* Wound */}
                   <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
                     <div style={{ fontSize: 8, color: uiTokens.color.text.subtle, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Wound</div>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: wtColor, lineHeight: 1 }}>{wt}+</div>
-                    <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, marginTop: 3 }}>S{weapon.strength} v T{target.profile.toughness}</div>
+                    <Tooltip title={`Strength ${weapon.strength} versus Toughness ${target.profile.toughness}`}>
+                      <div style={{ fontSize: 22, fontWeight: 800, color: wtColor, lineHeight: 1, cursor: 'help' }}>{wt}+</div>
+                    </Tooltip>
                   </div>
                   {/* Save */}
                   <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
