@@ -994,6 +994,15 @@ export default function App() {
         .map(unit => unit.id),
     );
   }, [battleState, activeRulesForBattle]);
+  const chargeReadyUnitIds = useMemo<Set<string>>(() => {
+    if (!battleState || battleState.phase !== 'charge') return new Set();
+    return new Set(
+      battleState.units
+        .filter(unit => unit.side === battleState.activeArmy && !unit.destroyed && !unit.embarkedInUnitId && !unit.activated)
+        .filter(unit => playChargeTargetOptions(battleState, unit.id, unit.side, activeRulesForBattle).length > 0)
+        .map(unit => unit.id),
+    );
+  }, [battleState, activeRulesForBattle]);
   const pendingDamageAllocationUnitIds = useMemo<Set<string>>(() => {
     if (!battleState || battleState.phase !== 'shooting') return new Set();
     return new Set(
@@ -3189,7 +3198,11 @@ export default function App() {
                     ? selectedFightTargetId
                     : null
               : null}
-            shootingReadyUnitIds={isPlayMode && battleState?.phase === 'shooting' ? shootingReadyUnitIds : undefined}
+            shootingReadyUnitIds={isPlayMode && battleState?.phase === 'shooting'
+              ? shootingReadyUnitIds
+              : isPlayMode && battleState?.phase === 'charge'
+                ? chargeReadyUnitIds
+                : undefined}
             fightFirstUnitIds={isPlayMode && battleState?.phase === BATTLE_PHASE.Fight ? fightFirstUnitIds : undefined}
             coverUnitIds={isPlayMode ? coverUnitIds : undefined}
             losRays={isPlayMode ? losRays : undefined}
