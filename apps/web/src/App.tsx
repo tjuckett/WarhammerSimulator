@@ -1245,7 +1245,7 @@ export default function App() {
           next[String(option.weaponIndex)] = validExisting;
           continue;
         }
-        const targetId = option.targetIds[0];
+        const targetId = selectedPlayShootingTargets.find(targetId => option.targetIds.includes(targetId)) ?? option.targetIds[0];
         if (!targetId) continue;
         next[String(option.weaponIndex)] = {
           [targetId]: playShootingWeaponAttackCount(selectedShootingUnit, option.weaponIndex) ?? 1,
@@ -1253,7 +1253,7 @@ export default function App() {
       }
       return next;
     });
-  }, [battleState?.phase, selectedShootingUnit?.id, selectedPlayShootingOptions, selectedShootingUnit, setShootingAttackAllocations]);
+  }, [battleState?.phase, selectedShootingUnit?.id, selectedPlayShootingOptions, selectedPlayShootingTargets, selectedShootingUnit, setShootingAttackAllocations]);
 
   useEffect(() => {
     if (!battleState || battleState.phase !== 'movement' || !overwatchUnit) {
