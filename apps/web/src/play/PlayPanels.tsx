@@ -364,7 +364,7 @@ export function PlayShootingPanel({
         <Typography variant="caption" sx={disabledTextSx}>This unit can be selected to shoot, but will make no attacks.</Typography>
       ) : !weaponOptions.length && !displayedWeapons.length ? (
         <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noRangedWeapons}</Typography>
-      ) : !targets.length ? (
+      ) : !targets.length && !displayedWeapons.length ? (
         <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noValidTargets}</Typography>
       ) : displayedWeapons.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
