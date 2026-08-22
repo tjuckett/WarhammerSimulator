@@ -109,6 +109,7 @@ const popupPanelSx = {
 
 function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defender' | 'all' = 'all') {
   const groups = new Map<string, number[]>();
+  const successes = new Map<string, number>();
   let modelsKilled = 0;
   let woundsLost = 0;
   for (const entry of entries) {
@@ -126,7 +127,11 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
     const isAttackerGroup = group === 'Hit rolls' || group === 'Wound rolls';
     const isDefenderGroup = group === 'Save rolls' || group === 'Feel No Pain';
     if ((section === 'attacker' && !isAttackerGroup) || (section === 'defender' && !isDefenderGroup)) continue;
-    if (group && rolls.length) groups.set(group, [...(groups.get(group) ?? []), ...rolls]);
+    if (group) {
+      if (rolls.length) groups.set(group, [...(groups.get(group) ?? []), ...rolls]);
+      const resultCount = normalizedMessage.match(/\]\s*(?:→|->)\s*(\d+)\s+(hits|wounds|saved|ignored)/)?.[1];
+      if (resultCount) successes.set(group, (successes.get(group) ?? 0) + Number(resultCount));
+    }
     if (entry.type === 'damage' && section !== 'attacker') {
       modelsKilled += Number(message.match(/(\d+) model\(s\) slain/)?.[1] ?? 0);
       woundsLost += Number(message.match(/(\d+) damage absorbed/)?.[1] ?? 0);
@@ -138,6 +143,7 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
         label,
         target: entries.find(entry => entry.message.trim().startsWith(label))?.message.match(/\((\d+)\+/)?.[1],
         rolls: [...(groups.get(label) ?? [])].sort((a, b) => b - a),
+        successCount: successes.get(label),
       }))
       .filter(group => group.rolls.length),
     modelsKilled,
@@ -175,6 +181,11 @@ function ShootingResultSummary({ entries, section = 'all' }: { entries: LogEntry
               );
             })}
           </Box>
+          {group.successCount !== undefined && (
+            <Typography variant="caption" sx={{ color: uiTokens.color.text.secondary, fontWeight: 700 }}>
+              → {group.successCount} {group.label === 'Hit rolls' ? 'hit' : group.label === 'Wound rolls' ? 'wound' : group.label === 'Save rolls' ? 'saved' : 'ignored'}{group.successCount === 1 ? '' : 's'}
+            </Typography>
+          )}
         </Box>
       ))}
       {section !== 'attacker' && (
