@@ -8823,6 +8823,7 @@ test('ruin footprints block LOS through the mat but not into or out of it', () =
   assert.equal(hasLOSEdgeToEdge(shooter.position, 0.5, targetBehind.position, 0.5, terrain), false);
   assert.equal(hasLOSEdgeToEdge(shooter.position, 0.5, targetInside.position, 0.5, terrain), true);
   assert.equal(hasLOSEdgeToEdge(shooterInside.position, 0.5, targetBehind.position, 0.5, terrain), true);
+  assert.equal(hasLOSEdgeToEdge(shooterInside.position, 0.5, targetBehind.position, 0.5, terrain, '11e'), true);
   assert.equal(targetHasCoverFrom(shooter.position, targetInside, terrain), true);
 });
 

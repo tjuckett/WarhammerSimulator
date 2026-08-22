@@ -235,9 +235,15 @@ export function findUnblockedLOSRay(
       .filter(t => t.features.some(feature => feature.category === 'light' || feature.category === 'dense'))
       .filter(t => !circleIntersectsTerrain(fromCenter, fromRadius, t) && !circleIntersectsTerrain(toCenter, toRadius, t))
     : [];
+  const rayTerrain = terrain.map(t =>
+    t.type === 'ruin'
+      && (circleIntersectsTerrain(fromCenter, fromRadius, t) || circleIntersectsTerrain(toCenter, toRadius, t))
+      ? { ...t, type: 'area' as const }
+      : t,
+  );
   for (const fp of fromPoints) {
     for (const tp of toPoints) {
-      if (hasLOS(fp, tp, terrain, obscuringTerrain)) return { from: fp, to: tp };
+      if (hasLOS(fp, tp, rayTerrain, obscuringTerrain)) return { from: fp, to: tp };
     }
   }
   return null;
