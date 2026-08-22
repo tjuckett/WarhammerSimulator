@@ -259,6 +259,19 @@ export function PlayShootingPanel({
         : weaponOptions.filter(o => String(o.weaponIndex) === selectedWeaponIndex && o.targetIds.includes(selectedTargetId))
       ).map(o => shooter.profile.weapons[o.weaponIndex]).filter(Boolean)
     : [];
+  const resultWeapon = resultEntries
+    .map(entry => shooter.profile.weapons.find(weapon => entry.message.includes(weapon.name)))
+    .find((weapon): weapon is BattleUnit['profile']['weapons'][number] => !!weapon);
+  const resultWeaponIndex = resultWeapon ? shooter.profile.weapons.indexOf(resultWeapon) : -1;
+  const displayedWeaponOptions = resultWeapon && resultWeaponIndex >= 0 && !weaponOptions.some(option => option.weaponIndex === resultWeaponIndex)
+    ? [{ weaponIndex: resultWeaponIndex, name: resultWeapon.name, targetIds: [] }, ...weaponOptions]
+    : weaponOptions;
+  const displayedWeaponIndex = resultWeaponIndex >= 0 && resultSection === 'attacker'
+    ? String(resultWeaponIndex)
+    : selectedWeaponIndex;
+  const displayedWeapons = refWeapons.length || !resultWeapon || !selectedTarget
+    ? refWeapons
+    : [resultWeapon];
 
   return (
     <Box sx={popup ? popupPanelSx : playPanelSx}>
@@ -309,10 +322,10 @@ export function PlayShootingPanel({
         <Select
           labelId="play-shooting-weapon-label"
           label={PLAY_PANEL_LABELS.weapon}
-          value={selectedWeaponIndex}
+          value={displayedWeaponIndex}
           onChange={(event: SelectChangeEvent) => onWeaponChange(event.target.value as 'all' | string)}
         >
-          {weaponOptions.map(option => (
+          {displayedWeaponOptions.map(option => (
             <MenuItem key={option.weaponIndex} value={String(option.weaponIndex)}>
               {option.name} ({shooter.profile.weapons[option.weaponIndex]?.range ?? 0}&quot;)
             </MenuItem>
@@ -341,7 +354,7 @@ export function PlayShootingPanel({
         </Select>
       </FormControl>
 
-      {shootingLocked ? (
+      {shootingLocked && resultSection !== 'attacker' ? (
         <Typography variant="caption" sx={warningTextSx}>
           {pendingDamageLabel
             ? `Allocate ${pendingDamageLabel} before selecting another shooter or target.`
@@ -353,9 +366,9 @@ export function PlayShootingPanel({
         <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noRangedWeapons}</Typography>
       ) : !targets.length ? (
         <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noValidTargets}</Typography>
-      ) : refWeapons.length > 0 ? (
+      ) : displayedWeapons.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {refWeapons.map((weapon, i) => {
+          {displayedWeapons.map((weapon, i) => {
             const wt = calcWoundTarget(weapon.strength, selectedTarget!.profile.toughness);
             const sv = calcEffectiveSave(selectedTarget!.profile.save, weapon.ap, selectedTarget!.profile.invulnSave);
             const usedInvuln = selectedTarget!.profile.invulnSave !== undefined && sv === selectedTarget!.profile.invulnSave;
