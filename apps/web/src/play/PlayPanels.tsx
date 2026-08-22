@@ -539,7 +539,15 @@ export function PlayShootingPanel({
                         type="number"
                         label={target?.profile.name ?? targetId}
                         value={weaponTargets[targetId] ?? 0}
-                        sx={{ minWidth: 120, flex: '0 0 120px' }}
+                        sx={{
+                          minWidth: 120,
+                          flex: '0 0 120px',
+                          '& input::-webkit-inner-spin-button': {
+                            opacity: 1,
+                            transform: 'scale(1.35)',
+                            cursor: 'pointer',
+                          },
+                        }}
                         slotProps={{ htmlInput: { min: 0, max: Math.max(0, weaponModelCount - allocatedElsewhere), step: 1 } }}
                         onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.floor(Number(event.target.value) || 0)))}
                       />
