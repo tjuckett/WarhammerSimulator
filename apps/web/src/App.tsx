@@ -2115,6 +2115,8 @@ export default function App() {
       setShootingResultEntries([]);
       setTargetErrorMsg(null);
       setCasualtyRemovalShooterId(null);
+      setPlayModelSelection(null);
+      setInspectedSelection(null);
       return;
     }
     if (damageAllocationLocked) {
