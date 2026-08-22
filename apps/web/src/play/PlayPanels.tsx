@@ -59,6 +59,14 @@ const warningTextSx = { color: uiTokens.color.status.warning };
 export function PendingDamageAllocationHud({ unit, resultEntries = [], weaponNames = [] }: { unit: BattleUnit; resultEntries?: LogEntry[]; weaponNames?: string[] }) {
   const label = pendingDamageLabel(unit);
   if (!label) return null;
+  const damageByWeapon = new Map<string, { hits: number; damage: number }>();
+  for (const allocation of unit.pendingDamageAllocations ?? []) {
+    const weapon = allocation.source ?? 'Unattributed attack';
+    const current = damageByWeapon.get(weapon) ?? { hits: 0, damage: 0 };
+    current.hits += 1;
+    current.damage += allocation.damage;
+    damageByWeapon.set(weapon, current);
+  }
   const forcedModel = unit.woundedModelIndex !== undefined
     ? `Model ${unit.woundedModelIndex + 1} is already wounded and must take this.`
     : 'Click a defender model to apply it.';
@@ -78,9 +86,16 @@ export function PendingDamageAllocationHud({ unit, resultEntries = [], weaponNam
       <Typography variant="caption" sx={{ color: uiTokens.color.status.pending, fontWeight: 800, textTransform: 'uppercase', lineHeight: 1 }}>
         Damage to apply
       </Typography>
-      <Typography variant="body2" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 800, lineHeight: 1.15 }}>
-        {label}
-      </Typography>
+      {[...damageByWeapon.entries()].map(([weapon, summary]) => (
+        <Typography key={weapon} variant="body2" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 800, lineHeight: 1.15 }}>
+          {weapon}: {summary.hits} hit{summary.hits === 1 ? '' : 's'} × {summary.damage} damage
+        </Typography>
+      ))}
+      {!damageByWeapon.size && (
+        <Typography variant="body2" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 800, lineHeight: 1.15 }}>
+          {label}
+        </Typography>
+      )}
       <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingMuted, lineHeight: 1.2 }}>
         {forcedModel} Each hit's damage applies to one model; excess damage does not carry over.
       </Typography>
