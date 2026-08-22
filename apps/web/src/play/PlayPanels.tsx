@@ -160,7 +160,10 @@ function ShootingResultSummary({ entries, section = 'all' }: { entries: LogEntry
       <Typography variant="caption" sx={{ color: uiTokens.color.text.secondary, fontWeight: 800 }}>Latest shooting result</Typography>
       {result.groups.map(group => (
         <Box key={group.label} sx={{ display: 'flex', gap: 0.75, alignItems: 'baseline', flexWrap: 'wrap' }}>
-          <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, minWidth: 74 }}>{group.label}</Typography>
+          <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, width: '100%' }}>
+            {group.label}
+            {group.successCount !== undefined && ` - ${group.rolls.length} roll${group.rolls.length === 1 ? '' : 's'} - ${group.successCount} ${group.label === 'Hit rolls' ? 'hit' : group.label === 'Wound rolls' ? 'wound' : group.label === 'Save rolls' ? 'saved' : 'ignored'}${group.successCount === 1 ? '' : 's'}`}
+          </Typography>
           <Box sx={{ display: 'flex', gap: 0.35, flexWrap: 'wrap' }}>
             {group.rolls.map((roll, index) => {
               const target = Number(group.target ?? 7);
@@ -181,11 +184,6 @@ function ShootingResultSummary({ entries, section = 'all' }: { entries: LogEntry
               );
             })}
           </Box>
-          {group.successCount !== undefined && (
-            <Typography variant="caption" sx={{ color: uiTokens.color.text.secondary, fontWeight: 700 }}>
-              → {group.successCount} {group.label === 'Hit rolls' ? 'hit' : group.label === 'Wound rolls' ? 'wound' : group.label === 'Save rolls' ? 'saved' : 'ignored'}{group.successCount === 1 ? '' : 's'}
-            </Typography>
-          )}
         </Box>
       ))}
       {section !== 'attacker' && (
