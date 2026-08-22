@@ -111,6 +111,7 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
   const groups = new Map<string, number[]>();
   const successes = new Map<string, number>();
   const targets = new Map<string, string | undefined>();
+  const noSave = new Set<string>();
   let currentWeapon = '';
   for (const entry of entries) {
     const message = entry.message;
@@ -133,6 +134,12 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
     const isAttackerGroup = group === 'Hit rolls' || group === 'Wound rolls';
     const isDefenderGroup = group === 'Save rolls' || group === 'Feel No Pain';
     if ((section === 'attacker' && !isAttackerGroup) || (section === 'defender' && !isDefenderGroup)) continue;
+    if (section !== 'attacker' && normalizedMessage.startsWith('No save possible')) {
+      const key = `${currentWeapon}::Save rolls`;
+      groups.set(key, groups.get(key) ?? []);
+      noSave.add(key);
+      continue;
+    }
     if (group) {
       const key = `${currentWeapon}::${group}`;
       if (rolls.length) groups.set(key, [...(groups.get(key) ?? []), ...rolls]);
@@ -150,8 +157,9 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
         target: targets.get(key),
         rolls: [...rolls].sort((a, b) => b - a),
         successCount: successes.get(key),
+        noSave: noSave.has(key),
       };
-    }).filter(group => group.rolls.length),
+    }).filter(group => group.rolls.length || group.noSave),
   };
 }
 
@@ -166,6 +174,7 @@ function ShootingResultSummary({ entries, section = 'all', weaponNames = [] }: {
         <Box key={group.label} sx={{ display: 'flex', gap: 0.75, alignItems: 'baseline', flexWrap: 'wrap' }}>
           <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, width: '100%' }}>
             {group.label}
+            {group.noSave ? ' - No save possible' : null}
             {group.successCount !== undefined && ` - ${group.rolls.length} roll${group.rolls.length === 1 ? '' : 's'} - ${group.successCount} ${group.baseLabel === 'Hit rolls' ? 'hit' : group.baseLabel === 'Wound rolls' ? 'wound' : group.baseLabel === 'Save rolls' ? 'saved' : 'ignored'}${group.successCount === 1 ? '' : 's'}`}
           </Typography>
           <Box sx={{ display: 'flex', gap: 0.35, flexWrap: 'wrap' }}>
