@@ -135,7 +135,7 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
     groups: ['Hit rolls', 'Wound rolls', 'Save rolls', 'Feel No Pain']
       .map(label => ({
         label,
-        target: entries.find(entry => entry.message.trim().startsWith(label))?.message.match(/\((\d+)\+/)?.[1],
+        target: entries.find(entry => entry.message.trim().startsWith(label))?.message.match(/(?:^|[,\s])(\d+)\+/)?.[1],
         rolls: [...(groups.get(label) ?? [])].sort((a, b) => b - a),
         successCount: successes.get(label),
       }))
@@ -165,10 +165,10 @@ function ShootingResultSummary({ entries, section = 'all' }: { entries: LogEntry
                 <Box key={`${group.label}-${index}`} sx={{
                   minWidth: 18,
                   px: 0.35,
-                  border: `1px solid ${critical ? '#a07800' : success ? '#2a5c2a' : group.label === 'Save rolls' ? '#6b3800' : '#3a1818'}`,
+                  border: `1px solid ${critical ? '#7040a0' : success ? '#2a5c2a' : group.label === 'Save rolls' ? '#6b3800' : '#3a1818'}`,
                   borderRadius: 0.75,
-                  background: critical ? '#2a1e00' : success ? '#0d260d' : group.label === 'Save rolls' ? '#2a1500' : '#1a0d0d',
-                  color: critical ? '#ffd700' : success ? '#78d786' : group.label === 'Save rolls' || group.label === 'Feel No Pain' ? '#d07030' : '#664444',
+                  background: critical ? '#241238' : success ? '#0d260d' : group.label === 'Save rolls' ? '#2a1500' : '#1a0d0d',
+                  color: critical ? '#d5a6ff' : success ? '#78d786' : group.label === 'Save rolls' || group.label === 'Feel No Pain' ? '#d07030' : '#664444',
                   textAlign: 'center',
                   fontSize: 11,
                   fontWeight: 700,
