@@ -732,6 +732,7 @@ export default function App() {
     isPlayMode
     && battleState?.phase === 'charge'
     && selectedChargeUnit
+    && !selectedChargeUnit.activated
     && !pendingChargeRoll
     && selectedPlayChargeOptions.length > 0
   );
