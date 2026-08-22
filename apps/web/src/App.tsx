@@ -2139,8 +2139,8 @@ export default function App() {
       return;
     }
     setShootingResultEntries(next.log.slice(prev.log.length));
-    const hasPendingDamage = selectPendingDamageUnit(next, selection.unitId);
-    if (!hasPendingDamage) setCasualtyRemovalShooterId(null);
+    const pendingDamageUnit = next.units.find(unit => !unit.destroyed && !unit.embarkedInUnitId && (unit.pendingDamageAllocations?.length ?? 0) > 0);
+    setCasualtyRemovalShooterId(pendingDamageUnit ? selection.unitId : null);
     setTargetErrorMsg(null);
     setShootingAttackAllocations({});
 
@@ -3214,7 +3214,7 @@ export default function App() {
                       popup
                       resultEntries={shootingResultEntries}
                       resultSection="attacker"
-                      actionLabel={shootingResultEntries.length && damageAllocationLocked ? 'Resolve' : 'Shoot'}
+                      actionLabel={shootingResultEntries.length && damageAllocationLocked ? 'Resolve' : shootingResultEntries.length ? 'Done' : 'Shoot'}
                       coverSaveEnabled={activeRulesForBattle.metadata.edition !== '11e'}
                       targets={selectedPlayShootingTargets}
                       selectedTarget={selectedShootingTargetUnit}

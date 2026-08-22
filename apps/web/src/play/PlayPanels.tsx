@@ -341,6 +341,7 @@ export function PlayShootingPanel({
 
   const shootingLocked = damageAllocationLocked;
   const resolvePendingDamage = shootingLocked && resultEntries.length > 0;
+  const completedWithoutPendingDamage = resultEntries.length > 0 && !shootingLocked;
   const noAttackSelected = selectedWeaponIndex !== 'all'
     && weaponOptions.some(option => String(option.weaponIndex) === selectedWeaponIndex && option.weaponIndex < 0);
   const canResolve = resolvePendingDamage || (!shootingLocked
@@ -629,6 +630,8 @@ export function PlayShootingPanel({
             ? `Allocate ${pendingDamageLabel} before selecting another shooter or target.`
             : 'Allocate pending damage to defender models before selecting another shooter or target.'}
         </Typography>
+      ) : completedWithoutPendingDamage ? (
+        <Typography variant="caption" sx={disabledTextSx}>No unsaved damage — no model allocation or Resolve step is required.</Typography>
       ) : shooter.movementAction === 'advanced' ? (
         <Typography variant="caption" sx={weaponOptions.length ? warningTextSx : disabledTextSx}>
           {weaponOptions.length
