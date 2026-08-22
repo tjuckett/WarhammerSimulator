@@ -252,25 +252,35 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     return unit?.modelPositions[firstIndex] ?? null;
   }
 
-  function selectedModelActionAnchor(sourceState: BattleState, selection: PlayModelSelection): Position | null {
+  function selectedModelActionAnchor(sourceState: BattleState, selection: PlayModelSelection): { anchor: Position; bounds: { left: number; right: number; top: number; bottom: number } } | null {
     const selectedUnitIds = new Set(selection.parts.map(part => `${part.side}:${part.unitId}`));
     const selectedModels = sourceState.units.filter(unit =>
       selectedUnitIds.has(`${unit.side}:${unit.id}`) && !unit.destroyed,
     ).flatMap(unit => {
       return unit.modelPositions.flatMap((model, modelIndex) => {
         if (!model) return [];
+        const radius = modelBaseRadiusInches(unit.profile, modelIndex);
         return [{
           ...model,
-          rightEdge: model.x + modelBaseRadiusInches(unit.profile, modelIndex),
+          radius,
+          rightEdge: model.x + radius,
         }];
       });
     });
     if (!selectedModels.length) return null;
     return {
+      bounds: {
+        left: Math.min(...selectedModels.map(model => model.x - model.radius)),
+        right: Math.max(...selectedModels.map(model => model.rightEdge)),
+        top: Math.min(...selectedModels.map(model => model.y - model.radius)),
+        bottom: Math.max(...selectedModels.map(model => model.y + model.radius)),
+      },
       // Anchor from the complete formation edge, not the clicked model, so a
       // wide shooting/charge panel always starts outside the selected unit.
-      x: Math.max(...selectedModels.map(model => model.rightEdge)),
-      y: (Math.min(...selectedModels.map(model => model.y)) + Math.max(...selectedModels.map(model => model.y))) / 2,
+      anchor: {
+        x: Math.max(...selectedModels.map(model => model.rightEdge)),
+        y: (Math.min(...selectedModels.map(model => model.y)) + Math.max(...selectedModels.map(model => model.y))) / 2,
+      },
     };
   }
 
@@ -282,38 +292,43 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       setSelectedActionsPosition(null);
       return;
     }
-    const anchor = selectedModelActionAnchor(state, selection);
-    if (!anchor) {
+    const selectionGeometry = selectedModelActionAnchor(state, selection);
+    if (!selectionGeometry) {
       setSelectedActionsPosition(null);
       return;
     }
+    const { anchor, bounds } = selectionGeometry;
     const canvasRect = canvas.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
     const scale = sizeRef.current.scale;
-    const nextPosition = {
-      left: canvasRect.left - containerRect.left + anchor.x * scale + 18,
-      top: canvasRect.top - containerRect.top + anchor.y * scale,
-    };
     const actionRect = selectedActionsRef.current?.getBoundingClientRect();
-    if (actionRect) {
-      const minTop = actionRect.height / 2 + 4;
-      const maxTop = Math.max(minTop, container.scrollHeight - actionRect.height / 2 - 4);
-      const maxLeft = Math.max(4, container.scrollWidth - actionRect.width - 4);
-      if (nextPosition.left + actionRect.width > container.scrollWidth - 4) {
-        const leftPosition = canvasRect.left - containerRect.left + anchor.x * scale - actionRect.width - 18;
-        if (leftPosition >= 4) {
-          nextPosition.left = leftPosition;
-        } else {
-          // Large shooting/charge panels may not fit on either side near a
-          // board edge. Put the panel above the formation instead of
-          // squeezing it over the selected models.
-          nextPosition.left = canvasRect.left - containerRect.left + anchor.x * scale - actionRect.width / 2;
-          nextPosition.top = canvasRect.top - containerRect.top + anchor.y * scale - actionRect.height / 2 - 18;
-        }
-      }
-      nextPosition.left = Math.max(4, Math.min(maxLeft, nextPosition.left));
-      nextPosition.top = Math.max(minTop, Math.min(maxTop, nextPosition.top));
-    }
+    if (!actionRect) return;
+    const canvasLeft = canvasRect.left - containerRect.left;
+    const canvasTop = canvasRect.top - containerRect.top;
+    const unitBounds = {
+      left: canvasLeft + bounds.left * scale,
+      right: canvasLeft + bounds.right * scale,
+      top: canvasTop + bounds.top * scale,
+      bottom: canvasTop + bounds.bottom * scale,
+    };
+    const centerX = canvasLeft + anchor.x * scale;
+    const centerY = canvasTop + anchor.y * scale;
+    const gap = 18;
+    const candidates = [
+      { left: unitBounds.right + gap, top: centerY - actionRect.height / 2 },
+      { left: unitBounds.left - actionRect.width - gap, top: centerY - actionRect.height / 2 },
+      { left: (unitBounds.left + unitBounds.right - actionRect.width) / 2, top: unitBounds.top - actionRect.height - gap },
+      { left: (unitBounds.left + unitBounds.right - actionRect.width) / 2, top: unitBounds.bottom + gap },
+    ];
+    const fitsContainer = (candidate: { left: number; top: number }) => (
+      candidate.left >= 4
+      && candidate.top >= 4
+      && candidate.left + actionRect.width <= container.scrollWidth - 4
+      && candidate.top + actionRect.height <= container.scrollHeight - 4
+    );
+    const nextPosition = candidates.find(fitsContainer) ?? candidates[0];
+    nextPosition.left = Math.max(4, Math.min(container.scrollWidth - actionRect.width - 4, nextPosition.left));
+    nextPosition.top = Math.max(4, Math.min(container.scrollHeight - actionRect.height - 4, nextPosition.top));
     setSelectedActionsPosition(current =>
       current
         && Math.abs(current.left - nextPosition.left) < 0.5
