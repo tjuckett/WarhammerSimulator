@@ -458,7 +458,7 @@ export function PlayShootingPanel({
                 <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700 }}>
                   {option.name} — {Object.values(weaponTargets).reduce((total, models) => total + (Number(models) || 0), 0)}/{weaponModelCount} model{weaponModelCount === 1 ? '' : 's'} assigned
                 </Typography>
-                <Box sx={option.targetIds.length > 3 ? { maxHeight: 190, overflowY: 'auto', display: 'grid', gap: 0.4, pr: 0.5 } : undefined}>
+                <Box sx={option.targetIds.length > 3 ? { maxHeight: 210, overflowY: 'auto', display: 'grid', gap: 0.6, pr: 0.5 } : { display: 'grid', gap: 0.6 }}>
                 {option.targetIds.map(targetId => {
                   const target = targets.find(candidate => candidate.id === targetId);
                   const allocatedElsewhere = Object.entries(weaponTargets)
