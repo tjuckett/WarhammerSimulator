@@ -998,7 +998,7 @@ export default function App() {
     if (!battleState || battleState.phase !== 'charge') return new Set();
     return new Set(
       battleState.units
-        .filter(unit => unit.side === battleState.activeArmy && !unit.destroyed && !unit.embarkedInUnitId && !unit.activated)
+        .filter(unit => unit.side === battleState.activeArmy && !unit.destroyed && !unit.embarkedInUnitId)
         .filter(unit => playChargeEligibilityReason(battleState, unit.id, unit.side, activeRulesForBattle) === null)
         .map(unit => unit.id),
     );
