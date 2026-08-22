@@ -2019,6 +2019,7 @@ export default function App() {
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'shooting' || !selection) return;
     if (damageAllocationLocked) {
+      if (shootingResultEntries.length && selectPendingDamageUnit(prev, casualtyRemovalShooterId)) return;
       setTargetErrorMsg('Allocate pending damage before shooting again');
       return;
     }
@@ -2045,22 +2046,8 @@ export default function App() {
     if (next === prev) return;
     setShootingResultEntries(next.log.slice(prev.log.length));
     const pendingDamageUnit = next.units.find(unit => !unit.destroyed && !unit.embarkedInUnitId && (unit.pendingDamageAllocations?.length ?? 0) > 0);
-    if (pendingDamageUnit) {
-      setCasualtyRemovalShooterId(selection.unitId);
-      setPlayModelSelection(normalizePlaySelectionForState(next, {
-        side: pendingDamageUnit.side,
-        parts: [{
-          unitId: pendingDamageUnit.id,
-          side: pendingDamageUnit.side,
-          modelIndices: pendingDamageUnit.modelPositions.map((_, modelIndex) => modelIndex),
-        }],
-      }));
-      setInspectedSelection({ kind: 'battle', side: pendingDamageUnit.side, unitId: pendingDamageUnit.id });
-      setTargetErrorMsg('Select a model to allocate the next pending damage');
-    }
-    if (!pendingDamageUnit) {
-      setTargetErrorMsg(null);
-    }
+    setCasualtyRemovalShooterId(pendingDamageUnit ? selection.unitId : null);
+    setTargetErrorMsg(null);
     // After a single-weapon fire the weapon is gone from the options; the effect picks the next available weapon.
     if (weaponIndex !== 'all') setSelectedShootingWeaponIndex('all');
 
@@ -3082,11 +3069,12 @@ export default function App() {
                 : undefined,
               selectedModelActions: battleState.phase !== 'deployment' && !isPlayReinforcementsStep && (pendingDamageAllocationUnit || (battleState.phase === BATTLE_PHASE.Shooting && !!activeSelectedShootingUnit) || selectedPlayScoutAllowance !== null || selectedPlayScoutMoveStarted || selectedPlayCanDeclareMobile || selectedPlayCanAdvance || selectedPlayCanRollCharge || !!pendingChargeRoll || !!pendingPlayChargeMovement || !!selectedPlayChargeResult || selectedPlayCanFallBack || selectedPlayCanTakeToSkies || selectedPlaySurgeTargetIds.length > 0 || selectedPlayCanMoveVertically || selectedPlayCanCompleteMovement || selectedPlayCanUndoMovement || selectedPlayCanSelectOverrun || selectedPlayCanPileIn || selectedPlayCanConsolidate || selectedPlayHasCoherencyIssue || selectedPlayCanEmbark || selectedPlayDisembarkOptions.length > 0) ? (
                 <>
-                  {battleState.phase === BATTLE_PHASE.Shooting && activeSelectedShootingUnit && (
+                  {battleState.phase === BATTLE_PHASE.Shooting && activeSelectedShootingUnit && !pendingDamageAllocationUnit && (
                     <PlayShootingPanel
                       shooter={activeSelectedShootingUnit}
                       popup
                       resultEntries={shootingResultEntries}
+                      actionLabel={shootingResultEntries.length && damageAllocationLocked ? 'Resolve Damage' : 'Shoot'}
                       coverSaveEnabled={activeRulesForBattle.metadata.edition !== '11e'}
                       targets={selectedPlayShootingTargets}
                       selectedTarget={selectedShootingTargetUnit}

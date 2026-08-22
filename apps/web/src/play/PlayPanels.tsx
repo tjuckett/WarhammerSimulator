@@ -128,7 +128,11 @@ function shootingResultSummary(entries: LogEntry[]) {
   }
   return {
     groups: ['Hit rolls', 'Wound rolls', 'Save rolls']
-      .map(label => ({ label, rolls: [...(groups.get(label) ?? [])].sort((a, b) => b - a) }))
+      .map(label => ({
+        label,
+        target: entries.find(entry => entry.message.trim().startsWith(label))?.message.match(/\((\d+)\+/)?.[1],
+        rolls: [...(groups.get(label) ?? [])].sort((a, b) => b - a),
+      }))
       .filter(group => group.rolls.length),
     modelsKilled,
     woundsLost,
@@ -145,7 +149,26 @@ function ShootingResultSummary({ entries }: { entries: LogEntry[] }) {
       {result.groups.map(group => (
         <Box key={group.label} sx={{ display: 'flex', gap: 0.75, alignItems: 'baseline', flexWrap: 'wrap' }}>
           <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, minWidth: 74 }}>{group.label}</Typography>
-          <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700 }}>{group.rolls.join(', ')}</Typography>
+          <Box sx={{ display: 'flex', gap: 0.35, flexWrap: 'wrap' }}>
+            {group.rolls.map((roll, index) => {
+              const target = Number(group.target ?? 7);
+              const success = roll >= target;
+              const critical = group.label !== 'Save rolls' && roll === 6;
+              return (
+                <Box key={`${group.label}-${index}`} sx={{
+                  minWidth: 18,
+                  px: 0.35,
+                  border: `1px solid ${critical ? '#a07800' : success ? '#2a5c2a' : group.label === 'Save rolls' ? '#6b3800' : '#3a1818'}`,
+                  borderRadius: 0.75,
+                  background: critical ? '#2a1e00' : success ? '#0d260d' : group.label === 'Save rolls' ? '#2a1500' : '#1a0d0d',
+                  color: critical ? '#ffd700' : success ? '#78d786' : group.label === 'Save rolls' ? '#d07030' : '#664444',
+                  textAlign: 'center',
+                  fontSize: 11,
+                  fontWeight: 700,
+                }}>{roll}</Box>
+              );
+            })}
+          </Box>
         </Box>
       ))}
       <Typography variant="caption" sx={{ color: uiTokens.color.text.secondary }}>
@@ -160,7 +183,7 @@ export function PlayShootingPanel({
   popup = false,
   resultEntries = [],
   title = PLAY_PANEL_LABELS.shooting,
-  actionLabel = PLAY_PANEL_LABELS.resolve,
+  actionLabel = 'Shoot',
   targets,
   selectedTarget,
   targetIsValid,
@@ -211,14 +234,15 @@ export function PlayShootingPanel({
   }
 
   const shootingLocked = damageAllocationLocked;
+  const resolvePendingDamage = shootingLocked && resultEntries.length > 0;
   const noAttackSelected = selectedWeaponIndex !== 'all'
     && weaponOptions.some(option => String(option.weaponIndex) === selectedWeaponIndex && option.weaponIndex < 0);
-  const canResolve = !shootingLocked
+  const canResolve = resolvePendingDamage || (!shootingLocked
     && !shooter.activated
     && (
       noAttackSelected
       || (weaponOptions.some(option => option.targetIds.length > 0) && !!selectedTarget && targetIsValid)
-    );
+    ));
   const targetInCover = !!(selectedTarget && coverUnitIds?.has(selectedTarget.id));
 
   const refWeapons = selectedTarget && targetIsValid
@@ -268,7 +292,7 @@ export function PlayShootingPanel({
           onClick={onResolve}
           disabled={!canResolve}
         >
-          {actionLabel}
+          {resolvePendingDamage ? 'Resolve Damage' : actionLabel}
         </Button>
       </Box>
 
