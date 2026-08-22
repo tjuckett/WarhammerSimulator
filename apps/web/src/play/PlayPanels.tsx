@@ -286,7 +286,10 @@ export function PlayShootingPanel({
   const canResolve = resolvePendingDamage || (!shootingLocked
     && !shooter.activated
     && weaponOptions.length > 0
-    && weaponOptions.every(option => option.weaponIndex < 0 || Object.values(shootingAttackAllocations[String(option.weaponIndex)] ?? {}).some(value => value > 0)));
+    && weaponOptions.every(option => option.weaponIndex < 0 || (
+      Object.values(shootingAttackAllocations[String(option.weaponIndex)] ?? {}).reduce((total, models) => total + (Number(models) || 0), 0)
+      === playShootingWeaponModelCount(shooter, option.weaponIndex)
+    )));
   const targetInCover = !!(selectedTarget && coverUnitIds?.has(selectedTarget.id));
 
   const refWeapons = selectedTarget && targetIsValid
@@ -425,7 +428,7 @@ export function PlayShootingPanel({
             return (
               <Box key={option.weaponIndex} sx={{ display: 'grid', gap: 0.4 }}>
                 <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700 }}>
-                  {option.name} — {weaponModelCount} model{weaponModelCount === 1 ? '' : 's'}
+                  {option.name} — {Object.values(weaponTargets).reduce((total, models) => total + (Number(models) || 0), 0)}/{weaponModelCount} model{weaponModelCount === 1 ? '' : 's'} assigned
                 </Typography>
                 {option.targetIds.map(targetId => {
                   const target = targets.find(candidate => candidate.id === targetId);
