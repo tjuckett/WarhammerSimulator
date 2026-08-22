@@ -3209,9 +3209,7 @@ export function shootPlayUnitWeapons(
   for (const selected of selectableWeapons) {
     const weaponAllocations = allocationByWeapon.get(selected.weaponIndex) ?? [];
     const fixedCount = fixedWeaponAttackCount(unit, selected.weapon, selected.weaponIndex);
-    if (fixedCount === null && weaponAllocations.length !== 1) return state;
-    const declaredCount = weaponAllocations.reduce((total, allocation) => total + (allocation.attackCount ?? 0), 0);
-    if (fixedCount !== null && weaponAllocations.length > 1 && declaredCount !== fixedCount) return state;
+    if (weaponAllocations.length !== 1) return state;
     if (weaponAllocations.some(allocation => allocation.attackCount !== undefined && (!Number.isInteger(allocation.attackCount) || allocation.attackCount < 0))) return state;
     for (const allocation of weaponAllocations) {
       if (s.attachedShootingTargetUnitId && allocation.targetUnitId !== s.attachedShootingTargetUnitId) return state;

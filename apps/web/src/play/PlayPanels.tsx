@@ -410,31 +410,25 @@ export function PlayShootingPanel({
                 <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700 }}>
                   {option.name}{fixedAttacks !== null ? ` — ${fixedAttacks} attacks` : ' — variable attacks'}
                 </Typography>
-                {option.targetIds.map(targetId => {
-                  const target = targets.find(candidate => candidate.id === targetId);
-                  const allocatedElsewhere = Object.entries(weaponTargets)
-                    .filter(([allocatedTargetId]) => allocatedTargetId !== targetId)
-                    .reduce((total, [, attacks]) => total + (Number(attacks) || 0), 0);
-                  const remainingAttacks = fixedAttacks === null
-                    ? undefined
-                    : Math.max(0, fixedAttacks - allocatedElsewhere);
-                  return (
-                    <TextField
-                      key={`${option.weaponIndex}:${targetId}`}
-                      size="small"
-                      type="number"
-                      label={target?.profile.name ?? targetId}
-                      value={weaponTargets[targetId] ?? 0}
-                      slotProps={{ htmlInput: { min: 0, max: remainingAttacks, step: 1 } }}
-                      onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.floor(Number(event.target.value) || 0)))}
-                    />
-                  );
-                })}
+                <FormControl size="small" fullWidth>
+                  <InputLabel id={`play-shooting-allocation-${option.weaponIndex}`}>Target</InputLabel>
+                  <Select
+                    labelId={`play-shooting-allocation-${option.weaponIndex}`}
+                    label="Target"
+                    value={option.targetIds.find(targetId => (weaponTargets[targetId] ?? 0) > 0) ?? ''}
+                    onChange={event => onShootingAttackAllocationChange(option.weaponIndex, event.target.value, 1)}
+                  >
+                    {option.targetIds.map(targetId => {
+                      const target = targets.find(candidate => candidate.id === targetId);
+                      return <MenuItem key={targetId} value={targetId}>{target?.profile.name ?? targetId}</MenuItem>;
+                    })}
+                  </Select>
+                </FormControl>
               </Box>
             );
           })}
           <Typography variant="caption" sx={{ color: uiTokens.color.text.quiet }}>
-            Set attacks to zero for targets that should not receive that weapon. Alternate weapon profiles remain one selectable loadout.
+            Each weapon must be assigned to one target before rolling. The weapon&apos;s attacks are rolled afterward; alternate weapon profiles remain one selectable loadout.
           </Typography>
         </Box>
       )}
