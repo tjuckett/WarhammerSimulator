@@ -1318,8 +1318,9 @@ test('11th Smokescreen applies cover and a hit penalty for the phase', () => {
     const shooting = shootPlayUnitWeapon(screened, shooter.id, 0, smoke.id, 'all', rules40K11th);
     const messages = shooting.log.map(entry => entry.message).join(' ');
     assert.match(messages, /Smokescreen: target has Benefit of Cover/);
-    assert.match(messages, /Hit rolls \(3\+\)/);
-    assert.match(messages, /Save rolls \(3\+, cover \+1\)/);
+    assert.match(messages, /Benefit of Cover -1 to Hit/);
+    assert.match(messages, /Hit rolls \(4\+\)/);
+    assert.match(messages, /Save rolls \(4\+\)/);
   } finally {
     Math.random = originalRandom;
   }
@@ -8051,7 +8052,8 @@ test('Selected weapon profile abilities do not affect alternate profiles', () =>
     const next = shootPlayUnitWeapon(battle, shooter.id, shooter.side, target.id, 0, rules40K11th);
     const messages = next.log.map(entry => entry.message).join(' ');
     assert.match(messages, /Plain Missile/);
-    assert.match(messages, /Save rolls \(3\+, cover \+1\)/);
+    assert.match(messages, /Benefit of Cover -1 to Hit/);
+    assert.match(messages, /Save rolls \(4\+\)/);
     assert.equal(messages.includes('Coverbreaker Missile'), false);
   } finally {
     Math.random = originalRandom;
@@ -10062,7 +10064,8 @@ test('11th Indirect Fire uses the stationary visibility threshold and always gra
     const shooting = shootPlayUnitWeapon(battle, shooter.id, 0, target.id, 'all', rules40K11th);
     const messages = shooting.log.map(entry => entry.message).join(' ');
     assert.match(messages, /Indirect Fire: unmodified 4\+ hit while stationary/);
-    assert.match(messages, /Save rolls \(3\+, cover \+1\)/);
+    assert.match(messages, /Benefit of Cover -1 to Hit/);
+    assert.match(messages, /Save rolls \(4\+\)/);
     assert.equal(messages.includes('Indirect Fire -1 to Hit'), false);
   } finally {
     Math.random = originalRandom;

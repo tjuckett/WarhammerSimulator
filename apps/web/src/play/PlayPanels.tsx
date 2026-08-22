@@ -163,6 +163,7 @@ export function PlayShootingPanel({
   targets,
   selectedTarget,
   targetIsValid,
+  coverSaveEnabled = true,
   damageAllocationLocked,
   pendingDamageLabel,
   weaponOptions,
@@ -184,6 +185,7 @@ export function PlayShootingPanel({
   targets: BattleUnit[];
   selectedTarget: BattleUnit | null;
   targetIsValid: boolean;
+  coverSaveEnabled?: boolean;
   damageAllocationLocked: boolean;
   pendingDamageLabel?: string | null;
   weaponOptions: PlayShootingWeaponOption[];
@@ -326,7 +328,7 @@ export function PlayShootingPanel({
             const usedInvuln = selectedTarget!.profile.invulnSave !== undefined && sv === selectedTarget!.profile.invulnSave;
             const noSave = sv > 6;
             const wtColor = calcWoundTargetColor(wt);
-            const coverBonus = targetInCover && (selectedTarget!.profile.save <= 6) ? 1 : 0;
+            const coverBonus = coverSaveEnabled && targetInCover && (selectedTarget!.profile.save <= 6) ? 1 : 0;
             const svWithCover = sv - coverBonus;
             const noSaveWithCover = svWithCover > 6;
             return (
@@ -379,7 +381,12 @@ export function PlayShootingPanel({
                         <div style={{ fontSize: 9, marginTop: 3, color: weapon.ap < 0 ? uiTokens.color.combat.apWarning : uiTokens.color.text.subtle }}>
                           AP{weapon.ap}{usedInvuln ? ' ★inv' : ''}
                         </div>
-                        {targetInCover && (
+                        {targetInCover && !coverSaveEnabled && (
+                          <div style={{ fontSize: 9, color: uiTokens.color.status.warning, marginTop: 2 }}>
+                            ⛨ cover: -1 to hit (11th)
+                          </div>
+                        )}
+                        {targetInCover && coverSaveEnabled && (
                           <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, marginTop: 2 }}>
                             ⛨ cover (no save to improve)
                           </div>

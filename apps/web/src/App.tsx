@@ -3087,6 +3087,7 @@ export default function App() {
                       shooter={activeSelectedShootingUnit}
                       popup
                       resultEntries={shootingResultEntries}
+                      coverSaveEnabled={activeRulesForBattle.metadata.edition !== '11e'}
                       targets={selectedPlayShootingTargets}
                       selectedTarget={selectedShootingTargetUnit}
                       targetIsValid={selectedShootingTargetIsValid}
@@ -3383,6 +3384,7 @@ export default function App() {
               {isPlayMode && battleState?.phase === 'shooting' && !activeSelectedShootingUnit && (
                 <PlayShootingPanel
                   shooter={activeSelectedShootingUnit}
+                  coverSaveEnabled={activeRulesForBattle.metadata.edition !== '11e'}
                   targets={selectedPlayShootingTargets}
                   selectedTarget={selectedShootingTargetUnit}
                   targetIsValid={selectedShootingTargetIsValid}
@@ -3403,6 +3405,7 @@ export default function App() {
               {isPlayMode && battleState?.phase === 'movement' && overwatchUnit && (
                 <PlayShootingPanel
                   shooter={overwatchUnit}
+                  coverSaveEnabled={activeRulesForBattle.metadata.edition !== '11e'}
                   title="Overwatch"
                   actionLabel="Snap Shoot"
                   targets={selectedOverwatchTargets}

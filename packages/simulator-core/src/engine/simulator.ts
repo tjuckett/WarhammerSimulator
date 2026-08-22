@@ -1319,7 +1319,7 @@ function resolveAttacks(
   let unsaved = 0;
   if (woundCount > 0) {
     const coverBonus = hasCover && !weaponHasKeyword(weapon, 'Ignores Cover')
-      ? rules.coverSaveBonus(defender)
+      ? rules.metadata.edition === '11e' ? 0 : rules.coverSaveBonus(defender)
       : 0;
     const waaaghInvulnSave = rules.metadata.edition === '11e'
       && state.activeArmyAbilities?.[defender.side]?.includes('waaagh') === true
@@ -3061,16 +3061,20 @@ function shootingWeaponModifiers(
   const usesSmokescreen = unitHasActiveStratagem(state, target, 'smokescreen', 'shooting')
     || targetIsScreenedBySmoke(state, unit, target);
   const cover = targetHasTerrainCoverFrom(unit.modelPositions, target, state.terrain) || usesIndirectFireCover || usesSmokescreen;
+  const usesCoverHitPenalty = rules.metadata.edition === '11e'
+    && cover
+    && !weaponHasKeyword(weapon, 'Ignores Cover');
   const usesBigGunsPenalty = (bigGunsNeverTire || targetWithinFriendlyEngagement(state, target, unit.side, rules))
     && !closeQuartersTarget
     && !weaponIsSidearm(weapon);
   const usesHeavyBonus = weaponHasKeyword(weapon, 'Heavy') && unit.movementAction === 'remainedStationary';
   const usesStealth = attachedUnitHasRule(state, target, 'Stealth');
-  const hitModifier = (usesBigGunsPenalty ? 1 : 0) + (usesHeavyBonus ? -1 : 0) + (usesIndirectFirePenalty ? 1 : 0) + (usesStealth ? 1 : 0);
+  const hitModifier = (usesBigGunsPenalty ? 1 : 0) + (usesHeavyBonus ? -1 : 0) + (usesIndirectFirePenalty ? 1 : 0) + (usesStealth ? 1 : 0) + (usesCoverHitPenalty ? 1 : 0);
   const hitModifierNotes = [
     usesBigGunsPenalty ? 'Big Guns Never Tire -1 to Hit' : '',
     usesHeavyBonus ? 'Heavy +1 to Hit' : '',
     usesIndirectFirePenalty ? 'Indirect Fire -1 to Hit; target has Benefit of Cover' : '',
+    usesCoverHitPenalty ? 'Benefit of Cover -1 to Hit' : '',
     rules.metadata.edition === '11e' && weaponHasKeyword(weapon, 'Indirect Fire') ? 'Indirect Fire: target has Benefit of Cover' : '',
     usesSmokescreen ? 'Smokescreen: target has Benefit of Cover' : '',
     usesStealth ? 'Stealth -1 to Hit' : '',
