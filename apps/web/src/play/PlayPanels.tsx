@@ -460,6 +460,7 @@ export function PlayShootingPanel({
                 <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700 }}>
                   {option.name} — {Object.values(weaponTargets).reduce((total, models) => total + (Number(models) || 0), 0)}/{weaponModelCount} model{weaponModelCount === 1 ? '' : 's'} assigned
                 </Typography>
+                <Box sx={option.targetIds.length > 3 ? { maxHeight: 190, overflowY: 'auto', display: 'grid', gap: 0.4, pr: 0.5 } : undefined}>
                 {option.targetIds.map(targetId => {
                   const target = targets.find(candidate => candidate.id === targetId);
                   const allocatedElsewhere = Object.entries(weaponTargets)
@@ -477,6 +478,7 @@ export function PlayShootingPanel({
                     />
                   );
                 })}
+                </Box>
               </Box>
             );
           })}
@@ -496,7 +498,7 @@ export function PlayShootingPanel({
       ) : !targets.length && !displayedWeapons.length ? (
         <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noValidTargets}</Typography>
       ) : displayedWeaponTargets.length > 0 ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: displayedWeaponTargets.length > 3 ? 310 : undefined, overflowY: displayedWeaponTargets.length > 3 ? 'auto' : undefined, paddingRight: displayedWeaponTargets.length > 3 ? 4 : undefined }}>
           {displayedWeaponTargets.map(({ weapon, target }, i) => {
             const targetInCoverForStats = !!coverUnitIds?.has(target.id);
             const wt = calcWoundTarget(weapon.strength, target.profile.toughness);
