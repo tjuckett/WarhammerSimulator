@@ -478,6 +478,14 @@ export function PlayShootingPanel({
                 <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700 }}>
                   {option.name} — {Object.values(weaponTargets).reduce((total, models) => total + (Number(models) || 0), 0)}/{weaponModelCount} assigned
                 </Typography>
+                <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', px: 0.5 }}>
+                  <Box sx={{ px: 0.7, py: 0.25, border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.control, background: uiTokens.surface.statCard }}>
+                    <Typography variant="caption" sx={{ color: uiTokens.color.combat.attacks, fontWeight: 900 }}>Attacks {weapon.attacks}</Typography>
+                  </Box>
+                  <Box sx={{ px: 0.7, py: 0.25, border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.control, background: uiTokens.surface.statCard }}>
+                    <Typography variant="caption" sx={{ color: uiTokens.color.combat.damage, fontWeight: 900 }}>Dmg {weapon.damage}</Typography>
+                  </Box>
+                </Box>
                 <Box sx={option.targetIds.length > 3 ? { maxHeight: 210, overflowY: 'auto', display: 'grid', gap: 0.6, pr: 0.5 } : { display: 'grid', gap: 0.6 }}>
                 {option.targetIds.map(targetId => {
                   const target = targets.find(candidate => candidate.id === targetId);
@@ -520,15 +528,7 @@ export function PlayShootingPanel({
                       />
                       {target && (
                         <Box sx={{ mt: 0.35, border: `1px solid ${uiTokens.border.statCard}`, borderRadius: uiTokens.radius.statCard, overflow: 'hidden', background: uiTokens.surface.statCard }}>
-                          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))' }}>
-                            <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
-                              <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 9 }}>Attacks</Typography>
-                              <Typography variant="caption" sx={{ color: uiTokens.color.combat.attacks, fontWeight: 900 }}>{weapon.attacks}</Typography>
-                            </Box>
-                            <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
-                              <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 9 }}>Dmg</Typography>
-                              <Typography variant="caption" sx={{ color: uiTokens.color.combat.damage, fontWeight: 900 }}>{weapon.damage}</Typography>
-                            </Box>
+                          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
                             <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
                               <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 9 }}>Hit</Typography>
                               <Typography variant="caption" sx={{ color: uiTokens.color.combat.hit, fontWeight: 900 }}>{allocationHit}+</Typography>
