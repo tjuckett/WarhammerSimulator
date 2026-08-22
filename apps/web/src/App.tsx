@@ -1639,6 +1639,24 @@ export default function App() {
         setInspectedSelection({ kind: 'battle', side: stillPending.side, unitId: stillPending.id });
         setTargetErrorMsg('Select a model to allocate the next pending damage');
       } else {
+        const anotherPending = next.units.find(unit =>
+          !unit.destroyed
+          && !unit.embarkedInUnitId
+          && (unit.pendingDamageAllocations?.length ?? 0) > 0,
+        );
+        if (anotherPending) {
+          setPlayModelSelection(normalizePlaySelectionForState(next, {
+            side: anotherPending.side,
+            parts: [{
+              unitId: anotherPending.id,
+              side: anotherPending.side,
+              modelIndices: anotherPending.modelPositions.map((_, index) => index),
+            }],
+          }));
+          setInspectedSelection({ kind: 'battle', side: anotherPending.side, unitId: anotherPending.id });
+          setTargetErrorMsg('Select a model to allocate the next pending damage');
+          return;
+        }
         const actingUnit = next.phase === 'fight' && casualtyRemovalShooterId
           ? next.units.find(unit => unit.id === casualtyRemovalShooterId && unit.side === next.activeArmy && !unit.destroyed && !unit.embarkedInUnitId)
           : null;
@@ -2114,7 +2132,10 @@ export default function App() {
     const next = noRangedWeapons
       ? shootPlayUnitWeapon(prev, selection.unitId, selection.side, undefined, -1, rules)
       : shootPlayUnitWeapons(prev, selection.unitId, selection.side, allocations, rules);
-    if (next === prev) return;
+    if (next === prev) {
+      setTargetErrorMsg('Shooting declaration could not be resolved. Check that every weapon-bearing model is assigned to a valid target and that each target has enough visible models.');
+      return;
+    }
     setShootingResultEntries(next.log.slice(prev.log.length));
     const pendingDamageUnit = next.units.find(unit => !unit.destroyed && !unit.embarkedInUnitId && (unit.pendingDamageAllocations?.length ?? 0) > 0);
     setCasualtyRemovalShooterId(pendingDamageUnit ? selection.unitId : null);
@@ -2429,10 +2450,7 @@ export default function App() {
       selectedMissionAction?.targetOperationMarkerId,
       selectedMissionAction?.targetUnitId,
     );
-    if (next === prev) {
-      setTargetErrorMsg('Shooting declaration could not be resolved. Check that every weapon-bearing model is assigned to a valid target and that each target has enough visible models.');
-      return;
-    }
+    if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
       type: GAME_ACTION_TYPE.StartAction,
       side: selectedTacticsUnit.side,
