@@ -56,7 +56,7 @@ const mutedTextSx = { color: uiTokens.color.text.muted };
 const disabledTextSx = { color: uiTokens.color.text.disabled };
 const warningTextSx = { color: uiTokens.color.status.warning };
 
-export function PendingDamageAllocationHud({ unit, resultEntries = [] }: { unit: BattleUnit; resultEntries?: LogEntry[] }) {
+export function PendingDamageAllocationHud({ unit, resultEntries = [], weaponNames = [] }: { unit: BattleUnit; resultEntries?: LogEntry[]; weaponNames?: string[] }) {
   const label = pendingDamageLabel(unit);
   if (!label) return null;
   const forcedModel = unit.woundedModelIndex !== undefined
@@ -74,7 +74,7 @@ export function PendingDamageAllocationHud({ unit, resultEntries = [] }: { unit:
       display: 'grid',
       gap: 0.35,
     }}>
-      <ShootingResultSummary entries={resultEntries} section="defender" />
+      <ShootingResultSummary entries={resultEntries} section="defender" weaponNames={weaponNames} />
       <Typography variant="caption" sx={{ color: uiTokens.color.status.pending, fontWeight: 800, textTransform: 'uppercase', lineHeight: 1 }}>
         Damage to apply
       </Typography>
@@ -107,7 +107,7 @@ const popupPanelSx = {
   gap: 1,
 };
 
-function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defender' | 'all' = 'all') {
+function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defender' | 'all' = 'all', weaponNames: string[] = []) {
   const groups = new Map<string, number[]>();
   const successes = new Map<string, number>();
   const targets = new Map<string, string | undefined>();
@@ -115,6 +115,10 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
   for (const entry of entries) {
     const message = entry.message;
     const normalizedMessage = message.trim();
+    const weaponFromHeader = normalizedMessage.includes('attacks vs')
+      ? weaponNames.find(name => normalizedMessage.includes(name))
+      : undefined;
+    if (weaponFromHeader) currentWeapon = weaponFromHeader;
     const weaponMatch = normalizedMessage.match(/^.+?\s+(.+?)\s+[—-]\s+\d+\s+model/);
     if (weaponMatch) currentWeapon = weaponMatch[1].trim();
     const rolls = message.match(/\[([^\]]*)\]/)?.[1]
@@ -151,9 +155,9 @@ function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defen
   };
 }
 
-function ShootingResultSummary({ entries, section = 'all' }: { entries: LogEntry[]; section?: 'attacker' | 'defender' | 'all' }) {
+function ShootingResultSummary({ entries, section = 'all', weaponNames = [] }: { entries: LogEntry[]; section?: 'attacker' | 'defender' | 'all'; weaponNames?: string[] }) {
   if (!entries.length) return null;
-  const result = shootingResultSummary(entries, section);
+  const result = shootingResultSummary(entries, section, weaponNames);
   if (!result.groups.length) return null;
   return (
     <Box sx={{ display: 'grid', gap: 0.5, pt: 0.75, pb: 0.5, mb: 0.5, borderTop: `1px solid ${uiTokens.border.control}` }}>
@@ -501,7 +505,7 @@ export function PlayShootingPanel({
           })}
         </div>
       ) : null}
-      <ShootingResultSummary entries={resultEntries} section={resultSection} />
+      <ShootingResultSummary entries={resultEntries} section={resultSection} weaponNames={shooter.profile.weapons.map(weapon => weapon.name)} />
     </Box>
   );
 }

@@ -3204,7 +3204,11 @@ export default function App() {
                     />
                   )}
                   {pendingDamageAllocationUnit && primaryPlaySelection?.unitId !== casualtyRemovalShooterId && (
-                    <PendingDamageAllocationHud unit={pendingDamageAllocationUnit} resultEntries={shootingResultEntries} />
+                    <PendingDamageAllocationHud
+                      unit={pendingDamageAllocationUnit}
+                      resultEntries={shootingResultEntries}
+                      weaponNames={battleState?.units.find(unit => unit.id === casualtyRemovalShooterId)?.profile.weapons.map(weapon => weapon.name) ?? []}
+                    />
                   )}
                   {selectedPlayCanPileIn && (
                     <Button size="small" color="secondary" variant="contained" onClick={pileInSelectedPlayUnit}>
