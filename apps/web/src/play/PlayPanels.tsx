@@ -56,6 +56,24 @@ const mutedTextSx = { color: uiTokens.color.text.muted };
 const disabledTextSx = { color: uiTokens.color.text.disabled };
 const warningTextSx = { color: uiTokens.color.status.warning };
 
+function averageCharacteristic(value: string): number | null {
+  const expression = String(value).replace(/\s+/g, '').toLowerCase();
+  if (/^\d+$/.test(expression)) return Number(expression);
+  let total = 0;
+  let matched = false;
+  const tokenPattern = /([+-]?)(\d*)d(\d+)|([+-]?\d+)/g;
+  let match: RegExpExecArray | null;
+  while ((match = tokenPattern.exec(expression))) {
+    matched = true;
+    if (match[3]) {
+      total += (match[1] === '-' ? -1 : 1) * (Number(match[2] || 1) * (Number(match[3]) + 1) / 2);
+    } else {
+      total += Number(match[4]);
+    }
+  }
+  return matched && tokenPattern.lastIndex === expression.length ? total : null;
+}
+
 export function PendingDamageAllocationHud({ unit, resultEntries = [], weaponNames = [] }: { unit: BattleUnit; resultEntries?: LogEntry[]; weaponNames?: string[] }) {
   const label = pendingDamageLabel(unit);
   if (!label) return null;
@@ -474,6 +492,20 @@ export function PlayShootingPanel({
                   const allocationSaveColor = allocationSaveWithCover !== null && allocationSaveWithCover > 6
                     ? uiTokens.color.combat.noSave
                     : uiTokens.color.combat.save;
+                  const allocatedModelCount = Number(weaponTargets[targetId] ?? 0);
+                  const averageAttacks = averageCharacteristic(weapon.attacks);
+                  const averageDamage = averageCharacteristic(weapon.damage);
+                  const hitChance = allocationHit === null ? 0 : Math.max(0, (7 - allocationHit) / 6);
+                  const woundChance = allocationWound === null ? 0 : Math.max(0, (7 - allocationWound) / 6);
+                  const saveFailureChance = allocationSaveWithCover === null || allocationSaveWithCover > 6
+                    ? 1
+                    : Math.max(0, (allocationSaveWithCover - 1) / 6);
+                  const expectedDamage = allocatedModelCount > 0 && averageAttacks !== null && averageDamage !== null
+                    ? allocatedModelCount * averageAttacks * hitChance * woundChance * saveFailureChance * averageDamage
+                    : null;
+                  const estimatedModelsLost = expectedDamage !== null && target
+                    ? Math.min(target.remainingModels, expectedDamage / Math.max(1, target.profile.wounds))
+                    : null;
                   return (
                     <Box key={`${option.weaponIndex}:${targetId}`} sx={{ display: 'grid', gap: 0.25 }}>
                       <TextField
@@ -486,9 +518,16 @@ export function PlayShootingPanel({
                       />
                       {target && (
                         <Box sx={{ display: 'flex', gap: 0.8, pl: 0.5, alignItems: 'center', flexWrap: 'wrap' }}>
+                          <Typography variant="caption" sx={{ color: uiTokens.color.combat.attacks, fontWeight: 800 }}>Attacks {weapon.attacks}</Typography>
+                          <Typography variant="caption" sx={{ color: uiTokens.color.combat.damage, fontWeight: 800 }}>Dmg {weapon.damage}</Typography>
                           <Typography variant="caption" sx={{ color: uiTokens.color.combat.hit, fontWeight: 800 }}>Hit {allocationHit}+</Typography>
                           <Typography variant="caption" sx={{ color: allocationWoundColor, fontWeight: 800 }}>Wound {allocationWound}+</Typography>
                           <Typography variant="caption" sx={{ color: allocationSaveColor, fontWeight: 800 }}>Save {allocationSaveWithCover !== null && allocationSaveWithCover > 6 ? '—' : `${allocationSaveWithCover}+`}</Typography>
+                          {estimatedModelsLost !== null && (
+                            <Tooltip title="Approximate expected model losses from average attacks, hit/wound/save probabilities, and average damage. Actual dice results may vary.">
+                              <Typography variant="caption" sx={{ color: uiTokens.color.status.warning, fontWeight: 800, cursor: 'help' }}>Est. ~{estimatedModelsLost.toFixed(1)} models die</Typography>
+                            </Tooltip>
+                          )}
                         </Box>
                       )}
                     </Box>
