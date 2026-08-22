@@ -755,6 +755,10 @@ export default function App() {
     if (!battleState || !selectedChargeUnit) return null;
     return [...battleState.log].reverse().find(entry => entry.type === 'charge' && entry.unitName === selectedChargeUnit.profile.name)?.message ?? null;
   }, [battleState?.log, selectedChargeUnit?.id, selectedChargeUnit?.profile.name]);
+  const selectedPlayChargeDice = useMemo(() => {
+    const match = selectedPlayChargeResult?.match(/rolled\s+(\d+)\+(\d+)=/i);
+    return match ? [Number(match[1]), Number(match[2])] : [];
+  }, [selectedPlayChargeResult]);
   const selectedPlayFightOptions = useMemo(
     () => (
       isPlayMode
@@ -3315,9 +3319,20 @@ export default function App() {
                   {battleState.phase === 'charge' && selectedChargeUnit && pendingChargeRoll && (
                     <>
                       {selectedPlayChargeResult && (
-                        <Typography variant="caption" sx={{ color: '#ffcf66', maxWidth: 240 }}>
-                          {selectedPlayChargeResult}
-                        </Typography>
+                        <>
+                          <Typography variant="caption" sx={{ color: '#ffcf66', maxWidth: 240 }}>
+                            {selectedPlayChargeResult}
+                          </Typography>
+                          {selectedPlayChargeDice.length > 0 && (
+                            <div style={{ display: 'flex', gap: 4 }}>
+                              {selectedPlayChargeDice.map((die, index) => (
+                                <span key={`${die}-${index}`} style={{ minWidth: 22, height: 22, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e2c16b', borderRadius: 4, background: 'rgba(226, 193, 107, 0.18)', color: '#ffe9a6', fontWeight: 800, fontSize: 12 }}>
+                                  {die}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </>
                       )}
                       <select
                         aria-label="Charge targets"
