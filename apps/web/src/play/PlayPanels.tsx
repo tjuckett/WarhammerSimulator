@@ -266,12 +266,15 @@ function ShootingResultSummary({ entries, section = 'all', weaponNames = [] }: {
       ))}
       {section !== 'defender' && result.woundSummary.length > 0 && (
         <Box sx={{ display: 'grid', gap: 0.35, mt: 0.5, p: 0.75, border: `1px solid ${uiTokens.border.warning}`, borderRadius: uiTokens.radius.control, background: uiTokens.surface.pendingHud }}>
-          <Typography variant="caption" sx={{ color: uiTokens.color.status.warning, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Wounds by target</Typography>
+          <Typography variant="caption" sx={{ color: uiTokens.color.status.warning, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Wounds before saves</Typography>
           {result.woundSummary.map(summary => (
             <Typography key={summary.target} variant="body2" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 900, lineHeight: 1.25 }}>
               {summary.target} — {summary.entries.map(entry => `${entry.ap}: ${entry.wounds} wound${entry.wounds === 1 ? '' : 's'}`).join('; ')}
             </Typography>
           ))}
+          <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, lineHeight: 1.2 }}>
+            Resolve appears only for wounds that fail their saves or have no save possible.
+          </Typography>
         </Box>
       )}
     </Box>
