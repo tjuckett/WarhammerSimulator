@@ -665,6 +665,7 @@ export default function App() {
     overwatchUnitId,
     selectedChargeUnit,
     selectedFightUnit,
+    selectedFightTargetId,
     selectedFightWeaponIndex,
   });
 

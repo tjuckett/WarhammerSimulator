@@ -26,6 +26,7 @@ export type PlayPhaseSelectorsInput = {
   overwatchUnitId: string;
   selectedChargeUnit: BattleUnit | null;
   selectedFightUnit: BattleUnit | null;
+  selectedFightTargetId: string;
   selectedFightWeaponIndex: 'all' | string;
 };
 
@@ -39,8 +40,14 @@ export function usePlayPhaseSelectors({
   overwatchUnitId,
   selectedChargeUnit,
   selectedFightUnit,
+  selectedFightTargetId,
   selectedFightWeaponIndex,
 }: PlayPhaseSelectorsInput) {
+  const pendingChargeRoll = battleState?.phase === BATTLE_PHASE.Charge
+    && battleState.pendingChargeRoll?.unitId === selectedChargeUnit?.id
+    && battleState.pendingChargeRoll.side === selectedChargeUnit?.side
+    ? battleState.pendingChargeRoll
+    : null;
 const selectedPlayShootingOptions = useMemo(
     () => (
       isPlayMode
@@ -219,4 +226,3 @@ const selectedPlayShootingOptions = useMemo(
     selectedFightAttackCount,
   };
 }
-
