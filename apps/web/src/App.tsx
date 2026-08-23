@@ -75,6 +75,7 @@ import { useTerrainEditing } from './terrain/useTerrainEditing';
 import { PLAY_DEPLOY_SELECTION_KIND, usePlayUiState } from './play/usePlayUiState';
 import { usePlayUndoState, type PendingPlayTimelineAction, type PlayUndoEntry } from './play/usePlayUndoState';
 import { enemyTargetsForIds, targetIdsForOptions, unitForSelection } from './play/playBattleSelectors';
+import { buildMeleeAttackAllocations, buildShootingAttackAllocations } from './play/playAttackAllocations';
 import {
   attachedBattleUnitIdsForSelection,
   attachedProfilesForInspection,
@@ -2130,15 +2131,7 @@ export default function App() {
       return;
     }
     const noRangedWeapons = selectedPlayShootingOptions.length === 1 && selectedPlayShootingOptions[0].weaponIndex < 0;
-    const allocations: PlayShootingAttackAllocation[] = Object.entries(shootingAttackAllocations).flatMap(([weaponIndexText, targets]) => {
-      const weaponIndex = Number(weaponIndexText);
-      const entries = Object.entries(targets).filter(([, attackCount]) => attackCount > 0);
-      return entries.map(([targetUnitId, attackCount]) => ({
-        weaponIndex,
-        targetUnitId,
-        ...(entries.length > 1 ? { modelCount: attackCount } : {}),
-      }));
-    });
+    const allocations = buildShootingAttackAllocations(shootingAttackAllocations);
     if (!allocations.length && !noRangedWeapons) {
       setTargetErrorMsg('Assign every ranged weapon to at least one valid target before rolling.');
       return;
@@ -2276,15 +2269,7 @@ export default function App() {
       setTargetErrorMsg('Allocate pending damage before fighting again');
       return;
     }
-    const meleeAllocations: PlayMeleeAttackAllocation[] = Object.entries(fightAttackAllocations).flatMap(([weaponIndexText, targets]) => {
-      const weaponIndex = Number(weaponIndexText);
-      const entries = Object.entries(targets).filter(([, attacks]) => attacks > 0);
-      return entries.map(([targetUnitId, attacks]) => ({
-        weaponIndex,
-        targetUnitId,
-        ...(entries.length > 1 ? { attackCount: attacks } : {}),
-      }));
-    });
+    const meleeAllocations = buildMeleeAttackAllocations(fightAttackAllocations);
     if (meleeAllocations.length) {
       const next = fightPlayUnitWeapons(prev, selection.unitId, selection.side, meleeAllocations, activeRulesForBattle);
       if (next === prev) {
