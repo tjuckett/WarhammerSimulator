@@ -81,6 +81,7 @@ import { usePlayPhaseSelectors } from './play/usePlayPhaseSelectors';
 import { createPlayMovementActionHandlers } from './play/playMovementController';
 import { createPlayShootingActions } from './play/playShootingActions';
 import { createPlayChargeActions } from './play/playChargeActions';
+import { createPlayFightActions } from './play/playFightActions';
 import {
   attachedBattleUnitIdsForSelection,
   attachedProfilesForInspection,
@@ -1971,6 +1972,17 @@ export default function App() {
     setInspectedSelection,
   });
 
+  const { pileInSelectedPlayUnit, consolidateSelectedPlayUnit } = createPlayFightActions({
+    battleStateRef,
+    playModelSelection,
+    activeRulesForBattle,
+    playUndoEntry,
+    pushPlayUndo,
+    commitBattleState,
+    setPlayModelSelection,
+    setTargetErrorMsg,
+  });
+
   function updateShootingAttackAllocation(weaponIndex: number, targetId: string, attacks: number) {
     const shooter = selectedShootingUnit;
     const maxModels = shooter ? playShootingWeaponModelCount(shooter, weaponIndex) : null;
@@ -2110,38 +2122,6 @@ export default function App() {
       weaponIndex,
       ...(usesSplit ? { targetSplits } : {}),
     });
-    commitBattleState(next);
-  }
-
-  function pileInSelectedPlayUnit() {
-    const selection = primaryPlaySelectionPart(playModelSelection);
-    const prev = battleStateRef.current;
-    if (!prev || prev.phase !== 'fight' || !selection) return;
-    const next = pileInPlayUnit(prev, selection.unitId, selection.side, activeRulesForBattle);
-    if (next === prev) return;
-    pushPlayUndo(playUndoEntry(prev), next, {
-      type: GAME_ACTION_TYPE.PileInUnit,
-      unitId: selection.unitId,
-      side: selection.side,
-    });
-    setPlayModelSelection(normalizePlaySelectionForState(next, playModelSelection));
-    setTargetErrorMsg(null);
-    commitBattleState(next);
-  }
-
-  function consolidateSelectedPlayUnit() {
-    const selection = primaryPlaySelectionPart(playModelSelection);
-    const prev = battleStateRef.current;
-    if (!prev || prev.phase !== 'fight' || !selection) return;
-    const next = consolidatePlayUnit(prev, selection.unitId, selection.side, activeRulesForBattle);
-    if (next === prev) return;
-    pushPlayUndo(playUndoEntry(prev), next, {
-      type: GAME_ACTION_TYPE.ConsolidateUnit,
-      unitId: selection.unitId,
-      side: selection.side,
-    });
-    setPlayModelSelection(normalizePlaySelectionForState(next, playModelSelection));
-    setTargetErrorMsg(null);
     commitBattleState(next);
   }
 
