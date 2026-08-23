@@ -1459,6 +1459,24 @@ export function resolveCombatAttacks(
     }));
   }
 
+  recordBattleEvent(state, {
+    type: BATTLE_EVENT_TYPE.AttackResolved,
+    side: attacker.side,
+    source: attacker.id,
+    data: {
+      weaponIndex,
+      weaponName: weapon.name,
+      targetUnitId: defender.id,
+      attackCount: numAttacks,
+      hits: hitResult.hits,
+      wounds: woundCount,
+      unsavedWounds: unsaved,
+      mortalWounds: totalMortals,
+      devastatingWounds,
+      ...(options.result ? { groups: options.result.groups } : {}),
+    },
+  });
+
   return logs;
 }
 
@@ -3169,22 +3187,6 @@ function resolveShootingWeaponIntoTarget(
     shooterSide: unit.side,
     weapons: [...(state.lastShootingResolution?.shooterUnitId === unit.id ? state.lastShootingResolution.weapons : []), result],
   };
-  recordBattleEvent(state, {
-    type: BATTLE_EVENT_TYPE.AttackResolved,
-    side: unit.side,
-    source: unit.id,
-    data: {
-      phase: state.phase,
-      weaponIndex,
-      weaponName: weapon.name,
-      targetUnitId: target.id,
-      attackCount: result.attackCount,
-      hits: result.hits,
-      wounds: result.wounds,
-      unsavedWounds: result.unsavedWounds,
-      groups: result.groups,
-    },
-  });
   if (logs.length > 0) {
     markRangedAttackMade(unit);
     markOneShotWeaponSpent(unit, weapon, weaponIndex);
