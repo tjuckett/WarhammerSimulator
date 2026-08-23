@@ -64,7 +64,7 @@ export function nextBattlePhase(state: Pick<BattleState, 'phase' | 'movementStep
 
 export function nextTurnTransition(
   state: Pick<BattleState, 'phase' | 'movementStep' | 'activeArmy' | 'battleRound' | 'turn' | 'maxBattleRounds' | 'maxTurns'>,
-): BattlePhaseTransition {
+): Extract<BattlePhaseTransition, { kind: 'turn' }> {
   const from = battlePhaseNode(state);
   if (state.activeArmy === 0) {
     return { kind: 'turn', from, nextSide: 1, nextBattleRound: state.battleRound ?? state.turn };

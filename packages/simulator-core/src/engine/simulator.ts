@@ -9,7 +9,7 @@ import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
 import { advanceAllowance, normalMoveAllowance } from './movement';
 import { objectiveControlRadius } from './objectiveGeometry';
 import { objectiveIndexesWithinRange, primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, terrainAreaIdsContainingUnit, unsupportedPrimaryMissionScoringLogs, updateObjectiveControl } from './missionScoring';
-import { battleRound, logWithBattleRound, maxBattleRounds, setBattleRound } from './battleRound';
+import { battleRound, logWithBattleRound, setBattleRound } from './battleRound';
 import {
   completeMissionEventsForCurrentTurn,
   recordCompletedMissionAction,
@@ -1479,6 +1479,17 @@ export function applyDamage(
         ...(options.sourceTags?.length ? { sourceTags: [...options.sourceTags] } : {}),
       },
     ];
+    recordBattleEvent(state, {
+      type: BATTLE_EVENT_TYPE.DamagePending,
+      side: attackerSide,
+      source: options.sourceUnitId,
+      data: {
+        targetUnitId: unit.id,
+        damage: totalDamage,
+        noCarryOver: options.noCarryOver ?? false,
+        source: options.source ?? 'attack',
+      },
+    });
     logs.push(log(state, attackerSide, unit.profile.name,
       `  ${unit.profile.name}: allocate ${totalDamage} damage${options.source ? ` from ${options.source}` : ''}`,
       'damage',
@@ -3144,6 +3155,22 @@ function resolveShootingWeaponIntoTarget(
     shooterSide: unit.side,
     weapons: [...(state.lastShootingResolution?.shooterUnitId === unit.id ? state.lastShootingResolution.weapons : []), result],
   };
+  recordBattleEvent(state, {
+    type: BATTLE_EVENT_TYPE.AttackResolved,
+    side: unit.side,
+    source: unit.id,
+    data: {
+      phase: state.phase,
+      weaponIndex,
+      weaponName: weapon.name,
+      targetUnitId: target.id,
+      attackCount: result.attackCount,
+      hits: result.hits,
+      wounds: result.wounds,
+      unsavedWounds: result.unsavedWounds,
+      groups: result.groups,
+    },
+  });
   if (logs.length > 0) {
     markRangedAttackMade(unit);
     markOneShotWeaponSpent(unit, weapon, weaponIndex);
@@ -3709,6 +3736,18 @@ export function playChargeRoll(
   const maximumDistance = Math.max(0, roll - takeToSkiesDistanceCost(rolledUnit));
   s.lastChargeRoll = { unitId, side, dice: [r1, r2], rawTotal: rawRoll, total: roll, maximumDistance, status: 'pending-target' };
   s.pendingChargeRoll = { unitId, side, maximumDistance };
+  recordBattleEvent(s, {
+    type: BATTLE_EVENT_TYPE.DiceRolled,
+    side,
+    source: unitId,
+    data: {
+      rollKind: 'charge',
+      dice: [r1, r2],
+      rawTotal: rawRoll,
+      total: roll,
+      maximumDistance,
+    },
+  });
   s.log = [...s.log, log(s, side, unit.profile.name,
     `${unit.profile.name} rolls a charge: ${r1}+${r2}=${roll}${roll !== rawRoll ? ` (capped from ${rawRoll})` : ''}.`,
     'charge',
@@ -5016,21 +5055,16 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
 function advanceTurnInPlace(s: BattleState): void {
   if (s.winner !== null) return;
   completeMissionEventsForCurrentTurn(s);
-
-  if (s.activeArmy === 0) {
-    s.activeArmy = 1;
-  } else {
-    setBattleRound(s, battleRound(s) + 1);
-    s.activeArmy = 0;
-    if (battleRound(s) > maxBattleRounds(s)) {
-      if (s.scores[0] > s.scores[1]) s.winner = 0;
-      else if (s.scores[1] > s.scores[0]) s.winner = 1;
-      else s.winner = 'draw';
-      enterBattlePhase(s, { phase: 'end' }, s.activeArmy);
-      return;
-    }
+  const transition = nextTurnTransition(s);
+  s.activeArmy = transition.nextSide;
+  if (transition.nextBattleRound !== battleRound(s)) setBattleRound(s, transition.nextBattleRound);
+  if (transition.nextBattleRound > battleRoundLimit(s)) {
+    if (s.scores[0] > s.scores[1]) s.winner = 0;
+    else if (s.scores[1] > s.scores[0]) s.winner = 1;
+    else s.winner = 'draw';
+    enterBattlePhase(s, { phase: 'end' }, s.activeArmy);
+    return;
   }
-
   enterBattlePhase(s, { phase: 'setup' }, s.activeArmy);
 }
 
@@ -5342,6 +5376,7 @@ export function createBattleState(
     phase: 'setup',
     winner: null,
     log: [],
+    events: [],
     units,
     terrain,
     board,
@@ -5390,6 +5425,7 @@ export function createDeploymentState(
     phase: 'deployment',
     winner: null,
     log: [],
+    events: [],
     units: [],
     terrain,
     board,
@@ -5430,7 +5466,7 @@ export function placeNextUnit(state: BattleState): BattleState {
 
   const unplaced: UnitProfile[] = s.unplacedUnits[side];
   if (!unplaced.length) {
-    s.phase = 'setup';
+    enterBattlePhase(s, { phase: 'setup' }, side);
     return s;
   }
 
@@ -5491,7 +5527,7 @@ export function placeNextUnit(state: BattleState): BattleState {
   )];
 
   if (!s.unplacedUnits[0].length && !s.unplacedUnits[1].length) {
-    s.phase = 'setup';
+    enterBattlePhase(s, { phase: 'setup' }, side);
     s.log = [...s.log, log(s, 0, '', '═══ DEPLOYMENT COMPLETE — BATTLE BEGINS ═══', 'phase')];
     return s;
   }
@@ -8049,8 +8085,7 @@ export function simulateNextUnit(state: BattleState, rules: RulesEdition): Battl
 function runSimulatedCommandPhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
   const armyName = state.armies[side].name;
   const logs: LogEntry[] = [];
-  state.phase = 'command';
-  state.movementStep = undefined;
+  enterBattlePhase(state, { phase: 'command' }, side);
   autoSelectPunishmentCondemnedUnits(state, side, rules);
   const nextCommandPoints = gainCommandPhaseCommandPoints(state);
   logs.push(phaseLog(state, side, armyName,
@@ -8065,13 +8100,12 @@ function runSimulatedCommandPhase(state: BattleState, side: Side, rules: RulesEd
 function runSimulatedMovementPhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
   const armyName = state.armies[side].name;
   const logs: LogEntry[] = [];
-  state.phase = 'movement';
-  state.movementStep = 'moveUnits';
+  enterBattlePhase(state, { phase: 'movement', step: MOVEMENT_STEP.MoveUnits }, side);
   logs.push(phaseLog(state, side, armyName, `\n─── Movement Phase ───`));
   state.units.filter(unit => unit.side === side && !unit.destroyed)
     .forEach(unit => logs.push(...runMovement(unit, state, rules)));
   markRemainingStationaryUnits(state, side);
-  state.movementStep = 'reinforcements';
+  enterBattlePhase(state, { phase: 'movement', step: MOVEMENT_STEP.Reinforcements }, side);
   updateObjectiveControl(state, rules);
   return logs;
 }
@@ -8079,8 +8113,7 @@ function runSimulatedMovementPhase(state: BattleState, side: Side, rules: RulesE
 function runSimulatedShootingPhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
   const armyName = state.armies[side].name;
   const logs: LogEntry[] = [];
-  state.phase = 'shooting';
-  state.movementStep = undefined;
+  enterBattlePhase(state, { phase: 'shooting' }, side);
   logs.push(phaseLog(state, side, armyName, `\n─── Shooting Phase ───`));
   logs.push(...runShootingPhaseUnits(state, side, rules));
   updateObjectiveControl(state, rules);
@@ -8090,7 +8123,7 @@ function runSimulatedShootingPhase(state: BattleState, side: Side, rules: RulesE
 function runSimulatedChargePhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
   const armyName = state.armies[side].name;
   const logs: LogEntry[] = [];
-  state.phase = 'charge';
+  enterBattlePhase(state, { phase: 'charge' }, side);
   logs.push(phaseLog(state, side, armyName, `\n─── Charge Phase ───`));
   state.units.filter(unit => unit.side === side && !unit.destroyed && !unit.inCombat)
     .forEach(unit => logs.push(...runCharge(unit, state, rules)));
@@ -8105,7 +8138,7 @@ function runSimulatedFightPhase(
 ): { state: BattleState; logs: LogEntry[] } {
   const armyName = state.armies[side].name;
   const logs: LogEntry[] = [];
-  state.phase = 'fight';
+  enterBattlePhase(state, { phase: 'fight' }, side);
   state.fightStepStarted = false;
   state.engagedUnitIdsAtFightStepStart = undefined;
   state.lastFightSelectionSide = undefined;
@@ -8187,19 +8220,16 @@ export function advanceTurn(state: BattleState): BattleState {
   const s = clone(state);
   if (s.winner !== null) return s;
   completeMissionEventsForCurrentTurn(s);
-
-  if (s.activeArmy === 0) {
-    s.activeArmy = 1;
+  const transition = nextTurnTransition(s);
+  s.activeArmy = transition.nextSide;
+  if (transition.nextBattleRound !== battleRound(s)) setBattleRound(s, transition.nextBattleRound);
+  if (transition.nextBattleRound > battleRoundLimit(s)) {
+    if (s.scores[0] > s.scores[1]) s.winner = 0;
+    else if (s.scores[1] > s.scores[0]) s.winner = 1;
+    else s.winner = 'draw';
+    enterBattlePhase(s, { phase: 'end' }, s.activeArmy);
   } else {
-    setBattleRound(s, battleRound(s) + 1);
-    s.activeArmy = 0;
-    if (battleRound(s) > maxBattleRounds(s)) {
-      if (s.scores[0] > s.scores[1]) s.winner = 0;
-      else if (s.scores[1] > s.scores[0]) s.winner = 1;
-      else s.winner = 'draw';
-      s.phase = 'end';
-    }
+    enterBattlePhase(s, { phase: 'setup' }, s.activeArmy);
   }
-
   return s;
 }
