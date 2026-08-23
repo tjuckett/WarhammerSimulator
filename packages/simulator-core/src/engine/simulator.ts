@@ -60,7 +60,7 @@ import {
 } from './baseSizes';
 import { attackingModelHasPlungingFire, auraAbilitiesInRange } from './otherRules';
 import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
-import { battlePhaseNode, battleRoundLimit, nextTurnTransition, setBattlePhase } from './battleStateMachine';
+import { battlePhaseNode, battleRoundLimit, initializeBattlePhase, nextTurnTransition } from './battleStateMachine';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -4945,9 +4945,9 @@ function checkWinner(state: BattleState): void {
 const TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight'];
 const PLAY_MODEL_EDIT_PHASES: Phase[] = ['deployment', 'setup', 'movement'];
 
-function enterBattlePhase(state: BattleState, phase: Parameters<typeof setBattlePhase>[1], side = state.activeArmy): void {
+function enterBattlePhase(state: BattleState, phase: Parameters<typeof initializeBattlePhase>[1], side = state.activeArmy): void {
   const from = battlePhaseNode(state);
-  setBattlePhase(state, phase);
+  initializeBattlePhase(state, phase);
   recordBattleEvent(state, {
     type: phase.phase === 'movement' && from.phase === 'movement'
       ? BATTLE_EVENT_TYPE.StepStarted
@@ -7936,12 +7936,6 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
     activeUnits(s, side).filter(u => !u.inCombat).forEach(u => newLogs.push(...runCharge(u, s, rules)));
   } else if (s.phase === 'charge') {
     enterBattlePhase(s, { phase: 'fight' }, side);
-    s.fightStepStarted = false;
-    s.engagedUnitIdsAtFightStepStart = undefined;
-    s.lastFightSelectionSide = undefined;
-    s.activeAttachedFightUnitId = undefined;
-    s.activeAttachedShootingUnitId = undefined;
-    s.attachedShootingTargetUnitId = undefined;
     newLogs.push(phaseLog(s, side, armyName, `\n--- Fight Phase ---`));
     if (rules.metadata.edition === '11e') {
       s = runAutomaticEleventhFightPhase(s, side, rules);
@@ -8021,12 +8015,6 @@ function advanceSimulationUnitPhase(state: BattleState, rules: RulesEdition): vo
   } else if (state.phase === 'charge') {
     enterBattlePhase(state, { phase: 'fight' }, side);
     resetSimulationUnitActivations(state, side);
-    state.fightStepStarted = false;
-    state.engagedUnitIdsAtFightStepStart = undefined;
-    state.lastFightSelectionSide = undefined;
-    state.activeAttachedFightUnitId = undefined;
-    state.activeAttachedShootingUnitId = undefined;
-    state.attachedShootingTargetUnitId = undefined;
     logs.push(phaseLog(state, side, armyName, '\n--- Fight Phase ---'));
     if (rules.metadata.edition === '11e') startFightStepInPlace(state, rules);
   } else if (state.phase === 'fight') {
@@ -8139,12 +8127,6 @@ function runSimulatedFightPhase(
   const armyName = state.armies[side].name;
   const logs: LogEntry[] = [];
   enterBattlePhase(state, { phase: 'fight' }, side);
-  state.fightStepStarted = false;
-  state.engagedUnitIdsAtFightStepStart = undefined;
-  state.lastFightSelectionSide = undefined;
-  state.activeAttachedFightUnitId = undefined;
-  state.activeAttachedShootingUnitId = undefined;
-  state.attachedShootingTargetUnitId = undefined;
   logs.push(phaseLog(state, side, armyName, `\n─── Fight Phase ───`));
   if (rules.metadata.edition === '11e') {
     state = runAutomaticEleventhFightPhase(state, side, rules);

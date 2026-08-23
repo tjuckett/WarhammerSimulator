@@ -73,11 +73,16 @@ Use this section as the current high-level pickup order before starting large ne
   - Centralize event creation and collection across movement, shooting, charge, fight, missions, abilities, and practice actions.
   - Preserve typed dice, targets, modifiers, outcomes, pending allocations, and failure reasons separately from formatted messages.
   - Use the new boundary as the prerequisite for safely splitting `packages/simulator-core/src/engine/simulator.ts` by domain.
-- [x] Introduce a hierarchical battle state machine for rounds, phases, and phase substeps.
+- [ ] Introduce a hierarchical battle state machine for rounds, phases, and phase substeps.
+  - Progress: shared round/phase graph, movement substeps, five-round boundary, and typed transition events are implemented; phase-owned handlers, interrupts, and legal-action contracts remain to be migrated.
   - Model the battle round and Command, Movement, Shooting, Charge, and Fight phases with explicit legal transitions and completion conditions.
   - Give each phase ownership of its temporary state, interrupts, pending resolutions, and legal actions while keeping shared combat resolution centralized.
   - Keep dice, hit, wound, save, damage, and typed result processing in shared rules services used by phase handlers.
   - Make the same transitions drive local play, simulation, AI actions, replay, and save/load.
+- [ ] Centralize combat resolution behind one shared combat service boundary.
+  - Audit shooting, charge, fight, overwatch, fight-on-death, mortal wounds, saves, Feel No Pain, damage allocation, and simulation paths for duplicated hit/wound/save/damage logic.
+  - Keep phase modules responsible for declarations, eligibility, and sequencing while shared combat services own dice and attack-result resolution.
+  - Return typed combat results/events from the shared boundary and remove phase-specific reimplementations where behavior is equivalent.
 - [x] Add a dedicated Army Builder mode.
   - Add a fourth app mode for army/list management with no battlefield canvas.
   - Top bar should show army-focused controls instead of play controls: army slot, army type/faction, saved army dropdown, New, Save, Import JSON, and Export JSON.

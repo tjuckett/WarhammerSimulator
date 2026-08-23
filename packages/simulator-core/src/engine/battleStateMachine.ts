@@ -40,6 +40,34 @@ export function setBattlePhase(state: Pick<BattleState, 'phase' | 'movementStep'
   state.movementStep = node.phase === BATTLE_PHASE.Movement ? node.step : undefined;
 }
 
+/**
+ * Applies the phase-owned cursor/state invariants shared by manual play and simulation.
+ * Rule-specific resets remain in the phase handlers; this only clears cursors that cannot
+ * survive a phase boundary.
+ */
+export function initializeBattlePhase(state: BattleState, node: BattlePhaseNode): void {
+  setBattlePhase(state, node);
+  if (node.phase !== BATTLE_PHASE.Shooting) {
+    state.activeAttachedShootingUnitId = undefined;
+    state.attachedShootingTargetUnitId = undefined;
+  }
+  if (node.phase !== BATTLE_PHASE.Charge) {
+    state.pendingChargeRoll = undefined;
+    state.pendingChargeMovement = undefined;
+  }
+  if (node.phase === BATTLE_PHASE.Fight) {
+    state.fightStepStarted = false;
+    state.engagedUnitIdsAtFightStepStart = undefined;
+    state.lastFightSelectionSide = undefined;
+    state.activeAttachedFightUnitId = undefined;
+  } else {
+    state.fightStepStarted = undefined;
+    state.engagedUnitIdsAtFightStepStart = undefined;
+    state.lastFightSelectionSide = undefined;
+    state.activeAttachedFightUnitId = undefined;
+  }
+}
+
 export function nextBattlePhase(state: Pick<BattleState, 'phase' | 'movementStep'>): BattlePhaseTransition | null {
   const from = battlePhaseNode(state);
   switch (from.phase) {
