@@ -20,6 +20,7 @@ import {
   unitWhollyWithinMissionTerritory,
   unitWithinBattlefieldCentre,
 } from './missionGeometry';
+import { applyScoringLedger, primaryRecordFromLedger } from './scoringLedger';
 
 export interface ObjectiveControlResult {
   objectiveIndex: number;
@@ -832,46 +833,54 @@ function scoreDataDrivenPrimaryMission(
       scoringDetails: [`${mission.name} was already evaluated for this scoring window. +0VP`],
     };
   }
-  const requestedVp = scored.reduce((total, clause) => total + clause.vp, 0);
-  const roundVp = records.filter(record => record.side === side && record.battleRound === round)
-    .reduce((total, record) => total + record.vp, 0);
-  const battleVp = records.filter(record => record.side === side)
-    .reduce((total, record) => total + record.vp, 0);
-  const vpGained = Math.min(requestedVp, Math.max(0, PRIMARY_ROUND_CAP - roundVp), Math.max(0, PRIMARY_BATTLE_CAP - battleVp));
-  state.scores[side] += vpGained;
-  state.missionState ??= {};
-  state.missionState.primaryMissionScoringRecords ??= [];
   const unsupportedClauses = scored.flatMap(clause => clause.unsupported ? [clause.unsupported] : []);
-  const capped = vpGained < requestedVp;
-  const status = capped ? 'capped' : requestedVp > 0 ? 'awarded' : unsupportedClauses.length ? 'unsupported' : 'not-met';
-  const capDetail = capped
-    ? `Requested ${requestedVp}VP; awarded ${vpGained}VP after the ${PRIMARY_ROUND_CAP}VP battle-round and ${PRIMARY_BATTLE_CAP}VP battle caps.`
-    : `Requested and awarded ${vpGained}VP.`;
+  const requestedVp = scored.reduce((total, clause) => total + clause.vp, 0);
+  const proposedStatus = requestedVp > 0 ? 'awarded' : unsupportedClauses.length ? 'unsupported' : 'not-met';
   const clauseDetails = scored.flatMap(clause => clause.detail ? [clause.detail] : []);
+  const entry = applyScoringLedger(state, {
+    id,
+    track: 'primary',
+    side,
+    missionName: mission.name,
+    requestedVp,
+    status: proposedStatus,
+    detail: clauseDetails.join(' '),
+    roundCap: PRIMARY_ROUND_CAP,
+    battleCap: PRIMARY_BATTLE_CAP,
+    battleRound: round,
+  });
+  if (!entry) {
+    return {
+      kind: 'scored',
+      missionName: mission.name,
+      scoringModel: `11e-data:${mission.name}`,
+      objectiveControlLabel: (state.objectiveControl ?? rules.objectiveControl).label,
+      side,
+      vpGained: 0,
+      score: [...state.scores],
+      objectives,
+      scoringDetails: [`${mission.name} was already evaluated for this scoring window. +0VP`],
+    };
+  }
+  const capDetail = entry.vp < requestedVp
+    ? `Requested ${requestedVp}VP; awarded ${entry.vp}VP after the ${PRIMARY_ROUND_CAP}VP battle-round and ${PRIMARY_BATTLE_CAP}VP battle caps.`
+    : `Requested and awarded ${entry.vp}VP.`;
   const recordDetail = [
     ...clauseDetails,
     capDetail,
     ...unsupportedClauses.map(clause => `Unsupported: ${clause}`),
   ].join(' ');
-  state.missionState.primaryMissionScoringRecords.push({
-    id,
-    side,
-    missionName: mission.name,
+  const missionState = state.missionState!;
+  missionState.primaryMissionScoringRecords ??= [];
+  const record = primaryRecordFromLedger(entry, {
     clauseIds: activeClauses.map(clause => clause.id),
-    status,
-    requestedVp,
-    vp: vpGained,
-    detail: recordDetail,
-    battleRound: round,
-    turn: state.turn,
-    activeSide: state.activeArmy,
-    phase: state.phase,
-    scoreAfter: state.scores[side],
     timing,
     clauseDetails,
-    capDetail,
     unsupportedReasons: unsupportedClauses,
   });
+  record.detail = recordDetail;
+  record.capDetail = capDetail;
+  missionState.primaryMissionScoringRecords.push(record);
 
   return {
     kind: 'scored',
@@ -879,7 +888,7 @@ function scoreDataDrivenPrimaryMission(
     scoringModel: `11e-data:${mission.name}`,
     objectiveControlLabel: (state.objectiveControl ?? rules.objectiveControl).label,
     side,
-    vpGained,
+    vpGained: entry.vp,
     score: [...state.scores],
     objectives,
     scoringDetails: [...scored.flatMap(clause => clause.detail ? [clause.detail] : []), capDetail],

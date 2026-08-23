@@ -9,6 +9,7 @@ export const BATTLE_EVENT_TYPE = {
   DiceRolled: 'dice-rolled',
   AttackResolved: 'attack-resolved',
   DamagePending: 'damage-pending',
+  ScoringApplied: 'scoring-applied',
   RuleNotice: 'rule-notice',
 } as const;
 

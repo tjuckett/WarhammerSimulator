@@ -370,6 +370,24 @@ export interface PrimaryMissionScoringRecord {
   unsupportedReasons?: string[];
 }
 
+export interface ScoringLedgerEntry {
+  id: string;
+  track: 'primary' | 'secondary';
+  sourceId?: string;
+  side: Side;
+  missionName: string;
+  requestedVp: number;
+  vp: number;
+  status: 'awarded' | 'capped' | 'not-met' | 'unsupported';
+  detail: string;
+  capReasons?: string[];
+  battleRound: number;
+  turn: number;
+  activeSide: Side;
+  phase: Phase;
+  scoreAfter: number;
+}
+
 export interface MissionState {
   operationMarkers?: OperationMarker[];
   condemnedUnitIds?: [string[], string[]];
@@ -377,6 +395,8 @@ export interface MissionState {
   secondaryMissionNextActivationIds?: [number, number];
   secondaryMissionScoringRecords?: SecondaryMissionScoringRecord[];
   primaryMissionScoringRecords?: PrimaryMissionScoringRecord[];
+  /** Shared authoritative mutation ledger for primary and secondary VP. */
+  scoringLedger?: ScoringLedgerEntry[];
   completedSecondaryActionsDuringBattle?: CompletedMissionActionEvent[];
   destroyedUnitsDuringBattle?: DestroyedUnitMissionEvent[];
   destroyedModelsDuringBattle?: DestroyedModelMissionEvent[];

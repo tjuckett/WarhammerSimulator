@@ -21,6 +21,7 @@ import {
   unitWithinFriendlyTerritory,
 } from './missionGeometry';
 import { objectiveIndexesWithinRange, updateObjectiveControl } from './missionScoring';
+import { applyScoringLedger, secondaryRecordFromLedger } from './scoringLedger';
 import type { RulesEdition } from './rulesEngine';
 import { secondaryMissionStateFor } from './secondaryMissions';
 
@@ -52,51 +53,27 @@ function recordScoring(
   const id = `${activationId}:${opportunityId}`;
   const records = state.missionState.secondaryMissionScoringRecords ?? [];
   if (records.some(record => record.id === id)) return null;
-
-  const requestedVp = status === 'awarded' ? Math.max(0, vp) : 0;
-  const totalAwarded = records
-    .filter(record => record.side === side)
-    .reduce((total, record) => total + record.vp, 0);
-  const roundAwarded = records
-    .filter(record => record.side === side && record.battleRound === battleRound(state))
-    .reduce((total, record) => total + record.vp, 0);
-  const fixedCardAwarded = card.mode === 'fixed'
-    ? records.filter(record => record.side === side && record.activationId === activationId)
-      .reduce((total, record) => total + record.vp, 0)
-    : 0;
-  const roundRemaining = Math.max(0, SECONDARY_ROUND_CAP - roundAwarded);
-  const battleRemaining = Math.max(0, SECONDARY_BATTLE_CAP - totalAwarded);
-  const fixedCardRemaining = card.mode === 'fixed'
-    ? Math.max(0, FIXED_SECONDARY_CARD_CAP - fixedCardAwarded)
-    : Number.POSITIVE_INFINITY;
-  const awardedVp = Math.min(requestedVp, roundRemaining, battleRemaining, fixedCardRemaining);
-  const capReasons = requestedVp > awardedVp ? [
-    ...(roundRemaining < requestedVp ? [`${SECONDARY_ROUND_CAP}VP battle-round secondary limit`] : []),
-    ...(battleRemaining < requestedVp ? [`${SECONDARY_BATTLE_CAP}VP battle secondary limit`] : []),
-    ...(fixedCardRemaining < requestedVp ? [`${FIXED_SECONDARY_CARD_CAP}VP Fixed card limit`] : []),
-  ] : [];
-  const finalStatus = status === 'awarded' && requestedVp > 0 && awardedVp === 0 ? 'capped' : status;
-  const finalDetail = capReasons.length
-    ? `${detail} Requested ${requestedVp}VP; awarded ${awardedVp}VP due to the ${capReasons.join(', ')}.`
-    : detail;
-
-  if (awardedVp > 0) state.scores[side] += awardedVp;
-  const record: SecondaryMissionScoringRecord = {
+  const entry = applyScoringLedger(state, {
     id,
-    activationId,
+    track: 'secondary',
+    sourceId: activationId,
     side,
     missionName: card.missionName,
-    clauseIds,
-    status: finalStatus,
-    requestedVp,
-    vp: awardedVp,
-    detail: finalDetail,
-    battleRound: battleRound(state),
-    turn: state.turn,
-    activeSide: state.activeArmy,
-    phase: state.phase,
-    scoreAfter: state.scores[side],
-  };
+    requestedVp: vp,
+    status: status === 'capped' ? 'awarded' : status,
+    detail,
+    roundCap: SECONDARY_ROUND_CAP,
+    battleCap: SECONDARY_BATTLE_CAP,
+    sourceCap: card.mode === 'fixed' ? FIXED_SECONDARY_CARD_CAP : undefined,
+    sourceCapLabel: card.mode === 'fixed' ? `${FIXED_SECONDARY_CARD_CAP}VP Fixed card limit` : undefined,
+  });
+  if (!entry) return null;
+  const record = secondaryRecordFromLedger({
+    ...entry,
+    detail: entry.capReasons?.length
+      ? `${detail} Requested ${entry.requestedVp}VP; awarded ${entry.vp}VP due to the ${entry.capReasons.join(', ')}.`
+      : detail,
+  }, { activationId, clauseIds });
   state.missionState.secondaryMissionScoringRecords = [...records, record];
   return record;
 }
