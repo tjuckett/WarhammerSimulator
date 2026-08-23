@@ -42,8 +42,6 @@ import {
   placePlayStrategicReserveUnit,
   placePlayUnit,
   placeNextUnit,
-  playFightActivationUnitIds,
-  playPhaseCoherencyIssues,
   removePlayCasualtyModels,
   removePlayModels,
   resolvePlaySurgeMove,
@@ -67,6 +65,7 @@ import { completeMissionEventsForCurrentTurn, startMissionEventsForNewTurn } fro
 import { configureSecondaryMissions, discardSecondaryMission, drawSecondaryMission, selectBeaconUnit, selectBurdenOfTrustGuards, selectSecondaryMissionWhenDrawn, selectTemptingTargetObjective } from '../engine/secondaryMissions';
 import { scoreSecondaryMissionsAtEndOfTurn, secondaryMissionScoringLogs } from '../engine/secondaryMissionScoring';
 import { advanceBattlePhase, initializeBattlePhase } from '../engine/battleStateMachine';
+import { phaseCanAdvance } from '../engine/legalActions';
 import { resetUnitForActiveTurn } from '../engine/turnState';
 
 export interface GameActionBase {
@@ -483,11 +482,10 @@ function clone<T>(value: T): T {
 function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   if (state.phase === BATTLE_PHASE.Fight && rules.metadata.edition === '11e') {
     if (state.fightStepStarted === false) return startPlayFightStep(state, rules);
-    if (playFightActivationUnitIds(state, 0, rules).length || playFightActivationUnitIds(state, 1, rules).length) return state;
   }
+  if (!phaseCanAdvance(state, state.activeArmy, rules)) return state;
   const next = clone(state);
   if (next.winner !== null || next.phase === BATTLE_PHASE.Deployment || next.phase === BATTLE_PHASE.End) return next;
-  if (playPhaseCoherencyIssues(next).length > 0) return next;
   if (next.phase !== BATTLE_PHASE.Movement || movementStep(next) === MOVEMENT_STEP.Reinforcements) {
     updateObjectiveControl(next, rules);
   }
