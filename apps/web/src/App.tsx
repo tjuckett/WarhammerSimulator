@@ -84,6 +84,7 @@ import { createPlayChargeActions } from './play/playChargeActions';
 import { createPlayFightActions } from './play/playFightActions';
 import { createPlayShootingResolution } from './play/playShootingResolution';
 import { createPendingDamageSelectionAction } from './play/playDamageAllocationActions';
+import { createPlayFightResolution } from './play/playFightResolution';
 import {
   attachedBattleUnitIdsForSelection,
   attachedProfilesForInspection,
@@ -2015,6 +2016,27 @@ export default function App() {
     setTargetErrorMsg,
   });
 
+  const { resolveSelectedPlayFight } = createPlayFightResolution({
+    battleStateRef,
+    playModelSelection,
+    damageAllocationLocked,
+    fightAttackAllocations,
+    selectedFightWeaponIndex,
+    selectedPlayFightTargets,
+    fightAttackSplits,
+    selectedFightAttackCount,
+    selectedFightTargetId,
+    activeRulesForBattle,
+    playUndoEntry,
+    pushPlayUndo,
+    selectPendingDamageUnit,
+    commitBattleState,
+    setTargetErrorMsg,
+    setShootingResultEntries,
+    setFightAttackAllocations,
+    setSelectedFightWeaponIndex,
+  });
+
   function updateShootingAttackAllocation(weaponIndex: number, targetId: string, attacks: number) {
     const shooter = selectedShootingUnit;
     const maxModels = shooter ? playShootingWeaponModelCount(shooter, weaponIndex) : null;
@@ -2023,74 +2045,6 @@ export default function App() {
 
   function updateFightAttackAllocation(weaponIndex: number, targetId: string, attacks: number) {
     setFightAttackAllocations(current => updateMeleeAttackAllocation(current, weaponIndex, targetId, attacks));
-  }
-
-  function resolveSelectedPlayFight() {
-    const selection = primaryPlaySelectionPart(playModelSelection);
-    const prev = battleStateRef.current;
-    if (!prev || prev.phase !== 'fight' || !selection) return;
-    if (damageAllocationLocked) {
-      setTargetErrorMsg('Allocate pending damage before fighting again');
-      return;
-    }
-    const meleeAllocations = buildMeleeAttackAllocations(fightAttackAllocations);
-    if (meleeAllocations.length) {
-      const next = fightPlayUnitWeapons(prev, selection.unitId, selection.side, meleeAllocations, activeRulesForBattle);
-      if (next === prev) {
-        setTargetErrorMsg('Allocate every selected melee weapon to valid engaged targets before rolling.');
-        return;
-      }
-      setShootingResultEntries(next.log.slice(prev.log.length));
-      const hasPendingDamage = selectPendingDamageUnit(next, selection.unitId);
-      if (!hasPendingDamage) setTargetErrorMsg(null);
-      setFightAttackAllocations({});
-      pushPlayUndo(playUndoEntry(prev), next, {
-        type: GAME_ACTION_TYPE.FightUnitWeapon,
-        unitId: selection.unitId,
-        side: selection.side,
-        targetUnitId: meleeAllocations[0].targetUnitId,
-        weaponIndex: 'all',
-      });
-      commitBattleState(next);
-      return;
-    }
-    const weaponIndex = selectedFightWeaponIndex === 'all' ? 'all' : Number(selectedFightWeaponIndex);
-    if (weaponIndex !== 'all' && !Number.isFinite(weaponIndex)) return;
-    const targetSplits = selectedPlayFightTargets.flatMap(target => {
-      const attacks = sanitizeMeleeAttackAllocation(fightAttackSplits[target.id] ?? 0);
-      return attacks > 0 ? [{ targetUnitId: target.id, attacks }] : [];
-    });
-    const splitTotal = targetSplits.reduce((total, split) => total + split.attacks, 0);
-    const usesSplit = selectedPlayFightTargets.length > 1 && targetSplits.length > 0;
-    if (usesSplit && (selectedFightAttackCount === null || splitTotal !== selectedFightAttackCount)) {
-      setTargetErrorMsg(`Allocate exactly ${selectedFightAttackCount ?? 'the fixed number of'} attacks before resolving`);
-      return;
-    }
-    const targetUnitId = usesSplit ? targetSplits[0].targetUnitId : selectedFightTargetId;
-    if (!targetUnitId) return;
-    const next = fightPlayUnitWeapon(
-      prev,
-      selection.unitId,
-      selection.side,
-      targetUnitId,
-      weaponIndex,
-      activeRulesForBattle,
-      usesSplit ? targetSplits : undefined,
-    );
-    if (next === prev) return;
-    setShootingResultEntries(next.log.slice(prev.log.length));
-    const hasPendingDamage = selectPendingDamageUnit(next, selection.unitId);
-    if (!hasPendingDamage) setTargetErrorMsg(null);
-    if (weaponIndex !== 'all') setSelectedFightWeaponIndex('all');
-    pushPlayUndo(playUndoEntry(prev), next, {
-      type: GAME_ACTION_TYPE.FightUnitWeapon,
-      unitId: selection.unitId,
-      side: selection.side,
-      targetUnitId,
-      weaponIndex,
-      ...(usesSplit ? { targetSplits } : {}),
-    });
-    commitBattleState(next);
   }
 
   function useSelectedPlayStratagem(stratagemId = selectedStratagemId, targetModelIndex?: number, secondaryTargetUnitId?: string, sourceModelIndex?: number, heroicInterventionMode?: HeroicInterventionMode) {
