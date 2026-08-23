@@ -26,6 +26,22 @@ export function updateAttackAllocation(
   };
 }
 
+export function updateMeleeAttackAllocation(
+  current: AllocationTable,
+  weaponIndex: number,
+  targetId: string,
+  attacks: number,
+): AllocationTable {
+  const weaponKey = String(weaponIndex);
+  return {
+    ...current,
+    [weaponKey]: {
+      ...(current[weaponKey] ?? {}),
+      [targetId]: attacks,
+    },
+  };
+}
+
 export function buildShootingAttackAllocations(allocations: AllocationTable): PlayShootingAttackAllocation[] {
   return Object.entries(allocations).flatMap(([weaponIndexText, targets]) => {
     const weaponIndex = Number(weaponIndexText);

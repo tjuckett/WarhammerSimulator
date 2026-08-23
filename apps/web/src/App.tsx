@@ -75,7 +75,7 @@ import { useTerrainEditing } from './terrain/useTerrainEditing';
 import { PLAY_DEPLOY_SELECTION_KIND, usePlayUiState } from './play/usePlayUiState';
 import { usePlayUndoState, type PendingPlayTimelineAction, type PlayUndoEntry } from './play/usePlayUndoState';
 import { enemyTargetsForIds, targetIdsForOptions, unitForSelection } from './play/playBattleSelectors';
-import { buildMeleeAttackAllocations, buildShootingAttackAllocations, updateAttackAllocation } from './play/playAttackAllocations';
+import { buildMeleeAttackAllocations, buildShootingAttackAllocations, updateAttackAllocation, updateMeleeAttackAllocation } from './play/playAttackAllocations';
 import { clone, createPlayUndoEntry } from './play/playUndoHelpers';
 import {
   attachedBattleUnitIdsForSelection,
@@ -2233,13 +2233,7 @@ export default function App() {
   }
 
   function updateFightAttackAllocation(weaponIndex: number, targetId: string, attacks: number) {
-    setFightAttackAllocations(current => ({
-      ...current,
-      [String(weaponIndex)]: {
-        ...(current[String(weaponIndex)] ?? {}),
-        [targetId]: attacks,
-      },
-    }));
+    setFightAttackAllocations(current => updateMeleeAttackAllocation(current, weaponIndex, targetId, attacks));
   }
 
   function resolveSelectedPlayFight() {
