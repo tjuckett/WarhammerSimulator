@@ -205,7 +205,7 @@ Phase handlers should own declaration, eligibility, and sequencing. The shared C
 - Pending damage and casualty allocation
 - Typed intermediate and final results
 
-`resolveCombatAttacks` is the current shared combat boundary. Shooting, split melee, normal melee, automated melee, and Fight on Death use it, and it emits typed `AttackResolved` events for every resolved weapon attack. The remaining combat-centralization work is extracting this resolver and its focused helpers from `simulator.ts` while preserving the public contract.
+`resolveCombatAttacks` is the current shared combat boundary. Shooting, split melee, normal melee, automated melee, and Fight on Death use it, and it emits typed `AttackResolved` events for every resolved weapon attack. `damageResolution.ts` now owns deterministic save, Feel No Pain, and damage/spillover outcomes; both immediate damage and defender-selected allocation emit typed `DamageApplied` events. The remaining work is moving resolver orchestration and its focused helpers from `simulator.ts` while preserving the public contract.
 
 ## Events and logs
 

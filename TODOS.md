@@ -80,7 +80,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Keep dice, hit, wound, save, damage, and typed result processing in shared rules services used by phase handlers.
   - Make the same transitions drive local play, simulation, AI actions, replay, and save/load.
 - [ ] Centralize combat resolution behind one shared combat service boundary.
-  - Progress: `resolveCombatAttacks` now serves shooting, split melee, normal/automatic melee, and Fight on Death; it emits typed attack results and shared pending-damage events. Extract the resolver and focused helpers from `simulator.ts` next.
+  - Progress: `resolveCombatAttacks` now serves shooting, split melee, normal/automatic melee, and Fight on Death; `damageResolution.ts` owns deterministic saves, Feel No Pain, and spillover math; typed attack, pending-damage, and applied-damage events are emitted. Extract resolver orchestration and focused helpers from `simulator.ts` next.
   - Audit charge, overwatch, mortal wounds, saves, Feel No Pain, damage allocation, and simulation paths for duplicated hit/wound/save/damage logic.
   - Keep phase modules responsible for declarations, eligibility, and sequencing while shared combat services own dice and attack-result resolution.
   - Return typed combat results/events from the shared boundary and remove phase-specific reimplementations where behavior is equivalent.
