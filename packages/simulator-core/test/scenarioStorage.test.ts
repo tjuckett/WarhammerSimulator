@@ -10540,6 +10540,10 @@ test('normal damage allocated to a model does not carry excess damage to another
   assert.equal(allocatedTarget.woundedModelIndex, undefined);
   assert.equal(allocatedTarget.woundsOnLeadModel, 3);
   assert.equal(allocatedTarget.pendingDamageAllocations, undefined);
+  assert.deepEqual(allocated.events?.at(-1)?.data, {
+    targetUnitId: 'target-1', damage: 5, killedModels: 1, remainingModels: 1,
+    woundsOnCurrentModel: 3, noCarryOver: true, source: 'High Damage Hit',
+  });
 });
 
 test('Multiple melee weapon profiles choose only one profile when fighting all weapons', () => {

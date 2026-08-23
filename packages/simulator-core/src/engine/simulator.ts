@@ -1610,6 +1610,21 @@ export function applyDamage(
     ));
   }
 
+  recordBattleEvent(state, {
+    type: BATTLE_EVENT_TYPE.DamageApplied,
+    side: attackerSide,
+    source: options.sourceUnitId,
+    data: {
+      targetUnitId: unit.id,
+      damage: totalDamage,
+      killedModels: killed,
+      remainingModels: effectiveRemaining,
+      woundsOnCurrentModel: unit.woundsOnLeadModel,
+      noCarryOver: options.noCarryOver ?? false,
+      source: options.source ?? 'attack',
+    },
+  });
+
   return logs;
 }
 
@@ -7384,6 +7399,20 @@ export function allocatePlayDamageToModel(
   const feelNoPain = applyFeelNoPain(unit, damage.damage, s);
   const appliedDamage = feelNoPain.damage;
   if (appliedDamage <= 0) {
+    recordBattleEvent(s, {
+      type: BATTLE_EVENT_TYPE.DamageApplied,
+      side: state.activeArmy,
+      source: damage.sourceUnitId,
+      data: {
+        targetUnitId: unit.id,
+        damage: 0,
+        killedModels: 0,
+        remainingModels: unit.remainingModels,
+        woundsOnCurrentModel: unit.woundsOnLeadModel,
+        noCarryOver: damage.noCarryOver ?? false,
+        source: damage.source ?? 'attack',
+      },
+    });
     s.log = [...s.log, ...feelNoPain.logs, log(
       s,
       state.activeArmy,
@@ -7395,7 +7424,15 @@ export function allocatePlayDamageToModel(
   }
 
   const currentWounds = unit.woundedModelIndex === modelIndex ? unit.woundsOnLeadModel : unit.profile.wounds;
-  if (appliedDamage >= currentWounds) {
+  const allocationOutcome = resolveDamageOutcome({
+    damage: appliedDamage,
+    modelCount: 1,
+    woundsOnCurrentModel: currentWounds,
+    woundsPerModel: unit.profile.wounds,
+    // Allocation only decides the selected model's fate; any carryover is queued below.
+    noCarryOver: true,
+  });
+  if (allocationOutcome.killedModels > 0) {
     const carryOverDamage = damage.noCarryOver ? 0 : appliedDamage - currentWounds;
     const destroyedBySide = s.units.find(candidate => candidate.id === damage.sourceUnitId)?.side ?? state.activeArmy;
     queueDeadlyDemiseForModels(s, unit, [modelIndex], destroyedBySide);
@@ -7430,18 +7467,32 @@ export function allocatePlayDamageToModel(
     }
   } else {
     unit.woundedModelIndex = modelIndex;
-    unit.woundsOnLeadModel = currentWounds - appliedDamage;
+    unit.woundsOnLeadModel = allocationOutcome.woundsOnCurrentModel;
   }
 
   s.log = [...s.log, ...feelNoPain.logs, log(
     s,
     state.activeArmy,
     unit.profile.name,
-    appliedDamage >= currentWounds
+    allocationOutcome.killedModels > 0
       ? `${unit.profile.name} allocates ${appliedDamage} damage to model ${modelIndex + 1}; model destroyed.`
       : `${unit.profile.name} allocates ${appliedDamage} damage to model ${modelIndex + 1} (${unit.woundsOnLeadModel}W remaining).`,
-    appliedDamage >= currentWounds ? 'death' : 'damage',
+    allocationOutcome.killedModels > 0 ? 'death' : 'damage',
   )];
+  recordBattleEvent(s, {
+    type: BATTLE_EVENT_TYPE.DamageApplied,
+    side: state.activeArmy,
+    source: damage.sourceUnitId,
+    data: {
+      targetUnitId: unit.id,
+      damage: appliedDamage,
+      killedModels: allocationOutcome.killedModels,
+      remainingModels: unit.remainingModels,
+      woundsOnCurrentModel: unit.woundsOnLeadModel,
+      noCarryOver: damage.noCarryOver ?? false,
+      source: damage.source ?? 'attack',
+    },
+  });
   if (s.pendingDeadlyDemises?.length) s.log = [...s.log, ...resolvePendingDeadlyDemisesInPlace(s)];
   return s;
 }
