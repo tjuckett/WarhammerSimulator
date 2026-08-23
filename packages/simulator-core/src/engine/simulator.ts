@@ -1060,7 +1060,21 @@ function processWoundsAgainstDefender(
   return { wounds, rolls, mortalsFromCrits: 0, devastatingWounds, logNote: notes.join('; ') };
 }
 
-function resolveAttacks(
+/**
+ * Shared dice-to-damage resolution used by every weapon attack path. Phase
+ * code validates declarations and sequencing; this resolver owns attack rolls,
+ * hit/wound/save/FNP processing, pending damage, and typed resolution groups.
+ */
+export interface CombatAttackResolutionOptions {
+  deferCasualties?: boolean;
+  snapShooting?: boolean;
+  attackCountOverride?: number;
+  selectedTargetCount?: number;
+  modelIndexes?: number[];
+  result?: ShootingWeaponResult;
+}
+
+export function resolveCombatAttacks(
   attacker: BattleUnit,
   defender: BattleUnit,
   weapon: WeaponProfile,
@@ -1070,7 +1084,7 @@ function resolveAttacks(
   hasCover: boolean,
   hitModifier = 0,
   hitModifierNote = '',
-  options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number; selectedTargetCount?: number; modelIndexes?: number[]; result?: ShootingWeaponResult } = {},
+  options: CombatAttackResolutionOptions = {},
 ): LogEntry[] {
   const logs: LogEntry[] = [];
   const damagedProfile = attacker.profile.damagedProfile;
@@ -3135,7 +3149,7 @@ function resolveShootingWeaponIntoTarget(
     unsavedWounds: 0,
     groups: [],
   };
-  const logs = resolveAttacks(
+  const logs = resolveCombatAttacks(
     unit,
     target,
     weapon,
@@ -4521,7 +4535,7 @@ export function fightPlayUnitWeapon(
         logs.push(log(s, side, fightingUnit.profile.name, `  ${option.weapon.name}: declared target is no longer valid`, 'info'));
         continue;
       }
-      const attackLogs = resolveAttacks(fightingUnit, splitTarget, option.weapon, option.weaponIndex, rules, s, false, 0, '', {
+      const attackLogs = resolveCombatAttacks(fightingUnit, splitTarget, option.weapon, option.weaponIndex, rules, s, false, 0, '', {
         deferCasualties: true,
         attackCountOverride: split.attacks,
         selectedTargetCount: targetSplits.length,
@@ -4533,7 +4547,7 @@ export function fightPlayUnitWeapon(
     if (madeAttacks) logs.push(...resolveHazardousTests(fightingUnit, option.weapon, option.weaponIndex, s));
   } else {
     for (const option of selectedMeleeWeapons) {
-      const attackLogs = resolveAttacks(fightingUnit, fightTarget, option.weapon, option.weaponIndex, rules, s, false, 0, '', { deferCasualties: true });
+      const attackLogs = resolveCombatAttacks(fightingUnit, fightTarget, option.weapon, option.weaponIndex, rules, s, false, 0, '', { deferCasualties: true });
       logs.push(...attackLogs);
       if (attackLogs.length > 0) logs.push(...resolveHazardousTests(fightingUnit, option.weapon, option.weaponIndex, s));
       madeAttacks = madeAttacks || attackLogs.length > 0;
@@ -4589,7 +4603,7 @@ export function fightPlayUnitWeapons(
     const entries = grouped.get(selected.weaponIndex)!;
     for (const entry of entries) {
       const target = s.units.find(candidate => candidate.id === entry.targetUnitId && !candidate.destroyed)!;
-      logs.push(...resolveAttacks(fightingUnit, target, selected.weapon, selected.weaponIndex, rules, s, false, 0, '', {
+      logs.push(...resolveCombatAttacks(fightingUnit, target, selected.weapon, selected.weaponIndex, rules, s, false, 0, '', {
         deferCasualties: true,
         ...(entries.length > 1 && entry.attackCount !== undefined ? { attackCountOverride: entry.attackCount } : {}),
         selectedTargetCount: entries.length,
@@ -4695,7 +4709,7 @@ export function fightOnDeathUnitWeapon(
   s.units.push(fighter);
   const weapon = fighter.profile.weapons[weaponIndex];
   const logs = [log(s, side, fighter.profile.name, `${fighter.profile.name} makes a Fight On Death attack against ${fightTarget.profile.name}:`, 'fight')];
-  logs.push(...resolveAttacks(fighter, fightTarget, weapon, weaponIndex, rules, s, false, 0, '', { deferCasualties: true }));
+  logs.push(...resolveCombatAttacks(fighter, fightTarget, weapon, weaponIndex, rules, s, false, 0, '', { deferCasualties: true }));
   s.units = s.units.filter(unit => unit !== fighter);
   s.log = [...s.log, ...logs, ...resolvePendingDeadlyDemisesInPlace(s)];
   return s;
@@ -4737,7 +4751,7 @@ function runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): Lo
 
   for (const { weapon, weaponIndex } of meleeWeapons) {
     if (aliveWeaponModelCount(unit, weaponIndex) <= 0) continue;
-    logs.push(...resolveAttacks(unit, target, weapon, weaponIndex, rules, state, false));
+    logs.push(...resolveCombatAttacks(unit, target, weapon, weaponIndex, rules, state, false));
     logs.push(...resolveHazardousTests(unit, weapon, weaponIndex, state));
   }
 
