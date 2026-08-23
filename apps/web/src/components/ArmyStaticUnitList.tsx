@@ -6,7 +6,7 @@ import { canDeployOutsideDeploymentZone, unitRosterId } from '@warhammer-simulat
 import { uiTokens } from '../theme/uiTokens';
 import { ModelWeaponLoadoutEditor } from './ArmyModelWeaponLoadoutEditor';
 import { UnitList } from './ArmyUnitList';
-import { buildLeaderManifest, buildTransportManifest, deploymentLabel, deploymentMode, groupedUnitDisplayItems, isLeaderUnit, type LeaderManifestEntry, type TransportManifestEntry, type UnitSplitPlan, unitKey } from './armyPanelHelpers';
+import { attachmentGroupModelCount, buildLeaderManifest, buildTransportManifest, deploymentLabel, deploymentMode, groupedUnitDisplayItems, isLeaderUnit, isTransportUnit, splitPlanForUnit, type LeaderManifestEntry, type TransportManifestEntry, type UnitSplitPlan, unitKey } from './armyPanelHelpers';
 
 export function StaticUnitList({
   army,
