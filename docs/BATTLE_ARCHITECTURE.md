@@ -39,7 +39,7 @@ flowchart TD
   Events --> LogUI[Battle log projection]
 ```
 
-The current system already has a typed phase enum, movement substeps, typed shooting/charge results, typed battle events, stratagem services, and unit-ability services. However, `simulator.ts` still coordinates most phase behavior and some combat paths remain phase-specific.
+The current system has a typed phase enum, movement substeps, typed shooting/charge results, typed battle events, stratagem services, and unit-ability services. Manual play advances normal phase boundaries through `battleStateMachine.ts`; simulation also uses its shared phase-entry invariant. `simulator.ts` still coordinates most phase behavior, so phase-owned legal-action and completion handlers remain to be extracted.
 
 ## Target battle architecture
 
@@ -205,7 +205,7 @@ Phase handlers should own declaration, eligibility, and sequencing. The shared C
 - Pending damage and casualty allocation
 - Typed intermediate and final results
 
-The `combat-centralization` TODO tracks the audit required to remove equivalent phase-specific implementations.
+`resolveCombatAttacks` is the current shared combat boundary. Shooting, split melee, normal melee, automated melee, and Fight on Death use it, and it emits typed `AttackResolved` events for every resolved weapon attack. The remaining combat-centralization work is extracting this resolver and its focused helpers from `simulator.ts` while preserving the public contract.
 
 ## Events and logs
 
@@ -224,7 +224,7 @@ flowchart LR
 
 ## Mission scoring and VP state
 
-Scoring is separated from combat and should be treated as its own rules subsystem. The current implementation already tracks primary records, secondary cards and records, objective ownership, secured objectives, mission events, and VP caps. The next architectural improvement is to make the scoring ledger the single mutation boundary.
+Scoring is separated from combat and treated as its own rules subsystem. It tracks primary records, secondary cards and records, objective ownership, secured objectives, mission events, and VP caps. `scoringLedger.ts` is the sole score-mutation boundary for primary and secondary awards: it applies caps and idempotency, records typed `ScoringApplied` events, and updates the score projection while the primary/secondary record types remain the detailed UI audit trail.
 
 ```mermaid
 flowchart TD
@@ -244,7 +244,7 @@ flowchart TD
   ScoringEvents --> ScoreUI[Score timeline / UI]
 ```
 
-The intended flow is:
+The implemented flow is:
 
 ```ts
 const result = evaluatePrimaryScoring(state, side, rules);

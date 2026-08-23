@@ -74,13 +74,14 @@ Use this section as the current high-level pickup order before starting large ne
   - Preserve typed dice, targets, modifiers, outcomes, pending allocations, and failure reasons separately from formatted messages.
   - Use the new boundary as the prerequisite for safely splitting `packages/simulator-core/src/engine/simulator.ts` by domain.
 - [ ] Introduce a hierarchical battle state machine for rounds, phases, and phase substeps.
-  - Progress: shared round/phase graph, movement substeps, five-round boundary, and typed transition events are implemented; phase-owned handlers, interrupts, and legal-action contracts remain to be migrated.
+  - Progress: shared round/phase graph, movement substeps, five-round boundary, typed transition events, and manual-play transition entry are implemented; phase-owned handlers, interrupts, simulation orchestration, and legal-action contracts remain to be migrated.
   - Model the battle round and Command, Movement, Shooting, Charge, and Fight phases with explicit legal transitions and completion conditions.
   - Give each phase ownership of its temporary state, interrupts, pending resolutions, and legal actions while keeping shared combat resolution centralized.
   - Keep dice, hit, wound, save, damage, and typed result processing in shared rules services used by phase handlers.
   - Make the same transitions drive local play, simulation, AI actions, replay, and save/load.
 - [ ] Centralize combat resolution behind one shared combat service boundary.
-  - Audit shooting, charge, fight, overwatch, fight-on-death, mortal wounds, saves, Feel No Pain, damage allocation, and simulation paths for duplicated hit/wound/save/damage logic.
+  - Progress: `resolveCombatAttacks` now serves shooting, split melee, normal/automatic melee, and Fight on Death; it emits typed attack results and shared pending-damage events. Extract the resolver and focused helpers from `simulator.ts` next.
+  - Audit charge, overwatch, mortal wounds, saves, Feel No Pain, damage allocation, and simulation paths for duplicated hit/wound/save/damage logic.
   - Keep phase modules responsible for declarations, eligibility, and sequencing while shared combat services own dice and attack-result resolution.
   - Return typed combat results/events from the shared boundary and remove phase-specific reimplementations where behavior is equivalent.
 - [x] Add a dedicated Army Builder mode.
