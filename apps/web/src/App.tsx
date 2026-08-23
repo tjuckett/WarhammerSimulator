@@ -74,7 +74,7 @@ import { useTerrainLayouts } from './terrain/useTerrainLayouts';
 import { useTerrainEditing } from './terrain/useTerrainEditing';
 import { PLAY_DEPLOY_SELECTION_KIND, usePlayUiState } from './play/usePlayUiState';
 import { usePlayUndoState, type PendingPlayTimelineAction, type PlayUndoEntry } from './play/usePlayUndoState';
-import { enemyTargetsForIds, targetIdsForOptions, unitForSelection } from './play/playBattleSelectors';
+import { enemyTargetsForIds, firstPendingDamageUnit, targetIdsForOptions, unitForSelection } from './play/playBattleSelectors';
 import { buildMeleeAttackAllocations, buildShootingAttackAllocations, updateAttackAllocation, updateMeleeAttackAllocation } from './play/playAttackAllocations';
 import { clone, createPlayUndoEntry } from './play/playUndoHelpers';
 import {
@@ -1007,11 +1007,7 @@ export default function App() {
   }, [battleState]);
   const pendingDamageAllocationUnit = useMemo(() => {
     if (!battleState || battleState.phase !== 'shooting') return null;
-    return battleState.units.find(unit =>
-      !unit.destroyed
-      && !unit.embarkedInUnitId
-      && (unit.pendingDamageAllocations?.length ?? 0) > 0
-    ) ?? null;
+    return firstPendingDamageUnit(battleState);
   }, [battleState]);
   const damageAllocationLocked = pendingDamageAllocationUnitIds.size > 0;
   const pendingDamageText = pendingDamageLabel(pendingDamageAllocationUnit);
@@ -2126,7 +2122,7 @@ export default function App() {
       return;
     }
     setShootingResultEntries(next.log.slice(prev.log.length));
-    const pendingDamageUnit = next.units.find(unit => !unit.destroyed && !unit.embarkedInUnitId && (unit.pendingDamageAllocations?.length ?? 0) > 0);
+    const pendingDamageUnit = firstPendingDamageUnit(next);
     setCasualtyRemovalShooterId(pendingDamageUnit ? selection.unitId : null);
     setTargetErrorMsg(null);
     setShootingAttackAllocations({});
@@ -2216,7 +2212,7 @@ export default function App() {
   }
 
   function selectPendingDamageUnit(next: BattleState, shooterUnitId: string | null) {
-    const pendingDamageUnit = next.units.find(unit => !unit.destroyed && !unit.embarkedInUnitId && (unit.pendingDamageAllocations?.length ?? 0) > 0);
+    const pendingDamageUnit = firstPendingDamageUnit(next);
     if (!pendingDamageUnit) return false;
     if (shooterUnitId) setCasualtyRemovalShooterId(shooterUnitId);
     setPlayModelSelection(normalizePlaySelectionForState(next, {

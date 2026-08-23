@@ -33,3 +33,11 @@ export function enemyTargetsForIds(
     && targetIds.has(unit.id),
   );
 }
+
+export function firstPendingDamageUnit(battleState: BattleState | null | undefined): BattleUnit | null {
+  return battleState?.units.find(unit =>
+    !unit.destroyed
+    && !unit.embarkedInUnitId
+    && (unit.pendingDamageAllocations?.length ?? 0) > 0,
+  ) ?? null;
+}
