@@ -10457,6 +10457,8 @@ test('play Fight resolves selected melee weapons into a selected target', () => 
       sourceObjectiveIndexesWithinRange: [],
     }]);
     assert.equal(fought.log.some(entry => entry.message.includes('Fighter fights Fight Target')), true);
+    assert.equal(fought.events?.filter(event => event.type === 'attack-resolved').length, 1);
+    assert.deepEqual(fought.events?.[0]?.data.targetUnitId, 'target-1');
   } finally {
     Math.random = originalRandom;
   }
