@@ -38,7 +38,8 @@ This sequence keeps the UI/core boundary explicit and avoids a broad, behavior-c
 - Play target selectors, attack allocation transformations, pending-damage lookup, and undo snapshots were extracted from `App.tsx`.
 - Army editing helpers, model loadouts, battlefield unit lists, static army editing, deployment lists, and grouping logic were extracted from `ArmyPanel.tsx`.
 - `usePlayPhaseSelectors` now owns shooting, overwatch, charge, and fight derived state.
+- Movement resolution callbacks now live in the typed `playMovementController` boundary.
 
 ## Remaining migration boundary
 
-The next safe App slice is moving stateful shooting/charge/fight callbacks into a typed phase-action hook. The simulator engine should be split only after those callbacks consume typed action/result contracts; its current functions share cloning, validation, logging, and phase orchestration, so mechanically moving ranges would create circular dependencies without improving ownership.
+The next safe App slice is moving stateful shooting/charge/fight and selection callbacks into typed phase-action hooks. The simulator engine should be split only after those callbacks consume typed action/result contracts; its current functions share cloning, validation, logging, and phase orchestration, so mechanically moving ranges would create circular dependencies without improving ownership.
