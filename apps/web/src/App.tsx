@@ -83,6 +83,7 @@ import { createPlayShootingActions } from './play/playShootingActions';
 import { createPlayChargeActions } from './play/playChargeActions';
 import { createPlayFightActions } from './play/playFightActions';
 import { createPlayShootingResolution } from './play/playShootingResolution';
+import { createPendingDamageSelectionAction } from './play/playDamageAllocationActions';
 import {
   attachedBattleUnitIdsForSelection,
   attachedProfilesForInspection,
@@ -2004,27 +2005,20 @@ export default function App() {
     setShootingAttackAllocations,
   });
 
+  const { selectPendingDamageUnit } = createPendingDamageSelectionAction({
+    battleStateRef,
+    pendingDamageAllocationUnitIds,
+    casualtyRemovalShooterId,
+    setCasualtyRemovalShooterId,
+    setPlayModelSelection,
+    setInspectedSelection,
+    setTargetErrorMsg,
+  });
+
   function updateShootingAttackAllocation(weaponIndex: number, targetId: string, attacks: number) {
     const shooter = selectedShootingUnit;
     const maxModels = shooter ? playShootingWeaponModelCount(shooter, weaponIndex) : null;
     setShootingAttackAllocations(current => updateAttackAllocation(current, weaponIndex, targetId, attacks, maxModels));
-  }
-
-  function selectPendingDamageUnit(next: BattleState, shooterUnitId: string | null) {
-    const pendingDamageUnit = firstPendingDamageUnit(next);
-    if (!pendingDamageUnit) return false;
-    if (shooterUnitId) setCasualtyRemovalShooterId(shooterUnitId);
-    setPlayModelSelection(normalizePlaySelectionForState(next, {
-      side: pendingDamageUnit.side,
-      parts: [{
-        unitId: pendingDamageUnit.id,
-        side: pendingDamageUnit.side,
-        modelIndices: pendingDamageUnit.modelPositions.map((_, modelIndex) => modelIndex),
-      }],
-    }));
-    setInspectedSelection({ kind: 'battle', side: pendingDamageUnit.side, unitId: pendingDamageUnit.id });
-    setTargetErrorMsg('Select a model to allocate the next pending damage');
-    return true;
   }
 
   function updateFightAttackAllocation(weaponIndex: number, targetId: string, attacks: number) {
