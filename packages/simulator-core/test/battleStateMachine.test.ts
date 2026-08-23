@@ -1,7 +1,16 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { BATTLE_PHASE, MOVEMENT_STEP, type BattleState } from '../src/types/battle';
-import { advanceBattlePhase, battlePhaseNode, nextBattlePhase, nextTurnTransition, setBattlePhase } from '../src/engine/battleStateMachine';
+import {
+  advanceBattlePhase,
+  battlePhaseNode,
+  battlePhaseStateHandler,
+  BATTLE_PHASE_STATE_HANDLERS,
+  initializeBattlePhase,
+  nextBattlePhase,
+  nextTurnTransition,
+  setBattlePhase,
+} from '../src/engine/battleStateMachine';
 import { BATTLE_EVENT_TYPE, createBattleEvent } from '../src/engine/battleEvents';
 
 function state(): Pick<BattleState, 'phase' | 'movementStep' | 'activeArmy' | 'battleRound' | 'turn' | 'maxBattleRounds' | 'maxTurns'> {
@@ -65,6 +74,26 @@ test('shared phase advance applies movement substeps and boundary cursor cleanup
   advanceBattlePhase(current);
   assert.equal(current.phase, BATTLE_PHASE.Shooting);
   assert.equal(current.movementStep, undefined);
+});
+
+test('phase state handlers own entry cursor invariants', () => {
+  const current = {
+    ...state(),
+    phase: BATTLE_PHASE.Shooting,
+    activeAttachedShootingUnitId: 'shooter',
+    attachedShootingTargetUnitId: 'target',
+    pendingChargeRoll: { unitId: 'charger' },
+    pendingChargeMovement: { unitId: 'charger' },
+  } as unknown as BattleState;
+  assert.equal(battlePhaseStateHandler({ phase: BATTLE_PHASE.Charge }), BATTLE_PHASE_STATE_HANDLERS[BATTLE_PHASE.Charge]);
+  initializeBattlePhase(current, { phase: BATTLE_PHASE.Charge });
+  assert.equal(current.activeAttachedShootingUnitId, undefined);
+  assert.equal(current.attachedShootingTargetUnitId, undefined);
+  assert.deepEqual(current.pendingChargeRoll, { unitId: 'charger' });
+  initializeBattlePhase(current, { phase: BATTLE_PHASE.Fight });
+  assert.equal(current.pendingChargeRoll, undefined);
+  assert.equal(current.pendingChargeMovement, undefined);
+  assert.equal(current.fightStepStarted, false);
 });
 
 test('typed battle events retain phase context without formatted log parsing', () => {
