@@ -60,7 +60,7 @@ import {
 } from './baseSizes';
 import { attackingModelHasPlungingFire, auraAbilitiesInRange } from './otherRules';
 import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
-import { battlePhaseNode, battleRoundLimit, initializeBattlePhase, nextTurnTransition } from './battleStateMachine';
+import { advanceBattlePhase, battlePhaseNode, battleRoundLimit, initializeBattlePhase, nextBattlePhase, nextTurnTransition } from './battleStateMachine';
 import { resetUnitForActiveTurn } from './turnState';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -4964,7 +4964,12 @@ const PLAY_MODEL_EDIT_PHASES: Phase[] = ['deployment', 'setup', 'movement'];
 
 function enterBattlePhase(state: BattleState, phase: Parameters<typeof initializeBattlePhase>[1], side = state.activeArmy): void {
   const from = battlePhaseNode(state);
-  initializeBattlePhase(state, phase);
+  const transition = nextBattlePhase(state);
+  const isNormalAdvance = transition?.kind === 'phase'
+    && transition.to.phase === phase.phase
+    && (phase.phase !== 'movement' || (transition.to.phase === 'movement' && transition.to.step === phase.step));
+  if (isNormalAdvance) advanceBattlePhase(state);
+  else initializeBattlePhase(state, phase);
   recordBattleEvent(state, {
     type: phase.phase === 'movement' && from.phase === 'movement'
       ? BATTLE_EVENT_TYPE.StepStarted
