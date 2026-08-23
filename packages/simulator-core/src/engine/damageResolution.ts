@@ -1,3 +1,5 @@
+import { countSuccesses } from './dice';
+
 export interface DamageResolutionInput {
   damage: number;
   modelCount: number;
@@ -50,4 +52,8 @@ export function resolveFeelNoPainOutcome(damage: number, target: number, rolls: 
   const ignored = countSuccesses(rolls, target);
   return { ignored, damage: Math.max(0, damage - ignored) };
 }
-import { countSuccesses } from './dice';
+
+export function resolveSaveOutcome(wounds: number, target: number, rolls: number[]): { saved: number; unsaved: number } {
+  const saved = countSuccesses(rolls, target);
+  return { saved, unsaved: Math.max(0, wounds - saved) };
+}

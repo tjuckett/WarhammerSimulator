@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { resolveDamageOutcome, resolveFeelNoPainOutcome } from '../src/engine/damageResolution';
+import { resolveDamageOutcome, resolveFeelNoPainOutcome, resolveSaveOutcome } from '../src/engine/damageResolution';
 
 test('damage resolution discards excess normal weapon damage but carries mortal damage', () => {
   assert.deepEqual(resolveDamageOutcome({
@@ -13,4 +13,8 @@ test('damage resolution discards excess normal weapon damage but carries mortal 
 
 test('feel no pain resolution counts successful prevention rolls', () => {
   assert.deepEqual(resolveFeelNoPainOutcome(4, 5, [5, 3, 6, 2]), { ignored: 2, damage: 2 });
+});
+
+test('save resolution counts saved and unsaved wounds', () => {
+  assert.deepEqual(resolveSaveOutcome(4, 4, [4, 2, 6, 1]), { saved: 2, unsaved: 2 });
 });

@@ -63,7 +63,7 @@ import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
 import { advanceBattlePhase, battlePhaseNode, battleRoundLimit, initializeBattlePhase, nextBattlePhase, nextTurnTransition } from './battleStateMachine';
 import { battleLog as log, phaseLog, resetBattleLogSequence } from './battleLog';
 import { resetUnitForActiveTurn } from './turnState';
-import { resolveDamageOutcome, resolveFeelNoPainOutcome } from './damageResolution';
+import { resolveDamageOutcome, resolveFeelNoPainOutcome, resolveSaveOutcome } from './damageResolution';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -1352,9 +1352,10 @@ export function resolveCombatAttacks(
       options.result?.groups.push({ kind: 'save', rolls: [], target: effectiveSave, successes: woundCount, noSave: true });
     } else {
       const saveRolls = rollMultiple(woundCount);
-      const saved = countSuccesses(saveRolls, effectiveSave);
-      unsaved = woundCount - saved;
-      options.result?.groups.push({ kind: 'save', rolls: [...saveRolls], target: effectiveSave, successes: saved });
+      const outcome = resolveSaveOutcome(woundCount, effectiveSave, saveRolls);
+      const saved = outcome.saved;
+      unsaved = outcome.unsaved;
+      options.result?.groups.push({ kind: 'save', rolls: [...saveRolls], target: effectiveSave, successes: outcome.saved });
       logs.push(log(state, defender.side, defender.profile.name,
         `     Save rolls (${effectiveSave}+${coverNote}): [${saveRolls.join(', ')}] → ${saved} saved, ${unsaved} failed`,
         'roll',
