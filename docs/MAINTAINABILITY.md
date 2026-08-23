@@ -8,7 +8,7 @@ Log entries are presentation history only. Game rules and UI state must never be
 
 | Area | Current issue | Target boundary |
 | --- | --- | --- |
-| `apps/web/src/App.tsx` | Combines page composition, play-phase action orchestration, undo coordination, persistence, and keyboard handling. | Keep page composition here; selectors now live in `usePlayPhaseSelectors`; move remaining stateful actions into phase-focused hooks and keep persistence in `gameSession/`. |
+| `apps/web/src/App.tsx` | Combines page composition, play-phase action orchestration, undo coordination, persistence, and keyboard handling. | Keep page composition here; selectors and the major movement, shooting, charge, fight, deployment, and model-selection actions now live in focused modules; keep persistence in `gameSession/`. |
 | `apps/web/src/play/PlayPanels.tsx` | Combines five phase panels, shared combat formatting, allocation controls, and result rendering. | Split into `ShootingPanel`, `ChargePanel`, `FightPanel`, `TacticsPanel`, and shared combat-display components. |
 | `packages/simulator-core/src/engine/simulator.ts` | Combines state cloning, movement, shooting, charge, fight, abilities, phase simulation, and presentation logging. | Split by domain while keeping a small action/state orchestration layer. |
 | `BattleState.log` | Used as both history and an accidental event bus. | Keep it append-only for display/audit; add typed fields/results for transient and inspectable gameplay state. |
@@ -24,10 +24,9 @@ Log entries are presentation history only. Game rules and UI state must never be
 
 ## Safe extraction order
 
-1. Finish replacing shooting-result log parsing with `ShootingResolution` data.
-2. Split `PlayPanels.tsx` by phase and move shared combat result rendering into a small component.
-3. Extract play-phase selectors and action callbacks from `App.tsx` into `usePlayPhaseState` and phase action modules.
-4. Split `simulator.ts` only after action contracts are typed and covered by core tests; preserve its public exports through a barrel module during migration.
+1. Remove the remaining dead compatibility code from `PlayPanels.tsx` after confirming no consumers depend on it.
+2. Finish moving the remaining tactics and mission callbacks from `App.tsx` if a narrow dependency boundary is available.
+3. Split `simulator.ts` only after action contracts are typed and covered by core tests; preserve its public exports through a barrel module during migration.
 
 This sequence keeps the UI/core boundary explicit and avoids a broad, behavior-changing rewrite.
 
@@ -39,7 +38,8 @@ This sequence keeps the UI/core boundary explicit and avoids a broad, behavior-c
 - Army editing helpers, model loadouts, battlefield unit lists, static army editing, deployment lists, and grouping logic were extracted from `ArmyPanel.tsx`.
 - `usePlayPhaseSelectors` now owns shooting, overwatch, charge, and fight derived state.
 - Movement resolution callbacks now live in the typed `playMovementController` boundary.
+- Deployment selection, model selection, charge/fight resolution, and the obsolete log-parsing result dialog were cleaned up or moved behind focused boundaries.
 
 ## Remaining migration boundary
 
-The next safe App slice is moving stateful shooting/charge/fight and selection callbacks into typed phase-action hooks. The simulator engine should be split only after those callbacks consume typed action/result contracts; its current functions share cloning, validation, logging, and phase orchestration, so mechanically moving ranges would create circular dependencies without improving ownership.
+The remaining App work is mostly tactics, mission, and setup orchestration. The simulator engine should be split only after those callbacks consume typed action/result contracts; its current functions share cloning, validation, logging, and phase orchestration, so mechanically moving ranges would create circular dependencies without improving ownership.
