@@ -2,6 +2,30 @@ import type { PlayMeleeAttackAllocation, PlayShootingAttackAllocation } from '@w
 
 type AllocationTable = Record<string, Record<string, number>>;
 
+export function updateAttackAllocation(
+  current: AllocationTable,
+  weaponIndex: number,
+  targetId: string,
+  attacks: number,
+  maxModels: number | null,
+): AllocationTable {
+  const weaponKey = String(weaponIndex);
+  const weaponAllocations = current[weaponKey] ?? {};
+  const otherTargetTotal = Object.entries(weaponAllocations)
+    .filter(([allocatedTargetId]) => allocatedTargetId !== targetId)
+    .reduce((total, [, allocatedModels]) => total + (Number(allocatedModels) || 0), 0);
+  const cappedAttacks = maxModels === null
+    ? attacks
+    : Math.min(attacks, Math.max(0, maxModels - otherTargetTotal));
+  return {
+    ...current,
+    [weaponKey]: {
+      ...weaponAllocations,
+      [targetId]: cappedAttacks,
+    },
+  };
+}
+
 export function buildShootingAttackAllocations(allocations: AllocationTable): PlayShootingAttackAllocation[] {
   return Object.entries(allocations).flatMap(([weaponIndexText, targets]) => {
     const weaponIndex = Number(weaponIndexText);

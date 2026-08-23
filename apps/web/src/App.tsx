@@ -75,7 +75,7 @@ import { useTerrainEditing } from './terrain/useTerrainEditing';
 import { PLAY_DEPLOY_SELECTION_KIND, usePlayUiState } from './play/usePlayUiState';
 import { usePlayUndoState, type PendingPlayTimelineAction, type PlayUndoEntry } from './play/usePlayUndoState';
 import { enemyTargetsForIds, targetIdsForOptions, unitForSelection } from './play/playBattleSelectors';
-import { buildMeleeAttackAllocations, buildShootingAttackAllocations } from './play/playAttackAllocations';
+import { buildMeleeAttackAllocations, buildShootingAttackAllocations, updateAttackAllocation } from './play/playAttackAllocations';
 import {
   attachedBattleUnitIdsForSelection,
   attachedProfilesForInspection,
@@ -2097,20 +2097,7 @@ export default function App() {
   function updateShootingAttackAllocation(weaponIndex: number, targetId: string, attacks: number) {
     const shooter = selectedShootingUnit;
     const maxModels = shooter ? playShootingWeaponModelCount(shooter, weaponIndex) : null;
-    setShootingAttackAllocations(current => ({
-      ...current,
-      [String(weaponIndex)]: {
-        ...(current[String(weaponIndex)] ?? {}),
-        [targetId]: maxModels === null
-          ? attacks
-          : Math.min(
-            attacks,
-            Math.max(0, maxModels - Object.entries(current[String(weaponIndex)] ?? {})
-              .filter(([allocatedTargetId]) => allocatedTargetId !== targetId)
-              .reduce((total, [, allocatedModels]) => total + (Number(allocatedModels) || 0), 0)),
-          ),
-      },
-    }));
+    setShootingAttackAllocations(current => updateAttackAllocation(current, weaponIndex, targetId, attacks, maxModels));
   }
 
   function resolveSelectedPlayShooting() {
