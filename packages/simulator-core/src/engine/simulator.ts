@@ -7,7 +7,6 @@ import { selectUnitToDrop, reactivePosition, deployModelFormation } from './depl
 import { DEFAULT_OBJECTIVES } from './missions';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
 import { advanceAllowance, normalMoveAllowance } from './movement';
-import { objectiveControlRadius } from './objectiveGeometry';
 import { objectiveIndexesWithinRange, primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, terrainAreaIdsContainingUnit, unsupportedPrimaryMissionScoringLogs, updateObjectiveControl } from './missionScoring';
 import { battleRound, setBattleRound } from './battleRound';
 import {
@@ -4603,58 +4602,6 @@ function isBelowHalfStrength(state: BattleState, unit: BattleUnit): boolean {
   }
 
   return attachedUnitRemainingModels(state, unit) <= startingStrength / 2;
-}
-
-// ─── Objective scoring ────────────────────────────────────────────────────────
-
-function scoreObjectives(s: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
-  const armyName = s.armies[side].name;
-  const parts: string[] = [];
-  const objectiveControl = s.objectiveControl ?? rules.objectiveControl;
-  const controlRadius = objectiveControlRadius(objectiveControl);
-
-  if (controlRadius === null) {
-    return [log(s, side, armyName,
-      `Objective scoring unavailable for ${objectiveControl.label}; implement this ruleset case-by-case.`,
-      'info',
-    )];
-  }
-
-  for (let i = 0; i < s.objectives.length; i++) {
-    const obj = s.objectives[i];
-    let oc0 = 0, oc1 = 0;
-
-    for (const unit of s.units) {
-      if (unit.destroyed || unit.embarkedInUnitId) continue;
-      const inRange = unit.modelPositions.some((model, modelIndex) => (
-        dist(model, obj) <= controlRadius + modelBaseRadius(unit, modelIndex)
-      ));
-      if (inRange) {
-        if (unit.side === 0) oc0 += objectiveControlValue(unit);
-        else oc1 += objectiveControlValue(unit);
-      }
-    }
-
-    let owner: Side | null = null;
-    if (oc0 > oc1) owner = 0;
-    else if (oc1 > oc0) owner = 1;
-    s.objectiveOwners[i] = owner;
-
-    if (owner === side) {
-      s.scores[side]++;
-      parts.push(`Obj${i + 1} +1VP`);
-    } else if (owner !== null) {
-      parts.push(`Obj${i + 1} enemy`);
-    } else {
-      parts.push(`Obj${i + 1} contested`);
-    }
-  }
-
-  const scoreStr = parts.join(', ') || 'no objectives scored';
-  return [log(s, side, armyName,
-    `\n─── Objectives: ${scoreStr} → ${s.scores[0]}VP / ${s.scores[1]}VP ───`,
-    'info',
-  )];
 }
 
 // ─── Victory check ────────────────────────────────────────────────────────────
