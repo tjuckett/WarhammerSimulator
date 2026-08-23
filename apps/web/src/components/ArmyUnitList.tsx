@@ -94,3 +94,11 @@ export function UnitList({
     </>
   );
 }
+
+function Badge({ label, color }: { label: string; color: string }) {
+  return (
+    <span style={{ color, border: `1px solid ${color}55`, background: `${color}12`, borderRadius: 3, padding: '1px 4px', fontSize: 9, fontWeight: 700 }}>
+      {label}
+    </span>
+  );
+}
