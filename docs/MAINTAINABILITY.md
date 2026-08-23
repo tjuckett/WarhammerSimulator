@@ -8,7 +8,7 @@ Log entries are presentation history only. Game rules and UI state must never be
 
 | Area | Current issue | Target boundary |
 | --- | --- | --- |
-| `apps/web/src/App.tsx` | Combines page composition, play-phase selectors, action orchestration, undo coordination, persistence, and keyboard handling. | Keep page composition here; move play selectors/actions into phase-focused hooks and keep persistence in `gameSession/`. |
+| `apps/web/src/App.tsx` | Combines page composition, play-phase action orchestration, undo coordination, persistence, and keyboard handling. | Keep page composition here; selectors now live in `usePlayPhaseSelectors`; move remaining stateful actions into phase-focused hooks and keep persistence in `gameSession/`. |
 | `apps/web/src/play/PlayPanels.tsx` | Combines five phase panels, shared combat formatting, allocation controls, and result rendering. | Split into `ShootingPanel`, `ChargePanel`, `FightPanel`, `TacticsPanel`, and shared combat-display components. |
 | `packages/simulator-core/src/engine/simulator.ts` | Combines state cloning, movement, shooting, charge, fight, abilities, phase simulation, and presentation logging. | Split by domain while keeping a small action/state orchestration layer. |
 | `BattleState.log` | Used as both history and an accidental event bus. | Keep it append-only for display/audit; add typed fields/results for transient and inspectable gameplay state. |
@@ -30,3 +30,15 @@ Log entries are presentation history only. Game rules and UI state must never be
 4. Split `simulator.ts` only after action contracts are typed and covered by core tests; preserve its public exports through a barrel module during migration.
 
 This sequence keeps the UI/core boundary explicit and avoids a broad, behavior-changing rewrite.
+
+## Completed follow-up slices
+
+- Typed combat result state replaced runtime shooting/charge result reconstruction from log text.
+- Play panels were split into tactics, shooting, charge, and fight modules with shared presentation helpers.
+- Play target selectors, attack allocation transformations, pending-damage lookup, and undo snapshots were extracted from `App.tsx`.
+- Army editing helpers, model loadouts, battlefield unit lists, static army editing, deployment lists, and grouping logic were extracted from `ArmyPanel.tsx`.
+- `usePlayPhaseSelectors` now owns shooting, overwatch, charge, and fight derived state.
+
+## Remaining migration boundary
+
+The next safe App slice is moving stateful shooting/charge/fight callbacks into a typed phase-action hook. The simulator engine should be split only after those callbacks consume typed action/result contracts; its current functions share cloning, validation, logging, and phase orchestration, so mechanically moving ranges would create circular dependencies without improving ownership.
