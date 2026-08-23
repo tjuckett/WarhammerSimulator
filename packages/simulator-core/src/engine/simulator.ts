@@ -7896,64 +7896,79 @@ export function beginPlayBattle(state: BattleState): BattleState {
   return s;
 }
 
-export function simulateNextPhase(state: BattleState, rules: RulesEdition): BattleState {
-  let s = clone(state);
-  if (s.phase !== 'movement' || movementStep(s) === 'reinforcements') {
-    updateObjectiveControl(s, rules);
-  }
+type SimulationPhaseAdvanceMode = 'full-phase' | 'unit-step';
+
+/**
+ * The shared simulation phase handler.  Full-phase simulation resolves every
+ * eligible unit after entering a phase, whereas unit-step simulation merely
+ * opens the phase and lets its caller resolve units one at a time.  The graph,
+ * entry invariants, end-of-turn work and logs are intentionally identical.
+ */
+function advanceSimulationPhase(
+  state: BattleState,
+  rules: RulesEdition,
+  mode: SimulationPhaseAdvanceMode,
+): BattleState {
+  let s = state;
   const side = s.activeArmy;
   const armyName = s.armies[side].name;
   const newLogs: LogEntry[] = [];
-
-  if (s.winner !== null || s.phase === 'deployment' || s.phase === 'end') return s;
+  const fullPhase = mode === 'full-phase';
+  const resetActivations = () => {
+    if (!fullPhase) resetSimulationUnitActivations(s, side);
+  };
 
   if (s.phase === 'setup') {
     newLogs.push(...startCommandPhase(s, rules));
-    s.log = [...s.log, ...newLogs];
-    return s;
-  }
-
-  if (!TURN_PHASES.includes(s.phase)) {
+    // Starting a player turn must not immediately evaluate army elimination.
+    // The legacy full-phase API deliberately exposes the Command phase first.
+    if (fullPhase) {
+      s.log = [...s.log, ...newLogs];
+      return s;
+    }
+  } else if (!TURN_PHASES.includes(s.phase)) {
     enterBattlePhase(s, { phase: 'setup' }, side);
-    s.log = [...s.log, ...newLogs];
-    return s;
-  }
-
-  if (s.phase === 'command') {
-    newLogs.push(...scorePrimaryMissionLogs(s, side, rules));
+  } else if (s.phase === 'command') {
+    if (fullPhase) newLogs.push(...scorePrimaryMissionLogs(s, side, rules));
     runAutomaticUnitAbilities(s, side, 'end-of-phase', rules);
-    enterBattlePhase(s, { phase: 'movement', step: 'moveUnits' }, side);
-    newLogs.push(phaseLog(s, side, armyName, `\n--- Movement Phase ---`));
-    activeUnits(s, side).forEach(u => newLogs.push(...runMovement(u, s, rules)));
-  } else if (s.phase === 'movement') {
-    if (movementStep(s) === 'moveUnits') {
+    enterBattlePhase(s, { phase: 'movement', step: MOVEMENT_STEP.MoveUnits }, side);
+    resetActivations();
+    newLogs.push(phaseLog(s, side, armyName, '\n--- Movement Phase ---'));
+    if (fullPhase) activeUnits(s, side).forEach(unit => newLogs.push(...runMovement(unit, s, rules)));
+  } else if (s.phase === 'movement' && movementStep(s) === MOVEMENT_STEP.MoveUnits) {
+    if (fullPhase) {
       const movementIssues = playMovementLegalityIssues(s, side);
       if (movementIssues.length) {
         s.log = [...s.log, log(s, side, armyName, `Movement is not legal: ${movementIssues.join(' ')}`, 'info')];
         return s;
       }
-      markRemainingStationaryUnits(s, side);
-      enterBattlePhase(s, { phase: 'movement', step: 'reinforcements' }, side);
-      newLogs.push(phaseLog(s, side, armyName, `\n--- Reinforcements Step ---`));
-    } else {
-      enterBattlePhase(s, { phase: 'shooting' }, side);
-      newLogs.push(phaseLog(s, side, armyName, `\n--- Shooting Phase ---`));
-      newLogs.push(...runShootingPhaseUnits(s, side, rules));
     }
+    markRemainingStationaryUnits(s, side);
+    enterBattlePhase(s, { phase: 'movement', step: MOVEMENT_STEP.Reinforcements }, side);
+    newLogs.push(phaseLog(s, side, armyName, '\n--- Reinforcements Step ---'));
+  } else if (s.phase === 'movement') {
+    enterBattlePhase(s, { phase: 'shooting' }, side);
+    resetActivations();
+    newLogs.push(phaseLog(s, side, armyName, '\n--- Shooting Phase ---'));
+    if (fullPhase) newLogs.push(...runShootingPhaseUnits(s, side, rules));
   } else if (s.phase === 'shooting') {
     enterBattlePhase(s, { phase: 'charge' }, side);
-    newLogs.push(phaseLog(s, side, armyName, `\n--- Charge Phase ---`));
-    activeUnits(s, side).filter(u => !u.inCombat).forEach(u => newLogs.push(...runCharge(u, s, rules)));
+    resetActivations();
+    newLogs.push(phaseLog(s, side, armyName, '\n--- Charge Phase ---'));
+    if (fullPhase) activeUnits(s, side).filter(unit => !unit.inCombat)
+      .forEach(unit => newLogs.push(...runCharge(unit, s, rules)));
   } else if (s.phase === 'charge') {
     enterBattlePhase(s, { phase: 'fight' }, side);
-    newLogs.push(phaseLog(s, side, armyName, `\n--- Fight Phase ---`));
+    resetActivations();
+    newLogs.push(phaseLog(s, side, armyName, '\n--- Fight Phase ---'));
     if (rules.metadata.edition === '11e') {
-      s = runAutomaticEleventhFightPhase(s, side, rules);
-    } else {
-      activeUnits(s, side).filter(u => u.charged).forEach(u => newLogs.push(...runFight(u, s, rules)));
-      activeUnits(s, side).filter(u => !u.charged && u.inCombat).forEach(u => newLogs.push(...runFight(u, s, rules)));
-      s.units.filter(u => u.side !== side && !u.destroyed && u.inCombat)
-        .forEach(u => newLogs.push(...runFight(u, s, rules)));
+      if (fullPhase) s = runAutomaticEleventhFightPhase(s, side, rules);
+      else startFightStepInPlace(s, rules);
+    } else if (fullPhase) {
+      activeUnits(s, side).filter(unit => unit.charged).forEach(unit => newLogs.push(...runFight(unit, s, rules)));
+      activeUnits(s, side).filter(unit => !unit.charged && unit.inCombat).forEach(unit => newLogs.push(...runFight(unit, s, rules)));
+      s.units.filter(unit => unit.side !== side && !unit.destroyed && unit.inCombat)
+        .forEach(unit => newLogs.push(...runFight(unit, s, rules)));
     }
   } else if (s.phase === 'fight') {
     for (const unit of activeUnits(s, side)) {
@@ -7971,6 +7986,13 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
   checkWinner(s);
   s.log = [...s.log, ...newLogs];
   return s;
+}
+
+export function simulateNextPhase(state: BattleState, rules: RulesEdition): BattleState {
+  const s = clone(state);
+  if (s.phase !== 'movement' || movementStep(s) === 'reinforcements') updateObjectiveControl(s, rules);
+  if (s.winner !== null || s.phase === 'deployment' || s.phase === 'end') return s;
+  return advanceSimulationPhase(s, rules, 'full-phase');
 }
 
 function resetSimulationUnitActivations(state: BattleState, side: Side): void {
@@ -7998,52 +8020,8 @@ export function simulationNextUnitId(state: BattleState, rules: RulesEdition): s
   return activeUnits(state, state.activeArmy).find(unit => !unit.activated)?.id;
 }
 
-function advanceSimulationUnitPhase(state: BattleState, rules: RulesEdition): void {
-  const side = state.activeArmy;
-  const armyName = state.armies[side].name;
-  const logs: LogEntry[] = [];
-
-  if (state.phase === 'setup') {
-    logs.push(...startCommandPhase(state, rules));
-  } else if (state.phase === 'command') {
-    runAutomaticUnitAbilities(state, side, 'end-of-phase', rules);
-    enterBattlePhase(state, { phase: 'movement', step: MOVEMENT_STEP.MoveUnits }, side);
-    resetSimulationUnitActivations(state, side);
-    logs.push(phaseLog(state, side, armyName, '\n--- Movement Phase ---'));
-  } else if (state.phase === 'movement' && movementStep(state) === MOVEMENT_STEP.MoveUnits) {
-    markRemainingStationaryUnits(state, side);
-    enterBattlePhase(state, { phase: 'movement', step: MOVEMENT_STEP.Reinforcements }, side);
-    logs.push(phaseLog(state, side, armyName, '\n--- Reinforcements Step ---'));
-  } else if (state.phase === 'movement') {
-    enterBattlePhase(state, { phase: 'shooting' }, side);
-    resetSimulationUnitActivations(state, side);
-    logs.push(phaseLog(state, side, armyName, '\n--- Shooting Phase ---'));
-  } else if (state.phase === 'shooting') {
-    enterBattlePhase(state, { phase: 'charge' }, side);
-    resetSimulationUnitActivations(state, side);
-    logs.push(phaseLog(state, side, armyName, '\n--- Charge Phase ---'));
-  } else if (state.phase === 'charge') {
-    enterBattlePhase(state, { phase: 'fight' }, side);
-    resetSimulationUnitActivations(state, side);
-    logs.push(phaseLog(state, side, armyName, '\n--- Fight Phase ---'));
-    if (rules.metadata.edition === '11e') startFightStepInPlace(state, rules);
-  } else if (state.phase === 'fight') {
-    for (const unit of activeUnits(state, side)) {
-      const objectiveIndex = consecrateObjectiveOptions(state, unit.id, side, rules, true)[0];
-      if (objectiveIndex !== undefined) {
-        const next = consecrateObjective(state, unit.id, side, objectiveIndex, rules, true);
-        state.log = next.log;
-      }
-    }
-    completeEndOfTurnActions(state, side);
-    logs.push(...scoreEndOfTurnSecondaryMissionLogs(state, side, rules));
-    logs.push(...scoreEndOfTurnPrimaryMissionLogs(state, side, rules));
-    returnOpponentAircraftToStrategicReserves(state, side, rules);
-    advanceTurnInPlace(state);
-    if ((state.phase as Phase) === 'end') logs.push(...scoreEndOfBattlePrimaryMissionLogs(state, rules));
-  }
-
-  state.log = [...state.log, ...logs];
+function advanceSimulationUnitPhase(state: BattleState, rules: RulesEdition): BattleState {
+  return advanceSimulationPhase(state, rules, 'unit-step');
 }
 
 export function simulateNextUnit(state: BattleState, rules: RulesEdition): BattleState {
@@ -8074,10 +8052,7 @@ export function simulateNextUnit(state: BattleState, rules: RulesEdition): Battl
     return s;
   }
 
-  advanceSimulationUnitPhase(s, rules);
-
-  checkWinner(s);
-  return s;
+  return advanceSimulationUnitPhase(s, rules);
 }
 
 function runSimulatedCommandPhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
