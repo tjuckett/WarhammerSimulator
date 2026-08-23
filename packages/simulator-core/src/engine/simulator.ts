@@ -87,6 +87,7 @@ import {
 } from './unitCombatModifiers';
 import { runBattleshockPhase } from './battleshockPhase';
 import * as chargeRules from './chargeRules';
+import * as fightEligibility from './fightEligibility';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -3849,25 +3850,18 @@ export function playMeleeFixedAttackCount(
   return Number(attacks) * aliveWeaponModelCount(unit, weaponIndex);
 }
 
-function unitCanFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean {
-  return !unit.destroyed
-    && !unit.embarkedInUnitId
-    && !unit.activated
-    && enemies(state, unit.side).some(enemy => unitCanFightTarget(unit, enemy) && inEngagement(unit, [enemy], rules.engagementRange()));
-}
+const fightEligibilityContext: fightEligibility.FightEligibilityContext = {
+  enemies,
+  canFightTarget: unitCanFightTarget,
+  inEngagement,
+};
 
-function unitWasEngagedAtFightStepStart(state: BattleState, unit: BattleUnit): boolean {
-  return state.engagedUnitIdsAtFightStepStart?.includes(unit.id) ?? false;
-}
-
-function unitEligibleToFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean {
-  if (unit.destroyed || unit.embarkedInUnitId || unit.activated) return false;
-  if (rules.metadata.edition !== '11e') return unitCanFight(unit, state, rules);
-  if (state.fightStepStarted === false) return false;
-  return unit.charged
-    || unitWasEngagedAtFightStepStart(state, unit)
-    || enemies(state, unit.side).some(enemy => unitCanFightTarget(unit, enemy) && inEngagement(unit, [enemy], rules.engagementRange()));
-}
+const unitCanFight = (unit: BattleUnit, state: BattleState, rules: RulesEdition) =>
+  fightEligibility.unitCanFight(unit, state, rules, fightEligibilityContext);
+const unitWasEngagedAtFightStepStart = (state: BattleState, unit: BattleUnit) =>
+  fightEligibility.unitWasEngagedAtFightStepStart(state, unit);
+const unitEligibleToFight = (unit: BattleUnit, state: BattleState, rules: RulesEdition) =>
+  fightEligibility.unitEligibleToFight(unit, state, rules, fightEligibilityContext);
 
 function startFightStepInPlace(s: BattleState, rules: RulesEdition): void {
   s.fightStepStarted = true;
