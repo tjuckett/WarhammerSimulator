@@ -121,7 +121,22 @@ The handlers are composed by the state machine; they should not inherit from one
 | `MovementPhaseHandler` | Move Units and Reinforcements substeps, movement declarations, reserves, transports, actions, and movement completion |
 | `ShootingPhaseHandler` | Shooting declarations, weapon/target locking, shooting interrupts, and shooting completion |
 | `ChargePhaseHandler` | Charge declarations, charge rolls, charge movement, Heroic Intervention, and charge completion |
-| `FightPhaseHandler` | Fight priority, pile-in, melee declarations, Fight on Death, consolidation, and Fight completion |
+| `FightPhaseHandler` | Fight priority, pile-in, melee declarations, Fight on Death, damage allocation, consolidation, and Fight completion |
+
+Fight should have an explicit nested state rather than relying only on unit flags:
+
+```ts
+type FightSubstate =
+  | 'select-activation'
+  | 'pile-in'
+  | 'declare-attacks'
+  | 'resolve-attacks'
+  | 'allocate-damage'
+  | 'consolidate'
+  | 'complete';
+```
+
+The Fight handler owns that sequence, while the Combat Resolver owns only the attack sequence inside `resolve-attacks` and the shared damage services used by `allocate-damage`.
 
 The current `battleStateMachine.ts` provides the transition graph, movement substeps, round boundary, five-round limit, and phase-entry cursor resets. The remaining state-machine work is moving the phase-specific legal-action and completion logic into these handlers.
 
@@ -298,10 +313,12 @@ flowchart TD
   ChargeComplete -- Yes --> Fight[Fight Phase]
 
   Fight --> FightPriority[Fight priority and activation selection]
-  FightPriority --> PileIn[Pile-in and melee declaration]
-  PileIn --> FightInterrupts[Fight on Death, Counter-offensive, abilities]
+  FightPriority --> PileIn[Pile-in substate]
+  PileIn --> DeclareFight[Declare melee targets and weapons]
+  DeclareFight --> FightInterrupts[Fight on Death, Counter-offensive, abilities]
   FightInterrupts --> Combat
-  DamageAllocation --> FightComplete{All fight activations complete?}
+  DamageAllocation --> Consolidation[Consolidation substate]
+  Consolidation --> FightComplete{All fight activations complete?}
   FightComplete -- No --> FightPriority
   FightComplete -- Yes --> EndTurn[End-of-turn effects]
 
