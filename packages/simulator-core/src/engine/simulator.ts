@@ -61,6 +61,7 @@ import {
 import { attackingModelHasPlungingFire, auraAbilitiesInRange } from './otherRules';
 import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
 import { battlePhaseNode, battleRoundLimit, initializeBattlePhase, nextTurnTransition } from './battleStateMachine';
+import { resetUnitForActiveTurn } from './turnState';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -5023,31 +5024,7 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
   });
   s.units.filter(u => u.side === side && !u.destroyed).forEach(u => { u.actionStartedThisTurn = undefined; });
   activeUnits(s, side).forEach(u => {
-    u.rangedAttacksMadePreviousTurn = u.rangedAttacksMadeThisTurn ?? false;
-    u.rangedAttacksMadeThisTurn = false;
-    u.activated = false;
-    u.charged = false;
-    u.piledIn = undefined;
-    u.consolidated = undefined;
-    u.firedWeaponIndices = undefined;
-    u.movementAction = undefined;
-    u.movementAllowanceRemaining = undefined;
-    u.movementAllowanceRemainingByModel = undefined;
-    u.movementAllowanceTotalByModel = undefined;
-    u.movementStartPositionsByModel = undefined;
-    u.movementStartRotationsByModel = undefined;
-    u.movementPathByModel = undefined;
-    u.movementComplete = undefined;
-    u.takingToSkies = undefined;
-    u.arrivedFromReinforcements = undefined;
-    u.rapidIngressThisPhase = undefined;
-    u.heroicInterventionThisPhase = undefined;
-    u.heroicInterventionMode = undefined;
-    u.emergencyDisembarkedThisTurn = undefined;
-    u.combatDisembarkedThisTurn = undefined;
-    u.rapidDisembarkedThisTurn = undefined;
-    u.fellBack = false;
-    u.inCombat = false;
+    resetUnitForActiveTurn(u);
   });
   enterBattlePhase(s, { phase: 'command' }, side);
   s.battleshockEligibleUnitIds = s.units

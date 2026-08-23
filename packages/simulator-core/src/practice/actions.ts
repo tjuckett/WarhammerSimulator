@@ -67,6 +67,7 @@ import { completeMissionEventsForCurrentTurn, startMissionEventsForNewTurn } fro
 import { configureSecondaryMissions, discardSecondaryMission, drawSecondaryMission, selectBeaconUnit, selectBurdenOfTrustGuards, selectSecondaryMissionWhenDrawn, selectTemptingTargetObjective } from '../engine/secondaryMissions';
 import { scoreSecondaryMissionsAtEndOfTurn, secondaryMissionScoringLogs } from '../engine/secondaryMissionScoring';
 import { advanceBattlePhase, initializeBattlePhase } from '../engine/battleStateMachine';
+import { resetUnitForActiveTurn } from '../engine/turnState';
 
 export interface GameActionBase {
   id?: string;
@@ -501,31 +502,8 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
     startMissionEventsForNewTurn(next, rules);
     for (const unit of next.units) {
       if (unit.side !== next.activeArmy || unit.destroyed) continue;
-      unit.rangedAttacksMadePreviousTurn = unit.rangedAttacksMadeThisTurn ?? false;
-      unit.rangedAttacksMadeThisTurn = false;
-      unit.activated = false;
-      unit.charged = false;
-      unit.piledIn = undefined;
-      unit.consolidated = undefined;
-      unit.firedWeaponIndices = undefined;
-      unit.movementAction = undefined;
-      unit.movementAllowanceRemaining = undefined;
-      unit.movementAllowanceRemainingByModel = undefined;
-      unit.movementAllowanceTotalByModel = undefined;
-      unit.movementStartPositionsByModel = undefined;
-      unit.movementComplete = undefined;
-      unit.takingToSkies = undefined;
-      unit.arrivedFromReinforcements = undefined;
-      unit.rapidIngressThisPhase = undefined;
-      unit.heroicInterventionThisPhase = undefined;
-      unit.heroicInterventionMode = undefined;
       unit.actionStartedThisTurn = undefined;
-      if (unit.emergencyDisembarkedThisTurn) unit.battleshocked = false;
-      unit.emergencyDisembarkedThisTurn = undefined;
-      unit.combatDisembarkedThisTurn = undefined;
-      unit.rapidDisembarkedThisTurn = undefined;
-      unit.fellBack = false;
-      unit.inCombat = false;
+      resetUnitForActiveTurn(unit, { clearEmergencyDisembarkBattleshock: true });
     }
     gainCommandPhaseCommandPoints(next);
     runAutomaticCommandUnitAbilities(next, next.activeArmy, rules);
