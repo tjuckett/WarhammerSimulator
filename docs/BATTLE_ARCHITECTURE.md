@@ -39,7 +39,7 @@ flowchart TD
   Events --> LogUI[Battle log projection]
 ```
 
-The current system has a typed phase enum, movement substeps, typed shooting/charge results, typed battle events, stratagem services, and unit-ability services. Manual play advances normal phase boundaries through `battleStateMachine.ts`; simulation also uses its shared phase-entry invariant. `simulator.ts` still coordinates most phase behavior, so phase-owned legal-action and completion handlers remain to be extracted.
+The current system has a typed phase enum, movement substeps, typed shooting/charge results, typed battle events, stratagem services, and unit-ability services. Manual play advances normal phase boundaries through `battleStateMachine.ts`; simulation also uses its shared phase-entry invariant. `legalActions.ts` now exposes an active-phase handler registry and one `phaseCanAdvance` completion predicate, which both legal action generation and manual stepping consume. `simulator.ts` still coordinates most phase behavior, so phase-specific simulation orchestration and interrupt ownership remain to be extracted.
 
 ## Target battle architecture
 

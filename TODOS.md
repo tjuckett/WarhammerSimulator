@@ -74,7 +74,7 @@ Use this section as the current high-level pickup order before starting large ne
   - Preserve typed dice, targets, modifiers, outcomes, pending allocations, and failure reasons separately from formatted messages.
   - Use the new boundary as the prerequisite for safely splitting `packages/simulator-core/src/engine/simulator.ts` by domain.
 - [ ] Introduce a hierarchical battle state machine for rounds, phases, and phase substeps.
-  - Progress: shared round/phase graph, movement substeps, five-round boundary, typed transition events, and manual-play transition entry are implemented; phase-owned handlers, interrupts, simulation orchestration, and legal-action contracts remain to be migrated.
+  - Progress: shared round/phase graph, movement substeps, five-round boundary, typed transition events, manual/simulation transition entry, and a shared active-phase legal-action/completion contract are implemented; interrupt ownership and phase-specific simulation orchestration remain to be migrated.
   - Model the battle round and Command, Movement, Shooting, Charge, and Fight phases with explicit legal transitions and completion conditions.
   - Give each phase ownership of its temporary state, interrupts, pending resolutions, and legal actions while keeping shared combat resolution centralized.
   - Keep dice, hit, wound, save, damage, and typed result processing in shared rules services used by phase handlers.
