@@ -80,6 +80,7 @@ import { clone, createPlayUndoEntry } from './play/playUndoHelpers';
 import { usePlayPhaseSelectors } from './play/usePlayPhaseSelectors';
 import { createPlayMovementActionHandlers } from './play/playMovementController';
 import { createPlayShootingActions } from './play/playShootingActions';
+import { createPlayChargeActions } from './play/playChargeActions';
 import {
   attachedBattleUnitIdsForSelection,
   attachedProfilesForInspection,
@@ -1956,6 +1957,20 @@ export default function App() {
     setSelectedShootingWeaponIndex,
   });
 
+  const { resolveSelectedPlayCharge, completeSelectedPlayChargeMovement } = createPlayChargeActions({
+    battleStateRef,
+    playModelSelection,
+    selectedChargeTargetIds,
+    activeRulesForBattle,
+    playUndoEntry,
+    pushPlayUndo,
+    commitBattleState,
+    setTargetErrorMsg,
+    setSelectedChargeTargetIds,
+    setPlayModelSelection,
+    setInspectedSelection,
+  });
+
   function updateShootingAttackAllocation(weaponIndex: number, targetId: string, attacks: number) {
     const shooter = selectedShootingUnit;
     const maxModels = shooter ? playShootingWeaponModelCount(shooter, weaponIndex) : null;
@@ -2006,44 +2021,6 @@ export default function App() {
       targetUnitId: '',
       weaponIndex: 'all',
     });
-    commitBattleState(next);
-  }
-
-  function resolveSelectedPlayCharge() {
-    const selection = primaryPlaySelectionPart(playModelSelection);
-    const prev = battleStateRef.current;
-    if (!prev || prev.phase !== 'charge' || !selection || !selectedChargeTargetIds.length) return;
-    const next = chargePlayUnitTargets(prev, selection.unitId, selection.side, selectedChargeTargetIds, activeRulesForBattle);
-    if (next === prev) return;
-    pushPlayUndo(playUndoEntry(prev), next, {
-      type: GAME_ACTION_TYPE.ChargeUnitTarget,
-      unitId: selection.unitId,
-      side: selection.side,
-      targetUnitId: selectedChargeTargetIds[0],
-      targetUnitIds: selectedChargeTargetIds,
-    });
-    setTargetErrorMsg(null);
-    commitBattleState(next);
-  }
-
-  function completeSelectedPlayChargeMovement() {
-    const selection = primaryPlaySelectionPart(playModelSelection);
-    const prev = battleStateRef.current;
-    if (!prev || prev.phase !== 'charge' || !selection) return;
-    const next = completePlayChargeMovement(prev, selection.unitId, selection.side, activeRulesForBattle);
-    if (next === prev) {
-      setTargetErrorMsg('Move every model into Engagement Range of each declared charge target before completing the charge.');
-      return;
-    }
-    pushPlayUndo(playUndoEntry(prev), next, {
-      type: GAME_ACTION_TYPE.CompleteChargeMovement,
-      unitId: selection.unitId,
-      side: selection.side,
-    });
-    setSelectedChargeTargetIds([]);
-    setPlayModelSelection(null);
-    setInspectedSelection(null);
-    setTargetErrorMsg(null);
     commitBattleState(next);
   }
 
