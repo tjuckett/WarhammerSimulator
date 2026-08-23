@@ -17,7 +17,7 @@ import {
   type PracticeTimeline,
 } from '../src/practice/timeline';
 import { applyGameAction, GAME_ACTION_TYPE, type GameAction } from '../src/practice/actions';
-import { getLegalActions } from '../src/engine/legalActions';
+import { activePhaseLegalActionHandler, getLegalActions, phaseCanAdvance } from '../src/engine/legalActions';
 import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
 import { screenedFromOpponentDeployment } from '../src/engine/deployment';
@@ -12813,11 +12813,15 @@ test('play step phase is blocked until movement coherency is restored', () => {
   };
   battle.units = [unit];
 
+  assert.equal(activePhaseLegalActionHandler(battle)?.phase, 'movement');
+  assert.equal(phaseCanAdvance(battle, 0, rules40K10th), false);
+
   const blocked = applyGameAction(battle, { type: 'play.stepPhase' }, { rules: rules40K10th });
   assert.equal(blocked.phase, 'movement');
 
   const restored = removePlayModels(battle, 'unit-1', 0, [0]);
   assert.deepEqual(playPhaseCoherencyIssues(restored), []);
+  assert.equal(phaseCanAdvance(restored, 0, rules40K10th), true);
   const advanced = applyGameAction(restored, { type: 'play.stepPhase' }, { rules: rules40K10th });
   assert.equal(advanced.phase, 'movement');
   assert.equal(advanced.movementStep, 'reinforcements');

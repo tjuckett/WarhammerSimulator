@@ -74,6 +74,12 @@ export interface LegalActionOptions {
   includeAbilities?: boolean;
 }
 
+/** The legal-action and completion boundary owned by an active battle phase. */
+export interface PhaseLegalActionHandler {
+  phase: BattleState['phase'];
+  appendActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition): void;
+}
+
 function activeUnits(state: BattleState, side: Side): BattleUnit[] {
   return state.units.filter(unit =>
     unit.side === side
@@ -81,6 +87,14 @@ function activeUnits(state: BattleState, side: Side): BattleUnit[] {
     && !unit.embarkedInUnitId
     && !unit.inStrategicReserves,
   );
+}
+
+export function phaseCanAdvance(state: BattleState, side: Side, rules: RulesEdition): boolean {
+  if (state.activeArmy !== side || state.phase === 'deployment' || state.phase === 'end') return false;
+  if (state.phase === 'fight' && rules.metadata.edition === '11e' && state.fightStepStarted === false) return false;
+  if (state.phase === 'fight' && rules.metadata.edition === '11e'
+    && (playFightActivationUnitIds(state, 0, rules).length || playFightActivationUnitIds(state, 1, rules).length)) return false;
+  return playPhaseCoherencyIssues(state).length === 0;
 }
 
 function addPhaseActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition, includePhaseStep: boolean) {
@@ -105,9 +119,7 @@ function addPhaseActions(actions: LegalAction[], state: BattleState, side: Side,
     });
     return;
   }
-  if (state.phase === 'fight' && rules.metadata.edition === '11e'
-    && (playFightActivationUnitIds(state, 0, rules).length || playFightActivationUnitIds(state, 1, rules).length)) return;
-  if (state.phase !== 'end' && playPhaseCoherencyIssues(state).length === 0) {
+  if (phaseCanAdvance(state, side, rules)) {
     actions.push({
       action: { type: 'play.stepPhase' },
       category: 'phase',
@@ -568,6 +580,23 @@ function addConsecrateActions(actions: LegalAction[], state: BattleState, side: 
   }
 }
 
+const PHASE_LEGAL_ACTION_HANDLERS: Partial<Record<BattleState['phase'], PhaseLegalActionHandler>> = {
+  movement: {
+    phase: 'movement',
+    appendActions(actions, state, side, rules) {
+      addMovementActions(actions, state, side, rules);
+      addSnapShootingActions(actions, state, side, rules);
+    },
+  },
+  shooting: { phase: 'shooting', appendActions: addShootingActions },
+  charge: { phase: 'charge', appendActions: addChargeActions },
+  fight: { phase: 'fight', appendActions: addFightActions },
+};
+
+export function activePhaseLegalActionHandler(state: BattleState): PhaseLegalActionHandler | undefined {
+  return PHASE_LEGAL_ACTION_HANDLERS[state.phase];
+}
+
 export function getLegalActions(
   state: BattleState,
   side: Side = state.activeArmy,
@@ -586,11 +615,7 @@ export function getLegalActions(
   if (actions.length) return actions;
 
   addPhaseActions(actions, state, side, rules, includePhaseStep);
-  addMovementActions(actions, state, side, rules);
-  addShootingActions(actions, state, side, rules);
-  addSnapShootingActions(actions, state, side, rules);
-  addChargeActions(actions, state, side, rules);
-  addFightActions(actions, state, side, rules);
+  activePhaseLegalActionHandler(state)?.appendActions(actions, state, side, rules);
   addPunishmentActions(actions, state, side, rules);
   addConsecrateActions(actions, state, side, rules);
   if (includeStratagems) addStratagemActions(actions, state, side, rules);
