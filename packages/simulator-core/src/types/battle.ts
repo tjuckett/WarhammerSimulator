@@ -493,6 +493,8 @@ export interface BattleState {
   };
   winner: null | Side | 'draw';
   log: LogEntry[];
+  /** Typed gameplay events. Log messages are a presentation/audit projection only. */
+  events?: import('../engine/battleEvents').BattleEvent[];
   units: BattleUnit[];
   pendingDeadlyDemises?: PendingDeadlyDemise[];
   pendingFightOnDeath?: PendingFightOnDeath[];

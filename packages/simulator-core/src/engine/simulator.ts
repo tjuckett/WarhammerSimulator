@@ -59,6 +59,8 @@ import {
   modelBaseRadiusInches,
 } from './baseSizes';
 import { attackingModelHasPlungingFire, auraAbilitiesInRange } from './otherRules';
+import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
+import { battlePhaseNode, battleRoundLimit, nextTurnTransition, setBattlePhase } from './battleStateMachine';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -4894,15 +4896,32 @@ function scoreEndOfTurnSecondaryMissionLogs(s: BattleState, side: Side, rules: R
 function checkWinner(state: BattleState): void {
   const a0 = state.units.some(u => u.side === 0 && !u.destroyed);
   const a1 = state.units.some(u => u.side === 1 && !u.destroyed);
-  if (!a0 && !a1) { state.winner = 'draw'; state.phase = 'end'; }
-  else if (!a0)   { state.winner = 1;      state.phase = 'end'; }
-  else if (!a1)   { state.winner = 0;      state.phase = 'end'; }
+  if (!a0 && !a1) { state.winner = 'draw'; enterBattlePhase(state, { phase: 'end' }); }
+  else if (!a0)   { state.winner = 1;      enterBattlePhase(state, { phase: 'end' }); }
+  else if (!a1)   { state.winner = 0;      enterBattlePhase(state, { phase: 'end' }); }
 }
 
 // ─── Deep copy ────────────────────────────────────────────────────────────────
 
 const TURN_PHASES: Phase[] = ['command', 'movement', 'shooting', 'charge', 'fight'];
 const PLAY_MODEL_EDIT_PHASES: Phase[] = ['deployment', 'setup', 'movement'];
+
+function enterBattlePhase(state: BattleState, phase: Parameters<typeof setBattlePhase>[1], side = state.activeArmy): void {
+  const from = battlePhaseNode(state);
+  setBattlePhase(state, phase);
+  recordBattleEvent(state, {
+    type: phase.phase === 'movement' && from.phase === 'movement'
+      ? BATTLE_EVENT_TYPE.StepStarted
+      : BATTLE_EVENT_TYPE.PhaseStarted,
+    side,
+    source: state.armies[side]?.name,
+    data: {
+      from: from.phase,
+      to: phase.phase,
+      ...(phase.phase === 'movement' ? { step: phase.step } : {}),
+    },
+  });
+}
 
 export function movementStep(state: BattleState): MovementStep {
   return state.phase === 'movement' ? state.movementStep ?? 'moveUnits' : 'moveUnits';
@@ -4975,8 +4994,7 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
     u.fellBack = false;
     u.inCombat = false;
   });
-  s.phase = 'command';
-  s.movementStep = undefined;
+  enterBattlePhase(s, { phase: 'command' }, side);
   s.battleshockEligibleUnitIds = s.units
     .filter(unit => unit.side === side
       && !unit.destroyed
@@ -5008,14 +5026,12 @@ function advanceTurnInPlace(s: BattleState): void {
       if (s.scores[0] > s.scores[1]) s.winner = 0;
       else if (s.scores[1] > s.scores[0]) s.winner = 1;
       else s.winner = 'draw';
-      s.phase = 'end';
-      s.movementStep = undefined;
+      enterBattlePhase(s, { phase: 'end' }, s.activeArmy);
       return;
     }
   }
 
-  s.phase = 'setup';
-  s.movementStep = undefined;
+  enterBattlePhase(s, { phase: 'setup' }, s.activeArmy);
 }
 
 function clone<T>(v: T): T { return JSON.parse(JSON.stringify(v)); }
@@ -7829,7 +7845,7 @@ export function beginPlayBattle(state: BattleState): BattleState {
     s.log = [...s.log, log(s, 0, '', `Deployment is not legal: ${issues.join(' ')}`, 'info')];
     return s;
   }
-  s.phase = 'setup';
+  enterBattlePhase(s, { phase: 'setup' }, s.activeArmy);
   s.log = [...s.log, log(s, 0, '', 'DEPLOYMENT COMPLETE - BATTLE BEGINS', 'phase')];
   return s;
 }
@@ -7852,7 +7868,7 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
   }
 
   if (!TURN_PHASES.includes(s.phase)) {
-    s.phase = 'setup';
+    enterBattlePhase(s, { phase: 'setup' }, side);
     s.log = [...s.log, ...newLogs];
     return s;
   }
@@ -7860,8 +7876,7 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
   if (s.phase === 'command') {
     newLogs.push(...scorePrimaryMissionLogs(s, side, rules));
     runAutomaticUnitAbilities(s, side, 'end-of-phase', rules);
-    s.phase = 'movement';
-    s.movementStep = 'moveUnits';
+    enterBattlePhase(s, { phase: 'movement', step: 'moveUnits' }, side);
     newLogs.push(phaseLog(s, side, armyName, `\n--- Movement Phase ---`));
     activeUnits(s, side).forEach(u => newLogs.push(...runMovement(u, s, rules)));
   } else if (s.phase === 'movement') {
@@ -7872,21 +7887,19 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
         return s;
       }
       markRemainingStationaryUnits(s, side);
-      s.movementStep = 'reinforcements';
+      enterBattlePhase(s, { phase: 'movement', step: 'reinforcements' }, side);
       newLogs.push(phaseLog(s, side, armyName, `\n--- Reinforcements Step ---`));
     } else {
-      s.movementStep = undefined;
-      s.phase = 'shooting';
+      enterBattlePhase(s, { phase: 'shooting' }, side);
       newLogs.push(phaseLog(s, side, armyName, `\n--- Shooting Phase ---`));
       newLogs.push(...runShootingPhaseUnits(s, side, rules));
     }
   } else if (s.phase === 'shooting') {
-    s.movementStep = undefined;
-    s.phase = 'charge';
+    enterBattlePhase(s, { phase: 'charge' }, side);
     newLogs.push(phaseLog(s, side, armyName, `\n--- Charge Phase ---`));
     activeUnits(s, side).filter(u => !u.inCombat).forEach(u => newLogs.push(...runCharge(u, s, rules)));
   } else if (s.phase === 'charge') {
-    s.phase = 'fight';
+    enterBattlePhase(s, { phase: 'fight' }, side);
     s.fightStepStarted = false;
     s.engagedUnitIdsAtFightStepStart = undefined;
     s.lastFightSelectionSide = undefined;
@@ -7954,25 +7967,23 @@ function advanceSimulationUnitPhase(state: BattleState, rules: RulesEdition): vo
     logs.push(...startCommandPhase(state, rules));
   } else if (state.phase === 'command') {
     runAutomaticUnitAbilities(state, side, 'end-of-phase', rules);
-    state.phase = 'movement';
-    state.movementStep = MOVEMENT_STEP.MoveUnits;
+    enterBattlePhase(state, { phase: 'movement', step: MOVEMENT_STEP.MoveUnits }, side);
     resetSimulationUnitActivations(state, side);
     logs.push(phaseLog(state, side, armyName, '\n--- Movement Phase ---'));
   } else if (state.phase === 'movement' && movementStep(state) === MOVEMENT_STEP.MoveUnits) {
     markRemainingStationaryUnits(state, side);
-    state.movementStep = MOVEMENT_STEP.Reinforcements;
+    enterBattlePhase(state, { phase: 'movement', step: MOVEMENT_STEP.Reinforcements }, side);
     logs.push(phaseLog(state, side, armyName, '\n--- Reinforcements Step ---'));
   } else if (state.phase === 'movement') {
-    state.phase = 'shooting';
-    state.movementStep = undefined;
+    enterBattlePhase(state, { phase: 'shooting' }, side);
     resetSimulationUnitActivations(state, side);
     logs.push(phaseLog(state, side, armyName, '\n--- Shooting Phase ---'));
   } else if (state.phase === 'shooting') {
-    state.phase = 'charge';
+    enterBattlePhase(state, { phase: 'charge' }, side);
     resetSimulationUnitActivations(state, side);
     logs.push(phaseLog(state, side, armyName, '\n--- Charge Phase ---'));
   } else if (state.phase === 'charge') {
-    state.phase = 'fight';
+    enterBattlePhase(state, { phase: 'fight' }, side);
     resetSimulationUnitActivations(state, side);
     state.fightStepStarted = false;
     state.engagedUnitIdsAtFightStepStart = undefined;
