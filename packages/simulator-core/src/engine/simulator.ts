@@ -86,6 +86,7 @@ import {
   unitHasDatasheetRule,
   unitHasKeyword,
 } from './unitCombatModifiers';
+import { runBattleshockPhase } from './battleshockPhase';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -4604,48 +4605,6 @@ function isBelowHalfStrength(state: BattleState, unit: BattleUnit): boolean {
   return attachedUnitRemainingModels(state, unit) <= startingStrength / 2;
 }
 
-function unitHasInsaneBraveryForCurrentBattleshock(state: BattleState, unit: BattleUnit): boolean {
-  const currentRound = battleRound(state);
-  return (state.stratagemUses ?? []).some(use =>
-    use.stratagemId === 'insane-bravery'
-    && use.targetUnitId === unit.id
-    && use.phase === 'command'
-    && use.battleRound === currentRound
-  );
-}
-
-function runBattleshock(state: BattleState, side: Side): LogEntry[] {
-  const logs: LogEntry[] = [];
-  for (const unit of state.units) {
-    if (unit.destroyed || unit.side !== side) continue;
-    if (attachedUnitTargetRepresentative(state, unit)?.id !== unit.id) continue;
-    const components = attachedUnitComponents(state, unit);
-    const belowHalfStrength = isBelowHalfStrength(state, unit);
-    if (unit.battleshocked || belowHalfStrength) {
-      if (unitHasInsaneBraveryForCurrentBattleshock(state, unit)) {
-        for (const component of components) component.battleshocked = false;
-        logs.push(log(state, unit.side, unit.profile.name,
-          `${unit.profile.name} automatically passes its Battle-shock test with Insane Bravery.`,
-          'info',
-        ));
-        continue;
-      }
-      const rolls = [d6(), d6()];
-      const roll = rolls[0] + rolls[1];
-      const needed = bestLeadership(state, unit);
-      const passed = roll >= needed;
-      for (const component of components) component.battleshocked = !passed;
-      logs.push(log(state, unit.side, unit.profile.name,
-        `😰 ${unit.profile.name} below half strength — Battle-shock (${needed}+): rolled ${rolls[0]}+${rolls[1]}=${roll} → ${passed ? 'PASSED' : 'FAILED (Battleshocked!)'}`,
-        'info',
-      ));
-    } else {
-      for (const component of components) component.battleshocked = false;
-    }
-  }
-  return logs;
-}
-
 // ─── Objective scoring ────────────────────────────────────────────────────────
 
 function scoreObjectives(s: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
@@ -4824,7 +4783,7 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
     phaseLog(s, side, armyName, `\n--- Command Phase ---`),
     log(s, side, armyName, `Both players gain 1CP (${nextCommandPoints[0]}CP / ${nextCommandPoints[1]}CP).`, 'info'),
   ];
-  logs.push(...runBattleshock(s, side));
+  logs.push(...runBattleshockPhase(s, side));
   return logs;
 }
 
@@ -7866,7 +7825,7 @@ function runSimulatedCommandPhase(state: BattleState, side: Side, rules: RulesEd
   logs.push(phaseLog(state, side, armyName,
     `\n═══ BATTLE ROUND ${battleRound(state)} — ${armyName.toUpperCase()} — ${rules.name.toUpperCase()} ═══`));
   logs.push(log(state, side, armyName, `Both players gain 1CP (${nextCommandPoints[0]}CP / ${nextCommandPoints[1]}CP).`, 'info'));
-  logs.push(...runBattleshock(state, side));
+  logs.push(...runBattleshockPhase(state, side));
   logs.push(...scorePrimaryMissionLogs(state, side, rules));
   runAutomaticUnitAbilities(state, side, 'end-of-phase', rules);
   return logs;
