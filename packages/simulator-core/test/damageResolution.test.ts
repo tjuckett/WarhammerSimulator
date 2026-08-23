@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { resolveDamageOutcome, resolveFeelNoPainOutcome, resolveSaveOutcome } from '../src/engine/damageResolution';
+import { resolveDamageOutcome, resolveFeelNoPainOutcome, resolveSaveOutcome } from '../src/engine/combatResolution';
 
 test('damage resolution discards excess normal weapon damage but carries mortal damage', () => {
   assert.deepEqual(resolveDamageOutcome({

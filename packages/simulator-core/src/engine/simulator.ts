@@ -63,7 +63,7 @@ import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
 import { advanceBattlePhase, battlePhaseNode, battleRoundLimit, initializeBattlePhase, nextBattlePhase, nextTurnTransition } from './battleStateMachine';
 import { battleLog as log, phaseLog, resetBattleLogSequence } from './battleLog';
 import { resetUnitForActiveTurn } from './turnState';
-import { resolveDamageOutcome, resolveFeelNoPainOutcome, resolveSaveOutcome } from './damageResolution';
+import { resolveDamageOutcome, resolveFeelNoPainOutcome, resolveSaveOutcome } from './combatResolution';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
