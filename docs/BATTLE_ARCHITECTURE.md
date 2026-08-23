@@ -207,6 +207,142 @@ flowchart LR
 
 `LogEntry.message` may be formatted for humans, but it is never an input to rules logic. New UI features should consume typed results or events directly.
 
+## Mission scoring and VP state
+
+Scoring is separated from combat and should be treated as its own rules subsystem. The current implementation already tracks primary records, secondary cards and records, objective ownership, secured objectives, mission events, and VP caps. The next architectural improvement is to make the scoring ledger the single mutation boundary.
+
+```mermaid
+flowchart TD
+  Phase[Phase Handler] --> Window[Scoring Window]
+  Window --> MissionEngine[Mission Scoring Engine]
+
+  MissionEngine --> Primary[Primary Mission Rules]
+  MissionEngine --> Secondary[Secondary Mission Rules]
+  MissionEngine --> Objective[Objective Control Snapshot]
+  MissionEngine --> Ledger[Scoring Ledger]
+
+  Ledger *-- Record[Scoring Record]
+  Ledger --> Delta[Score Delta]
+  Ledger --> ScoreProjection[BattleState score projection]
+  Ledger --> ScoringEvents[Typed Scoring Events]
+  ScoringEvents --> LogProjection[Scoring log projection]
+  ScoringEvents --> ScoreUI[Score timeline / UI]
+```
+
+The intended flow is:
+
+```ts
+const result = evaluatePrimaryScoring(state, side, rules);
+// Pure evaluation; no state mutation.
+
+const applied = applyScoringResult(state, result);
+// One mutation boundary for score, caps, records, and events.
+```
+
+Recommended scoring boundaries:
+
+| Component | Responsibility |
+| --- | --- |
+| `ObjectiveControlService` | Calculate current and secured objective ownership |
+| `MissionSnapshotService` | Capture start-of-turn and end-of-phase facts |
+| `PrimaryMissionRules` | Evaluate primary scoring clauses |
+| `SecondaryMissionRules` | Evaluate secondary card clauses |
+| `ScoringLedger` | Enforce caps, idempotency, score deltas, and records |
+| `MissionEventService` | Record destruction, actions, positions, and other scoring facts |
+| `ScoringEventProjection` | Turn typed scoring events into readable logs and UI data |
+
+Primary and secondary rule evaluation should remain separate because their cards, timing, and selection rules differ. They should share the ledger, record shape conventions, VP-cap enforcement, event collection, and score projection.
+
+## Full game flow
+
+This is the target end-to-end flow. It shows the relationship between setup, the round/phase state machine, timing windows, shared combat, scoring, events, persistence, replay, and controllers.
+
+```mermaid
+flowchart TD
+  Start[Create or load BattleState] --> Setup[Battle Setup]
+  Setup --> ValidateRoster[Validate armies and deployment]
+  ValidateRoster --> Deploy[Deployment Phase]
+  Deploy --> DeployComplete{Deployment legal and complete?}
+  DeployComplete -- No --> Deploy
+  DeployComplete -- Yes --> RoundStart[Start Battle Round]
+
+  RoundStart --> PlayerTurn[Active Player Turn]
+  PlayerTurn --> Command[Command Phase]
+  Command --> CommandWindow[Command abilities and stratagem window]
+  CommandWindow --> BattleShock[Battle-shock and Command effects]
+  BattleShock --> PrimaryCommand[Primary scoring window]
+
+  PrimaryCommand --> Movement[Movement Phase]
+  Movement --> MoveUnits[Move Units Step]
+  MoveUnits --> MovementActions[Movement actions, transports, reserves, abilities]
+  MovementActions --> MoveComplete{Move Units complete and legal?}
+  MoveComplete -- No --> MoveUnits
+  MoveComplete -- Yes --> Reinforcements[Reinforcements Step]
+  Reinforcements --> ReinforcementActions[Ingress, reserves, transport arrivals, stratagems]
+  ReinforcementActions --> Shooting[Shooting Phase]
+
+  Shooting --> ShootingWindow[Shooting declarations and weapon target locking]
+  ShootingWindow --> ShootingInterrupts[Overwatch and other interrupts]
+  ShootingInterrupts --> Combat[Shared Combat Resolver]
+  Combat --> ShootingResults[Typed attack results and pending damage]
+  ShootingResults --> DamageAllocation[Save, Feel No Pain, damage allocation]
+  DamageAllocation --> ShootingComplete{All shooting activations complete?}
+  ShootingComplete -- No --> ShootingWindow
+  ShootingComplete -- Yes --> Charge[Charge Phase]
+
+  Charge --> ChargeWindow[Charge declarations and charge rolls]
+  ChargeWindow --> ChargeInterrupts[Heroic Intervention and charge effects]
+  ChargeInterrupts --> ChargeMovement[Charge movement]
+  ChargeMovement --> ChargeComplete{All charges resolved?}
+  ChargeComplete -- No --> ChargeWindow
+  ChargeComplete -- Yes --> Fight[Fight Phase]
+
+  Fight --> FightPriority[Fight priority and activation selection]
+  FightPriority --> PileIn[Pile-in and melee declaration]
+  PileIn --> FightInterrupts[Fight on Death, Counter-offensive, abilities]
+  FightInterrupts --> Combat
+  DamageAllocation --> FightComplete{All fight activations complete?}
+  FightComplete -- No --> FightPriority
+  FightComplete -- Yes --> EndTurn[End-of-turn effects]
+
+  EndTurn --> Secondary[Secondary mission scoring]
+  Secondary --> PrimaryTurn[Primary mission scoring]
+  PrimaryTurn --> ScoreLedger[Apply Scoring Ledger]
+  ScoreLedger --> MissionEvents[Record mission events and typed scoring events]
+  MissionEvents --> WinnerCheck{Battle ended?}
+
+  WinnerCheck -- No --> NextPlayer{Both players completed the round?}
+  NextPlayer -- No --> PlayerTurn
+  NextPlayer -- Yes --> RoundLimit{Five-round limit reached?}
+  RoundLimit -- No --> RoundStart
+  RoundLimit -- Yes --> EndBattle[End Battle scoring and winner]
+  WinnerCheck -- Yes --> EndBattle
+
+  Combat --> Events[BattleEvent Collector]
+  MovementActions --> Events
+  ChargeMovement --> Events
+  FightInterrupts --> Events
+  CommandWindow --> Events
+  ScoreLedger --> Events
+
+  Events --> StateProjection[Persist typed state/results]
+  StateProjection --> Save[Save / checkpoint / replay]
+  StateProjection --> UI[Update UI and battlefield]
+  StateProjection --> AI[AI observation and legal actions]
+  Events --> LogProjection[Human-readable log projection]
+```
+
+The same state transitions and typed actions should drive:
+
+- Local human play
+- Human versus AI
+- AI versus AI simulation
+- Replay and undo
+- Checkpoints and database persistence
+- Score history and UI explanations
+
+No branch should use formatted log text as a substitute for state, action results, or scoring records.
+
 ## Inheritance and dependency conventions
 
 Legend:
