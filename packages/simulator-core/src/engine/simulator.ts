@@ -9,7 +9,7 @@ import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
 import { advanceAllowance, normalMoveAllowance } from './movement';
 import { objectiveControlRadius } from './objectiveGeometry';
 import { objectiveIndexesWithinRange, primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, terrainAreaIdsContainingUnit, unsupportedPrimaryMissionScoringLogs, updateObjectiveControl } from './missionScoring';
-import { battleRound, logWithBattleRound, setBattleRound } from './battleRound';
+import { battleRound, setBattleRound } from './battleRound';
 import {
   completeMissionEventsForCurrentTurn,
   recordCompletedMissionAction,
@@ -61,35 +61,14 @@ import {
 import { attackingModelHasPlungingFire, auraAbilitiesInRange } from './otherRules';
 import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
 import { advanceBattlePhase, battlePhaseNode, battleRoundLimit, initializeBattlePhase, nextBattlePhase, nextTurnTransition } from './battleStateMachine';
+import { battleLog as log, phaseLog, resetBattleLogSequence } from './battleLog';
 import { resetUnitForActiveTurn } from './turnState';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
-let _logId = 0;
 let _unitId = 0;
 
-function nextLog(state?: BattleState): string {
-  const usedIds = new Set(state?.log.map(entry => entry.id) ?? []);
-  let id = String(++_logId);
-  while (usedIds.has(id)) id = String(++_logId);
-  return id;
-}
-
 // ─── Log factory ─────────────────────────────────────────────────────────────
-
-function log(
-  state: BattleState,
-  side: Side,
-  unitName: string,
-  message: string,
-  type: LogEntry['type'],
-): LogEntry {
-  return logWithBattleRound({ id: nextLog(state), turn: battleRound(state), phase: state.phase, side, unitName, message, type });
-}
-
-function phaseLog(state: BattleState, side: Side, armyName: string, label: string): LogEntry {
-  return log(state, side, armyName, label, 'phase');
-}
 
 // ─── Geometry helpers ────────────────────────────────────────────────────────
 
@@ -5302,7 +5281,7 @@ export function createBattleState(
   objectivesOverride?: Position[],
   rules: RulesEdition = rules40K10th,
 ): BattleState {
-  _logId = 0;
+  resetBattleLogSequence();
   _unitId = 0;
 
   const board = boardFormatForId(setup?.boardFormat);
@@ -5407,7 +5386,7 @@ export function createDeploymentState(
   objectivesOverride?: Position[],
   rules: RulesEdition = rules40K10th,
 ): BattleState {
-  _logId = 0;
+  resetBattleLogSequence();
   _unitId = 0;
 
   const board = boardFormatForId(setup?.boardFormat);
