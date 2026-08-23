@@ -1883,6 +1883,16 @@ export default function App() {
     setTargetErrorMsg,
   });
 
+  const { selectPendingDamageUnit } = createPendingDamageSelectionAction({
+    battleStateRef,
+    pendingDamageAllocationUnitIds,
+    casualtyRemovalShooterId,
+    setCasualtyRemovalShooterId,
+    setPlayModelSelection,
+    setInspectedSelection,
+    setTargetErrorMsg,
+  });
+
   const { resolveSelectedPlayShooting } = createPlayShootingResolution({
     battleStateRef,
     playModelSelection,
@@ -1901,16 +1911,6 @@ export default function App() {
     setPlayModelSelection,
     setInspectedSelection,
     setShootingAttackAllocations,
-  });
-
-  const { selectPendingDamageUnit } = createPendingDamageSelectionAction({
-    battleStateRef,
-    pendingDamageAllocationUnitIds,
-    casualtyRemovalShooterId,
-    setCasualtyRemovalShooterId,
-    setPlayModelSelection,
-    setInspectedSelection,
-    setTargetErrorMsg,
   });
 
   const { resolveSelectedPlayFight } = createPlayFightResolution({
