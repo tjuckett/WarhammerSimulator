@@ -115,6 +115,8 @@ interface PhaseHandler {
 
 The handlers are composed by the state machine; they should not inherit from one another.
 
+`BATTLE_PHASE_STATE_HANDLERS` owns phase-entry cursor invariants, while `PHASE_LEGAL_ACTION_HANDLERS` owns the legal actions and interrupts exposed during each active phase. Full-phase simulation and unit-step simulation share one orchestrator, so they enter the same phase state and execute the same end-of-phase/turn boundary work; they differ only in whether that orchestrator automatically resolves the eligible units.
+
 | Handler | Owns |
 | --- | --- |
 | `CommandPhaseHandler` | Command points, Battle-shock timing, command abilities, command-end scoring, and Command completion |
