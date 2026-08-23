@@ -85,6 +85,7 @@ import { createPlayFightActions } from './play/playFightActions';
 import { createPlayShootingResolution } from './play/playShootingResolution';
 import { createPendingDamageSelectionAction } from './play/playDamageAllocationActions';
 import { createPlayFightResolution } from './play/playFightResolution';
+import { createPlayDeploymentSelection } from './play/playDeploymentSelection';
 import {
   attachedBattleUnitIdsForSelection,
   attachedProfilesForInspection,
@@ -114,11 +115,7 @@ import {
   resolveTakeToSkiesPlayUnitAction,
   type PlayDisembarkOption,
 } from './play/playMovementActions';
-import {
-  canSelectPlayReinforcementUnit,
-  canSelectPlayStrategicReserveUnit,
-  resolvePlayPlacement,
-} from './play/playDeploymentHelpers';
+import { resolvePlayPlacement } from './play/playDeploymentHelpers';
 import {
   PendingDamageAllocationHud,
   PlayFightPanel,
@@ -1452,46 +1449,22 @@ export default function App() {
     resetConfiguredBattle();
   }
 
-  function selectPlayDeployUnit(side: 0 | 1, unitIndex: number) {
-    setPlayDeploySelection({ kind: PLAY_DEPLOY_SELECTION_KIND.Deployment, side, unitIndex });
-    setPlayModelSelection(null);
-    setInspectedSelection({ kind: 'profile', side, unitIndex });
-    const current = battleStateRef.current;
-    if (current?.phase === BATTLE_PHASE.Deployment) commitBattleState({ ...current, activeArmy: side });
-  }
-
-  function selectPlayReinforcementUnit(side: 0 | 1, armyUnitIndex: number) {
-    const current = battleStateRef.current;
-    if (!canSelectPlayReinforcementUnit(current, side, armyUnitIndex)) {
-      inspectProfileUnit(side, armyUnitIndex);
-      return;
-    }
-    setPlayDeploySelection({ kind: PLAY_DEPLOY_SELECTION_KIND.Reinforcement, side, armyUnitIndex });
-    setPlayModelSelection(null);
-    setInspectedSelection({ kind: 'profile', side, unitIndex: armyUnitIndex });
-  }
-
-  function selectPlayStrategicReserveUnit(side: 0 | 1, unitId: string) {
-    const current = battleStateRef.current;
-    const unit = current?.units.find(candidate =>
-      candidate.id === unitId
-      && candidate.side === side
-      && !candidate.destroyed
-      && candidate.inStrategicReserves,
-    );
-    if (!current || !unit) return;
-    if (!canSelectPlayStrategicReserveUnit(current, side, unitId)) {
-      setInspectedSelection({ kind: 'battle', side, unitId });
-      return;
-    }
-    setPlayDeploySelection({ kind: PLAY_DEPLOY_SELECTION_KIND.StrategicReserve, side, unitId });
-    setPlayModelSelection(null);
-    setInspectedSelection({ kind: 'battle', side, unitId });
-  }
-
   function inspectProfileUnit(side: 0 | 1, unitIndex: number) {
     setInspectedSelection({ kind: 'profile', side, unitIndex });
   }
+
+  const {
+    selectPlayDeployUnit,
+    selectPlayReinforcementUnit,
+    selectPlayStrategicReserveUnit,
+  } = createPlayDeploymentSelection({
+    battleStateRef,
+    setPlayDeploySelection,
+    setPlayModelSelection,
+    setInspectedSelection,
+    inspectProfileUnit,
+    commitBattleState,
+  });
 
   function selectPlayModels(selection: PlayModelSelection | null) {
     if (damageAllocationLocked) {
