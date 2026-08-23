@@ -472,6 +472,19 @@ export interface BattleState {
     side: Side;
     maximumDistance: number;
   };
+  /** Structured charge result for play UI; never reconstruct this from log text. */
+  lastChargeRoll?: {
+    unitId: string;
+    side: Side;
+    dice: [number, number];
+    rawTotal: number;
+    total: number;
+    maximumDistance: number;
+    status: 'pending-target' | 'failed' | 'resolved';
+    failureReason?: 'no-reachable-targets' | 'cannot-reach-engagement' | 'undeclared-enemy';
+  };
+  /** Structured play shooting results. Log messages are never a data source for these values. */
+  lastShootingResolution?: ShootingResolution;
   pendingChargeMovement?: {
     unitId: string;
     side: Side;
@@ -518,4 +531,30 @@ export interface BattleState {
   unplacedUnits: [UnitProfile[], UnitProfile[]];
   deployStrategies: [string, string]; // DeploymentStrategy labels for record-keeping
   setup?: BattleSetup;
+}
+
+export interface ShootingRollGroup {
+  kind: 'hit' | 'wound' | 'save' | 'feel-no-pain' | 'damage';
+  rolls: number[];
+  target?: number;
+  successes?: number;
+  noSave?: boolean;
+}
+
+export interface ShootingWeaponResult {
+  weaponIndex: number;
+  weaponName: string;
+  targetUnitId: string;
+  targetUnitName: string;
+  attackCount: number;
+  hits: number;
+  wounds: number;
+  unsavedWounds: number;
+  groups: ShootingRollGroup[];
+}
+
+export interface ShootingResolution {
+  shooterUnitId: string;
+  shooterSide: Side;
+  weapons: ShootingWeaponResult[];
 }

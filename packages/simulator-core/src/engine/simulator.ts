@@ -1,4 +1,4 @@
-import { MOVEMENT_STEP, type BattleSetup, type BattleState, type BattleUnit, type LogEntry, type MovementStep, type PendingFightOnDeath, type Phase, type Position, type Side, type Terrain, type TerrainFeature } from '../types/battle';
+import { MOVEMENT_STEP, type BattleSetup, type BattleState, type BattleUnit, type LogEntry, type MovementStep, type PendingFightOnDeath, type Phase, type Position, type Side, type Terrain, type TerrainFeature, type ShootingWeaponResult } from '../types/battle';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile, type WeaponProfile } from '../types/army';
 import { rules40K10th, rulesEditionForRuleset, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
@@ -1068,7 +1068,7 @@ function resolveAttacks(
   hasCover: boolean,
   hitModifier = 0,
   hitModifierNote = '',
-  options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number; selectedTargetCount?: number; modelIndexes?: number[] } = {},
+  options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number; selectedTargetCount?: number; modelIndexes?: number[]; result?: ShootingWeaponResult } = {},
 ): LogEntry[] {
   const logs: LogEntry[] = [];
   const damagedProfile = attacker.profile.damagedProfile;
@@ -1174,6 +1174,7 @@ function resolveAttacks(
     `  ${weapon.isMelee ? '⚔️' : '🔫'} ${weapon.name} — ${weaponModelCount} model(s) × ${weapon.attacks} = ${numAttacks} attacks vs ${defender.profile.name}`,
     weapon.isMelee ? 'fight' : 'shoot',
   ));
+  if (options.result) options.result.attackCount = numAttacks;
   const effectiveStrength = weapon.strength + waaaghMeleeBonus + (weapon.isMelee ? leadingModifiers.strength : 0);
   logs.push(log(state, attacker.side, attacker.profile.name,
     `[combat-stats] skill=${weapon.skill} s=${effectiveStrength} ap=${weapon.ap} d=${weapon.damage} t=${attachedUnitToughness(state, defender)}${hasCover ? ' cover=1' : ''}`,
@@ -1254,6 +1255,7 @@ function resolveAttacks(
       ? hitRolls.filter(roll => roll === 6).length
       : 0;
     for (const pool of results) {
+      options.result?.groups.push({ kind: 'hit', rolls: [...pool.rolls], target: pool.target, successes: pool.result.hits });
       const noteHit = pool.result.logNote ? ` [${pool.result.logNote}]` : '';
       const plungingNote = pool.plunging ? '; Plunging Fire improves BS by 1' : '';
       logs.push(log(state, attacker.side, attacker.profile.name,
@@ -1302,6 +1304,7 @@ function resolveAttacks(
       `     Wound rolls (S${effectiveStrength} vs T${targetToughness}, ${wt}+): [${woundRolls.join(', ')}] → ${woundResult.wounds} wounds${noteWound}`,
       'roll',
     ));
+    options.result?.groups.push({ kind: 'wound', rolls: [...woundRolls], target: wt, successes: woundResult.wounds });
     woundCount += woundResult.wounds;
     totalMortals += woundResult.mortalsFromCrits;
     devastatingWounds += woundResult.devastatingWounds;
@@ -1314,6 +1317,7 @@ function resolveAttacks(
         `     Twin-linked wound rerolls (${wt}+): [${rerollWounds.join(', ')}] -> ${rerollResult.wounds} wounds${noteReroll}`,
         'roll',
       ));
+      options.result?.groups.push({ kind: 'wound', rolls: [...rerollWounds], target: wt, successes: rerollResult.wounds });
       woundCount += rerollResult.wounds;
       totalMortals += rerollResult.mortalsFromCrits;
       devastatingWounds += rerollResult.devastatingWounds;
@@ -1348,10 +1352,12 @@ function resolveAttacks(
         'roll',
       ));
       unsaved = woundCount;
+      options.result?.groups.push({ kind: 'save', rolls: [], target: effectiveSave, successes: woundCount, noSave: true });
     } else {
       const saveRolls = rollMultiple(woundCount);
       const saved = countSuccesses(saveRolls, effectiveSave);
       unsaved = woundCount - saved;
+      options.result?.groups.push({ kind: 'save', rolls: [...saveRolls], target: effectiveSave, successes: saved });
       logs.push(log(state, defender.side, defender.profile.name,
         `     Save rolls (${effectiveSave}+${coverNote}): [${saveRolls.join(', ')}] → ${saved} saved, ${unsaved} failed`,
         'roll',
@@ -1378,6 +1384,7 @@ function resolveAttacks(
       if (effectiveRemaining <= 0 || defender.destroyed) break;
       const dmgResult = rollExpression(weapon.damage);
       const damage = Math.max(1, dmgResult.total + meltaBonus);
+      options.result?.groups.push({ kind: 'damage', rolls: [...dmgResult.rolls], successes: damage });
       if (isVariableDamage) {
         logs.push(log(state, attacker.side, attacker.profile.name,
           `     Damage roll (${weapon.damage}): [${dmgResult.rolls.join(', ')}] = ${dmgResult.total}`,
@@ -1405,6 +1412,7 @@ function resolveAttacks(
       if (effectiveRemaining <= 0 || defender.destroyed) break;
       const dmgResult = rollExpression(weapon.damage);
       const damage = Math.max(1, dmgResult.total + meltaBonus);
+      options.result?.groups.push({ kind: 'damage', rolls: [...dmgResult.rolls], successes: damage });
       if (isVariableDamage) {
         logs.push(log(state, attacker.side, attacker.profile.name,
           `     Damage roll (${weapon.damage}): [${dmgResult.rolls.join(', ')}] = ${dmgResult.total}`,
@@ -3103,6 +3111,17 @@ function resolveShootingWeaponIntoTarget(
 ): LogEntry[] {
   const modifiers = shootingWeaponModifiers(state, unit, target, weapon, rules);
   const snapShooting = options.snapShooting ?? false;
+  const result: ShootingWeaponResult = {
+    weaponIndex,
+    weaponName: weapon.name,
+    targetUnitId: target.id,
+    targetUnitName: target.profile.name,
+    attackCount: 0,
+    hits: 0,
+    wounds: 0,
+    unsavedWounds: 0,
+    groups: [],
+  };
   const logs = resolveAttacks(
     unit,
     target,
@@ -3113,8 +3132,16 @@ function resolveShootingWeaponIntoTarget(
     modifiers.cover,
     snapShooting ? 0 : modifiers.hitModifier,
     snapShooting ? '' : modifiers.hitModifierNotes,
-    options,
+    { ...options, result },
   );
+  result.hits = result.groups.filter(group => group.kind === 'hit').reduce((total, group) => total + (group.successes ?? 0), 0);
+  result.wounds = result.groups.filter(group => group.kind === 'wound').reduce((total, group) => total + (group.successes ?? 0), 0);
+  result.unsavedWounds = result.groups.filter(group => group.kind === 'save').reduce((total, group) => total + (group.noSave ? (group.successes ?? 0) : (group.rolls.length - (group.successes ?? 0))), 0);
+  state.lastShootingResolution = {
+    shooterUnitId: unit.id,
+    shooterSide: unit.side,
+    weapons: [...(state.lastShootingResolution?.shooterUnitId === unit.id ? state.lastShootingResolution.weapons : []), result],
+  };
   if (logs.length > 0) {
     markRangedAttackMade(unit);
     markOneShotWeaponSpent(unit, weapon, weaponIndex);
@@ -3677,7 +3704,9 @@ export function playChargeRoll(
   const s = clone(state);
   const rolledUnit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
   if (rules.metadata.edition === '11e' && hasKeyword(rolledUnit, 'fly')) rolledUnit.takingToSkies = true;
-  s.pendingChargeRoll = { unitId, side, maximumDistance: Math.max(0, roll - takeToSkiesDistanceCost(rolledUnit)) };
+  const maximumDistance = Math.max(0, roll - takeToSkiesDistanceCost(rolledUnit));
+  s.lastChargeRoll = { unitId, side, dice: [r1, r2], rawTotal: rawRoll, total: roll, maximumDistance, status: 'pending-target' };
+  s.pendingChargeRoll = { unitId, side, maximumDistance };
   s.log = [...s.log, log(s, side, unit.profile.name,
     `${unit.profile.name} rolls a charge: ${r1}+${r2}=${roll}${roll !== rawRoll ? ` (capped from ${rawRoll})` : ''}.`,
     'charge',
@@ -3688,6 +3717,7 @@ export function playChargeRoll(
       component.takingToSkies = undefined;
     }
     s.pendingChargeRoll = undefined;
+    s.lastChargeRoll = { ...s.lastChargeRoll!, status: 'failed', failureReason: 'no-reachable-targets' };
     s.log = [...s.log, log(s, side, unit.profile.name, `${unit.profile.name} has no reachable charge targets and cannot charge.`, 'charge')];
   }
   return s;
@@ -3854,6 +3884,9 @@ export function chargePlayUnitTargets(
     }
     s.pendingChargeMovement = { unitId, side, targetUnitIds: uniqueTargetIds, maximumDistance };
     s.pendingChargeRoll = undefined;
+    if (s.lastChargeRoll?.unitId === unitId && s.lastChargeRoll.side === side) {
+      s.lastChargeRoll = { ...s.lastChargeRoll, status: 'resolved' };
+    }
     s.log = [...s.log, ...logs, log(s, side, chargingUnit.profile.name,
       `${chargingUnit.profile.name} must now make its charge move (${maximumDistance.toFixed(1)}" maximum).`,
       'charge')];
@@ -3870,6 +3903,9 @@ export function chargePlayUnitTargets(
     logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} fails the charge.`, 'charge'));
     s.log = [...s.log, ...logs];
     s.pendingChargeRoll = undefined;
+    if (s.lastChargeRoll?.unitId === unitId && s.lastChargeRoll.side === side) {
+      s.lastChargeRoll = { ...s.lastChargeRoll, status: 'failed', failureReason: 'cannot-reach-engagement' };
+    }
     return s;
   }
 
@@ -3904,6 +3940,9 @@ export function chargePlayUnitTargets(
     logs.push(log(failed, side, failedUnit.profile.name, `${failedUnit.profile.name} cannot reach engagement range.`, 'charge'));
     failed.log = [...failed.log, ...logs];
     failed.pendingChargeRoll = undefined;
+    if (failed.lastChargeRoll?.unitId === unitId && failed.lastChargeRoll.side === side) {
+      failed.lastChargeRoll = { ...failed.lastChargeRoll, status: 'failed', failureReason: 'undeclared-enemy' };
+    }
     return failed;
   }
 
@@ -3946,6 +3985,9 @@ export function chargePlayUnitTargets(
   logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} makes a successful${state.activeArmy !== side ? ' Heroic Intervention' : ''} charge.`, 'charge'));
   s.log = [...s.log, ...logs];
   s.pendingChargeRoll = undefined;
+  if (s.lastChargeRoll?.unitId === unitId && s.lastChargeRoll.side === side) {
+    s.lastChargeRoll = { ...s.lastChargeRoll, status: 'resolved' };
+  }
   return s;
 }
 

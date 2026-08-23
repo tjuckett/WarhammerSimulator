@@ -3,7 +3,6 @@ import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Tool
 import type { SelectChangeEvent } from '@mui/material/Select';
 import CasinoOutlinedIcon from '@mui/icons-material/CasinoOutlined';
 import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
-import type { LogEntry } from '@warhammer-simulator/core/types/battle';
 import type { CommandRerollRollType, HeroicInterventionMode, StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import { battleUnitsBaseEdgeDistance, playShootingWeaponModelCount, type FiringDeckSelection, type PlayChargeTargetOption, type PlayFightWeaponOption, type PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
@@ -22,69 +21,24 @@ import {
   type AbilityOption,
 } from './playUiHelpers';
 import { uiTokens } from '../theme/uiTokens';
+import { ShootingResultSummary as StructuredShootingResultSummary } from './ShootingResultSummary';
+import {
+  PLAY_PANEL_LABELS,
+  PLAY_PANEL_MESSAGES,
+  averageCharacteristic,
+  bestFeelNoPain,
+  disabledTextSx,
+  mutedTextSx,
+  panelTitleSx,
+  playPanelSx,
+  popupPanelSx,
+  warningTextSx,
+} from './playPanelShared';
+export { PlayTacticsPanel } from './PlayTacticsPanel';
+export { PlayChargePanel } from './PlayChargePanel';
+export { PlayFightPanel } from './PlayFightPanel';
 
-const PLAY_PANEL_LABELS = {
-  resolve: 'Resolve',
-  roll: 'Roll',
-  weapon: 'Weapon',
-  target: 'Target',
-  shooting: 'Shooting',
-  charge: 'Charge',
-  fight: 'Fight',
-  tactics: 'Tactics',
-  pendingDamage: 'Pending Damage',
-  stratagems: 'Stratagems',
-  ability: 'Ability',
-  useAbility: 'Use Ability',
-  startAction: 'Start Action',
-} as const;
-
-const PLAY_PANEL_MESSAGES = {
-  selectActiveUnit: "Select one of the active army's units on the battlefield.",
-  selectEligibleUnit: "Select one of the active army's eligible units.",
-  noRangedWeapons: 'No eligible ranged weapons for this unit.',
-  noMeleeWeapons: 'No eligible melee weapons for this unit.',
-  noValidTargets: 'No valid targets for the selected weapon.',
-  noChargeTargets: 'No eligible charge targets.',
-  noFightTargets: 'No enemy units in Engagement Range.',
-  noTactics: 'No available stratagems, actions, or selected-unit abilities.',
-  noStratagems: 'No available stratagems for the selected unit/timing.',
-} as const;
-
-const panelTitleSx = { fontWeight: 800, color: uiTokens.color.text.primary };
-const mutedTextSx = { color: uiTokens.color.text.muted };
-const disabledTextSx = { color: uiTokens.color.text.disabled };
-const warningTextSx = { color: uiTokens.color.status.warning };
-
-function averageCharacteristic(value: string): number | null {
-  const expression = String(value).replace(/\s+/g, '').toLowerCase();
-  if (/^\d+$/.test(expression)) return Number(expression);
-  let total = 0;
-  let matched = false;
-  let lastEnd = 0;
-  const tokenPattern = /([+-]?)(\d*)d(\d+)|([+-]?\d+)/g;
-  let match: RegExpExecArray | null;
-  while ((match = tokenPattern.exec(expression))) {
-    matched = true;
-    lastEnd = match.index + match[0].length;
-    if (match[3]) {
-      total += (match[1] === '-' ? -1 : 1) * (Number(match[2] || 1) * (Number(match[3]) + 1) / 2);
-    } else {
-      total += Number(match[4]);
-    }
-  }
-  return matched && lastEnd === expression.length ? total : null;
-}
-
-function bestFeelNoPain(unit: BattleUnit): number | null {
-  const targets = [...(unit.profile.abilities ?? []), ...(unit.profile.rules ?? [])]
-    .flatMap(rule => `${rule.name} ${rule.description}`.matchAll(/feel\s+no\s+pain\s*\(?\s*([2-6])\+?/gi))
-    .map(match => Number(match[1]))
-    .filter(value => Number.isFinite(value));
-  return targets.length ? Math.min(...targets) : null;
-}
-
-export function PendingDamageAllocationHud({ unit, resultEntries = [], weaponNames = [] }: { unit: BattleUnit; resultEntries?: LogEntry[]; weaponNames?: string[] }) {
+export function PendingDamageAllocationHud({ unit, result }: { unit: BattleUnit; result?: import('@warhammer-simulator/core/types/battle').ShootingResolution | null }) {
   const label = pendingDamageLabel(unit);
   if (!label) return null;
   const damageByWeapon = new Map<string, number[]>();
@@ -107,7 +61,7 @@ export function PendingDamageAllocationHud({ unit, resultEntries = [], weaponNam
       display: 'grid',
       gap: 0.35,
     }}>
-      <ShootingResultSummary entries={resultEntries} section="defender" weaponNames={weaponNames} />
+      <StructuredShootingResultSummary result={result} section="defender" />
       <Typography variant="caption" sx={{ color: uiTokens.color.status.pending, fontWeight: 800, textTransform: 'uppercase', lineHeight: 1 }}>
         Damage to apply
       </Typography>
@@ -136,60 +90,11 @@ export function PendingDamageAllocationHud({ unit, resultEntries = [], weaponNam
     </Box>
   );
 }
+/* Legacy log-derived shooting result code removed from runtime.
 
-const playPanelSx = {
-  border: `1px solid ${uiTokens.border.subtle}`,
-  borderRadius: uiTokens.radius.panel,
-  background: uiTokens.surface.panel,
-  padding: 1.25,
-  display: 'grid',
-  gap: 1,
-};
-
-const popupPanelSx = {
-  border: 0,
-  borderRadius: 0,
-  background: 'transparent',
-  padding: 0,
-  boxShadow: 'none',
-  display: 'grid',
-  gap: 1,
-};
-
-function shootingResultSummary(entries: LogEntry[], section: 'attacker' | 'defender' | 'all' = 'all', weaponNames: string[] = []) {
-  const groups = new Map<string, number[]>();
-  const successes = new Map<string, number>();
-  const targets = new Map<string, string | undefined>();
-  const noSave = new Set<string>();
-  const woundSummary = new Map<string, Map<string, number>>();
-  let currentWeapon = '';
-  let currentTarget = '';
-  let currentAp: string | null = null;
-  const addWoundSummary = (count: number) => {
-    if (!count || !currentTarget) return;
-    const byAp = woundSummary.get(currentTarget) ?? new Map<string, number>();
-    const apLabel = currentAp === null ? 'AP unknown' : `AP${Number(currentAp) > 0 ? '+' : ''}${currentAp}`;
-    byAp.set(apLabel, (byAp.get(apLabel) ?? 0) + count);
-    woundSummary.set(currentTarget, byAp);
-  };
-  for (const entry of entries) {
-    const message = entry.message;
-    const normalizedMessage = message.trim();
-    const weaponFromHeader = normalizedMessage.includes('attacks vs')
-      ? weaponNames.find(name => normalizedMessage.includes(name))
-      : undefined;
-    if (weaponFromHeader) currentWeapon = weaponFromHeader;
-    const targetFromHeader = normalizedMessage.match(/attacks vs\s+(.+)$/)?.[1];
-    if (targetFromHeader) currentTarget = targetFromHeader.trim();
-    const apFromStats = normalizedMessage.match(/\bap=(-?\d+)/)?.[1];
-    if (apFromStats) currentAp = apFromStats;
-    const lethalWounds = normalizedMessage.match(/^Lethal Hits:\s*(\d+)/)?.[1];
-    const devastatingWounds = normalizedMessage.match(/^Devastating Wounds:\s*(\d+) wound/)?.[1];
-    addWoundSummary(Number(lethalWounds ?? devastatingWounds ?? 0));
     const weaponMatch = normalizedMessage.match(/^.+?\s+(.+?)\s+[—-]\s+\d+\s+model/);
     if (weaponMatch) currentWeapon = weaponMatch[1].trim();
-    const rolls = message.match(/\[([^\]]*)\]/)?.[1]
-      ?.split(',').map(value => Number(value.trim())).filter(Number.isFinite) ?? [];
+    // legacy parser removed
     const group = normalizedMessage.startsWith('Hit rolls')
       ? 'Hit rolls'
       : normalizedMessage.startsWith('Wound rolls') || normalizedMessage.startsWith('Twin-linked wound rerolls')
@@ -289,10 +194,12 @@ function ShootingResultSummary({ entries, section = 'all', weaponNames = [] }: {
   );
 }
 
+*/
+
 export function PlayShootingPanel({
   shooter,
   popup = false,
-  resultEntries = [],
+  structuredResult = null,
   resultSection = 'all',
   title = PLAY_PANEL_LABELS.shooting,
   actionLabel = 'Shoot',
@@ -317,7 +224,7 @@ export function PlayShootingPanel({
 }: {
   shooter: BattleUnit | null;
   popup?: boolean;
-  resultEntries?: LogEntry[];
+  structuredResult?: import('@warhammer-simulator/core/types/battle').ShootingResolution | null;
   resultSection?: 'attacker' | 'defender' | 'all';
   title?: string;
   actionLabel?: string;
@@ -351,8 +258,9 @@ export function PlayShootingPanel({
   }
 
   const shootingLocked = damageAllocationLocked;
-  const resolvePendingDamage = shootingLocked && resultEntries.length > 0;
-  const completedWithoutPendingDamage = resultEntries.length > 0 && !shootingLocked;
+  const hasStructuredResult = !!structuredResult?.weapons.length;
+  const resolvePendingDamage = shootingLocked && hasStructuredResult;
+  const completedWithoutPendingDamage = hasStructuredResult && !shootingLocked;
   const noAttackSelected = selectedWeaponIndex !== 'all'
     && weaponOptions.some(option => String(option.weaponIndex) === selectedWeaponIndex && option.weaponIndex < 0);
   const canResolve = resolvePendingDamage || completedWithoutPendingDamage || (!shootingLocked
@@ -370,42 +278,31 @@ export function PlayShootingPanel({
         : weaponOptions.filter(o => String(o.weaponIndex) === selectedWeaponIndex && o.targetIds.includes(selectedTargetId))
       ).map(o => shooter.profile.weapons[o.weaponIndex]).filter(Boolean)
     : [];
-  const resultWeapon = resultEntries
-    .map(entry => shooter.profile.weapons.find(weapon => entry.message.includes(weapon.name)))
-    .find((weapon): weapon is BattleUnit['profile']['weapons'][number] => !!weapon);
-  const resultWeapons = shooter.profile.weapons.filter(weapon => resultEntries.some(entry => entry.message.includes(weapon.name)));
+  const resultWeaponIndices = new Set(structuredResult?.weapons.map(result => result.weaponIndex) ?? []);
+  const resultWeapons = shooter.profile.weapons.filter((_, index) => resultWeaponIndices.has(index));
   const availableWeapons = weaponOptions
     .filter(option => option.weaponIndex >= 0)
     .map(option => shooter.profile.weapons[option.weaponIndex])
     .filter((weapon): weapon is BattleUnit['profile']['weapons'][number] => !!weapon);
-  const resultWeaponIndex = resultWeapon ? shooter.profile.weapons.indexOf(resultWeapon) : -1;
-  const displayedWeaponOptions = resultWeapon && resultWeaponIndex >= 0 && !weaponOptions.some(option => option.weaponIndex === resultWeaponIndex)
-    ? [{ weaponIndex: resultWeaponIndex, name: resultWeapon.name, targetIds: [] }, ...weaponOptions]
-    : weaponOptions;
-  const displayedWeaponIndex = resultWeaponIndex >= 0 && resultSection === 'attacker'
-    ? String(resultWeaponIndex)
-    : selectedWeaponIndex;
-  const displayedWeapons = resultSection === 'attacker' && resultEntries.length > 0 && resultWeapons.length
+  const displayedWeaponOptions = weaponOptions;
+  const displayedWeaponIndex = selectedWeaponIndex;
+  const displayedWeapons = resultSection === 'attacker' && hasStructuredResult && resultWeapons.length
     ? resultWeapons
     : availableWeapons.length
       ? availableWeapons
-      : refWeapons.length || !resultWeapon
-        ? refWeapons
-        : [resultWeapon];
-  const resultWeaponTargets = resultEntries.flatMap(entry => {
-    const targetName = entry.message.trim().match(/attacks vs\s+(.+)$/)?.[1]?.trim();
-    if (!targetName) return [];
-    const weapon = shooter.profile.weapons.find(candidate => entry.message.includes(candidate.name));
-    const target = targets.find(candidate => targetName === candidate.profile.name || targetName.endsWith(candidate.profile.name));
+      : refWeapons;
+  const resultWeaponTargets = (structuredResult?.weapons ?? []).flatMap(result => {
+    const weapon = shooter.profile.weapons[result.weaponIndex];
+    const target = targets.find(candidate => candidate.id === result.targetUnitId);
     return weapon && target ? [{ weapon, target }] : [];
   });
   const displayedWeaponTargets = resultSection === 'attacker' || resultSection === 'defender'
-    ? resultEntries.length > 0 && resultWeaponTargets.length > 0
+    ? hasStructuredResult && resultWeaponTargets.length > 0
       ? resultWeaponTargets
       : displayedWeapons.flatMap(weapon => {
         const weaponIndex = shooter.profile.weapons.indexOf(weapon);
         const option = weaponOptions.find(candidate => candidate.weaponIndex === weaponIndex);
-        const targetIds = resultEntries.length
+        const targetIds = hasStructuredResult
           ? option?.targetIds.filter(targetId => (shootingAttackAllocations[String(weaponIndex)]?.[targetId] ?? 0) > 0) ?? []
           : option?.targetIds ?? [];
         return targetIds
@@ -655,7 +552,7 @@ export function PlayShootingPanel({
         <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noRangedWeapons}</Typography>
       ) : !targets.length && !displayedWeapons.length ? (
         <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noValidTargets}</Typography>
-      ) : resultEntries.length > 0 && displayedWeaponTargets.length > 0 ? (
+      ) : hasStructuredResult && displayedWeaponTargets.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: displayedWeaponTargets.length > 3 ? 310 : undefined, overflowY: displayedWeaponTargets.length > 3 ? 'auto' : undefined, paddingRight: displayedWeaponTargets.length > 3 ? 4 : undefined }}>
           {displayedWeaponTargets.map(({ weapon, target }, i) => {
             const targetInCoverForStats = !!coverUnitIds?.has(target.id);
@@ -742,521 +639,7 @@ export function PlayShootingPanel({
           })}
         </div>
       ) : null}
-      <ShootingResultSummary entries={resultEntries} section={resultSection} weaponNames={shooter.profile.weapons.map(weapon => weapon.name)} />
+      <StructuredShootingResultSummary result={structuredResult} section={resultSection} />
     </Box>
   );
 }
-
-export function PlayChargePanel({
-  charger,
-  targets,
-  selectedTargetIds,
-  options,
-  chargeRolled,
-  resultMessage,
-  onTargetChange,
-  onRoll,
-  onResolve,
-}: {
-  charger: BattleUnit | null;
-  targets: BattleUnit[];
-  selectedTargetIds: string[];
-  options: PlayChargeTargetOption[];
-  chargeRolled: boolean;
-  resultMessage: string | null;
-  onTargetChange: (values: string[]) => void;
-  onRoll: () => void;
-  onResolve: () => void;
-}) {
-  if (!charger) {
-    return (
-      <Box sx={playPanelSx}>
-        <Typography variant="subtitle2" sx={panelTitleSx}>{PLAY_PANEL_LABELS.charge}</Typography>
-        <Typography variant="body2" sx={mutedTextSx}>{PLAY_PANEL_MESSAGES.selectActiveUnit}</Typography>
-      </Box>
-    );
-  }
-  const canResolve = selectedTargetIds.length > 0
-    && selectedTargetIds.every(targetId => options.some(option => option.targetId === targetId));
-  return (
-    <Box sx={playPanelSx}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
-        <Box sx={{ minWidth: 0 }}>
-          <Typography variant="subtitle2" sx={panelTitleSx}>{PLAY_PANEL_LABELS.charge}</Typography>
-          <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {charger.profile.name}{charger.activated ? ' - done' : ''}
-          </Typography>
-        </Box>
-        <Button size="small" variant="contained" startIcon={<CasinoOutlinedIcon />} disabled={chargeRolled ? !canResolve : false} onClick={chargeRolled ? onResolve : onRoll}>
-          {chargeRolled ? PLAY_PANEL_LABELS.resolve : PLAY_PANEL_LABELS.roll}
-        </Button>
-      </Box>
-      {resultMessage && (
-        <Typography variant="caption" sx={{ display: 'block', mt: 0.75, color: uiTokens.color.status.warning }}>
-          {resultMessage}
-        </Typography>
-      )}
-      <FormControl size="small" fullWidth disabled={!chargeRolled || !targets.length}>
-        <InputLabel id="play-charge-target-label">{PLAY_PANEL_LABELS.target}</InputLabel>
-        <Select
-          labelId="play-charge-target-label"
-          label={PLAY_PANEL_LABELS.target}
-          multiple
-          value={selectedTargetIds}
-          onChange={(event: SelectChangeEvent<string[]>) => onTargetChange(event.target.value as string[])}
-          renderValue={(selected) => (selected as string[])
-            .map(targetId => targets.find(target => target.id === targetId)?.profile.name ?? targetId)
-            .join(', ')}
-        >
-          {targets.map(target => {
-            const needed = options.find(option => option.targetId === target.id)?.needed ?? 0;
-            return (
-              <MenuItem key={target.id} value={target.id}>
-                {target.profile.name} ({needed.toFixed(1)}&quot; needed)
-              </MenuItem>
-            );
-          })}
-        </Select>
-      </FormControl>
-      {!options.length && (
-        <Typography variant="caption" sx={disabledTextSx}>{chargeRolled ? PLAY_PANEL_MESSAGES.noChargeTargets : 'Roll the charge to see reachable targets.'}</Typography>
-      )}
-    </Box>
-  );
-}
-
-export function PlayFightPanel({
-  fighter,
-  popup = false,
-  actionLabel = PLAY_PANEL_LABELS.resolve,
-  targets,
-  selectedTarget,
-  selectedTargetId,
-  selectedWeaponIndex,
-  weaponOptions,
-  fixedAttackCount,
-  attackSplits,
-  attackAllocations = {},
-  damageAllocationLocked,
-  pendingDamageLabel,
-  onTargetChange,
-  onWeaponChange,
-  onAttackSplitChange,
-  onAttackAllocationChange = () => undefined,
-  onClearAttackSplits,
-  onResolve,
-}: {
-  fighter: BattleUnit | null;
-  popup?: boolean;
-  actionLabel?: string;
-  targets: BattleUnit[];
-  selectedTarget: BattleUnit | null;
-  selectedTargetId: string;
-  selectedWeaponIndex: 'all' | string;
-  weaponOptions: PlayFightWeaponOption[];
-  fixedAttackCount: number | null;
-  attackSplits: Record<string, number>;
-  attackAllocations?: Record<string, Record<string, number>>;
-  damageAllocationLocked: boolean;
-  pendingDamageLabel?: string | null;
-  onTargetChange: (value: string) => void;
-  onWeaponChange: (value: 'all' | string) => void;
-  onAttackSplitChange: (targetId: string, attacks: number) => void;
-  onAttackAllocationChange?: (weaponIndex: number, targetId: string, attacks: number) => void;
-  onClearAttackSplits: () => void;
-  onResolve: () => void;
-}) {
-  if (!fighter) {
-    return (
-      <Box sx={playPanelSx}>
-        <Typography variant="subtitle2" sx={panelTitleSx}>{PLAY_PANEL_LABELS.fight}</Typography>
-        <Typography variant="body2" sx={mutedTextSx}>{PLAY_PANEL_MESSAGES.selectEligibleUnit}</Typography>
-      </Box>
-    );
-  }
-  const selectedOptions = selectedWeaponIndex === 'all'
-    ? weaponOptions
-    : weaponOptions.filter(option => String(option.weaponIndex) === selectedWeaponIndex);
-  const allocationFor = (targetId: string) => sanitizeMeleeAttackAllocation(attackSplits[targetId] ?? 0);
-  const allocatedAttacks = targets.reduce((total, target) => total + allocationFor(target.id), 0);
-  const hasAttackSplits = allocatedAttacks > 0;
-  const hasAttackAllocations = Object.values(attackAllocations).some(targets => Object.values(targets).some(attacks => attacks > 0));
-  const splitAllocationValid = fixedAttackCount !== null
-    && allocatedAttacks === fixedAttackCount
-    && targets.every(target => Number.isInteger(allocationFor(target.id)));
-  const canResolve = !damageAllocationLocked
-    && !fighter.activated
-    && (hasAttackAllocations
-      ? true
-      : hasAttackSplits
-        ? splitAllocationValid
-        : !!selectedTarget && selectedOptions.some(option => option.targetIds.includes(selectedTargetId)));
-  return (
-    <Box sx={popup ? popupPanelSx : playPanelSx}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
-        <Box sx={{ minWidth: 0 }}>
-          <Typography variant="subtitle2" sx={panelTitleSx}>{PLAY_PANEL_LABELS.fight}</Typography>
-          <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {fighter.profile.name}{fighter.activated ? ' - done' : ''}
-          </Typography>
-        </Box>
-        <Button size="small" variant="contained" startIcon={<CasinoOutlinedIcon />} disabled={!canResolve} onClick={onResolve}>
-          {actionLabel}
-        </Button>
-      </Box>
-      <FormControl size="small" fullWidth disabled={damageAllocationLocked || !weaponOptions.length || fighter.activated}>
-        <InputLabel id="play-fight-weapon-label">{PLAY_PANEL_LABELS.weapon}</InputLabel>
-        <Select
-          labelId="play-fight-weapon-label"
-          label={PLAY_PANEL_LABELS.weapon}
-          value={selectedWeaponIndex}
-          onChange={(event: SelectChangeEvent) => onWeaponChange(event.target.value as 'all' | string)}
-        >
-          <MenuItem value="all">All eligible melee weapons</MenuItem>
-          {weaponOptions.map(option => (
-            <MenuItem key={option.weaponIndex} value={String(option.weaponIndex)}>{option.name}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl size="small" fullWidth disabled={damageAllocationLocked || !targets.length || fighter.activated}>
-        <InputLabel id="play-fight-target-label">{PLAY_PANEL_LABELS.target}</InputLabel>
-        <Select
-          labelId="play-fight-target-label"
-          label={PLAY_PANEL_LABELS.target}
-          value={selectedTargetId}
-          onChange={(event: SelectChangeEvent) => onTargetChange(event.target.value)}
-        >
-          {targets.map(target => (
-            <MenuItem key={target.id} value={target.id}>
-              {target.profile.name} ({target.remainingModels} model{target.remainingModels === 1 ? '' : 's'})
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      {!damageAllocationLocked && !fighter.activated && weaponOptions.some(option => option.weaponIndex >= 0) && (
-        <Box sx={{ display: 'grid', gap: 0.75, p: 1, border: `1px solid ${uiTokens.border.control}`, borderRadius: uiTokens.radius.control }}>
-          <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, fontWeight: 700 }}>
-            Lock every melee weapon target before rolling
-          </Typography>
-          {weaponOptions.filter(option => option.weaponIndex >= 0).map(option => {
-            const weapon = fighter.profile.weapons[option.weaponIndex];
-            const allocations = attackAllocations[String(option.weaponIndex)] ?? {};
-            const fixedAttacks = weapon && /^\d+$/.test(String(weapon.attacks).trim())
-              ? Number(weapon.attacks) * fighter.remainingModels
-              : null;
-            return (
-              <Box key={option.weaponIndex} sx={{ display: 'grid', gap: 0.4 }}>
-                <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700 }}>
-                  {option.name}{fixedAttacks !== null ? ` — ${fixedAttacks} attacks` : ' — variable attacks'}
-                </Typography>
-                {option.targetIds.map(targetId => {
-                  const target = targets.find(candidate => candidate.id === targetId);
-                  return (
-                    <TextField
-                      key={`${option.weaponIndex}:${targetId}`}
-                      size="small"
-                      type="number"
-                      label={target?.profile.name ?? targetId}
-                      value={allocations[targetId] ?? 0}
-                      slotProps={{ htmlInput: { min: 0, max: fixedAttacks ?? undefined, step: 1 } }}
-                      onChange={event => onAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.floor(Number(event.target.value) || 0)))}
-                    />
-                  );
-                })}
-              </Box>
-            );
-          })}
-          <Typography variant="caption" sx={{ color: uiTokens.color.text.quiet }}>
-            Set attacks to zero for alternate profiles or targets that should not receive that weapon.
-          </Typography>
-        </Box>
-      )}
-      {targets.length > 1 && fixedAttackCount !== null && (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75, p: 1, border: `1px solid ${uiTokens.border.control}`, borderRadius: uiTokens.radius.control }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
-            <Typography variant="caption" sx={{ color: uiTokens.color.text.muted }}>
-              Split {selectedOptions[0]?.name ?? 'this profile'} attacks: {allocatedAttacks}/{fixedAttackCount} allocated
-            </Typography>
-            <Button size="small" disabled={!hasAttackSplits} onClick={onClearAttackSplits}>Clear</Button>
-          </Box>
-          {targets.map(target => (
-            <TextField
-              key={target.id}
-              size="small"
-              type="number"
-              label={target.profile.name}
-              value={allocationFor(target.id)}
-              disabled={damageAllocationLocked || fighter.activated}
-              slotProps={{ htmlInput: { min: 0, max: fixedAttackCount, step: 1 } }}
-              onChange={event => {
-                const attacks = Number(event.target.value);
-                onAttackSplitChange(target.id, sanitizeMeleeAttackAllocation(attacks));
-              }}
-            />
-          ))}
-          {hasAttackSplits && !splitAllocationValid && (
-            <Typography variant="caption" sx={warningTextSx}>Allocate exactly {fixedAttackCount} attacks across the engaged targets.</Typography>
-          )}
-        </Box>
-      )}
-      {targets.length > 1 && fixedAttackCount === null && selectedWeaponIndex !== 'all' && (
-        <Typography variant="caption" sx={disabledTextSx}>Split allocation is available for weapons with a fixed Attacks characteristic.</Typography>
-      )}
-      {damageAllocationLocked ? (
-        <Typography variant="caption" sx={warningTextSx}>
-          {pendingDamageLabel ? `Allocate ${pendingDamageLabel} before fighting again.` : 'Allocate pending damage before fighting again.'}
-        </Typography>
-      ) : !weaponOptions.length ? (
-        <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noMeleeWeapons}</Typography>
-      ) : !targets.length ? (
-        <Typography variant="caption" sx={disabledTextSx}>{PLAY_PANEL_MESSAGES.noFightTargets}</Typography>
-      ) : null}
-    </Box>
-  );
-}
-
-export function PlayTacticsPanel({
-  state,
-  selectedUnit,
-  stratagems,
-  abilities,
-  selectedStratagemId,
-  selectedAbilityKey,
-  canStartAction,
-  actionName,
-  canToggleCondemnedUnit,
-  selectedUnitIsCondemned,
-  onStratagemChange,
-  onAbilityChange,
-  onUseStratagem,
-  onUseAbility,
-  onStartAction,
-  onToggleCondemnedUnit,
-  onResolveCommandReroll,
-}: {
-  state: BattleState;
-  selectedUnit: BattleUnit | null;
-  stratagems: StratagemDefinition[];
-  abilities: AbilityOption[];
-  selectedStratagemId: string;
-  selectedAbilityKey: string;
-  canStartAction: boolean;
-  actionName: string;
-  canToggleCondemnedUnit: boolean;
-  selectedUnitIsCondemned: boolean;
-  onStratagemChange: (value: string) => void;
-  onAbilityChange: (value: string) => void;
-  onUseStratagem: (stratagemId: string, targetModelIndex?: number, secondaryTargetUnitId?: string, sourceModelIndex?: number, heroicInterventionMode?: HeroicInterventionMode) => void;
-  onUseAbility: () => void;
-  onStartAction: () => void;
-  onToggleCondemnedUnit: () => void;
-  onResolveCommandReroll: (originalRolls: number[], label: string, rollType: CommandRerollRollType) => void;
-}) {
-  const cp = commandPoints(state);
-  const selectedAbility = abilities.find(option => abilityOptionKey(option) === selectedAbilityKey) ?? null;
-  const pendingFollowUps = stratagemFollowUpLabels(state);
-  const [commandRerollInput, setCommandRerollInput] = useState('');
-  const [commandRerollRollType, setCommandRerollRollType] = useState<CommandRerollRollType>('hit');
-  const [epicChallengeModelIndex, setEpicChallengeModelIndex] = useState(0);
-  const [crushingImpactTargetId, setCrushingImpactTargetId] = useState('');
-  const [explosivesSourceModelIndex, setExplosivesSourceModelIndex] = useState(0);
-  const [explosivesTargetId, setExplosivesTargetId] = useState('');
-  const [heroicInterventionMode, setHeroicInterventionMode] = useState<HeroicInterventionMode>('leap-to-defend');
-  const commandRerollRolls = parseDiceInput(commandRerollInput);
-  const selectedEpicChallengeModelIndex = selectedUnit?.modelPositions.length
-    ? Math.min(epicChallengeModelIndex, selectedUnit.modelPositions.length - 1)
-    : 0;
-  const rules = rulesEditionForRuleset(state.ruleset);
-  const selectedExplosivesSourceModelIndex = selectedUnit?.modelPositions.length
-    ? Math.min(explosivesSourceModelIndex, selectedUnit.modelPositions.length - 1)
-    : 0;
-
-  return (
-    <Box sx={playPanelSx}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, alignItems: 'center' }}>
-        <Box sx={{ minWidth: 0 }}>
-          <Typography variant="subtitle2" sx={panelTitleSx}>{PLAY_PANEL_LABELS.tactics}</Typography>
-          <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.muted }}>
-            CP {cp[0]}-{cp[1]}
-          </Typography>
-        </Box>
-      </Box>
-
-      <Box sx={{ display: 'grid', gap: 0.75 }}>
-        <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 800 }}>{PLAY_PANEL_LABELS.stratagems}</Typography>
-        {pendingFollowUps.map(label => (
-          <Typography key={label} variant="caption" sx={warningTextSx}>
-            {label}
-          </Typography>
-        ))}
-        {state.pendingCommandReroll && (
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: 0.75, alignItems: 'center' }}>
-            <Select
-              size="small"
-              value={commandRerollRollType}
-              onChange={event => setCommandRerollRollType(event.target.value as CommandRerollRollType)}
-              aria-label="Command Re-roll type"
-            >
-              {['advance', 'charge', 'damage', 'hazard', 'hit', 'save', 'wound', 'attacks'].map(type => (
-                <MenuItem key={type} value={type}>{type === 'attacks' ? 'attacks roll' : `${type} roll`}</MenuItem>
-              ))}
-            </Select>
-            <TextField
-              size="small"
-              label="Original roll"
-              placeholder="6 or 1,2"
-              value={commandRerollInput}
-              onChange={event => setCommandRerollInput(event.target.value)}
-              error={commandRerollInput.trim().length > 0 && commandRerollRolls.length === 0}
-              helperText="D6 values"
-            />
-            <Button
-              size="small"
-              variant="contained"
-              disabled={!commandRerollRolls.length}
-              onClick={() => {
-                onResolveCommandReroll(commandRerollRolls, `${commandRerollRollType} roll`, commandRerollRollType);
-                setCommandRerollInput('');
-              }}
-            >
-              {PLAY_PANEL_LABELS.resolve}
-            </Button>
-          </Box>
-        )}
-        {selectedUnit && stratagems.some(stratagem => stratagem.id === 'epic-challenge') && (
-          <Select
-            size="small"
-            value={selectedEpicChallengeModelIndex}
-            onChange={event => setEpicChallengeModelIndex(Number(event.target.value))}
-            aria-label="Epic Challenge model"
-          >
-            {selectedUnit.modelPositions.map((_, modelIndex) => (
-              <MenuItem key={modelIndex} value={modelIndex}>Epic Challenge: model {modelIndex + 1}</MenuItem>
-            ))}
-          </Select>
-        )}
-        {selectedUnit && stratagems.some(stratagem => stratagem.id === 'crushing-impact') && (
-          <Select
-            size="small"
-            value={crushingImpactTargetId}
-            onChange={event => setCrushingImpactTargetId(event.target.value)}
-            displayEmpty
-            aria-label="Crushing Impact target"
-          >
-            <MenuItem value="">Select Crushing Impact target</MenuItem>
-            {state.units
-              .filter(unit => unit.side !== selectedUnit.side && !unit.destroyed && !unit.embarkedInUnitId && !unit.inStrategicReserves)
-              .sort((left, right) => battleUnitsBaseEdgeDistance(selectedUnit, left) - battleUnitsBaseEdgeDistance(selectedUnit, right))
-              .map(unit => (
-                <MenuItem key={unit.id} value={unit.id}>Crushing Impact: {unit.profile.name}</MenuItem>
-              ))}
-          </Select>
-        )}
-        {selectedUnit && stratagems.some(stratagem => stratagem.id === 'explosives') && (
-          <>
-            <Select
-              size="small"
-              value={selectedExplosivesSourceModelIndex}
-              onChange={event => setExplosivesSourceModelIndex(Number(event.target.value))}
-              aria-label="Explosives source model"
-            >
-              {selectedUnit.modelPositions.map((_, modelIndex) => (
-                <MenuItem key={modelIndex} value={modelIndex}>Explosives from model {modelIndex + 1}</MenuItem>
-              ))}
-            </Select>
-            <Select
-              size="small"
-              value={explosivesTargetId}
-              onChange={event => setExplosivesTargetId(event.target.value)}
-              displayEmpty
-              aria-label="Explosives target"
-            >
-              <MenuItem value="">Select Explosives target</MenuItem>
-              {state.units
-                .filter(unit => !unit.destroyed && explosivesTargetAllowed(state, selectedUnit, unit, selectedExplosivesSourceModelIndex, rules))
-                .map(unit => <MenuItem key={unit.id} value={unit.id}>Explosives: {unit.profile.name}</MenuItem>)}
-            </Select>
-          </>
-        )}
-        {selectedUnit && stratagems.some(stratagem => stratagem.id === 'heroic-intervention') && (
-          <Select
-            size="small"
-            value={heroicInterventionMode}
-            onChange={event => setHeroicInterventionMode(event.target.value as HeroicInterventionMode)}
-            aria-label="Heroic Intervention mode"
-          >
-            <MenuItem value="leap-to-defend">Heroic Intervention: Leap to Defend (1CP)</MenuItem>
-            <MenuItem value="into-the-fray" disabled={cp[selectedUnit.side] < 2}>Heroic Intervention: Into the Fray (2CP)</MenuItem>
-          </Select>
-        )}
-        {stratagems.map(stratagem => (
-          <Button
-            key={stratagem.id}
-            size="small"
-            variant={stratagem.id === selectedStratagemId ? 'contained' : 'outlined'}
-            onMouseEnter={() => onStratagemChange(stratagem.id)}
-            onFocus={() => onStratagemChange(stratagem.id)}
-            disabled={(stratagem.id === 'crushing-impact' && !crushingImpactTargetId) || (stratagem.id === 'explosives' && !explosivesTargetId) || (stratagem.id === 'heroic-intervention' && heroicInterventionMode === 'into-the-fray' && cp[selectedUnit?.side ?? 0] < 2)}
-            onClick={() => onUseStratagem(
-              stratagem.id,
-              stratagem.id === 'epic-challenge' ? selectedEpicChallengeModelIndex : undefined,
-              stratagem.id === 'crushing-impact' ? crushingImpactTargetId : undefined,
-              stratagem.id === 'explosives' ? selectedExplosivesSourceModelIndex : undefined,
-              stratagem.id === 'heroic-intervention' ? heroicInterventionMode : undefined,
-            )}
-            title={stratagem.description}
-            sx={{ justifyContent: 'space-between', textTransform: 'none' }}
-          >
-            <span>{stratagem.name}</span>
-            <span>{stratagem.cost}CP</span>
-          </Button>
-        ))}
-        {!stratagems.length && (
-          <Typography variant="caption" sx={disabledTextSx}>
-            {PLAY_PANEL_MESSAGES.noStratagems}
-          </Typography>
-        )}
-      </Box>
-
-      <FormControl size="small" fullWidth disabled={!selectedUnit || !abilities.length}>
-        <InputLabel id="play-ability-label">{PLAY_PANEL_LABELS.ability}</InputLabel>
-        <Select
-          labelId="play-ability-label"
-          label={PLAY_PANEL_LABELS.ability}
-          value={selectedAbilityKey}
-          onChange={(event: SelectChangeEvent) => onAbilityChange(event.target.value)}
-        >
-          {abilities.map(option => (
-            <MenuItem key={abilityOptionKey(option)} value={abilityOptionKey(option)}>
-              {option.ability.name} ({abilityTimingLabel(option.timing)})
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <Button size="small" variant="outlined" disabled={!selectedAbility} onClick={onUseAbility}>
-        {PLAY_PANEL_LABELS.useAbility}
-      </Button>
-
-      <Button size="small" variant="outlined" disabled={!canStartAction} onClick={onStartAction}>
-        {actionName === 'Action' ? PLAY_PANEL_LABELS.startAction : `Start ${actionName}`}
-      </Button>
-      {canToggleCondemnedUnit && (
-        <Button size="small" variant={selectedUnitIsCondemned ? 'contained' : 'outlined'} onClick={onToggleCondemnedUnit}>
-          {selectedUnitIsCondemned ? 'Remove Condemnation' : 'Condemn Selected Enemy'}
-        </Button>
-      )}
-      {selectedUnit?.performingAction && (
-        <Typography variant="caption" sx={{ color: uiTokens.color.status.success }}>
-          Performing {selectedUnit.performingAction.name}
-        </Typography>
-      )}
-
-      {!stratagems.length && !abilities.length && !canStartAction && !selectedUnit?.performingAction && (
-        <Typography variant="caption" sx={disabledTextSx}>
-          {PLAY_PANEL_MESSAGES.noTactics}
-        </Typography>
-      )}
-    </Box>
-  );
-}
-

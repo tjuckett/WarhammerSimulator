@@ -733,7 +733,9 @@ export default function App() {
     && battleState?.phase === 'charge'
     && selectedChargeUnit
     && !pendingChargeRoll
-    && !selectedPlayChargeResult?.includes('no reachable charge targets')
+    && (battleState?.lastChargeRoll?.unitId !== selectedChargeUnit.id
+      || battleState.lastChargeRoll.side !== selectedChargeUnit.side
+      || battleState.lastChargeRoll.status !== 'failed')
     && selectedPlayChargeOptions.length > 0
   );
   const selectedPlayChargeActive = !!(
@@ -754,17 +756,11 @@ export default function App() {
   );
   const selectedPlayChargeResult = useMemo(() => {
     if (!battleState || !selectedChargeUnit) return null;
-    const entries = battleState.log.filter(entry => entry.type === 'charge'
-      && entry.phase === 'charge'
-      && entry.turn === battleState.turn
-      && entry.unitName === selectedChargeUnit.profile.name);
-    const roll = entries.find(entry => /rolls a charge:/i.test(entry.message))?.message;
-    const outcome = entries[entries.length - 1]?.message;
-    return roll && outcome && roll !== outcome ? `${roll} ${outcome}` : roll ?? outcome ?? null;
-  }, [battleState?.log, selectedChargeUnit?.id, selectedChargeUnit?.profile.name]);
+    const result = battleState.lastChargeRoll;
+    return result?.unitId === selectedChargeUnit.id && result.side === selectedChargeUnit.side ? result : null;
+  }, [battleState?.lastChargeRoll, selectedChargeUnit?.id, selectedChargeUnit?.side]);
   const selectedPlayChargeDice = useMemo(() => {
-    const match = selectedPlayChargeResult?.match(/rolls a charge:\s*(\d+)\+(\d+)=/i);
-    return match ? [Number(match[1]), Number(match[2])] : [];
+    return selectedPlayChargeResult?.dice ?? [];
   }, [selectedPlayChargeResult]);
   const selectedPlayFightOptions = useMemo(
     () => (
@@ -3251,7 +3247,7 @@ export default function App() {
                     <PlayShootingPanel
                       shooter={activeSelectedShootingUnit}
                       popup
-                      resultEntries={shootingResultEntries}
+                      structuredResult={battleState.lastShootingResolution}
                       resultSection="attacker"
                       actionLabel={shootingResultEntries.length && damageAllocationLocked ? 'Resolve' : shootingResultEntries.length ? 'Done' : 'Shoot'}
                       coverSaveEnabled={activeRulesForBattle.metadata.edition !== '11e'}
@@ -3277,8 +3273,7 @@ export default function App() {
                   {pendingDamageAllocationUnit && primaryPlaySelection?.unitId !== casualtyRemovalShooterId && (
                     <PendingDamageAllocationHud
                       unit={pendingDamageAllocationUnit}
-                      resultEntries={shootingResultEntries}
-                      weaponNames={battleState?.units.find(unit => unit.id === casualtyRemovalShooterId)?.profile.weapons.map(weapon => weapon.name) ?? []}
+                      result={battleState.lastShootingResolution}
                     />
                   )}
                   {selectedPlayCanPileIn && (
