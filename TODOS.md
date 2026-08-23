@@ -68,6 +68,11 @@ Use this section as the current high-level pickup order before starting large ne
   - Prioritize mission/event state tracking, automatic secondary scoring, primary scoring tests, scoring log explanations, and remaining core rule audit items listed below.
   - Keep edition-specific behavior behind `RulesEdition` or focused simulator-core helpers.
   - Next after this task: build Army Builder mode using the cleaned-up army editing and import/export boundaries.
+- [ ] Replace scattered simulator logging with a typed event/result collection boundary.
+  - Keep `BattleState.log` as presentation and audit history only; never use log messages to reconstruct game logic.
+  - Centralize event creation and collection across movement, shooting, charge, fight, missions, abilities, and practice actions.
+  - Preserve typed dice, targets, modifiers, outcomes, pending allocations, and failure reasons separately from formatted messages.
+  - Use the new boundary as the prerequisite for safely splitting `packages/simulator-core/src/engine/simulator.ts` by domain.
 - [x] Add a dedicated Army Builder mode.
   - Add a fourth app mode for army/list management with no battlefield canvas.
   - Top bar should show army-focused controls instead of play controls: army slot, army type/faction, saved army dropdown, New, Save, Import JSON, and Export JSON.
