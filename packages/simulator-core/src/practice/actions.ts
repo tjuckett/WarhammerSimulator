@@ -66,6 +66,7 @@ import {
 import { completeMissionEventsForCurrentTurn, startMissionEventsForNewTurn } from '../engine/missionEvents';
 import { configureSecondaryMissions, discardSecondaryMission, drawSecondaryMission, selectBeaconUnit, selectBurdenOfTrustGuards, selectSecondaryMissionWhenDrawn, selectTemptingTargetObjective } from '../engine/secondaryMissions';
 import { scoreSecondaryMissionsAtEndOfTurn, secondaryMissionScoringLogs } from '../engine/secondaryMissionScoring';
+import { advanceBattlePhase, initializeBattlePhase } from '../engine/battleStateMachine';
 
 export interface GameActionBase {
   id?: string;
@@ -491,12 +492,8 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   }
 
   const startCommand = (): void => {
-    next.phase = BATTLE_PHASE.Command;
+    initializeBattlePhase(next, { phase: BATTLE_PHASE.Command });
     if (next.activeArmyAbilities) next.activeArmyAbilities[next.activeArmy] = next.activeArmyAbilities[next.activeArmy].filter(id => id !== 'waaagh');
-    next.movementStep = undefined;
-    next.fightStepStarted = undefined;
-    next.engagedUnitIdsAtFightStepStart = undefined;
-    next.lastFightSelectionSide = undefined;
     next.units.forEach(unit => {
       unit.overrunFightSelected = undefined;
       unit.overrunPiledIn = undefined;
@@ -559,20 +556,12 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
     if (next.phase === BATTLE_PHASE.Movement) {
       if (movementStep(next) === MOVEMENT_STEP.MoveUnits) {
         markRemainingStationaryUnits(next);
-        next.movementStep = MOVEMENT_STEP.Reinforcements;
+        advanceBattlePhase(next);
       } else {
-        next.movementStep = undefined;
-        next.phase = PLAY_TURN_PHASES[currentIndex + 1];
+        advanceBattlePhase(next);
       }
     } else {
-      next.phase = PLAY_TURN_PHASES[currentIndex + 1];
-      if (next.phase === BATTLE_PHASE.Fight) {
-        next.fightStepStarted = false;
-        next.engagedUnitIdsAtFightStepStart = undefined;
-        next.lastFightSelectionSide = undefined;
-      }
-      if (next.phase === BATTLE_PHASE.Movement) next.movementStep = MOVEMENT_STEP.MoveUnits;
-      else next.movementStep = undefined;
+      advanceBattlePhase(next);
     }
   } else if (next.activeArmy === 0) {
     next.activeArmy = 1;
@@ -580,7 +569,7 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   } else {
     next.activeArmy = 0;
     setBattleRound(next, battleRound(next) + 1);
-    if (battleRound(next) > maxBattleRounds(next)) next.phase = BATTLE_PHASE.End;
+    if (battleRound(next) > maxBattleRounds(next)) initializeBattlePhase(next, { phase: BATTLE_PHASE.End });
     else startCommand();
   }
 
@@ -588,8 +577,7 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
     next.units.forEach(unit => { unit.takingToSkies = undefined; });
   }
 
-  if (next.phase === BATTLE_PHASE.End) {
-    next.movementStep = undefined;
+  if ((next.phase as Phase) === BATTLE_PHASE.End) {
     const recordCount = next.missionState?.primaryMissionScoringRecords?.length ?? 0;
     const results = scorePrimaryMissionsAtEndOfBattle(next, rules);
     const records = next.missionState?.primaryMissionScoringRecords?.slice(recordCount) ?? [];

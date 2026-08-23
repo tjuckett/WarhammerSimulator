@@ -90,6 +90,19 @@ export function nextBattlePhase(state: Pick<BattleState, 'phase' | 'movementStep
   }
 }
 
+/**
+ * Advance only within the active turn. Turn rollover has phase-owned effects
+ * (command resets, scoring and winner resolution) and is therefore performed
+ * by the caller's turn handler. All ordinary phase/substep transitions flow
+ * through this function so they receive identical entry-state invariants.
+ */
+export function advanceBattlePhase(state: BattleState): Extract<BattlePhaseTransition, { kind: 'phase' }> | null {
+  const transition = nextBattlePhase(state);
+  if (!transition || transition.kind !== 'phase') return null;
+  initializeBattlePhase(state, transition.to);
+  return transition;
+}
+
 export function nextTurnTransition(
   state: Pick<BattleState, 'phase' | 'movementStep' | 'activeArmy' | 'battleRound' | 'turn' | 'maxBattleRounds' | 'maxTurns'>,
 ): Extract<BattlePhaseTransition, { kind: 'turn' }> {

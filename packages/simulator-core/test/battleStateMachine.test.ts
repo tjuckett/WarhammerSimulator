@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { BATTLE_PHASE, MOVEMENT_STEP, type BattleState } from '../src/types/battle';
-import { battlePhaseNode, nextBattlePhase, nextTurnTransition, setBattlePhase } from '../src/engine/battleStateMachine';
+import { advanceBattlePhase, battlePhaseNode, nextBattlePhase, nextTurnTransition, setBattlePhase } from '../src/engine/battleStateMachine';
 import { BATTLE_EVENT_TYPE, createBattleEvent } from '../src/engine/battleEvents';
 
 function state(): Pick<BattleState, 'phase' | 'movementStep' | 'activeArmy' | 'battleRound' | 'turn' | 'maxBattleRounds' | 'maxTurns'> {
@@ -43,6 +43,28 @@ test('turn transition changes player before incrementing the battle round', () =
   });
   current.activeArmy = 1;
   assert.equal(nextTurnTransition(current).nextBattleRound, 2);
+});
+
+test('shared phase advance applies movement substeps and boundary cursor cleanup', () => {
+  const current = {
+    ...state(),
+    phase: BATTLE_PHASE.Movement,
+    movementStep: MOVEMENT_STEP.MoveUnits,
+    activeAttachedShootingUnitId: 'shooter',
+    attachedShootingTargetUnitId: 'target',
+    pendingChargeRoll: { unitId: 'charger' },
+    pendingChargeMovement: { unitId: 'charger' },
+  } as unknown as BattleState;
+  const transition = advanceBattlePhase(current);
+  assert.deepEqual(transition?.to, { phase: BATTLE_PHASE.Movement, step: MOVEMENT_STEP.Reinforcements });
+  assert.equal(current.activeAttachedShootingUnitId, undefined);
+  assert.equal(current.attachedShootingTargetUnitId, undefined);
+  assert.equal(current.pendingChargeRoll, undefined);
+  assert.equal(current.pendingChargeMovement, undefined);
+
+  advanceBattlePhase(current);
+  assert.equal(current.phase, BATTLE_PHASE.Shooting);
+  assert.equal(current.movementStep, undefined);
 });
 
 test('typed battle events retain phase context without formatted log parsing', () => {
