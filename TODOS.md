@@ -79,8 +79,8 @@ Use this section as the current high-level pickup order before starting large ne
   - Give each phase ownership of its temporary state, interrupts, pending resolutions, and legal actions while keeping shared combat resolution centralized.
   - Keep dice, hit, wound, save, damage, and typed result processing in shared rules services used by phase handlers.
   - Make the same transitions drive local play, simulation, AI actions, replay, and save/load.
-- [ ] Centralize combat resolution behind one shared combat service boundary.
-  - Progress: `resolveCombatAttacks` now serves shooting, split melee, normal/automatic melee, and Fight on Death; `damageResolution.ts` owns deterministic saves, Feel No Pain, and spillover math; typed attack, pending-damage, and applied-damage events are emitted. Extract resolver orchestration and focused helpers from `simulator.ts` next.
+- [x] Centralize combat resolution behind one shared combat service boundary.
+  - Completed: `resolveCombatAttacks` is the sole stateful attack pipeline for shooting, split melee, normal/automatic melee, and Fight on Death. `combatResolution.ts` exposes the deterministic save, Feel No Pain, and spillover services; typed attack, pending-damage, and applied-damage events preserve outcomes separately from logs. The orchestration remains co-located with battle-state mutation in `simulator.ts`; further mechanical extraction would add dependency plumbing without another combat path to eliminate.
   - Audit charge, overwatch, mortal wounds, saves, Feel No Pain, damage allocation, and simulation paths for duplicated hit/wound/save/damage logic.
   - Keep phase modules responsible for declarations, eligibility, and sequencing while shared combat services own dice and attack-result resolution.
   - Return typed combat results/events from the shared boundary and remove phase-specific reimplementations where behavior is equivalent.
