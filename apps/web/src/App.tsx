@@ -78,6 +78,7 @@ import { enemyTargetsForIds, firstPendingDamageUnit, targetIdsForOptions, unitFo
 import { buildMeleeAttackAllocations, buildShootingAttackAllocations, updateAttackAllocation, updateMeleeAttackAllocation } from './play/playAttackAllocations';
 import { clone, createPlayUndoEntry } from './play/playUndoHelpers';
 import { usePlayPhaseSelectors } from './play/usePlayPhaseSelectors';
+import { createPlayMovementActionHandlers } from './play/playMovementController';
 import {
   attachedBattleUnitIdsForSelection,
   attachedProfilesForInspection,
@@ -1927,44 +1928,15 @@ export default function App() {
     commitPendingPlayModelMove();
   }
 
-  function advanceSelectedPlayUnit() {
-    const selection = primaryPlaySelectionPart(playModelSelection);
-    const prev = battleStateRef.current;
-    if (!prev || !selection) return;
-    const rules = rulesEditionForRuleset(prev.ruleset);
-    const result = resolveAdvancePlayUnitAction(prev, selection, rules);
-    if (!result) return;
-
-    pushPlayUndo(playUndoEntry(prev), result.next, result.action);
-    setPlayModelSelection(normalizePlaySelectionForState(result.next, playModelSelection));
-    commitBattleState(result.next);
-  }
-
-  function fallBackSelectedPlayUnit() {
-    const selection = primaryPlaySelectionPart(playModelSelection);
-    const prev = battleStateRef.current;
-    if (!prev || !selection) return;
-    const rules = rulesEditionForRuleset(prev.ruleset);
-    const result = resolveFallBackPlayUnitAction(prev, selection, rules);
-    if (!result) return;
-
-    pushPlayUndo(playUndoEntry(prev), result.next, result.action);
-    setPlayModelSelection(normalizePlaySelectionForState(result.next, playModelSelection));
-    commitBattleState(result.next);
-  }
-
-  function completeSelectedPlayUnitMovement() {
-    commitPendingPlayModelMove();
-    const selection = primaryPlaySelectionPart(playModelSelection);
-    const prev = battleStateRef.current;
-    if (!prev || !selection) return;
-    const result = resolveCompletePlayUnitMovementAction(prev, selection);
-    if (!result) return;
-
-    pushPlayUndo(playUndoEntry(prev), result.next, result.action);
-    setPlayModelSelection(normalizePlaySelectionForState(result.next, playModelSelection));
-    commitBattleState(result.next);
-  }
+  const { advanceSelectedPlayUnit, fallBackSelectedPlayUnit, completeSelectedPlayUnitMovement } = createPlayMovementActionHandlers({
+    battleStateRef,
+    playModelSelection,
+    playUndoEntry,
+    pushPlayUndo,
+    commitPendingPlayModelMove,
+    setPlayModelSelection,
+    commitBattleState,
+  });
 
   function updateShootingAttackAllocation(weaponIndex: number, targetId: string, attacks: number) {
     const shooter = selectedShootingUnit;
