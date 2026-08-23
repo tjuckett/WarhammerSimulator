@@ -7,7 +7,7 @@ import { canDeployOutsideDeploymentZone, isImportedArmy, unitRosterId } from '@w
 import { uiTokens } from '../theme/uiTokens';
 import { ModelWeaponLoadoutEditor } from './ArmyModelWeaponLoadoutEditor';
 import { UnitList } from './ArmyUnitList';
-import { Badge, groupedUnitDisplayItems, StaticUnitList } from './ArmyStaticUnitList';
+import { StaticUnitList } from './ArmyStaticUnitList';
 import { PlayDeploymentList } from './ArmyDeploymentList';
 import {
   attachmentGroupIds,

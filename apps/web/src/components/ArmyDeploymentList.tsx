@@ -2,9 +2,9 @@ import type { BattleUnit } from '@warhammer-simulator/core/types/battle';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile } from '@warhammer-simulator/core/types/army';
 import { canDeployOutsideDeploymentZone, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
 import { uiTokens } from '../theme/uiTokens';
-import { Badge, groupedUnitDisplayItems } from './ArmyStaticUnitList';
+import { Badge } from './ArmyStaticUnitList';
 import { UnitList } from './ArmyUnitList';
-import { buildTransportManifest, deploymentLabel, deploymentMode, isTransportUnit, type TransportManifestEntry, unitKey } from './armyPanelHelpers';
+import { buildTransportManifest, deploymentLabel, deploymentMode, groupedUnitDisplayItems, isTransportUnit, type TransportManifestEntry, unitKey } from './armyPanelHelpers';
 
 function PanelSectionHeader({ label, count, color }: { label: string; count: number; color: string }) {
   return (

@@ -6,7 +6,7 @@ import { canDeployOutsideDeploymentZone, unitRosterId } from '@warhammer-simulat
 import { uiTokens } from '../theme/uiTokens';
 import { ModelWeaponLoadoutEditor } from './ArmyModelWeaponLoadoutEditor';
 import { UnitList } from './ArmyUnitList';
-import { buildLeaderManifest, buildTransportManifest, deploymentLabel, deploymentMode, isLeaderUnit, type LeaderManifestEntry, type TransportManifestEntry, type UnitSplitPlan, unitKey } from './armyPanelHelpers';
+import { buildLeaderManifest, buildTransportManifest, deploymentLabel, deploymentMode, groupedUnitDisplayItems, isLeaderUnit, type LeaderManifestEntry, type TransportManifestEntry, type UnitSplitPlan, unitKey } from './armyPanelHelpers';
 
 export function StaticUnitList({
   army,
@@ -364,66 +364,6 @@ export function StaticUnitList({
   );
 }
 
-type GroupedUnitDisplayItem = {
-  unit: UnitProfile;
-  index: number;
-  indent: number;
-  groupRole: 'solo' | 'leader' | 'bodyguard';
-  groupIndex: number;
-};
-
-export function groupedUnitDisplayItems(army: ImportedArmy): GroupedUnitDisplayItem[] {
-  const renderedIds = new Set<string>();
-  const groups: Array<{ sortIndex: number; hasCharacter: boolean; items: GroupedUnitDisplayItem[] }> = [];
-
-  army.units.forEach((unit, index) => {
-    const id = unitKey(unit, index);
-    if (renderedIds.has(id) || unit.leaderAttachment) return;
-
-    const leaders = army.units
-      .map((candidate, candidateIndex) => ({ unit: candidate, index: candidateIndex, id: unitKey(candidate, candidateIndex) }))
-      .filter(candidate =>
-        candidate.unit.leaderAttachment?.attachedToUnitId === id
-        || (!candidate.unit.leaderAttachment?.attachedToUnitId && candidate.unit.leaderAttachment?.attachedToName === unit.name),
-      );
-
-    const groupItems: GroupedUnitDisplayItem[] = [];
-    leaders.forEach((leader, leaderIndex) => {
-      groupItems.push({ unit: leader.unit, index: leader.index, indent: 0, groupRole: 'leader', groupIndex: leaderIndex });
-      renderedIds.add(leader.id);
-    });
-
-    groupItems.push({
-      unit,
-      index,
-      indent: leaders.length ? 1 : 0,
-      groupRole: leaders.length ? 'bodyguard' : 'solo',
-      groupIndex: leaders.length,
-    });
-    renderedIds.add(id);
-    groups.push({
-      sortIndex: index,
-      hasCharacter: isLeaderUnit(unit) || leaders.some(leader => isLeaderUnit(leader.unit)),
-      items: groupItems,
-    });
-  });
-
-  army.units.forEach((unit, index) => {
-    const id = unitKey(unit, index);
-    if (!renderedIds.has(id)) {
-      groups.push({
-        sortIndex: index,
-        hasCharacter: isLeaderUnit(unit),
-        items: [{ unit, index, indent: 0, groupRole: 'solo', groupIndex: 0 }],
-      });
-      renderedIds.add(id);
-    }
-  });
-
-  return groups
-    .sort((a, b) => Number(b.hasCharacter) - Number(a.hasCharacter) || a.sortIndex - b.sortIndex)
-    .flatMap(group => group.items);
-}
 
 function UnitSummaryBadges({
   unit,

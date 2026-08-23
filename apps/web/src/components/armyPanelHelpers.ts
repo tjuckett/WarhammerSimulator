@@ -1,4 +1,12 @@
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitDeploymentMode, type UnitProfile } from '@warhammer-simulator/core/types/army';
+
+export type GroupedUnitDisplayItem = {
+  unit: UnitProfile;
+  index: number;
+  indent: number;
+  groupRole: 'solo' | 'leader' | 'bodyguard';
+  groupIndex: number;
+};
 export function deploymentMode(unit: UnitProfile): UnitDeploymentMode {
   return unit.deployment?.mode ?? UNIT_DEPLOYMENT_MODE.Battlefield;
 }
@@ -251,4 +259,39 @@ export function weaponCountForLoadouts(unit: UnitProfile, weaponIndex: number): 
 
 export function modelWeaponCopyCount(unit: UnitProfile, modelIndex: number, weaponIndex: number): number {
   return modelWeaponLoadout(unit, modelIndex).filter(index => index === weaponIndex).length;
+}
+
+export function groupedUnitDisplayItems(army: ImportedArmy): GroupedUnitDisplayItem[] {
+  const renderedIds = new Set<string>();
+  const groups: Array<{ sortIndex: number; hasCharacter: boolean; items: GroupedUnitDisplayItem[] }> = [];
+
+  army.units.forEach((unit, index) => {
+    const id = unitKey(unit, index);
+    if (renderedIds.has(id) || unit.leaderAttachment) return;
+    const leaders = army.units
+      .map((candidate, candidateIndex) => ({ unit: candidate, index: candidateIndex, id: unitKey(candidate, candidateIndex) }))
+      .filter(candidate =>
+        candidate.unit.leaderAttachment?.attachedToUnitId === id
+        || (!candidate.unit.leaderAttachment?.attachedToUnitId && candidate.unit.leaderAttachment?.attachedToName === unit.name),
+      );
+    const groupItems: GroupedUnitDisplayItem[] = [];
+    leaders.forEach((leader, leaderIndex) => {
+      groupItems.push({ unit: leader.unit, index: leader.index, indent: 0, groupRole: 'leader', groupIndex: leaderIndex });
+      renderedIds.add(leader.id);
+    });
+    groupItems.push({ unit, index, indent: leaders.length ? 1 : 0, groupRole: leaders.length ? 'bodyguard' : 'solo', groupIndex: leaders.length });
+    renderedIds.add(id);
+    groups.push({ sortIndex: index, hasCharacter: isLeaderUnit(unit) || leaders.some(leader => isLeaderUnit(leader.unit)), items: groupItems });
+  });
+
+  army.units.forEach((unit, index) => {
+    const id = unitKey(unit, index);
+    if (!renderedIds.has(id)) {
+      groups.push({ sortIndex: index, hasCharacter: isLeaderUnit(unit), items: [{ unit, index, indent: 0, groupRole: 'solo', groupIndex: 0 }] });
+      renderedIds.add(id);
+    }
+  });
+  return groups
+    .sort((a, b) => Number(b.hasCharacter) - Number(a.hasCharacter) || a.sortIndex - b.sortIndex)
+    .flatMap(group => group.items);
 }
