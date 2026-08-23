@@ -63,6 +63,7 @@ import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
 import { advanceBattlePhase, battlePhaseNode, battleRoundLimit, initializeBattlePhase, nextBattlePhase, nextTurnTransition } from './battleStateMachine';
 import { battleLog as log, phaseLog, resetBattleLogSequence } from './battleLog';
 import { resetUnitForActiveTurn } from './turnState';
+import { resolveDamageOutcome } from './damageResolution';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -1513,39 +1514,20 @@ export function applyDamage(
   logs.push(...feelNoPain.logs);
   totalDamage = feelNoPain.damage;
 
-  let remaining = totalDamage;
-  let killed = 0;
   let simulatedModels = unit.remainingModels - (unit.pendingCasualties ?? 0);
   let simulatedLeadWounds = unit.woundedModelIndex !== undefined
     ? unit.woundsOnLeadModel
     : unit.pendingWoundAssignment?.woundsOnModel ?? unit.profile.wounds;
-
-  if (options.noCarryOver) {
-    // Each unsaved wound's damage is capped at the current lead model's remaining wounds;
-    // excess is discarded rather than spilling to the next model.
-    if (simulatedModels > 0) {
-      if (remaining >= simulatedLeadWounds) {
-        killed++;
-        simulatedModels--;
-        simulatedLeadWounds = unit.profile.wounds;
-      } else {
-        simulatedLeadWounds -= remaining;
-      }
-    }
-  } else {
-    // Mortal wounds carry over: drain the lead model, then continue onto the next.
-    while (remaining > 0 && simulatedModels > 0) {
-      if (remaining >= simulatedLeadWounds) {
-        remaining -= simulatedLeadWounds;
-        simulatedModels--;
-        killed++;
-        simulatedLeadWounds = unit.profile.wounds;
-      } else {
-        simulatedLeadWounds -= remaining;
-        remaining = 0;
-      }
-    }
-  }
+  const outcome = resolveDamageOutcome({
+    damage: totalDamage,
+    modelCount: simulatedModels,
+    woundsOnCurrentModel: simulatedLeadWounds,
+    woundsPerModel: unit.profile.wounds,
+    noCarryOver: options.noCarryOver,
+  });
+  const killed = outcome.killedModels;
+  simulatedModels = outcome.remainingModels;
+  simulatedLeadWounds = outcome.woundsOnCurrentModel;
 
   const destroyedModelPositions = killed > 0
     ? unit.modelPositions.slice(Math.max(0, simulatedModels)).map(position => ({ ...position }))
