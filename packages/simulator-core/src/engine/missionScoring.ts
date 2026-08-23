@@ -936,8 +936,29 @@ export function scorePrimaryMission(state: BattleState, side: Side, rules: Rules
     return scoreDataDrivenPrimaryMission(state, side, rules, eleventhMissionRule, objectives);
   }
 
-  const vpGained = objectives.filter(objective => objective.owner === side).length;
-  state.scores[side] += vpGained;
+  const requestedVp = objectives.filter(objective => objective.owner === side).length;
+  const timing = currentScoringTiming(state);
+  const id = ['generic-primary', side, missionName, battleRound(state), state.turn, state.activeArmy, timing].join(':');
+  const entry = applyScoringLedger(state, {
+    id,
+    track: 'primary',
+    side,
+    missionName,
+    requestedVp,
+    status: requestedVp > 0 ? 'awarded' : 'not-met',
+    detail: `${requestedVp} objective${requestedVp === 1 ? '' : 's'} controlled.`,
+  });
+  const vpGained = entry?.vp ?? 0;
+  if (entry) {
+    const missionState = state.missionState!;
+    missionState.primaryMissionScoringRecords ??= [];
+    missionState.primaryMissionScoringRecords.push(primaryRecordFromLedger(entry, {
+      clauseIds: [],
+      timing,
+      clauseDetails: [],
+      unsupportedReasons: [],
+    }));
+  }
 
   return {
     kind: 'scored',

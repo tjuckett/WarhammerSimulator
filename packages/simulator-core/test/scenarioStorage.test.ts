@@ -1719,6 +1719,7 @@ test('primary scoring framework preserves current 10th marker objective fallback
   assert.equal(result.vpGained, 1);
   assert.deepEqual(battle.objectiveOwners, [0, 1]);
   assert.deepEqual(battle.scores, [1, 0]);
+  assert.deepEqual(battle.missionState?.scoringLedger?.map(entry => [entry.track, entry.vp, entry.scoreAfter]), [['primary', 1, 1]]);
 });
 
 test('primary scoring framework leaves unsupported objective-control rules unscored', () => {
