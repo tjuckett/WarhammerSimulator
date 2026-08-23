@@ -74,6 +74,7 @@ import { useTerrainLayouts } from './terrain/useTerrainLayouts';
 import { useTerrainEditing } from './terrain/useTerrainEditing';
 import { PLAY_DEPLOY_SELECTION_KIND, usePlayUiState } from './play/usePlayUiState';
 import { usePlayUndoState, type PendingPlayTimelineAction, type PlayUndoEntry } from './play/usePlayUndoState';
+import { enemyTargetsForIds, targetIdsForOptions, unitForSelection } from './play/playBattleSelectors';
 import {
   attachedBattleUnitIdsForSelection,
   attachedProfilesForInspection,
@@ -644,25 +645,16 @@ export default function App() {
     const selectedOption = selectedShootingWeaponIndex === 'all'
       ? null
       : selectedPlayShootingOptions.find(option => String(option.weaponIndex) === selectedShootingWeaponIndex) ?? null;
-    const targetIds = new Set(
-      (selectedOption ? [selectedOption] : selectedPlayShootingOptions)
-        .flatMap(option => option.targetIds),
-    );
-    return battleState.units.filter(unit =>
-      unit.side !== selectedShootingUnit.side
-      && !unit.destroyed
-      && !unit.embarkedInUnitId
-      && targetIds.has(unit.id),
+    return enemyTargetsForIds(
+      battleState,
+      selectedShootingUnit.side,
+      targetIdsForOptions(selectedOption ? [selectedOption] : selectedPlayShootingOptions),
     );
   }, [battleState, selectedShootingUnit, selectedPlayShootingOptions, selectedShootingWeaponIndex]);
   const selectedShootingTargetUnit = useMemo(() => {
-    if (!battleState || !selectedShootingUnit || !selectedShootingTargetId) return null;
-    return battleState.units.find(unit =>
-      unit.id === selectedShootingTargetId
-      && unit.side !== selectedShootingUnit.side
-      && !unit.destroyed
-      && !unit.embarkedInUnitId
-    ) ?? null;
+    return selectedShootingUnit
+      ? unitForSelection(battleState, selectedShootingTargetId, selectedShootingUnit.side === 0 ? 1 : 0)
+      : null;
   }, [battleState, selectedShootingUnit, selectedShootingTargetId]);
   const selectedShootingTargetIsValid = !!(
     selectedShootingTargetUnit
@@ -688,25 +680,16 @@ export default function App() {
     const selectedOption = selectedShootingWeaponIndex === 'all'
       ? null
       : selectedOverwatchOptions.find(option => String(option.weaponIndex) === selectedShootingWeaponIndex) ?? null;
-    const targetIds = new Set(
-      (selectedOption ? [selectedOption] : selectedOverwatchOptions)
-        .flatMap(option => option.targetIds),
-    );
-    return battleState.units.filter(unit =>
-      unit.side !== overwatchUnit.side
-      && !unit.destroyed
-      && !unit.embarkedInUnitId
-      && targetIds.has(unit.id),
+    return enemyTargetsForIds(
+      battleState,
+      overwatchUnit.side,
+      targetIdsForOptions(selectedOption ? [selectedOption] : selectedOverwatchOptions),
     );
   }, [battleState, overwatchUnit, selectedOverwatchOptions, selectedShootingWeaponIndex]);
   const selectedOverwatchTargetUnit = useMemo(() => {
-    if (!battleState || !overwatchUnit || !selectedShootingTargetId) return null;
-    return battleState.units.find(unit =>
-      unit.id === selectedShootingTargetId
-      && unit.side !== overwatchUnit.side
-      && !unit.destroyed
-      && !unit.embarkedInUnitId
-    ) ?? null;
+    return overwatchUnit
+      ? unitForSelection(battleState, selectedShootingTargetId, overwatchUnit.side === 0 ? 1 : 0)
+      : null;
   }, [battleState, overwatchUnit, selectedShootingTargetId]);
   const selectedOverwatchTargetIsValid = !!(
     selectedOverwatchTargetUnit
@@ -725,8 +708,11 @@ export default function App() {
   );
   const selectedPlayChargeTargets = useMemo(() => {
     if (!battleState || !selectedChargeUnit) return [];
-    const targetIds = new Set(selectedPlayChargeOptions.map(option => option.targetId));
-    return battleState.units.filter(unit => unit.side !== selectedChargeUnit.side && !unit.destroyed && !unit.embarkedInUnitId && targetIds.has(unit.id));
+    return enemyTargetsForIds(
+      battleState,
+      selectedChargeUnit.side,
+      new Set(selectedPlayChargeOptions.map(option => option.targetId)),
+    );
   }, [battleState, selectedChargeUnit, selectedPlayChargeOptions]);
   const selectedPlayCanRollCharge = !!(
     isPlayMode
@@ -775,17 +761,20 @@ export default function App() {
   );
   const selectedPlayFightTargets = useMemo(() => {
     if (!battleState || !selectedFightUnit) return [];
-    const targetIds = new Set(
-      (selectedFightWeaponIndex === 'all'
-        ? selectedPlayFightOptions
-        : selectedPlayFightOptions.filter(option => String(option.weaponIndex) === selectedFightWeaponIndex)
-      ).flatMap(option => option.targetIds),
+    return enemyTargetsForIds(
+      battleState,
+      selectedFightUnit.side,
+      targetIdsForOptions(
+        selectedFightWeaponIndex === 'all'
+          ? selectedPlayFightOptions
+          : selectedPlayFightOptions.filter(option => String(option.weaponIndex) === selectedFightWeaponIndex),
+      ),
     );
-    return battleState.units.filter(unit => unit.side !== selectedFightUnit.side && !unit.destroyed && !unit.embarkedInUnitId && targetIds.has(unit.id));
   }, [battleState, selectedFightUnit, selectedPlayFightOptions, selectedFightWeaponIndex]);
   const selectedFightTargetUnit = useMemo(() => {
-    if (!battleState || !selectedFightUnit || !selectedFightTargetId) return null;
-    return battleState.units.find(unit => unit.id === selectedFightTargetId && unit.side !== selectedFightUnit.side && !unit.destroyed && !unit.embarkedInUnitId) ?? null;
+    return selectedFightUnit
+      ? unitForSelection(battleState, selectedFightTargetId, selectedFightUnit.side === 0 ? 1 : 0)
+      : null;
   }, [battleState, selectedFightUnit, selectedFightTargetId]);
   const selectedFightAttackCount = useMemo(() => {
     if (!battleState || !selectedFightUnit || selectedFightWeaponIndex === 'all') return null;
