@@ -64,6 +64,16 @@ import { advanceBattlePhase, battlePhaseNode, battleRoundLimit, initializeBattle
 import { battleLog as log, phaseLog, resetBattleLogSequence } from './battleLog';
 import { resetUnitForActiveTurn } from './turnState';
 import { resolveDamageOutcome, resolveFeelNoPainOutcome, resolveSaveOutcome } from './combatResolution';
+import {
+  centroid,
+  formationExtent,
+  markUnitDestroyed,
+  modelWeaponLoadout,
+  rememberDestroyedPositions,
+  spliceModelIndices,
+  translateFormation,
+  trimUnitModelState,
+} from './unitModelState';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -436,83 +446,6 @@ export function findReachablePosition(
   return lastClear;
 }
 
-// Returns centroid of an array of positions
-function centroid(positions: Position[]): Position {
-  if (!positions.length) return { x: 0, y: 0 };
-  return {
-    x: positions.reduce((s, p) => s + p.x, 0) / positions.length,
-    y: positions.reduce((s, p) => s + p.y, 0) / positions.length,
-    z: positions.reduce((s, p) => s + (p.z ?? 0), 0) / positions.length,
-  };
-}
-
-// How far the furthest model extends from the centroid along a given unit vector
-function formationExtent(positions: Position[], ctr: Position, dir: { x: number; y: number }): number {
-  return positions.reduce((maxE, p) => {
-    const dot = (p.x - ctr.x) * dir.x + (p.y - ctr.y) * dir.y;
-    return Math.max(maxE, dot);
-  }, 0);
-}
-
-// Translate all model positions by (dx, dy) and return the new centroid
-function translateFormation(unit: { position: Position; modelPositions: Position[] }, dx: number, dy: number): void {
-  unit.modelPositions = unit.modelPositions.map(mp => ({ ...mp, x: mp.x + dx, y: mp.y + dy }));
-  unit.position = { ...unit.position, x: unit.position.x + dx, y: unit.position.y + dy };
-}
-
-// After model loss, trim positions array and refresh centroid
-function trimFormation(unit: { position: Position; modelPositions: Position[]; modelRosterIndexes?: number[]; modelRotations?: number[]; remainingModels: number }): void {
-  if (unit.modelPositions.length > unit.remainingModels) {
-    unit.modelPositions = unit.modelPositions.slice(0, unit.remainingModels);
-    unit.modelRotations = unit.modelRotations?.slice(0, unit.remainingModels);
-    unit.modelRosterIndexes = unit.modelRosterIndexes?.slice(0, unit.remainingModels);
-  }
-  if (unit.modelPositions.length > 0) {
-    unit.position = centroid(unit.modelPositions);
-  }
-}
-
-function trimUnitModelState(unit: BattleUnit): void {
-  trimFormation(unit);
-  unit.movementAllowanceRemainingByModel = unit.movementAllowanceRemainingByModel?.slice(0, unit.remainingModels);
-  unit.movementAllowanceTotalByModel = unit.movementAllowanceTotalByModel?.slice(0, unit.remainingModels);
-  unit.movementStartPositionsByModel = unit.movementStartPositionsByModel?.slice(0, unit.remainingModels);
-  unit.movementStartRotationsByModel = unit.movementStartRotationsByModel?.slice(0, unit.remainingModels);
-  if (unit.woundedModelIndex !== undefined && unit.woundedModelIndex >= unit.remainingModels) {
-    unit.woundedModelIndex = undefined;
-    unit.woundsOnLeadModel = unit.remainingModels > 0 ? unit.profile.wounds : 0;
-  }
-}
-
-// Removes specific model indices (sorted descending) from all per-model arrays on a unit.
-function spliceModelIndices(unit: BattleUnit, sortedDescIndices: number[]): void {
-  for (const i of sortedDescIndices) {
-    if (unit.woundedModelIndex !== undefined) {
-      if (unit.woundedModelIndex === i) {
-        unit.woundedModelIndex = undefined;
-        unit.woundsOnLeadModel = unit.profile.wounds;
-      } else if (unit.woundedModelIndex > i) {
-        unit.woundedModelIndex -= 1;
-      }
-    }
-    unit.modelPositions.splice(i, 1);
-    unit.modelRosterIndexes?.splice(i, 1);
-    unit.modelRotations?.splice(i, 1);
-    unit.movementAllowanceRemainingByModel?.splice(i, 1);
-    unit.movementAllowanceTotalByModel?.splice(i, 1);
-    unit.movementStartPositionsByModel?.splice(i, 1);
-    unit.movementStartRotationsByModel?.splice(i, 1);
-  }
-}
-
-function modelWeaponLoadout(profile: UnitProfile, modelIndex: number): number[] {
-  const configured = profile.modelWeaponLoadouts?.[modelIndex];
-  if (configured?.length) {
-    return configured.filter(weaponIndex => weaponIndex >= 0 && weaponIndex < profile.weapons.length);
-  }
-  return profile.weapons.map((_, weaponIndex) => weaponIndex);
-}
-
 // Counts models in the unit that carry weaponIndex and optionally have LOS to the defender.
 // Pass defender + terrain to restrict to models with edge-to-edge LOS (ranged, non-Indirect Fire weapons).
 function aliveWeaponModelCount(
@@ -522,17 +455,6 @@ function aliveWeaponModelCount(
   terrain?: Terrain[],
 ): number {
   return aliveWeaponModelIndexes(unit, weaponIndex, defender, terrain).length;
-}
-
-function rememberDestroyedPositions(unit: BattleUnit): void {
-  if (unit.lastDestroyedPosition || unit.lastDestroyedModelPositions) return;
-  unit.lastDestroyedPosition = { ...unit.position };
-  unit.lastDestroyedModelPositions = unit.modelPositions.map(position => ({ ...position }));
-}
-
-function markUnitDestroyed(unit: BattleUnit): void {
-  rememberDestroyedPositions(unit);
-  unit.destroyed = true;
 }
 
 function aliveWeaponModelIndexes(
