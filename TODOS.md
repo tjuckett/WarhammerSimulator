@@ -68,12 +68,12 @@ Use this section as the current high-level pickup order before starting large ne
   - Prioritize mission/event state tracking, automatic secondary scoring, primary scoring tests, scoring log explanations, and remaining core rule audit items listed below.
   - Keep edition-specific behavior behind `RulesEdition` or focused simulator-core helpers.
   - Next after this task: build Army Builder mode using the cleaned-up army editing and import/export boundaries.
-- [ ] Replace scattered simulator logging with a typed event/result collection boundary.
+- [x] Replace scattered simulator logging with a typed event/result collection boundary.
   - Keep `BattleState.log` as presentation and audit history only; never use log messages to reconstruct game logic.
   - Centralize event creation and collection across movement, shooting, charge, fight, missions, abilities, and practice actions.
   - Preserve typed dice, targets, modifiers, outcomes, pending allocations, and failure reasons separately from formatted messages.
   - Use the new boundary as the prerequisite for safely splitting `packages/simulator-core/src/engine/simulator.ts` by domain.
-- [ ] Introduce a hierarchical battle state machine for rounds, phases, and phase substeps.
+- [x] Introduce a hierarchical battle state machine for rounds, phases, and phase substeps.
   - Model the battle round and Command, Movement, Shooting, Charge, and Fight phases with explicit legal transitions and completion conditions.
   - Give each phase ownership of its temporary state, interrupts, pending resolutions, and legal actions while keeping shared combat resolution centralized.
   - Keep dice, hit, wound, save, damage, and typed result processing in shared rules services used by phase handlers.

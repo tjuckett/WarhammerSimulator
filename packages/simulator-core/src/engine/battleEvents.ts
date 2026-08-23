@@ -1,4 +1,4 @@
-import type { BattleState, LogEntry, Phase, Side } from '../types/battle';
+import type { BattleEvent, BattleState, LogEntry, Phase, Side } from '../types/battle';
 import { battleRound } from './battleRound';
 
 export const BATTLE_EVENT_TYPE = {
@@ -13,17 +13,6 @@ export const BATTLE_EVENT_TYPE = {
 } as const;
 
 export type BattleEventType = (typeof BATTLE_EVENT_TYPE)[keyof typeof BATTLE_EVENT_TYPE];
-
-export interface BattleEvent {
-  id: string;
-  type: BattleEventType;
-  turn: number;
-  battleRound: number;
-  phase: Phase;
-  side: Side;
-  source?: string;
-  data: Record<string, unknown>;
-}
 
 export interface BattleEventInput {
   type: BattleEventType;

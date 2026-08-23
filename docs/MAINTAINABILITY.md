@@ -39,7 +39,9 @@ This sequence keeps the UI/core boundary explicit and avoids a broad, behavior-c
 - `usePlayPhaseSelectors` now owns shooting, overwatch, charge, and fight derived state.
 - Movement resolution callbacks now live in the typed `playMovementController` boundary.
 - Deployment selection, model selection, charge/fight resolution, and the obsolete log-parsing result dialog were cleaned up or moved behind focused boundaries.
+- Typed `BattleEvent` records now capture phase transitions, attack results, charge dice, and deferred damage without reconstructing gameplay from log text.
+- `battleStateMachine` now owns the shared round/phase graph, movement substeps, player-turn transitions, five-round limit, and end-of-battle boundary used by manual and simulated advancement.
 
 ## Remaining migration boundary
 
-The remaining App work is mostly tactics, mission, and setup orchestration. The simulator engine should be split only after those callbacks consume typed action/result contracts; its current functions share cloning, validation, logging, and phase orchestration, so mechanically moving ranges would create circular dependencies without improving ownership.
+The remaining App work is mostly tactics, mission, and setup orchestration. The simulator engine can now be split incrementally by domain using the typed event and phase-transition boundaries; avoid moving mechanically related ranges until each extracted domain has focused action/result contracts.

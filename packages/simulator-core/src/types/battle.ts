@@ -173,6 +173,17 @@ export interface LogEntry {
   type: LogType;
 }
 
+export interface BattleEvent {
+  id: string;
+  type: string;
+  turn: number;
+  battleRound: number;
+  phase: Phase;
+  side: Side;
+  source?: string;
+  data: Record<string, unknown>;
+}
+
 export interface DestroyedUnitMissionEvent {
   unitId: string;
   side: Side;
@@ -494,7 +505,7 @@ export interface BattleState {
   winner: null | Side | 'draw';
   log: LogEntry[];
   /** Typed gameplay events. Log messages are a presentation/audit projection only. */
-  events?: import('../engine/battleEvents').BattleEvent[];
+  events?: BattleEvent[];
   units: BattleUnit[];
   pendingDeadlyDemises?: PendingDeadlyDemise[];
   pendingFightOnDeath?: PendingFightOnDeath[];
