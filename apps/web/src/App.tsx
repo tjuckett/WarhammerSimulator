@@ -605,7 +605,7 @@ export default function App() {
   const pendingChargeRoll = battleState?.phase === 'charge'
     && selectedChargeUnit
     && battleState.pendingChargeRoll?.unitId === selectedChargeUnit.id
-    && battleState.pendingChargeRoll.side === selectedChargeUnit.side
+    && battleState.pendingChargeRoll?.side === selectedChargeUnit.side
     ? battleState.pendingChargeRoll
     : null;
   const selectedFightUnit = battleState?.phase === 'fight' && selectedPlayBattleUnit?.side === battleState.activeArmy

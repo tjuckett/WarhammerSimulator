@@ -45,7 +45,7 @@ export function usePlayPhaseSelectors({
 }: PlayPhaseSelectorsInput) {
   const pendingChargeRoll = battleState?.phase === BATTLE_PHASE.Charge
     && battleState.pendingChargeRoll?.unitId === selectedChargeUnit?.id
-    && battleState.pendingChargeRoll.side === selectedChargeUnit?.side
+    && battleState.pendingChargeRoll?.side === selectedChargeUnit?.side
     ? battleState.pendingChargeRoll
     : null;
 const selectedPlayShootingOptions = useMemo(
