@@ -88,6 +88,8 @@ import {
 import { runBattleshockPhase } from './battleshockPhase';
 import * as chargeRules from './chargeRules';
 import * as fightEligibility from './fightEligibility';
+import * as fightPhase from './fightPhase';
+import * as fightMovement from './fightMovement';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -3863,17 +3865,21 @@ const unitWasEngagedAtFightStepStart = (state: BattleState, unit: BattleUnit) =>
 const unitEligibleToFight = (unit: BattleUnit, state: BattleState, rules: RulesEdition) =>
   fightEligibility.unitEligibleToFight(unit, state, rules, fightEligibilityContext);
 
+const fightPhaseContext: fightPhase.FightPhaseContext = {
+  activeUnits,
+  enemies,
+  canFightTarget: unitCanFightTarget,
+  inEngagement,
+  unitEligibleToFight,
+  unitWasEngagedAtFightStepStart,
+  attachedComponents: attachedUnitComponents,
+  attachedUnitId,
+  attachedUnitHasRule,
+  unitHasActiveStratagem,
+};
+
 function startFightStepInPlace(s: BattleState, rules: RulesEdition): void {
-  s.fightStepStarted = true;
-  s.forcedFightUnitId = undefined;
-  s.lastFightSelectionSide = undefined;
-  s.activeAttachedFightUnitId = undefined;
-  s.activeAttachedShootingUnitId = undefined;
-  s.attachedShootingTargetUnitId = undefined;
-  s.engagedUnitIdsAtFightStepStart = s.units
-    .filter(unit => !unit.destroyed && !unit.embarkedInUnitId
-      && enemies(s, unit.side).some(enemy => unitCanFightTarget(unit, enemy) && inEngagement(unit, [enemy], rules.engagementRange())))
-    .map(unit => unit.id);
+  fightPhase.startFightStepInPlace(s, rules, fightPhaseContext);
   s.log = [...s.log, log(s, s.activeArmy, s.armies[s.activeArmy].name, 'Fight step begins; engagement eligibility is recorded.', 'phase')];
 }
 
@@ -3903,79 +3909,17 @@ export function playFightPhaseHasPendingActivations(
       || playFightActivationUnitIds(state, 1, rules).length > 0);
 }
 
-function unitHasCounteroffensive(state: BattleState, unit: BattleUnit): boolean {
-  return unitHasActiveStratagem(state, unit, 'counteroffensive', 'fight');
-}
-
-function unitHasFightsFirst(state: BattleState, unit: BattleUnit): boolean {
-  return unit.charged || unitHasCounteroffensive(state, unit) || attachedUnitHasRule(state, unit, 'Fights First');
-}
-
-function finishAttachedFightComponent(state: BattleState, unit: BattleUnit, rules: RulesEdition): void {
-  if (rules.metadata.edition !== '11e') return;
-  const remaining = attachedUnitComponents(state, unit)
-    .filter(component => !component.activated && unitEligibleToFight(component, state, rules));
-  if (remaining.length) {
-    state.activeAttachedFightUnitId = attachedUnitId(unit);
-    return;
-  }
-  state.activeAttachedFightUnitId = undefined;
-  const forcedUnit = state.units.find(candidate => candidate.id === state.forcedFightUnitId);
-  if (forcedUnit && attachedUnitId(forcedUnit) === attachedUnitId(unit)) state.forcedFightUnitId = undefined;
-  state.lastFightSelectionSide = unit.side;
-}
-
-function sideCanSelectFightUnit(state: BattleState, side: Side, rules: RulesEdition): boolean {
-  return state.phase === 'fight'
-    && (rules.metadata.edition === '11e'
-      || state.activeArmy === side
-      || activeUnits(state, side).some(unit => unitHasCounteroffensive(state, unit)));
-}
+const finishAttachedFightComponent = (state: BattleState, unit: BattleUnit, rules: RulesEdition) =>
+  fightPhase.finishAttachedFightComponent(state, unit, rules, fightPhaseContext);
+const sideCanSelectFightUnit = (state: BattleState, side: Side, rules: RulesEdition) =>
+  fightPhase.sideCanSelectFightUnit(state, side, rules, fightPhaseContext);
 
 export function playFightActivationUnitIds(
   state: BattleState,
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): string[] {
-  if (!sideCanSelectFightUnit(state, side, rules)) return [];
-  const eligible = activeUnits(state, side).filter(unit => unitEligibleToFight(unit, state, rules));
-  if (rules.metadata.edition === '11e' && state.activeAttachedFightUnitId) {
-    return eligible
-      .filter(unit => attachedUnitId(unit) === state.activeAttachedFightUnitId)
-      .map(unit => unit.id);
-  }
-  if (state.forcedFightUnitId) {
-    const forced = state.units.find(unit => unit.id === state.forcedFightUnitId);
-    if (!forced || forced.side !== side) return [];
-    return eligible
-      .filter(unit => attachedUnitId(unit) === attachedUnitId(forced))
-      .map(unit => unit.id);
-  }
-  if (rules.metadata.edition !== '11e' && state.activeArmy !== side) {
-    return eligible.filter(unit => unitHasCounteroffensive(state, unit)).map(unit => unit.id);
-  }
-  if (rules.metadata.edition === '11e') {
-    const allEligible = state.units.filter(unit => unitEligibleToFight(unit, state, rules));
-    const counteroffensive = allEligible.filter(unit => unitHasCounteroffensive(state, unit));
-    const priorityEligible = counteroffensive.length
-      ? counteroffensive
-      : allEligible.some(unit => unitHasFightsFirst(state, unit))
-        ? allEligible.filter(unit => unitHasFightsFirst(state, unit))
-        : allEligible;
-    const preferredSide = state.lastFightSelectionSide === undefined
-      ? state.activeArmy
-      : (state.lastFightSelectionSide === 0 ? 1 : 0) as Side;
-    const selectingSide = priorityEligible.some(unit => unit.side === preferredSide)
-      ? preferredSide
-      : (preferredSide === 0 ? 1 : 0) as Side;
-    return side === selectingSide
-      ? priorityEligible.filter(unit => unit.side === side).map(unit => unit.id)
-      : [];
-  }
-  const counteroffensive = eligible.filter(unit => unitHasCounteroffensive(state, unit));
-  if (counteroffensive.length) return counteroffensive.map(unit => unit.id);
-  const fightsFirst = eligible.filter(unit => unitHasFightsFirst(state, unit));
-  return (fightsFirst.length ? fightsFirst : eligible).map(unit => unit.id);
+  return fightPhase.playFightActivationUnitIds(state, side, rules, fightPhaseContext);
 }
 
 export function playFightFirstUnitIds(
@@ -3983,10 +3927,7 @@ export function playFightFirstUnitIds(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): string[] {
-  if (rules.metadata.edition !== '11e' || state.phase !== 'fight' || state.fightStepStarted !== true) return [];
-  return activeUnits(state, side)
-    .filter(unit => unitEligibleToFight(unit, state, rules) && unitHasFightsFirst(state, unit))
-    .map(unit => unit.id);
+  return fightPhase.playFightFirstUnitIds(state, side, rules, fightPhaseContext);
 }
 
 export function playOverrunFightUnitIds(
@@ -3994,13 +3935,7 @@ export function playOverrunFightUnitIds(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): string[] {
-  if (rules.metadata.edition !== '11e' || state.fightStepStarted !== true) return [];
-  return playFightActivationUnitIds(state, side, rules).filter(unitId => {
-    const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
-    if (!unit || unit.overrunFightSelected) return false;
-    const engaged = enemies(state, side).some(enemy => unitCanFightTarget(unit, enemy) && inEngagement(unit, [enemy], rules.engagementRange()));
-    return !engaged || (!unitWasEngagedAtFightStepStart(state, unit) && engaged);
-  });
+  return fightPhase.playOverrunFightUnitIds(state, side, rules, fightPhaseContext);
 }
 
 export function selectPlayOverrunFight(
@@ -4017,53 +3952,13 @@ export function selectPlayOverrunFight(
   return s;
 }
 
-function closestEnemyModelFor(
-  unit: BattleUnit,
-  modelIndex: number,
-  state: BattleState,
-): { unit: BattleUnit; modelIndex: number; distance: number } | null {
-  let closest: { unit: BattleUnit; modelIndex: number; distance: number } | null = null;
-  for (const enemy of enemies(state, unit.side)) {
-    for (let enemyModelIndex = 0; enemyModelIndex < enemy.modelPositions.length; enemyModelIndex++) {
-      const distance = modelBaseEdgeHorizontalDistance(unit, modelIndex, enemy, enemyModelIndex);
-      if (!closest || distance < closest.distance) closest = { unit: enemy, modelIndex: enemyModelIndex, distance };
-    }
-  }
-  return closest;
-}
-
-function nearestObjectiveToModel(model: Position, state: BattleState): Position | null {
-  if (!state.objectives.length) return null;
-  return state.objectives.reduce((best, objective) =>
-    dist(model, objective) < dist(model, best) ? objective : best,
-  );
-}
-
-function moveModelTowardPoint(unit: BattleUnit, modelIndex: number, point: Position, maxDistance: number, stopGap = 0): boolean {
-  const model = unit.modelPositions[modelIndex];
-  if (!model) return false;
-  const dx = point.x - model.x;
-  const dy = point.y - model.y;
-  const distance = Math.hypot(dx, dy);
-  const moveDistance = Math.min(maxDistance, Math.max(0, distance - stopGap));
-  if (distance < 0.001 || moveDistance < 0.001) return false;
-  unit.modelPositions[modelIndex] = {
-    ...model,
-    x: model.x + (dx / distance) * moveDistance,
-    y: model.y + (dy / distance) * moveDistance,
-  };
-  unit.position = centroid(unit.modelPositions);
-  return true;
-}
-
-function moveModelTowardEnemy(unit: BattleUnit, modelIndex: number, state: BattleState): boolean {
-  const closest = closestEnemyModelFor(unit, modelIndex, state);
-  if (!closest) return false;
-  const targetModel = closest.unit.modelPositions[closest.modelIndex];
-  const myRadius = modelBaseRadius(unit, modelIndex);
-  const targetRadius = modelBaseRadius(closest.unit, closest.modelIndex);
-  return moveModelTowardPoint(unit, modelIndex, targetModel, FIGHT_PHASE_MOVE_RANGE, myRadius + targetRadius + 0.02);
-}
+const fightMovementContext: fightMovement.FightMovementContext = {
+  enemies,
+  modelBaseEdgeHorizontalDistance,
+  modelBaseRadius,
+  centroid,
+  distance: dist,
+};
 
 function applyFightPhaseMove(
   state: BattleState,
@@ -4092,11 +3987,11 @@ function applyFightPhaseMove(
   let movedModels = 0;
   for (let modelIndex = 0; modelIndex < unit.modelPositions.length; modelIndex++) {
     const before = unit.modelPositions[modelIndex];
-    const movedTowardEnemy = moveModelTowardEnemy(unit, modelIndex, s);
+    const movedTowardEnemy = fightMovement.moveModelTowardEnemy(unit, modelIndex, s, FIGHT_PHASE_MOVE_RANGE, fightMovementContext);
     const movedTowardObjective = !movedTowardEnemy && kind === 'consolidate'
       ? (() => {
-          const objective = nearestObjectiveToModel(unit.modelPositions[modelIndex], s);
-          return objective ? moveModelTowardPoint(unit, modelIndex, objective, FIGHT_PHASE_MOVE_RANGE) : false;
+          const objective = fightMovement.nearestObjectiveToModel(unit.modelPositions[modelIndex], s, fightMovementContext);
+          return objective ? fightMovement.moveModelTowardPoint(unit, modelIndex, objective, FIGHT_PHASE_MOVE_RANGE, fightMovementContext) : false;
         })()
       : false;
     if (!movedTowardEnemy && !movedTowardObjective) continue;
