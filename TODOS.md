@@ -73,6 +73,11 @@ Use this section as the current high-level pickup order before starting large ne
   - Centralize event creation and collection across movement, shooting, charge, fight, missions, abilities, and practice actions.
   - Preserve typed dice, targets, modifiers, outcomes, pending allocations, and failure reasons separately from formatted messages.
   - Use the new boundary as the prerequisite for safely splitting `packages/simulator-core/src/engine/simulator.ts` by domain.
+- [ ] Introduce a hierarchical battle state machine for rounds, phases, and phase substeps.
+  - Model the battle round and Command, Movement, Shooting, Charge, and Fight phases with explicit legal transitions and completion conditions.
+  - Give each phase ownership of its temporary state, interrupts, pending resolutions, and legal actions while keeping shared combat resolution centralized.
+  - Keep dice, hit, wound, save, damage, and typed result processing in shared rules services used by phase handlers.
+  - Make the same transitions drive local play, simulation, AI actions, replay, and save/load.
 - [x] Add a dedicated Army Builder mode.
   - Add a fourth app mode for army/list management with no battlefield canvas.
   - Top bar should show army-focused controls instead of play controls: army slot, army type/faction, saved army dropdown, New, Save, Import JSON, and Export JSON.
