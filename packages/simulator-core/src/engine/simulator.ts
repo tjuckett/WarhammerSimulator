@@ -63,7 +63,7 @@ import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
 import { advanceBattlePhase, battlePhaseNode, battleRoundLimit, initializeBattlePhase, nextBattlePhase, nextTurnTransition } from './battleStateMachine';
 import { battleLog as log, phaseLog, resetBattleLogSequence } from './battleLog';
 import { resetUnitForActiveTurn } from './turnState';
-import { resolveDamageOutcome } from './damageResolution';
+import { resolveDamageOutcome, resolveFeelNoPainOutcome } from './damageResolution';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -2075,12 +2075,11 @@ function applyFeelNoPain(
   if (!target || damage <= 0) return { damage, logs: [] };
 
   const rolls = rollMultiple(damage);
-  const ignored = countSuccesses(rolls, target);
-  const remaining = Math.max(0, damage - ignored);
+  const outcome = resolveFeelNoPainOutcome(damage, target, rolls);
   return {
-    damage: remaining,
+    damage: outcome.damage,
     logs: [log(state, unit.side, unit.profile.name,
-      `     Feel No Pain (${target}+): [${rolls.join(', ')}] -> ${ignored} ignored, ${remaining} damage remains`,
+      `     Feel No Pain (${target}+): [${rolls.join(', ')}] -> ${outcome.ignored} ignored, ${outcome.damage} damage remains`,
       'roll',
     )],
   };

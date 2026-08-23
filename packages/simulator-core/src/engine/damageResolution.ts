@@ -45,3 +45,9 @@ export function resolveDamageOutcome(input: DamageResolutionInput): DamageResolu
 
   return { killedModels, remainingModels, woundsOnCurrentModel };
 }
+
+export function resolveFeelNoPainOutcome(damage: number, target: number, rolls: number[]): { ignored: number; damage: number } {
+  const ignored = countSuccesses(rolls, target);
+  return { ignored, damage: Math.max(0, damage - ignored) };
+}
+import { countSuccesses } from './dice';
