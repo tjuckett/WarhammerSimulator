@@ -76,6 +76,7 @@ import { PLAY_DEPLOY_SELECTION_KIND, usePlayUiState } from './play/usePlayUiStat
 import { usePlayUndoState, type PendingPlayTimelineAction, type PlayUndoEntry } from './play/usePlayUndoState';
 import { enemyTargetsForIds, targetIdsForOptions, unitForSelection } from './play/playBattleSelectors';
 import { buildMeleeAttackAllocations, buildShootingAttackAllocations, updateAttackAllocation } from './play/playAttackAllocations';
+import { clone, createPlayUndoEntry } from './play/playUndoHelpers';
 import {
   attachedBattleUnitIdsForSelection,
   attachedProfilesForInspection,
@@ -137,10 +138,6 @@ const PLAY_TURN_PHASES: Phase[] = [
   BATTLE_PHASE.Charge,
   BATTLE_PHASE.Fight,
 ];
-
-function clone<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value));
-}
 
 function makeGameSessionId(prefix: string): string {
   const randomId = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -1445,13 +1442,10 @@ export default function App() {
     resetConfiguredBattle();
   }
 
-  function playUndoEntry(state: BattleState): PlayUndoEntry {
-    return {
-      battleState: clone(state),
-      playDeploySelection: clone(playDeploySelection),
-      playModelSelection: clone(playModelSelection),
-    };
-  }
+  const playUndoEntry = useCallback(
+    (state: BattleState) => createPlayUndoEntry(state, playDeploySelection, playModelSelection),
+    [playDeploySelection, playModelSelection],
+  );
 
   function restoreGameSessionTimelineResult(result: TimelineStateResult) {
     restoreGameSessionResultTimeline(result);
