@@ -78,6 +78,7 @@ export interface LegalActionOptions {
 export interface PhaseLegalActionHandler {
   phase: BattleState['phase'];
   appendActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition): void;
+  appendInterrupts?(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition): void;
 }
 
 function activeUnits(state: BattleState, side: Side): BattleUnit[] {
@@ -588,9 +589,17 @@ const PHASE_LEGAL_ACTION_HANDLERS: Partial<Record<BattleState['phase'], PhaseLeg
       addSnapShootingActions(actions, state, side, rules);
     },
   },
-  shooting: { phase: 'shooting', appendActions: addShootingActions },
+  shooting: {
+    phase: 'shooting',
+    appendActions: addShootingActions,
+    appendInterrupts: addFightOnDeathActions,
+  },
   charge: { phase: 'charge', appendActions: addChargeActions },
-  fight: { phase: 'fight', appendActions: addFightActions },
+  fight: {
+    phase: 'fight',
+    appendActions: addFightActions,
+    appendInterrupts: addFightOnDeathActions,
+  },
 };
 
 export function activePhaseLegalActionHandler(state: BattleState): PhaseLegalActionHandler | undefined {
@@ -608,7 +617,7 @@ export function getLegalActions(
   const includeAbilities = options.includeAbilities ?? true;
   const actions: LegalAction[] = [];
 
-  addFightOnDeathActions(actions, state, side, rules);
+  activePhaseLegalActionHandler(state)?.appendInterrupts?.(actions, state, side, rules);
   if (state.pendingFightOnDeath?.length) return actions;
 
   addDamageActions(actions, state, side);

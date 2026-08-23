@@ -13240,6 +13240,9 @@ test('11th Fight On Death opens a serialized interrupt and resolves through lega
 
   const legal = getLegalActions(battle, attacker.side, rules40K11th);
   assert.deepEqual(legal, []);
+  battle.phase = 'charge';
+  assert.deepEqual(getLegalActions(battle, doomed.side, rules40K11th), []);
+  battle.phase = 'shooting';
   const interrupt = getLegalActions(battle, doomed.side, rules40K11th).find(option => option.action.type === GAME_ACTION_TYPE.FightOnDeath);
   assert.ok(interrupt);
   const originalRandom = Math.random;
