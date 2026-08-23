@@ -79,6 +79,7 @@ import { buildMeleeAttackAllocations, buildShootingAttackAllocations, updateAtta
 import { clone, createPlayUndoEntry } from './play/playUndoHelpers';
 import { usePlayPhaseSelectors } from './play/usePlayPhaseSelectors';
 import { createPlayMovementActionHandlers } from './play/playMovementController';
+import { createPlayShootingActions } from './play/playShootingActions';
 import {
   attachedBattleUnitIdsForSelection,
   attachedProfilesForInspection,
@@ -1938,6 +1939,23 @@ export default function App() {
     commitBattleState,
   });
 
+  const { resolveSelectedPlayOverwatch } = createPlayShootingActions({
+    battleStateRef,
+    overwatchUnit,
+    selectedOverwatchTargets,
+    selectedShootingTargetId,
+    selectedShootingWeaponIndex,
+    activeRulesForBattle,
+    playUndoEntry,
+    pushPlayUndo,
+    commitBattleState,
+    setTargetErrorMsg,
+    setShootingResultEntries,
+    setOverwatchUnitId,
+    setSelectedShootingTargetId,
+    setSelectedShootingWeaponIndex,
+  });
+
   function updateShootingAttackAllocation(weaponIndex: number, targetId: string, attacks: number) {
     const shooter = selectedShootingUnit;
     const maxModels = shooter ? playShootingWeaponModelCount(shooter, weaponIndex) : null;
@@ -1988,42 +2006,6 @@ export default function App() {
       targetUnitId: '',
       weaponIndex: 'all',
     });
-    commitBattleState(next);
-  }
-
-  function resolveSelectedPlayOverwatch() {
-    const prev = battleStateRef.current;
-    if (!prev || !overwatchUnit || !selectedShootingTargetId) return;
-    if (!selectedOverwatchTargets.some(target => target.id === selectedShootingTargetId)) {
-      setTargetErrorMsg('Selected unit cannot snap shoot that target.');
-      return;
-    }
-    const weaponIndex = selectedShootingWeaponIndex === 'all' ? 'all' : Number(selectedShootingWeaponIndex);
-    const next = snapShootPlayUnitWeapon(
-      prev,
-      overwatchUnit.id,
-      overwatchUnit.side,
-      selectedShootingTargetId,
-      weaponIndex,
-      activeRulesForBattle,
-    );
-    if (next === prev) {
-      setTargetErrorMsg('Snap shooting could not be resolved.');
-      return;
-    }
-    pushPlayUndo(playUndoEntry(prev), next, {
-      type: GAME_ACTION_TYPE.SnapShootUnitWeapon,
-      side: overwatchUnit.side,
-      unitId: overwatchUnit.id,
-      targetUnitId: selectedShootingTargetId,
-      weaponIndex,
-    });
-    const newEntries = next.log.slice(prev.log.length);
-    setShootingResultEntries(newEntries);
-    setOverwatchUnitId('');
-    setSelectedShootingTargetId('');
-    setSelectedShootingWeaponIndex('all');
-    setTargetErrorMsg(null);
     commitBattleState(next);
   }
 
