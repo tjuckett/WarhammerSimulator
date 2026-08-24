@@ -49,6 +49,58 @@ export function nearestFriendlyTransportInRange(state: BattleState, unit: Battle
   null);
 }
 
+const TRANSPORT_ACCESS_RANGE = 3;
+
+export interface TransportEmbarkContext {
+  movementStep(state: BattleState): string;
+  clone(state: BattleState): BattleState;
+  cancelUnitAction(state: BattleState, unit: BattleUnit, reason: string): void;
+  recordUnitLeftBattlefield(state: BattleState, unitId: string): void;
+  modelRotation(unit: BattleUnit, modelIndex: number): number;
+  log(state: BattleState, side: 0 | 1, title: string, message: string, type: string): BattleState['log'][number];
+}
+
+export function playUnitCanEmbark(state: BattleState, unitId: string, side: 0 | 1, context: TransportEmbarkContext, transportUnitId?: string): boolean {
+  if (state.phase !== 'movement' || context.movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
+  if (!unit || unit.embarkedInUnitId || isTransportProfile(unit.profile) || unit.disembarkedThisTurn || unit.movementComplete
+    || unit.movementAction === 'fellBack' || unit.fellBack) return false;
+  const transport = transportUnitId
+    ? state.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)
+    : nearestFriendlyTransportInRange(state, unit, TRANSPORT_ACCESS_RANGE);
+  return !!transport && isTransportProfile(transport.profile) && transportCapacityRemaining(state, transport.id) >= unit.remainingModels
+    && everyModelWithinRange(unit, transport, TRANSPORT_ACCESS_RANGE);
+}
+
+export function embarkPlayUnit(state: BattleState, unitId: string, side: 0 | 1, context: TransportEmbarkContext, transportUnitId?: string): BattleState {
+  if (!playUnitCanEmbark(state, unitId, side, context, transportUnitId)) return state;
+  const existingUnit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
+  const existingTransport = transportUnitId
+    ? state.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)
+    : nearestFriendlyTransportInRange(state, existingUnit, TRANSPORT_ACCESS_RANGE);
+  if (!existingTransport) return state;
+  const next = context.clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
+  const transport = next.units.find(candidate => candidate.id === existingTransport.id && candidate.side === side && !candidate.destroyed)!;
+  context.cancelUnitAction(next, unit, 'it left the battlefield');
+  context.recordUnitLeftBattlefield(next, unit.id);
+  unit.embarkedInUnitId = transport.id;
+  unit.embarkedThisTurn = true;
+  unit.position = { ...transport.position };
+  unit.modelPositions = transport.modelPositions.map(position => ({ ...position })).slice(0, Math.max(1, unit.remainingModels));
+  while (unit.modelPositions.length < unit.remainingModels) unit.modelPositions.push({ ...transport.position });
+  unit.movementAction = 'normalMove';
+  unit.movementAllowanceRemaining = 0;
+  unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
+  unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => 0);
+  unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
+  unit.movementStartRotationsByModel = unit.modelPositions.map((_, index) => context.modelRotation(unit, index));
+  unit.movementComplete = true;
+  unit.inCombat = false;
+  next.log = [...next.log, context.log(next, side, unit.profile.name, `${unit.profile.name} embarks within ${transport.profile.name}.`, 'move')];
+  return next;
+}
+
 export const DEPLOYMENT_STRATEGIES: { id: DeploymentStrategy; name: string }[] = [
   { id: 'balanced',       name: 'Balanced' },
   { id: 'refused-flank',  name: 'Refused Flank' },
