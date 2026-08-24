@@ -389,21 +389,11 @@ function meleeWeaponSelection(
   options: Array<{ weapon: WeaponProfile; weaponIndex: number }>,
   requested: number | 'all',
 ): Array<{ weapon: WeaponProfile; weaponIndex: number }> {
-  const selected = new Set<number>();
-  for (let modelIndex = 0; modelIndex < unit.remainingModels; modelIndex++) {
-    const rosterIndex = unit.modelRosterIndexes?.[modelIndex] ?? modelIndex;
-    const carried = new Set(modelWeaponLoadout(unit.profile, rosterIndex));
-    const modelOptions = options.filter(option => carried.has(option.weaponIndex));
-    const extra = chooseOneProfilePerGroup(modelOptions.filter(option => weaponHasKeyword(option.weapon, 'Extra Attacks')));
-    extra.forEach(option => selected.add(option.weaponIndex));
-    const normal = chooseOneProfilePerGroup(modelOptions.filter(option => !weaponHasKeyword(option.weapon, 'Extra Attacks')));
-    const requestedNormal = typeof requested === 'number'
-      ? normal.find(option => option.weaponIndex === requested)
-      : undefined;
-    const chosenNormal = requestedNormal ?? normal[0];
-    if (chosenNormal) selected.add(chosenNormal.weaponIndex);
-  }
-  return options.filter(option => selected.has(option.weaponIndex));
+  return manualCombat.selectMeleeWeapons(unit, options, requested, {
+    modelWeaponLoadout,
+    weaponHasKeyword,
+    chooseOneProfilePerGroup,
+  });
 }
 
 function participatingWeaponModelCount(

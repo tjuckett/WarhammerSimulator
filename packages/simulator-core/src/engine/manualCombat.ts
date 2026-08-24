@@ -1,7 +1,7 @@
 // Manual attack resolution and its progressively narrowed simulator facade context.
 // @ts-nocheck
 import type { BattleState, BattleUnit, LogEntry, PendingFightOnDeath, Position, ShootingWeaponResult, Side } from '../types/battle';
-import type { WeaponProfile } from '../types/army';
+import type { UnitProfile, WeaponProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import type { CombatAttackResolutionOptions } from './combatTypes';
 
@@ -1010,6 +1010,27 @@ export function applyFightPhaseMove(
 }
 
 export type MeleeAttackAllocation = { weaponIndex: number; targetUnitId: string; attackCount?: number };
+
+export function selectMeleeWeapons(
+  unit: BattleUnit,
+  options: Array<{ weapon: WeaponProfile; weaponIndex: number }>,
+  requested: number | 'all',
+  context: { modelWeaponLoadout(profile: UnitProfile, modelIndex: number): number[]; weaponHasKeyword(weapon: WeaponProfile, keyword: string): boolean; chooseOneProfilePerGroup<T extends { weapon: WeaponProfile }>(weapons: T[]): T[] },
+): Array<{ weapon: WeaponProfile; weaponIndex: number }> {
+  const selected = new Set<number>();
+  for (let modelIndex = 0; modelIndex < unit.remainingModels; modelIndex++) {
+    const rosterIndex = unit.modelRosterIndexes?.[modelIndex] ?? modelIndex;
+    const carried = new Set(context.modelWeaponLoadout(unit.profile, rosterIndex));
+    const modelOptions = options.filter(option => carried.has(option.weaponIndex));
+    context.chooseOneProfilePerGroup(modelOptions.filter(option => context.weaponHasKeyword(option.weapon, 'Extra Attacks')))
+      .forEach(option => selected.add(option.weaponIndex));
+    const normal = context.chooseOneProfilePerGroup(modelOptions.filter(option => !context.weaponHasKeyword(option.weapon, 'Extra Attacks')));
+    const requestedNormal = typeof requested === 'number' ? normal.find(option => option.weaponIndex === requested) : undefined;
+    const chosenNormal = requestedNormal ?? normal[0];
+    if (chosenNormal) selected.add(chosenNormal.weaponIndex);
+  }
+  return options.filter(option => selected.has(option.weaponIndex));
+}
 
 export interface ManualFightResolutionContext extends FightPhaseContext {
   clone(state: BattleState): BattleState;
