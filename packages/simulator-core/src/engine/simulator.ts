@@ -3730,6 +3730,21 @@ const modelMovementContext: interactiveMovementState.ModelMovementContext = {
   centroid,
 };
 
+const advanceMovementContext: interactiveMovementState.AdvanceMovementContext = {
+  clone,
+  movementStep,
+  isAircraft,
+  nonAircraftEngagedEnemies: (state, unit) => nonAircraftEngagedEnemies(state, unit, rulesEditionForRuleset(state.ruleset)),
+  lockOtherMovedUnits: lockOtherMovedPlayUnits,
+  cancelUnitAction,
+  advanceAllowance,
+  normalMoveAllowance,
+  takeToSkiesDistanceCost,
+  attachedComponents: attachedUnitComponents,
+  modelRotation,
+  createLog: (state, side, actor, message) => { state.log = [...state.log, log(state, side, actor, message, 'move')]; },
+};
+
 export function movePlayModels(
   state: BattleState,
   unitId: string,
@@ -4021,22 +4036,8 @@ export function playUnitCanAdvance(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): boolean {
-  if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
-  const unit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
-  if (
-    !unit
-    || unit.inStrategicReserves
-    || isAircraft(unit)
-    || unit.movementComplete
-    || unit.fellBack
-    || !!unit.movementAction
-    || typeof unit.movementAllowanceRemaining === 'number'
-    || !!unit.movementAllowanceRemainingByModel
-    || !!unit.movementAllowanceTotalByModel
-    || !!unit.movementStartPositionsByModel
-    || !!unit.movementStartRotationsByModel
-  ) return false;
-  return nonAircraftEngagedEnemies(state, unit, rules).length === 0;
+  return interactiveMovementState.canAdvance(state, unitId, side, advanceMovementContext);
+
 }
 
 export function declarePlaySuperHeavyMobile(state: BattleState, unitId: string, side: Side): BattleState {
@@ -4068,38 +4069,8 @@ export function advancePlayUnit(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
-  if (!playUnitCanAdvance(state, unitId, side, rules)) return state;
+  return interactiveMovementState.advanceUnit(state, unitId, side, rules, advanceMovementContext);
 
-  const s = clone(state);
-  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
-  if (!unit) return state;
-  lockOtherMovedPlayUnits(s, unit);
-  cancelUnitAction(s, unit, 'it made an Advance move');
-
-  const advance = advanceAllowance(unit, rules);
-  for (const component of attachedUnitComponents(s, unit)) {
-    const total = Math.max(0,
-      normalMoveAllowance(component)
-      + advance.advanceRoll
-      + (component.profile.movementOverrides?.advanceModifier ?? 0)
-      - takeToSkiesDistanceCost(component));
-    component.movementAction = 'advanced';
-    component.movementAllowanceRemaining = total;
-    component.movementAllowanceRemainingByModel = component.modelPositions.map(() => total);
-    component.movementAllowanceTotalByModel = component.modelPositions.map(() => total);
-    component.movementStartPositionsByModel = component.modelPositions.map(position => ({ ...position }));
-    component.movementStartRotationsByModel = component.modelPositions.map((_, modelIndex) => modelRotation(component, modelIndex));
-    component.movementComplete = total <= 0.001;
-    component.fellBack = false;
-  }
-  s.log = [...s.log, log(
-    s,
-    side,
-    unit.profile.name,
-    `${unit.profile.name} Advances: ${advance.advanceRoll === 6 && unit.profile.movementOverrides?.advanceRoll === 'auto6' ? 'auto 6' : `rolled ${advance.advanceRoll}`}; movement allowance is ${advance.total.toFixed(0)}".`,
-    'move',
-  )];
-  return s;
 }
 
 export function fallBackPlayUnit(

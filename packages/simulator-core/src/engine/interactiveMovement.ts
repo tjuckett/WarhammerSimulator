@@ -706,3 +706,50 @@ export function undoUnitMovement(state: BattleState, unitId: string, side: Side,
   }
   return next;
 }
+
+export interface AdvanceMovementContext {
+  clone(state: BattleState): BattleState;
+  movementStep(state: BattleState): string;
+  isAircraft(unit: BattleUnit): boolean;
+  nonAircraftEngagedEnemies(state: BattleState, unit: BattleUnit): BattleUnit[];
+  lockOtherMovedUnits(state: BattleState, unit: BattleUnit): void;
+  cancelUnitAction(state: BattleState, unit: BattleUnit, reason: string): void;
+  advanceAllowance(unit: BattleUnit, rules: RulesEdition): { advanceRoll: number; total: number };
+  normalMoveAllowance(unit: BattleUnit): number;
+  takeToSkiesDistanceCost(unit: BattleUnit): number;
+  attachedComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
+  modelRotation(unit: BattleUnit, modelIndex: number): number;
+  createLog(state: BattleState, side: Side, actor: string, message: string): void;
+}
+
+export function canAdvance(state: BattleState, unitId: string, side: Side, context: AdvanceMovementContext): boolean {
+  if (state.phase !== 'movement' || context.movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || unit.inStrategicReserves || context.isAircraft(unit) || unit.movementComplete || unit.fellBack || !!unit.movementAction
+    || typeof unit.movementAllowanceRemaining === 'number' || !!unit.movementAllowanceRemainingByModel || !!unit.movementAllowanceTotalByModel
+    || !!unit.movementStartPositionsByModel || !!unit.movementStartRotationsByModel) return false;
+  return context.nonAircraftEngagedEnemies(state, unit).length === 0;
+}
+
+export function advanceUnit(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: AdvanceMovementContext): BattleState {
+  if (!canAdvance(state, unitId, side, context)) return state;
+  const next = context.clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit) return state;
+  context.lockOtherMovedUnits(next, unit);
+  context.cancelUnitAction(next, unit, 'it made an Advance move');
+  const advance = context.advanceAllowance(unit, rules);
+  for (const component of context.attachedComponents(next, unit)) {
+    const total = Math.max(0, context.normalMoveAllowance(component) + advance.advanceRoll + (component.profile.movementOverrides?.advanceModifier ?? 0) - context.takeToSkiesDistanceCost(component));
+    component.movementAction = 'advanced';
+    component.movementAllowanceRemaining = total;
+    component.movementAllowanceRemainingByModel = component.modelPositions.map(() => total);
+    component.movementAllowanceTotalByModel = component.modelPositions.map(() => total);
+    component.movementStartPositionsByModel = component.modelPositions.map(position => ({ ...position }));
+    component.movementStartRotationsByModel = component.modelPositions.map((_, index) => context.modelRotation(component, index));
+    component.movementComplete = total <= 0.001;
+    component.fellBack = false;
+  }
+  context.createLog(next, side, unit.profile.name, `${unit.profile.name} Advances: ${advance.advanceRoll === 6 && unit.profile.movementOverrides?.advanceRoll === 'auto6' ? 'auto 6' : `rolled ${advance.advanceRoll}`}; movement allowance is ${advance.total.toFixed(0)}\".`);
+  return next;
+}
