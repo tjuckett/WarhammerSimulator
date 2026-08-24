@@ -5,7 +5,7 @@ import { distance } from './coherency';
 import { DEPLOYMENT_ZONE_SETS } from '../data/deploymentZones';
 import type { DeploymentZoneSet, DeploymentZoneShape } from '../data/deploymentZoneTypes';
 import { DEFAULT_BOARD_FORMAT, boardFormatForId } from '../data/boardFormats';
-import { deployableDrops, unitRosterId } from './armyUnits';
+import { attachedFollowersFor, deployableDrops, unitRosterId } from './armyUnits';
 import type { RulesEdition } from './rulesEngine';
 import {
   axisAlignedBoxIntersectsTerrain,
@@ -59,6 +59,33 @@ export function makeBattleUnit(
     activated: false,
     destroyed: false,
   };
+}
+
+export function addAircraftStrategicReserves(
+  units: BattleUnit[],
+  army: ImportedArmy,
+  side: Side,
+  board: BoardFormat,
+  createBattleUnit: typeof makeBattleUnit = makeBattleUnit,
+): void {
+  if (!army.units.length) return;
+  deployableDrops(army).filter(profileIsAircraft).forEach(profile => {
+    const reservePosition = { x: side === 0 ? -100 : board.width + 100, y: board.height / 2 };
+    const unit = createBattleUnit(profile, side, Array.from({ length: profile.baseModelCount }, () => ({ ...reservePosition })));
+    unit.inStrategicReserves = true;
+    units.push(unit);
+    attachedFollowersFor(army, profile).forEach(leader => {
+      const leaderUnit = createBattleUnit(
+        leader,
+        side,
+        Array.from({ length: leader.baseModelCount }, () => ({ ...reservePosition })),
+        unit.id,
+        unit.tabletopUnitId,
+      );
+      leaderUnit.inStrategicReserves = true;
+      units.push(leaderUnit);
+    });
+  });
 }
 
 export function removeUnitFromUnplaced(state: BattleState, side: Side, profile: UnitProfile): void {

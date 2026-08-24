@@ -2,7 +2,7 @@ import { MOVEMENT_STEP, type BattleSetup, type BattleState, type BattleUnit, typ
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile, type WeaponProfile } from '../types/army';
 import { rules40K10th, rulesEditionForRuleset, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
-import { deployArmy, distanceToDeploymentZone, everyModelWithinRange as everyModelWithinTransportRange, fp, isTransportProfile, nearestFriendlyTransportInRange as nearestTransportInRange, pointInDeploymentZone, transportCapacityRemaining as deploymentTransportCapacityRemaining, transportPassengers, zoneFor, unitRole, type DeploymentStrategy, type DeploymentZoneSource } from './deployment';
+import { addAircraftStrategicReserves, deployArmy, distanceToDeploymentZone, everyModelWithinRange as everyModelWithinTransportRange, fp, isTransportProfile, nearestFriendlyTransportInRange as nearestTransportInRange, pointInDeploymentZone, transportCapacityRemaining as deploymentTransportCapacityRemaining, transportPassengers, zoneFor, unitRole, type DeploymentStrategy, type DeploymentZoneSource } from './deployment';
 import * as deploymentActions from './deployment';
 import { selectUnitToDrop, reactivePosition, deployModelFormation } from './deploymentBrain';
 import { DEFAULT_OBJECTIVES } from './missions';
@@ -1929,26 +1929,6 @@ function leaderAnchor(bodyguard: BattleUnit, leader: UnitProfile, leaderIndex: n
   }, radius, zone, board);
 }
 
-function add11eAircraftStrategicReserves(
-  units: BattleUnit[],
-  army: ImportedArmy,
-  side: Side,
-  board: ReturnType<typeof boardFormatForId>,
-): void {
-  if (!army.units.length) return;
-  deployableDrops(army).filter(profileIsAircraft).forEach(profile => {
-    const reservePosition = { x: side === 0 ? -100 : board.width + 100, y: board.height / 2 };
-    const unit = makeBattleUnit(profile, side, Array.from({ length: profile.baseModelCount }, () => ({ ...reservePosition })));
-    unit.inStrategicReserves = true;
-    units.push(unit);
-    attachedFollowersFor(army, profile).forEach(leader => {
-      const leaderUnit = makeBattleUnit(leader, side, Array.from({ length: leader.baseModelCount }, () => ({ ...reservePosition })), unit.id, unit.tabletopUnitId);
-      leaderUnit.inStrategicReserves = true;
-      units.push(leaderUnit);
-    });
-  });
-}
-
 function disembarkPositions(
   state: BattleState,
   transport: BattleUnit,
@@ -2369,7 +2349,7 @@ const battleSetupContext: deploymentActions.BattleSetupContext = {
   boardFormatForId,
   rulesetMetadata: rules => rulesetMetadataForState(rules as RulesEdition),
   defaultObjectives: DEFAULT_OBJECTIVES,
-  addAircraftStrategicReserves: add11eAircraftStrategicReserves,
+  addAircraftStrategicReserves: (units, army, side, board) => addAircraftStrategicReserves(units, army, side, board, makeBattleUnit),
 };
 
 const reinforcementPlayContext: reinforcementPlay.PlayReinforcementContext = {
