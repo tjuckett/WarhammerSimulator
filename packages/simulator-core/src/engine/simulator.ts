@@ -2,7 +2,7 @@ import { MOVEMENT_STEP, type BattleSetup, type BattleState, type BattleUnit, typ
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile, type WeaponProfile } from '../types/army';
 import { rules40K10th, rulesEditionForRuleset, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
-import { addAircraftStrategicReserves, deployArmy, distanceToDeploymentZone, everyModelWithinRange as everyModelWithinTransportRange, fp, isTransportProfile, nearestFriendlyTransportInRange as nearestTransportInRange, pointInDeploymentZone, transportCapacityRemaining as deploymentTransportCapacityRemaining, transportPassengers, zoneFor, unitRole, type DeploymentStrategy, type DeploymentZoneSource } from './deployment';
+import { addAircraftStrategicReserves, deployArmy, everyModelWithinRange as everyModelWithinTransportRange, fp, isTransportProfile, nearestFriendlyTransportInRange as nearestTransportInRange, pointInDeploymentZone, transportCapacityRemaining as deploymentTransportCapacityRemaining, transportPassengers, zoneFor, unitRole, type DeploymentStrategy, type DeploymentZoneSource } from './deployment';
 import * as deploymentActions from './deployment';
 import { selectUnitToDrop, reactivePosition, deployModelFormation } from './deploymentBrain';
 import { DEFAULT_OBJECTIVES } from './missions';
@@ -28,8 +28,6 @@ import { scoreSecondaryMissionsAtEndOfTurn, secondaryMissionScoringLogs } from '
 import {
   attachedFollowersFor,
   attachedLeadersFor,
-  attachedUnitProfilesFor,
-  canDeployOutsideDeploymentZone,
   deployableDrops,
   isAttachedLeaderDrop,
   unitHasRule,
@@ -148,11 +146,7 @@ function setupDeploymentZoneSource(setup?: BattleSetup): DeploymentZoneSource {
   return setup?.deploymentZones ?? setup?.deployment ?? 'Default';
 }
 
-function modelIsOutsideEnemyDeploymentZoneBuffer(unit: UnitProfile, side: Side, position: Position, modelIndex = 0, deployment: DeploymentZoneSource = 'Default', board = boardFormatForId()): boolean {
-  if (!canDeployOutsideDeploymentZone(unit)) return true;
-  const enemyZone = zoneFor((1 - side) as Side, deployment, board);
-  return distanceToDeploymentZone(position, enemyZone) > ELEVENTH_SPECIAL_SETUP_ENEMY_BUFFER + modelBaseRadiusInches(unit, modelIndex);
-}
+const modelIsOutsideEnemyDeploymentZoneBuffer = deploymentActions.modelIsOutsideEnemyDeploymentZoneBuffer;
 
 function modelBaseRadius(unit: BattleUnit, modelIndex = 0): number {
   return modelBaseRadiusInches(unit.profile, modelIndex);
@@ -170,27 +164,8 @@ function maxModelBaseRadius(unit: BattleUnit): number {
   return battleUnitMaxBaseRadiusInches(unit);
 }
 
-function profileDropHasInfiltrators(state: BattleState, side: Side, profile: UnitProfile): boolean {
-  if (state.ruleset.edition !== '11e') return canDeployOutsideDeploymentZone(profile);
-  return attachedUnitProfilesFor(state.armies[side].army, profile).every(candidate => unitHasRule(candidate, 'Infiltrators'));
-}
-
-function infiltratorModelsAreOutsideEnemyUnits(
-  state: BattleState,
-  side: Side,
-  profile: UnitProfile,
-  modelPositions: Position[],
-  modelIndexes = modelPositions.map((_, index) => index),
-): boolean {
-  return modelPositions.every((position, modelIndex) => enemies(state, side).every(enemy =>
-    enemy.modelPositions.every((enemyPosition, enemyModelIndex) => baseFootprintDistance(
-      position,
-      modelBaseFootprintInches(profile, modelIndexes[modelIndex] ?? modelIndex),
-      enemyPosition,
-      modelFootprint(enemy, enemyModelIndex),
-    ) > ELEVENTH_SPECIAL_SETUP_ENEMY_BUFFER),
-  ));
-}
+const profileDropHasInfiltrators = deploymentActions.profileDropHasInfiltrators;
+const infiltratorModelsAreOutsideEnemyUnits = deploymentActions.infiltratorModelsAreOutsideEnemyUnits;
 
 const featureBlocksMovementForUnit = (feature: TerrainFeature, parent: Terrain, unit: BattleUnit): boolean =>
   interactiveMovementState.featureBlocksMovementForUnit(feature, parent, unit, hasKeyword, unitHasRule);

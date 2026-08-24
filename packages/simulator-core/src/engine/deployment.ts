@@ -1,11 +1,11 @@
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile } from '../types/army';
 import type { BattleState, BattleUnit, BoardFormat, Position, Side, Terrain } from '../types/battle';
-import { modelBaseRadiusInches, unitMaxBaseRadiusInches } from './baseSizes';
+import { baseFootprintDistance, modelBaseFootprintInches, modelBaseRadiusInches, unitMaxBaseRadiusInches } from './baseSizes';
 import { distance } from './coherency';
 import { DEPLOYMENT_ZONE_SETS } from '../data/deploymentZones';
 import type { DeploymentZoneSet, DeploymentZoneShape } from '../data/deploymentZoneTypes';
 import { DEFAULT_BOARD_FORMAT, boardFormatForId } from '../data/boardFormats';
-import { attachedFollowersFor, deployableDrops, unitRosterId } from './armyUnits';
+import { attachedFollowersFor, attachedUnitProfilesFor, canDeployOutsideDeploymentZone, deployableDrops, unitHasRule, unitRosterId } from './armyUnits';
 import type { RulesEdition } from './rulesEngine';
 import {
   axisAlignedBoxIntersectsTerrain,
@@ -18,6 +18,8 @@ import {
 import { centroid } from './unitModelState';
 
 export type DeploymentStrategy = 'balanced' | 'refused-flank' | 'objective-push';
+
+const ELEVENTH_SPECIAL_SETUP_ENEMY_BUFFER = 8;
 
 let nextBattleUnitId = 0;
 
@@ -100,6 +102,41 @@ export function profileIsAircraft(profile: UnitProfile): boolean {
 export function deployableProfilesForRules(army: ImportedArmy, rules: RulesEdition): UnitProfile[] {
   const profiles = deployableDrops(army);
   return rules.metadata.edition === '11e' ? profiles.filter(profile => !profileIsAircraft(profile)) : profiles;
+}
+
+export function modelIsOutsideEnemyDeploymentZoneBuffer(
+  profile: UnitProfile,
+  side: Side,
+  position: Position,
+  modelIndex = 0,
+  deployment: DeploymentZoneSource = 'Default',
+  board = boardFormatForId(),
+): boolean {
+  if (!canDeployOutsideDeploymentZone(profile)) return true;
+  const enemyZone = zoneFor((1 - side) as Side, deployment, board);
+  return distanceToDeploymentZone(position, enemyZone) > ELEVENTH_SPECIAL_SETUP_ENEMY_BUFFER + modelBaseRadiusInches(profile, modelIndex);
+}
+
+export function profileDropHasInfiltrators(state: BattleState, side: Side, profile: UnitProfile): boolean {
+  if (state.ruleset.edition !== '11e') return canDeployOutsideDeploymentZone(profile);
+  return attachedUnitProfilesFor(state.armies[side].army, profile).every(candidate => unitHasRule(candidate, 'Infiltrators'));
+}
+
+export function infiltratorModelsAreOutsideEnemyUnits(
+  state: BattleState,
+  side: Side,
+  profile: UnitProfile,
+  modelPositions: Position[],
+  modelIndexes = modelPositions.map((_, index) => index),
+): boolean {
+  return modelPositions.every((position, modelIndex) => state.units
+    .filter(enemy => enemy.side !== side && !enemy.destroyed && !enemy.embarkedInUnitId)
+    .every(enemy => enemy.modelPositions.every((enemyPosition, enemyModelIndex) => baseFootprintDistance(
+      position,
+      modelBaseFootprintInches(profile, modelIndexes[modelIndex] ?? modelIndex),
+      enemyPosition,
+      modelBaseFootprintInches(enemy.profile, enemyModelIndex, enemy.modelRotations?.[enemyModelIndex] ?? enemy.facingDeg ?? 0),
+    ) > ELEVENTH_SPECIAL_SETUP_ENEMY_BUFFER)));
 }
 
 /** Shared transport access rules used during deployment and the movement phase. */
