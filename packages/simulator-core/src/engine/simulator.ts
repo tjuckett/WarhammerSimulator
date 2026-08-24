@@ -22,7 +22,7 @@ import { gainCommandPhaseCommandPoints } from './commandPoints';
 import { runAutomaticCommandUnitAbilities, runAutomaticUnitAbilities } from './unitAbilities';
 import { objectiveControlValue, resolveDesperateEscapeTests } from './battleshock';
 import { circleIntersectsTerrain, findUnblockedLOSRay, hasAnyHiddenModelPair as hasAnyHiddenModelPairGeometry, hasAnyModelLOS as hasAnyModelLOSGeometry, hasAnyModelLOSConsideringHidden as hasAnyModelLOSConsideringHiddenGeometry, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, modelIsHiddenFrom as modelIsHiddenFromGeometry, pointInTerrain, targetHasTerrainCoverFrom as targetHasTerrainCoverFromGeometry, terrainCorners } from './terrainGeometry';
-import { COHERENCY_VERTICAL_RANGE, distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, verticalDistance, type CoherencyModel } from './coherency';
+import { COHERENCY_VERTICAL_RANGE, distance as dist, modelBaseEdgeDistance3d as coherencyModelBaseEdgeDistance3d, modelBaseEdgeHorizontalDistance as coherencyModelBaseEdgeHorizontalDistance, modelIndicesWithCoherencyIssues, modelListIsCoherent, unitsInEngagementRange, verticalDistance, type CoherencyModel } from './coherency';
 import { objectiveRoleForIndex, terrainWithinMissionTerritory } from './missionGeometry';
 import { scoreSecondaryMissionsAtEndOfTurn, secondaryMissionScoringLogs } from './secondaryMissionScoring';
 import {
@@ -415,16 +415,7 @@ export function chooseSimulationMovementTarget(
     : { kind: 'enemy', unit: enemy };
 }
 
-function modelBaseEdgeDistance3d(
-  aModel: Position,
-  aFootprint: ReturnType<typeof modelFootprint>,
-  bModel: Position,
-  bFootprint: ReturnType<typeof modelFootprint>,
-): number {
-  const horizontal = baseFootprintDistance(aModel, aFootprint, bModel, bFootprint);
-  const vertical = verticalDistance(aModel, bModel);
-  return Math.hypot(horizontal, vertical);
-}
+const modelBaseEdgeDistance3d = coherencyModelBaseEdgeDistance3d;
 
 function attackingModelToAttachedUnitDistance(
   state: BattleState,
@@ -444,39 +435,10 @@ function attackingModelToAttachedUnitDistance(
   ));
 }
 
-function modelBaseEdgeHorizontalDistance(
-  aUnit: BattleUnit,
-  aModelIndex: number,
-  bUnit: BattleUnit,
-  bModelIndex: number,
-): number {
-  return baseFootprintDistance(
-    aUnit.modelPositions[aModelIndex],
-    modelFootprint(aUnit, aModelIndex),
-    bUnit.modelPositions[bModelIndex],
-    modelFootprint(bUnit, bModelIndex),
-  );
-}
-
-function modelsWithinEngagementRange(
-  aModel: Position,
-  aFootprint: ReturnType<typeof modelFootprint>,
-  bModel: Position,
-  bFootprint: ReturnType<typeof modelFootprint>,
-  horizontalRange: number,
-): boolean {
-  return baseFootprintDistance(aModel, aFootprint, bModel, bFootprint) <= horizontalRange
-    && verticalDistance(aModel, bModel) <= COHERENCY_VERTICAL_RANGE;
-}
+const modelBaseEdgeHorizontalDistance = coherencyModelBaseEdgeHorizontalDistance;
 
 function inEngagement(unit: BattleUnit, others: BattleUnit[], range: number): boolean {
-  return others.some(o =>
-    unit.modelPositions.some((mp, mi) =>
-      o.modelPositions.some((op, oi) =>
-        modelsWithinEngagementRange(mp, modelFootprint(unit, mi), op, modelFootprint(o, oi), range),
-      ),
-    ),
-  );
+  return unitsInEngagementRange(unit, others, range);
 }
 
 function engagedEnemies(state: BattleState, unit: BattleUnit, rules: RulesEdition): BattleUnit[] {

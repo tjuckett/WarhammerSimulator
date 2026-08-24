@@ -1,5 +1,5 @@
 import type { BattleUnit, Position } from '../types/battle';
-import { modelBaseRadiusInches } from './baseSizes';
+import { baseFootprintDistance, modelBaseFootprintInches, modelBaseRadiusInches, type ModelBaseFootprint } from './baseSizes';
 
 export const COHERENCY_RANGE = 2;
 export const COHERENCY_MAX_PAIR_RANGE = 9;
@@ -18,6 +18,40 @@ export function distance(a: Position, b: Position): number {
 
 export function verticalDistance(a: Position, b: Position): number {
   return Math.abs((a.z ?? 0) - (b.z ?? 0));
+}
+
+export function modelBaseEdgeDistance3d(
+  aModel: Position,
+  aFootprint: ModelBaseFootprint,
+  bModel: Position,
+  bFootprint: ModelBaseFootprint,
+): number {
+  return Math.hypot(baseFootprintDistance(aModel, aFootprint, bModel, bFootprint), verticalDistance(aModel, bModel));
+}
+
+export function modelBaseEdgeHorizontalDistance(
+  aUnit: BattleUnit,
+  aModelIndex: number,
+  bUnit: BattleUnit,
+  bModelIndex: number,
+): number {
+  return baseFootprintDistance(
+    aUnit.modelPositions[aModelIndex],
+    modelBaseFootprintInches(aUnit.profile, aModelIndex, aUnit.modelRotations?.[aModelIndex] ?? aUnit.facingDeg ?? 0),
+    bUnit.modelPositions[bModelIndex],
+    modelBaseFootprintInches(bUnit.profile, bModelIndex, bUnit.modelRotations?.[bModelIndex] ?? bUnit.facingDeg ?? 0),
+  );
+}
+
+export function unitsInEngagementRange(unit: BattleUnit, others: BattleUnit[], range: number): boolean {
+  return others.some(other => unit.modelPositions.some((unitModel, unitModelIndex) =>
+    other.modelPositions.some((otherModel, otherModelIndex) => {
+      const unitFootprint = modelBaseFootprintInches(unit.profile, unitModelIndex, unit.modelRotations?.[unitModelIndex] ?? unit.facingDeg ?? 0);
+      const otherFootprint = modelBaseFootprintInches(other.profile, otherModelIndex, other.modelRotations?.[otherModelIndex] ?? other.facingDeg ?? 0);
+      return baseFootprintDistance(unitModel, unitFootprint, otherModel, otherFootprint) <= range
+        && verticalDistance(unitModel, otherModel) <= COHERENCY_VERTICAL_RANGE;
+    }),
+  ));
 }
 
 export function coherencyDistanceForRadii(aRadius: number, bRadius: number): number {
