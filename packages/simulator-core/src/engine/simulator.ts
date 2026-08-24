@@ -107,6 +107,7 @@ import {
   reinforcementPlacementIsWithinStrategicReserveEdge,
   strategicReserveUnitHasCloseQuartersIngress,
 } from './reinforcements';
+import * as turnAdvance from './turnAdvance';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -6653,20 +6654,8 @@ export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): Bat
   return s;
 }
 
+const turnAdvanceContext: turnAdvance.TurnAdvanceContext = { clone, enterBattlePhase };
+
 export function advanceTurn(state: BattleState): BattleState {
-  const s = clone(state);
-  if (s.winner !== null) return s;
-  completeMissionEventsForCurrentTurn(s);
-  const transition = nextTurnTransition(s);
-  s.activeArmy = transition.nextSide;
-  if (transition.nextBattleRound !== battleRound(s)) setBattleRound(s, transition.nextBattleRound);
-  if (transition.nextBattleRound > battleRoundLimit(s)) {
-    if (s.scores[0] > s.scores[1]) s.winner = 0;
-    else if (s.scores[1] > s.scores[0]) s.winner = 1;
-    else s.winner = 'draw';
-    enterBattlePhase(s, { phase: 'end' }, s.activeArmy);
-  } else {
-    enterBattlePhase(s, { phase: 'setup' }, s.activeArmy);
-  }
-  return s;
+  return turnAdvance.advanceTurn(state, turnAdvanceContext);
 }
