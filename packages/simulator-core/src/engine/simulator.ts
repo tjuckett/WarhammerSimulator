@@ -1857,18 +1857,11 @@ function updateAttachedShootingActivation(
   rules: RulesEdition,
   targetUnitId?: string,
 ): void {
-  if (rules.metadata.edition !== '11e' || !attachedUnitIsFormed(state, unit)) return;
-  state.activeAttachedShootingUnitId = attachedUnitId(unit);
-  state.attachedShootingTargetUnitId ??= targetUnitId;
-  const remaining = attachedUnitComponents(state, unit).filter(component =>
-    !component.activated
-    && (eligibleShootingWeapons(component, state, rules).length > 0
-      || unitCanBeSelectedToShootWithoutAttacks(component, state, rules)),
-  );
-  if (remaining.length) return;
-  for (const component of attachedUnitComponents(state, unit)) component.activated = true;
-  state.activeAttachedShootingUnitId = undefined;
-  state.attachedShootingTargetUnitId = undefined;
+  manualCombat.updateAttachedShootingActivation(state, unit, rules, {
+    ...manualShootingSelectionContext,
+    attachedUnitComponents,
+    attachedUnitIsFormed,
+  }, targetUnitId);
 }
 
 export function playSnapShootingWeaponOptions(

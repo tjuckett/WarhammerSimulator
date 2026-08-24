@@ -86,6 +86,32 @@ export interface ManualShootingResolutionContext extends ManualShootingSelection
   log(state: BattleState, side: Side, source: string, message: string, kind: 'shoot'): LogEntry;
 }
 
+export interface AttachedShootingContext extends ManualShootingSelectionContext {
+  attachedUnitComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
+  attachedUnitIsFormed(state: BattleState, unit: BattleUnit): boolean;
+}
+
+export function updateAttachedShootingActivation(
+  state: BattleState,
+  unit: BattleUnit,
+  rules: RulesEdition,
+  context: AttachedShootingContext,
+  targetUnitId?: string,
+): void {
+  if (rules.metadata.edition !== '11e' || !context.attachedUnitIsFormed(state, unit)) return;
+  state.activeAttachedShootingUnitId = context.attachedUnitId(unit);
+  state.attachedShootingTargetUnitId ??= targetUnitId;
+  const remaining = context.attachedUnitComponents(state, unit).filter(component =>
+    !component.activated
+    && (context.eligibleShootingWeapons(component, state, rules).length > 0
+      || context.unitCanBeSelectedToShootWithoutAttacks(component, state, rules)),
+  );
+  if (remaining.length) return;
+  for (const component of context.attachedUnitComponents(state, unit)) component.activated = true;
+  state.activeAttachedShootingUnitId = undefined;
+  state.attachedShootingTargetUnitId = undefined;
+}
+
 /** Resolve a unit's complete shooting declaration only after every weapon target is locked. */
 export function shootPlayUnitWeapons(
   state: BattleState,
