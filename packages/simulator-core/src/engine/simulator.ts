@@ -1909,40 +1909,15 @@ export function snapShootPlayUnitWeapon(
   weaponIndex: number | 'all',
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
-  if (state.phase !== 'movement' || state.movementStep !== 'reinforcements' || state.activeArmy === side) return state;
-  const s = clone(state);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  const target = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || !target || !unitHasActiveStratagem(s, unit, 'fire-overwatch', 'movement')) return state;
-
-  const eligibleWeapons = eligibleShootingWeapons(unit, s, rules, rules.metadata.edition === '11e')
-    .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
-    .filter(option =>
-      option.weaponIndex >= 0
-      && aliveWeaponModelCount(unit, option.weaponIndex) > 0
-      && snapShootingWeaponCanTarget(s, unit, target, option.weapon, rules)
-    );
-  const selectedWeapons = weaponIndex === 'all'
-    ? shootingWeaponSelectionForAll(eligibleWeapons)
-    : eligibleWeapons.filter(option => option.weaponIndex === weaponIndex);
-  if (!selectedWeapons.length) return state;
-
-  const logs: LogEntry[] = [
-    log(s, side, unit.profile.name, `${unit.profile.name} snap shoots ${target.profile.name}:`, 'shoot'),
-  ];
-  for (const option of selectedWeapons) {
-    logs.push(...resolveShootingWeaponIntoTarget(s, unit, target, option.weapon, option.weaponIndex, rules, {
-      deferCasualties: true,
-      snapShooting: true,
-    }));
-    if (unit.destroyed || target.destroyed) break;
-  }
-
-  if (logs.length <= 1) return state;
-  unit.activated = true;
-  unit.actionStartedThisTurn = true;
-  s.log = [...s.log, ...logs];
-  return s;
+  return manualCombat.snapShootPlayUnitWeapon(state, unitId, side, targetUnitId, weaponIndex, rules, {
+    ...manualShootingSelectionContext,
+    clone,
+    unitHasActiveStratagem,
+    snapShootingWeaponCanTarget,
+    shootingWeaponSelectionForAll,
+    resolveShootingWeaponIntoTarget,
+    log,
+  });
 }
 
 export interface LOSRay {
