@@ -257,6 +257,28 @@ export function runAutomaticChargePhase(state: BattleState, side: Side, rules: R
   return logs;
 }
 
+export interface AutomaticFightPhaseContext {
+  enterBattlePhase(state: BattleState, node: { phase: Phase }, side: Side): void;
+  phaseLog(state: BattleState, side: Side, armyName: string, message: string): LogEntry;
+  runAutomaticEleventhFightPhase(state: BattleState, side: Side, rules: RulesEdition): BattleState;
+  runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[];
+  updateObjectiveControl(state: BattleState, rules: RulesEdition): void;
+}
+
+export function runAutomaticFightPhase(state: BattleState, side: Side, rules: RulesEdition, context: AutomaticFightPhaseContext): { state: BattleState; logs: LogEntry[] } {
+  const armyName = state.armies[side].name;
+  context.enterBattlePhase(state, { phase: 'fight' }, side);
+  const logs = [context.phaseLog(state, side, armyName, '\n─── Fight Phase ───')];
+  if (rules.metadata.edition === '11e') state = context.runAutomaticEleventhFightPhase(state, side, rules);
+  else {
+    state.units.filter(unit => unit.side === side && !unit.destroyed && unit.charged).forEach(unit => logs.push(...context.runFight(unit, state, rules)));
+    state.units.filter(unit => unit.side === side && !unit.destroyed && !unit.charged && unit.inCombat).forEach(unit => logs.push(...context.runFight(unit, state, rules)));
+    state.units.filter(unit => unit.side !== side && !unit.destroyed && unit.inCombat).forEach(unit => logs.push(...context.runFight(unit, state, rules)));
+  }
+  context.updateObjectiveControl(state, rules);
+  return { state, logs };
+}
+
 export function simulateNextUnit(state: BattleState, rules: RulesEdition, context: SimulationUnitStepContext): BattleState {
   const next = context.clone(state);
   if (next.winner !== null || next.phase === 'deployment' || next.phase === 'end') return next;

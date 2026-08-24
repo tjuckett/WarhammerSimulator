@@ -4546,27 +4546,12 @@ function runSimulatedChargePhase(state: BattleState, side: Side, rules: RulesEdi
   return battleSimulation.runAutomaticChargePhase(state, side, rules, automaticChargePhaseContext);
 }
 
-function runSimulatedFightPhase(
-  state: BattleState,
-  side: Side,
-  rules: RulesEdition,
-): { state: BattleState; logs: LogEntry[] } {
-  const armyName = state.armies[side].name;
-  const logs: LogEntry[] = [];
-  enterBattlePhase(state, { phase: 'fight' }, side);
-  logs.push(phaseLog(state, side, armyName, `\n─── Fight Phase ───`));
-  if (rules.metadata.edition === '11e') {
-    state = runAutomaticEleventhFightPhase(state, side, rules);
-  } else {
-    state.units.filter(unit => unit.side === side && !unit.destroyed && unit.charged)
-      .forEach(unit => logs.push(...runFight(unit, state, rules)));
-    state.units.filter(unit => unit.side === side && !unit.destroyed && !unit.charged && unit.inCombat)
-      .forEach(unit => logs.push(...runFight(unit, state, rules)));
-    state.units.filter(unit => unit.side !== side && !unit.destroyed && unit.inCombat)
-      .forEach(unit => logs.push(...runFight(unit, state, rules)));
-  }
-  updateObjectiveControl(state, rules);
-  return { state, logs };
+const automaticFightPhaseContext: battleSimulation.AutomaticFightPhaseContext = {
+  enterBattlePhase, phaseLog, runAutomaticEleventhFightPhase, runFight, updateObjectiveControl,
+};
+
+function runSimulatedFightPhase(state: BattleState, side: Side, rules: RulesEdition): { state: BattleState; logs: LogEntry[] } {
+  return battleSimulation.runAutomaticFightPhase(state, side, rules, automaticFightPhaseContext);
 }
 
 export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): BattleState {
