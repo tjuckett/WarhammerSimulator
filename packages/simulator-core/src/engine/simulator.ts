@@ -3310,16 +3310,13 @@ export function playUnitCanAdvance(
 }
 
 export function declarePlaySuperHeavyMobile(state: BattleState, unitId: string, side: Side): BattleState {
-  if (state.ruleset.edition !== '11e' || state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return state;
-  const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
-  if (!existing || existing.inStrategicReserves || existing.movementComplete || unitHasStartedCurrentMove(existing)
-    || attachedUnitComponents(state, existing).some(component => component.superHeavyMobile)
-    || !attachedUnitComponents(state, existing).every(component => unitHasRule(component.profile, 'Super-heavy Walker'))) return state;
-  const s = clone(state);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
-  for (const component of attachedUnitComponents(s, unit)) component.superHeavyMobile = true;
-  s.log = [...s.log, log(s, side, unit.profile.name, `${unit.profile.name} declares MOBILE for this move.`, 'move')];
-  return s;
+  return interactiveMovementState.declareSuperHeavyMobile(state, unitId, side, {
+    clone,
+    movementStep,
+    attachedComponents: attachedUnitComponents,
+    hasRule: (unit, rule) => unitHasRule(unit.profile, rule),
+    log,
+  });
 }
 
 function resolveSuperHeavyMobileInPlace(state: BattleState, unit: BattleUnit): void {

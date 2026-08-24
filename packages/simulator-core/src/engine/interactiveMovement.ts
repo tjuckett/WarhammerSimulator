@@ -59,6 +59,31 @@ export function modelMoveHasNoBaseOverlap(state: BattleState, unit: BattleUnit, 
   });
 }
 
+export interface SuperHeavyMobileContext {
+  clone(state: BattleState): BattleState;
+  movementStep(state: BattleState): string;
+  attachedComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
+  hasRule(unit: BattleUnit, rule: string): boolean;
+  log(state: BattleState, side: Side, source: string, message: string, kind: 'move'): LogEntry;
+}
+
+export function declareSuperHeavyMobile(state: BattleState, unitId: string, side: Side, context: SuperHeavyMobileContext): BattleState {
+  if (state.ruleset.edition !== '11e' || state.phase !== 'movement' || context.movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return state;
+  const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
+  if (!existing || existing.inStrategicReserves || existing.movementComplete
+    || existing.movementStartPositionsByModel?.some((start, modelIndex) => {
+      const current = existing.modelPositions[modelIndex];
+      return current && (dist(start, current) > 0.001 || verticalDistance(start, current) > 0.001);
+    })
+    || context.attachedComponents(state, existing).some(component => component.superHeavyMobile)
+    || !context.attachedComponents(state, existing).every(component => context.hasRule(component, 'Super-heavy Walker'))) return state;
+  const next = context.clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
+  for (const component of context.attachedComponents(next, unit)) component.superHeavyMobile = true;
+  next.log = [...next.log, context.log(next, side, unit.profile.name, `${unit.profile.name} declares MOBILE for this move.`, 'move')];
+  return next;
+}
+
 export function profileModelRadii(profile: UnitProfile): number[] {
   return Array.from({ length: profile.baseModelCount }, (_, modelIndex) => modelBaseRadiusInches(profile, modelIndex));
 }
