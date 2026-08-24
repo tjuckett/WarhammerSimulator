@@ -115,7 +115,6 @@ import * as movementPathing from './movementPathing';
 import * as aircraftMovement from './aircraftMovement';
 import * as movementLegality from './movementLegality';
 import * as takeToSkies from './takeToSkies';
-import * as surgeMoves from './surgeMoves';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -4948,7 +4947,7 @@ function moveSurgeComponentTowardTarget(
   component.position = centroid(component.modelPositions);
 }
 
-const surgeMoveContext: surgeMoves.SurgeMoveContext = {
+const surgeMoveContext: interactiveMovementState.SurgeMoveContext = {
   clone,
   getUnit: (state, unitId, side) => state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId),
   enemies,
@@ -4968,15 +4967,15 @@ const surgeMoveContext: surgeMoves.SurgeMoveContext = {
 };
 
 export const playSurgeTargetUnitIds = (state: BattleState, unitId: string, side: Side): string[] =>
-  surgeMoves.targetUnitIds(state, unitId, side, surgeMoveContext);
+  interactiveMovementState.surgeMoveTargetUnitIds(state, unitId, side, surgeMoveContext);
 export const grantPlaySurgeMove = (
   state: BattleState, unitId: string, side: Side, maximumDistance: number, source: string,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
-): BattleState => surgeMoves.grant(state, unitId, side, maximumDistance, source, rules, surgeMoveContext);
+): BattleState => interactiveMovementState.grantSurgeMove(state, unitId, side, maximumDistance, source, rules, surgeMoveContext);
 export const resolvePlaySurgeMove = (
   state: BattleState, unitId: string, side: Side, targetUnitId: string,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
-): BattleState => surgeMoves.resolve(state, unitId, side, targetUnitId, rules, surgeMoveContext);
+): BattleState => interactiveMovementState.resolveSurgeMove(state, unitId, side, targetUnitId, rules, surgeMoveContext);
 
 const interactiveMovementStateContext: interactiveMovementState.InteractiveMovementStateContext = {
   modelRotation,
