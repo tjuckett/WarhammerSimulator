@@ -3427,32 +3427,14 @@ export function completePlayUnitMovement(
 }
 
 export function undeployPlayUnit(state: BattleState, unitId: string, side: Side): BattleState {
-  const s = clone(state);
-  if (s.phase !== 'deployment') return s;
-
-  const unitIndex = s.units.findIndex(unit => unit.id === unitId && unit.side === side && !unit.destroyed);
-  if (unitIndex < 0) return s;
-
-  const selectedUnit = s.units[unitIndex];
-  const army = s.armies[side].army;
-  const bodyguard = selectedUnit.profile.leaderAttachment
-    ? army.units.find(unit => unitMatchesAttachmentTarget(selectedUnit.profile, unit)) ?? selectedUnit.profile
-    : selectedUnit.profile;
-  const attachedLeaders = attachedLeadersFor(army, bodyguard);
-  const removeKeys = new Set([unitRosterId(bodyguard), ...attachedLeaders.map(unitRosterId)]);
-  s.units = s.units.filter(unit => unit.side !== side || !removeKeys.has(unitRosterId(unit.profile)));
-  if (!isAttachedLeaderDrop(army, bodyguard)) {
-    s.unplacedUnits[side] = [
-      bodyguard,
-      ...s.unplacedUnits[side].filter(unit => !removeKeys.has(unitRosterId(unit))),
-    ];
-  }
-  s.activeArmy = side;
-  s.log = [...s.log, log(s, side, bodyguard.name,
-    `${s.armies[side].name} returns ${bodyguard.name}${attachedLeaders.length ? ` with ${attachedLeaders.map(leader => leader.name).join(', ')}` : ''} to deployment.`,
-    'info',
-  )];
-  return s;
+  return deploymentActions.undeployPlayUnit(state, unitId, side, {
+    clone,
+    unitRosterId,
+    unitMatchesAttachmentTarget,
+    attachedLeaders: attachedLeadersFor,
+    isAttachedLeaderDrop,
+    log,
+  });
 }
 
 const formationEditContext: interactiveMovementState.FormationEditContext = {

@@ -1,5 +1,5 @@
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile } from '../types/army';
-import type { BattleState, BattleUnit, BoardFormat, Position, Terrain } from '../types/battle';
+import type { BattleState, BattleUnit, BoardFormat, Position, Side, Terrain } from '../types/battle';
 import { modelBaseRadiusInches, unitMaxBaseRadiusInches } from './baseSizes';
 import { distance } from './coherency';
 import { DEPLOYMENT_ZONE_SETS } from '../data/deploymentZones';
@@ -544,6 +544,42 @@ export function beginPlayBattle(state: BattleState, context: DeploymentStartCont
   }
   context.enterSetup(next, next.activeArmy);
   next.log = [...next.log, context.log(next, 0, '', 'DEPLOYMENT COMPLETE - BATTLE BEGINS', 'phase')];
+  return next;
+}
+
+export interface UndeployPlayUnitContext {
+  clone(state: BattleState): BattleState;
+  unitRosterId(profile: UnitProfile): string;
+  unitMatchesAttachmentTarget(profile: UnitProfile, target: UnitProfile): boolean;
+  attachedLeaders(army: ImportedArmy, bodyguard: UnitProfile): UnitProfile[];
+  isAttachedLeaderDrop(army: ImportedArmy, profile: UnitProfile): boolean;
+  log(state: BattleState, side: Side, title: string, message: string, type: string): BattleState['log'][number];
+}
+
+export function undeployPlayUnit(state: BattleState, unitId: string, side: Side, context: UndeployPlayUnitContext): BattleState {
+  const next = context.clone(state);
+  if (next.phase !== 'deployment') return next;
+  const unitIndex = next.units.findIndex(unit => unit.id === unitId && unit.side === side && !unit.destroyed);
+  if (unitIndex < 0) return next;
+
+  const selectedUnit = next.units[unitIndex];
+  const army = next.armies[side].army;
+  const bodyguard = selectedUnit.profile.leaderAttachment
+    ? army.units.find(profile => context.unitMatchesAttachmentTarget(selectedUnit.profile, profile)) ?? selectedUnit.profile
+    : selectedUnit.profile;
+  const attachedLeaders = context.attachedLeaders(army, bodyguard);
+  const removeKeys = new Set([context.unitRosterId(bodyguard), ...attachedLeaders.map(context.unitRosterId)]);
+  next.units = next.units.filter(unit => unit.side !== side || !removeKeys.has(context.unitRosterId(unit.profile)));
+  if (!context.isAttachedLeaderDrop(army, bodyguard)) {
+    next.unplacedUnits[side] = [
+      bodyguard,
+      ...next.unplacedUnits[side].filter(profile => !removeKeys.has(context.unitRosterId(profile))),
+    ];
+  }
+  next.activeArmy = side;
+  next.log = [...next.log, context.log(next, side, bodyguard.name,
+    `${next.armies[side].name} returns ${bodyguard.name}${attachedLeaders.length ? ` with ${attachedLeaders.map(leader => leader.name).join(', ')}` : ''} to deployment.`,
+    'info')];
   return next;
 }
 
