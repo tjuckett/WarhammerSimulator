@@ -53,6 +53,45 @@ export function playUnitCanStartAction(
   return !!unit && unitIsEligibleToStartAction(unit, state, rules, context);
 }
 
+export type MissionActionStartContext = Record<string, any>;
+
+export function applyStartedMissionAction(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  actionId: string,
+  actionName: string,
+  rules: RulesEdition,
+  targets: { objectiveIndex?: number; terrainId?: string; operationMarkerId?: string; unitId?: string },
+  context: MissionActionStartContext,
+): BattleState {
+  const next = context.clone(state);
+  const unit = next.units.find((candidate: BattleUnit) => candidate.id === unitId && candidate.side === side)!;
+  if (actionId === 'surveil' || actionId === 'booby-trap') {
+    const action = { id: actionId, name: actionName, startedPhase: next.phase, completesAt: 'end-of-turn' as const,
+      ...(targets.unitId !== undefined ? { targetUnitId: targets.unitId } : {}),
+      ...(targets.terrainId !== undefined ? { targetTerrainId: targets.terrainId } : {}) };
+    context.recordCompletedMissionAction(next, unit, action, context.attachedObjectiveIndexesWithinRange(next, unit, rules));
+    const target = targets.unitId === undefined ? undefined : next.units.find((candidate: BattleUnit) => candidate.id === targets.unitId);
+    const terrain = targets.terrainId === undefined ? undefined : next.terrain.find((candidate: any) => candidate.id === targets.terrainId);
+    next.log = [...next.log, context.log(next, side, unit.profile.name,
+      actionId === 'surveil' ? `${unit.profile.name} surveils ${target.profile.name}.` : `${unit.profile.name} traps ${terrain.name}.`, 'info')];
+    if (actionId === 'booby-trap') for (const component of context.attachedUnitComponents(next, unit)) component.actionStartedThisTurn = true;
+    return next;
+  }
+  const action = { id: actionId, name: actionName, startedPhase: next.phase, completesAt: 'end-of-turn' as const,
+    ...(targets.objectiveIndex !== undefined ? { targetObjectiveIndex: targets.objectiveIndex } : {}),
+    ...(targets.terrainId !== undefined ? { targetTerrainId: targets.terrainId } : {}),
+    ...(targets.operationMarkerId !== undefined ? { targetOperationMarkerId: targets.operationMarkerId } : {}),
+    ...(targets.unitId !== undefined ? { targetUnitId: targets.unitId } : {}) };
+  for (const component of context.attachedUnitComponents(next, unit)) {
+    component.performingAction = { ...action };
+    component.actionStartedThisTurn = true;
+  }
+  next.log = [...next.log, context.log(next, side, unit.profile.name, `${unit.profile.name} starts ${actionName}.`, 'info')];
+  return next;
+}
+
 export interface MissionActionsContext {
   canStartAction(state: BattleState, unitId: string, side: Side, rules: RulesEdition): boolean;
   objectiveIndexesWithinRange(state: BattleState, unit: BattleUnit, rules: RulesEdition): number[];

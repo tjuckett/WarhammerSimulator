@@ -1710,54 +1710,10 @@ export function startPlayUnitAction(
       || !surveilTargetOptions(state, unitId, side, rules).includes(targetUnitId))) {
     return state;
   }
-  const next = clone(state);
-  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
-  if (actionId === 'surveil' || actionId === 'booby-trap') {
-    const action = {
-      id: actionId,
-      name: actionName,
-      startedPhase: next.phase,
-      completesAt: 'end-of-turn' as const,
-      ...(targetUnitId !== undefined ? { targetUnitId } : {}),
-      ...(targetTerrainId !== undefined ? { targetTerrainId } : {}),
-    };
-    recordCompletedMissionAction(next, unit, action, attachedObjectiveIndexesWithinRange(next, unit, rules));
-    const target = targetUnitId === undefined
-      ? undefined
-      : next.units.find(candidate => candidate.id === targetUnitId);
-    const targetTerrain = targetTerrainId === undefined
-      ? undefined
-      : next.terrain.find(terrain => terrain.id === targetTerrainId);
-    next.log = [...next.log, log(
-      next,
-      side,
-      unit.profile.name,
-      actionId === 'surveil'
-        ? `${unit.profile.name} surveils ${target!.profile.name}.`
-        : `${unit.profile.name} traps ${targetTerrain!.name}.`,
-      'info',
-    )];
-    if (actionId === 'booby-trap') {
-      for (const component of attachedUnitComponents(next, unit)) component.actionStartedThisTurn = true;
-    }
-    return next;
-  }
-  const performingAction = {
-    id: actionId,
-    name: actionName,
-    startedPhase: next.phase,
-    completesAt: 'end-of-turn' as const,
-    ...(targetObjectiveIndex !== undefined ? { targetObjectiveIndex } : {}),
-    ...(targetTerrainId !== undefined ? { targetTerrainId } : {}),
-    ...(targetOperationMarkerId !== undefined ? { targetOperationMarkerId } : {}),
-    ...(targetUnitId !== undefined ? { targetUnitId } : {}),
-  };
-  for (const component of attachedUnitComponents(next, unit)) {
-    component.performingAction = { ...performingAction };
-    component.actionStartedThisTurn = true;
-  }
-  next.log = [...next.log, log(next, side, unit.profile.name, `${unit.profile.name} starts ${actionName}.`, 'info')];
-  return next;
+  return missionActions.applyStartedMissionAction(state, unitId, side, actionId, actionName, rules, {
+    objectiveIndex: targetObjectiveIndex, terrainId: targetTerrainId,
+    operationMarkerId: targetOperationMarkerId, unitId: targetUnitId,
+  }, { clone, attachedUnitComponents, attachedObjectiveIndexesWithinRange, recordCompletedMissionAction, log });
 }
 
 export function completeEndOfTurnActions(state: BattleState, side: Side): void {
