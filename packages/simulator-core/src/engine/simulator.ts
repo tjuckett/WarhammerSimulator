@@ -2298,12 +2298,7 @@ function clearFiringDeckWeapons(unit: BattleUnit): void {
   firingDeck.clearWeapons(unit);
 }
 
-function unitHasStartedCurrentMove(unit: BattleUnit): boolean {
-  return !!unit.movementStartPositionsByModel?.some((start, modelIndex) => {
-    const current = unit.modelPositions[modelIndex];
-    return current && (dist(start, current) > 0.001 || verticalDistance(start, current) > 0.001);
-  });
-}
+const unitHasStartedCurrentMove = interactiveMovementState.unitHasStartedCurrentMove;
 
 const takeToSkiesContext: interactiveMovementState.TakeToSkiesContext = {
   clone,

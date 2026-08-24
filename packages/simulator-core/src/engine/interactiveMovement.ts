@@ -58,6 +58,13 @@ export function unitSurgedThisPhase(state: BattleState, unit: BattleUnit): boole
   return unit.surgeMovePhase === state.phase && unit.surgeMoveTurn === state.turn;
 }
 
+export function unitHasStartedCurrentMove(unit: BattleUnit): boolean {
+  return !!unit.movementStartPositionsByModel?.some((start, modelIndex) => {
+    const current = unit.modelPositions[modelIndex];
+    return current && (dist(start, current) > 0.001 || verticalDistance(start, current) > 0.001);
+  });
+}
+
 export interface StationaryMovementContext {
   activeUnits(state: BattleState, side: Side): BattleUnit[];
   isAircraft(unit: BattleUnit): boolean;
