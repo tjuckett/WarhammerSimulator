@@ -172,25 +172,6 @@ function maxModelBaseRadius(unit: BattleUnit): number {
   return battleUnitMaxBaseRadiusInches(unit);
 }
 
-function featureBlocksMovementForUnit(feature: TerrainFeature, parent: Terrain, unit: BattleUnit): boolean {
-  if (!feature.blocksMovement) return false;
-  if (unitHasRule(unit.profile, 'Super-heavy Walker') && feature.featureHeight === 'low') return false;
-  if (hasKeyword(unit, 'infantry') && parent.type === 'ruin') return false;
-  if (hasKeyword(unit, 'infantry') && feature.featureHeight === 'low') return false;
-  return true;
-}
-
-function terrainMatBlocksMovementForUnit(t: Terrain, unit: BattleUnit): boolean {
-  if (unit.superHeavyMobile && t.type === 'ruin') return false;
-  if (hasKeyword(unit, 'titanic')) return true;
-  if (t.type === 'ruin' && hasAnyKeyword(unit, ['vehicle', 'monster'])) return true;
-  return t.type === 'impassable';
-}
-
-function takeToSkiesDistanceCost(unit: BattleUnit): number {
-  return unit.takingToSkies && !unitHasRule(unit.profile, 'Hover') ? 2 : 0;
-}
-
 function profileDropHasInfiltrators(state: BattleState, side: Side, profile: UnitProfile): boolean {
   if (state.ruleset.edition !== '11e') return canDeployOutsideDeploymentZone(profile);
   return attachedUnitProfilesFor(state.armies[side].army, profile).every(candidate => unitHasRule(candidate, 'Infiltrators'));
@@ -213,18 +194,16 @@ function infiltratorModelsAreOutsideEnemyUnits(
   ));
 }
 
-function unitTakesToSkiesForState(state: BattleState, unit: BattleUnit): boolean {
-  return hasKeyword(unit, 'fly')
-    && (state.ruleset.edition !== '11e' || unit.takingToSkies === true);
-}
-
-function unitMovedThisPhase(state: BattleState, unit: BattleUnit): boolean {
-  return unit.lastMovePhase === state.phase && unit.lastMoveTurn === state.turn;
-}
-
-function unitSurgedThisPhase(state: BattleState, unit: BattleUnit): boolean {
-  return unit.surgeMovePhase === state.phase && unit.surgeMoveTurn === state.turn;
-}
+const featureBlocksMovementForUnit = (feature: TerrainFeature, parent: Terrain, unit: BattleUnit): boolean =>
+  interactiveMovementState.featureBlocksMovementForUnit(feature, parent, unit, hasKeyword, unitHasRule);
+const terrainMatBlocksMovementForUnit = (terrain: Terrain, unit: BattleUnit): boolean =>
+  interactiveMovementState.terrainMatBlocksMovementForUnit(terrain, unit, hasKeyword, hasAnyKeyword);
+const takeToSkiesDistanceCost = (unit: BattleUnit): number =>
+  interactiveMovementState.takeToSkiesDistanceCost(unit, unitHasRule);
+const unitTakesToSkiesForState = (state: BattleState, unit: BattleUnit): boolean =>
+  interactiveMovementState.unitTakesToSkiesForState(state, unit, hasKeyword);
+const unitMovedThisPhase = interactiveMovementState.unitMovedThisPhase;
+const unitSurgedThisPhase = interactiveMovementState.unitSurgedThisPhase;
 
 export function findReachablePosition(
   unit: BattleUnit,

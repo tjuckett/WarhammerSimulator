@@ -1,4 +1,4 @@
-import type { BattleState, BattleUnit, BoardFormat, LogEntry, LogType, Position, Side } from '../types/battle';
+import type { BattleState, BattleUnit, BoardFormat, LogEntry, LogType, Position, Side, Terrain, TerrainFeature } from '../types/battle';
 import type { UnitProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
@@ -10,6 +10,52 @@ import { centroid, translateFormation } from './unitModelState';
 /** Shared model-formation geometry used by setup, movement, charge, and formation editing. */
 function modelRadius(unit: BattleUnit, modelIndex = 0): number {
   return modelBaseRadiusInches(unit.profile, modelIndex);
+}
+
+export function featureBlocksMovementForUnit(
+  feature: TerrainFeature,
+  parent: Terrain,
+  unit: BattleUnit,
+  hasKeyword: (unit: BattleUnit, keyword: string) => boolean,
+  unitHasRule: (profile: UnitProfile, rule: string) => boolean,
+): boolean {
+  if (!feature.blocksMovement) return false;
+  if (unitHasRule(unit.profile, 'Super-heavy Walker') && feature.featureHeight === 'low') return false;
+  if (hasKeyword(unit, 'infantry') && parent.type === 'ruin') return false;
+  if (hasKeyword(unit, 'infantry') && feature.featureHeight === 'low') return false;
+  return true;
+}
+
+export function terrainMatBlocksMovementForUnit(
+  terrain: Terrain,
+  unit: BattleUnit,
+  hasKeyword: (unit: BattleUnit, keyword: string) => boolean,
+  hasAnyKeyword: (unit: BattleUnit, keywords: string[]) => boolean,
+): boolean {
+  if (unit.superHeavyMobile && terrain.type === 'ruin') return false;
+  if (hasKeyword(unit, 'titanic')) return true;
+  if (terrain.type === 'ruin' && hasAnyKeyword(unit, ['vehicle', 'monster'])) return true;
+  return terrain.type === 'impassable';
+}
+
+export function takeToSkiesDistanceCost(unit: BattleUnit, unitHasRule: (profile: UnitProfile, rule: string) => boolean): number {
+  return unit.takingToSkies && !unitHasRule(unit.profile, 'Hover') ? 2 : 0;
+}
+
+export function unitTakesToSkiesForState(
+  state: BattleState,
+  unit: BattleUnit,
+  hasKeyword: (unit: BattleUnit, keyword: string) => boolean,
+): boolean {
+  return hasKeyword(unit, 'fly') && (state.ruleset.edition !== '11e' || unit.takingToSkies === true);
+}
+
+export function unitMovedThisPhase(state: BattleState, unit: BattleUnit): boolean {
+  return unit.lastMovePhase === state.phase && unit.lastMoveTurn === state.turn;
+}
+
+export function unitSurgedThisPhase(state: BattleState, unit: BattleUnit): boolean {
+  return unit.surgeMovePhase === state.phase && unit.surgeMoveTurn === state.turn;
 }
 
 export interface SingleModelMoveContext {
