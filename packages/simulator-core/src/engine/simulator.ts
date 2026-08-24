@@ -86,9 +86,7 @@ import {
   unitHasKeyword,
 } from './unitCombatModifiers';
 import { runBattleshockPhase } from './battleshockPhase';
-import * as chargeRules from './chargeRules';
 import * as fightEligibility from './fightEligibility';
-import * as fightPhase from './fightPhase';
 import * as fightMovement from './fightMovement';
 import * as deadlyDemise from './deadlyDemise';
 import * as damageApplication from './damageApplication';
@@ -2674,7 +2672,7 @@ export type PlayChargeTargetOption = {
   needed: number;
 };
 
-const chargeRulesContext: chargeRules.ChargeRulesContext = {
+const chargeRulesContext: combatAttackResolution.ChargeRulesContext = {
   attachedComponents: attachedUnitComponents,
   enemies,
   isAircraft,
@@ -2693,8 +2691,8 @@ export function playChargeRoll(
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit
     || attachedUnitComponents(state, unit).some(component => unitSurgedThisPhase(state, component))
-    || !chargeRules.sideCanDeclareCharge(state, side, unit)
-    || !chargeRules.unitCanDeclareCharge(state, unit, chargeRulesContext)) return state;
+    || !combatAttackResolution.sideCanDeclareCharge(state, side, unit)
+    || !combatAttackResolution.unitCanDeclareCharge(state, unit, chargeRulesContext)) return state;
   const r1 = d6();
   const r2 = d6();
   const rawRoll = r1 + r2;
@@ -2739,7 +2737,7 @@ export function playChargeEligibilityReason(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): string | null {
-  return chargeRules.playChargeEligibilityReason(state, unitId, side, rules, chargeRulesContext);
+  return combatAttackResolution.playChargeEligibilityReason(state, unitId, side, rules, chargeRulesContext);
 }
 
 export function playChargeTargetOptions(
@@ -2749,7 +2747,7 @@ export function playChargeTargetOptions(
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): PlayChargeTargetOption[] {
   if (state.phase !== 'charge') return [];
-  return chargeRules.playChargeTargetOptions(state, unitId, side, rules, chargeRulesContext);
+  return combatAttackResolution.playChargeTargetOptions(state, unitId, side, rules, chargeRulesContext);
 }
 
 export function chargePlayUnitTarget(
@@ -2781,8 +2779,8 @@ export function chargePlayUnitTargets(
     || !target
     || targets.length !== uniqueTargetIds.length
     || uniqueTargetIds.length === 0
-    || !chargeRules.sideCanDeclareCharge(state, side, unit)
-    || !chargeRules.unitCanDeclareCharge(state, unit, chargeRulesContext)
+    || !combatAttackResolution.sideCanDeclareCharge(state, side, unit)
+    || !combatAttackResolution.unitCanDeclareCharge(state, unit, chargeRulesContext)
     || targets.some(candidate => !unitCanChargeTarget(unit, candidate))
     || (state.activeArmy !== side
       && (unit.heroicInterventionMode === 'leap-to-defend'
@@ -2790,7 +2788,7 @@ export function chargePlayUnitTargets(
         : unit.heroicInterventionMode === 'into-the-fray'
           ? targets.some(candidate => battleUnitsBaseEdgeDistance(unit, candidate) > 6)
           : true))) return state;
-  const needed = Math.max(...targets.map(candidate => chargeRules.chargeNeededDistance(unit, candidate, rules, chargeRulesContext)));
+  const needed = Math.max(...targets.map(candidate => combatAttackResolution.chargeNeededDistance(unit, candidate, rules, chargeRulesContext)));
   const pendingRoll = state.pendingChargeRoll?.unitId === unitId && state.pendingChargeRoll.side === side
     ? state.pendingChargeRoll
     : undefined;
@@ -3026,7 +3024,7 @@ const unitWasEngagedAtFightStepStart = (state: BattleState, unit: BattleUnit) =>
 const unitEligibleToFight = (unit: BattleUnit, state: BattleState, rules: RulesEdition) =>
   fightEligibility.unitEligibleToFight(unit, state, rules, fightEligibilityContext);
 
-const fightPhaseContext: fightPhase.FightPhaseContext = {
+const fightPhaseContext: combatAttackResolution.FightPhaseContext = {
   activeUnits,
   enemies,
   canFightTarget: unitCanFightTarget,
@@ -3040,7 +3038,7 @@ const fightPhaseContext: fightPhase.FightPhaseContext = {
 };
 
 function startFightStepInPlace(s: BattleState, rules: RulesEdition): void {
-  fightPhase.startFightStepInPlace(s, rules, fightPhaseContext);
+  combatAttackResolution.startFightStepInPlace(s, rules, fightPhaseContext);
   s.log = [...s.log, log(s, s.activeArmy, s.armies[s.activeArmy].name, 'Fight step begins; engagement eligibility is recorded.', 'phase')];
 }
 
@@ -3071,16 +3069,16 @@ export function playFightPhaseHasPendingActivations(
 }
 
 const finishAttachedFightComponent = (state: BattleState, unit: BattleUnit, rules: RulesEdition) =>
-  fightPhase.finishAttachedFightComponent(state, unit, rules, fightPhaseContext);
+  combatAttackResolution.finishAttachedFightComponent(state, unit, rules, fightPhaseContext);
 const sideCanSelectFightUnit = (state: BattleState, side: Side, rules: RulesEdition) =>
-  fightPhase.sideCanSelectFightUnit(state, side, rules, fightPhaseContext);
+  combatAttackResolution.sideCanSelectFightUnit(state, side, rules, fightPhaseContext);
 
 export function playFightActivationUnitIds(
   state: BattleState,
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): string[] {
-  return fightPhase.playFightActivationUnitIds(state, side, rules, fightPhaseContext);
+  return combatAttackResolution.playFightActivationUnitIds(state, side, rules, fightPhaseContext);
 }
 
 export function playFightFirstUnitIds(
@@ -3088,7 +3086,7 @@ export function playFightFirstUnitIds(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): string[] {
-  return fightPhase.playFightFirstUnitIds(state, side, rules, fightPhaseContext);
+  return combatAttackResolution.playFightFirstUnitIds(state, side, rules, fightPhaseContext);
 }
 
 export function playOverrunFightUnitIds(
@@ -3096,7 +3094,7 @@ export function playOverrunFightUnitIds(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): string[] {
-  return fightPhase.playOverrunFightUnitIds(state, side, rules, fightPhaseContext);
+  return combatAttackResolution.playOverrunFightUnitIds(state, side, rules, fightPhaseContext);
 }
 
 export function selectPlayOverrunFight(
@@ -4872,7 +4870,7 @@ const takeToSkiesContext: interactiveMovementState.TakeToSkiesContext = {
   unitSurgedThisPhase,
   hasFlyKeyword: (state, unit) => attachedUnitKeywordSet(state, unit).has('fly'),
   movementCanBegin: (state, side) => state.activeArmy === side && movementStep(state) === 'moveUnits',
-  chargeCanBegin: (state, side, unit) => chargeRules.sideCanDeclareCharge(state, side, unit) && chargeRules.unitCanDeclareCharge(state, unit, chargeRulesContext),
+  chargeCanBegin: (state, side, unit) => combatAttackResolution.sideCanDeclareCharge(state, side, unit) && combatAttackResolution.unitCanDeclareCharge(state, unit, chargeRulesContext),
   unitHasStartedCurrentMove,
   unitHasHover: unit => unitHasRule(unit.profile, 'Hover'),
   updateMovementAllowances: unit => updateModelMovementAllowances(unit),

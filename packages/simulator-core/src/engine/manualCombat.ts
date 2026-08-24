@@ -1,6 +1,6 @@
 // Manual attack resolution and its progressively narrowed simulator facade context.
 // @ts-nocheck
-import type { BattleState, BattleUnit, LogEntry } from '../types/battle';
+import type { BattleState, BattleUnit, LogEntry, Side } from '../types/battle';
 import type { WeaponProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import type { CombatAttackResolutionOptions } from './combatTypes';
@@ -53,6 +53,157 @@ export function processWoundsAgainstDefender(
   const notes = [`Anti ${antiThreshold}+ critical wounds`];
   if (hasDevastatingWounds && devastatingWounds > 0) notes.push('critical wound->no save (Devastating Wounds)');
   return { wounds, rolls, mortalsFromCrits: 0, devastatingWounds, logNote: notes.join('; ') };
+}
+
+export interface ChargeRulesContext {
+  attachedComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
+  enemies(state: BattleState, side: Side): BattleUnit[];
+  isAircraft(unit: BattleUnit): boolean;
+  unitSurgedThisPhase(state: BattleState, unit: BattleUnit): boolean;
+  canChargeTarget(unit: BattleUnit, target: BattleUnit): boolean;
+  baseEdgeDistance(a: BattleUnit, b: BattleUnit): number;
+}
+
+export type ChargeTargetOption = { targetId: string; needed: number };
+
+export function chargeNeededDistance(unit: BattleUnit, target: BattleUnit, rules: RulesEdition, context: ChargeRulesContext): number {
+  return Math.max(0, context.baseEdgeDistance(unit, target) - rules.engagementRange());
+}
+
+export function unitCanDeclareCharge(state: BattleState, unit: BattleUnit, context: ChargeRulesContext): boolean {
+  return !unit.destroyed && !unit.embarkedInUnitId && !unit.performingAction && !context.isAircraft(unit)
+    && !unit.inCombat && !unit.fellBack && !unit.arrivedFromReinforcements
+    && !unit.emergencyDisembarkedThisTurn && !unit.combatDisembarkedThisTurn && !unit.rapidDisembarkedThisTurn
+    && unit.movementAction !== 'fellBack'
+    && (unit.movementAction !== 'advanced' || state.activeArmyAbilities?.[unit.side]?.includes('waaagh') === true);
+}
+
+export function sideCanDeclareCharge(state: BattleState, side: Side, unit: BattleUnit): boolean {
+  return state.activeArmy === side || (state.activeArmy !== side && unit.heroicInterventionThisPhase === true);
+}
+
+export function playChargeEligibilityReason(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: ChargeRulesContext): string | null {
+  if (state.phase !== 'charge') return 'The battle is not in the Charge phase.';
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit) return 'Select a living unit that is on the battlefield.';
+  if (!sideCanDeclareCharge(state, side, unit)) return 'This army cannot declare a charge right now.';
+  if (context.attachedComponents(state, unit).some(component => context.unitSurgedThisPhase(state, component))) return 'This unit already surged this phase.';
+  if (context.isAircraft(unit)) return 'Aircraft cannot declare charges.';
+  if (unit.inCombat) return 'This unit is already in combat.';
+  if (unit.fellBack || unit.movementAction === 'fellBack') return 'A unit that fell back cannot charge this phase.';
+  if (unit.arrivedFromReinforcements) return 'A unit arriving from Reinforcements cannot charge this phase.';
+  if (unit.emergencyDisembarkedThisTurn || unit.combatDisembarkedThisTurn || unit.rapidDisembarkedThisTurn) return 'This unit cannot charge after disembarking this turn.';
+  if (unit.performingAction) return 'This unit is performing an action.';
+  if (unit.movementAction === 'advanced' && state.activeArmyAbilities?.[side]?.includes('waaagh') !== true) return 'A unit that advanced cannot charge this phase.';
+  const candidates = context.enemies(state, side).filter(target => context.canChargeTarget(unit, target));
+  if (!candidates.length) return 'There are no eligible enemy units to charge.';
+  const needed = candidates.map(target => chargeNeededDistance(unit, target, rules, context));
+  if (!needed.some(distance => distance <= rules.chargeRange())) {
+    return `The nearest eligible charge requires ${Math.min(...needed).toFixed(1)} inches; the pre-roll charge range is ${rules.chargeRange()} inches.`;
+  }
+  return null;
+}
+
+export function playChargeTargetOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: ChargeRulesContext): ChargeTargetOption[] {
+  if (state.phase !== 'charge') return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || context.attachedComponents(state, unit).some(component => context.unitSurgedThisPhase(state, component))
+    || !sideCanDeclareCharge(state, side, unit) || !unitCanDeclareCharge(state, unit, context)) return [];
+  const pendingRoll = state.pendingChargeRoll?.unitId === unitId && state.pendingChargeRoll.side === side ? state.pendingChargeRoll : undefined;
+  return context.enemies(state, side)
+    .filter(target => context.canChargeTarget(unit, target)
+      && (state.activeArmy === side || (unit.heroicInterventionMode === 'leap-to-defend'
+        ? target.charged : unit.heroicInterventionMode === 'into-the-fray' ? context.baseEdgeDistance(unit, target) <= 6 : false)))
+    .map(target => ({ targetId: target.id, needed: chargeNeededDistance(unit, target, rules, context) }))
+    .filter(option => option.needed <= (pendingRoll?.maximumDistance ?? rules.chargeRange()));
+}
+
+export interface FightPhaseContext {
+  activeUnits(state: BattleState, side: Side): BattleUnit[];
+  enemies(state: BattleState, side: Side): BattleUnit[];
+  canFightTarget(unit: BattleUnit, target: BattleUnit): boolean;
+  inEngagement(unit: BattleUnit, targets: BattleUnit[], range: number): boolean;
+  unitEligibleToFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean;
+  unitWasEngagedAtFightStepStart(state: BattleState, unit: BattleUnit): boolean;
+  attachedComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
+  attachedUnitId(unit: BattleUnit): string;
+  attachedUnitHasRule(state: BattleState, unit: BattleUnit, rule: string): boolean;
+  unitHasActiveStratagem(state: BattleState, unit: BattleUnit, stratagemId: string, phase: string): boolean;
+}
+
+export function startFightStepInPlace(state: BattleState, rules: RulesEdition, context: FightPhaseContext): void {
+  state.fightStepStarted = true;
+  state.forcedFightUnitId = undefined;
+  state.lastFightSelectionSide = undefined;
+  state.activeAttachedFightUnitId = undefined;
+  state.activeAttachedShootingUnitId = undefined;
+  state.attachedShootingTargetUnitId = undefined;
+  state.engagedUnitIdsAtFightStepStart = state.units.filter(unit => !unit.destroyed && !unit.embarkedInUnitId
+    && context.enemies(state, unit.side).some(enemy => context.canFightTarget(unit, enemy)
+      && context.inEngagement(unit, [enemy], rules.engagementRange()))).map(unit => unit.id);
+}
+
+export function unitHasCounteroffensive(state: BattleState, unit: BattleUnit, context: FightPhaseContext): boolean {
+  return context.unitHasActiveStratagem(state, unit, 'counteroffensive', 'fight');
+}
+
+export function unitHasFightsFirst(state: BattleState, unit: BattleUnit, context: FightPhaseContext): boolean {
+  return unit.charged || unitHasCounteroffensive(state, unit, context) || context.attachedUnitHasRule(state, unit, 'Fights First');
+}
+
+export function finishAttachedFightComponent(state: BattleState, unit: BattleUnit, rules: RulesEdition, context: FightPhaseContext): void {
+  if (rules.metadata.edition !== '11e') return;
+  const remaining = context.attachedComponents(state, unit).filter(component => !component.activated && context.unitEligibleToFight(component, state, rules));
+  if (remaining.length) { state.activeAttachedFightUnitId = context.attachedUnitId(unit); return; }
+  state.activeAttachedFightUnitId = undefined;
+  const forcedUnit = state.units.find(candidate => candidate.id === state.forcedFightUnitId);
+  if (forcedUnit && context.attachedUnitId(forcedUnit) === context.attachedUnitId(unit)) state.forcedFightUnitId = undefined;
+  state.lastFightSelectionSide = unit.side;
+}
+
+export function sideCanSelectFightUnit(state: BattleState, side: Side, rules: RulesEdition, context: FightPhaseContext): boolean {
+  return state.phase === 'fight' && (rules.metadata.edition === '11e' || state.activeArmy === side
+    || context.activeUnits(state, side).some(unit => unitHasCounteroffensive(state, unit, context)));
+}
+
+export function playFightActivationUnitIds(state: BattleState, side: Side, rules: RulesEdition, context: FightPhaseContext): string[] {
+  if (!sideCanSelectFightUnit(state, side, rules, context)) return [];
+  const eligible = context.activeUnits(state, side).filter(unit => context.unitEligibleToFight(unit, state, rules));
+  if (rules.metadata.edition === '11e' && state.activeAttachedFightUnitId) return eligible.filter(unit => context.attachedUnitId(unit) === state.activeAttachedFightUnitId).map(unit => unit.id);
+  if (state.forcedFightUnitId) {
+    const forced = state.units.find(unit => unit.id === state.forcedFightUnitId);
+    if (!forced || forced.side !== side) return [];
+    return eligible.filter(unit => context.attachedUnitId(unit) === context.attachedUnitId(forced)).map(unit => unit.id);
+  }
+  if (rules.metadata.edition !== '11e' && state.activeArmy !== side) return eligible.filter(unit => unitHasCounteroffensive(state, unit, context)).map(unit => unit.id);
+  if (rules.metadata.edition === '11e') {
+    const allEligible = state.units.filter(unit => context.unitEligibleToFight(unit, state, rules));
+    const counteroffensive = allEligible.filter(unit => unitHasCounteroffensive(state, unit, context));
+    const priorityEligible = counteroffensive.length ? counteroffensive : allEligible.some(unit => unitHasFightsFirst(state, unit, context))
+      ? allEligible.filter(unit => unitHasFightsFirst(state, unit, context)) : allEligible;
+    const preferredSide = state.lastFightSelectionSide === undefined ? state.activeArmy : (state.lastFightSelectionSide === 0 ? 1 : 0) as Side;
+    const selectingSide = priorityEligible.some(unit => unit.side === preferredSide) ? preferredSide : (preferredSide === 0 ? 1 : 0) as Side;
+    return side === selectingSide ? priorityEligible.filter(unit => unit.side === side).map(unit => unit.id) : [];
+  }
+  const counteroffensive = eligible.filter(unit => unitHasCounteroffensive(state, unit, context));
+  if (counteroffensive.length) return counteroffensive.map(unit => unit.id);
+  const fightsFirst = eligible.filter(unit => unitHasFightsFirst(state, unit, context));
+  return (fightsFirst.length ? fightsFirst : eligible).map(unit => unit.id);
+}
+
+export function playFightFirstUnitIds(state: BattleState, side: Side, rules: RulesEdition, context: FightPhaseContext): string[] {
+  if (rules.metadata.edition !== '11e' || state.phase !== 'fight' || state.fightStepStarted !== true) return [];
+  return context.activeUnits(state, side).filter(unit => context.unitEligibleToFight(unit, state, rules) && unitHasFightsFirst(state, unit, context)).map(unit => unit.id);
+}
+
+export function playOverrunFightUnitIds(state: BattleState, side: Side, rules: RulesEdition, context: FightPhaseContext): string[] {
+  if (rules.metadata.edition !== '11e' || state.fightStepStarted !== true) return [];
+  return playFightActivationUnitIds(state, side, rules, context).filter(unitId => {
+    const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+    if (!unit || unit.overrunFightSelected) return false;
+    const engaged = context.enemies(state, side).some(enemy => context.canFightTarget(unit, enemy) && context.inEngagement(unit, [enemy], rules.engagementRange()));
+    return !engaged || (!context.unitWasEngagedAtFightStepStart(state, unit) && engaged);
+  });
 }
 
 export function resolveCombatAttacks(
