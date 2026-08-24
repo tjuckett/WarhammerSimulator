@@ -116,6 +116,7 @@ import * as scoutMoves from './scoutMoves';
 import * as takeToSkies from './takeToSkies';
 import * as surgeMoves from './surgeMoves';
 import * as movementGroups from './movementGroups';
+import * as strategicReservePlacement from './strategicReservePlacement';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -4833,15 +4834,15 @@ export function playFiringDeckOptions(state: BattleState, transportUnitId: strin
   return firingDeck.options(state, transportUnitId, side, firingDeckContext);
 }
 
-function strategicReservePlacementIsOutsideOpponentDeploymentZone(unit: BattleUnit, state: BattleState): boolean {
-  if (battleRound(state) > 2) return true;
-  const board = boardFormatForState(state);
-  const deployment = setupDeploymentZoneSource(state.setup);
-  const opponentZone = zoneFor((1 - unit.side) as Side, deployment, board);
-  return unit.modelPositions.every((model, modelIndex) =>
-    !pointInDeploymentZone(model, opponentZone, modelBaseRadius(unit, modelIndex)),
-  );
-}
+const strategicReservePlacementContext: strategicReservePlacement.StrategicReservePlacementContext = {
+  battleRound,
+  modelIsInOpponentDeploymentZone: (state, unit, modelIndex) => {
+    const zone = zoneFor((1 - unit.side) as Side, setupDeploymentZoneSource(state.setup), boardFormatForState(state));
+    return pointInDeploymentZone(unit.modelPositions[modelIndex], zone, modelBaseRadius(unit, modelIndex));
+  },
+};
+const strategicReservePlacementIsOutsideOpponentDeploymentZone = (unit: BattleUnit, state: BattleState): boolean =>
+  strategicReservePlacement.isOutsideOpponentDeploymentZone(state, unit, strategicReservePlacementContext);
 
 export function selectPlayFiringDeckWeapons(
   state: BattleState,
