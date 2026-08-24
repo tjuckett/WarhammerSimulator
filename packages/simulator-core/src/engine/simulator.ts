@@ -51,8 +51,6 @@ import {
   baseFootprintDistance,
   baseFootprintMaxPointDistance,
   baseFootprintIntersectsRect,
-  baseFootprintWithinRect,
-  baseFootprintsOverlap,
   battleUnitMaxBaseRadiusInches,
   modelBaseFootprintInches,
   modelBaseRadiusInches,
@@ -2109,29 +2107,8 @@ function translatedPlayMoveEndsInEngagement(
   return inEngagement(testUnit, enemies(test, testUnit.side), rulesEditionForRuleset(test.ruleset).engagementRange());
 }
 
-function unitHasBaseOverlap(state: BattleState, unit: BattleUnit): boolean {
-  for (let modelIndex = 0; modelIndex < unit.modelPositions.length; modelIndex++) {
-    const model = unit.modelPositions[modelIndex];
-    const footprint = modelFootprint(unit, modelIndex);
-    for (const otherUnit of state.units) {
-      if (otherUnit.destroyed) continue;
-      for (let otherModelIndex = 0; otherModelIndex < otherUnit.modelPositions.length; otherModelIndex++) {
-        if (otherUnit.id === unit.id && otherModelIndex === modelIndex) continue;
-        if (verticalDistance(model, otherUnit.modelPositions[otherModelIndex]) > 0.5) continue;
-        const otherFootprint = modelFootprint(otherUnit, otherModelIndex);
-        if (baseFootprintsOverlap(model, footprint, otherUnit.modelPositions[otherModelIndex], otherFootprint, 0.001)) return true;
-      }
-    }
-  }
-  return false;
-}
-
-function unitHasModelOutsideBattlefield(unit: BattleUnit, state: BattleState): boolean {
-  const board = boardFormatForState(state);
-  return unit.modelPositions.some((model, modelIndex) =>
-    !baseFootprintWithinRect(model, modelFootprint(unit, modelIndex), { x: 0, y: 0, width: board.width, height: board.height }),
-  );
-}
+const unitHasBaseOverlap = interactiveMovementState.unitHasBaseOverlap;
+const unitHasModelOutsideBattlefield = interactiveMovementState.unitHasModelOutsideBattlefield;
 
 const aircraftMovementContext: aircraftMovement.AircraftMovementContext = {
   isAircraft,

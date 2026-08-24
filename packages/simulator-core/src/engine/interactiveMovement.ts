@@ -3,7 +3,7 @@ import type { UnitProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
 import { zoneFor, pointInDeploymentZone, type DeploymentZone, type DeploymentZoneSource } from './deployment';
-import { baseFootprintDistance, baseFootprintIntersectsRect, baseFootprintMaxPointDistance, baseFootprintsOverlap, modelBaseFootprintInches, modelBaseRadiusInches } from './baseSizes';
+import { baseFootprintDistance, baseFootprintIntersectsRect, baseFootprintMaxPointDistance, baseFootprintWithinRect, baseFootprintsOverlap, modelBaseFootprintInches, modelBaseRadiusInches } from './baseSizes';
 import { distance as dist, verticalDistance } from './coherency';
 import { centroid, translateFormation } from './unitModelState';
 
@@ -126,6 +126,32 @@ export function modelMoveHasNoBaseOverlap(state: BattleState, unit: BattleUnit, 
       return !baseFootprintsOverlap(model, footprint, otherModel, otherFootprint);
     });
   });
+}
+
+export function unitHasBaseOverlap(state: BattleState, unit: BattleUnit): boolean {
+  return unit.modelPositions.some((model, modelIndex) => {
+    const footprint = modelBaseFootprintInches(unit.profile, modelIndex, unit.modelRotations?.[modelIndex] ?? unit.facingDeg ?? 0);
+    return state.units.some(otherUnit => {
+      if (otherUnit.destroyed || otherUnit.embarkedInUnitId) return false;
+      return otherUnit.modelPositions.some((otherModel, otherModelIndex) => {
+        if (otherUnit.id === unit.id && otherModelIndex === modelIndex) return false;
+        if (verticalDistance(model, otherModel) > 0.5) return false;
+        const otherFootprint = modelBaseFootprintInches(otherUnit.profile, otherModelIndex, otherUnit.modelRotations?.[otherModelIndex] ?? otherUnit.facingDeg ?? 0);
+        return baseFootprintsOverlap(model, footprint, otherModel, otherFootprint, 0.001);
+      });
+    });
+  });
+}
+
+export function unitHasModelOutsideBattlefield(unit: BattleUnit, state: BattleState): boolean {
+  const board = boardFormatForState(state);
+  return unit.modelPositions.some((model, modelIndex) =>
+    !baseFootprintWithinRect(
+      model,
+      modelBaseFootprintInches(unit.profile, modelIndex, unit.modelRotations?.[modelIndex] ?? unit.facingDeg ?? 0),
+      { x: 0, y: 0, width: board.width, height: board.height },
+    ),
+  );
 }
 
 export interface SuperHeavyMobileContext {
