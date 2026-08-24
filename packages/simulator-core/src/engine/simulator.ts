@@ -4554,60 +4554,47 @@ function runSimulatedFightPhase(state: BattleState, side: Side, rules: RulesEdit
   return battleSimulation.runAutomaticFightPhase(state, side, rules, automaticFightPhaseContext);
 }
 
+function resetAutomatedTurnState(state: BattleState, side: Side, rules: RulesEdition): void {
+  startMissionEventsForNewTurn(state, rules);
+  state.fightStepStarted = undefined;
+  state.engagedUnitIdsAtFightStepStart = undefined;
+  state.lastFightSelectionSide = undefined;
+  state.activeAttachedFightUnitId = undefined;
+  state.activeAttachedShootingUnitId = undefined;
+  state.attachedShootingTargetUnitId = undefined;
+  state.firingDeckLockedUnitIds = undefined;
+  state.units.forEach(clearFiringDeckWeapons);
+  state.units.forEach(unit => {
+    unit.overrunFightSelected = undefined;
+    unit.overrunPiledIn = undefined;
+  });
+  state.units.filter(unit => unit.side === side && !unit.destroyed).forEach(unit => {
+    resetUnitForActiveTurn(unit, { clearEmergencyDisembarkBattleshock: true });
+    unit.actionStartedThisTurn = undefined;
+    unit.embarkedThisTurn = undefined;
+    unit.disembarkedThisTurn = undefined;
+  });
+}
+
+const automaticTurnContext: battleSimulation.AutomaticTurnContext = {
+  clone,
+  resetActiveTurn: resetAutomatedTurnState,
+  runCommand: runSimulatedCommandPhase,
+  runMovement: runSimulatedMovementPhase,
+  runShooting: runSimulatedShootingPhase,
+  runCharge: runSimulatedChargePhase,
+  runFight: runSimulatedFightPhase,
+  checkWinner,
+  completeEndOfTurnActions,
+  scoreEndOfTurnSecondaryMissionLogs,
+  scoreEndOfTurnPrimaryMissionLogs,
+  returnOpponentAircraftToStrategicReserves,
+};
+
 export function simulatePlayerTurn(state: BattleState, rules: RulesEdition): BattleState {
-  let s = clone(state);
-  const side = s.activeArmy;
-  const armyName = s.armies[side].name;
-  const myUnits = () => s.units.filter(u => u.side === side && !u.destroyed);
-  const newLogs: LogEntry[] = [];
-
-  // Reset per-turn flags
-  startMissionEventsForNewTurn(s, rules);
-  s.fightStepStarted = undefined;
-  s.engagedUnitIdsAtFightStepStart = undefined;
-  s.lastFightSelectionSide = undefined;
-  s.activeAttachedFightUnitId = undefined;
-  s.activeAttachedShootingUnitId = undefined;
-  s.attachedShootingTargetUnitId = undefined;
-  s.firingDeckLockedUnitIds = undefined;
-  s.units.forEach(clearFiringDeckWeapons);
-  s.units.forEach(u => { u.overrunFightSelected = undefined; u.overrunPiledIn = undefined; });
-  myUnits().forEach(u => { u.rangedAttacksMadePreviousTurn = u.rangedAttacksMadeThisTurn ?? false; u.rangedAttacksMadeThisTurn = false; u.activated = false; u.charged = false; u.piledIn = undefined; u.consolidated = undefined; u.firedWeaponIndices = undefined; u.movementAction = undefined; u.movementAllowanceRemaining = undefined; u.movementAllowanceRemainingByModel = undefined; u.movementAllowanceTotalByModel = undefined; u.movementStartPositionsByModel = undefined; u.movementStartRotationsByModel = undefined; u.movementPathByModel = undefined; u.movementComplete = undefined; u.takingToSkies = undefined; u.arrivedFromReinforcements = undefined; u.rapidIngressThisPhase = undefined; u.heroicInterventionThisPhase = undefined; u.heroicInterventionMode = undefined; u.actionStartedThisTurn = undefined; u.embarkedThisTurn = undefined; u.disembarkedThisTurn = undefined; if (u.emergencyDisembarkedThisTurn) u.battleshocked = false; u.emergencyDisembarkedThisTurn = undefined; u.combatDisembarkedThisTurn = undefined; u.rapidDisembarkedThisTurn = undefined; u.fellBack = false; u.inCombat = false; });
-
-  // Command
-  newLogs.push(...runSimulatedCommandPhase(s, side, rules));
-
-  // Movement
-  newLogs.push(...runSimulatedMovementPhase(s, side, rules));
-
-  checkWinner(s);
-  if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }
-
-  // Shooting
-  newLogs.push(...runSimulatedShootingPhase(s, side, rules));
-
-  checkWinner(s);
-  if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }
-
-  // Charge
-  newLogs.push(...runSimulatedChargePhase(s, side, rules));
+  return battleSimulation.runAutomaticTurn(state, rules, automaticTurnContext);
 
   // Fight — charged first, then others in melee, then defender counterattacks
-  const fightResult = runSimulatedFightPhase(s, side, rules);
-  s = fightResult.state;
-  newLogs.push(...fightResult.logs);
-
-  checkWinner(s);
-  if (s.winner !== null) { s.log = [...s.log, ...newLogs]; return s; }
-
-  // Objective scoring after the turn's actions; shocked units have OC 0.
-  completeEndOfTurnActions(s, side);
-  newLogs.push(...scoreEndOfTurnSecondaryMissionLogs(s, side, rules));
-  newLogs.push(...scoreEndOfTurnPrimaryMissionLogs(s, side, rules));
-  returnOpponentAircraftToStrategicReserves(s, side, rules);
-
-  s.log = [...s.log, ...newLogs];
-  return s;
 }
 
 const turnAdvanceContext: turnAdvance.TurnAdvanceContext = { clone, enterBattlePhase };

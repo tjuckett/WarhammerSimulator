@@ -279,6 +279,55 @@ export function runAutomaticFightPhase(state: BattleState, side: Side, rules: Ru
   return { state, logs };
 }
 
+export interface AutomaticTurnContext {
+  clone(state: BattleState): BattleState;
+  resetActiveTurn(state: BattleState, side: Side, rules: RulesEdition): void;
+  runCommand(state: BattleState, side: Side, rules: RulesEdition): LogEntry[];
+  runMovement(state: BattleState, side: Side, rules: RulesEdition): LogEntry[];
+  runShooting(state: BattleState, side: Side, rules: RulesEdition): LogEntry[];
+  runCharge(state: BattleState, side: Side, rules: RulesEdition): LogEntry[];
+  runFight(state: BattleState, side: Side, rules: RulesEdition): { state: BattleState; logs: LogEntry[] };
+  checkWinner(state: BattleState): void;
+  completeEndOfTurnActions(state: BattleState, side: Side): void;
+  scoreEndOfTurnSecondaryMissionLogs(state: BattleState, side: Side, rules: RulesEdition): LogEntry[];
+  scoreEndOfTurnPrimaryMissionLogs(state: BattleState, side: Side, rules: RulesEdition): LogEntry[];
+  returnOpponentAircraftToStrategicReserves(state: BattleState, side: Side, rules: RulesEdition): void;
+}
+
+/** Runs one automated player turn while delegating each phase to its domain. */
+export function runAutomaticTurn(state: BattleState, rules: RulesEdition, context: AutomaticTurnContext): BattleState {
+  let next = context.clone(state);
+  const side = next.activeArmy;
+  const logs: LogEntry[] = [];
+  const finishIfWon = () => {
+    context.checkWinner(next);
+    if (next.winner === null) return false;
+    next.log = [...next.log, ...logs];
+    return true;
+  };
+
+  context.resetActiveTurn(next, side, rules);
+  logs.push(...context.runCommand(next, side, rules));
+  logs.push(...context.runMovement(next, side, rules));
+  if (finishIfWon()) return next;
+
+  logs.push(...context.runShooting(next, side, rules));
+  if (finishIfWon()) return next;
+
+  logs.push(...context.runCharge(next, side, rules));
+  const fight = context.runFight(next, side, rules);
+  next = fight.state;
+  logs.push(...fight.logs);
+  if (finishIfWon()) return next;
+
+  context.completeEndOfTurnActions(next, side);
+  logs.push(...context.scoreEndOfTurnSecondaryMissionLogs(next, side, rules));
+  logs.push(...context.scoreEndOfTurnPrimaryMissionLogs(next, side, rules));
+  context.returnOpponentAircraftToStrategicReserves(next, side, rules);
+  next.log = [...next.log, ...logs];
+  return next;
+}
+
 export function simulateNextUnit(state: BattleState, rules: RulesEdition, context: SimulationUnitStepContext): BattleState {
   const next = context.clone(state);
   if (next.winner !== null || next.phase === 'deployment' || next.phase === 'end') return next;
