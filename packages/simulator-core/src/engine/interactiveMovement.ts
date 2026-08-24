@@ -876,6 +876,58 @@ export function fallBackUnit(
   return next;
 }
 
+export interface CoherencyModelRemovalContext {
+  clone(state: BattleState): BattleState;
+  movementStep(state: BattleState): string;
+  recordDestroyedModels(state: BattleState, unit: BattleUnit, modelIndices: number[], destroyedBySide: Side): void;
+  spliceModelIndices(unit: BattleUnit, modelIndices: number[]): void;
+  recordDestroyedUnit(state: BattleState, unit: BattleUnit, destroyedBySide: Side): void;
+  centroid(positions: Position[]): Position;
+  createLog(state: BattleState, side: Side, actor: string, message: string, type: LogType): LogEntry;
+}
+
+export function removeModelsForCoherency(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  modelIndices: number[],
+  context: CoherencyModelRemovalContext,
+): BattleState {
+  const next = context.clone(state);
+  if (next.phase !== 'movement' || context.movementStep(next) !== 'moveUnits' || next.activeArmy !== side) return next;
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit) return next;
+  const uniqueIndices = Array.from(new Set(modelIndices))
+    .filter(modelIndex => unit.modelPositions[modelIndex])
+    .sort((left, right) => right - left);
+  if (!uniqueIndices.length) return next;
+
+  context.recordDestroyedModels(next, unit, uniqueIndices, side);
+  context.spliceModelIndices(unit, uniqueIndices);
+  unit.remainingModels = Math.max(0, unit.remainingModels - uniqueIndices.length);
+  unit.destroyed = unit.remainingModels <= 0 || unit.modelPositions.length === 0;
+  unit.remainingModels = unit.destroyed ? 0 : Math.min(unit.remainingModels, unit.modelPositions.length);
+  if (!unit.destroyed) {
+    unit.position = context.centroid(unit.modelPositions);
+    if (unit.movementAllowanceRemainingByModel?.length) unit.movementAllowanceRemaining = Math.max(...unit.movementAllowanceRemainingByModel);
+  } else {
+    unit.movementAllowanceRemaining = 0;
+    unit.movementAllowanceRemainingByModel = [];
+    unit.movementAllowanceTotalByModel = [];
+    unit.movementStartPositionsByModel = [];
+    unit.movementStartRotationsByModel = [];
+    context.recordDestroyedUnit(next, unit, side);
+  }
+  next.log = [...next.log, context.createLog(
+    next,
+    side,
+    unit.profile.name,
+    `${next.armies[side].name} removes ${uniqueIndices.length} ${unit.profile.name} model${uniqueIndices.length === 1 ? '' : 's'} to restore coherency.`,
+    'info',
+  )];
+  return next;
+}
+
 export interface CompleteMovementContext {
   clone(state: BattleState): BattleState;
   movementStep(state: BattleState): string;

@@ -3771,51 +3771,23 @@ export function undoPlayUnitMovement(state: BattleState, unitId: string, side: S
   return interactiveMovementState.undoUnitMovement(state, unitId, side, modelMovementContext);
 }
 
+const coherencyModelRemovalContext: interactiveMovementState.CoherencyModelRemovalContext = {
+  clone,
+  movementStep,
+  recordDestroyedModels: recordDestroyedModelMissionEvents,
+  spliceModelIndices,
+  recordDestroyedUnit: recordDestroyedUnitMissionEvent,
+  centroid,
+  createLog: log,
+};
+
 export function removePlayModels(
   state: BattleState,
   unitId: string,
   side: Side,
   modelIndices: number[],
 ): BattleState {
-  const s = clone(state);
-  if (s.phase !== 'movement' || movementStep(s) !== 'moveUnits' || s.activeArmy !== side) return s;
-
-  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
-  if (!unit) return s;
-
-  const uniqueIndices = Array.from(new Set(modelIndices))
-    .filter(modelIndex => unit.modelPositions[modelIndex])
-    .sort((a, b) => b - a);
-  if (!uniqueIndices.length) return s;
-
-  recordDestroyedModelMissionEvents(s, unit, uniqueIndices, side);
-  spliceModelIndices(unit, uniqueIndices);
-
-  unit.remainingModels = Math.max(0, unit.remainingModels - uniqueIndices.length);
-  unit.destroyed = unit.remainingModels <= 0 || unit.modelPositions.length === 0;
-  unit.remainingModels = unit.destroyed ? 0 : Math.min(unit.remainingModels, unit.modelPositions.length);
-  if (!unit.destroyed) {
-    unit.position = centroid(unit.modelPositions);
-    if (unit.movementAllowanceRemainingByModel?.length) {
-      unit.movementAllowanceRemaining = Math.max(...unit.movementAllowanceRemainingByModel);
-    }
-  } else {
-    unit.movementAllowanceRemaining = 0;
-    unit.movementAllowanceRemainingByModel = [];
-    unit.movementAllowanceTotalByModel = [];
-    unit.movementStartPositionsByModel = [];
-    unit.movementStartRotationsByModel = [];
-    recordDestroyedUnitMissionEvent(s, unit, side);
-  }
-
-  s.log = [...s.log, log(
-    s,
-    side,
-    unit.profile.name,
-    `${s.armies[side].name} removes ${uniqueIndices.length} ${unit.profile.name} model${uniqueIndices.length === 1 ? '' : 's'} to restore coherency.`,
-    'info',
-  )];
-  return s;
+  return interactiveMovementState.removeModelsForCoherency(state, unitId, side, modelIndices, coherencyModelRemovalContext);
 }
 
 export function removePlayCasualtyModels(
