@@ -981,6 +981,14 @@ function hasActiveSecondaryMission(state: BattleState, side: Side, missionName: 
   return secondaryMissionStateFor(state, side)?.activeCards.some(card => card.missionName === missionName) ?? false;
 }
 
+const secondaryMissionActionOptionsContext: missionActions.SecondaryMissionActionOptionsContext = {
+  hasActiveSecondaryMission,
+  canStartAction: playUnitCanStartAction,
+  objectiveIndexesWithinRange: attachedObjectiveIndexesWithinRange,
+  terrainAreaIdsContainingUnit: attachedTerrainAreaIdsContainingUnit,
+  terrainIsExplicitlyOutsideTerritory,
+};
+
 function completedOrInProgressObjectiveTargets(state: BattleState, side: Side, actionId: string): Set<number> {
   return missionActions.completedOrInProgressObjectiveTargets(state, side, actionId);
 }
@@ -991,13 +999,7 @@ export function cleanseObjectiveOptions(
   side: Side,
   rules: RulesEdition,
 ): number[] {
-  if (rules.metadata.edition !== '11e'
-    || !hasActiveSecondaryMission(state, side, 'Cleanse')
-    || !playUnitCanStartAction(state, unitId, side, rules)) return [];
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
-  if (!unit) return [];
-  const usedObjectives = completedOrInProgressObjectiveTargets(state, side, 'cleanse');
-  return attachedObjectiveIndexesWithinRange(state, unit, rules).filter(index => !usedObjectives.has(index));
+  return missionActions.cleanseObjectiveOptions(state, unitId, side, rules, secondaryMissionActionOptionsContext);
 }
 
 function terrainIsExplicitlyOutsideTerritory(state: BattleState, side: Side, terrainId: string): boolean {
@@ -1015,15 +1017,7 @@ export function plunderTerrainOptions(
   side: Side,
   rules: RulesEdition,
 ): string[] {
-  if (rules.metadata.edition !== '11e'
-    || !hasActiveSecondaryMission(state, side, 'Plunder')
-    || !playUnitCanStartAction(state, unitId, side, rules)) return [];
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
-  if (!unit) return [];
-  const usedTerrain = completedOrInProgressTerrainTargets(state, side, 'plunder');
-  return attachedTerrainAreaIdsContainingUnit(state, unit).filter(terrainId =>
-    !usedTerrain.has(terrainId) && terrainIsExplicitlyOutsideTerritory(state, side, terrainId)
-  );
+  return missionActions.plunderTerrainOptions(state, unitId, side, rules, secondaryMissionActionOptionsContext);
 }
 
 export interface SensorSweepOption {

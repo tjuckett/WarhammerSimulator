@@ -172,3 +172,27 @@ export function completedOrInProgressTerrainTargets(state: BattleState, side: Si
       .flatMap(unit => unit.performingAction?.targetTerrainId === undefined ? [] : [unit.performingAction.targetTerrainId]),
   ]);
 }
+
+export interface SecondaryMissionActionOptionsContext {
+  hasActiveSecondaryMission(state: BattleState, side: Side, missionName: string): boolean;
+  canStartAction(state: BattleState, unitId: string, side: Side, rules: RulesEdition): boolean;
+  objectiveIndexesWithinRange(state: BattleState, unit: BattleUnit, rules: RulesEdition): number[];
+  terrainAreaIdsContainingUnit(state: BattleState, unit: BattleUnit): string[];
+  terrainIsExplicitlyOutsideTerritory(state: BattleState, side: Side, terrainId: string): boolean;
+}
+
+export function cleanseObjectiveOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: SecondaryMissionActionOptionsContext): number[] {
+  if (rules.metadata.edition !== '11e' || !context.hasActiveSecondaryMission(state, side, 'Cleanse') || !context.canStartAction(state, unitId, side, rules)) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  if (!unit) return [];
+  const used = completedOrInProgressObjectiveTargets(state, side, 'cleanse');
+  return context.objectiveIndexesWithinRange(state, unit, rules).filter(index => !used.has(index));
+}
+
+export function plunderTerrainOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: SecondaryMissionActionOptionsContext): string[] {
+  if (rules.metadata.edition !== '11e' || !context.hasActiveSecondaryMission(state, side, 'Plunder') || !context.canStartAction(state, unitId, side, rules)) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  if (!unit) return [];
+  const used = completedOrInProgressTerrainTargets(state, side, 'plunder');
+  return context.terrainAreaIdsContainingUnit(state, unit).filter(terrainId => !used.has(terrainId) && context.terrainIsExplicitlyOutsideTerritory(state, side, terrainId));
+}
