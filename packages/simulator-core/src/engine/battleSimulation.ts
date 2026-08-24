@@ -193,6 +193,32 @@ export function runAutomaticCommandPhase(
   return logs;
 }
 
+export interface AutomaticMovementPhaseContext {
+  enterBattlePhase(state: BattleState, node: { phase: Phase; step?: string }, side: Side): void;
+  phaseLog(state: BattleState, side: Side, armyName: string, message: string): LogEntry;
+  runMovement(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[];
+  markRemainingStationaryUnits(state: BattleState, side: Side): void;
+  updateObjectiveControl(state: BattleState, rules: RulesEdition): void;
+}
+
+export function runAutomaticMovementPhase(
+  state: BattleState,
+  side: Side,
+  rules: RulesEdition,
+  context: AutomaticMovementPhaseContext,
+): LogEntry[] {
+  const armyName = state.armies[side].name;
+  const logs: LogEntry[] = [];
+  context.enterBattlePhase(state, { phase: 'movement', step: MOVEMENT_STEP.MoveUnits }, side);
+  logs.push(context.phaseLog(state, side, armyName, '\n─── Movement Phase ───'));
+  state.units.filter(unit => unit.side === side && !unit.destroyed)
+    .forEach(unit => logs.push(...context.runMovement(unit, state, rules)));
+  context.markRemainingStationaryUnits(state, side);
+  context.enterBattlePhase(state, { phase: 'movement', step: MOVEMENT_STEP.Reinforcements }, side);
+  context.updateObjectiveControl(state, rules);
+  return logs;
+}
+
 export function simulateNextUnit(state: BattleState, rules: RulesEdition, context: SimulationUnitStepContext): BattleState {
   const next = context.clone(state);
   if (next.winner !== null || next.phase === 'deployment' || next.phase === 'end') return next;

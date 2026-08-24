@@ -4517,17 +4517,16 @@ function runSimulatedCommandPhase(state: BattleState, side: Side, rules: RulesEd
   return battleSimulation.runAutomaticCommandPhase(state, side, rules, automaticCommandPhaseContext);
 }
 
+const automaticMovementPhaseContext: battleSimulation.AutomaticMovementPhaseContext = {
+  enterBattlePhase,
+  phaseLog,
+  runMovement,
+  markRemainingStationaryUnits,
+  updateObjectiveControl,
+};
+
 function runSimulatedMovementPhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
-  const armyName = state.armies[side].name;
-  const logs: LogEntry[] = [];
-  enterBattlePhase(state, { phase: 'movement', step: MOVEMENT_STEP.MoveUnits }, side);
-  logs.push(phaseLog(state, side, armyName, `\n─── Movement Phase ───`));
-  state.units.filter(unit => unit.side === side && !unit.destroyed)
-    .forEach(unit => logs.push(...runMovement(unit, state, rules)));
-  markRemainingStationaryUnits(state, side);
-  enterBattlePhase(state, { phase: 'movement', step: MOVEMENT_STEP.Reinforcements }, side);
-  updateObjectiveControl(state, rules);
-  return logs;
+  return battleSimulation.runAutomaticMovementPhase(state, side, rules, automaticMovementPhaseContext);
 }
 
 function runSimulatedShootingPhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
