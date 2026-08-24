@@ -3740,7 +3740,6 @@ export function movePlayModels(
   collide = false,
 ): BattleState {
   return interactiveMovementState.moveModels(state, unitId, side, modelIndices, dx, dy, collide, modelMovementContext);
-
 }
 
 export function movePlayModelsVertically(
@@ -3751,12 +3750,10 @@ export function movePlayModelsVertically(
   dz: number,
 ): BattleState {
   return interactiveMovementState.moveModelsVertically(state, unitId, side, modelIndices, dz, modelMovementContext);
-
 }
 
 export function undoPlayUnitMovement(state: BattleState, unitId: string, side: Side): BattleState {
   return interactiveMovementState.undoUnitMovement(state, unitId, side, modelMovementContext);
-
 }
 
 export function removePlayModels(
