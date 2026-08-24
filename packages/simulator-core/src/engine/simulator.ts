@@ -811,6 +811,25 @@ const shootingTargetRulesContext: manualCombat.ShootingSelectionRulesContext = {
   battleUnitToAttachedUnitDistance,
 };
 
+const shootingResolutionContext: manualCombat.ShootingResolutionContext = {
+  ...shootingTargetRulesContext,
+  targetHasTerrainCoverFrom: (_state, unit, target) => targetHasTerrainCoverFromGeometry(unit.modelPositions, target, _state.terrain, {
+    modelRadius: modelBaseRadius,
+    hasKeyword: unitHasKeyword,
+  }),
+  targetIsScreenedBySmoke,
+  hasAnyModelLOSConsideringHidden,
+  attachedUnitHasRule,
+  targetWithinFriendlyEngagement,
+  unitHasActiveStratagem,
+  markRangedAttackMade,
+  markOneShotWeaponSpent,
+  participatingWeaponModelCount,
+  resolveCombatAttacks,
+  resolveHazardousTests: (unit, weapon, weaponIndex, state, testCount) => resolveHazardousTests(unit, weapon, weaponIndex, state, testCount),
+  log,
+};
+
 function resolveHazardousTests(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number, state: BattleState, testCount = aliveWeaponModelCount(unit, weaponIndex)): LogEntry[] {
   return manualCombat.resolveHazardousTests(unit, weapon, weaponIndex, state, {
     weaponHasKeyword,
@@ -1248,50 +1267,6 @@ function battleUnitHasLosToAttachedUnit(state: BattleState, source: BattleUnit, 
   );
 }
 
-function shootingWeaponModifiers(
-  state: BattleState,
-  unit: BattleUnit,
-  target: BattleUnit,
-  weapon: WeaponProfile,
-  rules: RulesEdition,
-): { cover: boolean; hitModifier: number; hitModifierNotes: string } {
-  const foes = enemies(state, unit.side);
-  const bigGunsNeverTire = inEngagement(unit, foes, rules.engagementRange()) && unitCanUseBigGunsNeverTire(unit);
-  const closeQuartersTarget = rules.metadata.edition === '11e'
-    && weaponIsCloseQuarters(weapon)
-    && inEngagement(unit, [target], rules.engagementRange());
-  const usesIndirectFirePenalty = weaponHasKeyword(weapon, 'Indirect Fire')
-    && rules.metadata.edition !== '11e'
-    && !hasAnyModelLOSConsideringHidden(state, unit, target);
-  const usesIndirectFireCover = weaponHasKeyword(weapon, 'Indirect Fire')
-    && (rules.metadata.edition === '11e' || usesIndirectFirePenalty);
-  const usesSmokescreen = unitHasActiveStratagem(state, target, 'smokescreen', 'shooting')
-    || targetIsScreenedBySmoke(state, unit, target);
-  const cover = targetHasTerrainCoverFromGeometry(unit.modelPositions, target, state.terrain, {
-    modelRadius: modelBaseRadius,
-    hasKeyword: unitHasKeyword,
-  }) || usesIndirectFireCover || usesSmokescreen;
-  const usesCoverHitPenalty = rules.metadata.edition === '11e'
-    && cover
-    && !weaponHasKeyword(weapon, 'Ignores Cover');
-  const usesBigGunsPenalty = (bigGunsNeverTire || targetWithinFriendlyEngagement(state, target, unit.side, rules))
-    && !closeQuartersTarget
-    && !weaponIsSidearm(weapon);
-  const usesHeavyBonus = weaponHasKeyword(weapon, 'Heavy') && unit.movementAction === 'remainedStationary';
-  const usesStealth = attachedUnitHasRule(state, target, 'Stealth');
-  const hitModifier = (usesBigGunsPenalty ? 1 : 0) + (usesHeavyBonus ? -1 : 0) + (usesIndirectFirePenalty ? 1 : 0) + (usesStealth ? 1 : 0) + (usesCoverHitPenalty ? 1 : 0);
-  const hitModifierNotes = [
-    usesBigGunsPenalty ? 'Big Guns Never Tire -1 to Hit' : '',
-    usesHeavyBonus ? 'Heavy +1 to Hit' : '',
-    usesIndirectFirePenalty ? 'Indirect Fire -1 to Hit; target has Benefit of Cover' : '',
-    usesCoverHitPenalty ? 'Benefit of Cover -1 to Hit' : '',
-    rules.metadata.edition === '11e' && weaponHasKeyword(weapon, 'Indirect Fire') ? 'Indirect Fire: target has Benefit of Cover' : '',
-    usesSmokescreen ? 'Smokescreen: target has Benefit of Cover' : '',
-    usesStealth ? 'Stealth -1 to Hit' : '',
-  ].filter(Boolean).join('; ');
-  return { cover, hitModifier, hitModifierNotes };
-}
-
 function markOneShotWeaponSpent(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number): void {
   if (!weaponHasKeyword(weapon, 'One Shot')) return;
   unit.oneShotSpentWeaponIndices = [...new Set([...(unit.oneShotSpentWeaponIndices ?? []), weaponIndex])];
@@ -1306,51 +1281,7 @@ function resolveShootingWeaponIntoTarget(
   rules: RulesEdition,
   options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number; modelIndexes?: number[] } = {},
 ): LogEntry[] {
-  const modifiers = shootingWeaponModifiers(state, unit, target, weapon, rules);
-  const snapShooting = options.snapShooting ?? false;
-  const result: ShootingWeaponResult = {
-    weaponIndex,
-    weaponName: weapon.name,
-    targetUnitId: target.id,
-    targetUnitName: target.profile.name,
-    attackCount: 0,
-    hits: 0,
-    wounds: 0,
-    unsavedWounds: 0,
-    groups: [],
-  };
-  const logs = resolveCombatAttacks(
-    unit,
-    target,
-    weapon,
-    weaponIndex,
-    rules,
-    state,
-    modifiers.cover,
-    snapShooting ? 0 : modifiers.hitModifier,
-    snapShooting ? '' : modifiers.hitModifierNotes,
-    { ...options, result },
-  );
-  result.hits = result.groups.filter(group => group.kind === 'hit').reduce((total, group) => total + (group.successes ?? 0), 0);
-  result.wounds = result.groups.filter(group => group.kind === 'wound').reduce((total, group) => total + (group.successes ?? 0), 0);
-  result.unsavedWounds = result.groups.filter(group => group.kind === 'save').reduce((total, group) => total + (group.noSave ? (group.successes ?? 0) : (group.rolls.length - (group.successes ?? 0))), 0);
-  state.lastShootingResolution = {
-    shooterUnitId: unit.id,
-    shooterSide: unit.side,
-    weapons: [...(state.lastShootingResolution?.shooterUnitId === unit.id ? state.lastShootingResolution.weapons : []), result],
-  };
-  if (logs.length > 0) {
-    markRangedAttackMade(unit);
-    markOneShotWeaponSpent(unit, weapon, weaponIndex);
-  }
-  logs.push(...resolveHazardousTests(
-    unit,
-    weapon,
-    weaponIndex,
-    state,
-    options.modelIndexes?.length ?? participatingWeaponModelCount(unit, target, weapon, weaponIndex, state.terrain, state),
-  ));
-  return logs;
+  return manualCombat.resolveShootingWeaponIntoTarget(state, unit, target, weapon, weaponIndex, rules, options, shootingResolutionContext);
 }
 
 function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {

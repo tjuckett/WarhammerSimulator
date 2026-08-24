@@ -1,6 +1,6 @@
 // Manual attack resolution and its progressively narrowed simulator facade context.
 // @ts-nocheck
-import type { BattleState, BattleUnit, LogEntry, PendingFightOnDeath, Position, Side } from '../types/battle';
+import type { BattleState, BattleUnit, LogEntry, PendingFightOnDeath, Position, ShootingWeaponResult, Side } from '../types/battle';
 import type { WeaponProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import type { CombatAttackResolutionOptions } from './combatTypes';
@@ -389,6 +389,85 @@ export function shootingWeaponCanTarget(
     context.hasAnyHiddenModelPair(state, unit, component));
   return context.battleUnitToAttachedUnitDistance(state, unit, target) <= weapon.range
     && (targetVisible || (context.weaponHasKeyword(weapon, 'Indirect Fire') && !targetHidden));
+}
+
+export interface ShootingResolutionContext extends ShootingSelectionRulesContext {
+  targetHasTerrainCoverFrom(state: BattleState, unit: BattleUnit, target: BattleUnit): boolean;
+  targetIsScreenedBySmoke(state: BattleState, unit: BattleUnit, target: BattleUnit): boolean;
+  hasAnyModelLOSConsideringHidden(state: BattleState, unit: BattleUnit, target: BattleUnit): boolean;
+  attachedUnitHasRule(state: BattleState, unit: BattleUnit, rule: string): boolean;
+  targetWithinFriendlyEngagement(state: BattleState, target: BattleUnit, side: Side, rules: RulesEdition): boolean;
+  unitHasActiveStratagem(state: BattleState, unit: BattleUnit, stratagemId: string, phase: string): boolean;
+  markRangedAttackMade(unit: BattleUnit): void;
+  markOneShotWeaponSpent(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number): void;
+  participatingWeaponModelCount(unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, terrain: BattleState['terrain'], state: BattleState): number;
+  resolveCombatAttacks(attacker: BattleUnit, defender: BattleUnit, weapon: WeaponProfile, weaponIndex: number, rules: RulesEdition, state: BattleState, hasCover: boolean, hitModifier: number, hitModifierNote: string, options: object): LogEntry[];
+  resolveHazardousTests(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number, state: BattleState, testCount: number): LogEntry[];
+  log(state: BattleState, side: Side, source: string, message: string, kind: string): LogEntry;
+}
+
+export function resolveShootingWeaponIntoTarget(
+  state: BattleState,
+  unit: BattleUnit,
+  target: BattleUnit,
+  weapon: WeaponProfile,
+  weaponIndex: number,
+  rules: RulesEdition,
+  options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number; modelIndexes?: number[] } = {},
+  context: ShootingResolutionContext,
+): LogEntry[] {
+  const foes = context.enemies(state, unit.side);
+  const bigGunsNeverTire = context.inEngagement(unit, foes, rules.engagementRange()) && unitCanUseBigGunsNeverTire(unit, context);
+  const closeQuartersTarget = rules.metadata.edition === '11e'
+    && weaponIsCloseQuarters(weapon, context)
+    && context.inEngagement(unit, [target], rules.engagementRange());
+  const usesIndirectFirePenalty = context.weaponHasKeyword(weapon, 'Indirect Fire')
+    && rules.metadata.edition !== '11e'
+    && !context.hasAnyModelLOSConsideringHidden(state, unit, target);
+  const usesIndirectFireCover = context.weaponHasKeyword(weapon, 'Indirect Fire')
+    && (rules.metadata.edition === '11e' || usesIndirectFirePenalty);
+  const usesSmokescreen = context.unitHasActiveStratagem(state, target, 'smokescreen', 'shooting')
+    || context.targetIsScreenedBySmoke(state, unit, target);
+  const cover = context.targetHasTerrainCoverFrom(state, unit, target) || usesIndirectFireCover || usesSmokescreen;
+  const usesCoverHitPenalty = rules.metadata.edition === '11e' && cover && !context.weaponHasKeyword(weapon, 'Ignores Cover');
+  const usesBigGunsPenalty = (bigGunsNeverTire || context.targetWithinFriendlyEngagement(state, target, unit.side, rules))
+    && !closeQuartersTarget && !context.weaponIsSidearm(weapon);
+  const usesHeavyBonus = context.weaponHasKeyword(weapon, 'Heavy') && unit.movementAction === 'remainedStationary';
+  const usesStealth = context.attachedUnitHasRule(state, target, 'Stealth');
+  const hitModifier = (usesBigGunsPenalty ? 1 : 0) + (usesHeavyBonus ? -1 : 0)
+    + (usesIndirectFirePenalty ? 1 : 0) + (usesStealth ? 1 : 0) + (usesCoverHitPenalty ? 1 : 0);
+  const hitModifierNotes = [
+    usesBigGunsPenalty ? 'Big Guns Never Tire -1 to Hit' : '',
+    usesHeavyBonus ? 'Heavy +1 to Hit' : '',
+    usesIndirectFirePenalty ? 'Indirect Fire -1 to Hit; target has Benefit of Cover' : '',
+    usesCoverHitPenalty ? 'Benefit of Cover -1 to Hit' : '',
+    rules.metadata.edition === '11e' && context.weaponHasKeyword(weapon, 'Indirect Fire') ? 'Indirect Fire: target has Benefit of Cover' : '',
+    usesSmokescreen ? 'Smokescreen: target has Benefit of Cover' : '',
+    usesStealth ? 'Stealth -1 to Hit' : '',
+  ].filter(Boolean).join('; ');
+  const snapShooting = options.snapShooting ?? false;
+  const result: ShootingWeaponResult = {
+    weaponIndex, weaponName: weapon.name, targetUnitId: target.id, targetUnitName: target.profile.name,
+    attackCount: 0, hits: 0, wounds: 0, unsavedWounds: 0, groups: [],
+  };
+  const logs = context.resolveCombatAttacks(unit, target, weapon, weaponIndex, rules, state, cover,
+    snapShooting ? 0 : hitModifier, snapShooting ? '' : hitModifierNotes, { ...options, result });
+  result.hits = result.groups.filter(group => group.kind === 'hit').reduce((total, group) => total + (group.successes ?? 0), 0);
+  result.wounds = result.groups.filter(group => group.kind === 'wound').reduce((total, group) => total + (group.successes ?? 0), 0);
+  result.unsavedWounds = result.groups.filter(group => group.kind === 'save')
+    .reduce((total, group) => total + (group.noSave ? (group.successes ?? 0) : (group.rolls.length - (group.successes ?? 0))), 0);
+  state.lastShootingResolution = {
+    shooterUnitId: unit.id,
+    shooterSide: unit.side,
+    weapons: [...(state.lastShootingResolution?.shooterUnitId === unit.id ? state.lastShootingResolution.weapons : []), result],
+  };
+  if (logs.length > 0) {
+    context.markRangedAttackMade(unit);
+    context.markOneShotWeaponSpent(unit, weapon, weaponIndex);
+  }
+  logs.push(...context.resolveHazardousTests(unit, weapon, weaponIndex, state,
+    options.modelIndexes?.length ?? context.participatingWeaponModelCount(unit, target, weapon, weaponIndex, state.terrain, state)));
+  return logs;
 }
 
 export function fixedWeaponAttackCount(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number, context: ManualShootingSelectionContext): number | null {
