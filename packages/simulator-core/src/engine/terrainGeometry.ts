@@ -1,4 +1,4 @@
-import type { Position, Terrain, TerrainFeature } from '../types/battle';
+import type { BattleUnit, Position, Terrain, TerrainFeature } from '../types/battle';
 
 type RectShape = Pick<Terrain | TerrainFeature, 'x' | 'y' | 'width' | 'height' | 'rotationDeg'> & {
   polygonPoints?: Position[];
@@ -257,6 +257,53 @@ export function hasLOSEdgeToEdge(
   edition?: '10e' | '11e',
 ): boolean {
   return findUnblockedLOSRay(fromCenter, fromRadius, toCenter, toRadius, terrain, edition) !== null;
+}
+
+export interface TerrainCoverContext {
+  modelRadius(unit: BattleUnit, modelIndex: number): number;
+  hasKeyword(unit: BattleUnit, keyword: string): boolean;
+}
+
+function terrainIsWoods(terrain: Terrain): boolean {
+  return terrain.type === 'area' && /woods?|forest/i.test(terrain.name);
+}
+
+function terrainIsCraterOrRubble(terrain: Terrain): boolean {
+  return terrain.type === 'area' && /crater|rubble/i.test(terrain.name);
+}
+
+function modelHasCoverFromTerrainFootprint(
+  unit: BattleUnit,
+  modelIndex: number,
+  terrain: Terrain,
+  context: TerrainCoverContext,
+): boolean {
+  const model = unit.modelPositions[modelIndex];
+  if (!terrain.providesCover || !model || !circleFullyInTerrain(model, context.modelRadius(unit, modelIndex), terrain)) return false;
+  if (terrain.type === 'ruin' || terrainIsWoods(terrain)) return true;
+  if (terrainIsCraterOrRubble(terrain)) return context.hasKeyword(unit, 'Infantry');
+  return terrain.type === 'area';
+}
+
+function terrainFootprintObscures(from: Position, to: Position, terrain: Terrain): boolean {
+  if (!terrain.providesCover) return false;
+  if (terrain.type === 'ruin' || terrainIsWoods(terrain)) return linePassesThroughTerrain(from, to, terrain);
+  return terrain.type === 'impassable' && lineIntersectsTerrain(from, to, terrain);
+}
+
+export function targetHasTerrainCoverFrom(
+  shooterPositions: Position[],
+  target: BattleUnit,
+  terrain: Terrain[],
+  context: TerrainCoverContext,
+): boolean {
+  return target.modelPositions.every((model, modelIndex) => shooterPositions.some(from =>
+    terrain.some(feature =>
+      modelHasCoverFromTerrainFootprint(target, modelIndex, feature, context)
+      || terrainFootprintObscures(from, model, feature)
+      || feature.features.some(part => linePassesThroughTerrain(from, model, part)),
+    ),
+  ));
 }
 
 export function axisAlignedBoxIntersectsTerrain(

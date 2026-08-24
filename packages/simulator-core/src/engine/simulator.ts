@@ -20,7 +20,7 @@ import {
 import { gainCommandPhaseCommandPoints } from './commandPoints';
 import { runAutomaticCommandUnitAbilities, runAutomaticUnitAbilities } from './unitAbilities';
 import { objectiveControlValue, resolveDesperateEscapeTests } from './battleshock';
-import { circleFullyInTerrain, circleIntersectsTerrain, findUnblockedLOSRay, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, pointInTerrain, terrainCorners } from './terrainGeometry';
+import { circleIntersectsTerrain, findUnblockedLOSRay, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, pointInTerrain, targetHasTerrainCoverFrom as targetHasTerrainCoverFromGeometry, terrainCorners } from './terrainGeometry';
 import { COHERENCY_VERTICAL_RANGE, distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, verticalDistance, type CoherencyModel } from './coherency';
 import { secondaryMissionStateFor } from './secondaryMissions';
 import { objectiveRoleForIndex, terrainTerritoryRelation, terrainWithinMissionTerritory } from './missionGeometry';
@@ -547,50 +547,6 @@ function participatingWeaponModelCount(
   state?: BattleState,
 ): number {
   return participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, terrain, state).length;
-}
-
-function terrainIsWoods(t: Terrain): boolean {
-  return t.type === 'area' && /woods?|forest/i.test(t.name);
-}
-
-function terrainIsCraterOrRubble(t: Terrain): boolean {
-  return t.type === 'area' && /crater|rubble/i.test(t.name);
-}
-
-function modelWhollyWithinTerrain(unit: BattleUnit, modelIndex: number, terrain: Terrain): boolean {
-  const model = unit.modelPositions[modelIndex];
-  if (!model) return false;
-  return circleFullyInTerrain(model, modelBaseRadius(unit, modelIndex), terrain);
-}
-
-function modelHasCoverFromTerrainFootprint(unit: BattleUnit, modelIndex: number, terrain: Terrain): boolean {
-  if (!terrain.providesCover || !modelWhollyWithinTerrain(unit, modelIndex, terrain)) return false;
-  if (terrain.type === 'ruin' || terrainIsWoods(terrain)) return true;
-  if (terrainIsCraterOrRubble(terrain)) return unitHasKeyword(unit, 'Infantry');
-  return terrain.type === 'area';
-}
-
-function terrainFootprintObscures(from: Position, to: Position, terrain: Terrain): boolean {
-  if (!terrain.providesCover) return false;
-  if (terrain.type === 'ruin' || terrainIsWoods(terrain)) return linePassesThroughTerrain(from, to, terrain);
-  if (terrain.type === 'impassable') return lineIntersectsTerrain(from, to, terrain);
-  return false;
-}
-
-function modelHasTerrainCoverFrom(from: Position, target: BattleUnit, modelIndex: number, terrain: Terrain[]): boolean {
-  const modelPos = target.modelPositions[modelIndex];
-  if (!modelPos) return false;
-  return terrain.some(t =>
-    modelHasCoverFromTerrainFootprint(target, modelIndex, t)
-    || terrainFootprintObscures(from, modelPos, t)
-    || t.features.some(f => linePassesThroughTerrain(from, modelPos, f)),
-  );
-}
-
-function targetHasTerrainCoverFrom(shooterPositions: Position[], target: BattleUnit, terrain: Terrain[]): boolean {
-  return target.modelPositions.every((_, modelIndex) =>
-    shooterPositions.some(from => modelHasTerrainCoverFrom(from, target, modelIndex, terrain)),
-  );
 }
 
 function unitIsTransportProfile(profile: UnitProfile): boolean {
@@ -1785,7 +1741,10 @@ function shootingWeaponModifiers(
     && (rules.metadata.edition === '11e' || usesIndirectFirePenalty);
   const usesSmokescreen = unitHasActiveStratagem(state, target, 'smokescreen', 'shooting')
     || targetIsScreenedBySmoke(state, unit, target);
-  const cover = targetHasTerrainCoverFrom(unit.modelPositions, target, state.terrain) || usesIndirectFireCover || usesSmokescreen;
+  const cover = targetHasTerrainCoverFromGeometry(unit.modelPositions, target, state.terrain, {
+    modelRadius: modelBaseRadius,
+    hasKeyword: unitHasKeyword,
+  }) || usesIndirectFireCover || usesSmokescreen;
   const usesCoverHitPenalty = rules.metadata.edition === '11e'
     && cover
     && !weaponHasKeyword(weapon, 'Ignores Cover');
@@ -2308,7 +2267,10 @@ export function targetHasCoverFrom(
   terrain: Terrain[],
 ): boolean {
   const positions = Array.isArray(shooterPositions) ? shooterPositions : [shooterPositions];
-  return targetHasTerrainCoverFrom(positions, target, terrain);
+  return targetHasTerrainCoverFromGeometry(positions, target, terrain, {
+    modelRadius: modelBaseRadius,
+    hasKeyword: unitHasKeyword,
+  });
 }
 
 export function lockPlayUnitShooting(state: BattleState, unitId: string, side: Side): BattleState {
