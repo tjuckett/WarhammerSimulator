@@ -181,6 +181,103 @@ export interface SecondaryMissionActionOptionsContext {
   terrainIsExplicitlyOutsideTerritory(state: BattleState, side: Side, terrainId: string): boolean;
 }
 
+export interface TargetedMissionActionContext extends SecondaryMissionActionOptionsContext {
+  unitIsEligibleToStartAction(unit: BattleUnit, state: BattleState, rules: RulesEdition, ignoreActionStartedThisTurn?: boolean): boolean;
+  objectiveRoleForIndex(state: BattleState, objectiveIndex: number): string | undefined;
+  battleUnitsWithinBaseEdgeRange(a: BattleUnit, b: BattleUnit, range: number): boolean;
+  hasAnyModelLOSConsideringHidden(state: BattleState, attacker: BattleUnit, target: BattleUnit): boolean;
+  terrainWithinOpponentTerritory(state: BattleState, terrain: BattleState['terrain'][number], side: Side): boolean;
+  terrainContainsObjective(state: BattleState, terrain: BattleState['terrain'][number], objectiveIndex: number): boolean;
+  terrainIsOutsideDeploymentZone(state: BattleState, terrain: BattleState['terrain'][number], side: Side): boolean;
+  rulesForState(state: BattleState): RulesEdition;
+  log(state: BattleState, side: Side, title: string, message: string, type: string): BattleState['log'][number];
+}
+
+export interface SensorSweepOption {
+  objectiveIndex: number;
+  operationMarkerId: string;
+}
+
+export function objectiveIsCentral(state: BattleState, objectiveIndex: number, context: TargetedMissionActionContext): boolean {
+  return !!state.objectives[objectiveIndex] && context.objectiveRoleForIndex(state, objectiveIndex) === 'central';
+}
+
+export function sensorSweepOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: TargetedMissionActionContext): SensorSweepOption[] {
+  const missionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+  if (rules.metadata.edition !== '11e' || (missionName !== 'Extract Relic' && missionName !== 'Locate and Deny')
+    || state.phase !== 'shooting' || !context.canStartAction(state, unitId, side, rules)) return [];
+  const markers = state.missionState?.operationMarkers ?? [];
+  if (markers.length <= 1
+    || (state.missionEvents?.completedActionsThisTurn ?? []).some(event => event.side === side && event.actionId === 'sensor-sweep')
+    || state.units.some(unit => unit.side === side && unit.performingAction?.id === 'sensor-sweep')) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  if (!unit) return [];
+  return context.objectiveIndexesWithinRange(state, unit, rules)
+    .filter(index => objectiveIsCentral(state, index, context))
+    .flatMap(objectiveIndex => markers.map(marker => ({ objectiveIndex, operationMarkerId: marker.id })));
+}
+
+export function surveilTargetOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: TargetedMissionActionContext): string[] {
+  const missionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+  if (rules.metadata.edition !== '11e' || missionName !== 'Surveil the Foe' || state.phase !== 'shooting' || state.activeArmy !== side) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  if (!unit || !context.unitIsEligibleToStartAction(unit, state, rules, true)) return [];
+  const surveilled = new Set((state.missionEvents?.completedActionsThisTurn ?? [])
+    .filter(event => event.side === side && event.actionId === 'surveil')
+    .flatMap(event => event.targetUnitId ? [event.targetUnitId] : []));
+  return state.units.filter(target => target.side !== side && !target.destroyed && !target.embarkedInUnitId
+    && !target.inStrategicReserves && !surveilled.has(target.id)
+    && context.battleUnitsWithinBaseEdgeRange(unit, target, 18)
+    && context.hasAnyModelLOSConsideringHidden(state, unit, target)).map(target => target.id);
+}
+
+export function vanguardOperationTerrainIsValid(state: BattleState, unit: BattleUnit, side: Side, terrainId: string, context: TargetedMissionActionContext): boolean {
+  const terrain = state.terrain.find(candidate => candidate.id === terrainId);
+  return !!terrain && context.terrainWithinOpponentTerritory(state, terrain, side)
+    && context.terrainAreaIdsContainingUnit(state, unit).includes(terrainId)
+    && !state.units.some(candidate => candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId
+      && !candidate.inStrategicReserves && context.terrainAreaIdsContainingUnit(state, candidate).includes(terrainId));
+}
+
+export function vanguardOperationTerrainOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: TargetedMissionActionContext): string[] {
+  const missionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+  if (rules.metadata.edition !== '11e' || missionName !== 'Vanguard Operation' || !context.canStartAction(state, unitId, side, rules)) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  return unit ? state.terrain.filter(terrain => vanguardOperationTerrainIsValid(state, unit, side, terrain.id, context)).map(terrain => terrain.id) : [];
+}
+
+export function boobyTrapTerrainIsValid(state: BattleState, unit: BattleUnit, side: Side, terrainId: string, context: TargetedMissionActionContext): boolean {
+  const terrain = state.terrain.find(candidate => candidate.id === terrainId);
+  if (!terrain || !context.terrainAreaIdsContainingUnit(state, unit).includes(terrainId)) return false;
+  const homeRole = side === 0 ? 'home-0' : 'home-1';
+  const eligibleObjectiveTerrain = context.objectiveIndexesWithinRange(state, unit, context.rulesForState(state)).some(index =>
+    !!state.objectives[index] && context.terrainContainsObjective(state, terrain, index) && terrain.objectiveRole !== homeRole);
+  return eligibleObjectiveTerrain || context.terrainIsOutsideDeploymentZone(state, terrain, side);
+}
+
+export function boobyTrapTerrainOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: TargetedMissionActionContext): string[] {
+  const missionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+  if (rules.metadata.edition !== '11e' || missionName !== 'Death Trap' || state.phase !== 'shooting' || !context.canStartAction(state, unitId, side, rules)) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  if (!unit) return [];
+  const trapped = new Set([...(state.missionState?.operationMarkers ?? []).filter(marker => marker.side === side && marker.sourceActionId === 'booby-trap').flatMap(marker => marker.terrainId ? [marker.terrainId] : []),
+    ...(state.missionEvents?.completedActionsThisTurn ?? []).filter(event => event.side === side && event.actionId === 'booby-trap').flatMap(event => event.targetTerrainId ? [event.targetTerrainId] : [])]);
+  return state.terrain.filter(terrain => !trapped.has(terrain.id) && boobyTrapTerrainIsValid(state, unit, side, terrain.id, context)).map(terrain => terrain.id);
+}
+
+export function removeOpponentOperationMarkersAfterMove(state: BattleState, unit: BattleUnit, context: TargetedMissionActionContext): void {
+  const missionName = state.setup?.primaryMissions?.[unit.side] ?? state.setup?.primaryMission;
+  if (state.ruleset?.edition !== '11e' || missionName !== 'Surveil the Foe') return;
+  const objectives = new Set(context.objectiveIndexesWithinRange(state, unit, context.rulesForState(state)));
+  if (!objectives.size) return;
+  const markers = state.missionState?.operationMarkers ?? [];
+  const removed = markers.filter(marker => marker.side !== unit.side && marker.objectiveIndex !== undefined && objectives.has(marker.objectiveIndex));
+  if (!removed.length) return;
+  state.missionState!.operationMarkers = markers.filter(marker => !removed.includes(marker));
+  state.log = [...state.log, context.log(state, unit.side, unit.profile.name,
+    `${unit.profile.name} removes ${removed.length} enemy operation marker${removed.length === 1 ? '' : 's'} after ending a move within objective range.`, 'info')];
+}
+
 export function cleanseObjectiveOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: SecondaryMissionActionOptionsContext): number[] {
   if (rules.metadata.edition !== '11e' || !context.hasActiveSecondaryMission(state, side, 'Cleanse') || !context.canStartAction(state, unitId, side, rules)) return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);

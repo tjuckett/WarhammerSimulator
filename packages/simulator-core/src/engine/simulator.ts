@@ -989,6 +989,34 @@ const secondaryMissionActionOptionsContext: missionActions.SecondaryMissionActio
   terrainIsExplicitlyOutsideTerritory,
 };
 
+const targetedMissionActionContext: missionActions.TargetedMissionActionContext = {
+  ...secondaryMissionActionOptionsContext,
+  unitIsEligibleToStartAction,
+  objectiveRoleForIndex,
+  battleUnitsWithinBaseEdgeRange,
+  hasAnyModelLOSConsideringHidden,
+  terrainWithinOpponentTerritory: (state, terrain, side) => terrainWithinMissionTerritory(state, terrain, (1 - side) as Side) === true,
+  terrainContainsObjective: (_state, terrain, objectiveIndex) => pointInTerrain(_state.objectives[objectiveIndex], terrain),
+  terrainIsOutsideDeploymentZone: (state, terrain, side) => {
+    const zone = zoneFor(side, setupDeploymentZoneSource(state.setup), boardFormatForState(state));
+    return !pointInDeploymentZone({ x: terrain.x + terrain.width / 2, y: terrain.y + terrain.height / 2 }, zone);
+  },
+  rulesForState: state => rulesEditionForRuleset(state.ruleset),
+  log,
+};
+
+function objectiveIsCentral(state: BattleState, objectiveIndex: number): boolean {
+  return missionActions.objectiveIsCentral(state, objectiveIndex, targetedMissionActionContext);
+}
+
+function vanguardOperationTerrainIsValid(state: BattleState, unit: BattleUnit, side: Side, terrainId: string): boolean {
+  return missionActions.vanguardOperationTerrainIsValid(state, unit, side, terrainId, targetedMissionActionContext);
+}
+
+function removeOpponentOperationMarkersAfterMove(state: BattleState, unit: BattleUnit): void {
+  missionActions.removeOpponentOperationMarkersAfterMove(state, unit, targetedMissionActionContext);
+}
+
 function completedOrInProgressObjectiveTargets(state: BattleState, side: Side, actionId: string): Set<number> {
   return missionActions.completedOrInProgressObjectiveTargets(state, side, actionId);
 }
@@ -1020,44 +1048,13 @@ export function plunderTerrainOptions(
   return missionActions.plunderTerrainOptions(state, unitId, side, rules, secondaryMissionActionOptionsContext);
 }
 
-export interface SensorSweepOption {
-  objectiveIndex: number;
-  operationMarkerId: string;
-}
-
-function objectiveIsCentral(state: BattleState, objectiveIndex: number): boolean {
-  if (!state.objectives[objectiveIndex]) return false;
-  const role = objectiveRoleForIndex(state, objectiveIndex);
-  return role === 'central';
-}
-
 export function sensorSweepOptions(
   state: BattleState,
   unitId: string,
   side: Side,
   rules: RulesEdition,
-): SensorSweepOption[] {
-  const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
-  if (rules.metadata.edition !== '11e'
-    || (selectedMissionName !== 'Extract Relic' && selectedMissionName !== 'Locate and Deny')
-    || state.phase !== 'shooting'
-    || !playUnitCanStartAction(state, unitId, side, rules)) {
-    return [];
-  }
-  const markers = state.missionState?.operationMarkers ?? [];
-  if (markers.length <= 1) return [];
-  if ((state.missionEvents?.completedActionsThisTurn ?? []).some(event =>
-    event.side === side && event.actionId === 'sensor-sweep'
-  )) return [];
-  if (state.units.some(unit => unit.side === side && unit.performingAction?.id === 'sensor-sweep')) return [];
-
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
-  if (!unit) return [];
-  const centralObjectiveIndexes = attachedObjectiveIndexesWithinRange(state, unit, rules)
-    .filter(objectiveIndex => objectiveIsCentral(state, objectiveIndex));
-  return centralObjectiveIndexes.flatMap(objectiveIndex =>
-    markers.map(marker => ({ objectiveIndex, operationMarkerId: marker.id })),
-  );
+): missionActions.SensorSweepOption[] {
+  return missionActions.sensorSweepOptions(state, unitId, side, rules, targetedMissionActionContext);
 }
 
 export function surveilTargetOptions(
@@ -1066,74 +1063,7 @@ export function surveilTargetOptions(
   side: Side,
   rules: RulesEdition,
 ): string[] {
-  const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
-  if (rules.metadata.edition !== '11e'
-    || selectedMissionName !== 'Surveil the Foe'
-    || state.phase !== 'shooting'
-    || state.activeArmy !== side) {
-    return [];
-  }
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
-  if (!unit || !unitIsEligibleToStartAction(unit, state, rules, true)) return [];
-  const alreadySurveilledUnitIds = new Set(
-    (state.missionEvents?.completedActionsThisTurn ?? [])
-      .filter(event => event.side === side && event.actionId === 'surveil')
-      .flatMap(event => event.targetUnitId ? [event.targetUnitId] : []),
-  );
-  return state.units
-    .filter(target =>
-      target.side !== side
-      && !target.destroyed
-      && !target.embarkedInUnitId
-      && !target.inStrategicReserves
-      && !alreadySurveilledUnitIds.has(target.id)
-      && battleUnitsWithinBaseEdgeRange(unit, target, 18)
-      && hasAnyModelLOSConsideringHidden(state, unit, target)
-    )
-    .map(target => target.id);
-}
-
-function removeOpponentOperationMarkersAfterMove(
-  state: BattleState,
-  unit: BattleUnit,
-): void {
-  const selectedMissionName = state.setup?.primaryMissions?.[unit.side] ?? state.setup?.primaryMission;
-  if (state.ruleset?.edition !== '11e' || selectedMissionName !== 'Surveil the Foe') return;
-  const objectiveIndexes = new Set(attachedObjectiveIndexesWithinRange(state, unit, rulesEditionForRuleset(state.ruleset)));
-  if (!objectiveIndexes.size) return;
-  const markers = state.missionState?.operationMarkers ?? [];
-  const removed = markers.filter(marker =>
-    marker.side !== unit.side
-    && marker.objectiveIndex !== undefined
-    && objectiveIndexes.has(marker.objectiveIndex)
-  );
-  if (!removed.length) return;
-  state.missionState!.operationMarkers = markers.filter(marker => !removed.includes(marker));
-  state.log = [...state.log, log(
-    state,
-    unit.side,
-    unit.profile.name,
-    `${unit.profile.name} removes ${removed.length} enemy operation marker${removed.length === 1 ? '' : 's'} after ending a move within objective range.`,
-    'info',
-  )];
-}
-
-function vanguardOperationTerrainIsValid(
-  state: BattleState,
-  unit: BattleUnit,
-  side: Side,
-  terrainId: string,
-): boolean {
-  const terrain = state.terrain.find(candidate => candidate.id === terrainId);
-  if (!terrain || terrainWithinMissionTerritory(state, terrain, (1 - side) as Side) !== true) return false;
-  if (!attachedTerrainAreaIdsContainingUnit(state, unit).includes(terrainId)) return false;
-  return !state.units.some(candidate =>
-    candidate.side !== side
-    && !candidate.destroyed
-    && !candidate.embarkedInUnitId
-    && !candidate.inStrategicReserves
-    && terrainAreaIdsContainingUnit(state, candidate).includes(terrainId),
-  );
+  return missionActions.surveilTargetOptions(state, unitId, side, rules, targetedMissionActionContext);
 }
 
 export function vanguardOperationTerrainOptions(
@@ -1142,40 +1072,7 @@ export function vanguardOperationTerrainOptions(
   side: Side,
   rules: RulesEdition,
 ): string[] {
-  const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
-  if (rules.metadata.edition !== '11e' || selectedMissionName !== 'Vanguard Operation') return [];
-  if (!playUnitCanStartAction(state, unitId, side, rules)) return [];
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
-  if (!unit) return [];
-  return state.terrain
-    .filter(terrain => vanguardOperationTerrainIsValid(state, unit, side, terrain.id))
-    .map(terrain => terrain.id);
-}
-
-function boobyTrapTerrainIsValid(
-  state: BattleState,
-  unit: BattleUnit,
-  side: Side,
-  terrainId: string,
-): boolean {
-  const terrain = state.terrain.find(candidate => candidate.id === terrainId);
-  if (!terrain || !attachedTerrainAreaIdsContainingUnit(state, unit).includes(terrainId)) return false;
-
-  const homeRole = side === 0 ? 'home-0' : 'home-1';
-  const objectiveIndexes = attachedObjectiveIndexesWithinRange(state, unit, rulesEditionForRuleset(state.ruleset));
-  const isEligibleObjectiveTerrain = objectiveIndexes.some(objectiveIndex => {
-    const objective = state.objectives[objectiveIndex];
-    return objective
-      && pointInTerrain(objective, terrain)
-      && terrain.objectiveRole !== homeRole;
-  });
-  const deployment = setupDeploymentZoneSource(state.setup);
-  const zone = zoneFor(side, deployment, boardFormatForState(state));
-  const isOutsideDeploymentZone = !pointInDeploymentZone(
-    { x: terrain.x + terrain.width / 2, y: terrain.y + terrain.height / 2 },
-    zone,
-  );
-  return isEligibleObjectiveTerrain || isOutsideDeploymentZone;
+  return missionActions.vanguardOperationTerrainOptions(state, unitId, side, rules, targetedMissionActionContext);
 }
 
 export function boobyTrapTerrainOptions(
@@ -1184,29 +1081,7 @@ export function boobyTrapTerrainOptions(
   side: Side,
   rules: RulesEdition,
 ): string[] {
-  const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
-  if (rules.metadata.edition !== '11e'
-    || selectedMissionName !== 'Death Trap'
-    || state.phase !== 'shooting'
-    || !playUnitCanStartAction(state, unitId, side, rules)) {
-    return [];
-  }
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
-  if (!unit) return [];
-  const alreadyTrappedTerrainIds = new Set([
-    ...(state.missionState?.operationMarkers ?? [])
-      .filter(marker => marker.side === side && marker.sourceActionId === 'booby-trap')
-      .flatMap(marker => marker.terrainId ? [marker.terrainId] : []),
-    ...(state.missionEvents?.completedActionsThisTurn ?? [])
-      .filter(event => event.side === side && event.actionId === 'booby-trap')
-      .flatMap(event => event.targetTerrainId ? [event.targetTerrainId] : []),
-  ]);
-  return state.terrain
-    .filter(terrain =>
-      !alreadyTrappedTerrainIds.has(terrain.id)
-      && boobyTrapTerrainIsValid(state, unit, side, terrain.id)
-    )
-    .map(terrain => terrain.id);
+  return missionActions.boobyTrapTerrainOptions(state, unitId, side, rules, targetedMissionActionContext);
 }
 
 export function punishmentCondemnedUnitOptions(
