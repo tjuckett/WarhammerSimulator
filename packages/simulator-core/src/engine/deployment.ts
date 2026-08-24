@@ -1,6 +1,6 @@
 import { UNIT_DEPLOYMENT_MODE, type UnitProfile } from '../types/army';
 import type { BattleState, BattleUnit, BoardFormat, Position, Terrain } from '../types/battle';
-import { unitMaxBaseRadiusInches } from './baseSizes';
+import { modelBaseRadiusInches, unitMaxBaseRadiusInches } from './baseSizes';
 import { distance } from './coherency';
 import { DEPLOYMENT_ZONE_SETS } from '../data/deploymentZones';
 import type { DeploymentZoneSet, DeploymentZoneShape } from '../data/deploymentZoneTypes';
@@ -288,6 +288,59 @@ export function disembarkPlayUnit(
     'move',
   )];
   next.log.push(...hazardLogs);
+  return next;
+}
+
+export interface ManualDeploymentContext {
+  clone(state: BattleState): BattleState;
+  boardFormatForState(state: BattleState): BoardFormat;
+  setupDeploymentZoneSource(setup: BattleState['setup']): DeploymentZoneSource;
+  canInfiltrate(state: BattleState, side: 0 | 1, profile: UnitProfile): boolean;
+  infiltratorPlacementIsLegal(state: BattleState, side: 0 | 1, profile: UnitProfile, positions: Position[], deployment: DeploymentZoneSource, board: BoardFormat): boolean;
+  gridFormation(profile: UnitProfile, position: Position, side: 0 | 1): Position[];
+  makeBattleUnit(profile: UnitProfile, side: 0 | 1, positions: Position[], attachedToUnitId?: string, tabletopUnitId?: string): BattleUnit;
+  attachedFollowers(army: BattleState['armies'][number]['army'], profile: UnitProfile): UnitProfile[];
+  leaderAnchor(bodyguard: BattleUnit, leader: UnitProfile, leaderIndex: number, side: 0 | 1, deployment: DeploymentZoneSource, board: BoardFormat): Position;
+  resolveInternalModelOverlaps(unit: BattleUnit, zone: DeploymentZone, board: BoardFormat): void;
+  avoidDeploymentOverlap(unit: BattleUnit, state: BattleState, zone: DeploymentZone): void;
+  removeUnitFromUnplaced(state: BattleState, side: 0 | 1, profile: UnitProfile): void;
+  log(state: BattleState, side: 0 | 1, title: string, message: string, type: string): BattleState['log'][number];
+}
+
+export function placePlayUnit(state: BattleState, side: 0 | 1, unitIndex: number, position: Position, context: ManualDeploymentContext): BattleState {
+  const next = context.clone(state);
+  if (next.phase !== 'deployment') return next;
+  const profile = next.unplacedUnits[side][unitIndex];
+  if (!profile) return next;
+  const board = context.boardFormatForState(next);
+  const deployment = context.setupDeploymentZoneSource(next.setup);
+  const zone = zoneFor(side, deployment, board);
+  const canInfiltrate = context.canInfiltrate(next, side, profile);
+  if (!canInfiltrate && !pointInDeploymentZone(position, zone, modelBaseRadiusInches(profile))) {
+    next.log = [...next.log, context.log(next, side, profile.name, `${profile.name} must be placed wholly inside ${zone.name}.`, 'info')];
+    return next;
+  }
+  const positions = context.gridFormation(profile, position, side);
+  if (canInfiltrate && !context.infiltratorPlacementIsLegal(next, side, profile, positions, deployment, board)) {
+    next.log = [...next.log, context.log(next, side, profile.name,
+      `${profile.name} must be more than 8" horizontally from the enemy deployment zone and every enemy unit.`, 'info')];
+    return next;
+  }
+  const unit = context.makeBattleUnit(profile, side, positions);
+  next.units.push(unit);
+  next.unplacedUnits[side] = [...next.unplacedUnits[side].slice(0, unitIndex), ...next.unplacedUnits[side].slice(unitIndex + 1)];
+  context.attachedFollowers(next.armies[side].army, profile).forEach((leader, leaderIndex) => {
+    const leaderPositions = context.gridFormation(leader, context.leaderAnchor(unit, leader, leaderIndex, side, deployment, board), side);
+    const leaderUnit = context.makeBattleUnit(leader, side, leaderPositions, unit.id, unit.tabletopUnitId);
+    context.resolveInternalModelOverlaps(leaderUnit, zone, board);
+    context.avoidDeploymentOverlap(leaderUnit, next, zone);
+    context.resolveInternalModelOverlaps(leaderUnit, zone, board);
+    next.units.push(leaderUnit);
+    context.removeUnitFromUnplaced(next, side, leader);
+  });
+  next.log = [...next.log, context.log(next, side, profile.name,
+    `${next.armies[side].name} deploys ${profile.name} at (${unit.position.x.toFixed(1)}", ${unit.position.y.toFixed(1)}").`, 'info')];
+  next.activeArmy = next.unplacedUnits[side].length ? side : (1 - side) as 0 | 1;
   return next;
 }
 

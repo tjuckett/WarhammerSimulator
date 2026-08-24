@@ -3186,57 +3186,7 @@ export function placeNextUnit(state: BattleState): BattleState {
 }
 
 export function placePlayUnit(state: BattleState, side: Side, unitIndex: number, position: Position): BattleState {
-  const s = clone(state);
-  if (s.phase !== 'deployment') return s;
-  const board = boardFormatForState(s);
-
-  const unplaced = s.unplacedUnits[side];
-  const profile = unplaced[unitIndex];
-  if (!profile) return s;
-
-  const deployment = setupDeploymentZoneSource(s.setup);
-  const zone = zoneFor(side, deployment, board);
-  const canInfiltrate = profileDropHasInfiltrators(s, side, profile);
-  if (!canInfiltrate && !pointInDeploymentZone(position, zone, modelBaseRadiusInches(profile))) {
-    s.log = [...s.log, log(s, side, profile.name,
-      `${profile.name} must be placed wholly inside ${zone.name}.`,
-      'info',
-    )];
-    return s;
-  }
-  const modelPositions = interactiveMovementState.gridFormation(profile, position, side);
-  if (canInfiltrate && (
-    modelPositions.some((model, modelIndex) => !modelIsOutsideEnemyDeploymentZoneBuffer(profile, side, model, modelIndex, deployment, board))
-    || !infiltratorModelsAreOutsideEnemyUnits(s, side, profile, modelPositions)
-  )) {
-    s.log = [...s.log, log(s, side, profile.name,
-      `${profile.name} must be more than 8" horizontally from the enemy deployment zone and every enemy unit.`,
-      'info',
-    )];
-    return s;
-  }
-  const unit = makeBattleUnit(profile, side, modelPositions);
-
-  s.units.push(unit);
-  s.unplacedUnits[side] = [...unplaced.slice(0, unitIndex), ...unplaced.slice(unitIndex + 1)];
-  const attachedLeaders = attachedFollowersFor(s.armies[side].army, profile);
-  attachedLeaders.forEach((leader, leaderIndex) => {
-    const anchor = leaderAnchor(unit, leader, leaderIndex, side, deployment, board);
-    const leaderPositions = interactiveMovementState.gridFormation(leader, anchor, side);
-    const leaderUnit = makeBattleUnit(leader, side, leaderPositions, unit.id, unit.tabletopUnitId);
-    interactiveMovementState.resolveInternalModelOverlaps(leaderUnit, zone, board);
-    interactiveMovementState.avoidDeploymentOverlap(leaderUnit, s, zone);
-    interactiveMovementState.resolveInternalModelOverlaps(leaderUnit, zone, board);
-    s.units.push(leaderUnit);
-    removeUnitFromUnplaced(s, side, leader);
-  });
-  s.log = [...s.log, log(s, side, profile.name,
-    `${s.armies[side].name} deploys ${profile.name} at (${unit.position.x.toFixed(1)}", ${unit.position.y.toFixed(1)}").`,
-    'info',
-  )];
-
-  s.activeArmy = s.unplacedUnits[side].length ? side : (1 - side) as Side;
-  return s;
+  return deploymentActions.placePlayUnit(state, side, unitIndex, position, manualDeploymentContext);
 }
 
 export function placePlayReinforcement(state: BattleState, side: Side, armyUnitIndex: number, position: Position): BattleState {
@@ -3667,6 +3617,24 @@ const transportDisembarkContext: deploymentActions.TransportDisembarkContext = {
   centroid,
   modelRotation,
   resolveCombatDisembarkHazards,
+  log,
+};
+
+const manualDeploymentContext: deploymentActions.ManualDeploymentContext = {
+  clone,
+  boardFormatForState,
+  setupDeploymentZoneSource,
+  canInfiltrate: profileDropHasInfiltrators,
+  infiltratorPlacementIsLegal: (state, side, profile, positions, deployment, board) =>
+    positions.every((position, modelIndex) => modelIsOutsideEnemyDeploymentZoneBuffer(profile, side, position, modelIndex, deployment, board))
+      && infiltratorModelsAreOutsideEnemyUnits(state, side, profile, positions),
+  gridFormation: interactiveMovementState.gridFormation,
+  makeBattleUnit,
+  attachedFollowers: attachedFollowersFor,
+  leaderAnchor,
+  resolveInternalModelOverlaps: interactiveMovementState.resolveInternalModelOverlaps,
+  avoidDeploymentOverlap: interactiveMovementState.avoidDeploymentOverlap,
+  removeUnitFromUnplaced,
   log,
 };
 
