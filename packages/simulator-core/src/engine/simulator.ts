@@ -113,6 +113,7 @@ import * as firingDeck from './firingDeck';
 import * as movementPathing from './movementPathing';
 import * as aircraftMovement from './aircraftMovement';
 import * as movementLegality from './movementLegality';
+import * as battleSimulation from './battleSimulation';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -4459,7 +4460,13 @@ export function beginPlayBattle(state: BattleState): BattleState {
   return deploymentActions.beginPlayBattle(state, deploymentStartContext);
 }
 
-type SimulationPhaseAdvanceMode = 'full-phase' | 'unit-step';
+const simulationSelectionContext: battleSimulation.SimulationSelectionContext = {
+  movementStep,
+  activeUnits,
+  fightActivationUnitIds: playFightActivationUnitIds,
+};
+
+type SimulationPhaseAdvanceMode = battleSimulation.SimulationPhaseAdvanceMode;
 
 /**
  * The shared simulation phase handler.  Full-phase simulation resolves every
@@ -4559,63 +4566,31 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition): Batt
 }
 
 function resetSimulationUnitActivations(state: BattleState, side: Side): void {
-  activeUnits(state, side).forEach(unit => {
-    unit.activated = false;
-  });
-}
-
-function simulationFightUnitId(state: BattleState, rules: RulesEdition): string | undefined {
-  const preferredSides: Side[] = rules.metadata.edition === '11e'
-    ? [state.activeArmy, state.activeArmy === 0 ? 1 : 0]
-    : [state.activeArmy, state.activeArmy === 0 ? 1 : 0];
-  for (const side of preferredSides) {
-    const id = playFightActivationUnitIds(state, side, rules)[0];
-    if (id) return id;
-  }
-  return undefined;
+  battleSimulation.resetUnitActivations(state, side, simulationSelectionContext);
 }
 
 export function simulationNextUnitId(state: BattleState, rules: RulesEdition): string | undefined {
-  if (state.winner !== null || state.phase === 'deployment' || state.phase === 'end') return undefined;
-  if (state.phase === 'movement' && movementStep(state) === 'reinforcements') return undefined;
-  if (state.phase === 'fight') return simulationFightUnitId(state, rules);
-  if (!['movement', 'shooting', 'charge'].includes(state.phase)) return undefined;
-  return activeUnits(state, state.activeArmy).find(unit => !unit.activated)?.id;
+  return battleSimulation.nextUnitId(state, rules, simulationSelectionContext);
 }
 
 function advanceSimulationUnitPhase(state: BattleState, rules: RulesEdition): BattleState {
   return advanceSimulationPhase(state, rules, 'unit-step');
 }
 
+const simulationUnitStepContext: battleSimulation.SimulationUnitStepContext = {
+  ...simulationSelectionContext,
+  clone,
+  runMovement,
+  runShooting,
+  runCharge,
+  runFight,
+  runEleventhFight: runAutomaticFightForUnit,
+  checkWinner,
+  advancePhase: advanceSimulationUnitPhase,
+};
+
 export function simulateNextUnit(state: BattleState, rules: RulesEdition): BattleState {
-  const s = clone(state);
-  if (s.winner !== null || s.phase === 'deployment' || s.phase === 'end') return s;
-
-  const unitId = simulationNextUnitId(s, rules);
-  if (unitId) {
-    const unit = s.units.find(candidate => candidate.id === unitId);
-    if (!unit) return s;
-    if (s.phase === 'movement') {
-      s.log = [...s.log, ...runMovement(unit, s, rules)];
-    } else if (s.phase === 'shooting') {
-      s.log = [...s.log, ...runShooting(unit, s, rules)];
-    } else if (s.phase === 'charge') {
-      s.log = [...s.log, ...runCharge(unit, s, rules)];
-    } else if (s.phase === 'fight') {
-      if (rules.metadata.edition === '11e') {
-        const afterFight = runAutomaticFightForUnit(s, unit.id, rules);
-        if (afterFight !== s) return afterFight;
-      } else {
-        s.log = [...s.log, ...runFight(unit, s, rules)];
-      }
-    }
-    const current = s.units.find(candidate => candidate.id === unitId);
-    if (current && !current.activated) current.activated = true;
-    checkWinner(s);
-    return s;
-  }
-
-  return advanceSimulationUnitPhase(s, rules);
+  return battleSimulation.simulateNextUnit(state, rules, simulationUnitStepContext);
 }
 
 function runSimulatedCommandPhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
