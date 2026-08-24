@@ -5750,18 +5750,26 @@ export function undeployPlayUnit(state: BattleState, unitId: string, side: Side)
   return s;
 }
 
+const formationEditContext: interactiveMovementState.FormationEditContext = {
+  clone,
+  isModelEditPhase: phase => PLAY_MODEL_EDIT_PHASES.includes(phase),
+  movementStep,
+  centroid,
+  gridFormation: (unit, center, side, rows, modelIndices) => playGridFormationByRows(unit.profile, center, side, rows, modelIndices),
+  isAircraft,
+  aircraftCanMakeNormalMove: state => aircraftCanMakeNormalMove(rulesEditionForRuleset(state.ruleset)),
+  ensureMovementStartPositions: ensureModelMovementStartPositions,
+  ensureMovementStartRotations: ensureModelMovementStartRotations,
+  ensureMovementAllowanceTotals: ensureModelMovementAllowanceTotals,
+  modelRotation,
+  aircraftPivotWithinLimit,
+  movementDistanceFromStart: modelMovementDistanceFromStart,
+  lockOtherMovedUnits: lockOtherMovedPlayUnits,
+  updateMovementAllowances: updateModelMovementAllowances,
+};
+
 export function reorganizePlayUnitGrid(state: BattleState, unitId: string, side: Side, rows: number): BattleState {
-  const s = clone(state);
-  if (!PLAY_MODEL_EDIT_PHASES.includes(s.phase)) return s;
-  if (s.phase === 'movement' && movementStep(s) !== 'moveUnits') return s;
-
-  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
-  if (!unit) return s;
-
-  const center = centroid(unit.modelPositions);
-  unit.modelPositions = playGridFormationByRows(unit.profile, center, side, rows);
-  unit.position = centroid(unit.modelPositions);
-  return s;
+  return interactiveMovementState.reorganizeUnitGrid(state, unitId, side, rows, formationEditContext);
 }
 
 export function reorganizePlayModelsGrid(
@@ -5771,23 +5779,7 @@ export function reorganizePlayModelsGrid(
   modelIndices: number[],
   rows: number,
 ): BattleState {
-  const s = clone(state);
-  if (!PLAY_MODEL_EDIT_PHASES.includes(s.phase)) return s;
-  if (s.phase === 'movement' && movementStep(s) !== 'moveUnits') return s;
-
-  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
-  if (!unit) return s;
-
-  const uniqueIndices = Array.from(new Set(modelIndices)).filter(modelIndex => unit.modelPositions[modelIndex]);
-  if (!uniqueIndices.length) return s;
-
-  const center = centroid(uniqueIndices.map(modelIndex => unit.modelPositions[modelIndex]));
-  const gridPositions = playGridFormationByRows(unit.profile, center, side, rows, uniqueIndices);
-  uniqueIndices.forEach((modelIndex, index) => {
-    unit.modelPositions[modelIndex] = gridPositions[index];
-  });
-  unit.position = centroid(unit.modelPositions);
-  return s;
+  return interactiveMovementState.reorganizeModelsGrid(state, unitId, side, modelIndices, rows, formationEditContext);
 }
 
 export function rotatePlayModels(
@@ -5797,54 +5789,7 @@ export function rotatePlayModels(
   modelIndices: number[],
   degrees: number,
 ): BattleState {
-  const s = clone(state);
-  if (!PLAY_MODEL_EDIT_PHASES.includes(s.phase)) return s;
-  if (s.phase === 'movement' && movementStep(s) !== 'moveUnits') return s;
-
-  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
-  if (!unit) return s;
-
-  const uniqueIndices = Array.from(new Set(modelIndices)).filter(modelIndex => unit.modelPositions[modelIndex]);
-  if (uniqueIndices.length < 1) return s;
-  if (s.phase === 'movement') {
-    if (s.activeArmy !== side || unit.movementComplete || unit.movementAction === 'remainedStationary') return state;
-    if (isAircraft(unit) && !aircraftCanMakeNormalMove(rulesEditionForRuleset(s.ruleset))) return state;
-    ensureModelMovementStartPositions(unit);
-    ensureModelMovementStartRotations(unit);
-    ensureModelMovementAllowanceTotals(unit);
-  }
-
-  const center = centroid(uniqueIndices.map(modelIndex => unit.modelPositions[modelIndex]));
-  const radians = (degrees * Math.PI) / 180;
-  const cos = Math.cos(radians);
-  const sin = Math.sin(radians);
-  const rotations = unit.modelRotations ?? unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
-  for (const modelIndex of uniqueIndices) {
-    const model = unit.modelPositions[modelIndex];
-    const dx = model.x - center.x;
-    const dy = model.y - center.y;
-    unit.modelPositions[modelIndex] = {
-      x: center.x + dx * cos - dy * sin,
-      y: center.y + dx * sin + dy * cos,
-    };
-    rotations[modelIndex] = ((rotations[modelIndex] ?? unit.facingDeg ?? 0) + degrees) % 360;
-  }
-  unit.modelRotations = rotations;
-  if (uniqueIndices.length === unit.modelPositions.length) unit.facingDeg = ((unit.facingDeg ?? 0) + degrees) % 360;
-  unit.position = centroid(unit.modelPositions);
-  if (s.phase === 'movement' && isAircraft(unit)) {
-    if (!aircraftPivotWithinLimit(unit, uniqueIndices)) return state;
-    return s;
-  }
-  if (s.phase === 'movement') {
-    const totals = ensureModelMovementAllowanceTotals(unit);
-    const overBudget = uniqueIndices.some(modelIndex => modelMovementDistanceFromStart(unit, modelIndex) > (totals[modelIndex] ?? 0) + 0.001);
-    if (overBudget) return state;
-    lockOtherMovedPlayUnits(s, unit);
-    unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
-    updateModelMovementAllowances(unit);
-  }
-  return s;
+  return interactiveMovementState.rotateModels(state, unitId, side, modelIndices, degrees, formationEditContext);
 }
 
 export function playDeploymentIssues(state: BattleState): string[] {

@@ -347,3 +347,90 @@ export function declareTakeToSkies(
     : `${unit.profile.name} declares Take to the Skies (-2" maximum distance).`);
   return next;
 }
+
+export interface FormationEditContext {
+  clone(state: BattleState): BattleState;
+  isModelEditPhase(phase: BattleState['phase']): boolean;
+  movementStep(state: BattleState): string;
+  centroid(positions: Position[]): Position;
+  gridFormation(unit: BattleUnit, center: Position, side: Side, rows: number, modelIndices?: number[]): Position[];
+  isAircraft(unit: BattleUnit): boolean;
+  aircraftCanMakeNormalMove(state: BattleState): boolean;
+  ensureMovementStartPositions(unit: BattleUnit): void;
+  ensureMovementStartRotations(unit: BattleUnit): void;
+  ensureMovementAllowanceTotals(unit: BattleUnit): number[];
+  modelRotation(unit: BattleUnit, modelIndex: number): number;
+  aircraftPivotWithinLimit(unit: BattleUnit, modelIndices: number[]): boolean;
+  movementDistanceFromStart(unit: BattleUnit, modelIndex: number): number;
+  lockOtherMovedUnits(state: BattleState, unit: BattleUnit): void;
+  updateMovementAllowances(unit: BattleUnit): void;
+}
+
+export function reorganizeUnitGrid(
+  state: BattleState, unitId: string, side: Side, rows: number, context: FormationEditContext,
+): BattleState {
+  const next = context.clone(state);
+  if (!context.isModelEditPhase(next.phase) || (next.phase === 'movement' && context.movementStep(next) !== 'moveUnits')) return next;
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit) return next;
+  const center = context.centroid(unit.modelPositions);
+  unit.modelPositions = context.gridFormation(unit, center, side, rows);
+  unit.position = context.centroid(unit.modelPositions);
+  return next;
+}
+
+export function reorganizeModelsGrid(
+  state: BattleState, unitId: string, side: Side, modelIndices: number[], rows: number, context: FormationEditContext,
+): BattleState {
+  const next = context.clone(state);
+  if (!context.isModelEditPhase(next.phase) || (next.phase === 'movement' && context.movementStep(next) !== 'moveUnits')) return next;
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit) return next;
+  const uniqueIndices = Array.from(new Set(modelIndices)).filter(modelIndex => unit.modelPositions[modelIndex]);
+  if (!uniqueIndices.length) return next;
+  const center = context.centroid(uniqueIndices.map(modelIndex => unit.modelPositions[modelIndex]));
+  const positions = context.gridFormation(unit, center, side, rows, uniqueIndices);
+  uniqueIndices.forEach((modelIndex, index) => { unit.modelPositions[modelIndex] = positions[index]; });
+  unit.position = context.centroid(unit.modelPositions);
+  return next;
+}
+
+export function rotateModels(
+  state: BattleState, unitId: string, side: Side, modelIndices: number[], degrees: number, context: FormationEditContext,
+): BattleState {
+  const next = context.clone(state);
+  if (!context.isModelEditPhase(next.phase) || (next.phase === 'movement' && context.movementStep(next) !== 'moveUnits')) return next;
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
+  if (!unit) return next;
+  const uniqueIndices = Array.from(new Set(modelIndices)).filter(modelIndex => unit.modelPositions[modelIndex]);
+  if (!uniqueIndices.length) return next;
+  if (next.phase === 'movement') {
+    if (next.activeArmy !== side || unit.movementComplete || unit.movementAction === 'remainedStationary') return state;
+    if (context.isAircraft(unit) && !context.aircraftCanMakeNormalMove(next)) return state;
+    context.ensureMovementStartPositions(unit);
+    context.ensureMovementStartRotations(unit);
+    context.ensureMovementAllowanceTotals(unit);
+  }
+  const center = context.centroid(uniqueIndices.map(modelIndex => unit.modelPositions[modelIndex]));
+  const radians = degrees * Math.PI / 180;
+  const rotations = unit.modelRotations ?? unit.modelPositions.map((_, index) => context.modelRotation(unit, index));
+  for (const modelIndex of uniqueIndices) {
+    const model = unit.modelPositions[modelIndex];
+    const dx = model.x - center.x;
+    const dy = model.y - center.y;
+    unit.modelPositions[modelIndex] = { x: center.x + dx * Math.cos(radians) - dy * Math.sin(radians), y: center.y + dx * Math.sin(radians) + dy * Math.cos(radians) };
+    rotations[modelIndex] = ((rotations[modelIndex] ?? unit.facingDeg ?? 0) + degrees) % 360;
+  }
+  unit.modelRotations = rotations;
+  if (uniqueIndices.length === unit.modelPositions.length) unit.facingDeg = ((unit.facingDeg ?? 0) + degrees) % 360;
+  unit.position = context.centroid(unit.modelPositions);
+  if (next.phase === 'movement' && context.isAircraft(unit)) return context.aircraftPivotWithinLimit(unit, uniqueIndices) ? next : state;
+  if (next.phase === 'movement') {
+    const totals = context.ensureMovementAllowanceTotals(unit);
+    if (uniqueIndices.some(index => context.movementDistanceFromStart(unit, index) > (totals[index] ?? 0) + 0.001)) return state;
+    context.lockOtherMovedUnits(next, unit);
+    unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
+    context.updateMovementAllowances(unit);
+  }
+  return next;
+}
