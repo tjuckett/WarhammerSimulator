@@ -3,7 +3,7 @@ import type { UnitProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
 import { zoneFor, pointInDeploymentZone, type DeploymentZone, type DeploymentZoneSource } from './deployment';
-import { baseFootprintDistance, baseFootprintsOverlap, modelBaseFootprintInches, modelBaseRadiusInches } from './baseSizes';
+import { baseFootprintDistance, baseFootprintMaxPointDistance, baseFootprintsOverlap, modelBaseFootprintInches, modelBaseRadiusInches } from './baseSizes';
 import { distance as dist, verticalDistance } from './coherency';
 import { centroid, translateFormation } from './unitModelState';
 
@@ -82,6 +82,84 @@ export function declareSuperHeavyMobile(state: BattleState, unitId: string, side
   for (const component of context.attachedComponents(next, unit)) component.superHeavyMobile = true;
   next.log = [...next.log, context.log(next, side, unit.profile.name, `${unit.profile.name} declares MOBILE for this move.`, 'move')];
   return next;
+}
+
+export interface MovementBudgetContext {
+  ensureMovementStartPositions(unit: BattleUnit): void;
+  ensureMovementStartRotations(unit: BattleUnit): void;
+  ensureMovementAllowanceTotals(unit: BattleUnit): number[];
+  modelMovementDistanceFromStart(unit: BattleUnit, modelIndex: number): number;
+  modelRotation(unit: BattleUnit, modelIndex: number): number;
+  hasKeyword(unit: BattleUnit, keyword: string): boolean;
+}
+
+export function budgetAdjustedMove(unit: BattleUnit, modelIndices: number[], dx: number, dy: number, context: MovementBudgetContext): { dx: number; dy: number } {
+  const requestedDistance = Math.hypot(dx, dy);
+  if (requestedDistance < 0.001) return { dx, dy };
+  context.ensureMovementStartPositions(unit);
+  context.ensureMovementStartRotations(unit);
+  context.ensureMovementAllowanceTotals(unit);
+  const pathAware = !!unit.movementPathByModel;
+  const moveWithinAllowance = (scale: number) => modelIndices.every(modelIndex => {
+    const current = unit.modelPositions[modelIndex];
+    const total = unit.movementAllowanceTotalByModel?.[modelIndex] ?? 0;
+    const proposed = { x: current.x + dx * scale, y: current.y + dy * scale };
+    if (pathAware) {
+      const path = unit.movementPathByModel?.[modelIndex] ?? [current];
+      const last = path[path.length - 1] ?? current;
+      let distance = 0;
+      for (let index = 1; index < path.length; index++) {
+        distance += Math.hypot(path[index].x - path[index - 1].x, path[index].y - path[index - 1].y)
+          + (unit.takingToSkies && context.hasKeyword(unit, 'fly') ? 0 : verticalDistance(path[index - 1], path[index]));
+      }
+      distance += Math.hypot(proposed.x - last.x, proposed.y - last.y)
+        + (unit.takingToSkies && context.hasKeyword(unit, 'fly') ? 0 : verticalDistance(last, proposed));
+      return distance <= total + 0.000001;
+    }
+    const start = unit.movementStartPositionsByModel?.[modelIndex] ?? current;
+    const startRotation = unit.movementStartRotationsByModel?.[modelIndex] ?? context.modelRotation(unit, modelIndex);
+    return baseFootprintMaxPointDistance(
+      start,
+      modelBaseFootprintInches(unit.profile, modelIndex, startRotation),
+      proposed,
+      modelBaseFootprintInches(unit.profile, modelIndex, context.modelRotation(unit, modelIndex)),
+    ) <= total + 0.000001;
+  });
+  if (moveWithinAllowance(1)) return { dx, dy };
+  if (pathAware) {
+    const scale = Math.min(...modelIndices.map(modelIndex => {
+      const total = unit.movementAllowanceTotalByModel?.[modelIndex] ?? 0;
+      const remaining = Math.max(0, total - context.modelMovementDistanceFromStart(unit, modelIndex));
+      return Math.min(1, remaining / requestedDistance);
+    }));
+    return { dx: dx * scale, dy: dy * scale };
+  }
+  const rotationsUnchanged = modelIndices.every(modelIndex =>
+    Math.abs((unit.movementStartRotationsByModel?.[modelIndex] ?? context.modelRotation(unit, modelIndex))
+      - context.modelRotation(unit, modelIndex)) < 0.001);
+  if (rotationsUnchanged) {
+    let scale = 1;
+    for (const modelIndex of modelIndices) {
+      const current = unit.modelPositions[modelIndex];
+      const start = unit.movementStartPositionsByModel?.[modelIndex] ?? current;
+      const total = unit.movementAllowanceTotalByModel?.[modelIndex] ?? 0;
+      const a = dx * dx + dy * dy;
+      const b = 2 * ((current.x - start.x) * dx + (current.y - start.y) * dy);
+      const c = (current.x - start.x) ** 2 + (current.y - start.y) ** 2 - total * total;
+      const discriminant = b * b - 4 * a * c;
+      if (discriminant < 0 || a <= 0.000001) { scale = 0; continue; }
+      scale = Math.min(scale, Math.max(0, (-b + Math.sqrt(discriminant)) / (2 * a)));
+    }
+    return { dx: dx * scale, dy: dy * scale };
+  }
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 16; i++) {
+    const mid = (lo + hi) / 2;
+    if (moveWithinAllowance(mid)) lo = mid;
+    else hi = mid;
+  }
+  return { dx: dx * lo, dy: dy * lo };
 }
 
 export function profileModelRadii(profile: UnitProfile): number[] {

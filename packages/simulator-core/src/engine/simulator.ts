@@ -3036,88 +3036,6 @@ const lockOtherMovedPlayUnits = (state: BattleState, currentUnit: BattleUnit): v
 const markPlayMovementGroupComplete = (state: BattleState, currentUnit: BattleUnit): void =>
   interactiveMovementState.markMovementGroupComplete(state, currentUnit, movementGroupContext);
 
-function budgetAdjustedPlayMove(unit: BattleUnit, modelIndices: number[], dx: number, dy: number): { dx: number; dy: number } {
-  const distance = Math.hypot(dx, dy);
-  if (distance < 0.001) return { dx, dy };
-
-  ensureModelMovementStartPositions(unit);
-  ensureModelMovementStartRotations(unit);
-  ensureModelMovementAllowanceTotals(unit);
-  const pathAware = !!unit.movementPathByModel;
-  const moveWithinAllowance = (scale: number) => modelIndices.every(modelIndex => {
-    const current = unit.modelPositions[modelIndex];
-    const total = unit.movementAllowanceTotalByModel?.[modelIndex] ?? 0;
-    const proposed = { x: current.x + dx * scale, y: current.y + dy * scale };
-    if (pathAware) {
-      const path = unit.movementPathByModel?.[modelIndex] ?? [current];
-      const last = path[path.length - 1] ?? current;
-      let distance = 0;
-      for (let index = 1; index < path.length; index++) {
-        distance += Math.hypot(path[index].x - path[index - 1].x, path[index].y - path[index - 1].y)
-          + (unit.takingToSkies && hasKeyword(unit, 'fly') ? 0 : verticalDistance(path[index - 1], path[index]));
-      }
-      distance += Math.hypot(proposed.x - last.x, proposed.y - last.y)
-        + (unit.takingToSkies && hasKeyword(unit, 'fly') ? 0 : verticalDistance(last, proposed));
-      return distance <= total + 0.000001;
-    }
-    const start = unit.movementStartPositionsByModel?.[modelIndex] ?? current;
-    const startRotation = unit.movementStartRotationsByModel?.[modelIndex] ?? modelRotation(unit, modelIndex);
-    return baseFootprintMaxPointDistance(
-      start,
-      modelFootprint(unit, modelIndex, startRotation),
-      proposed,
-      modelFootprint(unit, modelIndex),
-    ) <= total + 0.000001;
-  });
-
-  if (moveWithinAllowance(1)) return { dx, dy };
-
-  if (pathAware) {
-    const requestedDistance = Math.hypot(dx, dy);
-    const scale = Math.min(...modelIndices.map(modelIndex => {
-      const total = unit.movementAllowanceTotalByModel?.[modelIndex] ?? 0;
-      const remaining = Math.max(0, total - modelMovementDistanceFromStart(unit, modelIndex));
-      return Math.min(1, remaining / requestedDistance);
-    }));
-    return { dx: dx * scale, dy: dy * scale };
-  }
-
-  const rotationsUnchanged = modelIndices.every(modelIndex =>
-    Math.abs((unit.movementStartRotationsByModel?.[modelIndex] ?? modelRotation(unit, modelIndex)) - modelRotation(unit, modelIndex)) < 0.001,
-  );
-  if (rotationsUnchanged) {
-    let scale = 1;
-    for (const modelIndex of modelIndices) {
-      const current = unit.modelPositions[modelIndex];
-      const start = unit.movementStartPositionsByModel?.[modelIndex] ?? current;
-      const total = unit.movementAllowanceTotalByModel?.[modelIndex] ?? 0;
-      const relX = current.x - start.x;
-      const relY = current.y - start.y;
-      const a = dx * dx + dy * dy;
-      const b = 2 * (relX * dx + relY * dy);
-      const c = relX * relX + relY * relY - total * total;
-      const discriminant = b * b - 4 * a * c;
-      if (discriminant < 0 || a <= 0.000001) {
-        scale = 0;
-        continue;
-      }
-      const limit = (-b + Math.sqrt(discriminant)) / (2 * a);
-      scale = Math.min(scale, Math.max(0, limit));
-    }
-    return { dx: dx * scale, dy: dy * scale };
-  }
-
-  let lo = 0;
-  let hi = 1;
-  for (let i = 0; i < 16; i++) {
-    const mid = (lo + hi) / 2;
-    if (moveWithinAllowance(mid)) lo = mid;
-    else hi = mid;
-  }
-
-  return { dx: dx * lo, dy: dy * lo };
-}
-
 const modelMovementContext: interactiveMovementState.ModelMovementContext = {
   clone,
   isModelEditPhase: phase => PLAY_MODEL_EDIT_PHASES.includes(phase),
@@ -3131,7 +3049,14 @@ const modelMovementContext: interactiveMovementState.ModelMovementContext = {
   ensureMovementAllowanceTotals: ensureModelMovementAllowanceTotals,
   ensureMovementPaths: ensureModelMovementPaths,
   aircraftMoveIsStraightForward: aircraftMoveIsStraightForward,
-  budgetAdjustedMove: budgetAdjustedPlayMove,
+  budgetAdjustedMove: (unit, indices, dx, dy) => interactiveMovementState.budgetAdjustedMove(unit, indices, dx, dy, {
+    ensureMovementStartPositions: ensureModelMovementStartPositions,
+    ensureMovementStartRotations: ensureModelMovementStartRotations,
+    ensureMovementAllowanceTotals: ensureModelMovementAllowanceTotals,
+    modelMovementDistanceFromStart,
+    modelRotation,
+    hasKeyword,
+  }),
   translatedMoveEndsInEngagement: translatedPlayMoveEndsInEngagement,
   collisionAdjustedMove: (state, unitId, side, indices, dx, dy, allowEngagement) =>
     collisionAdjustedPlayMove(state, unitId, side, indices, dx, dy, { allowEngagement }),
