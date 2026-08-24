@@ -985,18 +985,13 @@ export function completeEndOfTurnActions(state: BattleState, side: Side): void {
     attachedUnitId, vanguardOperationTerrainIsValid, cancelUnitAction, hasActiveSecondaryMission,
     attachedObjectiveIndexesWithinRange, rulesEditionForRuleset, attachedTerrainAreaIdsContainingUnit,
     terrainIsExplicitlyOutsideTerritory, recordCompletedMissionAction, attachedUnitComponents, log,
-    resolveSensorSweepCompletion: (next: BattleState, unit: BattleUnit, actingSide: Side, action: any): string | null => {
-      const markerIndex = next.missionState?.operationMarkers?.findIndex(marker => marker.id === action.targetOperationMarkerId) ?? -1;
-      const rules = rulesEditionForRuleset(next.ruleset);
-      const controls = action.targetObjectiveIndex !== undefined
-        && attachedObjectiveIndexesWithinRange(next, unit, rules).includes(action.targetObjectiveIndex)
-        && objectiveIsCentral(next, action.targetObjectiveIndex)
-        && updateObjectiveControl(next, rules)?.some(objective => objective.objectiveIndex === action.targetObjectiveIndex && objective.owner === actingSide);
-      if (markerIndex < 0) return 'the selected operation marker is no longer on the battlefield';
-      if (!controls) return 'the unit does not control the selected central objective';
-      next.missionState!.operationMarkers = next.missionState!.operationMarkers!.filter(marker => marker.id !== action.targetOperationMarkerId);
-      return null;
-    },
+    resolveSensorSweepCompletion: (next: BattleState, unit: BattleUnit, actingSide: Side, action: any): string | null =>
+      missionActions.resolveSensorSweepCompletion(next, unit, actingSide, action, {
+        rulesEditionForState: (state: BattleState) => rulesEditionForRuleset(state.ruleset),
+        objectiveIndexesWithinRange: attachedObjectiveIndexesWithinRange,
+        objectiveIsCentral,
+        updateObjectiveControl,
+      }),
   });
 }
 

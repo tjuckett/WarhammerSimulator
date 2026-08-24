@@ -182,6 +182,26 @@ export function startPlayUnitAction(
 
 export type MissionActionCompletionContext = Record<string, any>;
 
+export function resolveSensorSweepCompletion(
+  state: BattleState,
+  unit: BattleUnit,
+  actingSide: Side,
+  action: any,
+  context: MissionActionCompletionContext,
+): string | null {
+  const markerIndex = state.missionState?.operationMarkers?.findIndex((marker: any) => marker.id === action.targetOperationMarkerId) ?? -1;
+  const rules = context.rulesEditionForState(state);
+  const controls = action.targetObjectiveIndex !== undefined
+    && context.objectiveIndexesWithinRange(state, unit, rules).includes(action.targetObjectiveIndex)
+    && context.objectiveIsCentral(state, action.targetObjectiveIndex)
+    && context.updateObjectiveControl(state, rules)?.some((objective: any) =>
+      objective.objectiveIndex === action.targetObjectiveIndex && objective.owner === actingSide);
+  if (markerIndex < 0) return 'the selected operation marker is no longer on the battlefield';
+  if (!controls) return 'the unit does not control the selected central objective';
+  state.missionState!.operationMarkers = state.missionState!.operationMarkers!.filter((marker: any) => marker.id !== action.targetOperationMarkerId);
+  return null;
+}
+
 export function completeEndOfTurnActions(state: BattleState, side: Side, context: MissionActionCompletionContext): void {
   const handled = new Set<string>();
   for (const unit of state.units) {
