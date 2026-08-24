@@ -4061,6 +4061,39 @@ function resolveSuperHeavyMobileInPlace(state: BattleState, unit: BattleUnit): v
     `${unit.profile.name} resolves MOBILE: rolled ${roll}${roll === 1 ? ' and is Battle-shocked.' : '.'}`, roll === 1 ? 'damage' : 'move')];
 }
 
+const fallBackMovementContext: interactiveMovementState.FallBackMovementContext = {
+  advanceContext: advanceMovementContext,
+  clone,
+  engagedEnemies,
+  nearest,
+  distance: dist,
+  takeToSkiesDistanceCost,
+  collisionAdjustedMove: (state, unitId, side, modelIndices, dx, dy) =>
+    collisionAdjustedPlayMove(state, unitId, side, modelIndices, dx, dy, { ignoreEnemyModelPath: true }),
+  enemyCrossingModelIndices: playMoveEnemyCrossingModelIndices,
+  applyHorizontalTranslation: (unit, indices, dx, dy, state) => applyPlayModelTranslation(unit, indices, dx, dy, boardFormatForState(state)),
+  cancelUnitAction,
+  inEngagement: (state, unit, rules) => inEngagement(unit, enemies(state, unit.side), rules.engagementRange()),
+  modelRotation,
+  attachedComponents: attachedUnitComponents,
+  lockOtherMovedUnits: lockOtherMovedPlayUnits,
+  removeOpponentOperationMarkersAfterMove,
+  resolveDesperateEscape: (state, unit, modelIndices, onModelsDestroyed) => resolveDesperateEscapeTests(
+    state,
+    unit,
+    (testedUnit, message) => log(state, testedUnit.side, testedUnit.profile.name, message, 'roll'),
+    modelIndices,
+    onModelsDestroyed,
+  ),
+  bestLeadership,
+  d6,
+  resolveSuperHeavyMobile: resolveSuperHeavyMobileInPlace,
+  recordDestroyedModels: recordDestroyedModelMissionEvents,
+  recordDestroyedUnit: recordDestroyedUnitMissionEvent,
+  centroid,
+  createLog: log,
+};
+
 const completeMovementContext: interactiveMovementState.CompleteMovementContext = {
   clone,
   movementStep,
@@ -4085,93 +4118,7 @@ export function fallBackPlayUnit(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
-  if (!playUnitCanFallBack(state, unitId, side, rules)) return state;
-
-  const s = clone(state);
-  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
-  if (!unit) return state;
-  lockOtherMovedPlayUnits(s, unit);
-
-  const engaged = engagedEnemies(s, unit, rules);
-  const closest = nearest(unit, engaged);
-  if (!closest) return state;
-
-  const distanceToClosest = dist(unit.position, closest.position);
-  const direction = distanceToClosest > 0.001
-    ? {
-        x: (unit.position.x - closest.position.x) / distanceToClosest,
-        y: (unit.position.y - closest.position.y) / distanceToClosest,
-      }
-    : { x: side === 0 ? -1 : 1, y: 0 };
-  const modelIndices = unit.modelPositions.map((_, modelIndex) => modelIndex);
-  const maximumDistance = Math.max(0, unit.profile.move - takeToSkiesDistanceCost(unit));
-  const requestedDx = direction.x * maximumDistance;
-  const requestedDy = direction.y * maximumDistance;
-  const move = collisionAdjustedPlayMove(s, unitId, side, modelIndices, requestedDx, requestedDy, { ignoreEnemyModelPath: true });
-  if (Math.hypot(move.dx, move.dy) < 0.01) return state;
-  const wasBattleshocked = unit.battleshocked;
-  const desperateEscapeModelIndices = unit.battleshocked
-    ? undefined
-    : playMoveEnemyCrossingModelIndices(s, unit, new Set(modelIndices), move.dx, move.dy);
-  const usesDesperateEscape = wasBattleshocked || (desperateEscapeModelIndices?.length ?? 0) > 0;
-
-  applyPlayModelTranslation(unit, modelIndices, move.dx, move.dy, boardFormatForState(s));
-  cancelUnitAction(s, unit, 'it made a Fall Back move');
-  if (inEngagement(unit, enemies(s, side), rules.engagementRange())) return state;
-
-  unit.inCombat = false;
-  unit.movementAction = 'fellBack';
-  unit.movementAllowanceRemaining = 0;
-  unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
-  unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => 0);
-  unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
-  unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
-  unit.movementComplete = true;
-  unit.fellBack = true;
-  for (const component of attachedUnitComponents(s, unit)) {
-    component.lastMovePhase = s.phase;
-    component.lastMoveTurn = s.turn;
-    component.takingToSkies = undefined;
-  }
-  removeOpponentOperationMarkersAfterMove(s, unit);
-  for (const enemy of engaged) {
-    enemy.inCombat = inEngagement(enemy, enemies(s, enemy.side), rules.engagementRange());
-  }
-
-  const moved = Math.hypot(move.dx, move.dy);
-  const destroyedBySide = (side === 0 ? 1 : 0) as Side;
-  const desperateEscapeLogs = resolveDesperateEscapeTests(
-    s,
-    unit,
-    (testedUnit, message) => log(s, testedUnit.side, testedUnit.profile.name, message, 'roll'),
-    desperateEscapeModelIndices,
-    (testedUnit, modelIndices) => recordDestroyedModelMissionEvents(s, testedUnit, modelIndices, destroyedBySide),
-  );
-  const postMoveBattleshockLogs: LogEntry[] = [];
-  if (rules.metadata.edition === '11e' && usesDesperateEscape && !wasBattleshocked && !unit.destroyed) {
-    const rolls = [d6(), d6()];
-    const roll = rolls[0] + rolls[1];
-    const needed = bestLeadership(s, unit);
-    const passed = roll >= needed;
-    for (const component of attachedUnitComponents(s, unit)) component.battleshocked = !passed;
-    postMoveBattleshockLogs.push(log(
-      s,
-      unit.side,
-      unit.profile.name,
-      `${unit.profile.name} makes a Desperate Escape Battle-shock roll (${needed}+): rolled ${rolls[0]}+${rolls[1]}=${roll} → ${passed ? 'PASSED' : 'FAILED (Battleshocked!)'}`,
-      'info',
-    ));
-  }
-  resolveSuperHeavyMobileInPlace(s, unit);
-  if (unit.destroyed) recordDestroyedUnitMissionEvent(s, unit, destroyedBySide);
-  const newLogs: LogEntry[] = [
-    log(s, side, unit.profile.name, `${unit.profile.name} Falls Back ${moved.toFixed(1)}".`, 'move'),
-    ...desperateEscapeLogs,
-    ...postMoveBattleshockLogs,
-  ];
-  if (!unit.destroyed) unit.position = centroid(unit.modelPositions);
-  s.log = [...s.log, ...newLogs];
-  return s;
+  return interactiveMovementState.fallBackUnit(state, unitId, side, rules, fallBackMovementContext);
 }
 
 export function completePlayUnitMovement(

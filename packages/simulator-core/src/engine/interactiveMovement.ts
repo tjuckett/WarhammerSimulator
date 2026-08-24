@@ -1,4 +1,4 @@
-import type { BattleState, BattleUnit, BoardFormat, Position, Side } from '../types/battle';
+import type { BattleState, BattleUnit, BoardFormat, LogEntry, LogType, Position, Side } from '../types/battle';
 import type { UnitProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
@@ -758,6 +758,121 @@ export function advanceUnit(state: BattleState, unitId: string, side: Side, rule
     component.fellBack = false;
   }
   context.createLog(next, side, unit.profile.name, `${unit.profile.name} Advances: ${advance.advanceRoll === 6 && unit.profile.movementOverrides?.advanceRoll === 'auto6' ? 'auto 6' : `rolled ${advance.advanceRoll}`}; movement allowance is ${advance.total.toFixed(0)}\".`);
+  return next;
+}
+
+export interface FallBackMovementContext {
+  advanceContext: AdvanceMovementContext;
+  clone(state: BattleState): BattleState;
+  engagedEnemies(state: BattleState, unit: BattleUnit, rules: RulesEdition): BattleUnit[];
+  nearest(unit: BattleUnit, targets: BattleUnit[]): BattleUnit | null;
+  distance(a: Position, b: Position): number;
+  takeToSkiesDistanceCost(unit: BattleUnit): number;
+  lockOtherMovedUnits(state: BattleState, unit: BattleUnit): void;
+  collisionAdjustedMove(
+    state: BattleState,
+    unitId: string,
+    side: Side,
+    modelIndices: number[],
+    dx: number,
+    dy: number,
+  ): { dx: number; dy: number };
+  enemyCrossingModelIndices(state: BattleState, unit: BattleUnit, modelIndices: Set<number>, dx: number, dy: number): number[];
+  applyHorizontalTranslation(unit: BattleUnit, modelIndices: number[], dx: number, dy: number, state: BattleState): void;
+  cancelUnitAction(state: BattleState, unit: BattleUnit, reason: string): void;
+  inEngagement(state: BattleState, unit: BattleUnit, rules: RulesEdition): boolean;
+  modelRotation(unit: BattleUnit, modelIndex: number): number;
+  attachedComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
+  removeOpponentOperationMarkersAfterMove(state: BattleState, unit: BattleUnit): void;
+  resolveDesperateEscape(
+    state: BattleState,
+    unit: BattleUnit,
+    modelIndices: number[] | undefined,
+    onModelsDestroyed: (unit: BattleUnit, modelIndices: number[]) => void,
+  ): LogEntry[];
+  bestLeadership(state: BattleState, unit: BattleUnit): number;
+  d6(): number;
+  resolveSuperHeavyMobile(state: BattleState, unit: BattleUnit): void;
+  recordDestroyedModels(state: BattleState, unit: BattleUnit, modelIndices: number[], destroyedBySide: Side): void;
+  recordDestroyedUnit(state: BattleState, unit: BattleUnit, destroyedBySide: Side): void;
+  centroid(positions: Position[]): Position;
+  createLog(state: BattleState, side: Side, actor: string, message: string, type: LogType): LogEntry;
+}
+
+export function fallBackUnit(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+  context: FallBackMovementContext,
+): BattleState {
+  if (!canFallBack(state, unitId, side, context.advanceContext)) return state;
+
+  const next = context.clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit) return state;
+  context.lockOtherMovedUnits(next, unit);
+
+  const engaged = context.engagedEnemies(next, unit, rules);
+  const closest = context.nearest(unit, engaged);
+  if (!closest) return state;
+  const distanceToClosest = context.distance(unit.position, closest.position);
+  const direction = distanceToClosest > 0.001
+    ? { x: (unit.position.x - closest.position.x) / distanceToClosest, y: (unit.position.y - closest.position.y) / distanceToClosest }
+    : { x: side === 0 ? -1 : 1, y: 0 };
+  const modelIndices = unit.modelPositions.map((_, modelIndex) => modelIndex);
+  const maximumDistance = Math.max(0, unit.profile.move - context.takeToSkiesDistanceCost(unit));
+  const move = context.collisionAdjustedMove(next, unitId, side, modelIndices, direction.x * maximumDistance, direction.y * maximumDistance);
+  if (Math.hypot(move.dx, move.dy) < 0.01) return state;
+  const wasBattleshocked = unit.battleshocked;
+  const desperateEscapeModelIndices = unit.battleshocked
+    ? undefined
+    : context.enemyCrossingModelIndices(next, unit, new Set(modelIndices), move.dx, move.dy);
+  const usesDesperateEscape = wasBattleshocked || (desperateEscapeModelIndices?.length ?? 0) > 0;
+
+  context.applyHorizontalTranslation(unit, modelIndices, move.dx, move.dy, next);
+  context.cancelUnitAction(next, unit, 'it made a Fall Back move');
+  if (context.inEngagement(next, unit, rules)) return state;
+  unit.inCombat = false;
+  unit.movementAction = 'fellBack';
+  unit.movementAllowanceRemaining = 0;
+  unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
+  unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => 0);
+  unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
+  unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => context.modelRotation(unit, modelIndex));
+  unit.movementComplete = true;
+  unit.fellBack = true;
+  for (const component of context.attachedComponents(next, unit)) {
+    component.lastMovePhase = next.phase;
+    component.lastMoveTurn = next.turn;
+    component.takingToSkies = undefined;
+  }
+  context.removeOpponentOperationMarkersAfterMove(next, unit);
+  for (const enemy of engaged) enemy.inCombat = context.inEngagement(next, enemy, rules);
+
+  const destroyedBySide = (side === 0 ? 1 : 0) as Side;
+  const desperateEscapeLogs = context.resolveDesperateEscape(next, unit, desperateEscapeModelIndices,
+    (testedUnit, indices) => context.recordDestroyedModels(next, testedUnit, indices, destroyedBySide));
+  const postMoveBattleshockLogs: LogEntry[] = [];
+  if (rules.metadata.edition === '11e' && usesDesperateEscape && !wasBattleshocked && !unit.destroyed) {
+    const rolls = [context.d6(), context.d6()];
+    const roll = rolls[0] + rolls[1];
+    const needed = context.bestLeadership(next, unit);
+    const passed = roll >= needed;
+    for (const component of context.attachedComponents(next, unit)) component.battleshocked = !passed;
+    postMoveBattleshockLogs.push(context.createLog(next, unit.side, unit.profile.name,
+      `${unit.profile.name} makes a Desperate Escape Battle-shock roll (${needed}+): rolled ${rolls[0]}+${rolls[1]}=${roll} → ${passed ? 'PASSED' : 'FAILED (Battleshocked!)'}`,
+      'info'));
+  }
+  context.resolveSuperHeavyMobile(next, unit);
+  if (unit.destroyed) context.recordDestroyedUnit(next, unit, destroyedBySide);
+  const moved = Math.hypot(move.dx, move.dy);
+  next.log = [...next.log,
+    context.createLog(next, side, unit.profile.name, `${unit.profile.name} Falls Back ${moved.toFixed(1)}".`, 'move'),
+    ...desperateEscapeLogs,
+    ...postMoveBattleshockLogs,
+  ];
+  if (!unit.destroyed) unit.position = context.centroid(unit.modelPositions);
   return next;
 }
 
