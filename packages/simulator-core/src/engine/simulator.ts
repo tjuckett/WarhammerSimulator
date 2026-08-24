@@ -2508,15 +2508,7 @@ function applyPlayModelTranslation(
   dy: number,
   board = boardFormatForId(),
 ): void {
-  for (const modelIndex of modelIndices) {
-    const position = unit.modelPositions[modelIndex];
-    unit.modelPositions[modelIndex] = {
-      ...position,
-      x: Math.max(0, Math.min(board.width, position.x + dx)),
-      y: Math.max(0, Math.min(board.height, position.y + dy)),
-    };
-  }
-  unit.position = centroid(unit.modelPositions);
+  interactiveMovementState.applyHorizontalTranslation(unit, modelIndices, dx, dy, board);
 }
 
 function applyPlayModelVerticalTranslation(
@@ -2524,47 +2516,15 @@ function applyPlayModelVerticalTranslation(
   modelIndices: number[],
   dz: number,
 ): void {
-  for (const modelIndex of modelIndices) {
-    const position = unit.modelPositions[modelIndex];
-    unit.modelPositions[modelIndex] = {
-      ...position,
-      z: Math.max(0, (position.z ?? 0) + dz),
-    };
-  }
-  unit.position = centroid(unit.modelPositions);
+  interactiveMovementState.applyVerticalTranslation(unit, modelIndices, dz);
 }
 
 function playMoveHasNoBaseOverlap(state: BattleState, movingUnit: BattleUnit, movingIndices: Set<number>): boolean {
-  for (const modelIndex of movingIndices) {
-    const model = movingUnit.modelPositions[modelIndex];
-    const footprint = modelFootprint(movingUnit, modelIndex);
-    for (const otherUnit of state.units) {
-      if (otherUnit.destroyed || otherUnit.embarkedInUnitId) continue;
-      for (let otherModelIndex = 0; otherModelIndex < otherUnit.modelPositions.length; otherModelIndex++) {
-        if (otherUnit.id === movingUnit.id && movingIndices.has(otherModelIndex)) continue;
-        if (verticalDistance(model, otherUnit.modelPositions[otherModelIndex]) > 0.5) continue;
-        const otherFootprint = modelFootprint(otherUnit, otherModelIndex);
-        if (baseFootprintsOverlap(model, footprint, otherUnit.modelPositions[otherModelIndex], otherFootprint)) return false;
-      }
-    }
-  }
-  return true;
+  return interactiveMovementState.hasNoBaseOverlap(state, movingUnit, movingIndices);
 }
 
 function playMoveHasNoWallOverlap(state: BattleState, movingUnit: BattleUnit, movingIndices: Set<number>): boolean {
-  for (const modelIndex of movingIndices) {
-    const model = movingUnit.modelPositions[modelIndex];
-    const footprint = modelFootprint(movingUnit, modelIndex);
-    for (const terrain of state.terrain) {
-      if (terrainMatBlocksMovementForUnit(terrain, movingUnit)
-        && baseFootprintIntersectsRect(model, footprint, terrain)) return false;
-      for (const feature of terrain.features) {
-        if (!featureBlocksMovementForUnit(feature, terrain, movingUnit)) continue;
-        if (baseFootprintIntersectsRect(model, footprint, feature)) return false;
-      }
-    }
-  }
-  return true;
+  return interactiveMovementState.hasNoWallOverlap(state, movingUnit, movingIndices, movementCollisionContext);
 }
 
 function playMoveHasNoEndCollision(
@@ -2573,9 +2533,7 @@ function playMoveHasNoEndCollision(
   movingIndices: Set<number>,
   allowEngagement = false,
 ): boolean {
-  return playMoveHasNoBaseOverlap(state, movingUnit, movingIndices)
-    && playMoveHasNoWallOverlap(state, movingUnit, movingIndices)
-    && (allowEngagement || !inEngagement(movingUnit, enemies(state, movingUnit.side), rulesEditionForRuleset(state.ruleset).engagementRange()));
+  return interactiveMovementState.hasNoEndCollision(state, movingUnit, movingIndices, allowEngagement, movementCollisionContext);
 }
 
 const movementPathingContext: movementPathing.MovementPathingContext = {
@@ -2602,6 +2560,17 @@ const playMovePathCrossesBlockingTerrain = (state: BattleState, unit: BattleUnit
   movementPathing.crossesBlockingTerrain(state, unit, indices, dx, dy, movementPathingContext);
 const playMoveHasNoPathCollision = (state: BattleState, unit: BattleUnit, indices: Set<number>, dx: number, dy: number, options: { ignoreEnemyModelPath?: boolean } = {}) =>
   movementPathing.hasNoPathCollision(state, unit, indices, dx, dy, movementPathingContext, options);
+
+const movementCollisionContext: interactiveMovementState.MovementCollisionContext = {
+  clone,
+  boardFormatForState,
+  terrainBlocksMovement: terrainMatBlocksMovementForUnit,
+  featureBlocksMovement: featureBlocksMovementForUnit,
+  hasNoPathCollision: playMoveHasNoPathCollision,
+  inEngagement: (state, unit) => inEngagement(unit, enemies(state, unit.side), rulesEditionForRuleset(state.ruleset).engagementRange()),
+  enemies,
+  engagementRange: state => rulesEditionForRuleset(state.ruleset).engagementRange(),
+};
 
 function translatedPlayMoveEndsInEngagement(
   state: BattleState,
@@ -2702,40 +2671,7 @@ function collisionAdjustedPlayMove(
   dy: number,
   options: { allowEngagement?: boolean; ignoreEnemyModelPath?: boolean } = {},
 ): { dx: number; dy: number } {
-  const movingIndices = new Set(modelIndices);
-  const candidate = clone(state);
-  const candidateUnit = candidate.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
-  if (!candidateUnit) return { dx, dy };
-  const board = boardFormatForState(state);
-
-  applyPlayModelTranslation(candidateUnit, modelIndices, dx, dy, board);
-  if (
-    playMoveHasNoEndCollision(candidate, candidateUnit, movingIndices, !!options.allowEngagement)
-    && playMoveHasNoPathCollision(state, state.units.find(u => u.id === unitId && u.side === side && !u.destroyed)!, movingIndices, dx, dy, {
-      ignoreEnemyModelPath: !!options.ignoreEnemyModelPath,
-    })
-  ) return { dx, dy };
-
-  let lo = 0;
-  let hi = 1;
-  const movingUnit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
-  if (!movingUnit) return { dx: 0, dy: 0 };
-  for (let i = 0; i < 12; i++) {
-    const mid = (lo + hi) / 2;
-    const test = clone(state);
-    const testUnit = test.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
-    if (!testUnit) break;
-    applyPlayModelTranslation(testUnit, modelIndices, dx * mid, dy * mid, board);
-    if (
-      playMoveHasNoEndCollision(test, testUnit, movingIndices, !!options.allowEngagement)
-      && playMoveHasNoPathCollision(state, movingUnit, movingIndices, dx * mid, dy * mid, {
-        ignoreEnemyModelPath: !!options.ignoreEnemyModelPath,
-      })
-    ) lo = mid;
-    else hi = mid;
-  }
-
-  return { dx: dx * lo, dy: dy * lo };
+  return interactiveMovementState.collisionAdjustedMove(state, unitId, side, modelIndices, dx, dy, options, movementCollisionContext);
 }
 
 function movementAllowanceForPlayMove(unit: BattleUnit): number {

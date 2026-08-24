@@ -3,7 +3,7 @@ import type { UnitProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
 import { zoneFor, pointInDeploymentZone, type DeploymentZone, type DeploymentZoneSource } from './deployment';
-import { baseFootprintDistance, baseFootprintMaxPointDistance, baseFootprintsOverlap, modelBaseFootprintInches, modelBaseRadiusInches } from './baseSizes';
+import { baseFootprintDistance, baseFootprintIntersectsRect, baseFootprintMaxPointDistance, baseFootprintsOverlap, modelBaseFootprintInches, modelBaseRadiusInches } from './baseSizes';
 import { distance as dist, verticalDistance } from './coherency';
 import { centroid, translateFormation } from './unitModelState';
 
@@ -157,6 +157,109 @@ export function budgetAdjustedMove(unit: BattleUnit, modelIndices: number[], dx:
   for (let i = 0; i < 16; i++) {
     const mid = (lo + hi) / 2;
     if (moveWithinAllowance(mid)) lo = mid;
+    else hi = mid;
+  }
+  return { dx: dx * lo, dy: dy * lo };
+}
+
+export interface MovementCollisionContext {
+  clone(state: BattleState): BattleState;
+  boardFormatForState(state: BattleState): BoardFormat;
+  terrainBlocksMovement(terrain: BattleState['terrain'][number], unit: BattleUnit): boolean;
+  featureBlocksMovement(feature: NonNullable<BattleState['terrain'][number]['features']>[number], terrain: BattleState['terrain'][number], unit: BattleUnit): boolean;
+  hasNoPathCollision(state: BattleState, unit: BattleUnit, modelIndices: Set<number>, dx: number, dy: number, options: { ignoreEnemyModelPath?: boolean }): boolean;
+  inEngagement(state: BattleState, unit: BattleUnit): boolean;
+  enemies(state: BattleState, side: Side): BattleUnit[];
+  engagementRange(state: BattleState): number;
+}
+
+function modelFootprint(unit: BattleUnit, modelIndex: number) {
+  return modelBaseFootprintInches(unit.profile, modelIndex, unit.modelRotations?.[modelIndex] ?? unit.facingDeg ?? 0);
+}
+
+export function applyHorizontalTranslation(unit: BattleUnit, modelIndices: number[], dx: number, dy: number, board: BoardFormat): void {
+  for (const modelIndex of modelIndices) {
+    const position = unit.modelPositions[modelIndex];
+    unit.modelPositions[modelIndex] = {
+      ...position,
+      x: Math.max(0, Math.min(board.width, position.x + dx)),
+      y: Math.max(0, Math.min(board.height, position.y + dy)),
+    };
+  }
+  unit.position = centroid(unit.modelPositions);
+}
+
+export function applyVerticalTranslation(unit: BattleUnit, modelIndices: number[], dz: number): void {
+  for (const modelIndex of modelIndices) {
+    const position = unit.modelPositions[modelIndex];
+    unit.modelPositions[modelIndex] = { ...position, z: Math.max(0, (position.z ?? 0) + dz) };
+  }
+  unit.position = centroid(unit.modelPositions);
+}
+
+export function hasNoBaseOverlap(state: BattleState, movingUnit: BattleUnit, movingIndices: Set<number>): boolean {
+  for (const modelIndex of movingIndices) {
+    const model = movingUnit.modelPositions[modelIndex];
+    const footprint = modelFootprint(movingUnit, modelIndex);
+    for (const otherUnit of state.units) {
+      if (otherUnit.destroyed || otherUnit.embarkedInUnitId) continue;
+      for (let otherModelIndex = 0; otherModelIndex < otherUnit.modelPositions.length; otherModelIndex++) {
+        if (otherUnit.id === movingUnit.id && movingIndices.has(otherModelIndex)) continue;
+        if (verticalDistance(model, otherUnit.modelPositions[otherModelIndex]) > 0.5) continue;
+        if (baseFootprintsOverlap(model, footprint, otherUnit.modelPositions[otherModelIndex], modelFootprint(otherUnit, otherModelIndex))) return false;
+      }
+    }
+  }
+  return true;
+}
+
+export function hasNoWallOverlap(state: BattleState, movingUnit: BattleUnit, movingIndices: Set<number>, context: MovementCollisionContext): boolean {
+  for (const modelIndex of movingIndices) {
+    const model = movingUnit.modelPositions[modelIndex];
+    const footprint = modelFootprint(movingUnit, modelIndex);
+    for (const terrain of state.terrain) {
+      if (context.terrainBlocksMovement(terrain, movingUnit) && baseFootprintIntersectsRect(model, footprint, terrain)) return false;
+      for (const feature of terrain.features) {
+        if (context.featureBlocksMovement(feature, terrain, movingUnit) && baseFootprintIntersectsRect(model, footprint, feature)) return false;
+      }
+    }
+  }
+  return true;
+}
+
+export function hasNoEndCollision(state: BattleState, movingUnit: BattleUnit, movingIndices: Set<number>, allowEngagement: boolean, context: MovementCollisionContext): boolean {
+  return hasNoBaseOverlap(state, movingUnit, movingIndices)
+    && hasNoWallOverlap(state, movingUnit, movingIndices, context)
+    && (allowEngagement || !context.inEngagement(state, movingUnit));
+}
+
+export function collisionAdjustedMove(
+  state: BattleState, unitId: string, side: Side, modelIndices: number[], dx: number, dy: number,
+  options: { allowEngagement?: boolean; ignoreEnemyModelPath?: boolean }, context: MovementCollisionContext,
+): { dx: number; dy: number } {
+  const movingIndices = new Set(modelIndices);
+  const candidate = context.clone(state);
+  const candidateUnit = candidate.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed);
+  if (!candidateUnit) return { dx, dy };
+  const board = context.boardFormatForState(state);
+  applyHorizontalTranslation(candidateUnit, modelIndices, dx, dy, board);
+  const legal = (test: BattleState, testUnit: BattleUnit, moveX: number, moveY: number) =>
+    hasNoEndCollision(test, testUnit, movingIndices, !!options.allowEngagement, context)
+    && context.hasNoPathCollision(state, state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed)!, movingIndices, moveX, moveY, {
+      ignoreEnemyModelPath: !!options.ignoreEnemyModelPath,
+    });
+  if (legal(candidate, candidateUnit, dx, dy)) return { dx, dy };
+  let lo = 0;
+  let hi = 1;
+  const movingUnit = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed);
+  if (!movingUnit) return { dx: 0, dy: 0 };
+  for (let i = 0; i < 12; i++) {
+    const mid = (lo + hi) / 2;
+    const test = context.clone(state);
+    const testUnit = test.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed);
+    if (!testUnit) break;
+    applyHorizontalTranslation(testUnit, modelIndices, dx * mid, dy * mid, board);
+    if (legal(test, testUnit, dx * mid, dy * mid)) lo = mid;
     else hi = mid;
   }
   return { dx: dx * lo, dy: dy * lo };
