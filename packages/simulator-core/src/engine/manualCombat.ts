@@ -112,6 +112,79 @@ export function updateAttachedShootingActivation(
   state.attachedShootingTargetUnitId = undefined;
 }
 
+export interface PlayShootingExecutionContext extends ManualShootingSelectionContext {
+  clone(state: BattleState): BattleState;
+  clearFiringDeckWeapons(unit: BattleUnit): void;
+  resolvePendingDeadlyDemisesInPlace(state: BattleState): LogEntry[];
+  resolveShootingWeaponIntoTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, rules: RulesEdition, options: { deferCasualties?: boolean }): LogEntry[];
+  shootingWeaponSelectionForAll(weapons: Array<{ weapon: WeaponProfile; weaponIndex: number }>): Array<{ weapon: WeaponProfile; weaponIndex: number }>;
+  updateAttachedShootingActivation(state: BattleState, unit: BattleUnit, rules: RulesEdition, targetUnitId?: string): void;
+  log(state: BattleState, side: Side, source: string, message: string, kind: 'shoot' | 'info'): LogEntry;
+}
+
+export function shootPlayUnitWeapon(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  targetUnitId: string | undefined,
+  weaponIndex: number | 'all',
+  rules: RulesEdition,
+  context: PlayShootingExecutionContext,
+): BattleState {
+  if (state.phase !== 'shooting' || state.activeArmy !== side) return state;
+  const s = context.clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || unit.activated) return state;
+  if (s.activeAttachedShootingUnitId && context.attachedUnitId(unit) !== s.activeAttachedShootingUnitId) return state;
+  if (s.attachedShootingTargetUnitId && targetUnitId !== s.attachedShootingTargetUnitId) return state;
+
+  if (weaponIndex === -1 || (weaponIndex === 'all' && !context.eligibleShootingWeapons(unit, s, rules).length)) {
+    if (!context.unitCanBeSelectedToShootWithoutAttacks(unit, s, rules) || context.eligibleShootingWeapons(unit, s, rules).length > 0) return state;
+    unit.activated = true;
+    context.updateAttachedShootingActivation(s, unit, rules);
+    s.log = [...s.log, context.log(s, side, unit.profile.name, `${unit.profile.name} is selected to shoot but has no ranged weapons, so it makes no attacks.`, 'shoot')];
+    return s;
+  }
+
+  const target = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!target) return state;
+  const eligibleWeapons = context.eligibleShootingWeapons(unit, s, rules)
+    .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
+    .filter(option => option.weaponIndex >= 0 && context.aliveWeaponModelCount(unit, option.weaponIndex) > 0);
+  const selectedWeapons = weaponIndex === 'all'
+    ? context.shootingWeaponSelectionForAll(eligibleWeapons)
+    : eligibleWeapons.filter(option => option.weaponIndex === weaponIndex);
+  if (!selectedWeapons.length) return state;
+
+  const logs: LogEntry[] = [context.log(s, side, unit.profile.name, `🔫 ${unit.profile.name} shoots ${target.profile.name}:`, 'shoot')];
+  const firedWeaponIndices: number[] = [];
+  for (const option of selectedWeapons) {
+    if (!context.shootingWeaponCanTarget(s, unit, target, option.weapon, rules)) {
+      logs.push(context.log(s, side, unit.profile.name, `  ${option.weapon.name}: ${target.profile.name} is not a valid target`, 'info'));
+      continue;
+    }
+    const attackLogs = context.resolveShootingWeaponIntoTarget(s, unit, target, option.weapon, option.weaponIndex, rules, { deferCasualties: true });
+    logs.push(...attackLogs);
+    if (attackLogs.length > 0) firedWeaponIndices.push(option.weaponIndex);
+    if (unit.destroyed || target.destroyed) break;
+  }
+  if (firedWeaponIndices.length === 0) return state;
+  if (weaponIndex === 'all' && firedWeaponIndices.length === selectedWeapons.length) unit.activated = true;
+  else {
+    unit.firedWeaponIndices = [...new Set([...(unit.firedWeaponIndices ?? []), ...firedWeaponIndices])];
+    const remainingEligibleWeapons = context.eligibleShootingWeapons(unit, s, rules);
+    const hasRemainingTargets = remainingEligibleWeapons.some(weapon =>
+      context.enemies(s, side).some(candidate => context.shootingWeaponCanTarget(s, unit, candidate, weapon, rules)),
+    );
+    if (remainingEligibleWeapons.length === 0 || !hasRemainingTargets) unit.activated = true;
+  }
+  context.updateAttachedShootingActivation(s, unit, rules, target.id);
+  s.log = [...s.log, ...logs];
+  if (unit.activated && s.pendingDeadlyDemises?.length) s.log = [...s.log, ...context.resolvePendingDeadlyDemisesInPlace(s)];
+  if (unit.activated) context.clearFiringDeckWeapons(unit);
+  return s;
+}
+
 /** Resolve a unit's complete shooting declaration only after every weapon target is locked. */
 export function shootPlayUnitWeapons(
   state: BattleState,
