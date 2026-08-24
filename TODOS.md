@@ -470,9 +470,10 @@ engine modules.
   `GameAction` timeline the sole history authority for both `BattleState` and
   UI selection state; replace the parallel React undo stack except for temporary
   drag/rotation gesture coalescing.
-- [ ] **Next — extract interactive model-edit operations as one workflow:**
-  horizontal/vertical movement, undo, rotation, casualty model removal, and
-  movement completion. Its commands must record through the unified timeline.
+- [x] **Interactive model-edit workflow:** horizontal/vertical movement, undo,
+  rotation, coherency model removal, Advance/Fall Back, and movement completion
+  now live in `interactiveMovement.ts`. Timeline unification remains a separate
+  prerequisite below.
 - [x] Extract deployment and transport-placement workflows from battle creation, initial placement, embark, and disembark APIs.
 - [x] Extract remaining mission-action start/completion orchestration around the existing mission option module.
 - [x] Extract simulation phase/unit orchestration into a dedicated facade module.
@@ -481,13 +482,12 @@ engine modules.
 
 ### Consolidation Decision
 
-- [ ] Fold `scoutMoves.ts`, `takeToSkies.ts`, and `surgeMoves.ts` into a single
-  `specialMovement.ts` module when extracting interactive movement. They share the
-  same movement-history, action-cancellation, and phase-gating concerns; separate
-  modules currently create more dependency wiring than isolation.
-- [ ] Fold `movementGroups.ts` into the new interactive-movement module. It is not
-  independently reusable outside manual movement.
-- [ ] Fold `strategicReservePlacement.ts` into `reinforcements.ts`. It is a
+- [x] Fold the former Scouts, Take to the Skies, and Surge Move micro-modules into
+  `interactiveMovement.ts`; they share movement history, cancellation, and phase
+  gating concerns.
+- [x] Fold movement groups into `interactiveMovement.ts`; they are not independently
+  reusable outside manual movement.
+- [x] Fold strategic-reserve placement into `reinforcements.ts`; it is a
   reinforcement-placement restriction, not a standalone domain.
 - [x] Keep `movementLegality.ts`, `movementPathing.ts`, and
   `aircraftMovement.ts` separate: they have distinct validation/pathing/rules
