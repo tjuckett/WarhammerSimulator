@@ -180,178 +180,6 @@ function maxModelBaseRadius(unit: BattleUnit): number {
   return battleUnitMaxBaseRadiusInches(unit);
 }
 
-function modelRadiiForProfile(profile: UnitProfile): number[] {
-  return Array.from({ length: profile.baseModelCount }, (_, modelIndex) => modelBaseRadiusInches(profile, modelIndex));
-}
-
-// Returns the per-model spacing (diameter + gap) used for grid formations.
-function gridModelSpacing(radii: number[]): number {
-  return Math.max(...radii.map(r => r * 2), 1) + 0.08;
-}
-
-function playGridFormation(profile: UnitProfile, anchor: Position, side: Side): Position[] {
-  const count = profile.baseModelCount;
-  if (count <= 1) return [anchor];
-
-  const spacing = gridModelSpacing(modelRadiiForProfile(profile));
-  const columns = Math.ceil(Math.sqrt(count));
-  const rows = Math.ceil(count / columns);
-  const forward = side === 0 ? 1 : -1;
-  const startY = anchor.y - ((rows - 1) * spacing) / 2;
-
-  return Array.from({ length: count }, (_, modelIndex) => ({
-    x: anchor.x + forward * (modelIndex % columns) * spacing,
-    y: startY + Math.floor(modelIndex / columns) * spacing,
-  }));
-}
-
-function playGridFormationByRows(profile: UnitProfile, center: Position, side: Side, rows: number, modelIndices?: number[]): Position[] {
-  const indices = modelIndices?.length ? modelIndices : Array.from({ length: profile.baseModelCount }, (_, i) => i);
-  const count = indices.length;
-  if (count <= 1) return [center];
-
-  const rowCount = Math.max(1, Math.min(rows, count));
-  const columns = Math.ceil(count / rowCount);
-  const spacing = gridModelSpacing(indices.map(i => modelBaseRadiusInches(profile, i)));
-  const forward = side === 0 ? 1 : -1;
-  const startX = center.x - forward * ((columns - 1) * spacing) / 2;
-  const startY = center.y - ((rowCount - 1) * spacing) / 2;
-
-  return Array.from({ length: count }, (_, modelIndex) => ({
-    x: startX + forward * Math.floor(modelIndex / rowCount) * spacing,
-    y: startY + (modelIndex % rowCount) * spacing,
-  }));
-}
-
-function clampModelToBoard(point: Position, radius: number, zone?: ReturnType<typeof zoneFor>, board = boardFormatForId()): Position {
-  const minX = zone ? zone.x0 + radius : radius;
-  const maxX = zone ? zone.x1 - radius : board.width - radius;
-  return {
-    x: Math.min(maxX, Math.max(minX, point.x)),
-    y: Math.min(board.height - radius, Math.max(radius, point.y)),
-  };
-}
-
-function formationHasInternalOverlap(unit: BattleUnit): boolean {
-  for (let i = 0; i < unit.modelPositions.length; i++) {
-    for (let j = i + 1; j < unit.modelPositions.length; j++) {
-      const minDistance = modelBaseRadius(unit, i) + modelBaseRadius(unit, j);
-      if (dist(unit.modelPositions[i], unit.modelPositions[j]) < minDistance) return true;
-    }
-  }
-  return false;
-}
-
-function resolveInternalModelOverlaps(unit: BattleUnit, zone?: ReturnType<typeof zoneFor>, board = boardFormatForId()): void {
-  const positions = unit.modelPositions.map(p => ({ ...p }));
-
-  for (let pass = 0; pass < 16; pass++) {
-    let changed = false;
-    for (let i = 0; i < positions.length; i++) {
-      for (let j = i + 1; j < positions.length; j++) {
-        const radiusI = modelBaseRadius(unit, i);
-        const radiusJ = modelBaseRadius(unit, j);
-        const minDistance = radiusI + radiusJ + 0.02;
-        const dx = positions[j].x - positions[i].x;
-        const dy = positions[j].y - positions[i].y;
-        const d = Math.hypot(dx, dy);
-        if (d >= minDistance) continue;
-
-        const angle = d > 0.001 ? Math.atan2(dy, dx) : ((i + j) % 8) * (Math.PI / 4);
-        const ux = Math.cos(angle);
-        const uy = Math.sin(angle);
-        const push = (minDistance - Math.max(d, 0.001)) / 2;
-
-        positions[i] = clampModelToBoard({ x: positions[i].x - ux * push, y: positions[i].y - uy * push }, radiusI, zone, board);
-        positions[j] = clampModelToBoard({ x: positions[j].x + ux * push, y: positions[j].y + uy * push }, radiusJ, zone, board);
-        changed = true;
-      }
-    }
-    if (!changed) break;
-  }
-
-  unit.modelPositions = positions;
-  unit.position = centroid(positions);
-}
-
-function formationOverlapsUnits(unit: BattleUnit, newCenter: Position, state: BattleState): boolean {
-  const dx = newCenter.x - unit.position.x;
-  const dy = newCenter.y - unit.position.y;
-  for (const other of state.units) {
-    if (other.id === unit.id || other.destroyed) continue;
-    for (let modelIndex = 0; modelIndex < unit.modelPositions.length; modelIndex++) {
-      const model = unit.modelPositions[modelIndex];
-      const shifted = { x: model.x + dx, y: model.y + dy };
-      for (let otherModelIndex = 0; otherModelIndex < other.modelPositions.length; otherModelIndex++) {
-        const otherModel = other.modelPositions[otherModelIndex];
-        const minDistance = modelBaseRadius(unit, modelIndex) + modelBaseRadius(other, otherModelIndex);
-        if (dist(shifted, otherModel) < minDistance) return true;
-      }
-    }
-  }
-  return false;
-}
-
-function avoidModelOverlap(unit: BattleUnit, desired: Position, state: BattleState): Position {
-  if (!formationOverlapsUnits(unit, desired, state)) return desired;
-
-  let best = unit.position;
-  let lo = 0;
-  let hi = 1;
-  for (let i = 0; i < 18; i++) {
-    const t = (lo + hi) / 2;
-    const candidate = {
-      x: unit.position.x + (desired.x - unit.position.x) * t,
-      y: unit.position.y + (desired.y - unit.position.y) * t,
-    };
-    if (formationOverlapsUnits(unit, candidate, state)) {
-      hi = t;
-    } else {
-      best = candidate;
-      lo = t;
-    }
-  }
-
-  return best;
-}
-
-function formationWithinBounds(unit: BattleUnit, center: Position, zone?: ReturnType<typeof zoneFor>, board = boardFormatForId()): boolean {
-  const dx = center.x - unit.position.x;
-  const dy = center.y - unit.position.y;
-  for (let modelIndex = 0; modelIndex < unit.modelPositions.length; modelIndex++) {
-    const model = unit.modelPositions[modelIndex];
-    const r = modelBaseRadius(unit, modelIndex);
-    const x = model.x + dx;
-    const y = model.y + dy;
-    if (x < r || x > board.width - r || y < r || y > board.height - r) return false;
-    if (zone && !pointInDeploymentZone({ x, y }, zone, r)) return false;
-  }
-  return true;
-}
-
-function avoidDeploymentOverlap(unit: BattleUnit, state: BattleState, zone: ReturnType<typeof zoneFor>): void {
-  const board = boardFormatForState(state);
-  if (
-    !formationHasInternalOverlap(unit)
-    && !formationOverlapsUnits(unit, unit.position, state)
-    && formationWithinBounds(unit, unit.position, zone, board)
-  ) return;
-
-  for (let radius = 0.5; radius <= 14; radius += 0.5) {
-    for (let ai = 0; ai < 24; ai++) {
-      const angle = (ai / 24) * Math.PI * 2;
-      const candidate = {
-        x: unit.position.x + Math.cos(angle) * radius,
-        y: unit.position.y + Math.sin(angle) * radius,
-      };
-      if (!formationWithinBounds(unit, candidate, zone, board)) continue;
-      if (formationOverlapsUnits(unit, candidate, state)) continue;
-      translateFormation(unit, candidate.x - unit.position.x, candidate.y - unit.position.y);
-      return;
-    }
-  }
-}
-
 function featureBlocksMovementForUnit(feature: TerrainFeature, parent: Terrain, unit: BattleUnit): boolean {
   if (!feature.blocksMovement) return false;
   if (unitHasRule(unit.profile, 'Super-heavy Walker') && feature.featureHeight === 'low') return false;
@@ -1052,8 +880,10 @@ const resolveCombatDisembarkHazards = transportDestruction.resolveCombatDisembar
 const movementSimulationContext: movementSimulation.MovementSimulationContext = {
   unitSurgedThisPhase, isAircraft, aircraftCanMakeNormalMove, enemies, nonAircraftEngagedEnemies,
   inEngagement, log, chooseSimulationMovementTarget, dist, formationExtent, hasKeyword,
-  takeToSkiesDistanceCost, findReachablePosition, unitTakesToSkiesForState, avoidModelOverlap,
-  translateFormation, cancelUnitAction, resolveInternalModelOverlaps, centroid,
+  takeToSkiesDistanceCost, findReachablePosition, unitTakesToSkiesForState,
+  avoidModelOverlap: interactiveMovementState.avoidModelOverlap,
+  translateFormation, cancelUnitAction,
+  resolveInternalModelOverlaps: interactiveMovementState.resolveInternalModelOverlaps, centroid,
 };
 const runMovement = (unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] =>
   movementSimulation.runMovement(unit, state, rules, movementSimulationContext);
@@ -2530,7 +2360,7 @@ function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): L
       unit, target.position, maximumDistance, state.terrain, stopGap,
       unitTakesToSkiesForState(state, unit),
     );
-    const newPos = avoidModelOverlap(unit, reachablePos, state);
+    const newPos = interactiveMovementState.avoidModelOverlap(unit, reachablePos, state);
     if (dist(unit.position, newPos) + 0.01 < needed) {
       unit.takingToSkies = undefined;
       logs.push(log(state, unit.side, unit.profile.name,
@@ -2540,7 +2370,7 @@ function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): L
       return logs;
     }
     translateFormation(unit, newPos.x - unit.position.x, newPos.y - unit.position.y);
-    resolveInternalModelOverlaps(unit);
+    interactiveMovementState.resolveInternalModelOverlaps(unit);
     unit.charged = true;
     unit.lastMovePhase = state.phase;
     unit.lastMoveTurn = state.turn;
@@ -2767,9 +2597,9 @@ export function chargePlayUnitTargets(
     stopGap,
     unitTakesToSkiesForState(s, chargingUnit),
   );
-  const newPos = avoidModelOverlap(chargingUnit, reachablePos, s);
+  const newPos = interactiveMovementState.avoidModelOverlap(chargingUnit, reachablePos, s);
   translateFormation(chargingUnit, newPos.x - chargingUnit.position.x, newPos.y - chargingUnit.position.y);
-  resolveInternalModelOverlaps(chargingUnit);
+  interactiveMovementState.resolveInternalModelOverlaps(chargingUnit);
   chargingUnit.position = centroid(chargingUnit.modelPositions);
 
   if (chargeTargets.some(candidate => !inEngagement(chargingUnit, [candidate], rules.engagementRange()))) {
@@ -3688,7 +3518,7 @@ function leaderAnchor(bodyguard: BattleUnit, leader: UnitProfile, leaderIndex: n
   const radius = modelBaseRadiusInches(leader);
   const offsetX = forward * (battleUnitMaxBaseRadiusInches(bodyguard) + radius + 0.4);
   const offsetY = (leaderIndex - 0.5) * 1.2;
-  return clampModelToBoard({
+  return interactiveMovementState.clampModelToBoard({
     x: bodyguard.position.x + offsetX,
     y: bodyguard.position.y + offsetY,
   }, radius, zone, board);
@@ -3769,7 +3599,7 @@ function disembarkPositions(
   );
 
   for (const offset of offsets) {
-    const positions = playGridFormation(profile, {
+    const positions = interactiveMovementState.gridFormation(profile, {
       x: transport.position.x + offset.x,
       y: transport.position.y + offset.y,
     }, side);
@@ -3830,15 +3660,15 @@ export function createBattleState(
       const modelPositions = deployModelFormation(
         startPos, profile.baseModelCount, unitRole(profile), side as 0 | 1,
         terrain, zoneFor(side as 0 | 1, deployment, board), allPlacedModels,
-        modelRadiiForProfile(profile),
+        interactiveMovementState.profileModelRadii(profile),
         allPlacedModelRadii,
         rules.metadata.edition,
       );
       const unit = makeBattleUnit(profile, side, modelPositions);
       unit.position = startPos;
-      resolveInternalModelOverlaps(unit, zoneFor(side as 0 | 1, deployment, board), board);
-      avoidDeploymentOverlap(unit, { units, board } as BattleState, zoneFor(side as 0 | 1, deployment, board));
-      resolveInternalModelOverlaps(unit, zoneFor(side as 0 | 1, deployment, board), board);
+      interactiveMovementState.resolveInternalModelOverlaps(unit, zoneFor(side as 0 | 1, deployment, board), board);
+      interactiveMovementState.avoidDeploymentOverlap(unit, { units, board } as BattleState, zoneFor(side as 0 | 1, deployment, board));
+      interactiveMovementState.resolveInternalModelOverlaps(unit, zoneFor(side as 0 | 1, deployment, board), board);
       allPlacedModels.push(...unit.modelPositions);
       allPlacedModelRadii.push(...unit.modelPositions.map((_, modelIndex) => modelBaseRadius(unit, modelIndex)));
       units.push(unit);
@@ -3848,14 +3678,14 @@ export function createBattleState(
         const leaderPositions = deployModelFormation(
           anchor, leader.baseModelCount, unitRole(leader), side as 0 | 1,
           terrain, zoneFor(side as 0 | 1, deployment, board), allPlacedModels,
-          modelRadiiForProfile(leader),
+          interactiveMovementState.profileModelRadii(leader),
           allPlacedModelRadii,
           rules.metadata.edition,
         );
         const leaderUnit = makeBattleUnit(leader, side, leaderPositions, unit.id, unit.tabletopUnitId);
-        resolveInternalModelOverlaps(leaderUnit, zoneFor(side as 0 | 1, deployment, board), board);
-        avoidDeploymentOverlap(leaderUnit, { units, board } as BattleState, zoneFor(side as 0 | 1, deployment, board));
-        resolveInternalModelOverlaps(leaderUnit, zoneFor(side as 0 | 1, deployment, board), board);
+        interactiveMovementState.resolveInternalModelOverlaps(leaderUnit, zoneFor(side as 0 | 1, deployment, board), board);
+        interactiveMovementState.avoidDeploymentOverlap(leaderUnit, { units, board } as BattleState, zoneFor(side as 0 | 1, deployment, board));
+        interactiveMovementState.resolveInternalModelOverlaps(leaderUnit, zoneFor(side as 0 | 1, deployment, board), board);
         allPlacedModels.push(...leaderUnit.modelPositions);
         allPlacedModelRadii.push(...leaderUnit.modelPositions.map((_, modelIndex) => modelBaseRadius(leaderUnit, modelIndex)));
         units.push(leaderUnit);
@@ -3994,7 +3824,7 @@ export function placeNextUnit(state: BattleState): BattleState {
   const zone = zoneFor(side, deployment, board);
   const modelPos = deployModelFormation(
     pos, profile.baseModelCount, unitRole(profile), side, s.terrain, zone, allDeployedModels,
-    modelRadiiForProfile(profile),
+    interactiveMovementState.profileModelRadii(profile),
     allDeployedModelRadii,
     s.ruleset?.edition,
   );
@@ -4002,9 +3832,9 @@ export function placeNextUnit(state: BattleState): BattleState {
   const unit = makeBattleUnit(profile, side, modelPos);
   unit.position = pos;
 
-  resolveInternalModelOverlaps(unit, zone, board);
-  avoidDeploymentOverlap(unit, s, zone);
-  resolveInternalModelOverlaps(unit, zone, board);
+  interactiveMovementState.resolveInternalModelOverlaps(unit, zone, board);
+  interactiveMovementState.avoidDeploymentOverlap(unit, s, zone);
+  interactiveMovementState.resolveInternalModelOverlaps(unit, zone, board);
   s.units.push(unit);
   s.unplacedUnits[side] = [...unplaced.slice(0, unitIdx), ...unplaced.slice(unitIdx + 1)];
   const attachedLeaders = attachedFollowersFor(s.armies[side].army, profile);
@@ -4014,14 +3844,14 @@ export function placeNextUnit(state: BattleState): BattleState {
     const deployedRadii = s.units.flatMap(u => u.modelPositions.map((_, modelIndex) => modelBaseRadius(u, modelIndex)));
     const leaderModelPos = deployModelFormation(
       anchor, leader.baseModelCount, unitRole(leader), side, s.terrain, zone, deployedModels,
-      modelRadiiForProfile(leader),
+      interactiveMovementState.profileModelRadii(leader),
       deployedRadii,
       s.ruleset?.edition,
     );
     const leaderUnit = makeBattleUnit(leader, side, leaderModelPos, unit.id, unit.tabletopUnitId);
-    resolveInternalModelOverlaps(leaderUnit, zone, board);
-    avoidDeploymentOverlap(leaderUnit, s, zone);
-    resolveInternalModelOverlaps(leaderUnit, zone, board);
+    interactiveMovementState.resolveInternalModelOverlaps(leaderUnit, zone, board);
+    interactiveMovementState.avoidDeploymentOverlap(leaderUnit, s, zone);
+    interactiveMovementState.resolveInternalModelOverlaps(leaderUnit, zone, board);
     s.units.push(leaderUnit);
     removeUnitFromUnplaced(s, side, leader);
   });
@@ -4060,7 +3890,7 @@ export function placePlayUnit(state: BattleState, side: Side, unitIndex: number,
     )];
     return s;
   }
-  const modelPositions = playGridFormation(profile, position, side);
+  const modelPositions = interactiveMovementState.gridFormation(profile, position, side);
   if (canInfiltrate && (
     modelPositions.some((model, modelIndex) => !modelIsOutsideEnemyDeploymentZoneBuffer(profile, side, model, modelIndex, deployment, board))
     || !infiltratorModelsAreOutsideEnemyUnits(s, side, profile, modelPositions)
@@ -4078,11 +3908,11 @@ export function placePlayUnit(state: BattleState, side: Side, unitIndex: number,
   const attachedLeaders = attachedFollowersFor(s.armies[side].army, profile);
   attachedLeaders.forEach((leader, leaderIndex) => {
     const anchor = leaderAnchor(unit, leader, leaderIndex, side, deployment, board);
-    const leaderPositions = playGridFormation(leader, anchor, side);
+    const leaderPositions = interactiveMovementState.gridFormation(leader, anchor, side);
     const leaderUnit = makeBattleUnit(leader, side, leaderPositions, unit.id, unit.tabletopUnitId);
-    resolveInternalModelOverlaps(leaderUnit, zone, board);
-    avoidDeploymentOverlap(leaderUnit, s, zone);
-    resolveInternalModelOverlaps(leaderUnit, zone, board);
+    interactiveMovementState.resolveInternalModelOverlaps(leaderUnit, zone, board);
+    interactiveMovementState.avoidDeploymentOverlap(leaderUnit, s, zone);
+    interactiveMovementState.resolveInternalModelOverlaps(leaderUnit, zone, board);
     s.units.push(leaderUnit);
     removeUnitFromUnplaced(s, side, leader);
   });
@@ -4105,14 +3935,14 @@ export function placePlayReinforcement(state: BattleState, side: Side, armyUnitI
   const profileKey = unitRosterId(profile);
   if (state.units.some(unit => unit.side === side && !unit.destroyed && unitRosterId(unit.profile) === profileKey)) return state;
 
-  const modelPositions = playGridFormation(profile, position, side);
+  const modelPositions = interactiveMovementState.gridFormation(profile, position, side);
   if (!reinforcementPlacementIsOutsideEnemyRange(state, side, profile, modelPositions)) return state;
 
   const s = clone(state);
   const board = boardFormatForState(s);
   const unit = makeBattleUnit(profile, side, modelPositions);
   markUnitArrivedFromReinforcements(unit);
-  resolveInternalModelOverlaps(unit, undefined, board);
+  interactiveMovementState.resolveInternalModelOverlaps(unit, undefined, board);
   s.units.push(unit);
 
   const movingIndices = new Set(unit.modelPositions.map((_, modelIndex) => modelIndex));
@@ -4154,14 +3984,14 @@ export function placePlayStrategicReserveUnit(state: BattleState, side: Side, un
   const board = boardFormatForState(s);
   const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
   if (battleRound(s) === 1 && unit.deepStrikeUntilPhase !== state.phase) return state;
-  unit.modelPositions = playGridFormation(unit.profile, position, side).slice(0, unit.remainingModels);
+  unit.modelPositions = interactiveMovementState.gridFormation(unit.profile, position, side).slice(0, unit.remainingModels);
   unit.modelRotations = unit.modelPositions.map(() => side === 0 ? 0 : 180);
   unit.facingDeg = side === 0 ? 0 : 180;
   unit.position = centroid(unit.modelPositions);
   unit.inStrategicReserves = false;
   unit.rapidIngressThisPhase = undefined;
   markUnitArrivedFromReinforcements(unit);
-  resolveInternalModelOverlaps(unit, undefined, board);
+  interactiveMovementState.resolveInternalModelOverlaps(unit, undefined, board);
 
   const movingIndices = new Set(unit.modelPositions.map((_, modelIndex) => modelIndex));
   if (
@@ -4832,9 +4662,9 @@ function moveSurgeComponentTowardTarget(
     + formationExtent(component.modelPositions, component.position, direction)
     + formationExtent(target.modelPositions, target.position, { x: -direction.x, y: -direction.y }) + 0.02;
   const reachable = findReachablePosition(component, target.position, maximumDistance, state.terrain, stopGap);
-  const candidate = avoidModelOverlap(component, reachable, state);
+  const candidate = interactiveMovementState.avoidModelOverlap(component, reachable, state);
   translateFormation(component, candidate.x - component.position.x, candidate.y - component.position.y);
-  resolveInternalModelOverlaps(component);
+  interactiveMovementState.resolveInternalModelOverlaps(component);
   component.position = centroid(component.modelPositions);
 }
 
@@ -5647,7 +5477,7 @@ const formationEditContext: interactiveMovementState.FormationEditContext = {
   isModelEditPhase: phase => PLAY_MODEL_EDIT_PHASES.includes(phase),
   movementStep,
   centroid,
-  gridFormation: (unit, center, side, rows, modelIndices) => playGridFormationByRows(unit.profile, center, side, rows, modelIndices),
+  gridFormation: (unit, center, side, rows, modelIndices) => interactiveMovementState.gridFormationByRows(unit.profile, center, side, rows, modelIndices),
   isAircraft,
   aircraftCanMakeNormalMove: state => aircraftCanMakeNormalMove(rulesEditionForRuleset(state.ruleset)),
   ensureMovementStartPositions: ensureModelMovementStartPositions,

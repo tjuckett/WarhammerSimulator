@@ -1,6 +1,141 @@
-import type { BattleState, BattleUnit, Position, Side } from '../types/battle';
+import type { BattleState, BattleUnit, BoardFormat, Position, Side } from '../types/battle';
 import type { UnitProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
+import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
+import { zoneFor, pointInDeploymentZone, type DeploymentZone } from './deployment';
+import { baseFootprintDistance, modelBaseRadiusInches } from './baseSizes';
+import { distance as dist } from './coherency';
+import { centroid, translateFormation } from './unitModelState';
+
+/** Shared model-formation geometry used by setup, movement, charge, and formation editing. */
+function modelRadius(unit: BattleUnit, modelIndex = 0): number {
+  return modelBaseRadiusInches(unit.profile, modelIndex);
+}
+
+export function profileModelRadii(profile: UnitProfile): number[] {
+  return Array.from({ length: profile.baseModelCount }, (_, modelIndex) => modelBaseRadiusInches(profile, modelIndex));
+}
+
+function gridModelSpacing(radii: number[]): number {
+  return Math.max(...radii.map(radius => radius * 2), 1) + 0.08;
+}
+
+export function gridFormation(profile: UnitProfile, anchor: Position, side: Side): Position[] {
+  const count = profile.baseModelCount;
+  if (count <= 1) return [anchor];
+  const spacing = gridModelSpacing(profileModelRadii(profile));
+  const columns = Math.ceil(Math.sqrt(count));
+  const rows = Math.ceil(count / columns);
+  const forward = side === 0 ? 1 : -1;
+  const startY = anchor.y - ((rows - 1) * spacing) / 2;
+  return Array.from({ length: count }, (_, modelIndex) => ({
+    x: anchor.x + forward * (modelIndex % columns) * spacing,
+    y: startY + Math.floor(modelIndex / columns) * spacing,
+  }));
+}
+
+export function gridFormationByRows(profile: UnitProfile, center: Position, side: Side, rows: number, modelIndices?: number[]): Position[] {
+  const indices = modelIndices?.length ? modelIndices : Array.from({ length: profile.baseModelCount }, (_, index) => index);
+  const count = indices.length;
+  if (count <= 1) return [center];
+  const rowCount = Math.max(1, Math.min(rows, count));
+  const columns = Math.ceil(count / rowCount);
+  const spacing = gridModelSpacing(indices.map(index => modelBaseRadiusInches(profile, index)));
+  const forward = side === 0 ? 1 : -1;
+  const startX = center.x - forward * ((columns - 1) * spacing) / 2;
+  const startY = center.y - ((rowCount - 1) * spacing) / 2;
+  return Array.from({ length: count }, (_, modelIndex) => ({
+    x: startX + forward * Math.floor(modelIndex / rowCount) * spacing,
+    y: startY + (modelIndex % rowCount) * spacing,
+  }));
+}
+
+export function clampModelToBoard(point: Position, radius: number, zone?: DeploymentZone, board: BoardFormat = boardFormatForId()): Position {
+  const minX = zone ? zone.x0 + radius : radius;
+  const maxX = zone ? zone.x1 - radius : board.width - radius;
+  return { x: Math.min(maxX, Math.max(minX, point.x)), y: Math.min(board.height - radius, Math.max(radius, point.y)) };
+}
+
+export function formationHasInternalOverlap(unit: BattleUnit): boolean {
+  return unit.modelPositions.some((position, index) => unit.modelPositions.some((other, otherIndex) =>
+    otherIndex > index && dist(position, other) < modelRadius(unit, index) + modelRadius(unit, otherIndex),
+  ));
+}
+
+export function resolveInternalModelOverlaps(unit: BattleUnit, zone?: DeploymentZone, board: BoardFormat = boardFormatForId()): void {
+  const positions = unit.modelPositions.map(position => ({ ...position }));
+  for (let pass = 0; pass < 16; pass++) {
+    let changed = false;
+    for (let index = 0; index < positions.length; index++) {
+      for (let otherIndex = index + 1; otherIndex < positions.length; otherIndex++) {
+        const radius = modelRadius(unit, index);
+        const otherRadius = modelRadius(unit, otherIndex);
+        const minimum = radius + otherRadius + 0.02;
+        const dx = positions[otherIndex].x - positions[index].x;
+        const dy = positions[otherIndex].y - positions[index].y;
+        const distance = Math.hypot(dx, dy);
+        if (distance >= minimum) continue;
+        const angle = distance > 0.001 ? Math.atan2(dy, dx) : ((index + otherIndex) % 8) * (Math.PI / 4);
+        const push = (minimum - Math.max(distance, 0.001)) / 2;
+        positions[index] = clampModelToBoard({ x: positions[index].x - Math.cos(angle) * push, y: positions[index].y - Math.sin(angle) * push }, radius, zone, board);
+        positions[otherIndex] = clampModelToBoard({ x: positions[otherIndex].x + Math.cos(angle) * push, y: positions[otherIndex].y + Math.sin(angle) * push }, otherRadius, zone, board);
+        changed = true;
+      }
+    }
+    if (!changed) break;
+  }
+  unit.modelPositions = positions;
+  unit.position = centroid(positions);
+}
+
+export function formationOverlapsUnits(unit: BattleUnit, newCenter: Position, state: BattleState): boolean {
+  const dx = newCenter.x - unit.position.x;
+  const dy = newCenter.y - unit.position.y;
+  return state.units.some(other => other.id !== unit.id && !other.destroyed && unit.modelPositions.some((model, modelIndex) =>
+    other.modelPositions.some((otherModel, otherModelIndex) =>
+      dist({ x: model.x + dx, y: model.y + dy }, otherModel) < modelRadius(unit, modelIndex) + modelRadius(other, otherModelIndex),
+    ),
+  ));
+}
+
+export function avoidModelOverlap(unit: BattleUnit, desired: Position, state: BattleState): Position {
+  if (!formationOverlapsUnits(unit, desired, state)) return desired;
+  let best = unit.position;
+  let low = 0;
+  let high = 1;
+  for (let index = 0; index < 18; index++) {
+    const ratio = (low + high) / 2;
+    const candidate = { x: unit.position.x + (desired.x - unit.position.x) * ratio, y: unit.position.y + (desired.y - unit.position.y) * ratio };
+    if (formationOverlapsUnits(unit, candidate, state)) high = ratio;
+    else { best = candidate; low = ratio; }
+  }
+  return best;
+}
+
+export function formationWithinBounds(unit: BattleUnit, center: Position, zone?: DeploymentZone, board: BoardFormat = boardFormatForId()): boolean {
+  const dx = center.x - unit.position.x;
+  const dy = center.y - unit.position.y;
+  return unit.modelPositions.every((model, modelIndex) => {
+    const radius = modelRadius(unit, modelIndex);
+    const position = { x: model.x + dx, y: model.y + dy };
+    return position.x >= radius && position.x <= board.width - radius && position.y >= radius && position.y <= board.height - radius
+      && (!zone || pointInDeploymentZone(position, zone, radius));
+  });
+}
+
+export function avoidDeploymentOverlap(unit: BattleUnit, state: BattleState, zone: DeploymentZone): void {
+  const board = boardFormatForState(state);
+  if (!formationHasInternalOverlap(unit) && !formationOverlapsUnits(unit, unit.position, state) && formationWithinBounds(unit, unit.position, zone, board)) return;
+  for (let radius = 0.5; radius <= 14; radius += 0.5) {
+    for (let angleIndex = 0; angleIndex < 24; angleIndex++) {
+      const angle = (angleIndex / 24) * Math.PI * 2;
+      const candidate = { x: unit.position.x + Math.cos(angle) * radius, y: unit.position.y + Math.sin(angle) * radius };
+      if (!formationWithinBounds(unit, candidate, zone, board) || formationOverlapsUnits(unit, candidate, state)) continue;
+      translateFormation(unit, candidate.x - unit.position.x, candidate.y - unit.position.y);
+      return;
+    }
+  }
+}
 
 export interface InteractiveMovementStateContext {
   modelRotation(unit: BattleUnit, modelIndex?: number): number;
