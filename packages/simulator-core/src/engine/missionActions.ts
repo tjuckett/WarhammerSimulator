@@ -154,3 +154,21 @@ export function missionObjectiveActionOptions(
     return objectiveFilter === 'any' || (objectiveFilter === 'central' ? role === 'central' : role !== undefined && role !== homeRole);
   });
 }
+
+export function completedOrInProgressObjectiveTargets(state: BattleState, side: Side, actionId: string): Set<number> {
+  return new Set([
+    ...(state.missionEvents?.completedActionsThisTurn ?? []).filter(event => event.side === side && event.actionId === actionId)
+      .flatMap(event => event.targetObjectiveIndex === undefined ? [] : [event.targetObjectiveIndex]),
+    ...state.units.filter(unit => unit.side === side && unit.performingAction?.id === actionId)
+      .flatMap(unit => unit.performingAction?.targetObjectiveIndex === undefined ? [] : [unit.performingAction.targetObjectiveIndex]),
+  ]);
+}
+
+export function completedOrInProgressTerrainTargets(state: BattleState, side: Side, actionId: string): Set<string> {
+  return new Set([
+    ...(state.missionEvents?.completedActionsThisTurn ?? []).filter(event => event.side === side && event.actionId === actionId)
+      .flatMap(event => event.targetTerrainId === undefined ? [] : [event.targetTerrainId]),
+    ...state.units.filter(unit => unit.side === side && unit.performingAction?.id === actionId)
+      .flatMap(unit => unit.performingAction?.targetTerrainId === undefined ? [] : [unit.performingAction.targetTerrainId]),
+  ]);
+}

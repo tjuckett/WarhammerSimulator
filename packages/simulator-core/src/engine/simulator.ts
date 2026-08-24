@@ -982,16 +982,7 @@ function hasActiveSecondaryMission(state: BattleState, side: Side, missionName: 
 }
 
 function completedOrInProgressObjectiveTargets(state: BattleState, side: Side, actionId: string): Set<number> {
-  return new Set([
-    ...(state.missionEvents?.completedActionsThisTurn ?? [])
-      .filter(event => event.side === side && event.actionId === actionId)
-      .flatMap(event => event.targetObjectiveIndex === undefined ? [] : [event.targetObjectiveIndex]),
-    ...state.units
-      .filter(unit => unit.side === side && unit.performingAction?.id === actionId)
-      .flatMap(unit => unit.performingAction?.targetObjectiveIndex === undefined
-        ? []
-        : [unit.performingAction.targetObjectiveIndex]),
-  ]);
+  return missionActions.completedOrInProgressObjectiveTargets(state, side, actionId);
 }
 
 export function cleanseObjectiveOptions(
@@ -1015,16 +1006,7 @@ function terrainIsExplicitlyOutsideTerritory(state: BattleState, side: Side, ter
 }
 
 function completedOrInProgressTerrainTargets(state: BattleState, side: Side, actionId: string): Set<string> {
-  return new Set([
-    ...(state.missionEvents?.completedActionsThisTurn ?? [])
-      .filter(event => event.side === side && event.actionId === actionId)
-      .flatMap(event => event.targetTerrainId === undefined ? [] : [event.targetTerrainId]),
-    ...state.units
-      .filter(unit => unit.side === side && unit.performingAction?.id === actionId)
-      .flatMap(unit => unit.performingAction?.targetTerrainId === undefined
-        ? []
-        : [unit.performingAction.targetTerrainId]),
-  ]);
+  return missionActions.completedOrInProgressTerrainTargets(state, side, actionId);
 }
 
 export function plunderTerrainOptions(
