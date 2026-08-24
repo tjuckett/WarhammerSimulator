@@ -240,6 +240,23 @@ export function runAutomaticShootingPhase(
   return logs;
 }
 
+export interface AutomaticChargePhaseContext {
+  enterBattlePhase(state: BattleState, node: { phase: Phase }, side: Side): void;
+  phaseLog(state: BattleState, side: Side, armyName: string, message: string): LogEntry;
+  runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[];
+  updateObjectiveControl(state: BattleState, rules: RulesEdition): void;
+}
+
+export function runAutomaticChargePhase(state: BattleState, side: Side, rules: RulesEdition, context: AutomaticChargePhaseContext): LogEntry[] {
+  const armyName = state.armies[side].name;
+  context.enterBattlePhase(state, { phase: 'charge' }, side);
+  const logs = [context.phaseLog(state, side, armyName, '\n─── Charge Phase ───')];
+  state.units.filter(unit => unit.side === side && !unit.destroyed && !unit.inCombat)
+    .forEach(unit => logs.push(...context.runCharge(unit, state, rules)));
+  context.updateObjectiveControl(state, rules);
+  return logs;
+}
+
 export function simulateNextUnit(state: BattleState, rules: RulesEdition, context: SimulationUnitStepContext): BattleState {
   const next = context.clone(state);
   if (next.winner !== null || next.phase === 'deployment' || next.phase === 'end') return next;

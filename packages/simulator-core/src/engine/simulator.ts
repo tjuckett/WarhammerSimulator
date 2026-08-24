@@ -4540,15 +4540,10 @@ function runSimulatedShootingPhase(state: BattleState, side: Side, rules: RulesE
   return battleSimulation.runAutomaticShootingPhase(state, side, rules, automaticShootingPhaseContext);
 }
 
+const automaticChargePhaseContext: battleSimulation.AutomaticChargePhaseContext = { enterBattlePhase, phaseLog, runCharge, updateObjectiveControl };
+
 function runSimulatedChargePhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
-  const armyName = state.armies[side].name;
-  const logs: LogEntry[] = [];
-  enterBattlePhase(state, { phase: 'charge' }, side);
-  logs.push(phaseLog(state, side, armyName, `\n─── Charge Phase ───`));
-  state.units.filter(unit => unit.side === side && !unit.destroyed && !unit.inCombat)
-    .forEach(unit => logs.push(...runCharge(unit, state, rules)));
-  updateObjectiveControl(state, rules);
-  return logs;
+  return battleSimulation.runAutomaticChargePhase(state, side, rules, automaticChargePhaseContext);
 }
 
 function runSimulatedFightPhase(
