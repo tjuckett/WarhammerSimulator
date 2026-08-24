@@ -2,7 +2,7 @@ import { MOVEMENT_STEP, type BattleSetup, type BattleState, type BattleUnit, typ
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile, type WeaponProfile } from '../types/army';
 import { rules40K10th, rulesEditionForRuleset, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
-import { deployArmy, distanceToDeploymentZone, fp, pointInDeploymentZone, zoneFor, unitRole, type DeploymentStrategy, type DeploymentZoneSource } from './deployment';
+import { deployArmy, distanceToDeploymentZone, everyModelWithinRange as everyModelWithinTransportRange, fp, isTransportProfile, nearestFriendlyTransportInRange as nearestTransportInRange, pointInDeploymentZone, transportCapacityRemaining as deploymentTransportCapacityRemaining, transportPassengers, zoneFor, unitRole, type DeploymentStrategy, type DeploymentZoneSource } from './deployment';
 import { selectUnitToDrop, reactivePosition, deployModelFormation } from './deploymentBrain';
 import { DEFAULT_OBJECTIVES } from './missions';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
@@ -492,52 +492,12 @@ function participatingWeaponModelCount(
   return participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, terrain, state).length;
 }
 
-function unitIsTransportProfile(profile: UnitProfile): boolean {
-  return Math.max(0, Math.floor(profile.transportCapacity ?? 0)) > 0
-    || profile.keywords.some(keyword => keyword.toLowerCase() === 'transport')
-    || profile.factionKeywords.some(keyword => keyword.toLowerCase() === 'transport');
-}
-
-function transportCapacity(unit: BattleUnit): number {
-  return Math.max(0, Math.floor(unit.profile.transportCapacity ?? 0));
-}
-
-function embarkedUnitsForTransport(state: BattleState, transportUnitId: string): BattleUnit[] {
-  return state.units.filter(unit => !unit.destroyed && unit.embarkedInUnitId === transportUnitId);
-}
-
-function transportUsedCapacity(state: BattleState, transportUnitId: string): number {
-  return embarkedUnitsForTransport(state, transportUnitId)
-    .reduce((total, unit) => total + unit.remainingModels, 0);
-}
-
 export function transportCapacityRemaining(state: BattleState, transportUnitId: string): number {
-  const transport = state.units.find(unit => unit.id === transportUnitId && !unit.destroyed);
-  if (!transport) return 0;
-  return Math.max(0, transportCapacity(transport) - transportUsedCapacity(state, transportUnitId));
+  return deploymentTransportCapacityRemaining(state, transportUnitId);
 }
 
 export function playTransportPassengers(state: BattleState, transportUnitId: string): BattleUnit[] {
-  return embarkedUnitsForTransport(state, transportUnitId);
-}
-
-function everyModelWithinRange(unit: BattleUnit, target: BattleUnit, range: number): boolean {
-  return unit.modelPositions.every(model =>
-    target.modelPositions.some(targetModel => dist(model, targetModel) <= range),
-  );
-}
-
-function nearestFriendlyTransportInRange(state: BattleState, unit: BattleUnit, range: number): BattleUnit | null {
-  const candidates = state.units.filter(candidate =>
-    candidate.side === unit.side
-    && candidate.id !== unit.id
-    && !candidate.destroyed
-    && !candidate.embarkedInUnitId
-    && unitIsTransportProfile(candidate.profile)
-    && transportCapacityRemaining(state, candidate.id) >= unit.remainingModels
-    && everyModelWithinRange(unit, candidate, range)
-  );
-  return nearest(unit, candidates);
+  return transportPassengers(state, transportUnitId);
 }
 
 // ─── Unit queries ─────────────────────────────────────────────────────────────
@@ -768,7 +728,7 @@ export function resolvePendingDeadlyDemises(state: BattleState): BattleState {
 
 
 const transportDestruction = createTransportDestruction({
-  markUnitDestroyed, centroid, unitIsTransportProfile, embarkedUnitsForTransport, unitRosterId,
+  markUnitDestroyed, centroid, unitIsTransportProfile: isTransportProfile, embarkedUnitsForTransport: transportPassengers, unitRosterId,
   unitAssignedToTransport, makeBattleUnit, disembarkPositions, recordDestroyedModelMissionEvents,
   recordDestroyedUnitMissionEvent, log, modelRotation, d6,
 });
@@ -3928,7 +3888,7 @@ export function playUnitCanEmbark(
   if (
     !unit
     || unit.embarkedInUnitId
-    || unitIsTransportProfile(unit.profile)
+    || isTransportProfile(unit.profile)
     || unit.disembarkedThisTurn
     || unit.movementComplete
     || unit.movementAction === 'fellBack'
@@ -3936,10 +3896,10 @@ export function playUnitCanEmbark(
   ) return false;
   const transport = transportUnitId
     ? state.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)
-    : nearestFriendlyTransportInRange(state, unit, TRANSPORT_ACCESS_RANGE);
-  if (!transport || !unitIsTransportProfile(transport.profile)) return false;
+    : nearestTransportInRange(state, unit, TRANSPORT_ACCESS_RANGE);
+  if (!transport || !isTransportProfile(transport.profile)) return false;
   if (transportCapacityRemaining(state, transport.id) < unit.remainingModels) return false;
-  return everyModelWithinRange(unit, transport, TRANSPORT_ACCESS_RANGE);
+  return everyModelWithinTransportRange(unit, transport, TRANSPORT_ACCESS_RANGE);
 }
 
 export function embarkPlayUnit(
@@ -3952,7 +3912,7 @@ export function embarkPlayUnit(
   const existingUnit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
   const existingTransport = transportUnitId
     ? state.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)
-    : nearestFriendlyTransportInRange(state, existingUnit, TRANSPORT_ACCESS_RANGE);
+    : nearestTransportInRange(state, existingUnit, TRANSPORT_ACCESS_RANGE);
   if (!existingTransport) return state;
 
   const s = clone(state);
@@ -4028,7 +3988,7 @@ export function playUnitCanDisembark(
   const currentMovementStep = movementStep(state);
   if (currentMovementStep !== 'moveUnits' && currentMovementStep !== 'reinforcements') return false;
   const transport = state.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!transport || !unitIsTransportProfile(transport.profile)
+  if (!transport || !isTransportProfile(transport.profile)
     || transport.movementAction === 'advanced'
     || transport.movementAction === 'fellBack') return false;
   const passenger = passengerUnitId
@@ -4431,7 +4391,7 @@ function movementAllowanceForPlayMove(unit: BattleUnit): number {
 
 function firingDeckPassengerProfiles(state: BattleState, transport: BattleUnit): UnitProfile[] {
   const staged = state.armies[transport.side].army.units.filter(profile => unitAssignedToTransport(profile, transport));
-  const live = embarkedUnitsForTransport(state, transport.id).map(unit => unit.profile);
+  const live = transportPassengers(state, transport.id).map(unit => unit.profile);
   const seen = new Set<string>();
   return [...live, ...staged].filter(profile => {
     const id = unitRosterId(profile);

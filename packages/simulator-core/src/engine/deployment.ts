@@ -1,6 +1,7 @@
 import type { UnitProfile } from '../types/army';
-import type { BoardFormat, Position, Terrain } from '../types/battle';
+import type { BattleState, BattleUnit, BoardFormat, Position, Terrain } from '../types/battle';
 import { unitMaxBaseRadiusInches } from './baseSizes';
+import { distance } from './coherency';
 import { DEPLOYMENT_ZONE_SETS } from '../data/deploymentZones';
 import type { DeploymentZoneSet, DeploymentZoneShape } from '../data/deploymentZoneTypes';
 import { DEFAULT_BOARD_FORMAT, boardFormatForId } from '../data/boardFormats';
@@ -14,6 +15,39 @@ import {
 } from './terrainGeometry';
 
 export type DeploymentStrategy = 'balanced' | 'refused-flank' | 'objective-push';
+
+/** Shared transport access rules used during deployment and the movement phase. */
+export function isTransportProfile(profile: UnitProfile): boolean {
+  return Math.max(0, Math.floor(profile.transportCapacity ?? 0)) > 0
+    || profile.keywords.some(keyword => keyword.toLowerCase() === 'transport')
+    || profile.factionKeywords.some(keyword => keyword.toLowerCase() === 'transport');
+}
+
+export function transportPassengers(state: BattleState, transportUnitId: string): BattleUnit[] {
+  return state.units.filter(unit => !unit.destroyed && unit.embarkedInUnitId === transportUnitId);
+}
+
+export function transportCapacityRemaining(state: BattleState, transportUnitId: string): number {
+  const transport = state.units.find(unit => unit.id === transportUnitId && !unit.destroyed);
+  if (!transport) return 0;
+  const used = transportPassengers(state, transportUnitId).reduce((total, unit) => total + unit.remainingModels, 0);
+  return Math.max(0, Math.max(0, Math.floor(transport.profile.transportCapacity ?? 0)) - used);
+}
+
+export function everyModelWithinRange(unit: BattleUnit, target: BattleUnit, range: number): boolean {
+  return unit.modelPositions.every(model => target.modelPositions.some(targetModel => distance(model, targetModel) <= range));
+}
+
+export function nearestFriendlyTransportInRange(state: BattleState, unit: BattleUnit, range: number): BattleUnit | null {
+  const candidates = state.units.filter(candidate =>
+    candidate.side === unit.side && candidate.id !== unit.id && !candidate.destroyed && !candidate.embarkedInUnitId
+    && isTransportProfile(candidate.profile) && transportCapacityRemaining(state, candidate.id) >= unit.remainingModels
+    && everyModelWithinRange(unit, candidate, range),
+  );
+  return candidates.reduce<BattleUnit | null>((nearest, candidate) =>
+    !nearest || distance(unit.position, candidate.position) < distance(unit.position, nearest.position) ? candidate : nearest,
+  null);
+}
 
 export const DEPLOYMENT_STRATEGIES: { id: DeploymentStrategy; name: string }[] = [
   { id: 'balanced',       name: 'Balanced' },
