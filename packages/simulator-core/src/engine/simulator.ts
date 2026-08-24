@@ -87,8 +87,6 @@ import {
   unitHasKeyword,
 } from './unitCombatModifiers';
 import { runBattleshockPhase } from './battleshockPhase';
-import * as fightEligibility from './fightEligibility';
-import * as fightMovement from './fightMovement';
 import * as deadlyDemise from './deadlyDemise';
 import * as damageApplication from './damageApplication';
 import type { CombatAttackResolutionOptions } from './combatTypes';
@@ -2097,18 +2095,18 @@ export function playMeleeFixedAttackCount(
   return Number(attacks) * aliveWeaponModelCount(unit, weaponIndex);
 }
 
-const fightEligibilityContext: fightEligibility.FightEligibilityContext = {
+const fightEligibilityContext: manualCombat.FightEligibilityContext = {
   enemies,
   canFightTarget: unitCanFightTarget,
   inEngagement,
 };
 
 const unitCanFight = (unit: BattleUnit, state: BattleState, rules: RulesEdition) =>
-  fightEligibility.unitCanFight(unit, state, rules, fightEligibilityContext);
+  manualCombat.unitCanFight(unit, state, rules, fightEligibilityContext);
 const unitWasEngagedAtFightStepStart = (state: BattleState, unit: BattleUnit) =>
-  fightEligibility.unitWasEngagedAtFightStepStart(state, unit);
+  manualCombat.unitWasEngagedAtFightStepStart(state, unit);
 const unitEligibleToFight = (unit: BattleUnit, state: BattleState, rules: RulesEdition) =>
-  fightEligibility.unitEligibleToFight(unit, state, rules, fightEligibilityContext);
+  manualCombat.unitEligibleToFight(unit, state, rules, fightEligibilityContext);
 
 const fightPhaseContext: manualCombat.FightPhaseContext = {
   activeUnits,
@@ -2197,7 +2195,7 @@ export function selectPlayOverrunFight(
   return s;
 }
 
-const fightMovementContext: fightMovement.FightMovementContext = {
+const fightMovementContext: manualCombat.FightMovementContext = {
   enemies,
   modelBaseEdgeHorizontalDistance,
   modelBaseRadius,
@@ -2232,11 +2230,11 @@ function applyFightPhaseMove(
   let movedModels = 0;
   for (let modelIndex = 0; modelIndex < unit.modelPositions.length; modelIndex++) {
     const before = unit.modelPositions[modelIndex];
-    const movedTowardEnemy = fightMovement.moveModelTowardEnemy(unit, modelIndex, s, FIGHT_PHASE_MOVE_RANGE, fightMovementContext);
+    const movedTowardEnemy = manualCombat.moveModelTowardEnemy(unit, modelIndex, s, FIGHT_PHASE_MOVE_RANGE, fightMovementContext);
     const movedTowardObjective = !movedTowardEnemy && kind === 'consolidate'
       ? (() => {
-          const objective = fightMovement.nearestObjectiveToModel(unit.modelPositions[modelIndex], s, fightMovementContext);
-          return objective ? fightMovement.moveModelTowardPoint(unit, modelIndex, objective, FIGHT_PHASE_MOVE_RANGE, fightMovementContext) : false;
+          const objective = manualCombat.nearestObjectiveToModel(unit.modelPositions[modelIndex], s, fightMovementContext);
+          return objective ? manualCombat.moveModelTowardPoint(unit, modelIndex, objective, FIGHT_PHASE_MOVE_RANGE, fightMovementContext) : false;
         })()
       : false;
     if (!movedTowardEnemy && !movedTowardObjective) continue;

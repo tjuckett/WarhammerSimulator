@@ -1,6 +1,6 @@
 // Manual attack resolution and its progressively narrowed simulator facade context.
 // @ts-nocheck
-import type { BattleState, BattleUnit, LogEntry, Side } from '../types/battle';
+import type { BattleState, BattleUnit, LogEntry, Position, Side } from '../types/battle';
 import type { WeaponProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import type { CombatAttackResolutionOptions } from './combatTypes';
@@ -410,6 +410,76 @@ export function unitCanChargeTarget(unit: BattleUnit, target: BattleUnit, hasKey
 export function unitCanFightTarget(unit: BattleUnit, target: BattleUnit, hasKeyword: (unit: BattleUnit, keyword: string) => boolean): boolean {
   if (hasKeyword(unit, 'aircraft')) return hasKeyword(target, 'fly');
   return !hasKeyword(target, 'aircraft') || hasKeyword(unit, 'fly');
+}
+
+export interface FightEligibilityContext {
+  enemies(state: BattleState, side: Side): BattleUnit[];
+  canFightTarget(unit: BattleUnit, target: BattleUnit): boolean;
+  inEngagement(unit: BattleUnit, targets: BattleUnit[], range: number): boolean;
+}
+
+export function unitCanFight(unit: BattleUnit, state: BattleState, rules: RulesEdition, context: FightEligibilityContext): boolean {
+  return !unit.destroyed && !unit.embarkedInUnitId && !unit.activated
+    && context.enemies(state, unit.side).some(enemy => context.canFightTarget(unit, enemy)
+      && context.inEngagement(unit, [enemy], rules.engagementRange()));
+}
+
+export function unitWasEngagedAtFightStepStart(state: BattleState, unit: BattleUnit): boolean {
+  return state.engagedUnitIdsAtFightStepStart?.includes(unit.id) ?? false;
+}
+
+export function unitEligibleToFight(unit: BattleUnit, state: BattleState, rules: RulesEdition, context: FightEligibilityContext): boolean {
+  if (unit.destroyed || unit.embarkedInUnitId || unit.activated) return false;
+  if (rules.metadata.edition !== '11e') return unitCanFight(unit, state, rules, context);
+  if (state.fightStepStarted === false) return false;
+  return unit.charged || unitWasEngagedAtFightStepStart(state, unit)
+    || context.enemies(state, unit.side).some(enemy => context.canFightTarget(unit, enemy)
+      && context.inEngagement(unit, [enemy], rules.engagementRange()));
+}
+
+export interface FightMovementContext {
+  enemies(state: BattleState, side: Side): BattleUnit[];
+  modelBaseEdgeHorizontalDistance(unit: BattleUnit, modelIndex: number, target: BattleUnit, targetModelIndex: number): number;
+  modelBaseRadius(unit: BattleUnit, modelIndex: number): number;
+  centroid(positions: Position[]): Position;
+  distance(a: Position, b: Position): number;
+}
+
+function closestEnemyModelFor(unit: BattleUnit, modelIndex: number, state: BattleState, context: FightMovementContext) {
+  let closest: { unit: BattleUnit; modelIndex: number; distance: number } | null = null;
+  for (const enemy of context.enemies(state, unit.side)) {
+    for (let enemyModelIndex = 0; enemyModelIndex < enemy.modelPositions.length; enemyModelIndex++) {
+      const distance = context.modelBaseEdgeHorizontalDistance(unit, modelIndex, enemy, enemyModelIndex);
+      if (!closest || distance < closest.distance) closest = { unit: enemy, modelIndex: enemyModelIndex, distance };
+    }
+  }
+  return closest;
+}
+
+export function nearestObjectiveToModel(model: Position, state: BattleState, context: FightMovementContext): Position | null {
+  if (!state.objectives.length) return null;
+  return state.objectives.reduce((best, objective) => context.distance(model, objective) < context.distance(model, best) ? objective : best);
+}
+
+export function moveModelTowardPoint(unit: BattleUnit, modelIndex: number, point: Position, maxDistance: number, context: FightMovementContext, stopGap = 0): boolean {
+  const model = unit.modelPositions[modelIndex];
+  if (!model) return false;
+  const dx = point.x - model.x;
+  const dy = point.y - model.y;
+  const distance = Math.hypot(dx, dy);
+  const moveDistance = Math.min(maxDistance, Math.max(0, distance - stopGap));
+  if (distance < 0.001 || moveDistance < 0.001) return false;
+  unit.modelPositions[modelIndex] = { ...model, x: model.x + (dx / distance) * moveDistance, y: model.y + (dy / distance) * moveDistance };
+  unit.position = context.centroid(unit.modelPositions);
+  return true;
+}
+
+export function moveModelTowardEnemy(unit: BattleUnit, modelIndex: number, state: BattleState, maxDistance: number, context: FightMovementContext): boolean {
+  const closest = closestEnemyModelFor(unit, modelIndex, state, context);
+  if (!closest) return false;
+  const targetModel = closest.unit.modelPositions[closest.modelIndex];
+  return moveModelTowardPoint(unit, modelIndex, targetModel, maxDistance, context,
+    context.modelBaseRadius(unit, modelIndex) + context.modelBaseRadius(closest.unit, closest.modelIndex) + 0.02);
 }
 
 export interface CombatWoundContext {
