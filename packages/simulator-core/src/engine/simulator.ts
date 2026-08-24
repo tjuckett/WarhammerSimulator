@@ -111,6 +111,7 @@ import * as turnAdvance from './turnAdvance';
 import * as firingDeck from './firingDeck';
 import * as movementPathing from './movementPathing';
 import * as aircraftMovement from './aircraftMovement';
+import * as movementLegality from './movementLegality';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -4718,119 +4719,31 @@ function unitHasWallOverlap(state: BattleState, unit: BattleUnit): boolean {
   return !playMoveHasNoWallOverlap(state, unit, new Set(unit.modelPositions.map((_, modelIndex) => modelIndex)));
 }
 
-function movedModelDeltasFromStart(unit: BattleUnit): Array<{ modelIndex: number; dx: number; dy: number }> {
-  const starts = unit.movementStartPositionsByModel;
-  if (!starts?.length) return [];
-  return unit.modelPositions.flatMap((position, modelIndex) => {
-    const start = starts[modelIndex];
-    if (!start) return [];
-    const dx = position.x - start.x;
-    const dy = position.y - start.y;
-    return Math.hypot(dx, dy) > 0.001 ? [{ modelIndex, dx, dy }] : [];
-  });
-}
+const movementLegalityContext: movementLegality.MovementLegalityContext = {
+  isAircraft,
+  aircraftCanMakeNormalMove,
+  rulesForState: state => rulesEditionForRuleset(state.ruleset),
+  movementDistanceRequirementMet: aircraftMovedMinimumDistance,
+  unitTakesToSkies: unitTakesToSkiesForState,
+  modelBaseRadius,
+  verticalDistance,
+  distance: dist,
+  distancePointToSegment,
+  terrainBlocksMovement: terrainMatBlocksMovementForUnit,
+  featureBlocksMovement: featureBlocksMovementForUnit,
+  lineIntersectsTerrain,
+  hasAnyKeyword,
+  unitHasModelOutsideBattlefield: (state, unit) => unitHasModelOutsideBattlefield(unit, state),
+  unitHasBaseOverlap,
+  unitHasWallOverlap,
+  inEngagement,
+  enemies,
+};
 
-function unitMoveCrossedEnemyModels(state: BattleState, unit: BattleUnit): boolean {
-  if (unit.movementAction !== 'normalMove' && unit.movementAction !== 'advanced') return false;
-  if (unitTakesToSkiesForState(state, unit)) return false;
-  const starts = unit.movementStartPositionsByModel;
-  if (!starts?.length) return false;
-  return movedModelDeltasFromStart(unit).some(({ modelIndex }) => {
-    const from = starts[modelIndex] ?? unit.modelPositions[modelIndex];
-    const to = unit.modelPositions[modelIndex];
-    const movingRadius = modelBaseRadius(unit, modelIndex);
-    return state.units.some(otherUnit => {
-      if (otherUnit.destroyed || otherUnit.embarkedInUnitId || otherUnit.side === unit.side) return false;
-      if (isAircraft(otherUnit)) return false;
-      return otherUnit.modelPositions.some((otherModel, otherModelIndex) => {
-        if (verticalDistance(from, otherModel) > 0.5) return false;
-        const clearance = movingRadius + modelBaseRadius(otherUnit, otherModelIndex);
-        if (dist(otherModel, from) < clearance || dist(otherModel, to) < clearance) return false;
-        return distancePointToSegment(otherModel, from, to) < clearance;
-      });
-    });
-  });
-}
-
-function unitMoveCrossedBlockingTerrain(state: BattleState, unit: BattleUnit): boolean {
-  if (unitTakesToSkiesForState(state, unit)) return false;
-  const starts = unit.movementStartPositionsByModel;
-  if (!starts?.length) return false;
-  return movedModelDeltasFromStart(unit).some(({ modelIndex }) => {
-    const from = starts[modelIndex] ?? unit.modelPositions[modelIndex];
-    const to = unit.modelPositions[modelIndex];
-    const path = unit.movementPathByModel?.[modelIndex];
-    const segments = path && path.length > 1
-      ? path.slice(1).map((point, index) => ({ from: path[index], to: point }))
-      : [{ from, to }];
-    return segments.some(segment => state.terrain.some(terrain =>
-      (terrainMatBlocksMovementForUnit(terrain, unit) && lineIntersectsTerrain(segment.from, segment.to, terrain))
-      || terrain.features.some(feature =>
-        featureBlocksMovementForUnit(feature, terrain, unit) && lineIntersectsTerrain(segment.from, segment.to, feature),
-      ),
-    ));
-  });
-}
-
-function monsterVehicleMovedOverFriendlyMonsterVehicle(state: BattleState, unit: BattleUnit): boolean {
-  if (!hasAnyKeyword(unit, ['monster', 'vehicle']) || unitTakesToSkiesForState(state, unit)) return false;
-  const starts = unit.movementStartPositionsByModel;
-  if (!starts?.length) return false;
-  return movedModelDeltasFromStart(unit).some(({ modelIndex }) => {
-    const from = starts[modelIndex] ?? unit.modelPositions[modelIndex];
-    const to = unit.modelPositions[modelIndex];
-    const movingRadius = modelBaseRadius(unit, modelIndex);
-    return state.units.some(otherUnit => {
-      if (
-        otherUnit.id === unit.id
-        || otherUnit.side !== unit.side
-        || otherUnit.destroyed
-        || otherUnit.embarkedInUnitId
-        || !hasAnyKeyword(otherUnit, ['monster', 'vehicle'])
-      ) return false;
-      return otherUnit.modelPositions.some((otherModel, otherModelIndex) => {
-        if (verticalDistance(from, otherModel) > 0.5) return false;
-        const clearance = movingRadius + modelBaseRadius(otherUnit, otherModelIndex);
-        if (dist(otherModel, from) < clearance || dist(otherModel, to) < clearance) return false;
-        return distancePointToSegment(otherModel, from, to) < clearance;
-      });
-    });
-  });
-}
-
-function playMovementUnitLegalityIssues(state: BattleState, unit: BattleUnit): string[] {
-  if (unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves) return [];
-  const issues: string[] = [];
-  if (isAircraft(unit)
-    && aircraftCanMakeNormalMove(rulesEditionForRuleset(state.ruleset))
-    && !aircraftMovedMinimumDistance(unit)) {
-    issues.push(`${unit.profile.name} is an Aircraft and must make a Normal move of at least 20".`);
-  }
-  if (unitHasModelOutsideBattlefield(unit, state)) issues.push(`${unit.profile.name} has a model across the battlefield edge.`);
-  if (unitHasBaseOverlap(state, unit)) issues.push(`${unit.profile.name} cannot end its move on top of another model.`);
-  if (unitHasWallOverlap(state, unit)) issues.push(`${unit.profile.name} cannot end its move inside blocking terrain.`);
-  if (
-    (unit.movementAction === 'normalMove' || unit.movementAction === 'advanced')
-    && inEngagement(unit, enemies(state, unit.side), rulesEditionForRuleset(state.ruleset).engagementRange())
-  ) {
-    issues.push(`${unit.profile.name} cannot end a Normal or Advance move within Engagement Range.`);
-  }
-  if (unitMoveCrossedEnemyModels(state, unit)) issues.push(`${unit.profile.name} moved across an enemy model.`);
-  if (unitMoveCrossedBlockingTerrain(state, unit)) issues.push(`${unit.profile.name} moved through blocking terrain.`);
-  if (monsterVehicleMovedOverFriendlyMonsterVehicle(state, unit)) {
-    issues.push(`${unit.profile.name} is a Monster or Vehicle and must move around friendly Monsters and Vehicles.`);
-  }
-  return issues;
-}
-
-function playMovementLegalityIssues(state: BattleState, side: Side): string[] {
-  if (state.phase !== 'movement') return [];
-  return Array.from(new Set(
-    state.units
-      .filter(unit => unit.side === side && !unit.destroyed && !unit.embarkedInUnitId)
-      .flatMap(unit => playMovementUnitLegalityIssues(state, unit)),
-  ));
-}
+const playMovementUnitLegalityIssues = (state: BattleState, unit: BattleUnit): string[] =>
+  movementLegality.unitIssues(state, unit, movementLegalityContext);
+const playMovementLegalityIssues = (state: BattleState, side: Side): string[] =>
+  movementLegality.issues(state, side, movementLegalityContext);
 
 function collisionAdjustedPlayMove(
   state: BattleState,
