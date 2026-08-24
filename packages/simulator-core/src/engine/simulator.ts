@@ -2256,46 +2256,22 @@ export function markRemainingStationaryUnits(state: BattleState, side: Side = st
 }
 
 function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
-  const side = s.activeArmy;
-  const armyName = s.armies[side].name;
-  startMissionEventsForNewTurn(s, rules);
-  s.fightStepStarted = undefined;
-  s.engagedUnitIdsAtFightStepStart = undefined;
-  s.lastFightSelectionSide = undefined;
-  s.activeAttachedFightUnitId = undefined;
-  s.firingDeckLockedUnitIds = undefined;
-  s.preBattleAbilitiesResolved = true;
-  if (s.activeArmyAbilities) s.activeArmyAbilities[side] = s.activeArmyAbilities[side].filter(id => id !== 'waaagh');
-  s.units.forEach(clearFiringDeckWeapons);
-  s.units.forEach(unit => {
-    unit.overrunFightSelected = undefined;
-    unit.overrunPiledIn = undefined;
-    unit.scoutMoveStarted = undefined;
-    unit.scoutMoveAllowance = undefined;
-    unit.superHeavyMobile = undefined;
-    unit.firingDeckTurn = undefined;
+  return battleSimulation.startCommandPhase(s, rules, {
+    activeUnits,
+    startMissionEventsForNewTurn,
+    clearFiringDeckWeapons,
+    resetUnitForActiveTurn,
+    enterBattlePhase,
+    attachedUnitTargetRepresentative,
+    isBelowHalfStrength,
+    selectPunishmentUnits: autoSelectPunishmentCondemnedUnits,
+    runAutomaticUnitAbilities,
+    gainCommandPoints: gainCommandPhaseCommandPoints,
+    phaseLog,
+    log,
+    battleRound,
+    runBattleshock: runBattleshockPhase,
   });
-  s.units.filter(u => u.side === side && !u.destroyed).forEach(u => { u.actionStartedThisTurn = undefined; });
-  activeUnits(s, side).forEach(u => {
-    resetUnitForActiveTurn(u);
-  });
-  enterBattlePhase(s, { phase: 'command' }, side);
-  s.battleshockEligibleUnitIds = s.units
-    .filter(unit => unit.side === side
-      && !unit.destroyed
-      && attachedUnitTargetRepresentative(s, unit)?.id === unit.id
-      && (unit.battleshocked || isBelowHalfStrength(s, unit)))
-    .map(unit => unit.id);
-  autoSelectPunishmentCondemnedUnits(s, side, rules);
-  runAutomaticCommandUnitAbilities(s, side, rules);
-  const nextCommandPoints = gainCommandPhaseCommandPoints(s);
-  const logs = [
-    phaseLog(s, side, armyName, `\n=== BATTLE ROUND ${battleRound(s)} - ${armyName.toUpperCase()} - ${rules.name.toUpperCase()} ===`),
-    phaseLog(s, side, armyName, `\n--- Command Phase ---`),
-    log(s, side, armyName, `Both players gain 1CP (${nextCommandPoints[0]}CP / ${nextCommandPoints[1]}CP).`, 'info'),
-  ];
-  logs.push(...runBattleshockPhase(s, side));
-  return logs;
 }
 
 function advanceTurnInPlace(s: BattleState): void {

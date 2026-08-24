@@ -174,6 +174,64 @@ export interface AutomaticCommandPhaseContext {
   runAutomaticUnitAbilities(state: BattleState, side: Side, timing: 'end-of-phase', rules: RulesEdition): void;
 }
 
+export interface CommandPhaseStartContext {
+  activeUnits(state: BattleState, side: Side): BattleUnit[];
+  startMissionEventsForNewTurn(state: BattleState, rules: RulesEdition): void;
+  clearFiringDeckWeapons(unit: BattleUnit): void;
+  resetUnitForActiveTurn(unit: BattleUnit): void;
+  enterBattlePhase(state: BattleState, node: { phase: Phase }, side: Side): void;
+  attachedUnitTargetRepresentative(state: BattleState, unit: BattleUnit): BattleUnit | null | undefined;
+  isBelowHalfStrength(state: BattleState, unit: BattleUnit): boolean;
+  selectPunishmentUnits(state: BattleState, side: Side, rules: RulesEdition): void;
+  runAutomaticUnitAbilities(state: BattleState, side: Side, timing: 'end-of-phase', rules: RulesEdition): void;
+  gainCommandPoints(state: BattleState): [number, number];
+  phaseLog(state: BattleState, side: Side, armyName: string, message: string): LogEntry;
+  log(state: BattleState, side: Side, armyName: string, message: string, kind: 'info'): LogEntry;
+  battleRound(state: BattleState): number;
+  runBattleshock(state: BattleState, side: Side): LogEntry[];
+}
+
+export function startCommandPhase(state: BattleState, rules: RulesEdition, context: CommandPhaseStartContext): LogEntry[] {
+  const side = state.activeArmy;
+  const armyName = state.armies[side].name;
+  context.startMissionEventsForNewTurn(state, rules);
+  state.fightStepStarted = undefined;
+  state.engagedUnitIdsAtFightStepStart = undefined;
+  state.lastFightSelectionSide = undefined;
+  state.activeAttachedFightUnitId = undefined;
+  state.firingDeckLockedUnitIds = undefined;
+  state.preBattleAbilitiesResolved = true;
+  if (state.activeArmyAbilities) state.activeArmyAbilities[side] = state.activeArmyAbilities[side].filter(id => id !== 'waaagh');
+  state.units.forEach(context.clearFiringDeckWeapons);
+  state.units.forEach(unit => {
+    unit.overrunFightSelected = undefined;
+    unit.overrunPiledIn = undefined;
+    unit.scoutMoveStarted = undefined;
+    unit.scoutMoveAllowance = undefined;
+    unit.superHeavyMobile = undefined;
+    unit.firingDeckTurn = undefined;
+  });
+  state.units.filter(unit => unit.side === side && !unit.destroyed).forEach(unit => { unit.actionStartedThisTurn = undefined; });
+  context.activeUnits(state, side).forEach(context.resetUnitForActiveTurn);
+  context.enterBattlePhase(state, { phase: 'command' }, side);
+  state.battleshockEligibleUnitIds = state.units
+    .filter(unit => unit.side === side
+      && !unit.destroyed
+      && context.attachedUnitTargetRepresentative(state, unit)?.id === unit.id
+      && (unit.battleshocked || context.isBelowHalfStrength(state, unit)))
+    .map(unit => unit.id);
+  context.selectPunishmentUnits(state, side, rules);
+  context.runAutomaticUnitAbilities(state, side, 'end-of-phase', rules);
+  const commandPoints = context.gainCommandPoints(state);
+  const logs = [
+    context.phaseLog(state, side, armyName, `\n=== BATTLE ROUND ${context.battleRound(state)} - ${armyName.toUpperCase()} - ${rules.name.toUpperCase()} ===`),
+    context.phaseLog(state, side, armyName, '\n--- Command Phase ---'),
+    context.log(state, side, armyName, `Both players gain 1CP (${commandPoints[0]}CP / ${commandPoints[1]}CP).`, 'info'),
+  ];
+  logs.push(...context.runBattleshock(state, side));
+  return logs;
+}
+
 export function runAutomaticCommandPhase(
   state: BattleState,
   side: Side,
