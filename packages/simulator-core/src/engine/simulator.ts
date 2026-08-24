@@ -115,6 +115,7 @@ import * as movementLegality from './movementLegality';
 import * as scoutMoves from './scoutMoves';
 import * as takeToSkies from './takeToSkies';
 import * as surgeMoves from './surgeMoves';
+import * as movementGroups from './movementGroups';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -4999,35 +5000,14 @@ function playMovementGroupId(unit: BattleUnit): string {
   return unit.tabletopUnitId ?? unit.id;
 }
 
-function lockOtherMovedPlayUnits(state: BattleState, currentUnit: BattleUnit): void {
-  if (state.phase !== 'movement') return;
-  const currentGroupId = playMovementGroupId(currentUnit);
-  for (const unit of state.units) {
-    if (
-      unit.side !== currentUnit.side
-      || unit.destroyed
-      || playMovementGroupId(unit) === currentGroupId
-      || unit.movementComplete
-    ) continue;
-    if (unit.movementAction === 'normalMove' || unit.movementAction === 'advanced') {
-      unit.movementComplete = true;
-      removeOpponentOperationMarkersAfterMove(state, unit);
-    }
-  }
-}
-
-function markPlayMovementGroupComplete(state: BattleState, currentUnit: BattleUnit): void {
-  const currentGroupId = playMovementGroupId(currentUnit);
-  for (const unit of state.units) {
-    if (unit.side === currentUnit.side && !unit.destroyed && playMovementGroupId(unit) === currentGroupId) {
-      unit.movementComplete = true;
-      unit.lastMovePhase = state.phase;
-      unit.lastMoveTurn = state.turn;
-      unit.takingToSkies = undefined;
-      removeOpponentOperationMarkersAfterMove(state, unit);
-    }
-  }
-}
+const movementGroupContext: movementGroups.MovementGroupContext = {
+  groupId: playMovementGroupId,
+  removeOpponentMarkersAfterMove: removeOpponentOperationMarkersAfterMove,
+};
+const lockOtherMovedPlayUnits = (state: BattleState, currentUnit: BattleUnit): void =>
+  movementGroups.lockOtherMovedUnits(state, currentUnit, movementGroupContext);
+const markPlayMovementGroupComplete = (state: BattleState, currentUnit: BattleUnit): void =>
+  movementGroups.markGroupComplete(state, currentUnit, movementGroupContext);
 
 function budgetAdjustedPlayMove(unit: BattleUnit, modelIndices: number[], dx: number, dy: number): { dx: number; dy: number } {
   const distance = Math.hypot(dx, dy);
