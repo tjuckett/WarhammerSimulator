@@ -1,6 +1,6 @@
 // Manual attack resolution and its progressively narrowed simulator facade context.
 // @ts-nocheck
-import type { BattleState, BattleUnit, LogEntry, Position, Side } from '../types/battle';
+import type { BattleState, BattleUnit, LogEntry, PendingFightOnDeath, Position, Side } from '../types/battle';
 import type { WeaponProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import type { CombatAttackResolutionOptions } from './combatTypes';
@@ -831,6 +831,75 @@ export function fightPlayUnitWeapon(
   context.finishAttachedFightComponent(next, fightingUnit, rules);
   next.log = [...next.log, ...logs];
   if (next.pendingDeadlyDemises?.length) next.log = [...next.log, ...context.resolvePendingDeadlyDemisesInPlace(next)];
+  return next;
+}
+
+export interface FightOnDeathContext extends FightPhaseContext {
+  clone(state: BattleState): BattleState;
+  aliveWeaponModelCount(unit: BattleUnit, weaponIndex: number): number;
+  resolveCombatAttacks(...args: any[]): LogEntry[];
+  resolvePendingDeadlyDemisesInPlace(state: BattleState): LogEntry[];
+  log(state: BattleState, side: Side, source: string, message: string, kind: string): LogEntry;
+}
+
+function currentFightOnDeathWindow(state: BattleState, side: Side): PendingFightOnDeath | undefined {
+  return state.pendingFightOnDeath?.[0]?.side === side ? state.pendingFightOnDeath[0] : undefined;
+}
+
+export function fightOnDeathTargetIds(state: BattleState, side: Side, rules: RulesEdition, context: FightOnDeathContext): string[] {
+  const pending = currentFightOnDeathWindow(state, side);
+  if (!pending || !['shooting', 'fight'].includes(state.phase)) return [];
+  return state.units.filter(target => target.side !== side && !target.destroyed && !target.embarkedInUnitId
+    && context.canFightTarget(pending.unit, target)
+    && context.inEngagement(pending.unit, [target], rules.engagementRange())).map(target => target.id);
+}
+
+export function fightOnDeathWeaponOptions(
+  state: BattleState,
+  side: Side,
+  targetUnitId: string,
+  rules: RulesEdition,
+  context: FightOnDeathContext,
+): Array<{ weaponIndex: number; name: string }> {
+  const pending = currentFightOnDeathWindow(state, side);
+  if (!pending || !fightOnDeathTargetIds(state, side, rules, context).includes(targetUnitId)) return [];
+  return pending.unit.profile.weapons.map((weapon, weaponIndex) => ({ weapon, weaponIndex }))
+    .filter(option => option.weapon.isMelee && context.aliveWeaponModelCount(pending.unit, option.weaponIndex) > 0)
+    .map(option => ({ weaponIndex: option.weaponIndex, name: option.weapon.name }));
+}
+
+export function fightOnDeathUnitWeapon(
+  state: BattleState,
+  side: Side,
+  targetUnitId: string,
+  weaponIndex: number,
+  rules: RulesEdition,
+  context: FightOnDeathContext,
+): BattleState {
+  const pending = currentFightOnDeathWindow(state, side);
+  const target = state.units.find(unit => unit.id === targetUnitId && unit.side !== side && !unit.destroyed && !unit.embarkedInUnitId);
+  if (!pending || !target || !fightOnDeathWeaponOptions(state, side, targetUnitId, rules, context).some(option => option.weaponIndex === weaponIndex)) return state;
+  const next = context.clone(state);
+  const selected = next.pendingFightOnDeath?.shift();
+  const fightTarget = next.units.find(unit => unit.id === targetUnitId && unit.side !== side && !unit.destroyed && !unit.embarkedInUnitId);
+  if (!selected || !fightTarget) return state;
+  const fighter = selected.unit;
+  next.units = next.units.filter(unit => unit.id !== fighter.id);
+  next.units.push(fighter);
+  const weapon = fighter.profile.weapons[weaponIndex];
+  const logs = [context.log(next, side, fighter.profile.name, `${fighter.profile.name} makes a Fight On Death attack against ${fightTarget.profile.name}:`, 'fight')];
+  logs.push(...context.resolveCombatAttacks(fighter, fightTarget, weapon, weaponIndex, rules, next, false, 0, '', { deferCasualties: true }));
+  next.units = next.units.filter(unit => unit !== fighter);
+  next.log = [...next.log, ...logs, ...context.resolvePendingDeadlyDemisesInPlace(next)];
+  return next;
+}
+
+export function declineFightOnDeath(state: BattleState, side: Side, context: FightOnDeathContext): BattleState {
+  const pending = currentFightOnDeathWindow(state, side);
+  if (!pending) return state;
+  const next = context.clone(state);
+  next.pendingFightOnDeath?.shift();
+  next.log = [...next.log, context.log(next, side, pending.unit.profile.name, `${pending.unit.profile.name} declines its Fight On Death attack.`, 'fight')];
   return next;
 }
 

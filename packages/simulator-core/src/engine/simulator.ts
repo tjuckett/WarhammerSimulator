@@ -2160,22 +2160,12 @@ function queueFightOnDeathWindow(
   ];
 }
 
-function currentFightOnDeathWindow(state: BattleState, side: Side): PendingFightOnDeath | undefined {
-  return state.pendingFightOnDeath?.[0]?.side === side ? state.pendingFightOnDeath[0] : undefined;
-}
-
 export function fightOnDeathTargetIds(
   state: BattleState,
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): string[] {
-  const pending = currentFightOnDeathWindow(state, side);
-  if (!pending || !['shooting', 'fight'].includes(state.phase)) return [];
-  return state.units
-    .filter(target => target.side !== side && !target.destroyed && !target.embarkedInUnitId
-      && unitCanFightTarget(pending.unit, target)
-      && inEngagement(pending.unit, [target], rules.engagementRange()))
-    .map(target => target.id);
+  return manualCombat.fightOnDeathTargetIds(state, side, rules, manualFightResolutionContext);
 }
 
 export function fightOnDeathWeaponOptions(
@@ -2184,12 +2174,7 @@ export function fightOnDeathWeaponOptions(
   targetUnitId: string,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): Array<{ weaponIndex: number; name: string }> {
-  const pending = currentFightOnDeathWindow(state, side);
-  if (!pending || !fightOnDeathTargetIds(state, side, rules).includes(targetUnitId)) return [];
-  return pending.unit.profile.weapons
-    .map((weapon, weaponIndex) => ({ weapon, weaponIndex }))
-    .filter(option => option.weapon.isMelee && aliveWeaponModelCount(pending.unit, option.weaponIndex) > 0)
-    .map(option => ({ weaponIndex: option.weaponIndex, name: option.weapon.name }));
+  return manualCombat.fightOnDeathWeaponOptions(state, side, targetUnitId, rules, manualFightResolutionContext);
 }
 
 export function fightOnDeathUnitWeapon(
@@ -2199,23 +2184,7 @@ export function fightOnDeathUnitWeapon(
   weaponIndex: number,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
-  const pending = currentFightOnDeathWindow(state, side);
-  const target = state.units.find(unit => unit.id === targetUnitId && unit.side !== side && !unit.destroyed && !unit.embarkedInUnitId);
-  if (!pending || !target || !fightOnDeathWeaponOptions(state, side, targetUnitId, rules).some(option => option.weaponIndex === weaponIndex)) return state;
-
-  const s = clone(state);
-  const selected = s.pendingFightOnDeath?.shift();
-  const fightTarget = s.units.find(unit => unit.id === targetUnitId && unit.side !== side && !unit.destroyed && !unit.embarkedInUnitId);
-  if (!selected || !fightTarget) return state;
-  const fighter = selected.unit;
-  s.units = s.units.filter(unit => unit.id !== fighter.id);
-  s.units.push(fighter);
-  const weapon = fighter.profile.weapons[weaponIndex];
-  const logs = [log(s, side, fighter.profile.name, `${fighter.profile.name} makes a Fight On Death attack against ${fightTarget.profile.name}:`, 'fight')];
-  logs.push(...resolveCombatAttacks(fighter, fightTarget, weapon, weaponIndex, rules, s, false, 0, '', { deferCasualties: true }));
-  s.units = s.units.filter(unit => unit !== fighter);
-  s.log = [...s.log, ...logs, ...resolvePendingDeadlyDemisesInPlace(s)];
-  return s;
+  return manualCombat.fightOnDeathUnitWeapon(state, side, targetUnitId, weaponIndex, rules, manualFightResolutionContext);
 }
 
 export function declineFightOnDeath(
@@ -2223,12 +2192,7 @@ export function declineFightOnDeath(
   side: Side,
   _rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
-  const pending = currentFightOnDeathWindow(state, side);
-  if (!pending) return state;
-  const s = clone(state);
-  s.pendingFightOnDeath?.shift();
-  s.log = [...s.log, log(s, side, pending.unit.profile.name, `${pending.unit.profile.name} declines its Fight On Death attack.`, 'fight')];
-  return s;
+  return manualCombat.declineFightOnDeath(state, side, manualFightResolutionContext);
 }
 
 function runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
