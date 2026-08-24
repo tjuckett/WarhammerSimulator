@@ -489,6 +489,26 @@ export function createDeploymentState(
   return state;
 }
 
+export interface DeploymentStartContext {
+  clone(state: BattleState): BattleState;
+  deploymentIssues(state: BattleState): string[];
+  enterSetup(state: BattleState, side: 0 | 1): void;
+  log(state: BattleState, side: 0 | 1, title: string, message: string, type: string): BattleState['log'][number];
+}
+
+export function beginPlayBattle(state: BattleState, context: DeploymentStartContext): BattleState {
+  const next = context.clone(state);
+  if (next.phase !== 'deployment') return next;
+  const issues = context.deploymentIssues(next);
+  if (issues.length) {
+    next.log = [...next.log, context.log(next, 0, '', `Deployment is not legal: ${issues.join(' ')}`, 'info')];
+    return next;
+  }
+  context.enterSetup(next, next.activeArmy);
+  next.log = [...next.log, context.log(next, 0, '', 'DEPLOYMENT COMPLETE - BATTLE BEGINS', 'phase')];
+  return next;
+}
+
 export const DEPLOYMENT_STRATEGIES: { id: DeploymentStrategy; name: string }[] = [
   { id: 'balanced',       name: 'Balanced' },
   { id: 'refused-flank',  name: 'Refused Flank' },

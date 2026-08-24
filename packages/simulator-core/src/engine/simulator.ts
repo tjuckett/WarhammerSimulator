@@ -4448,17 +4448,15 @@ export function playDeploymentIssues(state: BattleState): string[] {
   return Array.from(new Set(issues));
 }
 
+const deploymentStartContext: deploymentActions.DeploymentStartContext = {
+  clone,
+  deploymentIssues: playDeploymentIssues,
+  enterSetup: (state, side) => enterBattlePhase(state, { phase: 'setup' }, side),
+  log,
+};
+
 export function beginPlayBattle(state: BattleState): BattleState {
-  const s = clone(state);
-  if (s.phase !== 'deployment') return s;
-  const issues = playDeploymentIssues(s);
-  if (issues.length) {
-    s.log = [...s.log, log(s, 0, '', `Deployment is not legal: ${issues.join(' ')}`, 'info')];
-    return s;
-  }
-  enterBattlePhase(s, { phase: 'setup' }, s.activeArmy);
-  s.log = [...s.log, log(s, 0, '', 'DEPLOYMENT COMPLETE - BATTLE BEGINS', 'phase')];
-  return s;
+  return deploymentActions.beginPlayBattle(state, deploymentStartContext);
 }
 
 type SimulationPhaseAdvanceMode = 'full-phase' | 'unit-step';
