@@ -192,6 +192,8 @@ export interface TargetedMissionActionContext extends SecondaryMissionActionOpti
   rulesForState(state: BattleState): RulesEdition;
   log(state: BattleState, side: Side, title: string, message: string, type: string): BattleState['log'][number];
   clone(state: BattleState): BattleState;
+  battleRound(state: BattleState): number;
+  hasUnresolvedFightWork(state: BattleState, side: Side, rules: RulesEdition): boolean;
 }
 
 export interface SensorSweepOption {
@@ -201,6 +203,39 @@ export interface SensorSweepOption {
 
 export function objectiveIsCentral(state: BattleState, objectiveIndex: number, context: TargetedMissionActionContext): boolean {
   return !!state.objectives[objectiveIndex] && context.objectiveRoleForIndex(state, objectiveIndex) === 'central';
+}
+
+export function consecrateObjectiveOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: TargetedMissionActionContext, resolvingEndOfTurn = false): number[] {
+  const missionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+  if (rules.metadata.edition !== '11e' || missionName !== 'Consecrate' || state.activeArmy !== side || state.phase !== 'fight') return [];
+  if (!resolvingEndOfTurn && context.hasUnresolvedFightWork(state, side, rules)) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
+  if (!unit) return [];
+  const destroyedAnEnemy = (state.missionEvents?.destroyedUnitsThisTurn ?? []).some(event =>
+    event.destroyedBySide === side && event.side !== side && event.destroyedByUnitId === unitId);
+  if (!destroyedAnEnemy) return [];
+  const alreadyUsed = (state.missionState?.operationMarkers ?? []).some(marker => marker.side === side
+    && marker.sourceActionId === 'consecrate' && marker.placedByUnitId === unitId
+    && marker.battleRound === context.battleRound(state) && marker.turn === state.turn);
+  if (alreadyUsed) return [];
+  const marked = new Set((state.missionState?.operationMarkers ?? []).filter(marker => marker.side === side && marker.sourceActionId === 'consecrate')
+    .flatMap(marker => marker.objectiveIndex === undefined ? [] : [marker.objectiveIndex]));
+  const ownHomeRole = side === 0 ? 'home-0' : 'home-1';
+  return context.objectiveIndexesWithinRange(state, unit, rules).filter(index => !marked.has(index)
+    && context.objectiveRoleForIndex(state, index) !== undefined && context.objectiveRoleForIndex(state, index) !== ownHomeRole);
+}
+
+export function consecrateObjective(state: BattleState, unitId: string, side: Side, objectiveIndex: number, rules: RulesEdition, context: TargetedMissionActionContext, resolvingEndOfTurn = false): BattleState {
+  if (!consecrateObjectiveOptions(state, unitId, side, rules, context, resolvingEndOfTurn).includes(objectiveIndex)) return state;
+  const next = context.clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId)!;
+  next.missionState ??= {};
+  next.missionState.operationMarkers = [...(next.missionState.operationMarkers ?? []), {
+    id: `operation-marker-${side}-consecrate-${objectiveIndex}`, side, sourceActionId: 'consecrate', placedByUnitId: unitId,
+    objectiveIndex, position: { ...next.objectives[objectiveIndex] }, battleRound: context.battleRound(next), turn: next.turn,
+  }];
+  next.log = [...next.log, context.log(next, side, unit.profile.name, `${unit.profile.name} consecrates objective ${objectiveIndex + 1}.`, 'info')];
+  return next;
 }
 
 export function sensorSweepOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: TargetedMissionActionContext): SensorSweepOption[] {

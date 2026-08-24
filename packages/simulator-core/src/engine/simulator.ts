@@ -869,40 +869,7 @@ export function consecrateObjectiveOptions(
   rules: RulesEdition,
   resolvingEndOfTurn = false,
 ): number[] {
-  const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
-  if (rules.metadata.edition !== '11e'
-    || selectedMissionName !== 'Consecrate'
-    || state.activeArmy !== side
-    || state.phase !== 'fight') return [];
-  const unresolvedFightMove = activeUnits(state, side).some(candidate =>
-    playUnitCanPileIn(state, candidate.id, side, rules)
-    || playUnitCanConsolidate(state, candidate.id, side)
-  );
-  if (!resolvingEndOfTurn
-    && (playFightActivationUnitIds(state, side, rules).length > 0 || unresolvedFightMove)) return [];
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
-  if (!unit) return [];
-  const becameConsecrationUnit = (state.missionEvents?.destroyedUnitsThisTurn ?? []).some(event =>
-    event.destroyedBySide === side && event.side !== side && event.destroyedByUnitId === unitId
-  );
-  if (!becameConsecrationUnit) return [];
-  const alreadyUsed = (state.missionState?.operationMarkers ?? []).some(marker =>
-    marker.side === side
-    && marker.sourceActionId === 'consecrate'
-    && marker.placedByUnitId === unitId
-    && marker.battleRound === battleRound(state)
-    && marker.turn === state.turn
-  );
-  if (alreadyUsed) return [];
-  const markedObjectives = new Set((state.missionState?.operationMarkers ?? [])
-    .filter(marker => marker.side === side && marker.sourceActionId === 'consecrate')
-    .flatMap(marker => marker.objectiveIndex === undefined ? [] : [marker.objectiveIndex]));
-  const ownHomeRole = side === 0 ? 'home-0' : 'home-1';
-  return attachedObjectiveIndexesWithinRange(state, unit, rules).filter(objectiveIndex =>
-    !markedObjectives.has(objectiveIndex)
-    && objectiveRoleForIndex(state, objectiveIndex) !== undefined
-    && objectiveRoleForIndex(state, objectiveIndex) !== ownHomeRole
-  );
+  return missionActions.consecrateObjectiveOptions(state, unitId, side, rules, targetedMissionActionContext, resolvingEndOfTurn);
 }
 
 export function consecrateObjective(
@@ -913,32 +880,7 @@ export function consecrateObjective(
   rules: RulesEdition,
   resolvingEndOfTurn = false,
 ): BattleState {
-  if (!consecrateObjectiveOptions(state, unitId, side, rules, resolvingEndOfTurn).includes(objectiveIndex)) return state;
-  const next = clone(state);
-  const unit = next.units.find(candidate => candidate.id === unitId)!;
-  const position = next.objectives[objectiveIndex];
-  next.missionState ??= {};
-  next.missionState.operationMarkers = [
-    ...(next.missionState.operationMarkers ?? []),
-    {
-      id: `operation-marker-${side}-consecrate-${objectiveIndex}`,
-      side,
-      sourceActionId: 'consecrate',
-      placedByUnitId: unitId,
-      objectiveIndex,
-      position: { ...position },
-      battleRound: battleRound(next),
-      turn: next.turn,
-    },
-  ];
-  next.log = [...next.log, log(
-    next,
-    side,
-    unit.profile.name,
-    `${unit.profile.name} consecrates objective ${objectiveIndex + 1}.`,
-    'info',
-  )];
-  return next;
+  return missionActions.consecrateObjective(state, unitId, side, objectiveIndex, rules, targetedMissionActionContext, resolvingEndOfTurn);
 }
 
 export function maintainControlObjectiveOptions(
@@ -1004,6 +946,10 @@ const targetedMissionActionContext: missionActions.TargetedMissionActionContext 
   rulesForState: state => rulesEditionForRuleset(state.ruleset),
   log,
   clone,
+  battleRound,
+  hasUnresolvedFightWork: (state, side, rules) => activeUnits(state, side).some(candidate =>
+    playUnitCanPileIn(state, candidate.id, side, rules) || playUnitCanConsolidate(state, candidate.id, side))
+    || playFightActivationUnitIds(state, side, rules).length > 0,
 };
 
 function objectiveIsCentral(state: BattleState, objectiveIndex: number): boolean {
