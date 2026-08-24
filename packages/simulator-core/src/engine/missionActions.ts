@@ -1,5 +1,16 @@
 import type { BattleState, BattleUnit, Side } from '../types/battle';
 import type { RulesEdition } from './rulesEngine';
+import { secondaryMissionStateFor } from './secondaryMissions';
+import { terrainTerritoryRelation } from './missionGeometry';
+
+export function hasActiveSecondaryMission(state: BattleState, side: Side, missionName: string): boolean {
+  return secondaryMissionStateFor(state, side)?.activeCards.some(card => card.missionName === missionName) ?? false;
+}
+
+export function terrainIsExplicitlyOutsideTerritory(state: BattleState, side: Side, terrainId: string): boolean {
+  const terrain = state.terrain.find(candidate => candidate.id === terrainId);
+  return !!terrain && ['enemy', 'no-mans-land'].includes(terrainTerritoryRelation(terrain, side));
+}
 
 export interface MissionActionEligibilityContext {
   attachedUnitComponents(state: BattleState, unit: BattleUnit): BattleUnit[];

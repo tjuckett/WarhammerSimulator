@@ -23,8 +23,7 @@ import { runAutomaticCommandUnitAbilities, runAutomaticUnitAbilities } from './u
 import { objectiveControlValue, resolveDesperateEscapeTests } from './battleshock';
 import { circleIntersectsTerrain, findUnblockedLOSRay, hasAnyHiddenModelPair as hasAnyHiddenModelPairGeometry, hasAnyModelLOSConsideringHidden as hasAnyModelLOSConsideringHiddenGeometry, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, modelIsHiddenFrom as modelIsHiddenFromGeometry, pointInTerrain, targetHasTerrainCoverFrom as targetHasTerrainCoverFromGeometry, terrainCorners } from './terrainGeometry';
 import { COHERENCY_VERTICAL_RANGE, distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, verticalDistance, type CoherencyModel } from './coherency';
-import { secondaryMissionStateFor } from './secondaryMissions';
-import { objectiveRoleForIndex, terrainTerritoryRelation, terrainWithinMissionTerritory } from './missionGeometry';
+import { objectiveRoleForIndex, terrainWithinMissionTerritory } from './missionGeometry';
 import { scoreSecondaryMissionsAtEndOfTurn, secondaryMissionScoringLogs } from './secondaryMissionScoring';
 import {
   attachedFollowersFor,
@@ -725,7 +724,6 @@ export function playUnitCanStartAction(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): boolean {
-  if (state.activeArmy !== side || state.phase === 'deployment' || state.phase === 'setup' || state.phase === 'end') return false;
   return missionActions.playUnitCanStartAction(state, unitId, side, rules, missionActionEligibilityContext);
 }
 
@@ -814,9 +812,8 @@ export function sabotageObjectiveOptions(
   return missionObjectiveActionOptions(state, unitId, side, rules, 'Sabotage', 'sabotage');
 }
 
-function hasActiveSecondaryMission(state: BattleState, side: Side, missionName: string): boolean {
-  return secondaryMissionStateFor(state, side)?.activeCards.some(card => card.missionName === missionName) ?? false;
-}
+const hasActiveSecondaryMission = missionActions.hasActiveSecondaryMission;
+const terrainIsExplicitlyOutsideTerritory = missionActions.terrainIsExplicitlyOutsideTerritory;
 
 const secondaryMissionActionOptionsContext: missionActions.SecondaryMissionActionOptionsContext = {
   hasActiveSecondaryMission,
@@ -870,11 +867,6 @@ export function cleanseObjectiveOptions(
   rules: RulesEdition,
 ): number[] {
   return missionActions.cleanseObjectiveOptions(state, unitId, side, rules, secondaryMissionActionOptionsContext);
-}
-
-function terrainIsExplicitlyOutsideTerritory(state: BattleState, side: Side, terrainId: string): boolean {
-  const terrain = state.terrain.find(candidate => candidate.id === terrainId);
-  return !!terrain && ['enemy', 'no-mans-land'].includes(terrainTerritoryRelation(terrain, side));
 }
 
 function completedOrInProgressTerrainTargets(state: BattleState, side: Side, actionId: string): Set<string> {
