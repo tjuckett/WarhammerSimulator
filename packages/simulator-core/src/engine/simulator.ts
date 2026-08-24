@@ -90,6 +90,8 @@ import * as chargeRules from './chargeRules';
 import * as fightEligibility from './fightEligibility';
 import * as fightPhase from './fightPhase';
 import * as fightMovement from './fightMovement';
+import * as deadlyDemise from './deadlyDemise';
+import * as combatWounds from './combatWounds';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -936,48 +938,13 @@ function unitCanFightTarget(unit: BattleUnit, target: BattleUnit): boolean {
 
 // ─── Combat resolution ────────────────────────────────────────────────────────
 
-function antiKeywordThreshold(weapon: WeaponProfile, defender: BattleUnit, state: BattleState): number | null {
-  for (const keyword of weapon.keywords) {
-    const match = keyword.match(/^anti[-\s]+(.+?)\s+([2-6])\+$/i);
-    if (!match) continue;
-    const targetKeyword = match[1].trim().toLowerCase();
-    if (attachedUnitKeywordSet(state, defender).has(targetKeyword)) return Number.parseInt(match[2], 10);
-  }
-  return null;
-}
-
-function processWoundsAgainstDefender(
-  rolls: number[],
-  woundTarget: number,
-  weapon: WeaponProfile,
-  defender: BattleUnit,
-  rules: RulesEdition,
-  state: BattleState,
-): { wounds: number; rolls: number[]; mortalsFromCrits: number; devastatingWounds: number; logNote: string } {
-  const antiThreshold = antiKeywordThreshold(weapon, defender, state);
-  if (antiThreshold === null) return rules.processWounds(rolls, woundTarget, weapon);
-
-  let wounds = 0;
-  let devastatingWounds = 0;
-  const notes: string[] = [];
-  const hasDevastatingWounds = weaponHasKeyword(weapon, 'Devastating Wounds');
-
-  for (const roll of rolls) {
-    if (roll === 1) continue;
-    const critical = roll === 6 || roll >= antiThreshold;
-    if (critical) {
-      if (hasDevastatingWounds) devastatingWounds++;
-      else wounds++;
-    } else if (roll >= woundTarget) {
-      wounds++;
-    }
-  }
-
-  notes.push(`Anti ${antiThreshold}+ critical wounds`);
-  if (hasDevastatingWounds && devastatingWounds > 0) notes.push('critical wound->no save (Devastating Wounds)');
-
-  return { wounds, rolls, mortalsFromCrits: 0, devastatingWounds, logNote: notes.join('; ') };
-}
+const combatWoundContext: combatWounds.CombatWoundContext = {
+  weaponHasKeyword,
+  attachedUnitKeywordSet,
+};
+const processWoundsAgainstDefender = (
+  rolls: number[], woundTarget: number, weapon: WeaponProfile, defender: BattleUnit, rules: RulesEdition, state: BattleState,
+) => combatWounds.processWoundsAgainstDefender(rolls, woundTarget, weapon, defender, rules, state, combatWoundContext);
 
 /**
  * Shared dice-to-damage resolution used by every weapon attack path. Phase
@@ -1567,84 +1534,20 @@ export function applyDamage(
   return logs;
 }
 
-function deadlyDemiseExpression(unit: BattleUnit): string | null {
-  for (const rule of [...unit.profile.abilities, ...(unit.profile.rules ?? [])]) {
-    const match = `${rule.name} ${rule.description}`.match(/Deadly\s+Demise\s+((?:\d+)?D\d+(?:[+-]\d+)?|\d+)/i);
-    if (match) return match[1].toUpperCase();
-  }
-  return null;
-}
-
-function queueDeadlyDemiseForModels(
-  state: BattleState,
-  unit: BattleUnit,
-  modelIndices: number[],
-  destroyedBySide: Side,
-): void {
-  const mortalWounds = deadlyDemiseExpression(unit);
-  if (!mortalWounds) return;
-  const queued = state.pendingDeadlyDemises ?? [];
-  for (const modelIndex of modelIndices) {
-    const position = unit.modelPositions[modelIndex];
-    if (!position) continue;
-    queued.push({
-      id: `deadly-demise:${unit.id}:${unit.modelRosterIndexes?.[modelIndex] ?? modelIndex}:${queued.length}`,
-      sourceUnitId: unit.id,
-      sourceUnitName: unit.profile.name,
-      sourceSide: unit.side,
-      destroyedBySide,
-      position: { ...position },
-      footprint: { ...modelFootprint(unit, modelIndex) },
-      mortalWounds,
-    });
-  }
-  state.pendingDeadlyDemises = queued;
-}
-
-function unitWithinDeadlyDemiseRange(
-  state: BattleState,
-  unit: BattleUnit,
-  pending: NonNullable<BattleState['pendingDeadlyDemises']>[number],
-): boolean {
-  return attachedUnitComponents(state, unit).some(component => component.modelPositions.some((position, modelIndex) => {
-    const horizontal = baseFootprintDistance(pending.position, pending.footprint, position, modelFootprint(component, modelIndex));
-    return Math.hypot(horizontal, (pending.position.z ?? 0) - (position.z ?? 0)) <= 6;
-  }));
-}
-
-function resolvePendingDeadlyDemisesInPlace(state: BattleState): LogEntry[] {
-  const logs: LogEntry[] = [];
-  while (state.pendingDeadlyDemises?.length) {
-    const pending = state.pendingDeadlyDemises.shift()!;
-    const triggerRoll = d6();
-    logs.push(log(state, pending.sourceSide, pending.sourceUnitName,
-      `${pending.sourceUnitName} Deadly Demise roll: ${triggerRoll}${triggerRoll === 6 ? ' - deadly demise!' : ' - no effect'}.`,
-      'roll',
-    ));
-    if (triggerRoll !== 6) continue;
-    const handled = new Set<string>();
-    const targets = state.units.filter(unit => {
-      if (unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves || !unit.modelPositions.length) return false;
-      const id = attachedUnitId(unit);
-      if (handled.has(id)) return false;
-      handled.add(id);
-      return unitWithinDeadlyDemiseRange(state, unit, pending);
-    });
-    for (const target of targets) {
-      const damage = rollExpression(pending.mortalWounds).total;
-      logs.push(log(state, pending.sourceSide, pending.sourceUnitName,
-        `${target.profile.name} suffers ${damage} mortal wound${damage === 1 ? '' : 's'} from Deadly Demise.`,
-        'damage',
-      ));
-      logs.push(...applyDamage(target, damage, state, pending.destroyedBySide, {
-        source: `Deadly Demise (${pending.sourceUnitName})`,
-        sourceUnitId: pending.sourceUnitId,
-      }));
-    }
-  }
-  state.pendingDeadlyDemises = undefined;
-  return logs;
-}
+const deadlyDemiseContext: deadlyDemise.DeadlyDemiseContext = {
+  d6,
+  rollExpression,
+  log,
+  modelFootprint,
+  baseFootprintDistance,
+  attachedComponents: attachedUnitComponents,
+  attachedUnitId,
+  applyDamage,
+};
+const queueDeadlyDemiseForModels = (state: BattleState, unit: BattleUnit, modelIndices: number[], destroyedBySide: Side) =>
+  deadlyDemise.queueDeadlyDemiseForModels(state, unit, modelIndices, destroyedBySide, deadlyDemiseContext);
+const resolvePendingDeadlyDemisesInPlace = (state: BattleState) =>
+  deadlyDemise.resolvePendingDeadlyDemisesInPlace(state, deadlyDemiseContext);
 
 export function resolvePendingDeadlyDemises(state: BattleState): BattleState {
   if (!state.pendingDeadlyDemises?.length) return state;
