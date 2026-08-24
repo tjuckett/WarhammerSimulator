@@ -2299,19 +2299,7 @@ function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
 }
 
 function advanceTurnInPlace(s: BattleState): void {
-  if (s.winner !== null) return;
-  completeMissionEventsForCurrentTurn(s);
-  const transition = nextTurnTransition(s);
-  s.activeArmy = transition.nextSide;
-  if (transition.nextBattleRound !== battleRound(s)) setBattleRound(s, transition.nextBattleRound);
-  if (transition.nextBattleRound > battleRoundLimit(s)) {
-    if (s.scores[0] > s.scores[1]) s.winner = 0;
-    else if (s.scores[1] > s.scores[0]) s.winner = 1;
-    else s.winner = 'draw';
-    enterBattlePhase(s, { phase: 'end' }, s.activeArmy);
-    return;
-  }
-  enterBattlePhase(s, { phase: 'setup' }, s.activeArmy);
+  turnAdvance.advanceTurnInPlace(s, turnAdvanceContext);
 }
 
 function clone<T>(v: T): T { return JSON.parse(JSON.stringify(v)); }

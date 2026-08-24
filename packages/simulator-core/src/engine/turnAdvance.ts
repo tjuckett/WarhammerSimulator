@@ -25,3 +25,19 @@ export function advanceTurn(state: BattleState, context: TurnAdvanceContext): Ba
   }
   return next;
 }
+
+export function advanceTurnInPlace(state: BattleState, context: TurnAdvanceContext): void {
+  if (state.winner !== null) return;
+  completeMissionEventsForCurrentTurn(state);
+  const transition = nextTurnTransition(state);
+  state.activeArmy = transition.nextSide;
+  if (transition.nextBattleRound !== battleRound(state)) setBattleRound(state, transition.nextBattleRound);
+  if (transition.nextBattleRound > battleRoundLimit(state)) {
+    if (state.scores[0] > state.scores[1]) state.winner = 0;
+    else if (state.scores[1] > state.scores[0]) state.winner = 1;
+    else state.winner = 'draw';
+    context.enterBattlePhase(state, { phase: 'end' }, state.activeArmy);
+    return;
+  }
+  context.enterBattlePhase(state, { phase: 'setup' }, state.activeArmy);
+}
