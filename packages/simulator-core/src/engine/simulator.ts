@@ -110,6 +110,7 @@ import {
 import * as turnAdvance from './turnAdvance';
 import * as firingDeck from './firingDeck';
 import * as movementPathing from './movementPathing';
+import * as aircraftMovement from './aircraftMovement';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -4691,83 +4692,26 @@ function unitHasModelOutsideBattlefield(unit: BattleUnit, state: BattleState): b
   );
 }
 
-function aircraftForwardVector(unit: BattleUnit, modelIndex = 0): Position {
-  const rotation = unit.movementStartRotationsByModel?.[modelIndex] ?? modelRotation(unit, modelIndex);
-  const radians = (rotation * Math.PI) / 180;
-  return { x: Math.cos(radians), y: Math.sin(radians) };
-}
+const aircraftMovementContext: aircraftMovement.AircraftMovementContext = {
+  isAircraft,
+  modelRotation,
+  movementDistanceFromStart: (unit, modelIndex) => modelMovementDistanceFromStart(unit, modelIndex),
+  cancelUnitAction,
+  recordUnitLeftBattlefield: recordUnitLeftBattlefieldMissionEvent,
+  createLog: (state, side, actor, message) => log(state, side, actor, message, 'move'),
+};
 
-function aircraftMoveIsStraightForward(unit: BattleUnit, modelIndices: number[], dx: number, dy: number): boolean {
-  const distance = Math.hypot(dx, dy);
-  if (distance < 0.001) return false;
-  return modelIndices.every(modelIndex => {
-    const forward = aircraftForwardVector(unit, modelIndex);
-    const parallel = dx * forward.x + dy * forward.y;
-    const perpendicular = Math.abs(dx * forward.y - dy * forward.x);
-    return parallel > 0 && perpendicular <= 0.01;
-  });
-}
-
-function aircraftMinimumMoveDistance(unit: BattleUnit): number {
-  return 20;
-}
-
-function aircraftMovedMinimumDistance(unit: BattleUnit): boolean {
-  if (!isAircraft(unit) || unit.inStrategicReserves) return true;
-  if (unit.movementAction !== 'normalMove') return false;
-  return unit.modelPositions.every((_, modelIndex) =>
-    modelMovementDistanceFromStart(unit, modelIndex) >= aircraftMinimumMoveDistance(unit) - 0.001,
-  );
-}
-
-function normalizedAngleDelta(a: number, b: number): number {
-  return ((((a - b) % 360) + 540) % 360) - 180;
-}
-
-function aircraftPivotWithinLimit(unit: BattleUnit, modelIndices: number[]): boolean {
-  return modelIndices.every(modelIndex => {
-    const start = unit.movementStartRotationsByModel?.[modelIndex] ?? modelRotation(unit, modelIndex);
-    return Math.abs(normalizedAngleDelta(modelRotation(unit, modelIndex), start)) <= 90.001;
-  });
-}
-
-function moveAircraftToStrategicReserves(state: BattleState, unit: BattleUnit): void {
-  cancelUnitAction(state, unit, 'it left the battlefield');
-  recordUnitLeftBattlefieldMissionEvent(state, unit.id);
-  unit.inStrategicReserves = true;
-  unit.modelPositions = [];
-  unit.modelRotations = [];
-  unit.position = { x: 0, y: 0 };
-  unit.movementAction = 'normalMove';
-  unit.movementAllowanceRemaining = 0;
-  unit.movementAllowanceRemainingByModel = [];
-  unit.movementAllowanceTotalByModel = [];
-  unit.movementStartPositionsByModel = [];
-  unit.movementStartRotationsByModel = [];
-  unit.movementComplete = true;
-  unit.inCombat = false;
-  state.log = [...state.log, log(
-    state,
-    unit.side,
-    unit.profile.name,
-    `${unit.profile.name} leaves the battlefield and is placed into Strategic Reserves.`,
-    'move',
-  )];
-}
+const aircraftMoveIsStraightForward = (unit: BattleUnit, modelIndices: number[], dx: number, dy: number) =>
+  aircraftMovement.moveIsStraightForward(unit, modelIndices, dx, dy, aircraftMovementContext);
+const aircraftMovedMinimumDistance = (unit: BattleUnit) =>
+  aircraftMovement.movedMinimumDistance(unit, aircraftMovementContext);
+const aircraftPivotWithinLimit = (unit: BattleUnit, modelIndices: number[]) =>
+  aircraftMovement.pivotWithinLimit(unit, modelIndices, aircraftMovementContext);
+const moveAircraftToStrategicReserves = (state: BattleState, unit: BattleUnit) =>
+  aircraftMovement.moveToStrategicReserves(state, unit, aircraftMovementContext);
 
 export function returnOpponentAircraftToStrategicReserves(state: BattleState, activeSide: Side, rules: RulesEdition): void {
-  if (rules.metadata.edition !== '11e') return;
-  const aircraft = state.units.filter(unit =>
-    unit.side !== activeSide && isAircraft(unit) && !unit.destroyed && !unit.inStrategicReserves,
-  );
-  for (const unit of aircraft) {
-    const group = state.units.filter(candidate =>
-      candidate.id === unit.id || candidate.attachedToUnitId === unit.id,
-    );
-    group.forEach(component => {
-      if (!component.destroyed && !component.inStrategicReserves) moveAircraftToStrategicReserves(state, component);
-    });
-  }
+  aircraftMovement.returnOpponentAircraftToStrategicReserves(state, activeSide, rules, aircraftMovementContext);
 }
 
 function unitHasWallOverlap(state: BattleState, unit: BattleUnit): boolean {
