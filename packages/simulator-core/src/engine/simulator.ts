@@ -350,40 +350,6 @@ function participatingWeaponModelIndexes(
     : aliveWeaponModelIndexes(attacker, weaponIndex);
 }
 
-function linePassesThroughModel(from: Position, to: Position, model: Position, radius: number): boolean {
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const lengthSquared = dx * dx + dy * dy;
-  if (lengthSquared < 0.0001) return false;
-  const projection = ((model.x - from.x) * dx + (model.y - from.y) * dy) / lengthSquared;
-  if (projection <= 0.02 || projection >= 0.98) return false;
-  const closestX = from.x + projection * dx;
-  const closestY = from.y + projection * dy;
-  return Math.hypot(model.x - closestX, model.y - closestY) <= radius;
-}
-
-function targetIsScreenedBySmoke(state: BattleState, attacker: BattleUnit, target: BattleUnit): boolean {
-  const smokeUnits = state.units.filter(unit =>
-    unit.side === target.side
-    && unit.id !== target.id
-    && !unit.destroyed
-    && !unit.embarkedInUnitId
-    && unitHasActiveStratagem(state, unit, 'smokescreen', 'shooting'),
-  );
-  return attacker.modelPositions.some(from =>
-    target.modelPositions.some(to =>
-      smokeUnits.some(smokeUnit => smokeUnit.modelPositions.some((smokeModel, smokeModelIndex) =>
-        linePassesThroughModel(
-          from,
-          to,
-          smokeModel,
-          modelBaseRadius(smokeUnit, smokeModelIndex),
-        )
-      ))
-    )
-  );
-}
-
 function meleeWeaponSelection(
   unit: BattleUnit,
   options: Array<{ weapon: WeaponProfile; weaponIndex: number }>,
@@ -721,7 +687,10 @@ const shootingResolutionContext: manualCombat.ShootingResolutionContext = {
     modelRadius: modelBaseRadius,
     hasKeyword: unitHasKeyword,
   }),
-  targetIsScreenedBySmoke,
+  targetIsScreenedBySmoke: (state, unit, target) => manualCombat.targetIsScreenedBySmoke(state, unit, target, {
+    ...shootingTargetRulesContext,
+    unitHasActiveStratagem,
+  }),
   hasAnyModelLOSConsideringHidden,
   attachedUnitHasRule,
   targetWithinFriendlyEngagement,

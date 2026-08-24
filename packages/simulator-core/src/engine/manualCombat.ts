@@ -423,6 +423,31 @@ export interface ShootingResolutionContext extends ShootingSelectionRulesContext
   log(state: BattleState, side: Side, source: string, message: string, kind: string): LogEntry;
 }
 
+function linePassesThroughModel(from: Position, to: Position, model: Position, radius: number): boolean {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const lengthSquared = dx * dx + dy * dy;
+  if (lengthSquared < 0.0001) return false;
+  const projection = ((model.x - from.x) * dx + (model.y - from.y) * dy) / lengthSquared;
+  if (projection <= 0.02 || projection >= 0.98) return false;
+  const closestX = from.x + projection * dx;
+  const closestY = from.y + projection * dy;
+  return Math.hypot(model.x - closestX, model.y - closestY) <= radius;
+}
+
+export function targetIsScreenedBySmoke(state: BattleState, attacker: BattleUnit, target: BattleUnit, context: ShootingSelectionRulesContext): boolean {
+  const smokeUnits = state.units.filter(unit =>
+    unit.side === target.side
+    && unit.id !== target.id
+    && !unit.destroyed
+    && !unit.embarkedInUnitId
+    && context.unitHasActiveStratagem(state, unit, 'smokescreen', 'shooting'),
+  );
+  return attacker.modelPositions.some(from => target.modelPositions.some(to =>
+    smokeUnits.some(smokeUnit => smokeUnit.modelPositions.some((smokeModel, modelIndex) =>
+      linePassesThroughModel(from, to, smokeModel, context.modelBaseRadius(smokeUnit, modelIndex))))));
+}
+
 export function resolveShootingWeaponIntoTarget(
   state: BattleState,
   unit: BattleUnit,
