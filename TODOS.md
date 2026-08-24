@@ -466,14 +466,15 @@ engine modules.
 
 ### Remaining
 
-- [ ] **First — unify play undo/redo on the core timeline.** Make the typed
+- [x] **First — unify play undo/redo on the core timeline.** Make the typed
   `GameAction` timeline the sole history authority for both `BattleState` and
   UI selection state; replace the parallel React undo stack except for temporary
-  drag/rotation gesture coalescing.
+  drag/rotation gesture coalescing. Persistent play undo/redo now uses the core
+  timeline, including serialized UI selection state; React retains only those
+  temporary gesture buffers.
 - [x] **Interactive model-edit workflow:** horizontal/vertical movement, undo,
   rotation, coherency model removal, Advance/Fall Back, and movement completion
-  now live in `interactiveMovement.ts`. Timeline unification remains a separate
-  prerequisite below.
+  now live in `interactiveMovement.ts`.
 - [x] Extract deployment and transport-placement workflows from battle creation, initial placement, embark, and disembark APIs.
 - [x] Extract remaining mission-action start/completion orchestration around the existing mission option module.
 - [x] Extract simulation phase/unit orchestration into a dedicated facade module.
