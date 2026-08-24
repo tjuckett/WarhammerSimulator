@@ -94,7 +94,7 @@ import type { CombatAttackResolutionOptions } from './combatTypes';
 import * as combatAttackResolution from './manualCombat';
 import { createTransportDestruction } from './transportDestruction';
 import * as movementSimulation from './movementSimulation';
-import * as missionActionOptions from './missionActionOptions';
+import * as missionActions from './missionActions';
 import * as interactiveMovementState from './interactiveMovement';
 import { battleCoherencyIssues, coherencyEditionForState, coherencyModelLists } from './battleCoherency';
 import {
@@ -1179,7 +1179,7 @@ export function playUnitCanStartAction(
   return !!unit && unitIsEligibleToStartAction(unit, state, rules);
 }
 
-const missionActionOptionsContext: missionActionOptions.MissionActionOptionsContext = {
+const missionActionOptionsContext: missionActions.MissionActionsContext = {
   canStartAction: playUnitCanStartAction,
   objectiveIndexesWithinRange: attachedObjectiveIndexesWithinRange,
   objectiveRoleForIndex,
@@ -1187,7 +1187,7 @@ const missionActionOptionsContext: missionActionOptions.MissionActionOptionsCont
 const missionObjectiveActionOptions = (
   state: BattleState, unitId: string, side: Side, rules: RulesEdition, missionName: string, actionId: string,
   objectiveFilter: 'any' | 'non-home' | 'central' = 'non-home',
-) => missionActionOptions.missionObjectiveActionOptions(state, unitId, side, rules, missionName, actionId, objectiveFilter, missionActionOptionsContext);
+) => missionActions.missionObjectiveActionOptions(state, unitId, side, rules, missionName, actionId, objectiveFilter, missionActionOptionsContext);
 
 export function extractIntelligenceObjectiveOptions(
   state: BattleState,

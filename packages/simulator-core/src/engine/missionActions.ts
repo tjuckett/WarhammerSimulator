@@ -1,7 +1,7 @@
 import type { BattleState, BattleUnit, Side } from '../types/battle';
 import type { RulesEdition } from './rulesEngine';
 
-export interface MissionActionOptionsContext {
+export interface MissionActionsContext {
   canStartAction(state: BattleState, unitId: string, side: Side, rules: RulesEdition): boolean;
   objectiveIndexesWithinRange(state: BattleState, unit: BattleUnit, rules: RulesEdition): number[];
   objectiveRoleForIndex(state: BattleState, objectiveIndex: number): string | undefined;
@@ -10,7 +10,7 @@ export interface MissionActionOptionsContext {
 export function missionObjectiveActionOptions(
   state: BattleState, unitId: string, side: Side, rules: RulesEdition,
   missionName: string, actionId: string, objectiveFilter: 'any' | 'non-home' | 'central' = 'non-home',
-  context: MissionActionOptionsContext,
+  context: MissionActionsContext,
 ): number[] {
   const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
   if (rules.metadata.edition !== '11e' || selectedMissionName !== missionName) return [];
