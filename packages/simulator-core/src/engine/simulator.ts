@@ -794,6 +794,23 @@ const shootingSelectionRulesContext: manualCombat.ShootingSelectionRulesContext 
   weaponIsSidearm,
 };
 
+const shootingTargetRulesContext: manualCombat.ShootingSelectionRulesContext = {
+  ...shootingSelectionRulesContext,
+  engagedEnemies,
+  attachedUnitTargetRepresentative,
+  activeEpicChallengeModelIndex,
+  hasLOSEdgeToEdge,
+  modelBaseRadius,
+  hasAnyModelLOS,
+  unitHasDatasheetRule,
+  battleUnitsBaseEdgeDistance,
+  targetWithinFriendlyEngagement,
+  battleUnitHasLosToAttachedUnit,
+  attachedUnitComponents,
+  hasAnyHiddenModelPair,
+  battleUnitToAttachedUnitDistance,
+};
+
 function resolveHazardousTests(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number, state: BattleState, testCount = aliveWeaponModelCount(unit, weaponIndex)): LogEntry[] {
   return manualCombat.resolveHazardousTests(unit, weapon, weaponIndex, state, {
     weaponHasKeyword,
@@ -1144,54 +1161,7 @@ function shootingWeaponCanTarget(
   weapon: WeaponProfile,
   rules: RulesEdition,
 ): boolean {
-  if (target.destroyed || target.embarkedInUnitId || target.side === unit.side) return false;
-  const eng = rules.engagementRange();
-  const foes = enemies(state, unit.side);
-  const engaged = inEngagement(unit, foes, eng);
-  const bigGunsNeverTire = engaged && unitCanUseBigGunsNeverTire(unit);
-  const closeQuarters = weaponIsCloseQuarters(weapon);
-  const targetPool = engaged && !bigGunsNeverTire ? engagedEnemies(state, unit, rules) : foes;
-  if (!targetPool.some(candidate => candidate.id === target.id && candidate.side === target.side)) return false;
-
-  const representative = attachedUnitTargetRepresentative(state, target);
-  const epicChallengeModelIndex = weapon.isMelee ? activeEpicChallengeModelIndex(state, target) : undefined;
-  const epicChallengeVisible = epicChallengeModelIndex !== undefined
-    && target.modelPositions[epicChallengeModelIndex] !== undefined
-    && unit.modelPositions.some((from, modelIndex) => hasLOSEdgeToEdge(
-      from,
-      modelBaseRadius(unit, modelIndex),
-      target.modelPositions[epicChallengeModelIndex],
-      modelBaseRadius(target, epicChallengeModelIndex),
-      state.terrain,
-      state.ruleset?.edition,
-    ));
-  const precisionCharacter = (weaponHasKeyword(weapon, 'Precision') || epicChallengeModelIndex !== undefined)
-    && unitHasKeyword(target, 'Character')
-    && (epicChallengeModelIndex === undefined
-      ? unit.modelPositions.some((from, modelIndex) => hasAnyModelLOS(from, modelBaseRadius(unit, modelIndex), target, state.terrain, state.ruleset?.edition))
-      : epicChallengeVisible);
-  if (representative?.id !== target.id && !precisionCharacter) return false;
-
-  if (engaged && !bigGunsNeverTire && rules.metadata.edition === '11e' && !closeQuarters) return false;
-
-  const targetEngagedWithFriendly = targetWithinFriendlyEngagement(state, target, unit.side, rules);
-  const targetEngagedWithShooter = inEngagement(unit, [target], eng);
-  if (unitHasDatasheetRule(target, 'Lone Operative') && battleUnitsBaseEdgeDistance(unit, target) > 12) return false;
-  if (weaponHasKeyword(weapon, 'Blast') && targetEngagedWithFriendly) return false;
-  if (
-    targetEngagedWithFriendly
-    && !(weaponIsSidearm(weapon) && targetEngagedWithShooter)
-    && !(rules.metadata.edition === '11e' && closeQuarters && targetEngagedWithShooter)
-    && !(bigGunsNeverTire && targetEngagedWithShooter)
-    && !unitCanUseBigGunsNeverTire(target)
-  ) return false;
-  const targetVisible = precisionCharacter
-    || battleUnitHasLosToAttachedUnit(state, unit, target);
-  const targetHidden = !targetVisible && attachedUnitComponents(state, target).some(component =>
-    hasAnyHiddenModelPair(state, unit, component),
-  );
-  return battleUnitToAttachedUnitDistance(state, unit, target) <= weapon.range
-    && (targetVisible || (weaponHasKeyword(weapon, 'Indirect Fire') && !targetHidden));
+  return manualCombat.shootingWeaponCanTarget(state, unit, target, weapon, rules, shootingTargetRulesContext);
 }
 
 function unitHasVisibleModelToTarget(state: BattleState, unit: BattleUnit, target: BattleUnit): boolean {

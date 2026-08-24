@@ -336,6 +336,61 @@ export function unitCanBeSelectedToShootWithoutAttacks(unit: BattleUnit, state: 
   return !engaged || unitCanUseBigGunsNeverTire(unit, context);
 }
 
+export function shootingWeaponCanTarget(
+  state: BattleState,
+  unit: BattleUnit,
+  target: BattleUnit,
+  weapon: WeaponProfile,
+  rules: RulesEdition,
+  context: ShootingSelectionRulesContext,
+): boolean {
+  if (target.destroyed || target.embarkedInUnitId || target.side === unit.side) return false;
+  const engagementRange = rules.engagementRange();
+  const foes = context.enemies(state, unit.side);
+  const engaged = context.inEngagement(unit, foes, engagementRange);
+  const bigGunsNeverTire = engaged && unitCanUseBigGunsNeverTire(unit, context);
+  const closeQuarters = weaponIsCloseQuarters(weapon, context);
+  const targetPool = engaged && !bigGunsNeverTire ? context.engagedEnemies(state, unit, rules) : foes;
+  if (!targetPool.some((candidate: BattleUnit) => candidate.id === target.id && candidate.side === target.side)) return false;
+
+  const representative = context.attachedUnitTargetRepresentative(state, target);
+  const epicChallengeModelIndex = weapon.isMelee ? context.activeEpicChallengeModelIndex(state, target) : undefined;
+  const epicChallengeVisible = epicChallengeModelIndex !== undefined
+    && target.modelPositions[epicChallengeModelIndex] !== undefined
+    && unit.modelPositions.some((from, modelIndex) => context.hasLOSEdgeToEdge(
+      from,
+      context.modelBaseRadius(unit, modelIndex),
+      target.modelPositions[epicChallengeModelIndex],
+      context.modelBaseRadius(target, epicChallengeModelIndex),
+      state.terrain,
+      state.ruleset?.edition,
+    ));
+  const precisionCharacter = (context.weaponHasKeyword(weapon, 'Precision') || epicChallengeModelIndex !== undefined)
+    && context.unitHasKeyword(target, 'Character')
+    && (epicChallengeModelIndex === undefined
+      ? unit.modelPositions.some((from, modelIndex) => context.hasAnyModelLOS(from, context.modelBaseRadius(unit, modelIndex), target, state.terrain, state.ruleset?.edition))
+      : epicChallengeVisible);
+  if (representative?.id !== target.id && !precisionCharacter) return false;
+  if (engaged && !bigGunsNeverTire && rules.metadata.edition === '11e' && !closeQuarters) return false;
+
+  const targetEngagedWithFriendly = context.targetWithinFriendlyEngagement(state, target, unit.side, rules);
+  const targetEngagedWithShooter = context.inEngagement(unit, [target], engagementRange);
+  if (context.unitHasDatasheetRule(target, 'Lone Operative') && context.battleUnitsBaseEdgeDistance(unit, target) > 12) return false;
+  if (context.weaponHasKeyword(weapon, 'Blast') && targetEngagedWithFriendly) return false;
+  if (
+    targetEngagedWithFriendly
+    && !(context.weaponIsSidearm(weapon) && targetEngagedWithShooter)
+    && !(rules.metadata.edition === '11e' && closeQuarters && targetEngagedWithShooter)
+    && !(bigGunsNeverTire && targetEngagedWithShooter)
+    && !unitCanUseBigGunsNeverTire(target, context)
+  ) return false;
+  const targetVisible = precisionCharacter || context.battleUnitHasLosToAttachedUnit(state, unit, target);
+  const targetHidden = !targetVisible && context.attachedUnitComponents(state, target).some((component: BattleUnit) =>
+    context.hasAnyHiddenModelPair(state, unit, component));
+  return context.battleUnitToAttachedUnitDistance(state, unit, target) <= weapon.range
+    && (targetVisible || (context.weaponHasKeyword(weapon, 'Indirect Fire') && !targetHidden));
+}
+
 export function fixedWeaponAttackCount(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number, context: ManualShootingSelectionContext): number | null {
   const attacks = Number(String(weapon.attacks).trim());
   if (!Number.isInteger(attacks) || attacks < 0) return null;
