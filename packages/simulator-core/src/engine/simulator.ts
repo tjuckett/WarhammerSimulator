@@ -115,6 +115,9 @@ import * as battleSimulation from './battleSimulation';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 const makeBattleUnit = deploymentActions.makeBattleUnit;
+const removeUnitFromUnplaced = deploymentActions.removeUnitFromUnplaced;
+const profileIsAircraft = deploymentActions.profileIsAircraft;
+const deployableProfilesForRules = deploymentActions.deployableProfilesForRules;
 
 // ─── Log factory ─────────────────────────────────────────────────────────────
 
@@ -1940,27 +1943,6 @@ function leaderAnchor(bodyguard: BattleUnit, leader: UnitProfile, leaderIndex: n
     x: bodyguard.position.x + offsetX,
     y: bodyguard.position.y + offsetY,
   }, radius, zone, board);
-}
-
-function removeUnitFromUnplaced(s: BattleState, side: Side, profile: UnitProfile): void {
-  const key = unitRosterId(profile);
-  s.unplacedUnits[side] = s.unplacedUnits[side].filter(unit => unitRosterId(unit) !== key);
-}
-
-function unitIsStagedReinforcement(unit: UnitProfile): boolean {
-  return unit.deployment?.mode === UNIT_DEPLOYMENT_MODE.DeepStrike
-    || unit.deployment?.mode === UNIT_DEPLOYMENT_MODE.StrategicReserve;
-}
-
-function profileIsAircraft(profile: UnitProfile): boolean {
-  return profile.keywords.some(keyword => keyword.toLowerCase() === 'aircraft');
-}
-
-function deployableProfilesForRules(army: ImportedArmy, rules: RulesEdition): UnitProfile[] {
-  const profiles = deployableDrops(army);
-  return rules.metadata.edition === '11e'
-    ? profiles.filter(profile => !profileIsAircraft(profile))
-    : profiles;
 }
 
 function add11eAircraftStrategicReserves(

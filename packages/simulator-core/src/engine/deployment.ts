@@ -5,6 +5,8 @@ import { distance } from './coherency';
 import { DEPLOYMENT_ZONE_SETS } from '../data/deploymentZones';
 import type { DeploymentZoneSet, DeploymentZoneShape } from '../data/deploymentZoneTypes';
 import { DEFAULT_BOARD_FORMAT, boardFormatForId } from '../data/boardFormats';
+import { deployableDrops, unitRosterId } from './armyUnits';
+import type { RulesEdition } from './rulesEngine';
 import {
   axisAlignedBoxIntersectsTerrain,
   circleFullyInTerrain,
@@ -57,6 +59,20 @@ export function makeBattleUnit(
     activated: false,
     destroyed: false,
   };
+}
+
+export function removeUnitFromUnplaced(state: BattleState, side: Side, profile: UnitProfile): void {
+  const key = unitRosterId(profile);
+  state.unplacedUnits[side] = state.unplacedUnits[side].filter(unit => unitRosterId(unit) !== key);
+}
+
+export function profileIsAircraft(profile: UnitProfile): boolean {
+  return profile.keywords.some(keyword => keyword.toLowerCase() === 'aircraft');
+}
+
+export function deployableProfilesForRules(army: ImportedArmy, rules: RulesEdition): UnitProfile[] {
+  const profiles = deployableDrops(army);
+  return rules.metadata.edition === '11e' ? profiles.filter(profile => !profileIsAircraft(profile)) : profiles;
 }
 
 /** Shared transport access rules used during deployment and the movement phase. */
