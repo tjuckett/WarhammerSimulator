@@ -1751,32 +1751,23 @@ function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition):
   return logs;
 }
 
-export type PlayShootingWeaponOption = {
-  weaponIndex: number;
-  name: string;
-  targetIds: string[];
+export type PlayShootingWeaponOption = manualCombat.PlayShootingWeaponOption;
+export type PlayShootingAttackAllocation = manualCombat.PlayShootingAttackAllocation;
+
+const manualShootingSelectionContext: manualCombat.ManualShootingSelectionContext = {
+  attachedUnitId,
+  aliveWeaponModelCount,
+  eligibleShootingWeapons,
+  enemies,
+  shootingWeaponCanTarget,
+  unitCanBeSelectedToShootWithoutAttacks,
 };
 
-export type PlayShootingAttackAllocation = {
-  weaponIndex: number;
-  targetUnitId: string;
-  modelCount?: number;
-};
+export const playShootingWeaponAttackCount = (unit: BattleUnit, weaponIndex: number): number | null =>
+  manualCombat.playShootingWeaponAttackCount(unit, weaponIndex, manualShootingSelectionContext);
 
-function fixedWeaponAttackCount(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number): number | null {
-  const attacks = Number(String(weapon.attacks).trim());
-  if (!Number.isInteger(attacks) || attacks < 0) return null;
-  return attacks * aliveWeaponModelCount(unit, weaponIndex);
-}
-
-export function playShootingWeaponAttackCount(unit: BattleUnit, weaponIndex: number): number | null {
-  const weapon = unit.profile.weapons[weaponIndex];
-  return weapon ? fixedWeaponAttackCount(unit, weapon, weaponIndex) : null;
-}
-
-export function playShootingWeaponModelCount(unit: BattleUnit, weaponIndex: number): number {
-  return aliveWeaponModelCount(unit, weaponIndex);
-}
+export const playShootingWeaponModelCount = (unit: BattleUnit, weaponIndex: number): number =>
+  manualCombat.playShootingWeaponModelCount(unit, weaponIndex, manualShootingSelectionContext);
 
 /** Resolve a unit's complete shooting declaration only after every weapon target is locked. */
 export function shootPlayUnitWeapons(
@@ -1871,30 +1862,7 @@ export function playShootingWeaponOptions(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): PlayShootingWeaponOption[] {
-  if (state.phase !== 'shooting' || state.activeArmy !== side) return [];
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit) return [];
-  if (state.activeAttachedShootingUnitId && attachedUnitId(unit) !== state.activeAttachedShootingUnitId) return [];
-  const lockedTargetId = state.activeAttachedShootingUnitId === attachedUnitId(unit)
-    ? state.attachedShootingTargetUnitId
-    : undefined;
-  const options = eligibleShootingWeapons(unit, state, rules)
-    .map(weapon => {
-      const weaponIndex = unit.profile.weapons.indexOf(weapon);
-      return {
-        weaponIndex,
-        name: weapon.name,
-        targetIds: enemies(state, side)
-          .filter(target => shootingWeaponCanTarget(state, unit, target, weapon, rules))
-          .filter(target => !lockedTargetId || target.id === lockedTargetId)
-          .map(target => target.id),
-      };
-    })
-    .filter(option => option.weaponIndex >= 0);
-  if (options.length === 0 && unitCanBeSelectedToShootWithoutAttacks(unit, state, rules)) {
-    return [{ weaponIndex: -1, name: 'No ranged weapons', targetIds: [] }];
-  }
-  return options;
+  return manualCombat.playShootingWeaponOptions(state, unitId, side, rules, manualShootingSelectionContext);
 }
 
 function runShootingPhaseUnits(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
@@ -2950,7 +2918,7 @@ export function fightPlayUnitWeapons(
   if (grouped.size !== selectableIndexes.size) return state;
   for (const selected of selectableWeapons) {
     const entries = grouped.get(selected.weaponIndex) ?? [];
-    const fixedAttacks = fixedWeaponAttackCount(unit, selected.weapon, selected.weaponIndex);
+    const fixedAttacks = manualCombat.fixedWeaponAttackCount(unit, selected.weapon, selected.weaponIndex, manualShootingSelectionContext);
     if (fixedAttacks === null && entries.length !== 1) return state;
     if (entries.length > 1 && entries.reduce((total, entry) => total + (entry.attackCount ?? 0), 0) !== fixedAttacks) return state;
     if (entries.some(entry => entry.attackCount !== undefined && (!Number.isInteger(entry.attackCount) || entry.attackCount < 1))) return state;

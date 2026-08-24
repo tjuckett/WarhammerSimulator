@@ -7,6 +7,75 @@ import type { CombatAttackResolutionOptions } from './combatTypes';
 
 export type CombatAttackContext = Record<string, any>;
 
+export type PlayShootingWeaponOption = {
+  weaponIndex: number;
+  name: string;
+  targetIds: string[];
+};
+
+export type PlayShootingAttackAllocation = {
+  weaponIndex: number;
+  targetUnitId: string;
+  modelCount?: number;
+};
+
+export interface ManualShootingSelectionContext {
+  attachedUnitId(unit: BattleUnit): string;
+  aliveWeaponModelCount(unit: BattleUnit, weaponIndex: number): number;
+  eligibleShootingWeapons(unit: BattleUnit, state: BattleState, rules: RulesEdition): WeaponProfile[];
+  enemies(state: BattleState, side: Side): BattleUnit[];
+  shootingWeaponCanTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, rules: RulesEdition): boolean;
+  unitCanBeSelectedToShootWithoutAttacks(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean;
+}
+
+export function fixedWeaponAttackCount(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number, context: ManualShootingSelectionContext): number | null {
+  const attacks = Number(String(weapon.attacks).trim());
+  if (!Number.isInteger(attacks) || attacks < 0) return null;
+  return attacks * context.aliveWeaponModelCount(unit, weaponIndex);
+}
+
+export function playShootingWeaponAttackCount(unit: BattleUnit, weaponIndex: number, context: ManualShootingSelectionContext): number | null {
+  const weapon = unit.profile.weapons[weaponIndex];
+  return weapon ? fixedWeaponAttackCount(unit, weapon, weaponIndex, context) : null;
+}
+
+export function playShootingWeaponModelCount(unit: BattleUnit, weaponIndex: number, context: ManualShootingSelectionContext): number {
+  return context.aliveWeaponModelCount(unit, weaponIndex);
+}
+
+export function playShootingWeaponOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+  context: ManualShootingSelectionContext,
+): PlayShootingWeaponOption[] {
+  if (state.phase !== 'shooting' || state.activeArmy !== side) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit) return [];
+  if (state.activeAttachedShootingUnitId && context.attachedUnitId(unit) !== state.activeAttachedShootingUnitId) return [];
+  const lockedTargetId = state.activeAttachedShootingUnitId === context.attachedUnitId(unit)
+    ? state.attachedShootingTargetUnitId
+    : undefined;
+  const options = context.eligibleShootingWeapons(unit, state, rules)
+    .map(weapon => {
+      const weaponIndex = unit.profile.weapons.indexOf(weapon);
+      return {
+        weaponIndex,
+        name: weapon.name,
+        targetIds: context.enemies(state, side)
+          .filter(target => context.shootingWeaponCanTarget(state, unit, target, weapon, rules))
+          .filter(target => !lockedTargetId || target.id === lockedTargetId)
+          .map(target => target.id),
+      };
+    })
+    .filter(option => option.weaponIndex >= 0);
+  if (options.length === 0 && context.unitCanBeSelectedToShootWithoutAttacks(unit, state, rules)) {
+    return [{ weaponIndex: -1, name: 'No ranged weapons', targetIds: [] }];
+  }
+  return options;
+}
+
 export function unitCanChargeTarget(unit: BattleUnit, target: BattleUnit, hasKeyword: (unit: BattleUnit, keyword: string) => boolean): boolean {
   if (hasKeyword(unit, 'aircraft')) return false;
   return !hasKeyword(target, 'aircraft') || hasKeyword(unit, 'fly');
