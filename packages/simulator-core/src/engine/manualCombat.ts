@@ -1678,6 +1678,65 @@ export function playOverrunFightUnitIds(state: BattleState, side: Side, rules: R
   });
 }
 
+export interface AutomatedFightContext extends FightPhaseContext {
+  activeUnits(state: BattleState, side: Side): BattleUnit[];
+  selectOverrunFight(state: BattleState, unitId: string, side: Side, rules: RulesEdition): BattleState;
+  pileIn(state: BattleState, unitId: string, side: Side, rules: RulesEdition): BattleState;
+  consolidate(state: BattleState, unitId: string, side: Side, rules: RulesEdition): BattleState;
+  runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[];
+}
+
+export function runAutomaticFightForUnit(state: BattleState, unitId: string, rules: RulesEdition, context: AutomatedFightContext): BattleState {
+  let next = state;
+  const unit = next.units.find(candidate => candidate.id === unitId && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || unit.activated) return next;
+  if (playOverrunFightUnitIds(next, unit.side, rules, context).includes(unit.id)) {
+    next = context.selectOverrunFight(next, unit.id, unit.side, rules);
+    const piled = context.pileIn(next, unit.id, unit.side, rules);
+    if (piled !== next) next = piled;
+  }
+  const selected = next.units.find(candidate => candidate.id === unitId && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!selected) return next;
+  const fightLogs = context.runFight(selected, next, rules);
+  if (fightLogs.length) next.log = [...next.log, ...fightLogs];
+  return next;
+}
+
+export function runAutomaticEleventhFightPhase(
+  state: BattleState,
+  startingSide: Side,
+  rules: RulesEdition,
+  context: AutomatedFightContext,
+): BattleState {
+  let next = state;
+  for (const pileSide of [startingSide, (startingSide === 0 ? 1 : 0) as Side]) {
+    for (const unit of context.activeUnits(next, pileSide)) {
+      const piled = context.pileIn(next, unit.id, pileSide, rules);
+      if (piled !== next) next = piled;
+    }
+  }
+  startFightStepInPlace(next, rules, context);
+
+  let nextSide = startingSide;
+  while (true) {
+    const otherSide = (nextSide === 0 ? 1 : 0) as Side;
+    const nextIds = playFightActivationUnitIds(next, nextSide, rules, context);
+    const otherIds = playFightActivationUnitIds(next, otherSide, rules, context);
+    const unitId = nextIds[0] ?? otherIds[0];
+    if (!unitId) break;
+    const selectedSide = nextIds.length ? nextSide : otherSide;
+    next = runAutomaticFightForUnit(next, unitId, rules, context);
+    if (!next.units.find(unit => unit.id === unitId)?.activated) break;
+    nextSide = (selectedSide === 0 ? 1 : 0) as Side;
+  }
+
+  for (const unit of next.units.filter(candidate => candidate.activated && !candidate.destroyed)) {
+    const consolidated = context.consolidate(next, unit.id, unit.side, rules);
+    if (consolidated !== next) next = consolidated;
+  }
+  return next;
+}
+
 export function resolveCombatAttacks(
   attacker: BattleUnit,
   defender: BattleUnit,

@@ -1833,51 +1833,20 @@ function runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): Lo
   return manualCombat.runFight(unit, state, rules, manualFightResolutionContext);
 }
 
-function runAutomaticFightForUnit(state: BattleState, unitId: string, rules: RulesEdition): BattleState {
-  let s = state;
-  const unit = s.units.find(candidate => candidate.id === unitId && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || unit.activated) return s;
-  if (playOverrunFightUnitIds(s, unit.side, rules).includes(unit.id)) {
-    s = selectPlayOverrunFight(s, unit.id, unit.side, rules);
-    const piled = pileInPlayUnit(s, unit.id, unit.side, rules);
-    if (piled !== s) s = piled;
-  }
-  const selected = s.units.find(candidate => candidate.id === unitId && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!selected) return s;
-  const fightLogs = runFight(selected, s, rules);
-  if (fightLogs.length) s.log = [...s.log, ...fightLogs];
-  return s;
-}
+const automaticFightContext: manualCombat.AutomatedFightContext = {
+  ...fightPhaseContext,
+  activeUnits,
+  selectOverrunFight: selectPlayOverrunFight,
+  pileIn: pileInPlayUnit,
+  consolidate: consolidatePlayUnit,
+  runFight,
+};
 
-function runAutomaticEleventhFightPhase(state: BattleState, startingSide: Side, rules: RulesEdition): BattleState {
-  let s = state;
-  for (const pileSide of [startingSide, (startingSide === 0 ? 1 : 0) as Side]) {
-    for (const unit of activeUnits(s, pileSide)) {
-      const piled = pileInPlayUnit(s, unit.id, pileSide, rules);
-      if (piled !== s) s = piled;
-    }
-  }
-  startFightStepInPlace(s, rules);
+const runAutomaticFightForUnit = (state: BattleState, unitId: string, rules: RulesEdition): BattleState =>
+  manualCombat.runAutomaticFightForUnit(state, unitId, rules, automaticFightContext);
 
-  let nextSide = startingSide;
-  while (true) {
-    const otherSide = (nextSide === 0 ? 1 : 0) as Side;
-    const nextIds = playFightActivationUnitIds(s, nextSide, rules);
-    const otherIds = playFightActivationUnitIds(s, otherSide, rules);
-    const unitId = nextIds[0] ?? otherIds[0];
-    if (!unitId) break;
-    const selectedSide = nextIds.length ? nextSide : otherSide;
-    s = runAutomaticFightForUnit(s, unitId, rules);
-    if (!s.units.find(unit => unit.id === unitId)?.activated) break;
-    nextSide = (selectedSide === 0 ? 1 : 0) as Side;
-  }
-
-  for (const unit of s.units.filter(candidate => candidate.activated && !candidate.destroyed)) {
-    const consolidated = consolidatePlayUnit(s, unit.id, unit.side, rules);
-    if (consolidated !== s) s = consolidated;
-  }
-  return s;
-}
+const runAutomaticEleventhFightPhase = (state: BattleState, startingSide: Side, rules: RulesEdition): BattleState =>
+  manualCombat.runAutomaticEleventhFightPhase(state, startingSide, rules, automaticFightContext);
 
 // ─── Victory check ────────────────────────────────────────────────────────────
 
