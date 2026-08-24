@@ -3103,86 +3103,7 @@ export function createDeploymentState(
 }
 
 export function placeNextUnit(state: BattleState): BattleState {
-  const s = clone(state);
-  const board = boardFormatForState(s);
-
-  // Determine which side places next; if current side is done, switch
-  let side = s.activeArmy as 0 | 1;
-  if (!s.unplacedUnits[side].length) {
-    side = (1 - side) as 0 | 1;
-  }
-
-  const unplaced: UnitProfile[] = s.unplacedUnits[side];
-  if (!unplaced.length) {
-    enterBattlePhase(s, { phase: 'setup' }, side);
-    return s;
-  }
-
-  const totalUnits = deployableProfilesForRules(s.armies[side].army, rulesEditionForRuleset(s.ruleset)).length;
-  const dropsCompleted = totalUnits - unplaced.length;
-
-  const unitIdx = selectUnitToDrop(unplaced, dropsCompleted, totalUnits);
-  const profile = unplaced[unitIdx];
-
-  const placedThisSide = s.units
-    .filter(u => u.side === side)
-    .map(u => {
-      const { hw, hh } = fp(u.profile.baseModelCount, maxModelBaseRadius(u));
-      return { x: u.position.x, y: u.position.y, hw, hh };
-    });
-
-  const pos = reactivePosition(profile, side, s, s.terrain, placedThisSide);
-  const allDeployedModels = s.units.flatMap(u => u.modelPositions);
-  const allDeployedModelRadii = s.units.flatMap(u => u.modelPositions.map((_, modelIndex) => modelBaseRadius(u, modelIndex)));
-  const deployment = setupDeploymentZoneSource(s.setup);
-  const zone = zoneFor(side, deployment, board);
-  const modelPos = deployModelFormation(
-    pos, profile.baseModelCount, unitRole(profile), side, s.terrain, zone, allDeployedModels,
-    interactiveMovementState.profileModelRadii(profile),
-    allDeployedModelRadii,
-    s.ruleset?.edition,
-  );
-
-  const unit = makeBattleUnit(profile, side, modelPos);
-  unit.position = pos;
-
-  interactiveMovementState.resolveInternalModelOverlaps(unit, zone, board);
-  interactiveMovementState.avoidDeploymentOverlap(unit, s, zone);
-  interactiveMovementState.resolveInternalModelOverlaps(unit, zone, board);
-  s.units.push(unit);
-  s.unplacedUnits[side] = [...unplaced.slice(0, unitIdx), ...unplaced.slice(unitIdx + 1)];
-  const attachedLeaders = attachedFollowersFor(s.armies[side].army, profile);
-  attachedLeaders.forEach((leader, leaderIndex) => {
-    const anchor = leaderAnchor(unit, leader, leaderIndex, side, deployment, board);
-    const deployedModels = s.units.flatMap(u => u.modelPositions);
-    const deployedRadii = s.units.flatMap(u => u.modelPositions.map((_, modelIndex) => modelBaseRadius(u, modelIndex)));
-    const leaderModelPos = deployModelFormation(
-      anchor, leader.baseModelCount, unitRole(leader), side, s.terrain, zone, deployedModels,
-      interactiveMovementState.profileModelRadii(leader),
-      deployedRadii,
-      s.ruleset?.edition,
-    );
-    const leaderUnit = makeBattleUnit(leader, side, leaderModelPos, unit.id, unit.tabletopUnitId);
-    interactiveMovementState.resolveInternalModelOverlaps(leaderUnit, zone, board);
-    interactiveMovementState.avoidDeploymentOverlap(leaderUnit, s, zone);
-    interactiveMovementState.resolveInternalModelOverlaps(leaderUnit, zone, board);
-    s.units.push(leaderUnit);
-    removeUnitFromUnplaced(s, side, leader);
-  });
-  s.log = [...s.log, log(s, side, profile.name,
-    `⬇️ ${s.armies[side].name} deploys ${profile.name} at (${pos.x.toFixed(1)}", ${pos.y.toFixed(1)}")`,
-    'info',
-  )];
-
-  if (!s.unplacedUnits[0].length && !s.unplacedUnits[1].length) {
-    enterBattlePhase(s, { phase: 'setup' }, side);
-    s.log = [...s.log, log(s, 0, '', '═══ DEPLOYMENT COMPLETE — BATTLE BEGINS ═══', 'phase')];
-    return s;
-  }
-
-  const otherSide = (1 - side) as 0 | 1;
-  s.activeArmy = s.unplacedUnits[otherSide].length ? otherSide : side;
-  return s;
+  return deploymentActions.placeNextUnit(state, automatedDeploymentContext);
 }
 
 export function placePlayUnit(state: BattleState, side: Side, unitIndex: number, position: Position): BattleState {
@@ -3636,6 +3557,20 @@ const manualDeploymentContext: deploymentActions.ManualDeploymentContext = {
   avoidDeploymentOverlap: interactiveMovementState.avoidDeploymentOverlap,
   removeUnitFromUnplaced,
   log,
+};
+
+const automatedDeploymentContext: deploymentActions.AutomatedDeploymentContext = {
+  ...manualDeploymentContext,
+  deployableProfiles: (army, edition) => edition === '11e'
+    ? deployableDrops(army).filter(profile => !profileIsAircraft(profile))
+    : deployableDrops(army),
+  selectUnitToDrop,
+  reactivePosition,
+  deployModelFormation,
+  profileModelRadii: interactiveMovementState.profileModelRadii,
+  maxModelBaseRadius,
+  modelBaseRadius,
+  enterSetup: (state, side) => enterBattlePhase(state, { phase: 'setup' }, side),
 };
 
 const reinforcementPlayContext: reinforcementPlay.PlayReinforcementContext = {

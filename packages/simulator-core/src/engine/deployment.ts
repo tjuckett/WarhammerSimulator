@@ -344,6 +344,71 @@ export function placePlayUnit(state: BattleState, side: 0 | 1, unitIndex: number
   return next;
 }
 
+export interface AutomatedDeploymentContext extends ManualDeploymentContext {
+  deployableProfiles(army: BattleState['armies'][number]['army'], edition: string): UnitProfile[];
+  selectUnitToDrop(units: UnitProfile[], dropsCompleted: number, totalUnits: number): number;
+  reactivePosition(profile: UnitProfile, side: 0 | 1, state: BattleState, terrain: Terrain[], placed: Array<{ x: number; y: number; hw: number; hh: number }>): Position;
+  deployModelFormation(position: Position, count: number, role: UnitRole, side: 0 | 1, terrain: Terrain[], zone: DeploymentZone, placedModels: Position[], modelRadii: number[], placedModelRadii: number[], edition?: string): Position[];
+  profileModelRadii(profile: UnitProfile): number[];
+  maxModelBaseRadius(unit: BattleUnit): number;
+  modelBaseRadius(unit: BattleUnit, modelIndex: number): number;
+  enterSetup(state: BattleState, side: 0 | 1): void;
+}
+
+export function placeNextUnit(state: BattleState, context: AutomatedDeploymentContext): BattleState {
+  const next = context.clone(state);
+  const board = context.boardFormatForState(next);
+  let side = next.activeArmy;
+  if (!next.unplacedUnits[side].length) side = (1 - side) as 0 | 1;
+  const unplaced = next.unplacedUnits[side];
+  if (!unplaced.length) {
+    context.enterSetup(next, side);
+    return next;
+  }
+  const totalUnits = context.deployableProfiles(next.armies[side].army, next.ruleset.edition).length;
+  const profileIndex = context.selectUnitToDrop(unplaced, totalUnits - unplaced.length, totalUnits);
+  const profile = unplaced[profileIndex];
+  const placed = next.units.filter(unit => unit.side === side).map(unit => {
+    const { hw, hh } = fp(unit.profile.baseModelCount, context.maxModelBaseRadius(unit));
+    return { x: unit.position.x, y: unit.position.y, hw, hh };
+  });
+  const position = context.reactivePosition(profile, side, next, next.terrain, placed);
+  const deployment = context.setupDeploymentZoneSource(next.setup);
+  const zone = zoneFor(side, deployment, board);
+  const makeFormation = (unitProfile: UnitProfile, anchor: Position) => context.deployModelFormation(
+    anchor, unitProfile.baseModelCount, unitRole(unitProfile), side, next.terrain, zone,
+    next.units.flatMap(unit => unit.modelPositions), context.profileModelRadii(unitProfile),
+    next.units.flatMap(unit => unit.modelPositions.map((_, modelIndex) => context.modelBaseRadius(unit, modelIndex))),
+    next.ruleset.edition,
+  );
+  const unit = context.makeBattleUnit(profile, side, makeFormation(profile, position));
+  unit.position = position;
+  context.resolveInternalModelOverlaps(unit, zone, board);
+  context.avoidDeploymentOverlap(unit, next, zone);
+  context.resolveInternalModelOverlaps(unit, zone, board);
+  next.units.push(unit);
+  next.unplacedUnits[side] = [...unplaced.slice(0, profileIndex), ...unplaced.slice(profileIndex + 1)];
+  context.attachedFollowers(next.armies[side].army, profile).forEach((leader, leaderIndex) => {
+    const leaderUnit = context.makeBattleUnit(leader, side,
+      makeFormation(leader, context.leaderAnchor(unit, leader, leaderIndex, side, deployment, board)), unit.id, unit.tabletopUnitId);
+    context.resolveInternalModelOverlaps(leaderUnit, zone, board);
+    context.avoidDeploymentOverlap(leaderUnit, next, zone);
+    context.resolveInternalModelOverlaps(leaderUnit, zone, board);
+    next.units.push(leaderUnit);
+    context.removeUnitFromUnplaced(next, side, leader);
+  });
+  next.log = [...next.log, context.log(next, side, profile.name,
+    `⬇️ ${next.armies[side].name} deploys ${profile.name} at (${position.x.toFixed(1)}", ${position.y.toFixed(1)}")`, 'info')];
+  if (!next.unplacedUnits[0].length && !next.unplacedUnits[1].length) {
+    context.enterSetup(next, side);
+    next.log = [...next.log, context.log(next, 0, '', '═══ DEPLOYMENT COMPLETE — BATTLE BEGINS ═══', 'phase')];
+    return next;
+  }
+  const otherSide = (1 - side) as 0 | 1;
+  next.activeArmy = next.unplacedUnits[otherSide].length ? otherSide : side;
+  return next;
+}
+
 export const DEPLOYMENT_STRATEGIES: { id: DeploymentStrategy; name: string }[] = [
   { id: 'balanced',       name: 'Balanced' },
   { id: 'refused-flank',  name: 'Refused Flank' },
