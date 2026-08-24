@@ -122,15 +122,6 @@ let _unitId = 0;
 
 // ─── Geometry helpers ────────────────────────────────────────────────────────
 
-function moveToward(from: Position, to: Position, maxInches: number, stopGap = 1.05): Position {
-  const d = dist(from, to);
-  const target = Math.max(0, d - stopGap);
-  const step = Math.min(maxInches, target);
-  if (step < 0.01) return from;
-  const t = step / d;
-  return { x: from.x + (to.x - from.x) * t, y: from.y + (to.y - from.y) * t };
-}
-
 function hasKeyword(unit: BattleUnit, keyword: string): boolean {
   return unit.profile.keywords.some(k => k.toLowerCase() === keyword.toLowerCase());
 }
@@ -235,32 +226,6 @@ function unitSurgedThisPhase(state: BattleState, unit: BattleUnit): boolean {
   return unit.surgeMovePhase === state.phase && unit.surgeMoveTurn === state.turn;
 }
 
-function lineBlockedByMovement(from: Position, to: Position, terrain: Terrain[], unit: BattleUnit): boolean {
-  const crossesBlockingShape = (shape: Terrain | TerrainFeature): boolean => {
-    if (pointInTerrain(from, shape)) return false;
-    if (pointInTerrain(to, shape)) return true;
-    return linePassesThroughTerrain(from, to, shape);
-  };
-  for (const t of terrain) {
-    if (terrainMatBlocksMovementForUnit(t, unit) && crossesBlockingShape(t)) return true;
-    if (t.features.some(feature => featureBlocksMovementForUnit(feature, t, unit) && crossesBlockingShape(feature))) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function terrainBlockerCorners(terrain: Terrain[], unit: BattleUnit): Position[] {
-  const corners: Position[] = [];
-  for (const t of terrain) {
-    if (terrainMatBlocksMovementForUnit(t, unit)) corners.push(...terrainCorners(t));
-    for (const feature of t.features) {
-      if (featureBlocksMovementForUnit(feature, t, unit)) corners.push(...terrainCorners(feature));
-    }
-  }
-  return corners;
-}
-
 export function findReachablePosition(
   unit: BattleUnit,
   to: Position,
@@ -269,48 +234,7 @@ export function findReachablePosition(
   stopGap = 1.05,
   ignoreTerrain = false,
 ): Position {
-  const direct = moveToward(unit.position, to, maxInches, stopGap);
-  if (ignoreTerrain || !lineBlockedByMovement(unit.position, direct, terrain, unit)) return direct;
-
-  const dToTarget = dist(unit.position, to);
-  const corners = terrainBlockerCorners(terrain, unit);
-  let best = unit.position;
-  let bestScore = dist(unit.position, to);
-
-  for (const corner of corners) {
-    const away = dist(corner, unit.position);
-    if (away < 0.01) continue;
-    const pad = 1.25;
-    const waypoint = {
-      x: corner.x + ((corner.x - unit.position.x) / away) * pad,
-      y: corner.y + ((corner.y - unit.position.y) / away) * pad,
-    };
-    const firstLeg = dist(unit.position, waypoint);
-    if (firstLeg > maxInches || lineBlockedByMovement(unit.position, waypoint, terrain, unit)) continue;
-    const remaining = maxInches - firstLeg;
-    const secondLeg = moveToward(waypoint, to, remaining, stopGap);
-    if (lineBlockedByMovement(waypoint, secondLeg, terrain, unit)) continue;
-    const score = dist(secondLeg, to);
-    if (score < bestScore) {
-      best = secondLeg;
-      bestScore = score;
-    }
-  }
-
-  if (best !== unit.position) return best;
-
-  const steps = Math.max(4, Math.ceil(dToTarget / 0.5));
-  let lastClear = unit.position;
-  for (let i = 1; i <= steps; i++) {
-    const t = i / steps;
-    const candidate = {
-      x: unit.position.x + (direct.x - unit.position.x) * t,
-      y: unit.position.y + (direct.y - unit.position.y) * t,
-    };
-    if (lineBlockedByMovement(unit.position, candidate, terrain, unit)) break;
-    lastClear = candidate;
-  }
-  return lastClear;
+  return movementPathing.findReachablePosition(unit, to, maxInches, terrain, movementPathingContext, stopGap, ignoreTerrain);
 }
 
 // Counts models in the unit that carry weaponIndex and optionally have LOS to the defender.
@@ -2393,6 +2317,7 @@ const movementPathingContext: movementPathing.MovementPathingContext = {
   featureBlocksMovement: featureBlocksMovementForUnit,
   pointInTerrain,
   linePassesThroughTerrain,
+  terrainCorners,
 };
 
 const distancePointToSegment = (point: Position, from: Position, to: Position) =>

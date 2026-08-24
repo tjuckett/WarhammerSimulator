@@ -12,6 +12,67 @@ export interface MovementPathingContext {
   featureBlocksMovement(feature: TerrainFeature, terrain: Terrain, unit: BattleUnit): boolean;
   pointInTerrain(point: Position, terrain: Terrain | TerrainFeature): boolean;
   linePassesThroughTerrain(from: Position, to: Position, terrain: Terrain | TerrainFeature): boolean;
+  terrainCorners(terrain: Terrain | TerrainFeature): Position[];
+}
+
+function moveToward(from: Position, to: Position, maxInches: number, distance: (a: Position, b: Position) => number, stopGap = 1.05): Position {
+  const total = distance(from, to);
+  const target = Math.max(0, total - stopGap);
+  const step = Math.min(maxInches, target);
+  if (step < 0.01) return from;
+  const ratio = step / total;
+  return { x: from.x + (to.x - from.x) * ratio, y: from.y + (to.y - from.y) * ratio };
+}
+
+export function findReachablePosition(
+  unit: BattleUnit,
+  to: Position,
+  maxInches: number,
+  terrain: Terrain[],
+  context: MovementPathingContext,
+  stopGap = 1.05,
+  ignoreTerrain = false,
+): Position {
+  const direct = moveToward(unit.position, to, maxInches, context.distance, stopGap);
+  const blocked = (from: Position, target: Position): boolean => {
+    const crosses = (shape: Terrain | TerrainFeature) => {
+      if (context.pointInTerrain(from, shape)) return false;
+      if (context.pointInTerrain(target, shape)) return true;
+      return context.linePassesThroughTerrain(from, target, shape);
+    };
+    return terrain.some(mat =>
+      (context.terrainBlocksMovement(mat, unit) && crosses(mat))
+      || mat.features.some(feature => context.featureBlocksMovement(feature, mat, unit) && crosses(feature)));
+  };
+  if (ignoreTerrain || !blocked(unit.position, direct)) return direct;
+  const targetDistance = context.distance(unit.position, to);
+  const corners = terrain.flatMap(mat => [
+    ...(context.terrainBlocksMovement(mat, unit) ? context.terrainCorners(mat) : []),
+    ...mat.features.flatMap(feature => context.featureBlocksMovement(feature, mat, unit) ? context.terrainCorners(feature) : []),
+  ]);
+  let best = unit.position;
+  let bestScore = targetDistance;
+  for (const corner of corners) {
+    const away = context.distance(corner, unit.position);
+    if (away < 0.01) continue;
+    const waypoint = { x: corner.x + ((corner.x - unit.position.x) / away) * 1.25, y: corner.y + ((corner.y - unit.position.y) / away) * 1.25 };
+    const firstLeg = context.distance(unit.position, waypoint);
+    if (firstLeg > maxInches || blocked(unit.position, waypoint)) continue;
+    const secondLeg = moveToward(waypoint, to, maxInches - firstLeg, context.distance, stopGap);
+    if (blocked(waypoint, secondLeg)) continue;
+    const score = context.distance(secondLeg, to);
+    if (score < bestScore) { best = secondLeg; bestScore = score; }
+  }
+  if (best !== unit.position) return best;
+  const steps = Math.max(4, Math.ceil(targetDistance / 0.5));
+  let lastClear = unit.position;
+  for (let i = 1; i <= steps; i++) {
+    const ratio = i / steps;
+    const candidate = { x: unit.position.x + (direct.x - unit.position.x) * ratio, y: unit.position.y + (direct.y - unit.position.y) * ratio };
+    if (blocked(unit.position, candidate)) break;
+    lastClear = candidate;
+  }
+  return lastClear;
 }
 
 export function distancePointToSegment(point: Position, from: Position, to: Position, context: MovementPathingContext): number {
