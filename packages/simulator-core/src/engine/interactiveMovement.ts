@@ -2,14 +2,61 @@ import type { BattleState, BattleUnit, BoardFormat, LogEntry, LogType, Position,
 import type { UnitProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
-import { zoneFor, pointInDeploymentZone, type DeploymentZone } from './deployment';
-import { baseFootprintDistance, modelBaseRadiusInches } from './baseSizes';
-import { distance as dist } from './coherency';
+import { zoneFor, pointInDeploymentZone, type DeploymentZone, type DeploymentZoneSource } from './deployment';
+import { baseFootprintDistance, baseFootprintsOverlap, modelBaseFootprintInches, modelBaseRadiusInches } from './baseSizes';
+import { distance as dist, verticalDistance } from './coherency';
 import { centroid, translateFormation } from './unitModelState';
 
 /** Shared model-formation geometry used by setup, movement, charge, and formation editing. */
 function modelRadius(unit: BattleUnit, modelIndex = 0): number {
   return modelBaseRadiusInches(unit.profile, modelIndex);
+}
+
+export interface SingleModelMoveContext {
+  clone(state: BattleState): BattleState;
+  isModelEditPhase(phase: BattleState['phase']): boolean;
+  movementStep(state: BattleState): string;
+  modelBaseRadius(unit: BattleUnit, modelIndex: number): number;
+  setupDeploymentZoneSource(setup: BattleState['setup']): DeploymentZoneSource;
+  canInfiltrate(state: BattleState, side: Side, profile: UnitProfile): boolean;
+  infiltratorPlacementIsLegal(state: BattleState, side: Side, profile: UnitProfile, position: Position, modelIndex: number, deployment: DeploymentZoneSource, board: BoardFormat): boolean;
+  infiltratorModelsAreOutsideEnemyUnits(state: BattleState, side: Side, profile: UnitProfile, positions: Position[], modelIndices: number[]): boolean;
+  modelMoveHasNoBaseOverlap(state: BattleState, unit: BattleUnit, modelIndex: number): boolean;
+}
+
+export function moveModel(state: BattleState, unitId: string, modelIndex: number, position: Position, context: SingleModelMoveContext): BattleState {
+  const next = context.clone(state);
+  if (!context.isModelEditPhase(next.phase)) return next;
+  if (next.phase === 'movement' && context.movementStep(next) !== 'moveUnits') return next;
+  const unit = next.units.find(candidate => candidate.id === unitId && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || !unit.modelPositions[modelIndex]) return next;
+  if (next.phase === 'deployment') {
+    const board = boardFormatForState(next);
+    const radius = context.modelBaseRadius(unit, modelIndex);
+    const deployment = context.setupDeploymentZoneSource(next.setup);
+    const zone = zoneFor(unit.side, deployment, board);
+    const canInfiltrate = context.canInfiltrate(next, unit.side, unit.profile);
+    if (!canInfiltrate && !pointInDeploymentZone(position, zone, radius)) return next;
+    if (canInfiltrate && !context.infiltratorPlacementIsLegal(next, unit.side, unit.profile, position, modelIndex, deployment, board)) return next;
+    if (canInfiltrate && !context.infiltratorModelsAreOutsideEnemyUnits(next, unit.side, unit.profile, [position], [modelIndex])) return next;
+  }
+  unit.modelPositions[modelIndex] = position;
+  unit.position = centroid(unit.modelPositions);
+  return context.modelMoveHasNoBaseOverlap(next, unit, modelIndex) ? next : state;
+}
+
+export function modelMoveHasNoBaseOverlap(state: BattleState, unit: BattleUnit, modelIndex: number): boolean {
+  const model = unit.modelPositions[modelIndex];
+  const footprint = modelBaseFootprintInches(unit.profile, modelIndex, unit.modelRotations?.[modelIndex] ?? unit.facingDeg ?? 0);
+  return state.units.every(otherUnit => {
+    if (otherUnit.destroyed || otherUnit.embarkedInUnitId) return true;
+    return otherUnit.modelPositions.every((otherModel, otherModelIndex) => {
+      if (otherUnit.id === unit.id && otherModelIndex === modelIndex) return true;
+      if (verticalDistance(model, otherModel) > 0.5) return true;
+      const otherFootprint = modelBaseFootprintInches(otherUnit.profile, otherModelIndex, otherUnit.modelRotations?.[otherModelIndex] ?? otherUnit.facingDeg ?? 0);
+      return !baseFootprintsOverlap(model, footprint, otherModel, otherFootprint);
+    });
+  });
 }
 
 export function profileModelRadii(profile: UnitProfile): number[] {

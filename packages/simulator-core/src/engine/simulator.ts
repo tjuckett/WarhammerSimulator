@@ -2522,45 +2522,19 @@ export function playPhaseCoherencyIssues(state: BattleState): string[] {
   ];
 }
 
-function modelMoveHasNoBaseOverlap(s: BattleState, unit: BattleUnit, modelIndex: number): boolean {
-  const model = unit.modelPositions[modelIndex];
-  const footprint = modelFootprint(unit, modelIndex);
-  return s.units.every(otherUnit => {
-    if (otherUnit.destroyed || otherUnit.embarkedInUnitId) return true;
-    return otherUnit.modelPositions.every((otherModel, otherModelIndex) => {
-      if (otherUnit.id === unit.id && otherModelIndex === modelIndex) return true;
-      if (verticalDistance(model, otherModel) > 0.5) return true;
-      const otherFootprint = modelFootprint(otherUnit, otherModelIndex);
-      return !baseFootprintsOverlap(model, footprint, otherModel, otherFootprint);
-    });
-  });
-}
-
 export function movePlayModel(state: BattleState, unitId: string, modelIndex: number, position: Position): BattleState {
-  const s = clone(state);
-  if (!PLAY_MODEL_EDIT_PHASES.includes(s.phase)) return s;
-  if (s.phase === 'movement' && movementStep(s) !== 'moveUnits') return s;
-
-  const unit = s.units.find(u => u.id === unitId && !u.destroyed && !u.embarkedInUnitId);
-  if (!unit || !unit.modelPositions[modelIndex]) return s;
-
-  if (s.phase === 'deployment') {
-    const board = boardFormatForState(s);
-    const radius = modelBaseRadius(unit, modelIndex);
-    const deployment = setupDeploymentZoneSource(s.setup);
-    const zone = zoneFor(unit.side, deployment, board);
-    const canInfiltrate = profileDropHasInfiltrators(s, unit.side, unit.profile);
-    if (!canInfiltrate && !pointInDeploymentZone(position, zone, radius)) return s;
-    if (canInfiltrate && !modelIsOutsideEnemyDeploymentZoneBuffer(unit.profile, unit.side, position, modelIndex, deployment, board)) return s;
-    if (canInfiltrate && !infiltratorModelsAreOutsideEnemyUnits(s, unit.side, unit.profile, [position], [modelIndex])) return s;
-  }
-
-  unit.modelPositions[modelIndex] = position;
-  unit.position = centroid(unit.modelPositions);
-
-  if (!modelMoveHasNoBaseOverlap(s, unit, modelIndex)) return state;
-
-  return s;
+  return interactiveMovementState.moveModel(state, unitId, modelIndex, position, {
+    clone,
+    isModelEditPhase: phase => PLAY_MODEL_EDIT_PHASES.includes(phase),
+    movementStep,
+    modelBaseRadius,
+    setupDeploymentZoneSource,
+    canInfiltrate: profileDropHasInfiltrators,
+    infiltratorPlacementIsLegal: (next, side, profile, candidate, index, deployment, board) =>
+      modelIsOutsideEnemyDeploymentZoneBuffer(profile, side, candidate, index, deployment as DeploymentZoneSource, board),
+    infiltratorModelsAreOutsideEnemyUnits,
+    modelMoveHasNoBaseOverlap: interactiveMovementState.modelMoveHasNoBaseOverlap,
+  });
 }
 
 function applyPlayModelTranslation(
