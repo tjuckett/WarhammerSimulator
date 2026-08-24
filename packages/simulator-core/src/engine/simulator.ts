@@ -3790,59 +3790,31 @@ export function removePlayModels(
   return interactiveMovementState.removeModelsForCoherency(state, unitId, side, modelIndices, coherencyModelRemovalContext);
 }
 
+const manualDamageAllocationContext: manualCombat.ManualDamageAllocationContext = {
+  clone,
+  queueDeadlyDemiseForModels,
+  recordDestroyedModelMissionEvents,
+  spliceModelIndices,
+  queueFightOnDeathWindow,
+  markUnitDestroyed,
+  recordDestroyedUnitMissionEvent,
+  emergencyDisembarkDestroyedTransport,
+  centroid,
+  log,
+  resolvePendingDeadlyDemisesInPlace,
+  applyFeelNoPain,
+  recordBattleEvent,
+  BATTLE_EVENT_TYPE,
+  resolveDamageOutcome,
+};
+
 export function removePlayCasualtyModels(
   state: BattleState,
   unitId: string,
   side: Side,
   modelIndices: number[],
 ): BattleState {
-  const pendingUnit = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
-  const pendingCasualties = pendingUnit?.pendingCasualties ?? 0;
-  if (state.phase !== 'shooting' || !pendingUnit || pendingCasualties <= 0) return state;
-
-  const s = clone(state);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit) return state;
-  const uniqueIndices = Array.from(new Set(modelIndices))
-    .filter(modelIndex => unit.modelPositions[modelIndex])
-    .sort((a, b) => b - a)
-    .slice(0, pendingCasualties);
-  if (!uniqueIndices.length) return state;
-  const destroyedModelPositions = uniqueIndices.map(modelIndex => ({ ...unit.modelPositions[modelIndex] }));
-  const destroyedModelRosterIndexes = uniqueIndices.map(modelIndex => unit.modelRosterIndexes?.[modelIndex] ?? modelIndex);
-
-  queueDeadlyDemiseForModels(s, unit, uniqueIndices, state.activeArmy);
-  recordDestroyedModelMissionEvents(s, unit, uniqueIndices, state.activeArmy);
-  spliceModelIndices(unit, uniqueIndices);
-  queueFightOnDeathWindow(s, unit, state.activeArmy, destroyedModelPositions, destroyedModelRosterIndexes);
-
-  unit.remainingModels = Math.max(0, unit.remainingModels - uniqueIndices.length);
-  unit.pendingCasualties = Math.max(0, (unit.pendingCasualties ?? 0) - uniqueIndices.length);
-  if (unit.pendingCasualties <= 0) unit.pendingCasualties = undefined;
-  if (unit.remainingModels <= 0 || unit.modelPositions.length <= 0) {
-    markUnitDestroyed(unit);
-    unit.remainingModels = 0;
-    unit.woundsOnLeadModel = 0;
-    unit.woundedModelIndex = undefined;
-    unit.pendingWoundAssignment = undefined;
-    unit.modelPositions = [];
-    unit.modelRotations = [];
-    recordDestroyedUnitMissionEvent(s, unit, state.activeArmy);
-    s.log = [...s.log, ...emergencyDisembarkDestroyedTransport(s, unit, state.activeArmy)];
-  } else {
-    unit.position = centroid(unit.modelPositions);
-    if (unit.woundsOnLeadModel <= 0) unit.woundsOnLeadModel = unit.profile.wounds;
-  }
-
-  s.log = [...s.log, log(
-    s,
-    state.activeArmy,
-    unit.profile.name,
-    `${unit.profile.name} removes ${uniqueIndices.length} selected casualty model${uniqueIndices.length === 1 ? '' : 's'}.`,
-    unit.destroyed ? 'death' : 'damage',
-  )];
-  if (s.pendingDeadlyDemises?.length) s.log = [...s.log, ...resolvePendingDeadlyDemisesInPlace(s)];
-  return s;
+  return manualCombat.removePlayCasualtyModels(state, unitId, side, modelIndices, manualDamageAllocationContext);
 }
 
 export function assignPlayWoundedModel(
@@ -3851,25 +3823,7 @@ export function assignPlayWoundedModel(
   side: Side,
   modelIndex: number,
 ): BattleState {
-  const pendingUnit = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
-  const pending = pendingUnit?.pendingWoundAssignment;
-  if (!['shooting', 'fight'].includes(state.phase) || !pendingUnit || !pending || (pendingUnit.pendingCasualties ?? 0) > 0) return state;
-
-  const s = clone(state);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || !unit.modelPositions[modelIndex] || !unit.pendingWoundAssignment) return state;
-  unit.woundedModelIndex = modelIndex;
-  unit.woundsOnLeadModel = unit.pendingWoundAssignment.woundsOnModel;
-  unit.pendingWoundAssignment = undefined;
-
-  s.log = [...s.log, log(
-    s,
-    state.activeArmy,
-    unit.profile.name,
-    `${unit.profile.name} marks model ${modelIndex + 1} as wounded (${unit.woundsOnLeadModel}W remaining).`,
-    'damage',
-  )];
-  return s;
+  return manualCombat.assignPlayWoundedModel(state, unitId, side, modelIndex, manualDamageAllocationContext);
 }
 
 export function allocatePlayDamageToModel(
@@ -3878,117 +3832,7 @@ export function allocatePlayDamageToModel(
   side: Side,
   modelIndex: number,
 ): BattleState {
-  const pendingUnit = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
-  const allocation = pendingUnit?.pendingDamageAllocations?.[0];
-  if (!['shooting', 'fight'].includes(state.phase) || !pendingUnit || !allocation || !pendingUnit.modelPositions[modelIndex]) return state;
-  if (allocation.targetModelIndex !== undefined && allocation.targetModelIndex !== modelIndex) return state;
-  if (pendingUnit.woundedModelIndex !== undefined && pendingUnit.woundedModelIndex !== modelIndex) return state;
-
-  const s = clone(state);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit?.pendingDamageAllocations?.length || !unit.modelPositions[modelIndex]) return state;
-  const damage = unit.pendingDamageAllocations.shift()!;
-  if (!unit.pendingDamageAllocations.length) unit.pendingDamageAllocations = undefined;
-
-  const feelNoPain = applyFeelNoPain(unit, damage.damage, s);
-  const appliedDamage = feelNoPain.damage;
-  if (appliedDamage <= 0) {
-    recordBattleEvent(s, {
-      type: BATTLE_EVENT_TYPE.DamageApplied,
-      side: state.activeArmy,
-      source: damage.sourceUnitId,
-      data: {
-        targetUnitId: unit.id,
-        damage: 0,
-        killedModels: 0,
-        remainingModels: unit.remainingModels,
-        woundsOnCurrentModel: unit.woundsOnLeadModel,
-        noCarryOver: damage.noCarryOver ?? false,
-        source: damage.source ?? 'attack',
-      },
-    });
-    s.log = [...s.log, ...feelNoPain.logs, log(
-      s,
-      state.activeArmy,
-      unit.profile.name,
-      `${unit.profile.name} allocates ${damage.damage} damage to model ${modelIndex + 1}; no damage gets through.`,
-      'damage',
-    )];
-    return s;
-  }
-
-  const currentWounds = unit.woundedModelIndex === modelIndex ? unit.woundsOnLeadModel : unit.profile.wounds;
-  const allocationOutcome = resolveDamageOutcome({
-    damage: appliedDamage,
-    modelCount: 1,
-    woundsOnCurrentModel: currentWounds,
-    woundsPerModel: unit.profile.wounds,
-    // Allocation only decides the selected model's fate; any carryover is queued below.
-    noCarryOver: true,
-  });
-  if (allocationOutcome.killedModels > 0) {
-    const carryOverDamage = damage.noCarryOver ? 0 : appliedDamage - currentWounds;
-    const destroyedBySide = s.units.find(candidate => candidate.id === damage.sourceUnitId)?.side ?? state.activeArmy;
-    queueDeadlyDemiseForModels(s, unit, [modelIndex], destroyedBySide);
-    recordDestroyedModelMissionEvents(s, unit, [modelIndex], destroyedBySide, {
-      destroyedByUnitId: damage.sourceUnitId,
-      sourceTags: damage.sourceTags,
-    });
-    spliceModelIndices(unit, [modelIndex]);
-    unit.remainingModels = Math.max(0, unit.remainingModels - 1);
-    unit.woundedModelIndex = undefined;
-    unit.woundsOnLeadModel = unit.remainingModels > 0 ? unit.profile.wounds : 0;
-    if (unit.remainingModels <= 0 || unit.modelPositions.length <= 0) {
-      markUnitDestroyed(unit);
-      unit.remainingModels = 0;
-      unit.modelPositions = [];
-      unit.modelRotations = [];
-      unit.pendingDamageAllocations = undefined;
-      recordDestroyedUnitMissionEvent(s, unit, destroyedBySide, {
-        destroyedByUnitId: damage.sourceUnitId,
-        destroyingUnitObjectiveIndexesWithinRange: damage.sourceObjectiveIndexesWithinRange,
-        sourceTags: damage.sourceTags,
-      });
-      s.log = [...s.log, ...emergencyDisembarkDestroyedTransport(s, unit, destroyedBySide)];
-    } else {
-      unit.position = centroid(unit.modelPositions);
-      if (carryOverDamage > 0) {
-        unit.pendingDamageAllocations = [
-          { ...damage, damage: carryOverDamage },
-          ...(unit.pendingDamageAllocations ?? []),
-        ];
-      }
-    }
-  } else {
-    unit.woundedModelIndex = modelIndex;
-    unit.woundsOnLeadModel = allocationOutcome.woundsOnCurrentModel;
-  }
-
-  s.log = [...s.log, ...feelNoPain.logs, log(
-    s,
-    state.activeArmy,
-    unit.profile.name,
-    allocationOutcome.killedModels > 0
-      ? `${unit.profile.name} allocates ${appliedDamage} damage to model ${modelIndex + 1}; model destroyed.`
-      : `${unit.profile.name} allocates ${appliedDamage} damage to model ${modelIndex + 1} (${unit.woundsOnLeadModel}W remaining).`,
-    allocationOutcome.killedModels > 0 ? 'death' : 'damage',
-  )];
-  recordBattleEvent(s, {
-    type: BATTLE_EVENT_TYPE.DamageApplied,
-    side: state.activeArmy,
-    source: damage.sourceUnitId,
-    data: {
-      targetUnitId: unit.id,
-      damage: appliedDamage,
-      killedModels: allocationOutcome.killedModels,
-      remainingModels: unit.remainingModels,
-      woundsOnCurrentModel: unit.woundsOnLeadModel,
-      noCarryOver: damage.noCarryOver ?? false,
-      source: damage.source ?? 'attack',
-    },
-  });
-  if (s.pendingDeadlyDemises?.length) s.log = [...s.log, ...resolvePendingDeadlyDemisesInPlace(s)];
-  return s;
+  return manualCombat.allocatePlayDamageToModel(state, unitId, side, modelIndex, manualDamageAllocationContext);
 }
 
 export function playUnitCanFallBack(
