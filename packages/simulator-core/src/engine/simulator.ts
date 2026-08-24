@@ -4063,6 +4063,14 @@ function resolveSuperHeavyMobileInPlace(state: BattleState, unit: BattleUnit): v
     `${unit.profile.name} resolves MOBILE: rolled ${roll}${roll === 1 ? ' and is Battle-shocked.' : '.'}`, roll === 1 ? 'damage' : 'move')];
 }
 
+const completeMovementContext: interactiveMovementState.CompleteMovementContext = {
+  clone,
+  movementStep,
+  unitLegalityIssues: playMovementUnitLegalityIssues,
+  markMovementGroupComplete: markPlayMovementGroupComplete,
+  resolveSuperHeavyMobile: resolveSuperHeavyMobileInPlace,
+};
+
 export function advancePlayUnit(
   state: BattleState,
   unitId: string,
@@ -4173,21 +4181,7 @@ export function completePlayUnitMovement(
   unitId: string,
   side: Side,
 ): BattleState {
-  if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return state;
-
-  const existingUnit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
-  if (
-    !existingUnit
-    || existingUnit.movementComplete
-    || (existingUnit.movementAction !== 'normalMove' && existingUnit.movementAction !== 'advanced')
-  ) return state;
-  if (playMovementUnitLegalityIssues(state, existingUnit).length > 0) return state;
-
-  const s = clone(state);
-  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId)!;
-  markPlayMovementGroupComplete(s, unit);
-  resolveSuperHeavyMobileInPlace(s, unit);
-  return s;
+  return interactiveMovementState.completeUnitMovement(state, unitId, side, completeMovementContext);
 }
 
 export function undeployPlayUnit(state: BattleState, unitId: string, side: Side): BattleState {

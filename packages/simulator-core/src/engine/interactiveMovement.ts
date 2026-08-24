@@ -753,3 +753,23 @@ export function advanceUnit(state: BattleState, unitId: string, side: Side, rule
   context.createLog(next, side, unit.profile.name, `${unit.profile.name} Advances: ${advance.advanceRoll === 6 && unit.profile.movementOverrides?.advanceRoll === 'auto6' ? 'auto 6' : `rolled ${advance.advanceRoll}`}; movement allowance is ${advance.total.toFixed(0)}\".`);
   return next;
 }
+
+export interface CompleteMovementContext {
+  clone(state: BattleState): BattleState;
+  movementStep(state: BattleState): string;
+  unitLegalityIssues(state: BattleState, unit: BattleUnit): string[];
+  markMovementGroupComplete(state: BattleState, unit: BattleUnit): void;
+  resolveSuperHeavyMobile(state: BattleState, unit: BattleUnit): void;
+}
+
+export function completeUnitMovement(state: BattleState, unitId: string, side: Side, context: CompleteMovementContext): BattleState {
+  if (state.phase !== 'movement' || context.movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return state;
+  const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
+  if (!existing || existing.movementComplete || (existing.movementAction !== 'normalMove' && existing.movementAction !== 'advanced')) return state;
+  if (context.unitLegalityIssues(state, existing).length > 0) return state;
+  const next = context.clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
+  context.markMovementGroupComplete(next, unit);
+  context.resolveSuperHeavyMobile(next, unit);
+  return next;
+}
