@@ -1637,72 +1637,23 @@ export function lockPlayUnitShooting(state: BattleState, unitId: string, side: S
 }
 
 function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
-  if (unit.performingAction) return [];
-  if (unit.destroyed || unit.embarkedInUnitId || unitSurgedThisPhase(state, unit) || isAircraft(unit) || unit.inCombat || unit.fellBack || unit.arrivedFromReinforcements || unit.emergencyDisembarkedThisTurn || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced' || (unit.firedWeaponIndices?.length ?? 0) > 0) return [];
-  const foes = enemies(state, unit.side).filter(
-    e => unitCanChargeTarget(unit, e) && dist(unit.position, e.position) <= rules.chargeRange(),
-  );
-  if (!foes.length) return [];
-
-  const target = nearest(unit, foes)!;
-  const d = dist(unit.position, target.position);
-  const eng = rules.engagementRange();
-
-  // Formation-aware stop gap (same as movement)
-  const dirX = d > 0 ? (target.position.x - unit.position.x) / d : 1;
-  const dirY = d > 0 ? (target.position.y - unit.position.y) / d : 0;
-  const myExtent  = formationExtent(unit.modelPositions,   unit.position,   { x: dirX,  y: dirY  });
-  const tgtExtent = formationExtent(target.modelPositions, target.position, { x: -dirX, y: -dirY });
-  const stopGap   = eng + myExtent + tgtExtent + 0.05;
-
-  const needed = Math.max(0, d - stopGap);
-  const r1 = d6(), r2 = d6();
-  const roll = r1 + r2;
-  if (rules.metadata.edition === '11e' && hasKeyword(unit, 'fly')) unit.takingToSkies = true;
-  const maximumDistance = Math.max(0, roll - takeToSkiesDistanceCost(unit));
-
-  const logs: LogEntry[] = [
-    log(state, unit.side, unit.profile.name,
-      `⚔️  ${unit.profile.name} charges ${target.profile.name}! (${needed.toFixed(1)}" needed, rolled ${r1}+${r2}=${roll})`,
-      'charge',
-    ),
-  ];
-
-  if (maximumDistance >= needed) {
-    const reachablePos = findReachablePosition(
-      unit, target.position, maximumDistance, state.terrain, stopGap,
-      unitTakesToSkiesForState(state, unit),
-    );
-    const newPos = interactiveMovementState.avoidModelOverlap(unit, reachablePos, state);
-    if (dist(unit.position, newPos) + 0.01 < needed) {
-      unit.takingToSkies = undefined;
-      logs.push(log(state, unit.side, unit.profile.name,
-        `  ❌ Charge path blocked by terrain`,
-        'charge',
-      ));
-      return logs;
-    }
-    translateFormation(unit, newPos.x - unit.position.x, newPos.y - unit.position.y);
-    interactiveMovementState.resolveInternalModelOverlaps(unit);
-    unit.charged = true;
-    unit.lastMovePhase = state.phase;
-    unit.lastMoveTurn = state.turn;
-    unit.takingToSkies = undefined;
-    unit.inCombat = true;
-    target.inCombat = true;
-    logs.push(log(state, unit.side, unit.profile.name,
-      `  ✅ Charge successful! ${unit.profile.name} is now in melee`,
-      'charge',
-    ));
-  } else {
-    unit.takingToSkies = undefined;
-    logs.push(log(state, unit.side, unit.profile.name,
-      `  ❌ Charge failed (needed ${Math.ceil(needed)}, rolled ${roll})`,
-      'charge',
-    ));
-  }
-
-  return logs;
+  return manualCombat.runCharge(unit, state, rules, {
+    enemies,
+    unitCanChargeTarget,
+    unitSurgedThisPhase,
+    isAircraft,
+    distance: dist,
+    formationExtent,
+    d6,
+    hasKeyword,
+    takesToSkies: unitTakesToSkiesForState,
+    takeToSkiesDistanceCost,
+    findReachablePosition,
+    avoidModelOverlap: interactiveMovementState.avoidModelOverlap,
+    translateFormation,
+    resolveInternalModelOverlaps: interactiveMovementState.resolveInternalModelOverlaps,
+    log,
+  });
 }
 
 export type PlayChargeTargetOption = {

@@ -7,6 +7,84 @@ import type { CombatAttackResolutionOptions } from './combatTypes';
 
 export type CombatAttackContext = Record<string, any>;
 
+export interface AutomatedChargeContext {
+  enemies(state: BattleState, side: Side): BattleUnit[];
+  unitCanChargeTarget(unit: BattleUnit, target: BattleUnit): boolean;
+  unitSurgedThisPhase(state: BattleState, unit: BattleUnit): boolean;
+  isAircraft(unit: BattleUnit): boolean;
+  distance(from: Position, to: Position): number;
+  formationExtent(points: Position[], center: Position, direction: Position): number;
+  d6(): number;
+  hasKeyword(unit: BattleUnit, keyword: string): boolean;
+  takesToSkies(state: BattleState, unit: BattleUnit): boolean;
+  takeToSkiesDistanceCost(unit: BattleUnit): number;
+  findReachablePosition(unit: BattleUnit, target: Position, maximumDistance: number, terrain: BattleState['terrain'], stopGap: number, takesToSkies: boolean): Position;
+  avoidModelOverlap(unit: BattleUnit, desired: Position, state: BattleState): Position;
+  translateFormation(unit: BattleUnit, dx: number, dy: number): void;
+  resolveInternalModelOverlaps(unit: BattleUnit): void;
+  log(state: BattleState, side: Side, source: string, message: string, kind: 'charge'): LogEntry;
+}
+
+export function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition, context: AutomatedChargeContext): LogEntry[] {
+  if (unit.performingAction) return [];
+  if (unit.destroyed || unit.embarkedInUnitId || context.unitSurgedThisPhase(state, unit) || context.isAircraft(unit)
+    || unit.inCombat || unit.fellBack || unit.arrivedFromReinforcements || unit.emergencyDisembarkedThisTurn
+    || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced' || (unit.firedWeaponIndices?.length ?? 0) > 0) return [];
+  const foes = context.enemies(state, unit.side).filter(
+    target => context.unitCanChargeTarget(unit, target) && context.distance(unit.position, target.position) <= rules.chargeRange(),
+  );
+  if (!foes.length) return [];
+
+  const target = foes.reduce((nearest, candidate) =>
+    context.distance(unit.position, candidate.position) < context.distance(unit.position, nearest.position) ? candidate : nearest);
+  const distance = context.distance(unit.position, target.position);
+  const engagementRange = rules.engagementRange();
+  const direction = {
+    x: distance > 0 ? (target.position.x - unit.position.x) / distance : 1,
+    y: distance > 0 ? (target.position.y - unit.position.y) / distance : 0,
+  };
+  const stopGap = engagementRange
+    + context.formationExtent(unit.modelPositions, unit.position, direction)
+    + context.formationExtent(target.modelPositions, target.position, { x: -direction.x, y: -direction.y })
+    + 0.05;
+  const needed = Math.max(0, distance - stopGap);
+  const firstDie = context.d6();
+  const secondDie = context.d6();
+  const roll = firstDie + secondDie;
+  if (rules.metadata.edition === '11e' && context.hasKeyword(unit, 'fly')) unit.takingToSkies = true;
+  const maximumDistance = Math.max(0, roll - context.takeToSkiesDistanceCost(unit));
+  const logs: LogEntry[] = [context.log(state, unit.side, unit.profile.name,
+    `⚔️  ${unit.profile.name} charges ${target.profile.name}! (${needed.toFixed(1)}" needed, rolled ${firstDie}+${secondDie}=${roll})`, 'charge')];
+
+  if (maximumDistance >= needed) {
+    const reachablePosition = context.findReachablePosition(
+      unit, target.position, maximumDistance, state.terrain, stopGap,
+      context.takesToSkies(state, unit),
+    );
+    const newPosition = context.avoidModelOverlap(unit, reachablePosition, state);
+    if (context.distance(unit.position, newPosition) + 0.01 < needed) {
+      unit.takingToSkies = undefined;
+      logs.push(context.log(state, unit.side, unit.profile.name, '  ❌ Charge path blocked by terrain', 'charge'));
+      return logs;
+    }
+    context.translateFormation(unit, newPosition.x - unit.position.x, newPosition.y - unit.position.y);
+    context.resolveInternalModelOverlaps(unit);
+    unit.charged = true;
+    unit.lastMovePhase = state.phase;
+    unit.lastMoveTurn = state.turn;
+    unit.takingToSkies = undefined;
+    unit.inCombat = true;
+    target.inCombat = true;
+    logs.push(context.log(state, unit.side, unit.profile.name,
+      `  ✅ Charge successful! ${unit.profile.name} is now in melee`, 'charge'));
+  } else {
+    unit.takingToSkies = undefined;
+    logs.push(context.log(state, unit.side, unit.profile.name,
+      `  ❌ Charge failed (needed ${Math.ceil(needed)}, rolled ${roll})`, 'charge'));
+  }
+  return logs;
+}
+
 /** Dependencies for player-selected casualty and damage allocation. */
 export type ManualDamageAllocationContext = Record<string, any>;
 
