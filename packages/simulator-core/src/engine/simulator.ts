@@ -4529,14 +4529,15 @@ function runSimulatedMovementPhase(state: BattleState, side: Side, rules: RulesE
   return battleSimulation.runAutomaticMovementPhase(state, side, rules, automaticMovementPhaseContext);
 }
 
+const automaticShootingPhaseContext: battleSimulation.AutomaticShootingPhaseContext = {
+  enterBattlePhase,
+  phaseLog,
+  runShootingPhaseUnits,
+  updateObjectiveControl,
+};
+
 function runSimulatedShootingPhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
-  const armyName = state.armies[side].name;
-  const logs: LogEntry[] = [];
-  enterBattlePhase(state, { phase: 'shooting' }, side);
-  logs.push(phaseLog(state, side, armyName, `\n─── Shooting Phase ───`));
-  logs.push(...runShootingPhaseUnits(state, side, rules));
-  updateObjectiveControl(state, rules);
-  return logs;
+  return battleSimulation.runAutomaticShootingPhase(state, side, rules, automaticShootingPhaseContext);
 }
 
 function runSimulatedChargePhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {

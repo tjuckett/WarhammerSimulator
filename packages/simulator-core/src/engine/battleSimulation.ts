@@ -219,6 +219,27 @@ export function runAutomaticMovementPhase(
   return logs;
 }
 
+export interface AutomaticShootingPhaseContext {
+  enterBattlePhase(state: BattleState, node: { phase: Phase }, side: Side): void;
+  phaseLog(state: BattleState, side: Side, armyName: string, message: string): LogEntry;
+  runShootingPhaseUnits(state: BattleState, side: Side, rules: RulesEdition): LogEntry[];
+  updateObjectiveControl(state: BattleState, rules: RulesEdition): void;
+}
+
+export function runAutomaticShootingPhase(
+  state: BattleState,
+  side: Side,
+  rules: RulesEdition,
+  context: AutomaticShootingPhaseContext,
+): LogEntry[] {
+  const armyName = state.armies[side].name;
+  context.enterBattlePhase(state, { phase: 'shooting' }, side);
+  const logs = [context.phaseLog(state, side, armyName, '\n─── Shooting Phase ───')];
+  logs.push(...context.runShootingPhaseUnits(state, side, rules));
+  context.updateObjectiveControl(state, rules);
+  return logs;
+}
+
 export function simulateNextUnit(state: BattleState, rules: RulesEdition, context: SimulationUnitStepContext): BattleState {
   const next = context.clone(state);
   if (next.winner !== null || next.phase === 'deployment' || next.phase === 'end') return next;
