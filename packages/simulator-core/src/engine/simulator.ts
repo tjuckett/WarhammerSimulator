@@ -97,6 +97,7 @@ import type { CombatAttackResolutionOptions } from './combatTypes';
 import * as combatAttackResolution from './combatAttackResolution';
 import { createTransportDestruction } from './transportDestruction';
 import * as movementSimulation from './movementSimulation';
+import * as missionActionOptions from './missionActionOptions';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -1164,46 +1165,15 @@ export function playUnitCanStartAction(
   return !!unit && unitIsEligibleToStartAction(unit, state, rules);
 }
 
-function missionObjectiveActionOptions(
-  state: BattleState,
-  unitId: string,
-  side: Side,
-  rules: RulesEdition,
-  missionName: string,
-  actionId: string,
+const missionActionOptionsContext: missionActionOptions.MissionActionOptionsContext = {
+  canStartAction: playUnitCanStartAction,
+  objectiveIndexesWithinRange: attachedObjectiveIndexesWithinRange,
+  objectiveRoleForIndex,
+};
+const missionObjectiveActionOptions = (
+  state: BattleState, unitId: string, side: Side, rules: RulesEdition, missionName: string, actionId: string,
   objectiveFilter: 'any' | 'non-home' | 'central' = 'non-home',
-): number[] {
-  const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
-  if (rules.metadata.edition !== '11e' || selectedMissionName !== missionName) return [];
-  if (!playUnitCanStartAction(state, unitId, side, rules)) return [];
-
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
-  if (!unit) return [];
-  const markedObjectives = new Set([
-    ...(state.missionState?.operationMarkers ?? [])
-      .filter(marker => marker.side === side && marker.sourceActionId === actionId)
-      .flatMap(marker => marker.objectiveIndex === undefined ? [] : [marker.objectiveIndex]),
-    ...state.units
-      .filter(candidate => candidate.side === side && candidate.performingAction?.id === actionId)
-      .flatMap(candidate => candidate.performingAction?.targetObjectiveIndex === undefined
-        ? []
-        : [candidate.performingAction.targetObjectiveIndex]),
-  ]);
-  const homeRole = side === 0 ? 'home-0' : 'home-1';
-  const opponentHomeRole = side === 0 ? 'home-1' : 'home-0';
-
-  return attachedObjectiveIndexesWithinRange(state, unit, rules).filter(objectiveIndex => {
-    if (markedObjectives.has(objectiveIndex)) return false;
-    const objective = state.objectives[objectiveIndex];
-    if (!objective) return false;
-    const objectiveRole = objectiveRoleForIndex(state, objectiveIndex);
-    if (objectiveFilter === 'any') return true;
-    if (objectiveFilter === 'central') {
-      return objectiveRole === 'central';
-    }
-    return objectiveRole !== undefined && objectiveRole !== homeRole;
-  });
-}
+) => missionActionOptions.missionObjectiveActionOptions(state, unitId, side, rules, missionName, actionId, objectiveFilter, missionActionOptionsContext);
 
 export function extractIntelligenceObjectiveOptions(
   state: BattleState,
