@@ -1003,6 +1003,7 @@ const targetedMissionActionContext: missionActions.TargetedMissionActionContext 
   },
   rulesForState: state => rulesEditionForRuleset(state.ruleset),
   log,
+  clone,
 };
 
 function objectiveIsCentral(state: BattleState, objectiveIndex: number): boolean {
@@ -1089,26 +1090,7 @@ export function punishmentCondemnedUnitOptions(
   side: Side,
   rules: RulesEdition,
 ): string[] {
-  const selectedMissionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
-  if (rules.metadata.edition !== '11e'
-    || selectedMissionName !== 'Punishment'
-    || state.phase !== 'command'
-    || state.activeArmy !== side) {
-    return [];
-  }
-  const enemiesOnBattlefield = state.units.filter(unit =>
-    unit.side !== side
-    && !unit.destroyed
-    && !unit.embarkedInUnitId
-    && !unit.inStrategicReserves
-    && unit.modelPositions.length > 0
-  );
-  const previousTurnDestroyingUnitIds = new Set(state.missionEvents?.lastCompletedTurn?.destroyingUnitIds ?? []);
-  const eligible = enemiesOnBattlefield.filter(unit =>
-    attachedObjectiveIndexesWithinRange(state, unit, rules).length > 0
-    || previousTurnDestroyingUnitIds.has(unit.id)
-  );
-  return (eligible.length ? eligible : enemiesOnBattlefield).map(unit => unit.id);
+  return missionActions.punishmentCondemnedUnitOptions(state, side, rules, targetedMissionActionContext);
 }
 
 export function togglePunishmentCondemnedUnit(
@@ -1117,28 +1099,7 @@ export function togglePunishmentCondemnedUnit(
   side: Side,
   rules: RulesEdition,
 ): BattleState {
-  const options = punishmentCondemnedUnitOptions(state, side, rules);
-  if (!options.includes(unitId)) return state;
-  const current = state.missionState?.condemnedUnitIds?.[side] ?? [];
-  const alreadySelected = current.includes(unitId);
-  if (!alreadySelected && current.length >= 3) return state;
-
-  const next = clone(state);
-  next.missionState = next.missionState ?? {};
-  const selections: [string[], string[]] = next.missionState.condemnedUnitIds ?? [[], []];
-  selections[side] = alreadySelected
-    ? selections[side].filter(id => id !== unitId)
-    : [...selections[side], unitId];
-  next.missionState.condemnedUnitIds = selections;
-  const unit = next.units.find(candidate => candidate.id === unitId)!;
-  next.log = [...next.log, log(
-    next,
-    side,
-    next.armies[side].name,
-    `${unit.profile.name} is ${alreadySelected ? 'no longer condemned' : 'condemned'} by ${next.armies[side].name}.`,
-    'info',
-  )];
-  return next;
+  return missionActions.togglePunishmentCondemnedUnit(state, unitId, side, rules, targetedMissionActionContext);
 }
 
 function autoSelectPunishmentCondemnedUnits(
@@ -1146,21 +1107,7 @@ function autoSelectPunishmentCondemnedUnits(
   side: Side,
   rules: RulesEdition,
 ): void {
-  const unitIds = punishmentCondemnedUnitOptions(state, side, rules).slice(0, 3);
-  if (!unitIds.length) return;
-  state.missionState = state.missionState ?? {};
-  const selections: [string[], string[]] = state.missionState.condemnedUnitIds ?? [[], []];
-  selections[side] = unitIds;
-  state.missionState.condemnedUnitIds = selections;
-  state.log = [...state.log, log(
-    state,
-    side,
-    state.armies[side].name,
-    `${state.armies[side].name} condemns ${unitIds.map(unitId =>
-      state.units.find(unit => unit.id === unitId)?.profile.name ?? unitId
-    ).join(', ')}.`,
-    'info',
-  )];
+  missionActions.autoSelectPunishmentCondemnedUnits(state, side, rules, targetedMissionActionContext);
 }
 
 export function startPlayUnitAction(

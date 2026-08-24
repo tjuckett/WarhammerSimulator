@@ -191,6 +191,7 @@ export interface TargetedMissionActionContext extends SecondaryMissionActionOpti
   terrainIsOutsideDeploymentZone(state: BattleState, terrain: BattleState['terrain'][number], side: Side): boolean;
   rulesForState(state: BattleState): RulesEdition;
   log(state: BattleState, side: Side, title: string, message: string, type: string): BattleState['log'][number];
+  clone(state: BattleState): BattleState;
 }
 
 export interface SensorSweepOption {
@@ -276,6 +277,43 @@ export function removeOpponentOperationMarkersAfterMove(state: BattleState, unit
   state.missionState!.operationMarkers = markers.filter(marker => !removed.includes(marker));
   state.log = [...state.log, context.log(state, unit.side, unit.profile.name,
     `${unit.profile.name} removes ${removed.length} enemy operation marker${removed.length === 1 ? '' : 's'} after ending a move within objective range.`, 'info')];
+}
+
+export function punishmentCondemnedUnitOptions(state: BattleState, side: Side, rules: RulesEdition, context: TargetedMissionActionContext): string[] {
+  const missionName = state.setup?.primaryMissions?.[side] ?? state.setup?.primaryMission;
+  if (rules.metadata.edition !== '11e' || missionName !== 'Punishment' || state.phase !== 'command' || state.activeArmy !== side) return [];
+  const enemies = state.units.filter(unit => unit.side !== side && !unit.destroyed && !unit.embarkedInUnitId
+    && !unit.inStrategicReserves && unit.modelPositions.length > 0);
+  const previousDestroyers = new Set(state.missionEvents?.lastCompletedTurn?.destroyingUnitIds ?? []);
+  const eligible = enemies.filter(unit => context.objectiveIndexesWithinRange(state, unit, rules).length > 0 || previousDestroyers.has(unit.id));
+  return (eligible.length ? eligible : enemies).map(unit => unit.id);
+}
+
+export function togglePunishmentCondemnedUnit(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: TargetedMissionActionContext): BattleState {
+  if (!punishmentCondemnedUnitOptions(state, side, rules, context).includes(unitId)) return state;
+  const current = state.missionState?.condemnedUnitIds?.[side] ?? [];
+  const alreadySelected = current.includes(unitId);
+  if (!alreadySelected && current.length >= 3) return state;
+  const next = context.clone(state);
+  next.missionState ??= {};
+  const selections: [string[], string[]] = next.missionState.condemnedUnitIds ?? [[], []];
+  selections[side] = alreadySelected ? selections[side].filter(id => id !== unitId) : [...selections[side], unitId];
+  next.missionState.condemnedUnitIds = selections;
+  const unit = next.units.find(candidate => candidate.id === unitId)!;
+  next.log = [...next.log, context.log(next, side, next.armies[side].name,
+    `${unit.profile.name} is ${alreadySelected ? 'no longer condemned' : 'condemned'} by ${next.armies[side].name}.`, 'info')];
+  return next;
+}
+
+export function autoSelectPunishmentCondemnedUnits(state: BattleState, side: Side, rules: RulesEdition, context: TargetedMissionActionContext): void {
+  const unitIds = punishmentCondemnedUnitOptions(state, side, rules, context).slice(0, 3);
+  if (!unitIds.length) return;
+  state.missionState ??= {};
+  const selections: [string[], string[]] = state.missionState.condemnedUnitIds ?? [[], []];
+  selections[side] = unitIds;
+  state.missionState.condemnedUnitIds = selections;
+  state.log = [...state.log, context.log(state, side, state.armies[side].name,
+    `${state.armies[side].name} condemns ${unitIds.map(id => state.units.find(unit => unit.id === id)?.profile.name ?? id).join(', ')}.`, 'info')];
 }
 
 export function cleanseObjectiveOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: SecondaryMissionActionOptionsContext): number[] {
