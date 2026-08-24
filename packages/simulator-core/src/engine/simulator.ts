@@ -114,7 +114,6 @@ import * as firingDeck from './firingDeck';
 import * as movementPathing from './movementPathing';
 import * as aircraftMovement from './aircraftMovement';
 import * as movementLegality from './movementLegality';
-import * as scoutMoves from './scoutMoves';
 import * as takeToSkies from './takeToSkies';
 import * as surgeMoves from './surgeMoves';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
@@ -4897,7 +4896,7 @@ export const declarePlayUnitTakeToSkies = (
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState => takeToSkies.declare(state, unitId, side, rules, takeToSkiesContext);
 
-const scoutMoveContext: scoutMoves.ScoutMoveContext = {
+const scoutMoveContext: interactiveMovementState.ScoutMoveContext = {
   clone,
   attachedComponents: attachedUnitComponents,
   componentsAreWithinDeploymentZone: (state, components, side) => {
@@ -4926,11 +4925,11 @@ const scoutMoveContext: scoutMoves.ScoutMoveContext = {
 };
 
 export const playScoutMoveAllowance = (state: BattleState, unitId: string, side: Side): number | null =>
-  scoutMoves.allowance(state, unitId, side, scoutMoveContext);
+  interactiveMovementState.scoutMoveAllowance(state, unitId, side, scoutMoveContext);
 export const startPlayScoutMove = (state: BattleState, unitId: string, side: Side): BattleState =>
-  scoutMoves.start(state, unitId, side, scoutMoveContext);
+  interactiveMovementState.startScoutMove(state, unitId, side, scoutMoveContext);
 export const completePlayScoutMove = (state: BattleState, unitId: string, side: Side): BattleState =>
-  scoutMoves.complete(state, unitId, side, scoutMoveContext);
+  interactiveMovementState.completeScoutMove(state, unitId, side, scoutMoveContext);
 
 function moveSurgeComponentTowardTarget(
   state: BattleState, component: BattleUnit, target: BattleUnit, maximumDistance: number, rules: RulesEdition,
