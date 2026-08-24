@@ -162,6 +162,37 @@ export function simulateNextPhase(state: BattleState, rules: RulesEdition, conte
   return advancePhase(next, rules, 'full-phase', context);
 }
 
+export interface AutomaticCommandPhaseContext {
+  enterBattlePhase(state: BattleState, node: { phase: Phase }, side: Side): void;
+  selectPunishmentUnits(state: BattleState, side: Side, rules: RulesEdition): void;
+  gainCommandPoints(state: BattleState): [number, number];
+  phaseLog(state: BattleState, side: Side, armyName: string, message: string): LogEntry;
+  log(state: BattleState, side: Side, armyName: string, message: string, kind: 'info'): LogEntry;
+  battleRound(state: BattleState): number;
+  runBattleshock(state: BattleState, side: Side): LogEntry[];
+  scorePrimaryMissionLogs(state: BattleState, side: Side, rules: RulesEdition): LogEntry[];
+  runAutomaticUnitAbilities(state: BattleState, side: Side, timing: 'end-of-phase', rules: RulesEdition): void;
+}
+
+export function runAutomaticCommandPhase(
+  state: BattleState,
+  side: Side,
+  rules: RulesEdition,
+  context: AutomaticCommandPhaseContext,
+): LogEntry[] {
+  const armyName = state.armies[side].name;
+  context.enterBattlePhase(state, { phase: 'command' }, side);
+  context.selectPunishmentUnits(state, side, rules);
+  const commandPoints = context.gainCommandPoints(state);
+  const logs = [context.phaseLog(state, side, armyName,
+    `\n═══ BATTLE ROUND ${context.battleRound(state)} — ${armyName.toUpperCase()} — ${rules.name.toUpperCase()} ═══`)];
+  logs.push(context.log(state, side, armyName, `Both players gain 1CP (${commandPoints[0]}CP / ${commandPoints[1]}CP).`, 'info'));
+  logs.push(...context.runBattleshock(state, side));
+  logs.push(...context.scorePrimaryMissionLogs(state, side, rules));
+  context.runAutomaticUnitAbilities(state, side, 'end-of-phase', rules);
+  return logs;
+}
+
 export function simulateNextUnit(state: BattleState, rules: RulesEdition, context: SimulationUnitStepContext): BattleState {
   const next = context.clone(state);
   if (next.winner !== null || next.phase === 'deployment' || next.phase === 'end') return next;

@@ -4501,19 +4501,20 @@ export function simulateNextUnit(state: BattleState, rules: RulesEdition): Battl
   return battleSimulation.simulateNextUnit(state, rules, simulationUnitStepContext);
 }
 
+const automaticCommandPhaseContext: battleSimulation.AutomaticCommandPhaseContext = {
+  enterBattlePhase,
+  selectPunishmentUnits: autoSelectPunishmentCondemnedUnits,
+  gainCommandPoints: gainCommandPhaseCommandPoints,
+  phaseLog,
+  log,
+  battleRound,
+  runBattleshock: runBattleshockPhase,
+  scorePrimaryMissionLogs,
+  runAutomaticUnitAbilities,
+};
+
 function runSimulatedCommandPhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
-  const armyName = state.armies[side].name;
-  const logs: LogEntry[] = [];
-  enterBattlePhase(state, { phase: 'command' }, side);
-  autoSelectPunishmentCondemnedUnits(state, side, rules);
-  const nextCommandPoints = gainCommandPhaseCommandPoints(state);
-  logs.push(phaseLog(state, side, armyName,
-    `\n═══ BATTLE ROUND ${battleRound(state)} — ${armyName.toUpperCase()} — ${rules.name.toUpperCase()} ═══`));
-  logs.push(log(state, side, armyName, `Both players gain 1CP (${nextCommandPoints[0]}CP / ${nextCommandPoints[1]}CP).`, 'info'));
-  logs.push(...runBattleshockPhase(state, side));
-  logs.push(...scorePrimaryMissionLogs(state, side, rules));
-  runAutomaticUnitAbilities(state, side, 'end-of-phase', rules);
-  return logs;
+  return battleSimulation.runAutomaticCommandPhase(state, side, rules, automaticCommandPhaseContext);
 }
 
 function runSimulatedMovementPhase(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
