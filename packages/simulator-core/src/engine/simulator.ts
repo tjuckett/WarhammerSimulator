@@ -1492,6 +1492,7 @@ export type PlayShootingAttackAllocation = manualCombat.PlayShootingAttackAlloca
 const manualShootingSelectionContext: manualCombat.ManualShootingSelectionContext = {
   attachedUnitId,
   aliveWeaponModelCount,
+  nearest,
   eligibleShootingWeapons,
   enemies,
   shootingWeaponCanTarget,
@@ -1953,6 +1954,7 @@ const manualFightResolutionContext: manualCombat.ManualFightResolutionContext = 
   clone,
   unitCanFight,
   aliveWeaponModelCount,
+  nearest,
   selectMeleeWeapons: meleeWeaponSelection,
   chooseOneProfilePerGroup,
   fixedWeaponAttackCount: (unit, weapon, weaponIndex) => manualCombat.fixedWeaponAttackCount(unit, weapon, weaponIndex, manualShootingSelectionContext),
@@ -2196,35 +2198,7 @@ export function declineFightOnDeath(
 }
 
 function runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
-  if (unit.destroyed || unit.embarkedInUnitId) return [];
-  const eng = rules.engagementRange();
-  const foes = enemies(state, unit.side).filter(e => unitCanFightTarget(unit, e) && inEngagement(unit, [e], eng));
-  if (!foes.length) return [];
-  unit.activated = true;
-  finishAttachedFightComponent(state, unit, rules);
-
-  const meleeOptions = unit.profile.weapons
-    .map((weapon, weaponIndex) => ({ weapon, weaponIndex }))
-    .filter(option => option.weapon.isMelee);
-  const meleeWeapons = rules.metadata.edition === '11e'
-    ? meleeWeaponSelection(unit, meleeOptions, 'all')
-    : chooseOneProfilePerGroup(meleeOptions);
-  if (!meleeWeapons.length) return [log(state, unit.side, unit.profile.name, `${unit.profile.name} is selected to fight but has no melee weapons.`, 'fight')];
-
-  const target = nearest(unit, foes)!;
-  const logs: LogEntry[] = [
-    log(state, unit.side, unit.profile.name, `🗡️  ${unit.profile.name} fights ${target.profile.name}:`, 'fight'),
-  ];
-
-  for (const { weapon, weaponIndex } of meleeWeapons) {
-    if (aliveWeaponModelCount(unit, weaponIndex) <= 0) continue;
-    logs.push(...resolveCombatAttacks(unit, target, weapon, weaponIndex, rules, state, false));
-    logs.push(...resolveHazardousTests(unit, weapon, weaponIndex, state));
-  }
-
-  logs.push(...resolvePendingDeadlyDemisesInPlace(state));
-
-  return logs;
+  return manualCombat.runFight(unit, state, rules, manualFightResolutionContext);
 }
 
 function runAutomaticFightForUnit(state: BattleState, unitId: string, rules: RulesEdition): BattleState {

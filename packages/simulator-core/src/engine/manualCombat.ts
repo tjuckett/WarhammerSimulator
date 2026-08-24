@@ -162,6 +162,7 @@ export type PlayShootingAttackAllocation = {
 export interface ManualShootingSelectionContext {
   attachedUnitId(unit: BattleUnit): string;
   aliveWeaponModelCount(unit: BattleUnit, weaponIndex: number): number;
+  nearest(unit: BattleUnit, targets: BattleUnit[]): BattleUnit | null;
   eligibleShootingWeapons(unit: BattleUnit, state: BattleState, rules: RulesEdition, allowActivated?: boolean): WeaponProfile[];
   enemies(state: BattleState, side: Side): BattleUnit[];
   shootingWeaponCanTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, rules: RulesEdition): boolean;
@@ -694,6 +695,7 @@ export type MeleeAttackAllocation = { weaponIndex: number; targetUnitId: string;
 
 export interface ManualFightResolutionContext extends FightPhaseContext {
   clone(state: BattleState): BattleState;
+  nearest(unit: BattleUnit, targets: BattleUnit[]): BattleUnit | null;
   unitCanFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean;
   aliveWeaponModelCount(unit: BattleUnit, weaponIndex: number): number;
   selectMeleeWeapons(unit: BattleUnit, options: Array<{ weapon: WeaponProfile; weaponIndex: number }>, requested: number | 'all'): Array<{ weapon: WeaponProfile; weaponIndex: number }>;
@@ -901,6 +903,28 @@ export function declineFightOnDeath(state: BattleState, side: Side, context: Fig
   next.pendingFightOnDeath?.shift();
   next.log = [...next.log, context.log(next, side, pending.unit.profile.name, `${pending.unit.profile.name} declines its Fight On Death attack.`, 'fight')];
   return next;
+}
+
+export function runFight(unit: BattleUnit, state: BattleState, rules: RulesEdition, context: ManualFightResolutionContext): LogEntry[] {
+  if (unit.destroyed || unit.embarkedInUnitId) return [];
+  const foes = context.enemies(state, unit.side).filter(enemy => context.canFightTarget(unit, enemy)
+    && context.inEngagement(unit, [enemy], rules.engagementRange()));
+  if (!foes.length) return [];
+  unit.activated = true;
+  context.finishAttachedFightComponent(state, unit, rules);
+  const meleeOptions = unit.profile.weapons.map((weapon, weaponIndex) => ({ weapon, weaponIndex })).filter(option => option.weapon.isMelee);
+  const meleeWeapons = rules.metadata.edition === '11e' ? context.selectMeleeWeapons(unit, meleeOptions, 'all') : context.chooseOneProfilePerGroup(meleeOptions);
+  if (!meleeWeapons.length) return [context.log(state, unit.side, unit.profile.name, `${unit.profile.name} is selected to fight but has no melee weapons.`, 'fight')];
+  const target = context.nearest(unit, foes);
+  if (!target) return [];
+  const logs: LogEntry[] = [context.log(state, unit.side, unit.profile.name, `${unit.profile.name} fights ${target.profile.name}:`, 'fight')];
+  for (const { weapon, weaponIndex } of meleeWeapons) {
+    if (context.aliveWeaponModelCount(unit, weaponIndex) <= 0) continue;
+    logs.push(...context.resolveCombatAttacks(unit, target, weapon, weaponIndex, rules, state, false));
+    logs.push(...context.resolveHazardousTests(unit, weapon, weaponIndex, state));
+  }
+  logs.push(...context.resolvePendingDeadlyDemisesInPlace(state));
+  return logs;
 }
 
 export interface CombatWoundContext {
