@@ -113,6 +113,7 @@ import * as movementPathing from './movementPathing';
 import * as aircraftMovement from './aircraftMovement';
 import * as movementLegality from './movementLegality';
 import * as scoutMoves from './scoutMoves';
+import * as takeToSkies from './takeToSkies';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -4864,51 +4865,34 @@ function unitHasStartedCurrentMove(unit: BattleUnit): boolean {
   });
 }
 
-export function playUnitCanTakeToSkies(
-  state: BattleState,
-  unitId: string,
-  side: Side,
-  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
-): boolean {
-  if (rules.metadata.edition !== '11e') return false;
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit
-    || unit.inStrategicReserves
-    || isAircraft(unit)
-    || attachedUnitComponents(state, unit).some(component => component.takingToSkies || unitSurgedThisPhase(state, component))) return false;
-  if (!attachedUnitKeywordSet(state, unit).has('fly')) return false;
-  if (state.phase === 'movement') {
-    return state.activeArmy === side
-      && movementStep(state) === 'moveUnits'
-      && attachedUnitComponents(state, unit).every(component => !component.movementComplete && !unitHasStartedCurrentMove(component));
-  }
-  return state.phase === 'charge'
-    && chargeRules.sideCanDeclareCharge(state, side, unit)
-    && chargeRules.unitCanDeclareCharge(state, unit, chargeRulesContext)
-    && attachedUnitComponents(state, unit).every(component => !component.activated && !component.charged);
-}
+const takeToSkiesContext: takeToSkies.TakeToSkiesContext = {
+  clone,
+  getUnit: (state, unitId, side) => state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId),
+  attachedComponents: attachedUnitComponents,
+  isAircraft,
+  unitSurgedThisPhase,
+  hasFlyKeyword: (state, unit) => attachedUnitKeywordSet(state, unit).has('fly'),
+  movementCanBegin: (state, side) => state.activeArmy === side && movementStep(state) === 'moveUnits',
+  chargeCanBegin: (state, side, unit) => chargeRules.sideCanDeclareCharge(state, side, unit) && chargeRules.unitCanDeclareCharge(state, unit, chargeRulesContext),
+  unitHasStartedCurrentMove,
+  unitHasHover: unit => unitHasRule(unit.profile, 'Hover'),
+  updateMovementAllowances: unit => updateModelMovementAllowances(unit),
+  createLog: (state, side, actor, message) => { state.log = [...state.log, log(state, side, actor, message, 'move')]; },
+};
 
-export function declarePlayUnitTakeToSkies(
+export const playUnitCanTakeToSkies = (
   state: BattleState,
   unitId: string,
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
-): BattleState {
-  if (!playUnitCanTakeToSkies(state, unitId, side, rules)) return state;
-  const s = clone(state);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
-  for (const component of attachedUnitComponents(s, unit)) {
-    component.takingToSkies = true;
-    if (component.movementAllowanceTotalByModel?.length) {
-      component.movementAllowanceTotalByModel = component.movementAllowanceTotalByModel.map(total => Math.max(0, total - 2));
-      updateModelMovementAllowances(component);
-    }
-  }
-  s.log = [...s.log, log(s, side, unit.profile.name, unitHasRule(unit.profile, 'Hover')
-    ? `${unit.profile.name} declares Take to the Skies; Hover prevents the -2" maximum-distance cost.`
-    : `${unit.profile.name} declares Take to the Skies (-2" maximum distance).`, 'move')];
-  return s;
-}
+): boolean => takeToSkies.canDeclare(state, unitId, side, rules, takeToSkiesContext);
+
+export const declarePlayUnitTakeToSkies = (
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): BattleState => takeToSkies.declare(state, unitId, side, rules, takeToSkiesContext);
 
 const scoutMoveContext: scoutMoves.ScoutMoveContext = {
   clone,
