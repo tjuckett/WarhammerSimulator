@@ -496,6 +496,44 @@ export interface DeploymentStartContext {
   log(state: BattleState, side: 0 | 1, title: string, message: string, type: string): BattleState['log'][number];
 }
 
+export interface DeploymentLegalityContext {
+  coherencyLists(state: BattleState): Array<{ label: string; models: unknown[] }>;
+  isCoherent(models: unknown[], state: BattleState): boolean;
+  unitHasBaseOverlap(state: BattleState, unit: BattleUnit): boolean;
+  boardFormatForState(state: BattleState): BoardFormat;
+  setupDeploymentZoneSource(setup: BattleState['setup']): DeploymentZoneSource;
+  canInfiltrate(state: BattleState, side: 0 | 1, profile: UnitProfile): boolean;
+  infiltratorPlacementIsLegal(state: BattleState, side: 0 | 1, profile: UnitProfile, positions: Position[], deployment: DeploymentZoneSource, board: BoardFormat): boolean;
+  modelBaseRadius(unit: BattleUnit, modelIndex: number): number;
+  unitHasWallOverlap(state: BattleState, unit: BattleUnit): boolean;
+}
+
+export function deploymentIssues(state: BattleState, context: DeploymentLegalityContext): string[] {
+  if (state.phase !== 'deployment') return [];
+  const issues: string[] = [];
+  const unplacedCount = state.unplacedUnits[0].length + state.unplacedUnits[1].length;
+  if (unplacedCount > 0) issues.push(`${unplacedCount} unit${unplacedCount === 1 ? '' : 's'} still undeployed.`);
+  for (const list of context.coherencyLists(state)) {
+    if (!context.isCoherent(list.models, state)) issues.push(`${list.label} (${list.models.length} models) is out of coherency.`);
+  }
+  for (const unit of state.units) {
+    if (unit.destroyed || unit.inStrategicReserves) continue;
+    if (context.unitHasBaseOverlap(state, unit)) issues.push(`${unit.profile.name} has overlapping bases.`);
+    const board = context.boardFormatForState(state);
+    const deployment = context.setupDeploymentZoneSource(state.setup);
+    const zone = zoneFor(unit.side, deployment, board);
+    if (context.canInfiltrate(state, unit.side, unit.profile)) {
+      if (!context.infiltratorPlacementIsLegal(state, unit.side, unit.profile, unit.modelPositions, deployment, board)) {
+        issues.push(`${unit.profile.name} is within 8" of the enemy deployment zone or an enemy unit.`);
+      }
+    } else if (unit.modelPositions.some((model, modelIndex) => !pointInDeploymentZone(model, zone, context.modelBaseRadius(unit, modelIndex)))) {
+      issues.push(`${unit.profile.name} is not wholly inside ${zone.name}.`);
+    }
+    if (context.unitHasWallOverlap(state, unit)) issues.push(`${unit.profile.name} has a model in a wall.`);
+  }
+  return Array.from(new Set(issues));
+}
+
 export function beginPlayBattle(state: BattleState, context: DeploymentStartContext): BattleState {
   const next = context.clone(state);
   if (next.phase !== 'deployment') return next;

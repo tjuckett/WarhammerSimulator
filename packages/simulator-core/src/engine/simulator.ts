@@ -4404,49 +4404,22 @@ export function rotatePlayModels(
   return interactiveMovementState.rotateModels(state, unitId, side, modelIndices, degrees, formationEditContext);
 }
 
+const deploymentLegalityContext: deploymentActions.DeploymentLegalityContext = {
+  coherencyLists: coherencyModelLists,
+  isCoherent: (models, state) => modelListIsCoherent(models as CoherencyModel[], coherencyEditionForState(state)),
+  unitHasBaseOverlap,
+  boardFormatForState,
+  setupDeploymentZoneSource,
+  canInfiltrate: profileDropHasInfiltrators,
+  infiltratorPlacementIsLegal: (state, side, profile, positions, deployment, board) =>
+    positions.every((position, modelIndex) => modelIsOutsideEnemyDeploymentZoneBuffer(profile, side, position, modelIndex, deployment, board))
+      && infiltratorModelsAreOutsideEnemyUnits(state, side, profile, positions),
+  modelBaseRadius,
+  unitHasWallOverlap,
+};
+
 export function playDeploymentIssues(state: BattleState): string[] {
-  if (state.phase !== 'deployment') return [];
-
-  const issues: string[] = [];
-  const unplacedCount = state.unplacedUnits[0].length + state.unplacedUnits[1].length;
-  if (unplacedCount > 0) issues.push(`${unplacedCount} unit${unplacedCount === 1 ? '' : 's'} still undeployed.`);
-
-  for (const list of coherencyModelLists(state)) {
-    if (!modelListIsCoherent(list.models, coherencyEditionForState(state))) {
-      issues.push(`${list.label} (${list.models.length} models) is out of coherency.`);
-    }
-  }
-
-  for (const unit of state.units) {
-    if (unit.destroyed || unit.inStrategicReserves) continue;
-    if (unitHasBaseOverlap(state, unit)) issues.push(`${unit.profile.name} has overlapping bases.`);
-
-    const board = boardFormatForState(state);
-    const deployment = setupDeploymentZoneSource(state.setup);
-    const zone = zoneFor(unit.side, deployment, board);
-    if (profileDropHasInfiltrators(state, unit.side, unit.profile)) {
-      const tooCloseToEnemyZone = unit.modelPositions.some((model, modelIndex) =>
-        !modelIsOutsideEnemyDeploymentZoneBuffer(unit.profile, unit.side, model, modelIndex, deployment, board),
-      );
-      const tooCloseToEnemyUnit = !infiltratorModelsAreOutsideEnemyUnits(state, unit.side, unit.profile, unit.modelPositions);
-      if (tooCloseToEnemyZone || tooCloseToEnemyUnit) issues.push(`${unit.profile.name} is within 8" of the enemy deployment zone or an enemy unit.`);
-    } else {
-      const outsideZone = unit.modelPositions.some((model, modelIndex) =>
-        !pointInDeploymentZone(model, zone, modelBaseRadius(unit, modelIndex)),
-      );
-      if (outsideZone) issues.push(`${unit.profile.name} is not wholly inside ${zone.name}.`);
-    }
-
-    const inWall = unit.modelPositions.some((model, modelIndex) => {
-      const footprint = modelFootprint(unit, modelIndex);
-      return state.terrain.some(terrain =>
-        terrain.features.some(feature => baseFootprintIntersectsRect(model, footprint, feature)),
-      );
-    });
-    if (inWall) issues.push(`${unit.profile.name} has a model in a wall.`);
-  }
-
-  return Array.from(new Set(issues));
+  return deploymentActions.deploymentIssues(state, deploymentLegalityContext);
 }
 
 const deploymentStartContext: deploymentActions.DeploymentStartContext = {
