@@ -1717,59 +1717,23 @@ export function startPlayUnitAction(
 }
 
 export function completeEndOfTurnActions(state: BattleState, side: Side): void {
-  const handled = new Set<string>();
-  for (const unit of state.units) {
-    if (unit.side !== side || unit.destroyed || !unit.performingAction) continue;
-    const groupId = attachedUnitId(unit);
-    if (handled.has(groupId)) continue;
-    handled.add(groupId);
-    const action = unit.performingAction;
-    const actionName = action.name;
-    if (action.id === 'vanguard-operation'
-      && (action.targetTerrainId === undefined
-        || !vanguardOperationTerrainIsValid(state, unit, side, action.targetTerrainId))) {
-      cancelUnitAction(state, unit, 'the target terrain area is no longer eligible');
-      continue;
-    }
-    if (action.id === 'cleanse'
-      && (action.targetObjectiveIndex === undefined
-        || !hasActiveSecondaryMission(state, side, 'Cleanse')
-        || !attachedObjectiveIndexesWithinRange(state, unit, rulesEditionForRuleset(state.ruleset)).includes(action.targetObjectiveIndex))) {
-      cancelUnitAction(state, unit, 'the selected objective is no longer eligible');
-      continue;
-    }
-    if (action.id === 'plunder'
-      && (action.targetTerrainId === undefined
-        || !hasActiveSecondaryMission(state, side, 'Plunder')
-        || !attachedTerrainAreaIdsContainingUnit(state, unit).includes(action.targetTerrainId)
-        || !terrainIsExplicitlyOutsideTerritory(state, side, action.targetTerrainId))) {
-      cancelUnitAction(state, unit, 'the selected terrain area is no longer eligible');
-      continue;
-    }
-    if (action.id === 'sensor-sweep') {
-      const markerIndex = state.missionState?.operationMarkers?.findIndex(marker =>
-        marker.id === action.targetOperationMarkerId
-      ) ?? -1;
-      const controlsTargetObjective = action.targetObjectiveIndex !== undefined
-        && attachedObjectiveIndexesWithinRange(state, unit, rulesEditionForRuleset(state.ruleset)).includes(action.targetObjectiveIndex)
-        && objectiveIsCentral(state, action.targetObjectiveIndex)
-        && updateObjectiveControl(state, rulesEditionForRuleset(state.ruleset))?.some(objective =>
-          objective.objectiveIndex === action.targetObjectiveIndex && objective.owner === side
-        );
-      if (markerIndex < 0 || !controlsTargetObjective) {
-        cancelUnitAction(state, unit, markerIndex < 0
-          ? 'the selected operation marker is no longer on the battlefield'
-          : 'the unit does not control the selected central objective');
-        continue;
-      }
-      state.missionState!.operationMarkers = state.missionState!.operationMarkers!.filter(
-        marker => marker.id !== action.targetOperationMarkerId,
-      );
-    }
-    recordCompletedMissionAction(state, unit, action, attachedObjectiveIndexesWithinRange(state, unit, rulesEditionForRuleset(state.ruleset)));
-    for (const component of attachedUnitComponents(state, unit)) component.performingAction = undefined;
-    state.log = [...state.log, log(state, side, unit.profile.name, `${unit.profile.name} completes ${actionName}.`, 'info')];
-  }
+  missionActions.completeEndOfTurnActions(state, side, {
+    attachedUnitId, vanguardOperationTerrainIsValid, cancelUnitAction, hasActiveSecondaryMission,
+    attachedObjectiveIndexesWithinRange, rulesEditionForRuleset, attachedTerrainAreaIdsContainingUnit,
+    terrainIsExplicitlyOutsideTerritory, recordCompletedMissionAction, attachedUnitComponents, log,
+    resolveSensorSweepCompletion: (next: BattleState, unit: BattleUnit, actingSide: Side, action: any): string | null => {
+      const markerIndex = next.missionState?.operationMarkers?.findIndex(marker => marker.id === action.targetOperationMarkerId) ?? -1;
+      const rules = rulesEditionForRuleset(next.ruleset);
+      const controls = action.targetObjectiveIndex !== undefined
+        && attachedObjectiveIndexesWithinRange(next, unit, rules).includes(action.targetObjectiveIndex)
+        && objectiveIsCentral(next, action.targetObjectiveIndex)
+        && updateObjectiveControl(next, rules)?.some(objective => objective.objectiveIndex === action.targetObjectiveIndex && objective.owner === actingSide);
+      if (markerIndex < 0) return 'the selected operation marker is no longer on the battlefield';
+      if (!controls) return 'the unit does not control the selected central objective';
+      next.missionState!.operationMarkers = next.missionState!.operationMarkers!.filter(marker => marker.id !== action.targetOperationMarkerId);
+      return null;
+    },
+  });
 }
 
 function eligibleShootingWeapons(

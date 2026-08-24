@@ -92,6 +92,39 @@ export function applyStartedMissionAction(
   return next;
 }
 
+export type MissionActionCompletionContext = Record<string, any>;
+
+export function completeEndOfTurnActions(state: BattleState, side: Side, context: MissionActionCompletionContext): void {
+  const handled = new Set<string>();
+  for (const unit of state.units) {
+    if (unit.side !== side || unit.destroyed || !unit.performingAction) continue;
+    const groupId = context.attachedUnitId(unit);
+    if (handled.has(groupId)) continue;
+    handled.add(groupId);
+    const action = unit.performingAction;
+    if (action.id === 'vanguard-operation' && (action.targetTerrainId === undefined || !context.vanguardOperationTerrainIsValid(state, unit, side, action.targetTerrainId))) {
+      context.cancelUnitAction(state, unit, 'the target terrain area is no longer eligible'); continue;
+    }
+    if (action.id === 'cleanse' && (action.targetObjectiveIndex === undefined || !context.hasActiveSecondaryMission(state, side, 'Cleanse')
+      || !context.attachedObjectiveIndexesWithinRange(state, unit, context.rulesEditionForRuleset(state.ruleset)).includes(action.targetObjectiveIndex))) {
+      context.cancelUnitAction(state, unit, 'the selected objective is no longer eligible'); continue;
+    }
+    if (action.id === 'plunder' && (action.targetTerrainId === undefined || !context.hasActiveSecondaryMission(state, side, 'Plunder')
+      || !context.attachedTerrainAreaIdsContainingUnit(state, unit).includes(action.targetTerrainId)
+      || !context.terrainIsExplicitlyOutsideTerritory(state, side, action.targetTerrainId))) {
+      context.cancelUnitAction(state, unit, 'the selected terrain area is no longer eligible'); continue;
+    }
+    if (action.id === 'sensor-sweep') {
+      const reason = context.resolveSensorSweepCompletion(state, unit, side, action);
+      if (reason) { context.cancelUnitAction(state, unit, reason); continue; }
+    }
+    context.recordCompletedMissionAction(state, unit, action, context.attachedObjectiveIndexesWithinRange(state, unit, context.rulesEditionForRuleset(state.ruleset)));
+    for (const component of context.attachedUnitComponents(state, unit)) component.performingAction = undefined;
+    state.log = [...state.log, context.log(state, side, unit.profile.name, `${unit.profile.name} completes ${action.name}.`, 'info')];
+  }
+}
+
+
 export interface MissionActionsContext {
   canStartAction(state: BattleState, unitId: string, side: Side, rules: RulesEdition): boolean;
   objectiveIndexesWithinRange(state: BattleState, unit: BattleUnit, rules: RulesEdition): number[];
