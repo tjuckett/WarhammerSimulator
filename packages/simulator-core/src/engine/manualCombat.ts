@@ -76,6 +76,101 @@ export function playShootingWeaponOptions(
   return options;
 }
 
+export interface ManualShootingResolutionContext extends ManualShootingSelectionContext {
+  clone(state: BattleState): BattleState;
+  aliveWeaponModelIndexes(unit: BattleUnit, weaponIndex: number): number[];
+  participatingWeaponModelIndexes(unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, terrain: BattleState['terrain'], state: BattleState): number[];
+  resolveShootingWeaponIntoTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, rules: RulesEdition, options: { deferCasualties?: boolean; modelIndexes?: number[] }): LogEntry[];
+  shootingWeaponSelectionForAll(weapons: Array<{ weapon: WeaponProfile; weaponIndex: number }>): Array<{ weapon: WeaponProfile; weaponIndex: number }>;
+  updateAttachedShootingActivation(state: BattleState, unit: BattleUnit, rules: RulesEdition): void;
+  log(state: BattleState, side: Side, source: string, message: string, kind: 'shoot'): LogEntry;
+}
+
+/** Resolve a unit's complete shooting declaration only after every weapon target is locked. */
+export function shootPlayUnitWeapons(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  allocations: PlayShootingAttackAllocation[],
+  rules: RulesEdition,
+  context: ManualShootingResolutionContext,
+): BattleState {
+  if (state.phase !== 'shooting' || state.activeArmy !== side || !allocations.length) return state;
+  const s = context.clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || unit.activated) return state;
+  if (s.activeAttachedShootingUnitId && context.attachedUnitId(unit) !== s.activeAttachedShootingUnitId) return state;
+
+  const eligibleWeapons = context.eligibleShootingWeapons(unit, s, rules)
+    .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
+    .filter(option => option.weaponIndex >= 0 && context.aliveWeaponModelCount(unit, option.weaponIndex) > 0);
+  const selectableWeapons = context.shootingWeaponSelectionForAll(eligibleWeapons);
+  const selectableIndexes = new Set(selectableWeapons.map(option => option.weaponIndex));
+  const allocationByWeapon = new Map<number, PlayShootingAttackAllocation[]>();
+  for (const allocation of allocations) {
+    if (!selectableIndexes.has(allocation.weaponIndex)) return state;
+    if (!s.units.some(candidate => candidate.id === allocation.targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId)) return state;
+    const weaponAllocations = allocationByWeapon.get(allocation.weaponIndex) ?? [];
+    weaponAllocations.push(allocation);
+    allocationByWeapon.set(allocation.weaponIndex, weaponAllocations);
+  }
+  if (allocationByWeapon.size !== selectableIndexes.size) return state;
+
+  for (const selected of selectableWeapons) {
+    const weaponAllocations = allocationByWeapon.get(selected.weaponIndex) ?? [];
+    const availableModelIndexes = context.aliveWeaponModelIndexes(unit, selected.weaponIndex);
+    const assignedModelIndexes = new Set<number>();
+    if (weaponAllocations.length > 1) {
+      const declaredModels = weaponAllocations.reduce((total, allocation) => total + (allocation.modelCount ?? 0), 0);
+      if (declaredModels !== availableModelIndexes.length) return state;
+    }
+    const allocationCandidates = weaponAllocations.map(allocation => {
+      const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
+      const eligibleModelIndexes = context.participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, s.terrain, s);
+      return { allocation, eligibleModelIndexes };
+    }).sort((a, b) => a.eligibleModelIndexes.length - b.eligibleModelIndexes.length);
+    for (const { allocation, eligibleModelIndexes } of allocationCandidates) {
+      if (allocation.modelCount !== undefined && (!Number.isInteger(allocation.modelCount) || allocation.modelCount < 1)) return state;
+      if (s.attachedShootingTargetUnitId && allocation.targetUnitId !== s.attachedShootingTargetUnitId) return state;
+      const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
+      if (!context.shootingWeaponCanTarget(s, unit, target, selected.weapon, rules)) return state;
+      const remainingModelIndexes = eligibleModelIndexes.filter(modelIndex => !assignedModelIndexes.has(modelIndex));
+      const modelCount = allocation.modelCount ?? remainingModelIndexes.length;
+      if (modelCount > remainingModelIndexes.length) return state;
+      remainingModelIndexes.slice(0, modelCount).forEach(modelIndex => assignedModelIndexes.add(modelIndex));
+    }
+  }
+
+  const logs: LogEntry[] = [context.log(s, side, unit.profile.name, `🔫 ${unit.profile.name} locks all ranged targets before rolling:`, 'shoot')];
+  for (const selected of selectableWeapons) {
+    const weaponAllocations = allocationByWeapon.get(selected.weaponIndex)!;
+    const assignedModelIndexes = new Set<number>();
+    const orderedWeaponAllocations = [...weaponAllocations].sort((a, b) => {
+      const targetA = s.units.find(candidate => candidate.id === a.targetUnitId && !candidate.destroyed)!;
+      const targetB = s.units.find(candidate => candidate.id === b.targetUnitId && !candidate.destroyed)!;
+      return context.participatingWeaponModelIndexes(unit, targetA, selected.weapon, selected.weaponIndex, s.terrain, s).length
+        - context.participatingWeaponModelIndexes(unit, targetB, selected.weapon, selected.weaponIndex, s.terrain, s).length;
+    });
+    for (const allocation of orderedWeaponAllocations) {
+      const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
+      const eligibleModelIndexes = context.participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, s.terrain, s)
+        .filter(modelIndex => !assignedModelIndexes.has(modelIndex));
+      const modelCount = allocation.modelCount ?? eligibleModelIndexes.length;
+      const modelIndexes = eligibleModelIndexes.slice(0, modelCount);
+      modelIndexes.forEach(modelIndex => assignedModelIndexes.add(modelIndex));
+      logs.push(...context.resolveShootingWeaponIntoTarget(s, unit, target, selected.weapon, selected.weaponIndex, rules, {
+        deferCasualties: true,
+        modelIndexes,
+      }));
+    }
+  }
+  unit.firedWeaponIndices = [...new Set([...(unit.firedWeaponIndices ?? []), ...selectableWeapons.map(option => option.weaponIndex)])];
+  unit.activated = true;
+  context.updateAttachedShootingActivation(s, unit, rules);
+  s.log = [...s.log, ...logs];
+  return s;
+}
+
 export function unitCanChargeTarget(unit: BattleUnit, target: BattleUnit, hasKeyword: (unit: BattleUnit, keyword: string) => boolean): boolean {
   if (hasKeyword(unit, 'aircraft')) return false;
   return !hasKeyword(target, 'aircraft') || hasKeyword(unit, 'fly');
