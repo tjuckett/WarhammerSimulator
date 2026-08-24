@@ -1,4 +1,4 @@
-import type { UnitProfile } from '../types/army';
+import { UNIT_DEPLOYMENT_MODE, type UnitProfile } from '../types/army';
 import type { BattleState, BattleUnit, BoardFormat, Position, Terrain } from '../types/battle';
 import { unitMaxBaseRadiusInches } from './baseSizes';
 import { distance } from './coherency';
@@ -65,7 +65,7 @@ export interface TransportDisembarkPlacementContext {
 }
 
 export function unitAssignedToTransport(profile: UnitProfile, transport: BattleUnit, context: TransportDisembarkPlacementContext): boolean {
-  return profile.deployment?.mode === 'transport'
+  return profile.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport
     && (profile.deployment.transportUnitId === context.unitRosterId(transport.profile)
       || (!profile.deployment.transportUnitId && profile.deployment.transportName === transport.profile.name));
 }
@@ -136,6 +136,158 @@ export function embarkPlayUnit(state: BattleState, unitId: string, side: 0 | 1, 
   unit.movementComplete = true;
   unit.inCombat = false;
   next.log = [...next.log, context.log(next, side, unit.profile.name, `${unit.profile.name} embarks within ${transport.profile.name}.`, 'move')];
+  return next;
+}
+
+export type PlayDisembarkModes = {
+  combatDisembark: boolean;
+  rapidDisembark: boolean;
+};
+
+export interface TransportDisembarkContext extends TransportDisembarkPlacementContext {
+  movementStep(state: BattleState): string;
+  clone(state: BattleState): BattleState;
+  normalMoveAllowance(unit: BattleUnit): number;
+  centroid(positions: Position[]): Position;
+  modelRotation(unit: BattleUnit, modelIndex: number): number;
+  resolveCombatDisembarkHazards(state: BattleState, unit: BattleUnit): BattleState['log'];
+  log(state: BattleState, side: 0 | 1, title: string, message: string, type: string): BattleState['log'][number];
+}
+
+export function playDisembarkModes(
+  state: BattleState,
+  transportUnitId: string,
+  context: TransportDisembarkContext,
+  passengerUnitId?: string,
+  passengerProfile?: UnitProfile,
+): PlayDisembarkModes {
+  const transport = state.units.find(candidate => candidate.id === transportUnitId);
+  const rapidDisembark = state.ruleset.edition === '11e'
+    && transport?.movementComplete === true
+    && transport.movementAction === 'normalMove'
+    && (context.movementStep(state) === 'moveUnits' || transport.arrivedFromReinforcements === true);
+  const passenger = passengerUnitId
+    ? state.units.find(candidate => candidate.id === passengerUnitId && candidate.embarkedInUnitId === transportUnitId)
+    : undefined;
+  const profile = passenger?.profile ?? passengerProfile;
+  const canTacticalDisembark = !!transport
+    && !!profile
+    && !!disembarkPositions(state, transport, profile, context);
+  return {
+    rapidDisembark,
+    combatDisembark: state.ruleset.edition === '11e'
+      && !!transport?.inCombat
+      && !rapidDisembark
+      && !canTacticalDisembark,
+  };
+}
+
+export function playUnitCanDisembark(
+  state: BattleState,
+  side: 0 | 1,
+  transportUnitId: string,
+  context: TransportDisembarkContext,
+  passengerUnitId?: string,
+  armyUnitIndex?: number,
+  combatDisembark?: boolean,
+  rapidDisembark?: boolean,
+): boolean {
+  if (state.phase !== 'movement' || state.activeArmy !== side) return false;
+  const currentMovementStep = context.movementStep(state);
+  if (currentMovementStep !== 'moveUnits' && currentMovementStep !== 'reinforcements') return false;
+  const transport = state.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!transport || !isTransportProfile(transport.profile)
+    || transport.movementAction === 'advanced'
+    || transport.movementAction === 'fellBack') return false;
+  const passenger = passengerUnitId
+    ? state.units.find(candidate => candidate.id === passengerUnitId && candidate.side === side && !candidate.destroyed && candidate.embarkedInUnitId === transportUnitId)
+    : null;
+  if (passenger?.embarkedThisTurn) return false;
+  const profile = passenger?.profile ?? (typeof armyUnitIndex === 'number' ? state.armies[side].army.units[armyUnitIndex] : undefined);
+  if (!profile || (armyUnitIndex !== undefined && !unitAssignedToTransport(profile, transport, context))) return false;
+  const defaultDisembarkModes = playDisembarkModes(state, transportUnitId, context, passengerUnitId, profile);
+  const useRapidDisembark = rapidDisembark ?? defaultDisembarkModes.rapidDisembark;
+  const requestedCombatDisembark = combatDisembark ?? defaultDisembarkModes.combatDisembark;
+  const useCombatDisembark = requestedCombatDisembark
+    && !(state.ruleset.edition === '11e'
+      && !useRapidDisembark
+      && !!disembarkPositions(state, transport, profile, context));
+  if (useCombatDisembark && state.ruleset.edition !== '11e') return false;
+  if (useRapidDisembark && state.ruleset.edition !== '11e') return false;
+  const transportCanDisembarkBeforeMovement = !transport.movementAction
+    || transport.movementAction === 'remainedStationary';
+  if (!useRapidDisembark && !useCombatDisembark && !transportCanDisembarkBeforeMovement) return false;
+  if (useRapidDisembark && (transport.movementAction !== 'normalMove' || !transport.movementComplete)) return false;
+  if (currentMovementStep === 'reinforcements' && !useRapidDisembark) return false;
+  if (state.units.some(unit => unit.side === side && !unit.destroyed && !unit.embarkedInUnitId && context.unitRosterId(unit.profile) === context.unitRosterId(profile))) return false;
+  return !!disembarkPositions(state, transport, profile, context, useCombatDisembark, useRapidDisembark);
+}
+
+export function disembarkPlayUnit(
+  state: BattleState,
+  side: 0 | 1,
+  transportUnitId: string,
+  context: TransportDisembarkContext,
+  passengerUnitId?: string,
+  armyUnitIndex?: number,
+  combatDisembark?: boolean,
+  rapidDisembark?: boolean,
+): BattleState {
+  if (!playUnitCanDisembark(state, side, transportUnitId, context, passengerUnitId, armyUnitIndex, combatDisembark, rapidDisembark)) return state;
+  const next = context.clone(state);
+  const transport = next.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
+  const existingPassenger = passengerUnitId
+    ? next.units.find(candidate => candidate.id === passengerUnitId && candidate.side === side && !candidate.destroyed && candidate.embarkedInUnitId === transportUnitId)
+    : null;
+  const profile = existingPassenger?.profile ?? (typeof armyUnitIndex === 'number' ? next.armies[side].army.units[armyUnitIndex] : undefined);
+  if (!profile) return state;
+  const defaultDisembarkModes = playDisembarkModes(next, transportUnitId, context, existingPassenger?.id, profile);
+  const useRapidDisembark = rapidDisembark ?? defaultDisembarkModes.rapidDisembark;
+  const requestedCombatDisembark = combatDisembark ?? defaultDisembarkModes.combatDisembark;
+  const useCombatDisembark = requestedCombatDisembark
+    && !(next.ruleset.edition === '11e'
+      && !useRapidDisembark
+      && !!disembarkPositions(next, transport, profile, context));
+  const positions = disembarkPositions(next, transport, profile, context, useCombatDisembark, useRapidDisembark);
+  if (!positions) return state;
+
+  const unit = existingPassenger ?? context.makeBattleUnit(profile, side, positions);
+  unit.embarkedInUnitId = undefined;
+  unit.disembarkedThisTurn = true;
+  unit.modelPositions = positions;
+  unit.modelRotations = positions.map(() => side === 0 ? 0 : 180);
+  unit.position = context.centroid(positions);
+  unit.remainingModels = Math.min(unit.remainingModels || profile.baseModelCount, positions.length);
+  unit.movementAction = undefined;
+  unit.movementAllowanceRemaining = context.normalMoveAllowance(unit);
+  unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => context.normalMoveAllowance(unit));
+  unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => context.normalMoveAllowance(unit));
+  unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
+  unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => context.modelRotation(unit, modelIndex));
+  unit.movementComplete = false;
+  unit.inCombat = false;
+  if (useCombatDisembark) {
+    unit.combatDisembarkedThisTurn = true;
+    unit.battleshocked = true;
+  }
+  if (useRapidDisembark) {
+    unit.rapidDisembarkedThisTurn = true;
+    unit.movementAction = 'normalMove';
+    unit.movementAllowanceRemaining = 0;
+    unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
+    unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => 0);
+    unit.movementComplete = true;
+  }
+  const hazardLogs = useCombatDisembark ? context.resolveCombatDisembarkHazards(next, unit) : [];
+  if (!existingPassenger) next.units.push(unit);
+  next.log = [...next.log, context.log(
+    next,
+    side,
+    unit.profile.name,
+    `${unit.profile.name} disembarks from ${transport.profile.name}.`,
+    'move',
+  )];
+  next.log.push(...hazardLogs);
   return next;
 }
 

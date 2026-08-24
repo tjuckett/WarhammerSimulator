@@ -731,7 +731,8 @@ export function resolvePendingDeadlyDemises(state: BattleState): BattleState {
 
 const transportDestruction = createTransportDestruction({
   markUnitDestroyed, centroid, unitIsTransportProfile: isTransportProfile, embarkedUnitsForTransport: transportPassengers, unitRosterId,
-  unitAssignedToTransport, makeBattleUnit, disembarkPositions, recordDestroyedModelMissionEvents,
+  unitAssignedToTransport: (profile: UnitProfile, transport: BattleUnit) => deploymentActions.unitAssignedToTransport(profile, transport, transportDisembarkPlacementContext),
+  makeBattleUnit, disembarkPositions, recordDestroyedModelMissionEvents,
   recordDestroyedUnitMissionEvent, log, modelRotation, d6,
 });
 const emergencyDisembarkDestroyedTransport = transportDestruction.emergencyDisembarkDestroyedTransport;
@@ -2924,17 +2925,6 @@ function add11eAircraftStrategicReserves(
   });
 }
 
-const TRANSPORT_ACCESS_RANGE = 3;
-const COMBAT_DISEMBARK_RANGE = 6;
-
-function unitAssignedToTransport(profile: UnitProfile, transport: BattleUnit): boolean {
-  return profile.deployment?.mode === UNIT_DEPLOYMENT_MODE.Transport
-    && (
-      profile.deployment.transportUnitId === unitRosterId(transport.profile)
-      || (!profile.deployment.transportUnitId && profile.deployment.transportName === transport.profile.name)
-    );
-}
-
 function disembarkPositions(
   state: BattleState,
   transport: BattleUnit,
@@ -3275,10 +3265,7 @@ export function embarkPlayUnit(
   return deploymentActions.embarkPlayUnit(state, unitId, side, transportEmbarkContext, transportUnitId);
 }
 
-export type PlayDisembarkModes = {
-  combatDisembark: boolean;
-  rapidDisembark: boolean;
-};
+export type PlayDisembarkModes = deploymentActions.PlayDisembarkModes;
 
 export function playDisembarkModes(
   state: BattleState,
@@ -3286,25 +3273,7 @@ export function playDisembarkModes(
   passengerUnitId?: string,
   passengerProfile?: UnitProfile,
 ): PlayDisembarkModes {
-  const transport = state.units.find(candidate => candidate.id === transportUnitId);
-  const rapidDisembark = state.ruleset.edition === '11e'
-    && transport?.movementComplete === true
-    && transport.movementAction === 'normalMove'
-    && (movementStep(state) === 'moveUnits' || transport.arrivedFromReinforcements === true);
-  const passenger = passengerUnitId
-    ? state.units.find(candidate => candidate.id === passengerUnitId && candidate.embarkedInUnitId === transportUnitId)
-    : undefined;
-  const profile = passenger?.profile ?? passengerProfile;
-  const canTacticalDisembark = !!transport
-    && !!profile
-    && !!disembarkPositions(state, transport, profile, false, false);
-  return {
-    rapidDisembark,
-    combatDisembark: state.ruleset.edition === '11e'
-      && !!transport?.inCombat
-      && !rapidDisembark
-      && !canTacticalDisembark,
-  };
+  return deploymentActions.playDisembarkModes(state, transportUnitId, transportDisembarkContext, passengerUnitId, passengerProfile);
 }
 
 export function playUnitCanDisembark(
@@ -3316,35 +3285,7 @@ export function playUnitCanDisembark(
   combatDisembark?: boolean,
   rapidDisembark?: boolean,
 ): boolean {
-  if (state.phase !== 'movement' || state.activeArmy !== side) return false;
-  const currentMovementStep = movementStep(state);
-  if (currentMovementStep !== 'moveUnits' && currentMovementStep !== 'reinforcements') return false;
-  const transport = state.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!transport || !isTransportProfile(transport.profile)
-    || transport.movementAction === 'advanced'
-    || transport.movementAction === 'fellBack') return false;
-  const passenger = passengerUnitId
-    ? state.units.find(candidate => candidate.id === passengerUnitId && candidate.side === side && !candidate.destroyed && candidate.embarkedInUnitId === transportUnitId)
-    : null;
-  if (passenger?.embarkedThisTurn) return false;
-  const profile = passenger?.profile ?? (typeof armyUnitIndex === 'number' ? state.armies[side].army.units[armyUnitIndex] : undefined);
-  if (!profile || (armyUnitIndex !== undefined && !unitAssignedToTransport(profile, transport))) return false;
-  const defaultDisembarkModes = playDisembarkModes(state, transportUnitId, passengerUnitId, profile);
-  const useRapidDisembark = rapidDisembark ?? defaultDisembarkModes.rapidDisembark;
-  const requestedCombatDisembark = combatDisembark ?? defaultDisembarkModes.combatDisembark;
-  const useCombatDisembark = requestedCombatDisembark
-    && !(state.ruleset.edition === '11e'
-      && !useRapidDisembark
-      && !!disembarkPositions(state, transport, profile, false, false));
-  if (useCombatDisembark && state.ruleset.edition !== '11e') return false;
-  if (useRapidDisembark && state.ruleset.edition !== '11e') return false;
-  const transportCanDisembarkBeforeMovement = !transport.movementAction
-    || transport.movementAction === 'remainedStationary';
-  if (!useRapidDisembark && !useCombatDisembark && !transportCanDisembarkBeforeMovement) return false;
-  if (useRapidDisembark && (transport.movementAction !== 'normalMove' || !transport.movementComplete)) return false;
-  if (currentMovementStep === 'reinforcements' && !useRapidDisembark) return false;
-  if (state.units.some(unit => unit.side === side && !unit.destroyed && !unit.embarkedInUnitId && unitRosterId(unit.profile) === unitRosterId(profile))) return false;
-  return !!disembarkPositions(state, transport, profile, useCombatDisembark, useRapidDisembark);
+  return deploymentActions.playUnitCanDisembark(state, side, transportUnitId, transportDisembarkContext, passengerUnitId, armyUnitIndex, combatDisembark, rapidDisembark);
 }
 
 export function disembarkPlayUnit(
@@ -3356,62 +3297,7 @@ export function disembarkPlayUnit(
   combatDisembark?: boolean,
   rapidDisembark?: boolean,
 ): BattleState {
-  if (!playUnitCanDisembark(state, side, transportUnitId, passengerUnitId, armyUnitIndex, combatDisembark, rapidDisembark)) return state;
-  const s = clone(state);
-  const transport = s.units.find(candidate => candidate.id === transportUnitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
-  const existingPassenger = passengerUnitId
-    ? s.units.find(candidate => candidate.id === passengerUnitId && candidate.side === side && !candidate.destroyed && candidate.embarkedInUnitId === transportUnitId)
-    : null;
-  const profile = existingPassenger?.profile ?? (typeof armyUnitIndex === 'number' ? s.armies[side].army.units[armyUnitIndex] : undefined);
-  if (!profile) return state;
-  const defaultDisembarkModes = playDisembarkModes(s, transportUnitId, existingPassenger?.id, profile);
-  const useRapidDisembark = rapidDisembark ?? defaultDisembarkModes.rapidDisembark;
-  const requestedCombatDisembark = combatDisembark ?? defaultDisembarkModes.combatDisembark;
-  const useCombatDisembark = requestedCombatDisembark
-    && !(s.ruleset.edition === '11e'
-      && !useRapidDisembark
-      && !!disembarkPositions(s, transport, profile, false, false));
-  const positions = disembarkPositions(s, transport, profile, useCombatDisembark, useRapidDisembark);
-  if (!positions) return state;
-
-  const unit = existingPassenger ?? makeBattleUnit(profile, side, positions);
-  unit.embarkedInUnitId = undefined;
-  unit.disembarkedThisTurn = true;
-  unit.modelPositions = positions;
-  unit.modelRotations = positions.map(() => side === 0 ? 0 : 180);
-  unit.position = centroid(positions);
-  unit.remainingModels = Math.min(unit.remainingModels || profile.baseModelCount, positions.length);
-  unit.movementAction = undefined;
-  unit.movementAllowanceRemaining = normalMoveAllowance(unit);
-  unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => normalMoveAllowance(unit));
-  unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => normalMoveAllowance(unit));
-  unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
-  unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
-  unit.movementComplete = false;
-  unit.inCombat = false;
-  if (useCombatDisembark) {
-    unit.combatDisembarkedThisTurn = true;
-    unit.battleshocked = true;
-  }
-  if (useRapidDisembark) {
-    unit.rapidDisembarkedThisTurn = true;
-    unit.movementAction = 'normalMove';
-    unit.movementAllowanceRemaining = 0;
-    unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
-    unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => 0);
-    unit.movementComplete = true;
-  }
-  const hazardLogs = useCombatDisembark ? resolveCombatDisembarkHazards(s, unit) : [];
-  if (!existingPassenger) s.units.push(unit);
-  s.log = [...s.log, log(
-    s,
-    side,
-    unit.profile.name,
-    `${unit.profile.name} disembarks from ${transport.profile.name}.`,
-    'move',
-  )];
-  s.log.push(...hazardLogs);
-  return s;
+  return deploymentActions.disembarkPlayUnit(state, side, transportUnitId, transportDisembarkContext, passengerUnitId, armyUnitIndex, combatDisembark, rapidDisembark);
 }
 
 export function playPhaseCoherencyIssues(state: BattleState): string[] {
@@ -3722,7 +3608,7 @@ function movementAllowanceForPlayMove(unit: BattleUnit): number {
 }
 
 function firingDeckPassengerProfiles(state: BattleState, transport: BattleUnit): UnitProfile[] {
-  const staged = state.armies[transport.side].army.units.filter(profile => unitAssignedToTransport(profile, transport));
+  const staged = state.armies[transport.side].army.units.filter(profile => deploymentActions.unitAssignedToTransport(profile, transport, transportDisembarkPlacementContext));
   const live = transportPassengers(state, transport.id).map(unit => unit.profile);
   const seen = new Set<string>();
   return [...live, ...staged].filter(profile => {
@@ -3771,6 +3657,17 @@ const transportDisembarkPlacementContext: deploymentActions.TransportDisembarkPl
   rapidPlacementIsLegal: (state, transport, profile, positions, unit) => reinforcementPlacementIsOutsideEnemyRange(state, transport.side, profile, positions)
     && reinforcementPlacementIsWithinStrategicReserveEdge(unit, state) && strategicReservePlacementIsOutsideOpponentDeploymentZone(unit, state),
   unitRosterId,
+};
+
+const transportDisembarkContext: deploymentActions.TransportDisembarkContext = {
+  ...transportDisembarkPlacementContext,
+  movementStep,
+  clone,
+  normalMoveAllowance,
+  centroid,
+  modelRotation,
+  resolveCombatDisembarkHazards,
+  log,
 };
 
 const reinforcementPlayContext: reinforcementPlay.PlayReinforcementContext = {
