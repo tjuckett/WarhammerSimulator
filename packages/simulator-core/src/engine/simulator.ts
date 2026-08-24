@@ -91,7 +91,6 @@ import * as fightEligibility from './fightEligibility';
 import * as fightPhase from './fightPhase';
 import * as fightMovement from './fightMovement';
 import * as deadlyDemise from './deadlyDemise';
-import * as combatWounds from './combatWounds';
 import * as damageApplication from './damageApplication';
 import type { CombatAttackResolutionOptions } from './combatTypes';
 import * as combatAttackResolution from './manualCombat';
@@ -961,13 +960,13 @@ function unitCanFightTarget(unit: BattleUnit, target: BattleUnit): boolean {
 
 // ─── Combat resolution ────────────────────────────────────────────────────────
 
-const combatWoundContext: combatWounds.CombatWoundContext = {
+const combatWoundContext: combatAttackResolution.CombatWoundContext = {
   weaponHasKeyword,
   attachedUnitKeywordSet,
 };
 const processWoundsAgainstDefender = (
   rolls: number[], woundTarget: number, weapon: WeaponProfile, defender: BattleUnit, rules: RulesEdition, state: BattleState,
-) => combatWounds.processWoundsAgainstDefender(rolls, woundTarget, weapon, defender, rules, state, combatWoundContext);
+) => combatAttackResolution.processWoundsAgainstDefender(rolls, woundTarget, weapon, defender, rules, state, combatWoundContext);
 
 /**
  * Shared dice-to-damage resolution used by every weapon attack path. Phase
