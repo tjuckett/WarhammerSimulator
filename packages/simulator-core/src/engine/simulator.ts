@@ -100,6 +100,13 @@ import * as movementSimulation from './movementSimulation';
 import * as missionActionOptions from './missionActionOptions';
 import * as interactiveMovementState from './interactiveMovementState';
 import { battleCoherencyIssues, coherencyEditionForState, coherencyModelLists } from './battleCoherency';
+import {
+  markUnitArrivedFromReinforcements,
+  profileDropHasDeepStrike,
+  reinforcementPlacementIsOutsideEnemyRange,
+  reinforcementPlacementIsWithinStrategicReserveEdge,
+  strategicReserveUnitHasCloseQuartersIngress,
+} from './reinforcements';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -3827,78 +3834,6 @@ function add11eAircraftStrategicReserves(
       units.push(leaderUnit);
     });
   });
-}
-
-function reinforcementPlacementIsOutsideEnemyRange(
-  state: BattleState,
-  side: Side,
-  profile: UnitProfile,
-  modelPositions: Position[],
-  minRange = rulesEditionForRuleset(state.ruleset).reinforcementRange(),
-): boolean {
-  const foes = enemies(state, side);
-  return modelPositions.every((model, modelIndex) =>
-    foes.every(enemy =>
-      enemy.modelPositions.every((enemyModel, enemyModelIndex) => baseFootprintDistance(
-        model,
-        modelBaseFootprintInches(profile, modelIndex),
-        enemyModel,
-        modelFootprint(enemy, enemyModelIndex),
-      ) > minRange),
-    ),
-  );
-}
-
-function profileDropHasDeepStrike(state: BattleState, side: Side, profile: UnitProfile): boolean {
-  if (state.units.some(unit => unit.side === side && unit.inStrategicReserves && unit.deepStrikeUntilPhase === state.phase && unitRosterId(unit.profile) === unitRosterId(profile))) {
-    return true;
-  }
-  return attachedUnitProfilesFor(state.armies[side].army, profile).every(candidate =>
-    candidate.deployment?.mode === UNIT_DEPLOYMENT_MODE.DeepStrike || unitHasRule(candidate, 'Deep Strike'),
-  );
-}
-
-function profileHasCloseQuartersOnEveryModel(profile: UnitProfile): boolean {
-  return profile.baseModelCount > 0
-    && Array.from({ length: profile.baseModelCount }, (_, modelIndex) =>
-      modelWeaponLoadout(profile, modelIndex).some(weaponIndex => weaponIsCloseQuarters(profile.weapons[weaponIndex])),
-    ).every(Boolean);
-}
-
-function strategicReserveUnitHasCloseQuartersIngress(state: BattleState, side: Side, profile: UnitProfile): boolean {
-  return state.ruleset.edition === '11e'
-    && profile.deployment?.mode === UNIT_DEPLOYMENT_MODE.StrategicReserve
-    && attachedUnitProfilesFor(state.armies[side].army, profile).every(profileHasCloseQuartersOnEveryModel);
-}
-
-const STRATEGIC_RESERVES_EDGE_RANGE = 6;
-
-function reinforcementPlacementIsWithinStrategicReserveEdge(unit: BattleUnit, state: BattleState): boolean {
-  const board = boardFormatForState(state);
-  const edgeBands = [
-    { x: 0, y: 0, width: STRATEGIC_RESERVES_EDGE_RANGE, height: board.height },
-    { x: board.width - STRATEGIC_RESERVES_EDGE_RANGE, y: 0, width: STRATEGIC_RESERVES_EDGE_RANGE, height: board.height },
-    { x: 0, y: 0, width: board.width, height: STRATEGIC_RESERVES_EDGE_RANGE },
-    { x: 0, y: board.height - STRATEGIC_RESERVES_EDGE_RANGE, width: board.width, height: STRATEGIC_RESERVES_EDGE_RANGE },
-  ];
-  return edgeBands.some(rect =>
-    unit.modelPositions.every((model, modelIndex) =>
-      baseFootprintWithinRect(model, modelFootprint(unit, modelIndex), rect),
-    ),
-  );
-}
-
-function markUnitArrivedFromReinforcements(unit: BattleUnit): void {
-  unit.movementAction = 'normalMove';
-  unit.movementAllowanceRemaining = 0;
-  unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
-  unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => 0);
-  unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
-  unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
-  unit.movementComplete = true;
-  unit.arrivedFromReinforcements = true;
-  unit.inCombat = false;
-  unit.fellBack = false;
 }
 
 const TRANSPORT_ACCESS_RANGE = 3;
