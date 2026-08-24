@@ -253,6 +253,23 @@ export function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEd
   return logs;
 }
 
+export interface ShootingLockContext {
+  clone(state: BattleState): BattleState;
+  attachedUnitComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
+}
+
+export function lockPlayUnitShooting(state: BattleState, unitId: string, side: Side, context: ShootingLockContext): BattleState {
+  if (state.phase !== 'shooting') return state;
+  const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed);
+  if (!existing || existing.activated) return state;
+  const next = context.clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
+  for (const component of context.attachedUnitComponents(next, unit)) component.activated = true;
+  next.activeAttachedShootingUnitId = undefined;
+  next.attachedShootingTargetUnitId = undefined;
+  return next;
+}
+
 /** Resolve a unit's complete shooting declaration only after every weapon target is locked. */
 export function shootPlayUnitWeapons(
   state: BattleState,

@@ -1961,15 +1961,7 @@ export function targetHasCoverFrom(
 }
 
 export function lockPlayUnitShooting(state: BattleState, unitId: string, side: Side): BattleState {
-  if (state.phase !== 'shooting') return state;
-  const existing = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
-  if (!existing || existing.activated) return state;
-  const s = clone(state);
-  const unit = s.units.find(u => u.id === unitId && u.side === side)!;
-  for (const component of attachedUnitComponents(s, unit)) component.activated = true;
-  s.activeAttachedShootingUnitId = undefined;
-  s.attachedShootingTargetUnitId = undefined;
-  return s;
+  return manualCombat.lockPlayUnitShooting(state, unitId, side, { clone, attachedUnitComponents });
 }
 
 function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
