@@ -58,6 +58,29 @@ export function unitSurgedThisPhase(state: BattleState, unit: BattleUnit): boole
   return unit.surgeMovePhase === state.phase && unit.surgeMoveTurn === state.turn;
 }
 
+export interface StationaryMovementContext {
+  activeUnits(state: BattleState, side: Side): BattleUnit[];
+  isAircraft(unit: BattleUnit): boolean;
+  modelRotation(unit: BattleUnit, modelIndex: number): number;
+}
+
+export function markRemainingStationaryUnits(
+  state: BattleState,
+  side: Side,
+  context: StationaryMovementContext,
+): void {
+  for (const unit of context.activeUnits(state, side)) {
+    if (context.isAircraft(unit) || unit.movementAction || unit.fellBack) continue;
+    unit.movementAction = 'remainedStationary';
+    unit.movementAllowanceRemaining = 0;
+    unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
+    unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => 0);
+    unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
+    unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => context.modelRotation(unit, modelIndex));
+    unit.movementComplete = true;
+  }
+}
+
 export interface SingleModelMoveContext {
   clone(state: BattleState): BattleState;
   isModelEditPhase(phase: BattleState['phase']): boolean;

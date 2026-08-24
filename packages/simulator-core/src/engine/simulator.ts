@@ -1900,18 +1900,11 @@ function activeUnits(state: BattleState, side: Side): BattleUnit[] {
 }
 
 export function markRemainingStationaryUnits(state: BattleState, side: Side = state.activeArmy): void {
-  for (const unit of activeUnits(state, side)) {
-    if (isAircraft(unit)) continue;
-    if (!unit.movementAction && !unit.fellBack) {
-      unit.movementAction = 'remainedStationary';
-      unit.movementAllowanceRemaining = 0;
-      unit.movementAllowanceRemainingByModel = unit.modelPositions.map(() => 0);
-      unit.movementAllowanceTotalByModel = unit.modelPositions.map(() => 0);
-      unit.movementStartPositionsByModel = unit.modelPositions.map(position => ({ ...position }));
-      unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => modelRotation(unit, modelIndex));
-      unit.movementComplete = true;
-    }
-  }
+  interactiveMovementState.markRemainingStationaryUnits(state, side, {
+    activeUnits,
+    isAircraft,
+    modelRotation,
+  });
 }
 
 function startCommandPhase(s: BattleState, rules: RulesEdition): LogEntry[] {
