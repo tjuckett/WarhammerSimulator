@@ -227,6 +227,32 @@ export function snapShootPlayUnitWeapon(state: BattleState, unitId: string, side
   return s;
 }
 
+export interface AutomatedShootingContext extends ManualShootingSelectionContext {
+  aliveWeaponModelCount(unit: BattleUnit, weaponIndex: number): number;
+  nearest(unit: BattleUnit, targets: BattleUnit[]): BattleUnit | null;
+  resolveShootingWeaponIntoTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, rules: RulesEdition, options?: object): LogEntry[];
+  shootingWeaponSelectionForAll(weapons: Array<{ weapon: WeaponProfile; weaponIndex: number }>): Array<{ weapon: WeaponProfile; weaponIndex: number }>;
+  log(state: BattleState, side: Side, source: string, message: string, kind: 'shoot' | 'info'): LogEntry;
+}
+
+export function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition, context: AutomatedShootingContext): LogEntry[] {
+  const rangedWeapons = context.shootingWeaponSelectionForAll(context.eligibleShootingWeapons(unit, state, rules)
+    .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) })).filter(option => option.weaponIndex >= 0));
+  if (!rangedWeapons.length) return [];
+  const logs: LogEntry[] = [context.log(state, unit.side, unit.profile.name, `🔫 ${unit.profile.name} shoots:`, 'shoot')];
+  for (const { weapon, weaponIndex } of rangedWeapons) {
+    if (context.aliveWeaponModelCount(unit, weaponIndex) <= 0) continue;
+    const validTargets = context.enemies(state, unit.side).filter(target => context.shootingWeaponCanTarget(state, unit, target, weapon, rules));
+    if (!validTargets.length) {
+      logs.push(context.log(state, unit.side, unit.profile.name, `  ${weapon.name}: no valid targets in range/LOS`, 'info'));
+      continue;
+    }
+    logs.push(...context.resolveShootingWeaponIntoTarget(state, unit, context.nearest(unit, validTargets)!, weapon, weaponIndex, rules));
+    if (unit.destroyed) break;
+  }
+  return logs;
+}
+
 /** Resolve a unit's complete shooting declaration only after every weapon target is locked. */
 export function shootPlayUnitWeapons(
   state: BattleState,

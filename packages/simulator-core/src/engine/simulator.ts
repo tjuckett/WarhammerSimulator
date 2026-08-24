@@ -1722,33 +1722,13 @@ function resolveShootingWeaponIntoTarget(
 }
 
 function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
-  const rangedWeapons = shootingWeaponSelectionForAll(
-    eligibleShootingWeapons(unit, state, rules)
-      .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
-      .filter(option => option.weaponIndex >= 0),
-  );
-  if (!rangedWeapons.length) return [];
-
-  const logs: LogEntry[] = [
-    log(state, unit.side, unit.profile.name, `🔫 ${unit.profile.name} shoots:`, 'shoot'),
-  ];
-
-  for (const { weapon, weaponIndex } of rangedWeapons) {
-    if (aliveWeaponModelCount(unit, weaponIndex) <= 0) continue;
-    const validTargets = enemies(state, unit.side).filter(e => shootingWeaponCanTarget(state, unit, e, weapon, rules));
-    if (!validTargets.length) {
-      logs.push(log(state, unit.side, unit.profile.name,
-        `  ${weapon.name}: no valid targets in range/LOS`,
-        'info',
-      ));
-      continue;
-    }
-    const target = nearest(unit, validTargets)!;
-    logs.push(...resolveShootingWeaponIntoTarget(state, unit, target, weapon, weaponIndex, rules));
-    if (unit.destroyed) break;
-  }
-
-  return logs;
+  return manualCombat.runShooting(unit, state, rules, {
+    ...manualShootingSelectionContext,
+    nearest,
+    resolveShootingWeaponIntoTarget,
+    shootingWeaponSelectionForAll,
+    log,
+  });
 }
 
 export type PlayShootingWeaponOption = manualCombat.PlayShootingWeaponOption;
