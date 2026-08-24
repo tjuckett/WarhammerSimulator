@@ -92,6 +92,7 @@ import * as fightPhase from './fightPhase';
 import * as fightMovement from './fightMovement';
 import * as deadlyDemise from './deadlyDemise';
 import * as combatWounds from './combatWounds';
+import * as damageApplication from './damageApplication';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
 
@@ -1367,171 +1368,28 @@ export function resolveCombatAttacks(
   return logs;
 }
 
+
+const damageApplicationContext: damageApplication.DamageApplicationContext = {
+  applyFeelNoPain,
+  queueDeadlyDemise: (state, unit, modelIndexes, attackerSide) =>
+    queueDeadlyDemiseForModels(state, unit, modelIndexes, attackerSide),
+  recordDestroyedModels: recordDestroyedModelMissionEvents,
+  rememberDestroyedPositions,
+  trimUnitModelState,
+  queueFightOnDeath: queueFightOnDeathWindow,
+  markUnitDestroyed,
+  recordDestroyedUnit: recordDestroyedUnitMissionEvent,
+  emergencyDisembark: emergencyDisembarkDestroyedTransport,
+};
+
 export function applyDamage(
   unit: BattleUnit,
   totalDamage: number,
   state: BattleState,
   attackerSide: Side,
-  options: {
-    deferCasualties?: boolean;
-    noCarryOver?: boolean;
-    source?: string;
-    sourceUnitId?: string;
-    targetModelIndex?: number;
-    sourceObjectiveIndexesWithinRange?: number[];
-    sourceTags?: Array<'psychic'>;
-  } = {},
+  options: damageApplication.DamageApplicationOptions = {},
 ): LogEntry[] {
-  const logs: LogEntry[] = [];
-  if (options.deferCasualties) {
-    unit.pendingDamageAllocations = [
-      ...(unit.pendingDamageAllocations ?? []),
-      {
-        damage: totalDamage,
-        noCarryOver: options.noCarryOver,
-        source: options.source,
-        ...(options.sourceUnitId ? { sourceUnitId: options.sourceUnitId } : {}),
-        ...(options.targetModelIndex !== undefined ? { targetModelIndex: options.targetModelIndex } : {}),
-        ...(options.sourceObjectiveIndexesWithinRange
-          ? { sourceObjectiveIndexesWithinRange: options.sourceObjectiveIndexesWithinRange }
-          : {}),
-        ...(options.sourceTags?.length ? { sourceTags: [...options.sourceTags] } : {}),
-      },
-    ];
-    recordBattleEvent(state, {
-      type: BATTLE_EVENT_TYPE.DamagePending,
-      side: attackerSide,
-      source: options.sourceUnitId,
-      data: {
-        targetUnitId: unit.id,
-        damage: totalDamage,
-        noCarryOver: options.noCarryOver ?? false,
-        source: options.source ?? 'attack',
-      },
-    });
-    logs.push(log(state, attackerSide, unit.profile.name,
-      `  ${unit.profile.name}: allocate ${totalDamage} damage${options.source ? ` from ${options.source}` : ''}`,
-      'damage',
-    ));
-    return logs;
-  }
-
-  const feelNoPain = applyFeelNoPain(unit, totalDamage, state);
-  logs.push(...feelNoPain.logs);
-  totalDamage = feelNoPain.damage;
-
-  let simulatedModels = unit.remainingModels - (unit.pendingCasualties ?? 0);
-  let simulatedLeadWounds = unit.woundedModelIndex !== undefined
-    ? unit.woundsOnLeadModel
-    : unit.pendingWoundAssignment?.woundsOnModel ?? unit.profile.wounds;
-  const outcome = resolveDamageOutcome({
-    damage: totalDamage,
-    modelCount: simulatedModels,
-    woundsOnCurrentModel: simulatedLeadWounds,
-    woundsPerModel: unit.profile.wounds,
-    noCarryOver: options.noCarryOver,
-  });
-  const killed = outcome.killedModels;
-  simulatedModels = outcome.remainingModels;
-  simulatedLeadWounds = outcome.woundsOnCurrentModel;
-
-  const destroyedModelPositions = killed > 0
-    ? unit.modelPositions.slice(Math.max(0, simulatedModels)).map(position => ({ ...position }))
-    : [];
-  const destroyedModelRosterIndexes = killed > 0
-    ? Array.from({ length: killed }, (_, index) => unit.modelRosterIndexes?.[simulatedModels + index] ?? simulatedModels + index)
-    : [];
-
-  if (options.deferCasualties) {
-    if (killed > 0) unit.pendingCasualties = (unit.pendingCasualties ?? 0) + killed;
-    if (simulatedModels <= 0) {
-      unit.woundedModelIndex = undefined;
-      unit.pendingWoundAssignment = undefined;
-      unit.woundsOnLeadModel = 0;
-    } else if (simulatedLeadWounds < unit.profile.wounds) {
-      if (unit.woundedModelIndex !== undefined) {
-        unit.woundsOnLeadModel = simulatedLeadWounds;
-        unit.pendingWoundAssignment = undefined;
-      } else {
-        unit.pendingWoundAssignment = { woundsOnModel: simulatedLeadWounds };
-        unit.woundsOnLeadModel = unit.profile.wounds;
-      }
-    } else if (unit.woundedModelIndex === undefined) {
-      unit.pendingWoundAssignment = undefined;
-      unit.woundsOnLeadModel = unit.profile.wounds;
-    }
-  } else {
-    if (killed > 0) {
-      queueDeadlyDemiseForModels(
-        state,
-        unit,
-        Array.from({ length: killed }, (_, index) => simulatedModels + index),
-        attackerSide,
-      );
-      recordDestroyedModelMissionEvents(
-        state,
-        unit,
-        Array.from({ length: killed }, (_, index) => simulatedModels + index),
-        attackerSide,
-        { destroyedByUnitId: options.sourceUnitId, sourceTags: options.sourceTags },
-      );
-    }
-    unit.remainingModels = simulatedModels;
-    unit.woundsOnLeadModel = simulatedModels > 0 ? simulatedLeadWounds : 0;
-    unit.woundedModelIndex = unit.woundsOnLeadModel > 0 && unit.woundsOnLeadModel < unit.profile.wounds ? 0 : undefined;
-    unit.pendingWoundAssignment = undefined;
-    if (killed > 0 && simulatedModels <= 0) rememberDestroyedPositions(unit);
-    if (killed > 0) trimUnitModelState(unit);
-    if (killed > 0) {
-      queueFightOnDeathWindow(state, unit, attackerSide, destroyedModelPositions, destroyedModelRosterIndexes);
-    }
-  }
-
-  const effectiveRemaining = options.deferCasualties
-    ? unit.remainingModels - (unit.pendingCasualties ?? 0)
-    : unit.remainingModels;
-  if (killed > 0 && effectiveRemaining <= 0 && !options.deferCasualties) {
-    markUnitDestroyed(unit);
-    recordDestroyedUnitMissionEvent(state, unit, attackerSide, {
-      destroyedByUnitId: options.sourceUnitId,
-      destroyingUnitObjectiveIndexesWithinRange: options.sourceObjectiveIndexesWithinRange,
-      sourceTags: options.sourceTags,
-    });
-    logs.push(log(state, attackerSide, unit.profile.name,
-      `  💀 ${unit.profile.name} DESTROYED`,
-      'death',
-    ));
-    logs.push(...emergencyDisembarkDestroyedTransport(state, unit, attackerSide));
-  } else if (killed > 0) {
-    logs.push(log(state, attackerSide, unit.profile.name,
-      options.deferCasualties
-        ? `  ⚠️  ${unit.profile.name}: ${killed} model(s) slain - select ${unit.pendingCasualties} casualty model${unit.pendingCasualties === 1 ? '' : 's'} to remove`
-        : `  ⚠️  ${unit.profile.name}: ${killed} model(s) slain (${unit.remainingModels}/${unit.profile.baseModelCount} remain)`,
-      'damage',
-    ));
-  } else if (totalDamage > 0) {
-    logs.push(log(state, attackerSide, unit.profile.name,
-      `  🩸 ${unit.profile.name}: ${totalDamage} damage absorbed (${unit.woundsOnLeadModel}W left on lead model)`,
-      'damage',
-    ));
-  }
-
-  recordBattleEvent(state, {
-    type: BATTLE_EVENT_TYPE.DamageApplied,
-    side: attackerSide,
-    source: options.sourceUnitId,
-    data: {
-      targetUnitId: unit.id,
-      damage: totalDamage,
-      killedModels: killed,
-      remainingModels: effectiveRemaining,
-      woundsOnCurrentModel: unit.woundsOnLeadModel,
-      noCarryOver: options.noCarryOver ?? false,
-      source: options.source ?? 'attack',
-    },
-  });
-
-  return logs;
+  return damageApplication.applyDamage(unit, totalDamage, state, attackerSide, options, damageApplicationContext);
 }
 
 const deadlyDemiseContext: deadlyDemise.DeadlyDemiseContext = {
