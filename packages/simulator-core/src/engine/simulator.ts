@@ -98,7 +98,7 @@ import * as combatAttackResolution from './combatAttackResolution';
 import { createTransportDestruction } from './transportDestruction';
 import * as movementSimulation from './movementSimulation';
 import * as missionActionOptions from './missionActionOptions';
-import * as interactiveMovementState from './interactiveMovementState';
+import * as interactiveMovementState from './interactiveMovement';
 import { battleCoherencyIssues, coherencyEditionForState, coherencyModelLists } from './battleCoherency';
 import {
   markUnitArrivedFromReinforcements,
