@@ -1120,19 +1120,12 @@ function resolveHazardousTests(unit: BattleUnit, weapon: WeaponProfile, weaponIn
   return logs;
 }
 
+const missionActionEligibilityContext: missionActions.MissionActionEligibilityContext = {
+  attachedUnitComponents, isAircraft, isFortification, objectiveControlValue, attachedUnitKeywordSet,
+  inEngagement, enemies, log,
+};
 function cancelUnitAction(state: BattleState, unit: BattleUnit, reason: string): void {
-  const components = attachedUnitComponents(state, unit);
-  const action = components.map(component => component.performingAction).find(Boolean);
-  if (!action) return;
-  const actionName = action.name;
-  for (const component of components) component.performingAction = undefined;
-  state.log = [...state.log, log(
-    state,
-    unit.side,
-    unit.profile.name,
-    `${unit.profile.name} does not complete ${actionName}: ${reason}.`,
-    'info',
-  )];
+  missionActions.cancelUnitAction(state, unit, reason, missionActionEligibilityContext);
 }
 
 function attachedObjectiveIndexesWithinRange(state: BattleState, unit: BattleUnit, rules: RulesEdition): number[] {
@@ -1148,25 +1141,8 @@ function attachedTerrainAreaIdsContainingUnit(state: BattleState, unit: BattleUn
   );
 }
 
-function unitIsEligibleToStartAction(
-  unit: BattleUnit,
-  state: BattleState,
-  rules: RulesEdition,
-  ignoreActionStartedThisTurn = false,
-): boolean {
-  const components = attachedUnitComponents(state, unit);
-  if (!components.length || components.some(component => component.embarkedInUnitId || component.inStrategicReserves)) return false;
-  if (components.some(component => isAircraft(component) || isFortification(component))) return false;
-  if (components.some(component => component.battleshocked)) return false;
-  if (components.reduce((total, component) => total + objectiveControlValue(component), 0) <= 0) return false;
-  if (components.some(component => (!ignoreActionStartedThisTurn && component.actionStartedThisTurn) || component.performingAction)) return false;
-  if (rules.metadata.edition === '11e' && state.phase === 'shooting'
-    && components.some(component => component.activated || (component.firedWeaponIndices?.length ?? 0) > 0)) return false;
-  if (components.some(component => component.movementAction === 'advanced' || component.movementAction === 'fellBack' || component.fellBack)) return false;
-  const canActWhileEngaged = attachedUnitKeywordSet(state, unit).has('vehicle') || attachedUnitKeywordSet(state, unit).has('monster');
-  if (!canActWhileEngaged && components.some(component => inEngagement(component, enemies(state, unit.side), rules.engagementRange()))) return false;
-  return true;
-}
+const unitIsEligibleToStartAction = (unit: BattleUnit, state: BattleState, rules: RulesEdition, ignoreActionStartedThisTurn = false): boolean =>
+  missionActions.unitIsEligibleToStartAction(unit, state, rules, missionActionEligibilityContext, ignoreActionStartedThisTurn);
 
 export function playUnitCanStartAction(
   state: BattleState,
@@ -1175,8 +1151,7 @@ export function playUnitCanStartAction(
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): boolean {
   if (state.activeArmy !== side || state.phase === 'deployment' || state.phase === 'setup' || state.phase === 'end') return false;
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
-  return !!unit && unitIsEligibleToStartAction(unit, state, rules);
+  return missionActions.playUnitCanStartAction(state, unitId, side, rules, missionActionEligibilityContext);
 }
 
 const missionActionOptionsContext: missionActions.MissionActionsContext = {
