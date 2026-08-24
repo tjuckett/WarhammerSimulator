@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import type { BattleState } from '@warhammer-simulator/core/types/battle';
 import type { GameAction } from '@warhammer-simulator/core/practice/actions';
 import type { PlayModelSelection } from '../components/Battlefield';
@@ -17,8 +17,8 @@ export type PendingPlayTimelineAction = {
 };
 
 export function usePlayUndoState() {
-  const [playUndoStack, setPlayUndoStack] = useState<PlayUndoEntry[]>([]);
-  const playUndoStackRef = useRef<PlayUndoEntry[]>([]);
+  // Drag and rotation gestures stay local until they become one committed timeline action.
+  // Persistent undo/redo history belongs exclusively to the core practice timeline.
   const pendingPlayModelMoveUndoRef = useRef<PlayUndoEntry | null>(null);
   const pendingPlayModelMoveActionRef = useRef<PendingPlayTimelineAction | null>(null);
   const pendingPlayRotationUndoRef = useRef<PlayUndoEntry | null>(null);
@@ -30,21 +30,6 @@ export function usePlayUndoState() {
       clearTimeout(playRotationUndoTimerRef.current);
       playRotationUndoTimerRef.current = null;
     }
-  }
-
-  function pushPlayUndoEntry(entry: PlayUndoEntry) {
-    const nextStack = [...playUndoStackRef.current, entry].slice(-100);
-    playUndoStackRef.current = nextStack;
-    setPlayUndoStack(nextStack);
-  }
-
-  function popPlayUndoEntry(): PlayUndoEntry | null {
-    const entry = playUndoStackRef.current[playUndoStackRef.current.length - 1] ?? null;
-    if (!entry) return null;
-    const nextStack = playUndoStackRef.current.slice(0, -1);
-    playUndoStackRef.current = nextStack;
-    setPlayUndoStack(nextStack);
-    return entry;
   }
 
   function clearPendingPlayModelMove() {
@@ -59,18 +44,12 @@ export function usePlayUndoState() {
   }
 
   function clearPlayUndo() {
-    playUndoStackRef.current = [];
-    setPlayUndoStack([]);
     clearPendingPlayModelMove();
     clearPendingPlayRotation();
   }
 
   return {
-    state: {
-      playUndoStack,
-    },
     refs: {
-      playUndoStackRef,
       pendingPlayModelMoveUndoRef,
       pendingPlayModelMoveActionRef,
       pendingPlayRotationUndoRef,
@@ -78,8 +57,6 @@ export function usePlayUndoState() {
       playRotationUndoTimerRef,
     },
     actions: {
-      pushPlayUndoEntry,
-      popPlayUndoEntry,
       clearPlayUndo,
       clearPendingPlayModelMove,
       clearPendingPlayRotation,

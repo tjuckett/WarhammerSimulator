@@ -72,7 +72,7 @@ import { ModeChooserDialog } from './modes/ModeChooserDialog';
 import { GameSessionCheckpointDialogs } from './gameSession/GameSessionCheckpointDialogs';
 import { useTerrainLayouts } from './terrain/useTerrainLayouts';
 import { useTerrainEditing } from './terrain/useTerrainEditing';
-import { PLAY_DEPLOY_SELECTION_KIND, usePlayUiState } from './play/usePlayUiState';
+import { PLAY_DEPLOY_SELECTION_KIND, type PlayDeploySelection, usePlayUiState } from './play/usePlayUiState';
 import { usePlayUndoState, type PendingPlayTimelineAction, type PlayUndoEntry } from './play/usePlayUndoState';
 import { enemyTargetsForIds, firstPendingDamageUnit, targetIdsForOptions, unitForSelection } from './play/playBattleSelectors';
 import { buildMeleeAttackAllocations, buildShootingAttackAllocations, updateAttackAllocation, updateMeleeAttackAllocation } from './play/playAttackAllocations';
@@ -323,11 +323,7 @@ export default function App() {
     },
   } = usePlayUiState();
   const {
-    state: {
-      playUndoStack,
-    },
     refs: {
-      playUndoStackRef,
       pendingPlayModelMoveUndoRef,
       pendingPlayModelMoveActionRef,
       pendingPlayRotationUndoRef,
@@ -335,8 +331,6 @@ export default function App() {
       playRotationUndoTimerRef,
     },
     actions: {
-      pushPlayUndoEntry,
-      popPlayUndoEntry,
       clearPlayUndo,
       clearPendingPlayModelMove,
       clearPendingPlayRotation,
@@ -422,7 +416,6 @@ export default function App() {
       resetTimeline: resetGameSessionTimeline,
       startTimeline: startGameSessionTimeline,
       recordAction: recordGameSessionAction,
-      undoTimelineCursor: undoGameSessionTimelineCursor,
       restoreResultTimeline: restoreGameSessionResultTimeline,
       undoTimelineAction: undoGameSessionTimelineAction,
       redoTimelineAction: redoGameSessionTimelineAction,
@@ -474,6 +467,7 @@ export default function App() {
     restoreTimelineResult: restoreGameSessionTimelineResult,
     createBranchId: () => makeGameSessionId('checkpoint-branch'),
   });
+  const canUndoPlayAction = (gameSessionTimeline?.cursor ?? 0) > 0;
 
   useEffect(() => {
     setSaveErrorOpen(gameSessionSaveStatus.startsWith('Save failed:'));
@@ -1331,6 +1325,11 @@ export default function App() {
     [playDeploySelection, playModelSelection],
   );
 
+  const playInteractionState = useCallback(() => ({
+    deploySelection: clone(playDeploySelection),
+    modelSelection: clone(playModelSelection),
+  }), [playDeploySelection, playModelSelection]);
+
   function restoreGameSessionTimelineResult(result: TimelineStateResult) {
     restoreGameSessionResultTimeline(result);
     const restoredSetup = restoredTimelineSetupForResult(result, terrainLayouts);
@@ -1339,22 +1338,30 @@ export default function App() {
     setStrategy1(restoredSetup.strategy1);
     setStrategy2(restoredSetup.strategy2);
     restoreSetup(restoredSetup);
-    clearPlayUiState();
+    setPlayDeploySelection((result.interactionState?.deploySelection as PlayDeploySelection | null | undefined) ?? null);
+    setPlayModelSelection((result.interactionState?.modelSelection as PlayModelSelection | null | undefined) ?? null);
+    setInspectedSelection(null);
     commitBattleState(result.state);
   }
 
   function commitPlayTimelineAction(pending: PendingPlayTimelineAction) {
-    recordGameSessionAction(pending.undoEntry.battleState, pending.stateAfter, pending.action);
-    pushPlayUndoEntry(pending.undoEntry);
+    recordGameSessionAction(
+      pending.undoEntry.battleState,
+      pending.stateAfter,
+      pending.action,
+      {
+        deploySelection: clone(pending.undoEntry.playDeploySelection),
+        modelSelection: clone(pending.undoEntry.playModelSelection),
+      },
+      playInteractionState(),
+    );
   }
 
   function pushPlayUndo(entry: PlayUndoEntry, stateAfter?: BattleState, action?: GameAction) {
     commitPendingPlayRotationUndo();
     if (stateAfter && action) {
       commitPlayTimelineAction({ undoEntry: entry, stateAfter, action });
-      return;
     }
-    pushPlayUndoEntry(entry);
   }
 
   function commitPendingPlayRotationUndo() {
@@ -1366,9 +1373,7 @@ export default function App() {
     if (pendingAction) {
       if (pendingAction.action.type === GAME_ACTION_TYPE.RotateModels && pendingAction.action.degrees === 0) return;
       commitPlayTimelineAction(pendingAction);
-      return;
     }
-    pushPlayUndoEntry(entry);
   }
 
   function commitPendingPlayModelMove() {
@@ -1383,9 +1388,7 @@ export default function App() {
         && pendingAction.action.dy === 0
       ) return;
       commitPlayTimelineAction(pendingAction);
-      return;
     }
-    pushPlayUndoEntry(entry);
   }
 
   function changeMode(mode: AppMode) {
@@ -2283,6 +2286,15 @@ export default function App() {
   const undoPlayAction = useCallback(() => {
     if (!isPlayMode) return;
     setShootingResultEntries([]);
+    if (pendingPlayModelMoveUndoRef.current) {
+      const entry = pendingPlayModelMoveUndoRef.current;
+      clearPendingPlayModelMove();
+      commitBattleState(clone(entry.battleState));
+      setPlayDeploySelection(clone(entry.playDeploySelection));
+      setPlayModelSelection(clone(entry.playModelSelection));
+      clearPendingPlayRotation();
+      return;
+    }
     if (pendingPlayRotationUndoRef.current) {
       const entry = pendingPlayRotationUndoRef.current;
       clearPendingPlayRotation();
@@ -2292,28 +2304,17 @@ export default function App() {
       clearPendingPlayModelMove();
       return;
     }
-    const entry = playUndoStackRef.current[playUndoStackRef.current.length - 1];
-    if (!entry) {
-      undoGameSessionTimelineAction();
-      return;
-    }
-    undoGameSessionTimelineCursor();
-    commitBattleState(clone(entry.battleState));
-    setPlayDeploySelection(clone(entry.playDeploySelection));
-    setPlayModelSelection(clone(entry.playModelSelection));
     clearPendingPlayModelMove();
-    popPlayUndoEntry();
+    undoGameSessionTimelineAction();
   }, [
     isPlayMode,
     clearPendingPlayRotation,
     setPlayDeploySelection,
     setPlayModelSelection,
     clearPendingPlayModelMove,
+    pendingPlayModelMoveUndoRef,
     undoGameSessionTimelineAction,
-    undoGameSessionTimelineCursor,
-    popPlayUndoEntry,
     pendingPlayRotationUndoRef,
-    playUndoStackRef,
   ]);
 
   const redoPlayAction = useCallback(() => {
@@ -3022,19 +3023,19 @@ export default function App() {
             <div className="preview-caption">
               {selectedPlayUnit
                 ? playDeploySelection?.kind === PLAY_DEPLOY_SELECTION_KIND.Reinforcement
-                  ? `Click to set up ${selectedPlayUnit.name} as Reinforcements more than 9" from enemies${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
+                  ? `Click to set up ${selectedPlayUnit.name} as Reinforcements more than 9" from enemies${canUndoPlayAction ? ' - Ctrl+Z to undo' : ''}`
                   : playDeploySelection?.kind === PLAY_DEPLOY_SELECTION_KIND.StrategicReserve
-                    ? `Click to return ${selectedPlayUnit.name} from Strategic Reserves within 6" of a battlefield edge and more than 9" from enemies${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
-                  : `Click to deploy ${selectedPlayUnit.name} for ${battleState.armies[playDeploySelection!.side].name}${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
-                : `Drag or shift-click deployed models to edit${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`}
+                    ? `Click to return ${selectedPlayUnit.name} from Strategic Reserves within 6" of a battlefield edge and more than 9" from enemies${canUndoPlayAction ? ' - Ctrl+Z to undo' : ''}`
+                    : `Click to deploy ${selectedPlayUnit.name} for ${battleState.armies[playDeploySelection!.side].name}${canUndoPlayAction ? ' - Ctrl+Z to undo' : ''}`
+                : `Drag or shift-click deployed models to edit${canUndoPlayAction ? ' - Ctrl+Z to undo' : ''}`}
             </div>
           )}
           {isPlayMode && battleState && battleState.phase !== 'deployment' && battleState.phase !== 'end' && (
             <div className="preview-caption">
               {battleState.phase === 'movement'
                 ? isPlayReinforcementsStep
-                  ? `Play Reinforcements step - select staged Deep Strike, Reserve, or off-board Aircraft units${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
-                  : `Play Movement phase - drag selected models to move${playUndoStack.length ? ' - Ctrl+Z to undo' : ''}`
+                  ? `Play Reinforcements step - select staged Deep Strike, Reserve, or off-board Aircraft units${canUndoPlayAction ? ' - Ctrl+Z to undo' : ''}`
+                  : `Play Movement phase - drag selected models to move${canUndoPlayAction ? ' - Ctrl+Z to undo' : ''}`
                 : `Play ${PHASE_LABELS[battleState.phase] ?? battleState.phase} phase - select units on the board`}
             </div>
           )}

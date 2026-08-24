@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type MutableRefObject } from 'react';
 import type { BattleState } from '@warhammer-simulator/core/types/battle';
-import type { GameAction } from '@warhammer-simulator/core/practice/actions';
+import type { GameAction, GameActionInteractionState } from '@warhammer-simulator/core/practice/actions';
 import {
   appendResolvedTimelineAction,
   createPracticeTimeline as createGameSessionTimeline,
@@ -60,9 +60,19 @@ export function useGameSessionTimeline({
     setCurrentTimeline(nextTimeline);
   }
 
-  function recordAction(stateBefore: BattleState, stateAfter: BattleState, action: GameAction) {
+  function recordAction(
+    stateBefore: BattleState,
+    stateAfter: BattleState,
+    action: GameAction,
+    interactionBefore?: GameActionInteractionState,
+    interactionAfter?: GameActionInteractionState,
+  ) {
     const currentTimeline = timelineRef.current ?? createGameSessionTimeline(stateBefore);
-    const nextTimeline = appendResolvedTimelineAction(currentTimeline, action, { stateBefore, stateAfter });
+    const nextTimeline = appendResolvedTimelineAction(currentTimeline, {
+      ...action,
+      interactionBefore,
+      interactionAfter,
+    }, { stateBefore, stateAfter });
     setCurrentTimeline(nextTimeline);
   }
 

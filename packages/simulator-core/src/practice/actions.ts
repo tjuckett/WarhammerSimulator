@@ -72,12 +72,29 @@ export interface GameActionBase {
   id?: string;
   createdAt?: string;
   label?: string;
+  interactionBefore?: GameActionInteractionState;
+  interactionAfter?: GameActionInteractionState;
 }
 
 export interface ModelSelectionPart {
   unitId: string;
   side: Side;
   modelIndices: number[];
+}
+
+/** Serializable play UI state that travels with a timeline action. */
+export interface GameActionInteractionState {
+  deploySelection?: {
+    kind: 'deployment' | 'reinforcement' | 'strategicReserve';
+    side: Side;
+    unitIndex?: number;
+    armyUnitIndex?: number;
+    unitId?: string;
+  } | null;
+  modelSelection?: {
+    side: Side;
+    parts: ModelSelectionPart[];
+  } | null;
 }
 
 export const GAME_ACTION_TYPE = {

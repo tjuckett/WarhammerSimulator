@@ -1,6 +1,6 @@
 import type { BattleState } from '../types/battle';
 import type { RulesetMetadata } from '../engine/rulesEngine';
-import { applyGameAction, type GameAction, type GameActionContext } from './actions';
+import { applyGameAction, type GameAction, type GameActionContext, type GameActionInteractionState } from './actions';
 
 export const PRACTICE_TIMELINE_VERSION = 1;
 
@@ -34,6 +34,7 @@ export interface PracticeTimeline {
 export interface TimelineStateResult {
   timeline: PracticeTimeline;
   state: BattleState;
+  interactionState?: GameActionInteractionState;
 }
 
 export interface CreatePracticeTimelineOptions {
@@ -101,6 +102,12 @@ export function currentTimelineState(timeline: PracticeTimeline): BattleState {
   if (timeline.cursor <= 0) return clone(timeline.initialState);
   const entry = timeline.entries[Math.min(timeline.cursor, timeline.entries.length) - 1];
   return clone(entry?.stateAfter ?? timeline.initialState);
+}
+
+export function currentTimelineInteractionState(timeline: PracticeTimeline): GameActionInteractionState | undefined {
+  if (timeline.cursor <= 0) return undefined;
+  const interactionState = timeline.entries[Math.min(timeline.cursor, timeline.entries.length) - 1]?.action.interactionAfter;
+  return interactionState ? clone(interactionState) : undefined;
 }
 
 export function appendTimelineAction(
@@ -182,6 +189,7 @@ export function undoTimeline(timeline: PracticeTimeline): TimelineStateResult {
       cursor: timeline.cursor - 1,
     },
     state: clone(entry.stateBefore),
+    interactionState: entry.action.interactionBefore ? clone(entry.action.interactionBefore) : undefined,
   };
 }
 
@@ -197,6 +205,7 @@ export function redoTimeline(timeline: PracticeTimeline): TimelineStateResult {
       cursor: timeline.cursor + 1,
     },
     state: clone(entry.stateAfter),
+    interactionState: entry.action.interactionAfter ? clone(entry.action.interactionAfter) : undefined,
   };
 }
 
@@ -212,9 +221,11 @@ export function seekTimeline(
     };
   }
 
+  const entry = timeline.entries[nextCursor - 1];
   return {
     timeline: { ...timeline, cursor: nextCursor },
-    state: clone(timeline.entries[nextCursor - 1].stateAfter),
+    state: clone(entry.stateAfter),
+    interactionState: entry.action.interactionAfter ? clone(entry.action.interactionAfter) : undefined,
   };
 }
 

@@ -13,8 +13,10 @@ import {
   appendResolvedTimelineAction,
   createPracticeTimeline,
   currentTimelineState,
+  redoTimeline,
   replayTimeline,
   type PracticeTimeline,
+  undoTimeline,
 } from '../src/practice/timeline';
 import { applyGameAction, GAME_ACTION_TYPE, type GameAction } from '../src/practice/actions';
 import { activePhaseLegalActionHandler, getLegalActions, phaseCanAdvance } from '../src/engine/legalActions';
@@ -408,6 +410,36 @@ function addStep(timeline: PracticeTimeline, phase: Phase): PracticeTimeline {
     stateAfter: state(phase),
   });
 }
+
+test('timeline restores serialized play interaction state with undo and redo', () => {
+  const initial = state('deployment');
+  const timeline = appendResolvedTimelineAction(createPracticeTimeline(initial), {
+    type: 'play.stepPhase',
+    interactionBefore: {
+      deploySelection: { kind: 'deployment', side: 0, unitIndex: 1 },
+      modelSelection: { side: 0, parts: [{ unitId: 'controller-1', side: 0, modelIndices: [0] }] },
+    },
+    interactionAfter: {
+      deploySelection: null,
+      modelSelection: { side: 0, parts: [{ unitId: 'controller-1', side: 0, modelIndices: [1] }] },
+    },
+  }, {
+    stateBefore: initial,
+    stateAfter: state('command'),
+  });
+
+  const undone = undoTimeline(timeline);
+  assert.deepEqual(undone.interactionState, {
+    deploySelection: { kind: 'deployment', side: 0, unitIndex: 1 },
+    modelSelection: { side: 0, parts: [{ unitId: 'controller-1', side: 0, modelIndices: [0] }] },
+  });
+
+  const redone = redoTimeline(undone.timeline);
+  assert.deepEqual(redone.interactionState, {
+    deploySelection: null,
+    modelSelection: { side: 0, parts: [{ unitId: 'controller-1', side: 0, modelIndices: [1] }] },
+  });
+});
 
 test('local practice scenario repository keeps checkpoint timelines and branches', async () => {
   installStorage();
