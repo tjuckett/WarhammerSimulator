@@ -2941,165 +2941,17 @@ function disembarkPositions(
 export { type DeploymentStrategy };
 
 export function createBattleState(
-  army1: ImportedArmy,
-  color1: string,
-  army2: ImportedArmy,
-  color2: string,
-  terrain: Terrain[],
-  strategy1: DeploymentStrategy = 'balanced',
-  strategy2: DeploymentStrategy = 'balanced',
-  setup?: BattleState['setup'],
-  objectivesOverride?: Position[],
-  rules: RulesEdition = rules40K10th,
+  army1: ImportedArmy, color1: string, army2: ImportedArmy, color2: string, terrain: Terrain[],
+  strategy1: DeploymentStrategy = 'balanced', strategy2: DeploymentStrategy = 'balanced', setup?: BattleState['setup'], objectivesOverride?: Position[], rules: RulesEdition = rules40K10th,
 ): BattleState {
-  resetBattleLogSequence();
-  _unitId = 0;
-
-  const board = boardFormatForId(setup?.boardFormat);
-  const objectives: Position[] = clone(objectivesOverride ?? DEFAULT_OBJECTIVES);
-
-  const deployment = setupDeploymentZoneSource(setup);
-  const army1Deployable = deployableProfilesForRules(army1, rules);
-  const army2Deployable = deployableProfilesForRules(army2, rules);
-  const positions1 = deployArmy(army1Deployable, 0, strategy1, terrain, objectives, deployment, board);
-  const positions2 = deployArmy(army2Deployable, 1, strategy2, terrain, objectives, deployment, board);
-
-  const units: BattleUnit[] = [];
-  const allPlacedModels: Position[] = []; // grows as each unit is placed; prevents cross-unit overlap
-  const allPlacedModelRadii: number[] = [];
-
-  const place = (army: ImportedArmy, side: Side, positions: Position[], terrain: Terrain[]) => {
-    deployableProfilesForRules(army, rules).forEach((profile, i) => {
-      const startPos = positions[i];
-      const modelPositions = deployModelFormation(
-        startPos, profile.baseModelCount, unitRole(profile), side as 0 | 1,
-        terrain, zoneFor(side as 0 | 1, deployment, board), allPlacedModels,
-        interactiveMovementState.profileModelRadii(profile),
-        allPlacedModelRadii,
-        rules.metadata.edition,
-      );
-      const unit = makeBattleUnit(profile, side, modelPositions);
-      unit.position = startPos;
-      interactiveMovementState.resolveInternalModelOverlaps(unit, zoneFor(side as 0 | 1, deployment, board), board);
-      interactiveMovementState.avoidDeploymentOverlap(unit, { units, board } as BattleState, zoneFor(side as 0 | 1, deployment, board));
-      interactiveMovementState.resolveInternalModelOverlaps(unit, zoneFor(side as 0 | 1, deployment, board), board);
-      allPlacedModels.push(...unit.modelPositions);
-      allPlacedModelRadii.push(...unit.modelPositions.map((_, modelIndex) => modelBaseRadius(unit, modelIndex)));
-      units.push(unit);
-
-      attachedFollowersFor(army, profile).forEach((leader, leaderIndex) => {
-        const anchor = leaderAnchor(unit, leader, leaderIndex, side, deployment, board);
-        const leaderPositions = deployModelFormation(
-          anchor, leader.baseModelCount, unitRole(leader), side as 0 | 1,
-          terrain, zoneFor(side as 0 | 1, deployment, board), allPlacedModels,
-          interactiveMovementState.profileModelRadii(leader),
-          allPlacedModelRadii,
-          rules.metadata.edition,
-        );
-        const leaderUnit = makeBattleUnit(leader, side, leaderPositions, unit.id, unit.tabletopUnitId);
-        interactiveMovementState.resolveInternalModelOverlaps(leaderUnit, zoneFor(side as 0 | 1, deployment, board), board);
-        interactiveMovementState.avoidDeploymentOverlap(leaderUnit, { units, board } as BattleState, zoneFor(side as 0 | 1, deployment, board));
-        interactiveMovementState.resolveInternalModelOverlaps(leaderUnit, zoneFor(side as 0 | 1, deployment, board), board);
-        allPlacedModels.push(...leaderUnit.modelPositions);
-        allPlacedModelRadii.push(...leaderUnit.modelPositions.map((_, modelIndex) => modelBaseRadius(leaderUnit, modelIndex)));
-        units.push(leaderUnit);
-      });
-    });
-  };
-
-  place(army1, 0, positions1, terrain);
-  place(army2, 1, positions2, terrain);
-  if (rules.metadata.edition === '11e') {
-    add11eAircraftStrategicReserves(units, army1, 0, board);
-    add11eAircraftStrategicReserves(units, army2, 1, board);
-  }
-
-  return {
-    ruleset: rulesetMetadataForState(rules),
-    battleRound: 1,
-    maxBattleRounds: 5,
-    turn: 1,
-    maxTurns: 5,
-    activeArmy: 0,
-    phase: 'setup',
-    winner: null,
-    log: [],
-    events: [],
-    units,
-    terrain,
-    board,
-    armies: [
-      { name: army1.name, faction: army1.faction, color: color1, army: army1 },
-      { name: army2.name, faction: army2.faction, color: color2, army: army2 },
-    ],
-    objectives,
-    objectiveControl: rules.objectiveControl,
-    objectiveOwners: objectives.map(() => null),
-    scores: [0, 0],
-    commandPoints: [0, 0],
-    stratagemUses: [],
-    abilityUses: [],
-    unplacedUnits: [[], []],
-    deployStrategies: [strategy1, strategy2],
-    setup: setup ? { ...setup, boardFormat: board.id } : setup,
-  };
+  return deploymentActions.createBattleState(army1, color1, army2, color2, terrain, strategy1, strategy2, setup, objectivesOverride, rules, battleSetupContext);
 }
 
 export function createDeploymentState(
-  army1: ImportedArmy,
-  color1: string,
-  army2: ImportedArmy,
-  color2: string,
-  terrain: Terrain[],
-  strategy1: DeploymentStrategy = 'balanced',
-  strategy2: DeploymentStrategy = 'balanced',
-  setup?: BattleState['setup'],
-  objectivesOverride?: Position[],
-  rules: RulesEdition = rules40K10th,
+  army1: ImportedArmy, color1: string, army2: ImportedArmy, color2: string, terrain: Terrain[],
+  strategy1: DeploymentStrategy = 'balanced', strategy2: DeploymentStrategy = 'balanced', setup?: BattleState['setup'], objectivesOverride?: Position[], rules: RulesEdition = rules40K10th,
 ): BattleState {
-  resetBattleLogSequence();
-  _unitId = 0;
-
-  const board = boardFormatForId(setup?.boardFormat);
-  const objectives: Position[] = clone(objectivesOverride ?? DEFAULT_OBJECTIVES);
-
-  const state: BattleState = {
-    ruleset: rulesetMetadataForState(rules),
-    battleRound: 1,
-    maxBattleRounds: 5,
-    turn: 1,
-    maxTurns: 5,
-    activeArmy: 0,
-    phase: 'deployment',
-    winner: null,
-    log: [],
-    events: [],
-    units: [],
-    terrain,
-    board,
-    armies: [
-      { name: army1.name, faction: army1.faction, color: color1, army: army1 },
-      { name: army2.name, faction: army2.faction, color: color2, army: army2 },
-    ],
-    objectives,
-    objectiveControl: rules.objectiveControl,
-    objectiveOwners: objectives.map(() => null),
-    scores: [0, 0],
-    commandPoints: [0, 0],
-    stratagemUses: [],
-    abilityUses: [],
-    unplacedUnits: [deployableProfilesForRules(army1, rules), deployableProfilesForRules(army2, rules)],
-    deployStrategies: [strategy1, strategy2],
-    setup: setup ? { ...setup, boardFormat: board.id } : setup,
-  };
-
-  if (rules.metadata.edition === '11e') {
-    add11eAircraftStrategicReserves(state.units, army1, 0, board);
-    add11eAircraftStrategicReserves(state.units, army2, 1, board);
-  }
-
-  state.log = [log(state, 0, '', '═══ DEPLOYMENT PHASE ═══', 'phase')];
-  return state;
+  return deploymentActions.createDeploymentState(army1, color1, army2, color2, terrain, strategy1, strategy2, setup, objectivesOverride, rules, battleSetupContext);
 }
 
 export function placeNextUnit(state: BattleState): BattleState {
@@ -3571,6 +3423,18 @@ const automatedDeploymentContext: deploymentActions.AutomatedDeploymentContext =
   maxModelBaseRadius,
   modelBaseRadius,
   enterSetup: (state, side) => enterBattlePhase(state, { phase: 'setup' }, side),
+};
+
+const battleSetupContext: deploymentActions.BattleSetupContext = {
+  ...automatedDeploymentContext,
+  reset: () => {
+    resetBattleLogSequence();
+    _unitId = 0;
+  },
+  boardFormatForId,
+  rulesetMetadata: rules => rulesetMetadataForState(rules as RulesEdition),
+  defaultObjectives: DEFAULT_OBJECTIVES,
+  addAircraftStrategicReserves: add11eAircraftStrategicReserves,
 };
 
 const reinforcementPlayContext: reinforcementPlay.PlayReinforcementContext = {

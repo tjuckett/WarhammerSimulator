@@ -1,4 +1,4 @@
-import { UNIT_DEPLOYMENT_MODE, type UnitProfile } from '../types/army';
+import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile } from '../types/army';
 import type { BattleState, BattleUnit, BoardFormat, Position, Terrain } from '../types/battle';
 import { modelBaseRadiusInches, unitMaxBaseRadiusInches } from './baseSizes';
 import { distance } from './coherency';
@@ -407,6 +407,86 @@ export function placeNextUnit(state: BattleState, context: AutomatedDeploymentCo
   const otherSide = (1 - side) as 0 | 1;
   next.activeArmy = next.unplacedUnits[otherSide].length ? otherSide : side;
   return next;
+}
+
+export interface BattleSetupContext extends AutomatedDeploymentContext {
+  reset(): void;
+  boardFormatForId(id?: string): BoardFormat;
+  rulesetMetadata(rules: { metadata: { edition: string }; objectiveControl: BattleState['objectiveControl'] }): BattleState['ruleset'];
+  defaultObjectives: Position[];
+  addAircraftStrategicReserves(units: BattleUnit[], army: ImportedArmy, side: 0 | 1, board: BoardFormat): void;
+}
+
+function initialBattleState(
+  phase: BattleState['phase'], armies: [ImportedArmy, ImportedArmy], colors: [string, string], terrain: Terrain[], strategies: [DeploymentStrategy, DeploymentStrategy],
+  setup: BattleState['setup'] | undefined, objectives: Position[], board: BoardFormat,
+  rules: { metadata: { edition: string }; objectiveControl: BattleState['objectiveControl'] }, units: BattleUnit[], unplacedUnits: [UnitProfile[], UnitProfile[]], context: BattleSetupContext,
+): BattleState {
+  return {
+    ruleset: context.rulesetMetadata(rules), battleRound: 1, maxBattleRounds: 5, turn: 1, maxTurns: 5, activeArmy: 0, phase, winner: null, log: [], events: [], units, terrain, board,
+    armies: armies.map((army, side) => ({ name: army.name, faction: army.faction, color: colors[side], army })) as BattleState['armies'],
+    objectives, objectiveControl: rules.objectiveControl, objectiveOwners: objectives.map(() => null), scores: [0, 0], commandPoints: [0, 0], stratagemUses: [], abilityUses: [], unplacedUnits,
+    deployStrategies: strategies, setup: setup ? { ...setup, boardFormat: board.id } : setup,
+  };
+}
+
+export function createBattleState(
+  army1: ImportedArmy, color1: string, army2: ImportedArmy, color2: string, terrain: Terrain[], strategy1: DeploymentStrategy, strategy2: DeploymentStrategy,
+  setup: BattleState['setup'] | undefined, objectivesOverride: Position[] | undefined,
+  rules: { metadata: { edition: string }; objectiveControl: BattleState['objectiveControl'] }, context: BattleSetupContext,
+): BattleState {
+  context.reset();
+  const armies: [ImportedArmy, ImportedArmy] = [army1, army2];
+  const strategies: [DeploymentStrategy, DeploymentStrategy] = [strategy1, strategy2];
+  const board = context.boardFormatForId(setup?.boardFormat);
+  const objectives = (objectivesOverride ?? context.defaultObjectives).map(position => ({ ...position }));
+  const deployment = context.setupDeploymentZoneSource(setup);
+  const profiles = armies.map(army => context.deployableProfiles(army, rules.metadata.edition)) as [UnitProfile[], UnitProfile[]];
+  const planned = profiles.map((profilesForSide, side) => deployArmy(profilesForSide, side as 0 | 1, strategies[side], terrain, objectives, deployment, board)) as [Position[], Position[]];
+  const units: BattleUnit[] = [];
+  const placedModels: Position[] = [];
+  const placedRadii: number[] = [];
+  armies.forEach((army, side) => profiles[side].forEach((profile, index) => {
+    const zone = zoneFor(side as 0 | 1, deployment, board);
+    const deployProfile = (unitProfile: UnitProfile, position: Position) => context.deployModelFormation(position, unitProfile.baseModelCount, unitRole(unitProfile), side as 0 | 1,
+      terrain, zone, placedModels, context.profileModelRadii(unitProfile), placedRadii, rules.metadata.edition);
+    const unit = context.makeBattleUnit(profile, side as 0 | 1, deployProfile(profile, planned[side][index]));
+    unit.position = planned[side][index];
+    context.resolveInternalModelOverlaps(unit, zone, board);
+    context.avoidDeploymentOverlap(unit, { units, board } as BattleState, zone);
+    context.resolveInternalModelOverlaps(unit, zone, board);
+    placedModels.push(...unit.modelPositions);
+    placedRadii.push(...unit.modelPositions.map((_, modelIndex) => context.modelBaseRadius(unit, modelIndex)));
+    units.push(unit);
+    context.attachedFollowers(army, profile).forEach((leader, leaderIndex) => {
+      const leaderUnit = context.makeBattleUnit(leader, side as 0 | 1, deployProfile(leader, context.leaderAnchor(unit, leader, leaderIndex, side as 0 | 1, deployment, board)), unit.id, unit.tabletopUnitId);
+      context.resolveInternalModelOverlaps(leaderUnit, zone, board);
+      context.avoidDeploymentOverlap(leaderUnit, { units, board } as BattleState, zone);
+      context.resolveInternalModelOverlaps(leaderUnit, zone, board);
+      placedModels.push(...leaderUnit.modelPositions);
+      placedRadii.push(...leaderUnit.modelPositions.map((_, modelIndex) => context.modelBaseRadius(leaderUnit, modelIndex)));
+      units.push(leaderUnit);
+    });
+  }));
+  if (rules.metadata.edition === '11e') armies.forEach((army, side) => context.addAircraftStrategicReserves(units, army, side as 0 | 1, board));
+  return initialBattleState('setup', armies, [color1, color2], terrain, strategies, setup, objectives, board, rules, units, [[], []], context);
+}
+
+export function createDeploymentState(
+  army1: ImportedArmy, color1: string, army2: ImportedArmy, color2: string, terrain: Terrain[], strategy1: DeploymentStrategy, strategy2: DeploymentStrategy,
+  setup: BattleState['setup'] | undefined, objectivesOverride: Position[] | undefined,
+  rules: { metadata: { edition: string }; objectiveControl: BattleState['objectiveControl'] }, context: BattleSetupContext,
+): BattleState {
+  context.reset();
+  const armies: [ImportedArmy, ImportedArmy] = [army1, army2];
+  const board = context.boardFormatForId(setup?.boardFormat);
+  const objectives = (objectivesOverride ?? context.defaultObjectives).map(position => ({ ...position }));
+  const state = initialBattleState('deployment', armies, [color1, color2], terrain, [strategy1, strategy2], setup, objectives, board, rules, [], [
+    context.deployableProfiles(army1, rules.metadata.edition), context.deployableProfiles(army2, rules.metadata.edition),
+  ], context);
+  if (rules.metadata.edition === '11e') armies.forEach((army, side) => context.addAircraftStrategicReserves(state.units, army, side as 0 | 1, board));
+  state.log = [context.log(state, 0, '', '═══ DEPLOYMENT PHASE ═══', 'phase')];
+  return state;
 }
 
 export const DEPLOYMENT_STRATEGIES: { id: DeploymentStrategy; name: string }[] = [
