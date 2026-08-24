@@ -117,7 +117,6 @@ import * as movementLegality from './movementLegality';
 import * as scoutMoves from './scoutMoves';
 import * as takeToSkies from './takeToSkies';
 import * as surgeMoves from './surgeMoves';
-import * as movementGroups from './movementGroups';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -5002,14 +5001,14 @@ function playMovementGroupId(unit: BattleUnit): string {
   return unit.tabletopUnitId ?? unit.id;
 }
 
-const movementGroupContext: movementGroups.MovementGroupContext = {
+const movementGroupContext: interactiveMovementState.MovementGroupContext = {
   groupId: playMovementGroupId,
   removeOpponentMarkersAfterMove: removeOpponentOperationMarkersAfterMove,
 };
 const lockOtherMovedPlayUnits = (state: BattleState, currentUnit: BattleUnit): void =>
-  movementGroups.lockOtherMovedUnits(state, currentUnit, movementGroupContext);
+  interactiveMovementState.lockOtherMovedUnits(state, currentUnit, movementGroupContext);
 const markPlayMovementGroupComplete = (state: BattleState, currentUnit: BattleUnit): void =>
-  movementGroups.markGroupComplete(state, currentUnit, movementGroupContext);
+  interactiveMovementState.markMovementGroupComplete(state, currentUnit, movementGroupContext);
 
 function budgetAdjustedPlayMove(unit: BattleUnit, modelIndices: number[], dx: number, dy: number): { dx: number; dy: number } {
   const distance = Math.hypot(dx, dy);
