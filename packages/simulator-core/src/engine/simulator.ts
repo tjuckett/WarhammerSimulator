@@ -1782,6 +1782,21 @@ const manualChargeRollContext: manualCombat.ManualChargeRollContext = {
   inEngagement,
 };
 
+const manualChargeDeclarationContext: manualCombat.ManualChargeDeclarationContext = {
+  ...manualChargeRollContext,
+  chargeRules: chargeRulesContext,
+  findReachablePosition,
+  avoidModelOverlap: interactiveMovementState.avoidModelOverlap,
+  resolveInternalModelOverlaps: interactiveMovementState.resolveInternalModelOverlaps,
+  translateFormation,
+  formationExtent,
+  centroid,
+  modelRotation,
+  unitTakesToSkiesForState,
+  distance: dist,
+  unitCanChargeTarget,
+};
+
 export function playChargeRoll(
   state: BattleState,
   unitId: string,
@@ -1827,177 +1842,7 @@ export function chargePlayUnitTargets(
   targetUnitIds: string[],
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
-  if (state.phase !== 'charge') return state;
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  const uniqueTargetIds = [...new Set(targetUnitIds)];
-  const targets = uniqueTargetIds
-    .map(targetId => state.units.find(candidate => candidate.id === targetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId))
-    .filter((target): target is BattleUnit => !!target);
-  const target = targets[0];
-  if (!unit
-    || attachedUnitComponents(state, unit).some(component => unitSurgedThisPhase(state, component))
-    || !target
-    || targets.length !== uniqueTargetIds.length
-    || uniqueTargetIds.length === 0
-    || !manualCombat.sideCanDeclareCharge(state, side, unit)
-    || !manualCombat.unitCanDeclareCharge(state, unit, chargeRulesContext)
-    || targets.some(candidate => !unitCanChargeTarget(unit, candidate))
-    || (state.activeArmy !== side
-      && (unit.heroicInterventionMode === 'leap-to-defend'
-        ? targets.some(candidate => !candidate.charged)
-        : unit.heroicInterventionMode === 'into-the-fray'
-          ? targets.some(candidate => battleUnitsBaseEdgeDistance(unit, candidate) > 6)
-          : true))) return state;
-  const needed = Math.max(...targets.map(candidate => manualCombat.chargeNeededDistance(unit, candidate, rules, chargeRulesContext)));
-  const pendingRoll = state.pendingChargeRoll?.unitId === unitId && state.pendingChargeRoll.side === side
-    ? state.pendingChargeRoll
-    : undefined;
-  if (needed > (pendingRoll?.maximumDistance ?? rules.chargeRange())) return state;
-
-  const s = clone(state);
-  const chargingUnit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  const chargeTargets = uniqueTargetIds
-    .map(targetId => s.units.find(candidate => candidate.id === targetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId))
-    .filter((candidate): candidate is BattleUnit => !!candidate);
-  const chargeTarget = chargeTargets[0];
-  if (!chargingUnit || !chargeTarget || chargeTargets.length !== uniqueTargetIds.length) return state;
-
-  const r1 = pendingRoll ? undefined : d6();
-  const r2 = pendingRoll ? undefined : d6();
-  const rawRoll = pendingRoll ? undefined : r1! + r2!;
-  const roll = pendingRoll ? undefined : (state.activeArmy !== side && chargingUnit.heroicInterventionMode === 'into-the-fray'
-    ? Math.min(6, rawRoll!)
-    : rawRoll!);
-  const maximumDistance = pendingRoll?.maximumDistance ?? Math.max(0, roll! - takeToSkiesDistanceCost(chargingUnit));
-  const heroicIntervention = state.activeArmy !== side;
-  const logs: LogEntry[] = [
-    log(s, side, chargingUnit.profile.name,
-      pendingRoll
-        ? `${chargingUnit.profile.name} declares a charge against ${chargeTargets.map(candidate => candidate.profile.name).join(', ')} (${needed.toFixed(1)}" maximum needed; charge roll already passed).`
-        : `${chargingUnit.profile.name} declares a charge against ${chargeTargets.map(candidate => candidate.profile.name).join(', ')} (${needed.toFixed(1)}" maximum needed, rolled ${r1}+${r2}=${roll}${roll !== rawRoll ? ` (capped from ${rawRoll})` : ''}).`,
-      'charge',
-    ),
-  ];
-
-  // Play resolves the rolled charge with a manual model-by-model move.
-  if (pendingRoll) {
-    for (const component of attachedUnitComponents(s, chargingUnit)) {
-      component.movementAction = 'normalMove';
-      component.movementAllowanceRemaining = maximumDistance;
-      component.movementAllowanceRemainingByModel = component.modelPositions.map(() => maximumDistance);
-      component.movementAllowanceTotalByModel = component.modelPositions.map(() => maximumDistance);
-      component.movementStartPositionsByModel = component.modelPositions.map(position => ({ ...position }));
-      component.movementStartRotationsByModel = component.modelPositions.map((_, modelIndex) => modelRotation(component, modelIndex));
-      component.movementPathByModel = component.modelPositions.map(position => [{ ...position }]);
-      component.movementComplete = false;
-    }
-    s.pendingChargeMovement = { unitId, side, targetUnitIds: uniqueTargetIds, maximumDistance };
-    s.pendingChargeRoll = undefined;
-    if (s.lastChargeRoll?.unitId === unitId && s.lastChargeRoll.side === side) {
-      s.lastChargeRoll = { ...s.lastChargeRoll, status: 'resolved' };
-    }
-    s.log = [...s.log, ...logs, log(s, side, chargingUnit.profile.name,
-      `${chargingUnit.profile.name} must now make its charge move (${maximumDistance.toFixed(1)}" maximum).`,
-      'charge')];
-    return s;
-  }
-
-  if (maximumDistance + 0.001 < needed) {
-    for (const component of attachedUnitComponents(s, chargingUnit)) {
-      component.activated = true;
-      component.heroicInterventionThisPhase = undefined;
-      component.heroicInterventionMode = undefined;
-      component.takingToSkies = undefined;
-    }
-    logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} fails the charge.`, 'charge'));
-    s.log = [...s.log, ...logs];
-    s.pendingChargeRoll = undefined;
-    if (s.lastChargeRoll?.unitId === unitId && s.lastChargeRoll.side === side) {
-      s.lastChargeRoll = { ...s.lastChargeRoll, status: 'failed', failureReason: 'cannot-reach-engagement' };
-    }
-    return s;
-  }
-
-  const d = dist(chargingUnit.position, chargeTarget.position);
-  const dirX = d > 0 ? (chargeTarget.position.x - chargingUnit.position.x) / d : 1;
-  const dirY = d > 0 ? (chargeTarget.position.y - chargingUnit.position.y) / d : 0;
-  const myExtent = formationExtent(chargingUnit.modelPositions, chargingUnit.position, { x: dirX, y: dirY });
-  const tgtExtent = formationExtent(chargeTarget.modelPositions, chargeTarget.position, { x: -dirX, y: -dirY });
-  const stopGap = rules.engagementRange() + myExtent + tgtExtent + 0.05;
-  const reachablePos = findReachablePosition(
-    chargingUnit,
-    chargeTarget.position,
-    maximumDistance,
-    s.terrain,
-    stopGap,
-    unitTakesToSkiesForState(s, chargingUnit),
-  );
-  const newPos = interactiveMovementState.avoidModelOverlap(chargingUnit, reachablePos, s);
-  translateFormation(chargingUnit, newPos.x - chargingUnit.position.x, newPos.y - chargingUnit.position.y);
-  interactiveMovementState.resolveInternalModelOverlaps(chargingUnit);
-  chargingUnit.position = centroid(chargingUnit.modelPositions);
-
-  if (chargeTargets.some(candidate => !inEngagement(chargingUnit, [candidate], rules.engagementRange()))) {
-    const failed = clone(state);
-    const failedUnit = failed.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
-    for (const component of attachedUnitComponents(failed, failedUnit)) {
-      component.activated = true;
-      component.heroicInterventionThisPhase = undefined;
-      component.heroicInterventionMode = undefined;
-      component.takingToSkies = undefined;
-    }
-    logs.push(log(failed, side, failedUnit.profile.name, `${failedUnit.profile.name} cannot reach engagement range.`, 'charge'));
-    failed.log = [...failed.log, ...logs];
-    failed.pendingChargeRoll = undefined;
-    if (failed.lastChargeRoll?.unitId === unitId && failed.lastChargeRoll.side === side) {
-      failed.lastChargeRoll = { ...failed.lastChargeRoll, status: 'failed', failureReason: 'undeclared-enemy' };
-    }
-    return failed;
-  }
-
-  const declaredTargetComponentIds = new Set(
-    chargeTargets.flatMap(candidate => attachedUnitComponents(s, candidate).map(component => component.id)),
-  );
-  const undeclaredEnemyInEngagement = enemies(s, side).some(enemy =>
-    !declaredTargetComponentIds.has(enemy.id)
-      && inEngagement(chargingUnit, [enemy], rules.engagementRange()),
-  );
-  if (undeclaredEnemyInEngagement) {
-    const failed = clone(state);
-    const failedUnit = failed.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
-    for (const component of attachedUnitComponents(failed, failedUnit)) {
-      component.activated = true;
-      component.heroicInterventionThisPhase = undefined;
-      component.heroicInterventionMode = undefined;
-      component.takingToSkies = undefined;
-    }
-    logs.push(log(failed, side, failedUnit.profile.name,
-      `${failedUnit.profile.name} cannot complete the charge while engaging an undeclared enemy unit.`,
-      'charge',
-    ));
-    failed.log = [...failed.log, ...logs];
-    failed.pendingChargeRoll = undefined;
-    return failed;
-  }
-
-  for (const component of attachedUnitComponents(s, chargingUnit)) {
-    component.activated = true;
-    component.charged = !heroicIntervention;
-    component.heroicInterventionThisPhase = undefined;
-    component.heroicInterventionMode = undefined;
-    component.inCombat = true;
-    component.lastMovePhase = s.phase;
-    component.lastMoveTurn = s.turn;
-    component.takingToSkies = undefined;
-  }
-  for (const target of chargeTargets) target.inCombat = true;
-  logs.push(log(s, side, chargingUnit.profile.name, `${chargingUnit.profile.name} makes a successful${state.activeArmy !== side ? ' Heroic Intervention' : ''} charge.`, 'charge'));
-  s.log = [...s.log, ...logs];
-  s.pendingChargeRoll = undefined;
-  if (s.lastChargeRoll?.unitId === unitId && s.lastChargeRoll.side === side) {
-    s.lastChargeRoll = { ...s.lastChargeRoll, status: 'resolved' };
-  }
-  return s;
+  return manualCombat.chargePlayUnitTargets(state, unitId, side, targetUnitIds, rules, manualChargeDeclarationContext);
 }
 
 export function completePlayChargeMovement(
