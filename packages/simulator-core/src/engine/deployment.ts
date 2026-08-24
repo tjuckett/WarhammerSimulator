@@ -50,6 +50,44 @@ export function nearestFriendlyTransportInRange(state: BattleState, unit: Battle
 }
 
 const TRANSPORT_ACCESS_RANGE = 3;
+const COMBAT_DISEMBARK_RANGE = 6;
+
+export interface TransportDisembarkPlacementContext {
+  enemies(state: BattleState, side: 0 | 1): BattleUnit[];
+  engagedEnemies(state: BattleState, unit: BattleUnit): BattleUnit[];
+  gridFormation(profile: UnitProfile, position: Position, side: 0 | 1): Position[];
+  makeBattleUnit(profile: UnitProfile, side: 0 | 1, positions: Position[]): BattleUnit;
+  inEngagement(state: BattleState, unit: BattleUnit, enemies: BattleUnit[]): boolean;
+  hasNoBaseOverlap(state: BattleState, unit: BattleUnit, indices: Set<number>): boolean;
+  hasNoWallOverlap(state: BattleState, unit: BattleUnit, indices: Set<number>): boolean;
+  rapidPlacementIsLegal(state: BattleState, transport: BattleUnit, profile: UnitProfile, positions: Position[], unit: BattleUnit): boolean;
+  unitRosterId(profile: UnitProfile): string;
+}
+
+export function unitAssignedToTransport(profile: UnitProfile, transport: BattleUnit, context: TransportDisembarkPlacementContext): boolean {
+  return profile.deployment?.mode === 'transport'
+    && (profile.deployment.transportUnitId === context.unitRosterId(transport.profile)
+      || (!profile.deployment.transportUnitId && profile.deployment.transportName === transport.profile.name));
+}
+
+export function disembarkPositions(state: BattleState, transport: BattleUnit, profile: UnitProfile, context: TransportDisembarkPlacementContext, combatDisembark = false, rapidDisembark = false, emergencyDisembark = false): Position[] | null {
+  const side = transport.side;
+  const forward = side === 0 ? 1 : -1;
+  const range = combatDisembark || emergencyDisembark ? COMBAT_DISEMBARK_RANGE : TRANSPORT_ACCESS_RANGE;
+  const offsets: Position[] = [{ x: forward * (range + .5), y: 0 }, { x: -forward * (range + .5), y: 0 }, { x: 0, y: range + .5 }, { x: 0, y: -(range + .5) }];
+  const engagedByTransport = new Set(context.engagedEnemies(state, transport).map(enemy => enemy.id));
+  for (const offset of offsets) {
+    const positions = context.gridFormation(profile, { x: transport.position.x + offset.x, y: transport.position.y + offset.y }, side);
+    const candidate = context.makeBattleUnit(profile, side, positions);
+    const engaged = context.enemies(state, side).filter(enemy => context.inEngagement(state, candidate, [enemy])).map(enemy => enemy.id);
+    if ((!combatDisembark && engaged.length) || (combatDisembark && engaged.some(id => !engagedByTransport.has(id)))
+      || !context.hasNoBaseOverlap(state, candidate, new Set(candidate.modelPositions.map((_, index) => index)))
+      || !context.hasNoWallOverlap(state, candidate, new Set(candidate.modelPositions.map((_, index) => index)))
+      || (rapidDisembark && transport.arrivedFromReinforcements && !context.rapidPlacementIsLegal(state, transport, profile, positions, candidate))) continue;
+    return positions;
+  }
+  return null;
+}
 
 export interface TransportEmbarkContext {
   movementStep(state: BattleState): string;

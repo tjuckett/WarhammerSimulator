@@ -2943,42 +2943,7 @@ function disembarkPositions(
   rapidDisembark = false,
   emergencyDisembark = false,
 ): Position[] | null {
-  const side = transport.side;
-  const forward = side === 0 ? 1 : -1;
-  const accessRange = combatDisembark || emergencyDisembark ? COMBAT_DISEMBARK_RANGE : TRANSPORT_ACCESS_RANGE;
-  const offsets: Position[] = [
-    { x: forward * (accessRange + 0.5), y: 0 },
-    { x: -forward * (accessRange + 0.5), y: 0 },
-    { x: 0, y: accessRange + 0.5 },
-    { x: 0, y: -(accessRange + 0.5) },
-  ];
-  const enemiesInState = enemies(state, side);
-  const transportEngagedEnemyIds = new Set(
-    engagedEnemies(state, transport, rulesEditionForRuleset(state.ruleset)).map(enemy => enemy.id),
-  );
-
-  for (const offset of offsets) {
-    const positions = interactiveMovementState.gridFormation(profile, {
-      x: transport.position.x + offset.x,
-      y: transport.position.y + offset.y,
-    }, side);
-    const candidateUnit = makeBattleUnit(profile, side, positions);
-    const engagedEnemyIds = enemiesInState
-      .filter(enemy => inEngagement(candidateUnit, [enemy], rulesEditionForRuleset(state.ruleset).engagementRange()))
-      .map(enemy => enemy.id);
-    if (!combatDisembark && engagedEnemyIds.length > 0) continue;
-    if (combatDisembark && engagedEnemyIds.some(enemyId => !transportEngagedEnemyIds.has(enemyId))) continue;
-    if (!playMoveHasNoBaseOverlap(state, candidateUnit, new Set(candidateUnit.modelPositions.map((_, index) => index)))) continue;
-    if (!playMoveHasNoWallOverlap(state, candidateUnit, new Set(candidateUnit.modelPositions.map((_, index) => index)))) continue;
-    if (rapidDisembark && transport.arrivedFromReinforcements === true && (
-      !reinforcementPlacementIsOutsideEnemyRange(state, transport.side, profile, positions)
-      || !reinforcementPlacementIsWithinStrategicReserveEdge(candidateUnit, state)
-      || !strategicReservePlacementIsOutsideOpponentDeploymentZone(candidateUnit, state)
-    )) continue;
-    return positions;
-  }
-
-  return null;
+  return deploymentActions.disembarkPositions(state, transport, profile, transportDisembarkPlacementContext, combatDisembark, rapidDisembark, emergencyDisembark);
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────
@@ -3794,6 +3759,19 @@ const strategicReservePlacementContext: StrategicReservePlacementContext = {
 };
 const strategicReservePlacementIsOutsideOpponentDeploymentZone = (unit: BattleUnit, state: BattleState): boolean =>
   isStrategicReservePlacementOutsideOpponentDeploymentZone(state, unit, strategicReservePlacementContext);
+
+const transportDisembarkPlacementContext: deploymentActions.TransportDisembarkPlacementContext = {
+  enemies,
+  engagedEnemies: (state, unit) => engagedEnemies(state, unit, rulesEditionForRuleset(state.ruleset)),
+  gridFormation: interactiveMovementState.gridFormation,
+  makeBattleUnit,
+  inEngagement: (state, unit, targets) => inEngagement(unit, targets, rulesEditionForRuleset(state.ruleset).engagementRange()),
+  hasNoBaseOverlap: playMoveHasNoBaseOverlap,
+  hasNoWallOverlap: playMoveHasNoWallOverlap,
+  rapidPlacementIsLegal: (state, transport, profile, positions, unit) => reinforcementPlacementIsOutsideEnemyRange(state, transport.side, profile, positions)
+    && reinforcementPlacementIsWithinStrategicReserveEdge(unit, state) && strategicReservePlacementIsOutsideOpponentDeploymentZone(unit, state),
+  unitRosterId,
+};
 
 const reinforcementPlayContext: reinforcementPlay.PlayReinforcementContext = {
   movementStep,
