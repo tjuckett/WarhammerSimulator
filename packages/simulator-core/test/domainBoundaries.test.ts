@@ -22,6 +22,37 @@ import {
   undoTimeline,
 } from '../src/practice/timeline';
 import { GAME_ACTION_TYPE } from '../src/practice/actions';
+import { getLegalActions } from '../src/engine/legalActions';
+import { localPracticeScenarioRepository, PRACTICE_SCENARIO_STORAGE_KEY } from '../src/practice/scenarioStorage';
+import { scenarioFromTimeline } from '../src/practice/scenarios';
+
+class MemoryStorage {
+  private values = new Map<string, string>();
+
+  get length() {
+    return this.values.size;
+  }
+
+  clear() {
+    this.values.clear();
+  }
+
+  getItem(key: string) {
+    return this.values.get(key) ?? null;
+  }
+
+  key(index: number) {
+    return Array.from(this.values.keys())[index] ?? null;
+  }
+
+  removeItem(key: string) {
+    this.values.delete(key);
+  }
+
+  setItem(key: string, value: string) {
+    this.values.set(key, value);
+  }
+}
 
 function profile(overrides: Partial<UnitProfile> = {}): UnitProfile {
   return {
@@ -163,4 +194,28 @@ test('timeline undo and redo restore immutable state snapshots', () => {
   assert.equal(redone.timeline.cursor, 1);
   assert.equal(redone.state.phase, 'shooting');
   assert.equal(redone.state.turn, 2);
+});
+
+test('legacy manual checkpoint metadata remains readable as a play checkpoint', async () => {
+  const storage = new MemoryStorage();
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: storage });
+  const initial = battleState({ phase: 'command' });
+  const timeline = createPracticeTimeline(initial, { id: 'legacy-timeline', createdAt: '2026-01-01T00:00:00.000Z' });
+  const legacy = scenarioFromTimeline(timeline, { id: 'legacy-save', branchId: 'legacy-game' });
+  legacy.metadata.checkpointKind = 'manual' as never;
+
+  await localPracticeScenarioRepository.saveScenario(legacy);
+
+  const summary = (await localPracticeScenarioRepository.listSummaries()).find(item => item.id === 'legacy-save');
+  assert.equal(summary?.checkpointKind, 'play');
+  assert.ok(storage.getItem(PRACTICE_SCENARIO_STORAGE_KEY));
+});
+
+test('legal actions do not expose phase-specific actions outside their phase', () => {
+  const state = battleState({ phase: 'command' });
+  const actions = getLegalActions(state, 0, rules40K11th).map(option => option.action.type);
+
+  assert.equal(actions.includes(GAME_ACTION_TYPE.ShootUnitWeapon), false);
+  assert.equal(actions.includes(GAME_ACTION_TYPE.ChargeUnitTarget), false);
+  assert.equal(actions.includes(GAME_ACTION_TYPE.FightUnitWeapon), false);
 });
