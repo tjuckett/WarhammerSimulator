@@ -466,9 +466,32 @@ engine modules.
 
 ### Remaining
 
-- [ ] Extract interactive model-edit operations as one workflow: horizontal/vertical movement, undo, rotation, casualty model removal, and movement completion.
+- [ ] **First — unify play undo/redo on the core timeline.** Make the typed
+  `GameAction` timeline the sole history authority for both `BattleState` and
+  UI selection state; replace the parallel React undo stack except for temporary
+  drag/rotation gesture coalescing.
+- [ ] **Next — extract interactive model-edit operations as one workflow:**
+  horizontal/vertical movement, undo, rotation, casualty model removal, and
+  movement completion. Its commands must record through the unified timeline.
 - [ ] Extract deployment and transport-placement workflows from battle creation, initial placement, embark, and disembark APIs.
 - [ ] Extract remaining mission-action start/completion orchestration around the existing mission option module.
 - [ ] Extract simulation phase/unit orchestration into a dedicated facade module.
 - [ ] Audit the remaining simulator facade for cohesive rule boundaries, remove dead adapters, and ensure public API compatibility.
 - [ ] For every batch: run `npm test`, root `npm run build`, then make a focused commit.
+
+### Consolidation Decision
+
+- [ ] Fold `scoutMoves.ts`, `takeToSkies.ts`, and `surgeMoves.ts` into a single
+  `specialMovement.ts` module when extracting interactive movement. They share the
+  same movement-history, action-cancellation, and phase-gating concerns; separate
+  modules currently create more dependency wiring than isolation.
+- [ ] Fold `movementGroups.ts` into the new interactive-movement module. It is not
+  independently reusable outside manual movement.
+- [ ] Fold `strategicReservePlacement.ts` into `reinforcements.ts`. It is a
+  reinforcement-placement restriction, not a standalone domain.
+- [x] Keep `movementLegality.ts`, `movementPathing.ts`, and
+  `aircraftMovement.ts` separate: they have distinct validation/pathing/rules
+  responsibilities and focused regression coverage.
+- [x] Keep combat, Fight, state-machine, coherency, Firing Deck, and turn-advance
+  modules separate. Their boundaries reflect distinct game concepts rather than
+  file-size-driven splits.
