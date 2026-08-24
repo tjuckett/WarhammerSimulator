@@ -451,3 +451,24 @@ The simulator now supports turn-, phase-, and unit-granularity stepping with a p
 - [x] **Unit-step mode** — the Step control activates one unit at a time within the current phase and tracks the active unit through the simulation cursor.
 - [x] **Step-granularity selector** — the Unit | Phase | Turn selector switches both manual stepping and Auto Run behavior.
 - [x] **Active unit highlight** — unit-step mode draws the active unit highlight on the Battlefield canvas.
+## Simulator Facade Decomposition Handoff
+
+Resume this work from the latest small commit. The target is a maintainable facade in
+`packages/simulator-core/src/engine/simulator.ts`: preserve its public API and the
+centralized battle state machine, while moving cohesive rule workflows into typed
+engine modules.
+
+### Completed
+
+- [x] Fight phase, damage application, combat resolution, transport destruction, and movement simulation.
+- [x] Mission action options, interactive movement state, battle coherency, reinforcements, turn advancement, Firing Deck, movement pathing, and Aircraft movement.
+- [x] Movement legality, Scouts, Take to the Skies, Surge Move, movement groups, and strategic-reserve placement.
+
+### Remaining
+
+- [ ] Extract interactive model-edit operations as one workflow: horizontal/vertical movement, undo, rotation, casualty model removal, and movement completion.
+- [ ] Extract deployment and transport-placement workflows from battle creation, initial placement, embark, and disembark APIs.
+- [ ] Extract remaining mission-action start/completion orchestration around the existing mission option module.
+- [ ] Extract simulation phase/unit orchestration into a dedicated facade module.
+- [ ] Audit the remaining simulator facade for cohesive rule boundaries, remove dead adapters, and ensure public API compatibility.
+- [ ] For every batch: run `npm test`, root `npm run build`, then make a focused commit.
