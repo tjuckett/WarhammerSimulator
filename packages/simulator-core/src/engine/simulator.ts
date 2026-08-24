@@ -105,7 +105,9 @@ import {
   profileDropHasDeepStrike,
   reinforcementPlacementIsOutsideEnemyRange,
   reinforcementPlacementIsWithinStrategicReserveEdge,
+  strategicReservePlacementIsOutsideOpponentDeploymentZone as isStrategicReservePlacementOutsideOpponentDeploymentZone,
   strategicReserveUnitHasCloseQuartersIngress,
+  type StrategicReservePlacementContext,
 } from './reinforcements';
 import * as turnAdvance from './turnAdvance';
 import * as firingDeck from './firingDeck';
@@ -116,7 +118,6 @@ import * as scoutMoves from './scoutMoves';
 import * as takeToSkies from './takeToSkies';
 import * as surgeMoves from './surgeMoves';
 import * as movementGroups from './movementGroups';
-import * as strategicReservePlacement from './strategicReservePlacement';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -4834,7 +4835,7 @@ export function playFiringDeckOptions(state: BattleState, transportUnitId: strin
   return firingDeck.options(state, transportUnitId, side, firingDeckContext);
 }
 
-const strategicReservePlacementContext: strategicReservePlacement.StrategicReservePlacementContext = {
+const strategicReservePlacementContext: StrategicReservePlacementContext = {
   battleRound,
   modelIsInOpponentDeploymentZone: (state, unit, modelIndex) => {
     const zone = zoneFor((1 - unit.side) as Side, setupDeploymentZoneSource(state.setup), boardFormatForState(state));
@@ -4842,7 +4843,7 @@ const strategicReservePlacementContext: strategicReservePlacement.StrategicReser
   },
 };
 const strategicReservePlacementIsOutsideOpponentDeploymentZone = (unit: BattleUnit, state: BattleState): boolean =>
-  strategicReservePlacement.isOutsideOpponentDeploymentZone(state, unit, strategicReservePlacementContext);
+  isStrategicReservePlacementOutsideOpponentDeploymentZone(state, unit, strategicReservePlacementContext);
 
 export function selectPlayFiringDeckWeapons(
   state: BattleState,

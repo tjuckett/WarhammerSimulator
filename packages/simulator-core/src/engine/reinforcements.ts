@@ -31,6 +31,20 @@ export function profileDropHasDeepStrike(state: BattleState, side: Side, profile
     candidate.deployment?.mode === UNIT_DEPLOYMENT_MODE.DeepStrike || unitHasRule(candidate, 'Deep Strike'));
 }
 
+export interface StrategicReservePlacementContext {
+  battleRound(state: BattleState): number;
+  modelIsInOpponentDeploymentZone(state: BattleState, unit: BattleUnit, modelIndex: number): boolean;
+}
+
+export function strategicReservePlacementIsOutsideOpponentDeploymentZone(
+  state: BattleState,
+  unit: BattleUnit,
+  context: StrategicReservePlacementContext,
+): boolean {
+  return context.battleRound(state) > 2
+    || unit.modelPositions.every((_, modelIndex) => !context.modelIsInOpponentDeploymentZone(state, unit, modelIndex));
+}
+
 function profileHasCloseQuartersOnEveryModel(profile: UnitProfile): boolean {
   return profile.baseModelCount > 0 && Array.from({ length: profile.baseModelCount }, (_, modelIndex) =>
     modelWeaponLoadout(profile, modelIndex).some(weaponIndex => weaponHasKeyword(profile.weapons[weaponIndex], 'Close-Quarters')),
