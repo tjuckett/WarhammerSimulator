@@ -13,8 +13,51 @@ import {
   pointInTerrain,
   terrainCenter,
 } from './terrainGeometry';
+import { centroid } from './unitModelState';
 
 export type DeploymentStrategy = 'balanced' | 'refused-flank' | 'objective-push';
+
+let nextBattleUnitId = 0;
+
+export function resetBattleUnitIds(): void {
+  nextBattleUnitId = 0;
+}
+
+export function makeBattleUnit(
+  profile: UnitProfile,
+  side: Side,
+  modelPositions: Position[],
+  attachedToUnitId?: string,
+  tabletopUnitId?: string,
+): BattleUnit {
+  const id = `${side}_${nextBattleUnitId++}`;
+  return {
+    id,
+    attachedToUnitId,
+    tabletopUnitId: tabletopUnitId ?? id,
+    side,
+    profile,
+    remainingModels: profile.baseModelCount,
+    woundsOnLeadModel: profile.wounds,
+    position: centroid(modelPositions),
+    modelPositions,
+    modelRosterIndexes: Array.from({ length: profile.baseModelCount }, (_, modelIndex) => modelIndex),
+    modelRotations: modelPositions.map(() => side === 0 ? 0 : 180),
+    facingDeg: side === 0 ? 0 : 180,
+    charged: false,
+    movementAction: undefined,
+    movementAllowanceRemaining: undefined,
+    movementAllowanceRemainingByModel: undefined,
+    movementAllowanceTotalByModel: undefined,
+    movementStartPositionsByModel: undefined,
+    movementStartRotationsByModel: undefined,
+    fellBack: false,
+    inCombat: false,
+    battleshocked: false,
+    activated: false,
+    destroyed: false,
+  };
+}
 
 /** Shared transport access rules used during deployment and the movement phase. */
 export function isTransportProfile(profile: UnitProfile): boolean {

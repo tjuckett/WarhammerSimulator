@@ -114,9 +114,7 @@ import * as movementLegality from './movementLegality';
 import * as battleSimulation from './battleSimulation';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
-// ─── ID generators ────────────────────────────────────────────────────────────
-
-let _unitId = 0;
+const makeBattleUnit = deploymentActions.makeBattleUnit;
 
 // ─── Log factory ─────────────────────────────────────────────────────────────
 
@@ -1932,42 +1930,6 @@ function advanceTurnInPlace(s: BattleState): void {
 
 function clone<T>(v: T): T { return JSON.parse(JSON.stringify(v)); }
 
-function makeBattleUnit(
-  profile: UnitProfile,
-  side: Side,
-  modelPositions: Position[],
-  attachedToUnitId?: string,
-  tabletopUnitId?: string,
-): BattleUnit {
-  const id = `${side}_${_unitId++}`;
-  return {
-    id,
-    attachedToUnitId,
-    tabletopUnitId: tabletopUnitId ?? id,
-    side,
-    profile,
-    remainingModels: profile.baseModelCount,
-    woundsOnLeadModel: profile.wounds,
-    position: centroid(modelPositions),
-    modelPositions,
-    modelRosterIndexes: Array.from({ length: profile.baseModelCount }, (_, modelIndex) => modelIndex),
-    modelRotations: modelPositions.map(() => side === 0 ? 0 : 180),
-    facingDeg: side === 0 ? 0 : 180,
-    charged: false,
-    movementAction: undefined,
-    movementAllowanceRemaining: undefined,
-    movementAllowanceRemainingByModel: undefined,
-    movementAllowanceTotalByModel: undefined,
-    movementStartPositionsByModel: undefined,
-    movementStartRotationsByModel: undefined,
-    fellBack: false,
-    inCombat: false,
-    battleshocked: false,
-    activated: false,
-    destroyed: false,
-  };
-}
-
 function leaderAnchor(bodyguard: BattleUnit, leader: UnitProfile, leaderIndex: number, side: Side, deployment: DeploymentZoneSource = 'Default', board = boardFormatForId()): Position {
   const forward = side === 0 ? -1 : 1;
   const zone = zoneFor(side, deployment, board);
@@ -2436,7 +2398,7 @@ const battleSetupContext: deploymentActions.BattleSetupContext = {
   ...automatedDeploymentContext,
   reset: () => {
     resetBattleLogSequence();
-    _unitId = 0;
+    deploymentActions.resetBattleUnitIds();
   },
   boardFormatForId,
   rulesetMetadata: rules => rulesetMetadataForState(rules as RulesEdition),
