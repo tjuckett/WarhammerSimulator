@@ -478,7 +478,7 @@ engine modules.
 - [x] Extract deployment and transport-placement workflows from battle creation, initial placement, embark, and disembark APIs.
 - [x] Extract remaining mission-action start/completion orchestration around the existing mission option module.
 - [x] Extract simulation phase/unit orchestration into a dedicated facade module.
-- [ ] Audit the remaining simulator facade for cohesive rule boundaries, remove dead adapters, and ensure public API compatibility.
+- [x] Audit the remaining simulator facade for cohesive rule boundaries, remove dead adapters, and ensure public API compatibility. The final passes moved aircraft reserve setup, Infiltrator deployment validation, shared LOS/engagement geometry, movement overlap/boundary checks, and movement-start state into their owning domains. The remaining `simulator.ts` code is public API compatibility plus context assembly/orchestration for those modules; no obsolete Scouts, Take to the Skies, Surge Move, movement-group, or standalone strategic-reserve micro-module remains in the facade.
 - [ ] For every batch: run `npm test`, root `npm run build`, then make a focused commit.
 
 ### Consolidation Decision
