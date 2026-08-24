@@ -622,6 +622,74 @@ export function moveModelTowardEnemy(unit: BattleUnit, modelIndex: number, state
     context.modelBaseRadius(unit, modelIndex) + context.modelBaseRadius(closest.unit, closest.modelIndex) + 0.02);
 }
 
+export interface FightMovementWorkflowContext extends FightMovementContext {
+  clone(state: BattleState): BattleState;
+  attachedComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
+  inEngagement(unit: BattleUnit, targets: BattleUnit[], range: number): boolean;
+  unitSurgedThisPhase(state: BattleState, unit: BattleUnit): boolean;
+  unitCanFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean;
+  unitEligibleToFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean;
+  canConsolidate(state: BattleState, unitId: string, side: Side, rules: RulesEdition): boolean;
+  hasNoBaseOverlap(state: BattleState, unit: BattleUnit, modelIndices: Set<number>): boolean;
+  hasNoWallOverlap(state: BattleState, unit: BattleUnit, modelIndices: Set<number>): boolean;
+  log(state: BattleState, side: Side, subject: string, message: string, kind: string): LogEntry;
+  moveRange: number;
+}
+
+export function applyFightPhaseMove(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  kind: 'pileIn' | 'consolidate',
+  rules: RulesEdition,
+  context: FightMovementWorkflowContext,
+): BattleState {
+  if (state.phase !== 'fight' || (state.activeArmy !== side && rules.metadata.edition !== '11e')) return state;
+  const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
+  if (!existing || context.attachedComponents(state, existing).some(component => context.unitSurgedThisPhase(state, component))) return state;
+  const isOverrunPileIn = kind === 'pileIn' && rules.metadata.edition === '11e' && state.fightStepStarted && existing.overrunFightSelected;
+  if (kind === 'pileIn' && (isOverrunPileIn ? existing.overrunPiledIn : existing.piledIn)) return state;
+  if (kind === 'consolidate' && existing.consolidated) return state;
+  if (kind === 'pileIn' && isOverrunPileIn && !context.unitEligibleToFight(existing, state, rules)) return state;
+  if (kind === 'pileIn' && !isOverrunPileIn && rules.metadata.edition === '11e' && state.fightStepStarted) return state;
+  if (kind === 'pileIn' && !isOverrunPileIn && !context.unitCanFight(existing, state, rules)
+    && !(existing.charged && context.enemies(state, side).length > 0)) return state;
+  if (kind === 'consolidate' && !context.canConsolidate(state, unitId, side, rules)) return state;
+
+  const next = context.clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit) return state;
+  let movedModels = 0;
+  for (let modelIndex = 0; modelIndex < unit.modelPositions.length; modelIndex++) {
+    const before = unit.modelPositions[modelIndex];
+    const movedTowardEnemy = moveModelTowardEnemy(unit, modelIndex, next, context.moveRange, context);
+    const movedTowardObjective = !movedTowardEnemy && kind === 'consolidate'
+      ? (() => {
+          const objective = nearestObjectiveToModel(unit.modelPositions[modelIndex], next, context);
+          return objective ? moveModelTowardPoint(unit, modelIndex, objective, context.moveRange, context) : false;
+        })()
+      : false;
+    if (!movedTowardEnemy && !movedTowardObjective) continue;
+    const movingIndices = new Set([modelIndex]);
+    if (!context.hasNoBaseOverlap(next, unit, movingIndices) || !context.hasNoWallOverlap(next, unit, movingIndices)) {
+      unit.modelPositions[modelIndex] = before;
+      unit.position = context.centroid(unit.modelPositions);
+      continue;
+    }
+    movedModels++;
+  }
+  if (kind === 'pileIn' && !context.inEngagement(unit, context.enemies(next, side), rules.engagementRange())) return state;
+  if (kind === 'pileIn' && isOverrunPileIn) unit.overrunPiledIn = true;
+  else if (kind === 'pileIn') unit.piledIn = true;
+  else unit.consolidated = true;
+  unit.lastMovePhase = next.phase;
+  unit.lastMoveTurn = next.turn;
+  unit.inCombat = context.inEngagement(unit, context.enemies(next, side), rules.engagementRange());
+  next.log = [...next.log, context.log(next, side, unit.profile.name,
+    `${unit.profile.name} ${isOverrunPileIn ? 'makes its Overrun pile-in' : kind === 'pileIn' ? 'piles in' : 'consolidates'}${movedModels ? ` with ${movedModels} model${movedModels === 1 ? '' : 's'}` : ''}.`, 'move')];
+  return next;
+}
+
 export interface CombatWoundContext {
   weaponHasKeyword(weapon: WeaponProfile, keyword: string): boolean;
   attachedUnitKeywordSet(state: BattleState, unit: BattleUnit): Set<string>;

@@ -1994,6 +1994,21 @@ const fightMovementContext: manualCombat.FightMovementContext = {
   distance: dist,
 };
 
+const fightMovementWorkflowContext: manualCombat.FightMovementWorkflowContext = {
+  ...fightMovementContext,
+  clone,
+  attachedComponents: attachedUnitComponents,
+  inEngagement,
+  unitSurgedThisPhase,
+  unitCanFight,
+  unitEligibleToFight,
+  canConsolidate: playUnitCanConsolidate,
+  hasNoBaseOverlap: (state, unit, modelIndices) => playMoveHasNoBaseOverlap(state, unit, modelIndices),
+  hasNoWallOverlap: (state, unit, modelIndices) => playMoveHasNoWallOverlap(state, unit, modelIndices),
+  log,
+  moveRange: FIGHT_PHASE_MOVE_RANGE,
+};
+
 function applyFightPhaseMove(
   state: BattleState,
   unitId: string,
@@ -2001,59 +2016,7 @@ function applyFightPhaseMove(
   kind: 'pileIn' | 'consolidate',
   rules: RulesEdition,
 ): BattleState {
-  if (state.phase !== 'fight') return state;
-  if (state.activeArmy !== side && rules.metadata.edition !== '11e') return state;
-  const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
-  if (!existing) return state;
-  if (attachedUnitComponents(state, existing).some(component => unitSurgedThisPhase(state, component))) return state;
-  const isOverrunPileIn = kind === 'pileIn' && rules.metadata.edition === '11e' && state.fightStepStarted && existing.overrunFightSelected;
-  if (kind === 'pileIn' && (isOverrunPileIn ? existing.overrunPiledIn : existing.piledIn)) return state;
-  if (kind === 'consolidate' && existing.consolidated) return state;
-  if (kind === 'pileIn' && isOverrunPileIn && !unitEligibleToFight(existing, state, rules)) return state;
-  if (kind === 'pileIn' && !isOverrunPileIn && rules.metadata.edition === '11e' && state.fightStepStarted) return state;
-  if (kind === 'pileIn' && !isOverrunPileIn && !unitCanFight(existing, state, rules) && !(existing.charged && enemies(state, side).length > 0)) return state;
-  if (kind === 'consolidate' && !playUnitCanConsolidate(state, unitId, side, rules)) return state;
-
-  const s = clone(state);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit) return state;
-
-  let movedModels = 0;
-  for (let modelIndex = 0; modelIndex < unit.modelPositions.length; modelIndex++) {
-    const before = unit.modelPositions[modelIndex];
-    const movedTowardEnemy = manualCombat.moveModelTowardEnemy(unit, modelIndex, s, FIGHT_PHASE_MOVE_RANGE, fightMovementContext);
-    const movedTowardObjective = !movedTowardEnemy && kind === 'consolidate'
-      ? (() => {
-          const objective = manualCombat.nearestObjectiveToModel(unit.modelPositions[modelIndex], s, fightMovementContext);
-          return objective ? manualCombat.moveModelTowardPoint(unit, modelIndex, objective, FIGHT_PHASE_MOVE_RANGE, fightMovementContext) : false;
-        })()
-      : false;
-    if (!movedTowardEnemy && !movedTowardObjective) continue;
-    const movingIndices = new Set([modelIndex]);
-    if (!playMoveHasNoBaseOverlap(s, unit, movingIndices) || !playMoveHasNoWallOverlap(s, unit, movingIndices)) {
-      unit.modelPositions[modelIndex] = before;
-      unit.position = centroid(unit.modelPositions);
-      continue;
-    }
-    movedModels++;
-  }
-
-  if (kind === 'pileIn' && !inEngagement(unit, enemies(s, side), rules.engagementRange())) return state;
-  if (kind === 'pileIn' && isOverrunPileIn) unit.overrunPiledIn = true;
-  else if (kind === 'pileIn') unit.piledIn = true;
-  else unit.consolidated = true;
-  unit.lastMovePhase = s.phase;
-  unit.lastMoveTurn = s.turn;
-  unit.inCombat = inEngagement(unit, enemies(s, side), rules.engagementRange());
-
-  s.log = [...s.log, log(
-    s,
-    side,
-    unit.profile.name,
-    `${unit.profile.name} ${isOverrunPileIn ? 'makes its Overrun pile-in' : kind === 'pileIn' ? 'piles in' : 'consolidates'}${movedModels ? ` with ${movedModels} model${movedModels === 1 ? '' : 's'}` : ''}.`,
-    'move',
-  )];
-  return s;
+  return manualCombat.applyFightPhaseMove(state, unitId, side, kind, rules, fightMovementWorkflowContext);
 }
 
 export function playUnitCanPileIn(
