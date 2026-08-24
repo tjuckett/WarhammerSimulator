@@ -631,17 +631,8 @@ function targetVisibleToFriendlyUnit(state: BattleState, target: BattleUnit, sid
   return activeUnits(state, side).some(unit => battleUnitHasLosToAttachedUnit(state, unit, target));
 }
 
-function unitCanChargeTarget(unit: BattleUnit, target: BattleUnit): boolean {
-  if (isAircraft(unit)) return false;
-  if (isAircraft(target) && !hasKeyword(unit, 'fly')) return false;
-  return true;
-}
-
-function unitCanFightTarget(unit: BattleUnit, target: BattleUnit): boolean {
-  if (isAircraft(unit)) return hasKeyword(target, 'fly');
-  if (isAircraft(target)) return hasKeyword(unit, 'fly');
-  return true;
-}
+const unitCanChargeTarget = (unit: BattleUnit, target: BattleUnit): boolean => manualCombat.unitCanChargeTarget(unit, target, hasKeyword);
+const unitCanFightTarget = (unit: BattleUnit, target: BattleUnit): boolean => manualCombat.unitCanFightTarget(unit, target, hasKeyword);
 
 // ─── Combat resolution ────────────────────────────────────────────────────────
 

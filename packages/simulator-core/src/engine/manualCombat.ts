@@ -7,6 +7,16 @@ import type { CombatAttackResolutionOptions } from './combatTypes';
 
 export type CombatAttackContext = Record<string, any>;
 
+export function unitCanChargeTarget(unit: BattleUnit, target: BattleUnit, hasKeyword: (unit: BattleUnit, keyword: string) => boolean): boolean {
+  if (hasKeyword(unit, 'aircraft')) return false;
+  return !hasKeyword(target, 'aircraft') || hasKeyword(unit, 'fly');
+}
+
+export function unitCanFightTarget(unit: BattleUnit, target: BattleUnit, hasKeyword: (unit: BattleUnit, keyword: string) => boolean): boolean {
+  if (hasKeyword(unit, 'aircraft')) return hasKeyword(target, 'fly');
+  return !hasKeyword(target, 'aircraft') || hasKeyword(unit, 'fly');
+}
+
 export interface CombatWoundContext {
   weaponHasKeyword(weapon: WeaponProfile, keyword: string): boolean;
   attachedUnitKeywordSet(state: BattleState, unit: BattleUnit): Set<string>;
