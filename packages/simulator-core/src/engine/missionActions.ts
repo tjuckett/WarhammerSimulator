@@ -92,6 +92,83 @@ export function applyStartedMissionAction(
   return next;
 }
 
+export interface StartPlayMissionActionContext extends Record<string, any> {
+  playUnitCanStartAction(state: BattleState, unitId: string, side: Side, rules: RulesEdition): boolean;
+  extractIntelligenceObjectiveOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition): number[];
+  triangulateObjectiveOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition): number[];
+  consecrateObjectiveOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition): number[];
+  maintainControlObjectiveOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition): number[];
+  secureAssetObjectiveOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition): number[];
+  decoyObjectiveOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition): number[];
+  sabotageObjectiveOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition): number[];
+  cleanseObjectiveOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition): number[];
+  plunderTerrainOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition): string[];
+  vanguardOperationTerrainOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition): string[];
+  boobyTrapTerrainOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition): string[];
+  sensorSweepOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition): Array<{ objectiveIndex?: number; operationMarkerId?: string }>;
+  surveilTargetOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition): string[];
+  applyStartedMissionAction: typeof applyStartedMissionAction;
+}
+
+export function startPlayUnitAction(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  actionId: string,
+  actionName: string,
+  rules: RulesEdition,
+  targetObjectiveIndex: number | undefined,
+  targetTerrainId: string | undefined,
+  targetOperationMarkerId: string | undefined,
+  targetUnitId: string | undefined,
+  context: StartPlayMissionActionContext,
+): BattleState {
+  if (actionId !== 'surveil' && !context.playUnitCanStartAction(state, unitId, side, rules)) return state;
+  if (actionId === 'extract-intelligence'
+    && (targetObjectiveIndex === undefined
+      || !context.extractIntelligenceObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) return state;
+  if (actionId === 'triangulate'
+    && (targetObjectiveIndex === undefined
+      || !context.triangulateObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) return state;
+  if (actionId === 'consecrate') return state;
+  if (actionId === 'maintain-control'
+    && (targetObjectiveIndex === undefined
+      || !context.maintainControlObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) return state;
+  if (actionId === 'secure-asset'
+    && (targetObjectiveIndex === undefined
+      || !context.secureAssetObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) return state;
+  if (actionId === 'decoy'
+    && (targetObjectiveIndex === undefined
+      || !context.decoyObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) return state;
+  if (actionId === 'sabotage'
+    && (targetObjectiveIndex === undefined
+      || !context.sabotageObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) return state;
+  if (actionId === 'cleanse'
+    && (targetObjectiveIndex === undefined
+      || !context.cleanseObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) return state;
+  if (actionId === 'plunder'
+    && (targetTerrainId === undefined
+      || !context.plunderTerrainOptions(state, unitId, side, rules).includes(targetTerrainId))) return state;
+  if (actionId === 'vanguard-operation'
+    && (targetTerrainId === undefined
+      || !context.vanguardOperationTerrainOptions(state, unitId, side, rules).includes(targetTerrainId))) return state;
+  if (actionId === 'booby-trap'
+    && (targetTerrainId === undefined
+      || !context.boobyTrapTerrainOptions(state, unitId, side, rules).includes(targetTerrainId))) return state;
+  if (actionId === 'sensor-sweep'
+    && !context.sensorSweepOptions(state, unitId, side, rules).some(option =>
+      option.objectiveIndex === targetObjectiveIndex && option.operationMarkerId === targetOperationMarkerId)) return state;
+  if (actionId === 'surveil'
+    && (targetUnitId === undefined
+      || !context.surveilTargetOptions(state, unitId, side, rules).includes(targetUnitId))) return state;
+  return context.applyStartedMissionAction(state, unitId, side, actionId, actionName, rules, {
+    objectiveIndex: targetObjectiveIndex,
+    terrainId: targetTerrainId,
+    operationMarkerId: targetOperationMarkerId,
+    unitId: targetUnitId,
+  }, context);
+}
+
 export type MissionActionCompletionContext = Record<string, any>;
 
 export function completeEndOfTurnActions(state: BattleState, side: Side, context: MissionActionCompletionContext): void {

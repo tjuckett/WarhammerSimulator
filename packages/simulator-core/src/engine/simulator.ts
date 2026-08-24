@@ -1079,76 +1079,29 @@ export function startPlayUnitAction(
   targetOperationMarkerId?: string,
   targetUnitId?: string,
 ): BattleState {
-  if (actionId !== 'surveil' && !playUnitCanStartAction(state, unitId, side, rules)) return state;
-  if (actionId === 'extract-intelligence'
-    && (targetObjectiveIndex === undefined
-      || !extractIntelligenceObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
-    return state;
-  }
-  if (actionId === 'triangulate'
-    && (targetObjectiveIndex === undefined
-      || !triangulateObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
-    return state;
-  }
-  if (actionId === 'consecrate') {
-    return state;
-  }
-  if (actionId === 'maintain-control'
-    && (targetObjectiveIndex === undefined
-      || !maintainControlObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
-    return state;
-  }
-  if (actionId === 'secure-asset'
-    && (targetObjectiveIndex === undefined
-      || !secureAssetObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
-    return state;
-  }
-  if (actionId === 'decoy'
-    && (targetObjectiveIndex === undefined
-      || !decoyObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
-    return state;
-  }
-  if (actionId === 'sabotage'
-    && (targetObjectiveIndex === undefined
-      || !sabotageObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
-    return state;
-  }
-  if (actionId === 'cleanse'
-    && (targetObjectiveIndex === undefined
-      || !cleanseObjectiveOptions(state, unitId, side, rules).includes(targetObjectiveIndex))) {
-    return state;
-  }
-  if (actionId === 'plunder'
-    && (targetTerrainId === undefined
-      || !plunderTerrainOptions(state, unitId, side, rules).includes(targetTerrainId))) {
-    return state;
-  }
-  if (actionId === 'vanguard-operation'
-    && (targetTerrainId === undefined
-      || !vanguardOperationTerrainOptions(state, unitId, side, rules).includes(targetTerrainId))) {
-    return state;
-  }
-  if (actionId === 'booby-trap'
-    && (targetTerrainId === undefined
-      || !boobyTrapTerrainOptions(state, unitId, side, rules).includes(targetTerrainId))) {
-    return state;
-  }
-  if (actionId === 'sensor-sweep'
-    && !sensorSweepOptions(state, unitId, side, rules).some(option =>
-      option.objectiveIndex === targetObjectiveIndex
-      && option.operationMarkerId === targetOperationMarkerId
-    )) {
-    return state;
-  }
-  if (actionId === 'surveil'
-    && (targetUnitId === undefined
-      || !surveilTargetOptions(state, unitId, side, rules).includes(targetUnitId))) {
-    return state;
-  }
-  return missionActions.applyStartedMissionAction(state, unitId, side, actionId, actionName, rules, {
-    objectiveIndex: targetObjectiveIndex, terrainId: targetTerrainId,
-    operationMarkerId: targetOperationMarkerId, unitId: targetUnitId,
-  }, { clone, attachedUnitComponents, attachedObjectiveIndexesWithinRange, recordCompletedMissionAction, log });
+  return missionActions.startPlayUnitAction(state, unitId, side, actionId, actionName, rules,
+    targetObjectiveIndex, targetTerrainId, targetOperationMarkerId, targetUnitId, {
+      playUnitCanStartAction,
+      extractIntelligenceObjectiveOptions,
+      triangulateObjectiveOptions,
+      consecrateObjectiveOptions,
+      maintainControlObjectiveOptions,
+      secureAssetObjectiveOptions,
+      decoyObjectiveOptions,
+      sabotageObjectiveOptions,
+      cleanseObjectiveOptions,
+      plunderTerrainOptions,
+      vanguardOperationTerrainOptions,
+      boobyTrapTerrainOptions,
+      sensorSweepOptions,
+      surveilTargetOptions,
+      applyStartedMissionAction: missionActions.applyStartedMissionAction,
+      clone,
+      attachedUnitComponents,
+      attachedObjectiveIndexesWithinRange,
+      recordCompletedMissionAction,
+      log,
+    });
 }
 
 export function completeEndOfTurnActions(state: BattleState, side: Side): void {
