@@ -3699,6 +3699,37 @@ function budgetAdjustedPlayMove(unit: BattleUnit, modelIndices: number[], dx: nu
   return { dx: dx * lo, dy: dy * lo };
 }
 
+const modelMovementContext: interactiveMovementState.ModelMovementContext = {
+  clone,
+  isModelEditPhase: phase => PLAY_MODEL_EDIT_PHASES.includes(phase),
+  movementStep,
+  isSurgedThisPhase: unitSurgedThisPhase,
+  isAircraft,
+  aircraftCanMakeNormalMove: state => aircraftCanMakeNormalMove(rulesEditionForRuleset(state.ruleset)),
+  nonAircraftEngagedEnemies: (state, unit) => nonAircraftEngagedEnemies(state, unit, rulesEditionForRuleset(state.ruleset)),
+  ensureMovementStartPositions: ensureModelMovementStartPositions,
+  ensureMovementStartRotations: ensureModelMovementStartRotations,
+  ensureMovementAllowanceTotals: ensureModelMovementAllowanceTotals,
+  ensureMovementPaths: ensureModelMovementPaths,
+  aircraftMoveIsStraightForward: aircraftMoveIsStraightForward,
+  budgetAdjustedMove: budgetAdjustedPlayMove,
+  translatedMoveEndsInEngagement: translatedPlayMoveEndsInEngagement,
+  collisionAdjustedMove: (state, unitId, side, indices, dx, dy, allowEngagement) =>
+    collisionAdjustedPlayMove(state, unitId, side, indices, dx, dy, { allowEngagement }),
+  unitHasModelOutsideBattlefield,
+  moveAircraftToStrategicReserves,
+  applyHorizontalTranslation: (unit, indices, dx, dy, state) => applyPlayModelTranslation(unit, indices, dx, dy, boardFormatForState(state)),
+  applyVerticalTranslation: applyPlayModelVerticalTranslation,
+  appendMovementWaypoints: appendModelMovementWaypoints,
+  cancelUnitAction,
+  inEngagement: (state, unit) => inEngagement(unit, enemies(state, unit.side), rulesEditionForRuleset(state.ruleset).engagementRange()),
+  lockOtherMovedUnits: lockOtherMovedPlayUnits,
+  updateMovementAllowances: updateModelMovementAllowances,
+  modelMovementDistanceFromStart,
+  attachedComponents: attachedUnitComponents,
+  centroid,
+};
+
 export function movePlayModels(
   state: BattleState,
   unitId: string,
@@ -3708,85 +3739,8 @@ export function movePlayModels(
   dy: number,
   collide = false,
 ): BattleState {
-  const chargeMovement = state.phase === 'charge'
-    && state.pendingChargeMovement?.unitId === unitId
-    && state.pendingChargeMovement?.side === side;
-  if (!PLAY_MODEL_EDIT_PHASES.includes(state.phase) && !chargeMovement) return state;
-  if (state.phase === 'movement' && movementStep(state) !== 'moveUnits') return state;
+  return interactiveMovementState.moveModels(state, unitId, side, modelIndices, dx, dy, collide, modelMovementContext);
 
-  const existingUnit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
-  if (!existingUnit) return state;
-  if (state.phase === 'setup' && !existingUnit.scoutMoveStarted) return state;
-  if (state.phase === 'movement') {
-    if (state.activeArmy !== side) return state;
-    if (
-      existingUnit.movementComplete
-      || unitSurgedThisPhase(state, existingUnit)
-      || existingUnit.fellBack
-      || existingUnit.movementAction === 'fellBack'
-      || existingUnit.movementAction === 'remainedStationary'
-    ) return state;
-    if (isAircraft(existingUnit) && !aircraftCanMakeNormalMove(rulesEditionForRuleset(state.ruleset))) return state;
-    if (!isAircraft(existingUnit) && nonAircraftEngagedEnemies(state, existingUnit, rulesEditionForRuleset(state.ruleset)).length > 0) return state;
-  }
-
-  const s = clone(state);
-  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId)!;
-  const uniqueIndices = Array.from(new Set(modelIndices)).filter(modelIndex => unit.modelPositions[modelIndex]);
-  if (!uniqueIndices.length) return state;
-
-  if (s.phase === 'movement' && isAircraft(unit)) {
-    ensureModelMovementStartPositions(unit);
-    ensureModelMovementStartRotations(unit);
-    ensureModelMovementAllowanceTotals(unit);
-    if (!aircraftMoveIsStraightForward(unit, uniqueIndices, dx, dy)) return state;
-  }
-
-  if (s.phase === 'movement') {
-    ensureModelMovementPaths(unit);
-  }
-
-  const budgetMove = (s.phase === 'movement' || s.phase === 'setup' || chargeMovement) && !isAircraft(unit)
-    ? budgetAdjustedPlayMove(unit, uniqueIndices, dx, dy)
-    : { dx, dy };
-  if (Math.hypot(budgetMove.dx, budgetMove.dy) < 0.001) return state;
-  if (
-    (s.phase === 'movement' || s.phase === 'setup')
-    && translatedPlayMoveEndsInEngagement(s, unit, uniqueIndices, budgetMove.dx, budgetMove.dy)
-  ) return state;
-
-  const move = collide
-    ? collisionAdjustedPlayMove(s, unitId, side, uniqueIndices, budgetMove.dx, budgetMove.dy, { allowEngagement: chargeMovement })
-    : budgetMove;
-  if (Math.hypot(move.dx, move.dy) < 0.001) return state;
-
-  if (s.phase === 'movement' && isAircraft(unit)) {
-    const test = clone(s);
-    const testUnit = test.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId)!;
-    for (const modelIndex of uniqueIndices) {
-      const position = testUnit.modelPositions[modelIndex];
-      testUnit.modelPositions[modelIndex] = { x: position.x + move.dx, y: position.y + move.dy };
-    }
-    testUnit.position = centroid(testUnit.modelPositions);
-    if (unitHasModelOutsideBattlefield(testUnit, s)) {
-      moveAircraftToStrategicReserves(s, unit);
-      return s;
-    }
-  }
-
-  applyPlayModelTranslation(unit, uniqueIndices, move.dx, move.dy, boardFormatForState(s));
-  if (s.phase === 'movement') appendModelMovementWaypoints(unit, uniqueIndices);
-  cancelUnitAction(s, unit, 'it made a move');
-  if ((s.phase === 'movement' || s.phase === 'setup') && inEngagement(unit, enemies(s, side), rulesEditionForRuleset(s.ruleset).engagementRange())) return state;
-
-  if (s.phase === 'movement') {
-    lockOtherMovedPlayUnits(s, unit);
-    unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
-    updateModelMovementAllowances(unit);
-  }
-  if (s.phase === 'setup') updateModelMovementAllowances(unit);
-  if (s.phase === 'charge') updateModelMovementAllowances(unit);
-  return s;
 }
 
 export function movePlayModelsVertically(
@@ -3796,76 +3750,13 @@ export function movePlayModelsVertically(
   modelIndices: number[],
   dz: number,
 ): BattleState {
-  if (Math.abs(dz) < 0.001) return state;
-  const scoutMove = state.phase === 'setup';
-  if (!scoutMove && (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side)) return state;
+  return interactiveMovementState.moveModelsVertically(state, unitId, side, modelIndices, dz, modelMovementContext);
 
-  const existingUnit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
-  if (!existingUnit) return state;
-  if (scoutMove && !existingUnit.scoutMoveStarted) return state;
-  if (
-    existingUnit.inStrategicReserves
-    || existingUnit.movementComplete
-    || existingUnit.fellBack
-    || existingUnit.movementAction === 'fellBack'
-    || existingUnit.movementAction === 'remainedStationary'
-    || isAircraft(existingUnit)
-    || nonAircraftEngagedEnemies(state, existingUnit, rulesEditionForRuleset(state.ruleset)).length > 0
-  ) return state;
-
-  const s = clone(state);
-  const unit = s.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId)!;
-  const uniqueIndices = Array.from(new Set(modelIndices)).filter(modelIndex => unit.modelPositions[modelIndex]);
-  if (!uniqueIndices.length) return state;
-
-  ensureModelMovementStartPositions(unit);
-  ensureModelMovementStartRotations(unit);
-  ensureModelMovementAllowanceTotals(unit);
-  if (s.phase === 'movement') ensureModelMovementPaths(unit);
-
-  const before = unit.modelPositions.map(position => ({ ...position }));
-  applyPlayModelVerticalTranslation(unit, uniqueIndices, dz);
-  if (uniqueIndices.every(modelIndex => Math.abs((unit.modelPositions[modelIndex].z ?? 0) - (before[modelIndex].z ?? 0)) < 0.001)) return state;
-
-  const totals = ensureModelMovementAllowanceTotals(unit);
-  if (s.phase === 'movement') appendModelMovementWaypoints(unit, uniqueIndices);
-  if (uniqueIndices.some(modelIndex => modelMovementDistanceFromStart(unit, modelIndex) > (totals[modelIndex] ?? 0) + 0.001)) return state;
-  if (inEngagement(unit, enemies(s, side), rulesEditionForRuleset(s.ruleset).engagementRange())) return state;
-
-  lockOtherMovedPlayUnits(s, unit);
-  cancelUnitAction(s, unit, 'it made a move');
-  unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
-  updateModelMovementAllowances(unit);
-  return s;
 }
 
 export function undoPlayUnitMovement(state: BattleState, unitId: string, side: Side): BattleState {
-  if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return state;
-  const existingUnit = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
-  if (!existingUnit) return state;
-  const components = attachedUnitComponents(state, existingUnit);
-  if (!components.some(unit => unit.movementStartPositionsByModel?.length === unit.modelPositions.length)) return state;
+  return interactiveMovementState.undoUnitMovement(state, unitId, side, modelMovementContext);
 
-  const s = clone(state);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
-  for (const component of attachedUnitComponents(s, unit)) {
-    if (component.movementStartPositionsByModel?.length !== component.modelPositions.length) continue;
-    component.modelPositions = component.movementStartPositionsByModel.map(position => ({ ...position }));
-    component.modelRotations = component.movementStartRotationsByModel
-      ? [...component.movementStartRotationsByModel]
-      : undefined;
-    component.position = centroid(component.modelPositions);
-    component.movementAction = undefined;
-    component.movementComplete = undefined;
-    component.movementAllowanceRemaining = undefined;
-    component.movementAllowanceRemainingByModel = undefined;
-    component.movementAllowanceTotalByModel = undefined;
-    component.movementStartPositionsByModel = undefined;
-    component.movementStartRotationsByModel = undefined;
-    component.movementPathByModel = undefined;
-    component.takingToSkies = undefined;
-  }
-  return s;
 }
 
 export function removePlayModels(

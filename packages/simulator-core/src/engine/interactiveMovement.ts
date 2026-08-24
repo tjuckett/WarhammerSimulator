@@ -569,3 +569,140 @@ export function rotateModels(
   }
   return next;
 }
+
+export interface ModelMovementContext {
+  clone(state: BattleState): BattleState;
+  isModelEditPhase(phase: BattleState['phase']): boolean;
+  movementStep(state: BattleState): string;
+  isSurgedThisPhase(state: BattleState, unit: BattleUnit): boolean;
+  isAircraft(unit: BattleUnit): boolean;
+  aircraftCanMakeNormalMove(state: BattleState): boolean;
+  nonAircraftEngagedEnemies(state: BattleState, unit: BattleUnit): BattleUnit[];
+  ensureMovementStartPositions(unit: BattleUnit): void;
+  ensureMovementStartRotations(unit: BattleUnit): void;
+  ensureMovementAllowanceTotals(unit: BattleUnit): number[];
+  ensureMovementPaths(unit: BattleUnit): void;
+  aircraftMoveIsStraightForward(unit: BattleUnit, modelIndices: number[], dx: number, dy: number): boolean;
+  budgetAdjustedMove(unit: BattleUnit, modelIndices: number[], dx: number, dy: number): { dx: number; dy: number };
+  translatedMoveEndsInEngagement(state: BattleState, unit: BattleUnit, modelIndices: number[], dx: number, dy: number): boolean;
+  collisionAdjustedMove(state: BattleState, unitId: string, side: Side, modelIndices: number[], dx: number, dy: number, allowEngagement: boolean): { dx: number; dy: number };
+  unitHasModelOutsideBattlefield(unit: BattleUnit, state: BattleState): boolean;
+  moveAircraftToStrategicReserves(state: BattleState, unit: BattleUnit): void;
+  applyHorizontalTranslation(unit: BattleUnit, modelIndices: number[], dx: number, dy: number, state: BattleState): void;
+  applyVerticalTranslation(unit: BattleUnit, modelIndices: number[], dz: number): void;
+  appendMovementWaypoints(unit: BattleUnit, modelIndices: number[]): void;
+  cancelUnitAction(state: BattleState, unit: BattleUnit, reason: string): void;
+  inEngagement(state: BattleState, unit: BattleUnit): boolean;
+  lockOtherMovedUnits(state: BattleState, unit: BattleUnit): void;
+  updateMovementAllowances(unit: BattleUnit): void;
+  modelMovementDistanceFromStart(unit: BattleUnit, modelIndex: number): number;
+  attachedComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
+  centroid(positions: Position[]): Position;
+}
+
+export function moveModels(
+  state: BattleState, unitId: string, side: Side, modelIndices: number[], dx: number, dy: number, collide: boolean, context: ModelMovementContext,
+): BattleState {
+  const chargeMovement = state.phase === 'charge' && state.pendingChargeMovement?.unitId === unitId && state.pendingChargeMovement?.side === side;
+  if (!context.isModelEditPhase(state.phase) && !chargeMovement) return state;
+  if (state.phase === 'movement' && context.movementStep(state) !== 'moveUnits') return state;
+  const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
+  if (!existing || (state.phase === 'setup' && !existing.scoutMoveStarted)) return state;
+  if (state.phase === 'movement') {
+    if (state.activeArmy !== side || existing.movementComplete || context.isSurgedThisPhase(state, existing) || existing.fellBack
+      || existing.movementAction === 'fellBack' || existing.movementAction === 'remainedStationary') return state;
+    if (context.isAircraft(existing) && !context.aircraftCanMakeNormalMove(state)) return state;
+    if (!context.isAircraft(existing) && context.nonAircraftEngagedEnemies(state, existing).length > 0) return state;
+  }
+  const next = context.clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
+  const indices = Array.from(new Set(modelIndices)).filter(index => unit.modelPositions[index]);
+  if (!indices.length) return state;
+  if (next.phase === 'movement' && context.isAircraft(unit)) {
+    context.ensureMovementStartPositions(unit);
+    context.ensureMovementStartRotations(unit);
+    context.ensureMovementAllowanceTotals(unit);
+    if (!context.aircraftMoveIsStraightForward(unit, indices, dx, dy)) return state;
+  }
+  if (next.phase === 'movement') context.ensureMovementPaths(unit);
+  const budget = (next.phase === 'movement' || next.phase === 'setup' || chargeMovement) && !context.isAircraft(unit)
+    ? context.budgetAdjustedMove(unit, indices, dx, dy) : { dx, dy };
+  if (Math.hypot(budget.dx, budget.dy) < 0.001) return state;
+  if ((next.phase === 'movement' || next.phase === 'setup') && context.translatedMoveEndsInEngagement(next, unit, indices, budget.dx, budget.dy)) return state;
+  const move = collide ? context.collisionAdjustedMove(next, unitId, side, indices, budget.dx, budget.dy, chargeMovement) : budget;
+  if (Math.hypot(move.dx, move.dy) < 0.001) return state;
+  if (next.phase === 'movement' && context.isAircraft(unit)) {
+    const test = context.clone(next);
+    const testUnit = test.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
+    for (const index of indices) testUnit.modelPositions[index] = { ...testUnit.modelPositions[index], x: testUnit.modelPositions[index].x + move.dx, y: testUnit.modelPositions[index].y + move.dy };
+    testUnit.position = context.centroid(testUnit.modelPositions);
+    if (context.unitHasModelOutsideBattlefield(testUnit, next)) {
+      context.moveAircraftToStrategicReserves(next, unit);
+      return next;
+    }
+  }
+  context.applyHorizontalTranslation(unit, indices, move.dx, move.dy, next);
+  if (next.phase === 'movement') context.appendMovementWaypoints(unit, indices);
+  context.cancelUnitAction(next, unit, 'it made a move');
+  if ((next.phase === 'movement' || next.phase === 'setup') && context.inEngagement(next, unit)) return state;
+  if (next.phase === 'movement') {
+    context.lockOtherMovedUnits(next, unit);
+    unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
+  }
+  context.updateMovementAllowances(unit);
+  return next;
+}
+
+export function moveModelsVertically(
+  state: BattleState, unitId: string, side: Side, modelIndices: number[], dz: number, context: ModelMovementContext,
+): BattleState {
+  if (Math.abs(dz) < 0.001) return state;
+  const scoutMove = state.phase === 'setup';
+  if (!scoutMove && (state.phase !== 'movement' || context.movementStep(state) !== 'moveUnits' || state.activeArmy !== side)) return state;
+  const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
+  if (!existing || (scoutMove && !existing.scoutMoveStarted) || existing.inStrategicReserves || existing.movementComplete || existing.fellBack
+    || existing.movementAction === 'fellBack' || existing.movementAction === 'remainedStationary' || context.isAircraft(existing)
+    || context.nonAircraftEngagedEnemies(state, existing).length > 0) return state;
+  const next = context.clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
+  const indices = Array.from(new Set(modelIndices)).filter(index => unit.modelPositions[index]);
+  if (!indices.length) return state;
+  context.ensureMovementStartPositions(unit);
+  context.ensureMovementStartRotations(unit);
+  const totals = context.ensureMovementAllowanceTotals(unit);
+  if (next.phase === 'movement') context.ensureMovementPaths(unit);
+  const before = unit.modelPositions.map(position => ({ ...position }));
+  context.applyVerticalTranslation(unit, indices, dz);
+  if (indices.every(index => Math.abs((unit.modelPositions[index].z ?? 0) - (before[index].z ?? 0)) < 0.001)) return state;
+  if (next.phase === 'movement') context.appendMovementWaypoints(unit, indices);
+  if (indices.some(index => context.modelMovementDistanceFromStart(unit, index) > (totals[index] ?? 0) + 0.001) || context.inEngagement(next, unit)) return state;
+  context.lockOtherMovedUnits(next, unit);
+  context.cancelUnitAction(next, unit, 'it made a move');
+  unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
+  context.updateMovementAllowances(unit);
+  return next;
+}
+
+export function undoUnitMovement(state: BattleState, unitId: string, side: Side, context: ModelMovementContext): BattleState {
+  if (state.phase !== 'movement' || context.movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return state;
+  const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
+  if (!existing || !context.attachedComponents(state, existing).some(unit => unit.movementStartPositionsByModel?.length === unit.modelPositions.length)) return state;
+  const next = context.clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
+  for (const component of context.attachedComponents(next, unit)) {
+    if (component.movementStartPositionsByModel?.length !== component.modelPositions.length) continue;
+    component.modelPositions = component.movementStartPositionsByModel.map(position => ({ ...position }));
+    component.modelRotations = component.movementStartRotationsByModel ? [...component.movementStartRotationsByModel] : undefined;
+    component.position = context.centroid(component.modelPositions);
+    component.movementAction = undefined;
+    component.movementComplete = undefined;
+    component.movementAllowanceRemaining = undefined;
+    component.movementAllowanceRemainingByModel = undefined;
+    component.movementAllowanceTotalByModel = undefined;
+    component.movementStartPositionsByModel = undefined;
+    component.movementStartRotationsByModel = undefined;
+    component.movementPathByModel = undefined;
+    component.takingToSkies = undefined;
+  }
+  return next;
+}
