@@ -109,6 +109,7 @@ import {
 } from './reinforcements';
 import * as turnAdvance from './turnAdvance';
 import * as firingDeck from './firingDeck';
+import * as movementPathing from './movementPathing';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -4627,119 +4628,30 @@ function playMoveHasNoEndCollision(
     && (allowEngagement || !inEngagement(movingUnit, enemies(state, movingUnit.side), rulesEditionForRuleset(state.ruleset).engagementRange()));
 }
 
-function distancePointToSegment(point: Position, from: Position, to: Position): number {
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const lengthSq = dx * dx + dy * dy;
-  if (lengthSq <= 0.000001) return dist(point, from);
-  const t = Math.max(0, Math.min(1, ((point.x - from.x) * dx + (point.y - from.y) * dy) / lengthSq));
-  return dist(point, { x: from.x + dx * t, y: from.y + dy * t });
-}
+const movementPathingContext: movementPathing.MovementPathingContext = {
+  distance: dist,
+  verticalDistance,
+  modelBaseRadius,
+  takesToSkies: unitTakesToSkiesForState,
+  isAircraft,
+  unitHasRule: (unit, rule) => unitHasRule(unit.profile, rule),
+  unitHasKeyword: hasKeyword,
+  terrainBlocksMovement: terrainMatBlocksMovementForUnit,
+  featureBlocksMovement: featureBlocksMovementForUnit,
+  pointInTerrain,
+  linePassesThroughTerrain,
+};
 
-function pointSegmentProjectionT(point: Position, from: Position, to: Position): number {
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const lengthSq = dx * dx + dy * dy;
-  if (lengthSq <= 0.000001) return 0;
-  return Math.max(0, Math.min(1, ((point.x - from.x) * dx + (point.y - from.y) * dy) / lengthSq));
-}
-
-function playMovePathCrossesEnemyModels(
-  state: BattleState,
-  movingUnit: BattleUnit,
-  movingIndices: Set<number>,
-  dx: number,
-  dy: number,
-  includeFriendly = false,
-): boolean {
-  if (unitTakesToSkiesForState(state, movingUnit)) return false;
-
-  for (const modelIndex of movingIndices) {
-    const from = movingUnit.modelPositions[modelIndex];
-    const to = { x: from.x + dx, y: from.y + dy };
-    const movingRadius = modelBaseRadius(movingUnit, modelIndex);
-    for (const otherUnit of state.units) {
-      if (otherUnit.destroyed || otherUnit.embarkedInUnitId) continue;
-      if (otherUnit.id === movingUnit.id || (!includeFriendly && otherUnit.side === movingUnit.side)) continue;
-      if (unitHasRule(movingUnit.profile, 'Super-heavy Walker') && !hasKeyword(otherUnit, 'titanic')) continue;
-      if (otherUnit.side !== movingUnit.side && isAircraft(otherUnit)) continue;
-      for (let otherModelIndex = 0; otherModelIndex < otherUnit.modelPositions.length; otherModelIndex++) {
-        if (verticalDistance(from, otherUnit.modelPositions[otherModelIndex]) > 0.5) continue;
-        const clearance = movingRadius + modelBaseRadius(otherUnit, otherModelIndex);
-        if (distancePointToSegment(otherUnit.modelPositions[otherModelIndex], from, to) < clearance) return true;
-      }
-    }
-  }
-  return false;
-}
-
-function playMoveEnemyCrossingModelIndices(
-  state: BattleState,
-  movingUnit: BattleUnit,
-  movingIndices: Set<number>,
-  dx: number,
-  dy: number,
-): number[] {
-  const crossingModelIndices: number[] = [];
-
-  for (const modelIndex of movingIndices) {
-    const from = movingUnit.modelPositions[modelIndex];
-    const to = { x: from.x + dx, y: from.y + dy };
-    const movingRadius = modelBaseRadius(movingUnit, modelIndex);
-    const crossesEnemy = state.units.some(otherUnit => {
-      if (otherUnit.destroyed || otherUnit.side === movingUnit.side) return false;
-      if (isAircraft(otherUnit)) return false;
-      return otherUnit.modelPositions.some((otherModel, otherModelIndex) => {
-      if (verticalDistance(from, otherModel) > 0.5) return false;
-      const clearance = movingRadius + modelBaseRadius(otherUnit, otherModelIndex);
-      if (dist(otherModel, from) < clearance && dist(otherModel, to) < clearance) return false;
-      if (pointSegmentProjectionT(otherModel, from, to) <= 0.05) return false;
-      return distancePointToSegment(otherModel, from, to) < clearance;
-      });
-    });
-    if (crossesEnemy) crossingModelIndices.push(modelIndex);
-  }
-
-  return crossingModelIndices;
-}
-
-function playMovePathCrossesBlockingTerrain(
-  state: BattleState,
-  movingUnit: BattleUnit,
-  movingIndices: Set<number>,
-  dx: number,
-  dy: number,
-): boolean {
-  if (unitTakesToSkiesForState(state, movingUnit)) return false;
-
-  for (const modelIndex of movingIndices) {
-    const from = movingUnit.modelPositions[modelIndex];
-    const to = { x: from.x + dx, y: from.y + dy };
-    for (const terrain of state.terrain) {
-      if (terrainMatBlocksMovementForUnit(terrain, movingUnit)
-        && !pointInTerrain(from, terrain)
-        && (pointInTerrain(to, terrain) || linePassesThroughTerrain(from, to, terrain))) return true;
-      for (const feature of terrain.features) {
-        if (featureBlocksMovementForUnit(feature, terrain, movingUnit)
-          && !pointInTerrain(from, feature)
-          && (pointInTerrain(to, feature) || linePassesThroughTerrain(from, to, feature))) return true;
-      }
-    }
-  }
-  return false;
-}
-
-function playMoveHasNoPathCollision(
-  state: BattleState,
-  movingUnit: BattleUnit,
-  movingIndices: Set<number>,
-  dx: number,
-  dy: number,
-  options: { ignoreEnemyModelPath?: boolean } = {},
-): boolean {
-  return (options.ignoreEnemyModelPath || !playMovePathCrossesEnemyModels(state, movingUnit, movingIndices, dx, dy, true))
-    && !playMovePathCrossesBlockingTerrain(state, movingUnit, movingIndices, dx, dy);
-}
+const distancePointToSegment = (point: Position, from: Position, to: Position) =>
+  movementPathing.distancePointToSegment(point, from, to, movementPathingContext);
+const playMovePathCrossesEnemyModels = (state: BattleState, unit: BattleUnit, indices: Set<number>, dx: number, dy: number, includeFriendly = false) =>
+  movementPathing.crossesEnemyModels(state, unit, indices, dx, dy, movementPathingContext, includeFriendly);
+const playMoveEnemyCrossingModelIndices = (state: BattleState, unit: BattleUnit, indices: Set<number>, dx: number, dy: number) =>
+  movementPathing.enemyCrossingModelIndices(state, unit, indices, dx, dy, movementPathingContext);
+const playMovePathCrossesBlockingTerrain = (state: BattleState, unit: BattleUnit, indices: Set<number>, dx: number, dy: number) =>
+  movementPathing.crossesBlockingTerrain(state, unit, indices, dx, dy, movementPathingContext);
+const playMoveHasNoPathCollision = (state: BattleState, unit: BattleUnit, indices: Set<number>, dx: number, dy: number, options: { ignoreEnemyModelPath?: boolean } = {}) =>
+  movementPathing.hasNoPathCollision(state, unit, indices, dx, dy, movementPathingContext, options);
 
 function translatedPlayMoveEndsInEngagement(
   state: BattleState,
