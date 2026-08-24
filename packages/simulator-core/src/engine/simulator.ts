@@ -21,7 +21,7 @@ import {
 import { gainCommandPhaseCommandPoints } from './commandPoints';
 import { runAutomaticCommandUnitAbilities, runAutomaticUnitAbilities } from './unitAbilities';
 import { objectiveControlValue, resolveDesperateEscapeTests } from './battleshock';
-import { circleIntersectsTerrain, findUnblockedLOSRay, hasAnyHiddenModelPair as hasAnyHiddenModelPairGeometry, hasAnyModelLOSConsideringHidden as hasAnyModelLOSConsideringHiddenGeometry, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, modelIsHiddenFrom as modelIsHiddenFromGeometry, pointInTerrain, targetHasTerrainCoverFrom as targetHasTerrainCoverFromGeometry, terrainCorners } from './terrainGeometry';
+import { circleIntersectsTerrain, findUnblockedLOSRay, hasAnyHiddenModelPair as hasAnyHiddenModelPairGeometry, hasAnyModelLOS as hasAnyModelLOSGeometry, hasAnyModelLOSConsideringHidden as hasAnyModelLOSConsideringHiddenGeometry, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, modelIsHiddenFrom as modelIsHiddenFromGeometry, pointInTerrain, targetHasTerrainCoverFrom as targetHasTerrainCoverFromGeometry, terrainCorners } from './terrainGeometry';
 import { COHERENCY_VERTICAL_RANGE, distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, verticalDistance, type CoherencyModel } from './coherency';
 import { objectiveRoleForIndex, terrainWithinMissionTerritory } from './missionGeometry';
 import { scoreSecondaryMissionsAtEndOfTurn, secondaryMissionScoringLogs } from './secondaryMissionScoring';
@@ -276,16 +276,13 @@ function chooseOneProfilePerGroup<T extends { weapon: WeaponProfile }>(weapons: 
 
 // True if the shooter model (at fromCenter with fromRadius) has edge-to-edge LOS
 // to at least one model in the target unit.
-function hasAnyModelLOS(
-  fromCenter: Position, fromRadius: number,
+const hasAnyModelLOS = (
+  fromCenter: Position,
+  fromRadius: number,
   target: BattleUnit,
   terrain: Terrain[],
   edition?: '10e' | '11e',
-): boolean {
-  return target.modelPositions.some((toCenter, i) =>
-    hasLOSEdgeToEdge(fromCenter, fromRadius, toCenter, modelBaseRadius(target, i), terrain, edition),
-  );
-}
+): boolean => hasAnyModelLOSGeometry(fromCenter, fromRadius, target, terrain, edition, modelBaseRadius);
 
 function terrainVisibilityContext() {
   return {

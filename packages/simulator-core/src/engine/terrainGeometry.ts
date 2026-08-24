@@ -310,6 +310,19 @@ export interface TerrainVisibilityContext extends TerrainCoverContext {
   modelBaseEdgeDistance(source: BattleUnit, sourceModelIndex: number, target: BattleUnit, targetModelIndex: number): number;
 }
 
+export function hasAnyModelLOS(
+  fromCenter: Position,
+  fromRadius: number,
+  target: BattleUnit,
+  terrain: Terrain[],
+  edition: '10e' | '11e' | undefined,
+  modelRadius: (unit: BattleUnit, modelIndex: number) => number,
+): boolean {
+  return target.modelPositions.some((toCenter, modelIndex) =>
+    hasLOSEdgeToEdge(fromCenter, fromRadius, toCenter, modelRadius(target, modelIndex), terrain, edition),
+  );
+}
+
 function terrainCanHideModels(terrain: Terrain): boolean {
   if (terrain.features.some(feature => feature.category === 'light' || feature.category === 'dense')) return true;
   return terrain.type === 'ruin' || (terrain.type === 'area' && /woods?|forest/i.test(terrain.name));
