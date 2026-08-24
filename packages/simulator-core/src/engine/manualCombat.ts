@@ -7,6 +7,23 @@ import type { CombatAttackResolutionOptions } from './combatTypes';
 
 export type CombatAttackContext = Record<string, any>;
 
+export function applyFeelNoPain(unit: BattleUnit, damage: number, state: BattleState, context: Record<string, any>): { damage: number; logs: LogEntry[] } {
+  const target = context.attachedUnitComponents(state, unit)
+    .flatMap((component: BattleUnit) => context.feelNoPainTargets(component)
+      .filter((rule: any) => component.id === unit.id || rule.sharesWithAttachedUnit)
+      .map((rule: any) => rule.target))
+    .filter((value: number | null): value is number => value !== null)
+    .sort((a: number, b: number) => a - b)[0] ?? null;
+  if (!target || damage <= 0) return { damage, logs: [] };
+  const rolls = context.rollMultiple(damage);
+  const outcome = context.resolveFeelNoPainOutcome(damage, target, rolls);
+  return {
+    damage: outcome.damage,
+    logs: [context.log(state, unit.side, unit.profile.name,
+      `     Feel No Pain (${target}+): [${rolls.join(', ')}] -> ${outcome.ignored} ignored, ${outcome.damage} damage remains`, 'roll')],
+  };
+}
+
 export function resolveHazardousTests(
   unit: BattleUnit,
   weapon: WeaponProfile,

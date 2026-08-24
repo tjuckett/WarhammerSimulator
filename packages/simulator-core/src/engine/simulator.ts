@@ -754,23 +754,13 @@ function applyFeelNoPain(
   damage: number,
   state: BattleState,
 ): { damage: number; logs: LogEntry[] } {
-  const target = attachedUnitComponents(state, unit)
-    .flatMap(component => feelNoPainTargets(component)
-      .filter(rule => component.id === unit.id || rule.sharesWithAttachedUnit)
-      .map(rule => rule.target))
-    .filter((value): value is number => value !== null)
-    .sort((a, b) => a - b)[0] ?? null;
-  if (!target || damage <= 0) return { damage, logs: [] };
-
-  const rolls = rollMultiple(damage);
-  const outcome = resolveFeelNoPainOutcome(damage, target, rolls);
-  return {
-    damage: outcome.damage,
-    logs: [log(state, unit.side, unit.profile.name,
-      `     Feel No Pain (${target}+): [${rolls.join(', ')}] -> ${outcome.ignored} ignored, ${outcome.damage} damage remains`,
-      'roll',
-    )],
-  };
+  return manualCombat.applyFeelNoPain(unit, damage, state, {
+    attachedUnitComponents,
+    feelNoPainTargets,
+    rollMultiple,
+    resolveFeelNoPainOutcome,
+    log,
+  });
 }
 
 function unitCanUseBigGunsNeverTire(unit: BattleUnit): boolean {
