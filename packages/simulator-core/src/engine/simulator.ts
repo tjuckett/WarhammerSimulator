@@ -1948,6 +1948,18 @@ const finishAttachedFightComponent = (state: BattleState, unit: BattleUnit, rule
 const sideCanSelectFightUnit = (state: BattleState, side: Side, rules: RulesEdition) =>
   manualCombat.sideCanSelectFightUnit(state, side, rules, fightPhaseContext);
 
+const manualFightResolutionContext: manualCombat.ManualFightResolutionContext = {
+  ...fightPhaseContext,
+  clone,
+  selectMeleeWeapons: meleeWeaponSelection,
+  chooseOneProfilePerGroup,
+  fixedWeaponAttackCount: (unit, weapon, weaponIndex) => manualCombat.fixedWeaponAttackCount(unit, weapon, weaponIndex, manualShootingSelectionContext),
+  resolveCombatAttacks,
+  resolvePendingDeadlyDemisesInPlace,
+  finishAttachedFightComponent,
+  log,
+};
+
 export function playFightActivationUnitIds(
   state: BattleState,
   side: Side,
@@ -2187,53 +2199,7 @@ export function fightPlayUnitWeapons(
   allocations: PlayMeleeAttackAllocation[],
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
-  if (!sideCanSelectFightUnit(state, side, rules) || !allocations.length) return state;
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || !unitCanFight(unit, state, rules) || !playFightActivationUnitIds(state, side, rules).includes(unit.id)) return state;
-  const meleeWeapons = unit.profile.weapons
-    .map((weapon, weaponIndex) => ({ weapon, weaponIndex }))
-    .filter(option => option.weapon.isMelee);
-  const selectableWeapons = rules.metadata.edition === '11e'
-    ? meleeWeaponSelection(unit, meleeWeapons, 'all')
-    : chooseOneProfilePerGroup(meleeWeapons);
-  const selectableIndexes = new Set(selectableWeapons.map(option => option.weaponIndex));
-  const grouped = new Map<number, PlayMeleeAttackAllocation[]>();
-  for (const allocation of allocations) {
-    if (!selectableIndexes.has(allocation.weaponIndex)) return state;
-    const target = state.units.find(candidate => candidate.id === allocation.targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-    if (!target || !unitCanFightTarget(unit, target) || !inEngagement(unit, [target], rules.engagementRange())) return state;
-    grouped.set(allocation.weaponIndex, [...(grouped.get(allocation.weaponIndex) ?? []), allocation]);
-  }
-  if (grouped.size !== selectableIndexes.size) return state;
-  for (const selected of selectableWeapons) {
-    const entries = grouped.get(selected.weaponIndex) ?? [];
-    const fixedAttacks = manualCombat.fixedWeaponAttackCount(unit, selected.weapon, selected.weaponIndex, manualShootingSelectionContext);
-    if (fixedAttacks === null && entries.length !== 1) return state;
-    if (entries.length > 1 && entries.reduce((total, entry) => total + (entry.attackCount ?? 0), 0) !== fixedAttacks) return state;
-    if (entries.some(entry => entry.attackCount !== undefined && (!Number.isInteger(entry.attackCount) || entry.attackCount < 1))) return state;
-  }
-
-  const s = clone(state);
-  const fightingUnit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!fightingUnit) return state;
-  const logs: LogEntry[] = [log(s, side, fightingUnit.profile.name, `${fightingUnit.profile.name} locks all melee targets before rolling:`, 'fight')];
-  for (const selected of selectableWeapons) {
-    const entries = grouped.get(selected.weaponIndex)!;
-    for (const entry of entries) {
-      const target = s.units.find(candidate => candidate.id === entry.targetUnitId && !candidate.destroyed)!;
-      logs.push(...resolveCombatAttacks(fightingUnit, target, selected.weapon, selected.weaponIndex, rules, s, false, 0, '', {
-        deferCasualties: true,
-        ...(entries.length > 1 && entry.attackCount !== undefined ? { attackCountOverride: entry.attackCount } : {}),
-        selectedTargetCount: entries.length,
-      }));
-    }
-  }
-  if (!logs.length) return state;
-  fightingUnit.activated = true;
-  finishAttachedFightComponent(s, fightingUnit, rules);
-  s.log = [...s.log, ...logs];
-  if (s.pendingDeadlyDemises?.length) s.log = [...s.log, ...resolvePendingDeadlyDemisesInPlace(s)];
-  return s;
+  return manualCombat.fightPlayUnitWeapons(state, unitId, side, allocations, rules, manualFightResolutionContext);
 }
 
 function unitHasFightOnDeath(unit: BattleUnit): boolean {
