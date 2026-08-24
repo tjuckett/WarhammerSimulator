@@ -20,7 +20,7 @@ import {
 import { gainCommandPhaseCommandPoints } from './commandPoints';
 import { runAutomaticCommandUnitAbilities, runAutomaticUnitAbilities } from './unitAbilities';
 import { objectiveControlValue, resolveDesperateEscapeTests } from './battleshock';
-import { circleIntersectsTerrain, findUnblockedLOSRay, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, pointInTerrain, targetHasTerrainCoverFrom as targetHasTerrainCoverFromGeometry, terrainCorners } from './terrainGeometry';
+import { circleIntersectsTerrain, findUnblockedLOSRay, hasAnyHiddenModelPair as hasAnyHiddenModelPairGeometry, hasAnyModelLOSConsideringHidden as hasAnyModelLOSConsideringHiddenGeometry, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, modelIsHiddenFrom as modelIsHiddenFromGeometry, pointInTerrain, targetHasTerrainCoverFrom as targetHasTerrainCoverFromGeometry, terrainCorners } from './terrainGeometry';
 import { COHERENCY_VERTICAL_RANGE, distance as dist, modelIndicesWithCoherencyIssues, modelListIsCoherent, verticalDistance, type CoherencyModel } from './coherency';
 import { secondaryMissionStateFor } from './secondaryMissions';
 import { objectiveRoleForIndex, terrainTerritoryRelation, terrainWithinMissionTerritory } from './missionGeometry';
@@ -383,85 +383,28 @@ function hasAnyModelLOS(
   );
 }
 
-function terrainCanHideModels(terrain: Terrain): boolean {
-  if (terrain.features.some(feature => feature.category === 'light' || feature.category === 'dense')) return true;
-  // Older/runtime terrain records may not have generated feature rows. Preserve
-  // the layout defaults used by the terrain importer in that case.
-  if (terrain.type === 'ruin') return true;
-  return terrain.type === 'area' && /woods?|forest/i.test(terrain.name);
+function terrainVisibilityContext() {
+  return {
+    modelRadius: modelBaseRadius,
+    hasKeyword,
+    modelBaseEdgeDistance: (source: BattleUnit, sourceModelIndex: number, target: BattleUnit, targetModelIndex: number) =>
+      modelBaseEdgeDistance3d(
+        source.modelPositions[sourceModelIndex], modelFootprint(source, sourceModelIndex),
+        target.modelPositions[targetModelIndex], modelFootprint(target, targetModelIndex),
+      ),
+  };
 }
 
-function modelIsGoneToGroundFromDenseTerrain(
-  state: BattleState,
-  source: BattleUnit,
-  sourceModelIndex: number,
-  target: BattleUnit,
-  targetModelIndex: number,
-): boolean {
-  const denseTerrain = state.terrain
-    .map(terrain => ({
-      ...terrain,
-      features: terrain.features.filter(feature => feature.category === 'dense'),
-    }))
-    .filter(terrain => terrain.features.length > 0);
-  if (!denseTerrain.length) return false;
-  return !hasLOSEdgeToEdge(
-    source.modelPositions[sourceModelIndex],
-    modelBaseRadius(source, sourceModelIndex),
-    target.modelPositions[targetModelIndex],
-    modelBaseRadius(target, targetModelIndex),
-    denseTerrain,
-    state.ruleset?.edition,
-  );
-}
-
-function modelIsHiddenFrom(
-  state: BattleState,
-  source: BattleUnit,
-  sourceModelIndex: number,
-  target: BattleUnit,
-  targetModelIndex: number,
-): boolean {
-  if (state.ruleset?.edition !== '11e') return false;
-  if (!hasKeyword(target, 'infantry') && !hasKeyword(target, 'beasts') && !hasKeyword(target, 'swarm')) return false;
-  if (target.rangedAttacksMadeThisTurn || target.rangedAttacksMadePreviousTurn) return false;
-  const targetModel = target.modelPositions[targetModelIndex];
-  const sourceModel = source.modelPositions[sourceModelIndex];
-  if (!targetModel || !sourceModel) return false;
-  if (!state.terrain.some(terrain =>
-    terrainCanHideModels(terrain)
-      && circleIntersectsTerrain(targetModel, modelBaseRadius(target, targetModelIndex), terrain),
-  )) return false;
-  const goneToGround = modelIsGoneToGroundFromDenseTerrain(
-    state,
-    source,
-    sourceModelIndex,
-    target,
-    targetModelIndex,
-  );
-  return modelBaseEdgeDistance3d(
-    sourceModel,
-    modelFootprint(source, sourceModelIndex),
-    targetModel,
-    modelFootprint(target, targetModelIndex),
-  ) > (goneToGround ? 12 : 15);
+function modelIsHiddenFrom(state: BattleState, source: BattleUnit, sourceModelIndex: number, target: BattleUnit, targetModelIndex: number): boolean {
+  return modelIsHiddenFromGeometry(state, source, sourceModelIndex, target, targetModelIndex, terrainVisibilityContext());
 }
 
 function hasAnyModelLOSConsideringHidden(state: BattleState, source: BattleUnit, target: BattleUnit): boolean {
-  return source.modelPositions.some((from, sourceModelIndex) =>
-    target.modelPositions.some((to, targetModelIndex) =>
-      !modelIsHiddenFrom(state, source, sourceModelIndex, target, targetModelIndex)
-      && hasLOSEdgeToEdge(from, modelBaseRadius(source, sourceModelIndex), to, modelBaseRadius(target, targetModelIndex), state.terrain, state.ruleset?.edition),
-    ),
-  );
+  return hasAnyModelLOSConsideringHiddenGeometry(state, source, target, terrainVisibilityContext());
 }
 
 function hasAnyHiddenModelPair(state: BattleState, source: BattleUnit, target: BattleUnit): boolean {
-  return source.modelPositions.some((_from, sourceModelIndex) =>
-    target.modelPositions.some((_to, targetModelIndex) =>
-      modelIsHiddenFrom(state, source, sourceModelIndex, target, targetModelIndex),
-    ),
-  );
+  return hasAnyHiddenModelPairGeometry(state, source, target, terrainVisibilityContext());
 }
 
 function markRangedAttackMade(unit: BattleUnit): void {
