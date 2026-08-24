@@ -108,6 +108,7 @@ import {
   strategicReserveUnitHasCloseQuartersIngress,
 } from './reinforcements';
 import * as turnAdvance from './turnAdvance';
+import * as firingDeck from './firingDeck';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -5030,22 +5031,6 @@ function movementAllowanceForPlayMove(unit: BattleUnit): number {
   return Math.max(0, normalMoveAllowance(unit) - takeToSkiesDistanceCost(unit));
 }
 
-export function playFiringDeckCapacity(unit: BattleUnit): number {
-  for (const rule of [...unit.profile.abilities, ...(unit.profile.rules ?? [])]) {
-    const match = `${rule.name} ${rule.description}`.match(/Firing\s+Deck\s+(\d+)/i);
-    if (match) return Number.parseInt(match[1], 10);
-  }
-  return 0;
-}
-
-export interface FiringDeckSelection {
-  passengerRosterId: string;
-  passengerName?: string;
-  modelIndex: number;
-  weaponIndex: number;
-  weaponName?: string;
-}
-
 function firingDeckPassengerProfiles(state: BattleState, transport: BattleUnit): UnitProfile[] {
   const staged = state.armies[transport.side].army.units.filter(profile => unitAssignedToTransport(profile, transport));
   const live = embarkedUnitsForTransport(state, transport.id).map(unit => unit.profile);
@@ -5058,20 +5043,21 @@ function firingDeckPassengerProfiles(state: BattleState, transport: BattleUnit):
   });
 }
 
+export type FiringDeckSelection = firingDeck.FiringDeckSelection;
+
+const firingDeckContext: firingDeck.FiringDeckContext = {
+  clone,
+  isTransport: unit => unitHasKeyword(unit, 'Transport'),
+  passengerProfiles: firingDeckPassengerProfiles,
+  createLog: (state, side, actor, message) => log(state, side, actor, message, 'shoot'),
+};
+
+export function playFiringDeckCapacity(unit: BattleUnit): number {
+  return firingDeck.capacity(unit);
+}
+
 export function playFiringDeckOptions(state: BattleState, transportUnitId: string, side: Side): FiringDeckSelection[] {
-  if (state.phase !== 'shooting' || state.activeArmy !== side) return [];
-  const transport = state.units.find(unit => unit.id === transportUnitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
-  if (!transport || transport.activated || playFiringDeckCapacity(transport) <= 0 || !unitHasKeyword(transport, 'Transport')) return [];
-  return firingDeckPassengerProfiles(state, transport).flatMap(profile =>
-    Array.from({ length: profile.baseModelCount }, (_, modelIndex) =>
-      modelWeaponLoadout(profile, modelIndex).flatMap(weaponIndex => {
-        const weapon = profile.weapons[weaponIndex];
-        return weapon && !weapon.isMelee && !weaponHasKeyword(weapon, 'One Shot')
-          ? [{ passengerRosterId: unitRosterId(profile), passengerName: profile.name, modelIndex, weaponIndex, weaponName: weapon.name }]
-          : [];
-      }),
-    ).flat(),
-  );
+  return firingDeck.options(state, transportUnitId, side, firingDeckContext);
 }
 
 function strategicReservePlacementIsOutsideOpponentDeploymentZone(unit: BattleUnit, state: BattleState): boolean {
@@ -5090,95 +5076,15 @@ export function selectPlayFiringDeckWeapons(
   side: Side,
   selections: FiringDeckSelection[],
 ): BattleState {
-  const options = playFiringDeckOptions(state, transportUnitId, side);
-  const transport = state.units.find(unit => unit.id === transportUnitId && unit.side === side && !unit.destroyed);
-  if (!transport || transport.firingDeckTurn === state.turn) return state;
-  const capacity = playFiringDeckCapacity(transport);
-  const modelKeys = selections.map(selection => `${selection.passengerRosterId}:${selection.modelIndex}`);
-  if (
-    selections.length > capacity
-    || new Set(modelKeys).size !== selections.length
-    || selections.some(selection => !options.some(option =>
-      option.passengerRosterId === selection.passengerRosterId
-      && option.modelIndex === selection.modelIndex
-      && option.weaponIndex === selection.weaponIndex
-    ))
-  ) return state;
-
-  const s = clone(state);
-  applyFiringDeckSelectionsInPlace(s, transportUnitId, side, selections);
-  return s;
-}
-
-function applyFiringDeckSelectionsInPlace(
-  state: BattleState,
-  transportUnitId: string,
-  side: Side,
-  selections: FiringDeckSelection[],
-): void {
-  const selectedTransport = state.units.find(unit => unit.id === transportUnitId && unit.side === side && !unit.destroyed)!;
-  const passengerProfiles = firingDeckPassengerProfiles(state, selectedTransport);
-  const baseWeaponCount = selectedTransport.profile.weapons.length;
-  const existingLoadouts = selectedTransport.modelPositions.map((_, modelIndex) =>
-    [...modelWeaponLoadout(selectedTransport.profile, selectedTransport.modelRosterIndexes?.[modelIndex] ?? modelIndex)],
-  );
-  const grantedIndices: number[] = [];
-  for (const selection of selections) {
-    const passenger = passengerProfiles.find(profile => unitRosterId(profile) === selection.passengerRosterId)!;
-    const sourceWeapon = passenger.weapons[selection.weaponIndex];
-    const grantedIndex = selectedTransport.profile.weapons.length;
-    selectedTransport.profile.weapons.push({
-      ...sourceWeapon,
-      name: `${sourceWeapon.name} (Firing Deck: ${passenger.name})`,
-      firingDeckSource: {
-        passengerRosterId: selection.passengerRosterId,
-        passengerName: passenger.name,
-        modelIndex: selection.modelIndex,
-        weaponIndex: selection.weaponIndex,
-      },
-    });
-    existingLoadouts[0] = [...(existingLoadouts[0] ?? []), grantedIndex];
-    grantedIndices.push(grantedIndex);
-  }
-  selectedTransport.profile.modelWeaponLoadouts = existingLoadouts;
-  selectedTransport.firingDeckBaseWeaponCount = baseWeaponCount;
-  selectedTransport.firingDeckGrantedWeaponIndices = grantedIndices;
-  selectedTransport.firingDeckTurn = state.turn;
-  const selectedPassengerIds = new Set(selections.map(selection => selection.passengerRosterId));
-  const lockedIds = state.units
-    .filter(unit => unit.embarkedInUnitId === selectedTransport.id && selectedPassengerIds.has(unitRosterId(unit.profile)))
-    .map(unit => unit.id);
-  state.firingDeckLockedUnitIds = [...new Set([...(state.firingDeckLockedUnitIds ?? []), ...lockedIds])];
-  state.log = [...state.log, log(state, side, selectedTransport.profile.name,
-    selections.length
-      ? `${selectedTransport.profile.name} selects ${selections.length} embarked model${selections.length === 1 ? '' : 's'} for Firing Deck.`
-      : `${selectedTransport.profile.name} selects no embarked models for Firing Deck.`,
-    'shoot',
-  )];
+  return firingDeck.select(state, transportUnitId, side, selections, firingDeckContext);
 }
 
 function autoSelectFiringDeckInPlace(state: BattleState, transport: BattleUnit): void {
-  if (transport.firingDeckTurn === state.turn) return;
-  const capacity = playFiringDeckCapacity(transport);
-  if (capacity <= 0) return;
-  const usedModels = new Set<string>();
-  const selections = playFiringDeckOptions(state, transport.id, transport.side).filter(option => {
-    const key = `${option.passengerRosterId}:${option.modelIndex}`;
-    if (usedModels.has(key) || usedModels.size >= capacity) return false;
-    usedModels.add(key);
-    return true;
-  });
-  applyFiringDeckSelectionsInPlace(state, transport.id, transport.side, selections);
+  firingDeck.autoSelectInPlace(state, transport, firingDeckContext);
 }
 
 function clearFiringDeckWeapons(unit: BattleUnit): void {
-  if (unit.firingDeckBaseWeaponCount === undefined) return;
-  unit.profile.weapons = unit.profile.weapons.slice(0, unit.firingDeckBaseWeaponCount);
-  unit.profile.modelWeaponLoadouts = unit.profile.modelWeaponLoadouts?.map(loadout =>
-    loadout.filter(weaponIndex => weaponIndex < unit.firingDeckBaseWeaponCount!),
-  );
-  unit.firingDeckBaseWeaponCount = undefined;
-  unit.firingDeckGrantedWeaponIndices = undefined;
+  firingDeck.clearWeapons(unit);
 }
 
 function unitHasStartedCurrentMove(unit: BattleUnit): boolean {
