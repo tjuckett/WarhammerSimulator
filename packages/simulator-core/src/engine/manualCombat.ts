@@ -270,6 +270,53 @@ export function lockPlayUnitShooting(state: BattleState, unitId: string, side: S
   return next;
 }
 
+export interface AutomatedShootingPhaseContext extends AutomatedShootingContext {
+  activeUnits(state: BattleState, side: Side): BattleUnit[];
+  attachedUnitId(unit: BattleUnit): string;
+  attachedUnitIsFormed(state: BattleState, unit: BattleUnit): boolean;
+  attachedUnitComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
+  autoSelectFiringDeckInPlace(state: BattleState, unit: BattleUnit): void;
+  clearFiringDeckWeapons(unit: BattleUnit): void;
+  resolvePendingDeadlyDemisesInPlace(state: BattleState): LogEntry[];
+}
+
+export function runShootingPhaseUnits(state: BattleState, side: Side, rules: RulesEdition, context: AutomatedShootingPhaseContext): LogEntry[] {
+  if (rules.metadata.edition !== '11e') return context.activeUnits(state, side).flatMap(unit => runShooting(unit, state, rules, context));
+  const logs: LogEntry[] = [];
+  const handled = new Set<string>();
+  for (const selected of context.activeUnits(state, side)) {
+    const groupId = context.attachedUnitId(selected);
+    if (handled.has(groupId)) continue;
+    handled.add(groupId);
+    context.autoSelectFiringDeckInPlace(state, selected);
+    if (!context.attachedUnitIsFormed(state, selected)) {
+      logs.push(...runShooting(selected, state, rules, context), ...context.resolvePendingDeadlyDemisesInPlace(state));
+      context.clearFiringDeckWeapons(selected);
+      continue;
+    }
+    const components = context.attachedUnitComponents(state, selected);
+    const declarations: Array<{ componentId: string; targetId: string; weapon: WeaponProfile; weaponIndex: number }> = [];
+    for (const component of components) {
+      const weapons = context.shootingWeaponSelectionForAll(context.eligibleShootingWeapons(component, state, rules).map(weapon => ({ weapon, weaponIndex: component.profile.weapons.indexOf(weapon) })).filter(option => option.weaponIndex >= 0));
+      if (weapons.length) logs.push(context.log(state, component.side, component.profile.name, `${component.profile.name} shoots:`, 'shoot'));
+      for (const option of weapons) {
+        const target = context.nearest(component, context.enemies(state, side).filter(candidate => context.shootingWeaponCanTarget(state, component, candidate, option.weapon, rules)));
+        if (target) declarations.push({ componentId: component.id, targetId: target.id, ...option });
+        else logs.push(context.log(state, component.side, component.profile.name, `  ${option.weapon.name}: no valid targets in range/LOS`, 'info'));
+      }
+    }
+    for (const declaration of declarations) {
+      const component = state.units.find(unit => unit.id === declaration.componentId && !unit.destroyed);
+      const target = state.units.find(unit => unit.id === declaration.targetId && !unit.destroyed);
+      if (component && target) logs.push(...context.resolveShootingWeaponIntoTarget(state, component, target, declaration.weapon, declaration.weaponIndex, rules));
+    }
+    for (const component of components) component.activated = true;
+    logs.push(...context.resolvePendingDeadlyDemisesInPlace(state));
+    components.forEach(context.clearFiringDeckWeapons);
+  }
+  return logs;
+}
+
 /** Resolve a unit's complete shooting declaration only after every weapon target is locked. */
 export function shootPlayUnitWeapons(
   state: BattleState,

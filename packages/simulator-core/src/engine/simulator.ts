@@ -1778,57 +1778,20 @@ export function playShootingWeaponOptions(
 }
 
 function runShootingPhaseUnits(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
-  if (rules.metadata.edition !== '11e') {
-    return activeUnits(state, side).flatMap(unit => runShooting(unit, state, rules));
-  }
-  const logs: LogEntry[] = [];
-  const handled = new Set<string>();
-  for (const selected of activeUnits(state, side)) {
-    const groupId = attachedUnitId(selected);
-    if (handled.has(groupId)) continue;
-    handled.add(groupId);
-    autoSelectFiringDeckInPlace(state, selected);
-    if (!attachedUnitIsFormed(state, selected)) {
-      logs.push(...runShooting(selected, state, rules));
-      logs.push(...resolvePendingDeadlyDemisesInPlace(state));
-      clearFiringDeckWeapons(selected);
-      continue;
-    }
-    const components = attachedUnitComponents(state, selected);
-    const declarations: Array<{ componentId: string; targetId: string; weapon: WeaponProfile; weaponIndex: number }> = [];
-    for (const component of components) {
-      const weapons = shootingWeaponSelectionForAll(eligibleShootingWeapons(component, state, rules)
-        .map(weapon => ({ weapon, weaponIndex: component.profile.weapons.indexOf(weapon) }))
-        .filter(option => option.weaponIndex >= 0));
-      if (weapons.length) {
-        logs.push(log(state, component.side, component.profile.name, `${component.profile.name} shoots:`, 'shoot'));
-      }
-      for (const option of weapons) {
-        const targets = enemies(state, side).filter(target =>
-          shootingWeaponCanTarget(state, component, target, option.weapon, rules),
-        );
-        const target = nearest(component, targets);
-        if (target) {
-          declarations.push({ componentId: component.id, targetId: target.id, ...option });
-        } else {
-          logs.push(log(state, component.side, component.profile.name,
-            `  ${option.weapon.name}: no valid targets in range/LOS`, 'info'));
-        }
-      }
-    }
-    for (const declaration of declarations) {
-      const component = state.units.find(unit => unit.id === declaration.componentId && !unit.destroyed);
-      const target = state.units.find(unit => unit.id === declaration.targetId && !unit.destroyed);
-      if (!component || !target) continue;
-      logs.push(...resolveShootingWeaponIntoTarget(
-        state, component, target, declaration.weapon, declaration.weaponIndex, rules,
-      ));
-    }
-    for (const component of components) component.activated = true;
-    logs.push(...resolvePendingDeadlyDemisesInPlace(state));
-    components.forEach(clearFiringDeckWeapons);
-  }
-  return logs;
+  return manualCombat.runShootingPhaseUnits(state, side, rules, {
+    ...manualShootingSelectionContext,
+    activeUnits,
+    attachedUnitId,
+    attachedUnitIsFormed,
+    attachedUnitComponents,
+    autoSelectFiringDeckInPlace,
+    clearFiringDeckWeapons,
+    resolvePendingDeadlyDemisesInPlace,
+    nearest,
+    resolveShootingWeaponIntoTarget,
+    shootingWeaponSelectionForAll,
+    log,
+  });
 }
 
 function updateAttachedShootingActivation(
