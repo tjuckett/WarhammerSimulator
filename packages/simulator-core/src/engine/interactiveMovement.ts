@@ -731,6 +731,13 @@ export function canAdvance(state: BattleState, unitId: string, side: Side, conte
   return context.nonAircraftEngagedEnemies(state, unit).length === 0;
 }
 
+export function canFallBack(state: BattleState, unitId: string, side: Side, context: AdvanceMovementContext): boolean {
+  if (state.phase !== 'movement' || context.movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  return !!unit && !unit.inStrategicReserves && !context.isAircraft(unit) && !unit.movementComplete && !unit.movementAction
+    && context.nonAircraftEngagedEnemies(state, unit).length > 0;
+}
+
 export function advanceUnit(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: AdvanceMovementContext): BattleState {
   if (!canAdvance(state, unitId, side, context)) return state;
   const next = context.clone(state);

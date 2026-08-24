@@ -4025,9 +4025,7 @@ export function playUnitCanFallBack(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): boolean {
-  if (state.phase !== 'movement' || movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
-  const unit = state.units.find(u => u.id === unitId && u.side === side && !u.destroyed && !u.embarkedInUnitId);
-  return !!unit && !unit.inStrategicReserves && !isAircraft(unit) && !unit.movementComplete && !unit.movementAction && nonAircraftEngagedEnemies(state, unit, rules).length > 0;
+  return interactiveMovementState.canFallBack(state, unitId, side, advanceMovementContext);
 }
 
 export function playUnitCanAdvance(
