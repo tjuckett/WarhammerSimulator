@@ -86,7 +86,7 @@ import {
   unitHasDatasheetRule,
   unitHasKeyword,
 } from './unitCombatModifiers';
-import { runBattleshockPhase } from './battleshockPhase';
+import { bestLeadership, isBelowHalfStrength, runBattleshockPhase } from './battleshockPhase';
 import * as deadlyDemise from './deadlyDemise';
 import * as damageApplication from './damageApplication';
 import type { CombatAttackResolutionOptions } from './combatTypes';
@@ -1877,23 +1877,6 @@ function runAutomaticEleventhFightPhase(state: BattleState, startingSide: Side, 
     if (consolidated !== s) s = consolidated;
   }
   return s;
-}
-
-function bestLeadership(state: BattleState, unit: BattleUnit): number {
-  return Math.min(...attachedUnitComponents(state, unit).flatMap(component => [
-    component.profile.leadership,
-    ...(component.profile.modelProfiles?.map(profile => profile.leadership) ?? []),
-  ]));
-}
-
-function isBelowHalfStrength(state: BattleState, unit: BattleUnit): boolean {
-  const startingStrength = attachedUnitComponents(state, unit, true)
-    .reduce((total, component) => total + component.profile.baseModelCount, 0);
-  if (startingStrength === 1) {
-    return unit.woundsOnLeadModel <= unit.profile.wounds / 2;
-  }
-
-  return attachedUnitRemainingModels(state, unit) <= startingStrength / 2;
 }
 
 // ─── Victory check ────────────────────────────────────────────────────────────
