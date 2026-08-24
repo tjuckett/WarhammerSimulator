@@ -1765,54 +1765,28 @@ const chargeRulesContext: manualCombat.ChargeRulesContext = {
   baseEdgeDistance: battleUnitsBaseEdgeDistance,
 };
 
+const manualChargeRollContext: manualCombat.ManualChargeRollContext = {
+  attachedUnitComponents,
+  unitSurgedThisPhase,
+  sideCanDeclareCharge: manualCombat.sideCanDeclareCharge,
+  unitCanDeclareCharge: (state: BattleState, unit: BattleUnit) => manualCombat.unitCanDeclareCharge(state, unit, chargeRulesContext),
+  d6,
+  clone,
+  hasKeyword,
+  takeToSkiesDistanceCost,
+  recordBattleEvent,
+  BATTLE_EVENT_TYPE,
+  log,
+  playChargeTargetOptions,
+};
+
 export function playChargeRoll(
   state: BattleState,
   unitId: string,
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
-  if (state.phase !== 'charge' || state.pendingChargeRoll) return state;
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit
-    || attachedUnitComponents(state, unit).some(component => unitSurgedThisPhase(state, component))
-    || !manualCombat.sideCanDeclareCharge(state, side, unit)
-    || !manualCombat.unitCanDeclareCharge(state, unit, chargeRulesContext)) return state;
-  const r1 = d6();
-  const r2 = d6();
-  const rawRoll = r1 + r2;
-  const roll = state.activeArmy !== side && unit.heroicInterventionMode === 'into-the-fray' ? Math.min(6, rawRoll) : rawRoll;
-  const s = clone(state);
-  const rolledUnit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
-  if (rules.metadata.edition === '11e' && hasKeyword(rolledUnit, 'fly')) rolledUnit.takingToSkies = true;
-  const maximumDistance = Math.max(0, roll - takeToSkiesDistanceCost(rolledUnit));
-  s.lastChargeRoll = { unitId, side, dice: [r1, r2], rawTotal: rawRoll, total: roll, maximumDistance, status: 'pending-target' };
-  s.pendingChargeRoll = { unitId, side, maximumDistance };
-  recordBattleEvent(s, {
-    type: BATTLE_EVENT_TYPE.DiceRolled,
-    side,
-    source: unitId,
-    data: {
-      rollKind: 'charge',
-      dice: [r1, r2],
-      rawTotal: rawRoll,
-      total: roll,
-      maximumDistance,
-    },
-  });
-  s.log = [...s.log, log(s, side, unit.profile.name,
-    `${unit.profile.name} rolls a charge: ${r1}+${r2}=${roll}${roll !== rawRoll ? ` (capped from ${rawRoll})` : ''}.`,
-    'charge',
-  )];
-  if (!playChargeTargetOptions(s, unitId, side, rules).length) {
-    for (const component of attachedUnitComponents(s, rolledUnit)) {
-      component.activated = true;
-      component.takingToSkies = undefined;
-    }
-    s.pendingChargeRoll = undefined;
-    s.lastChargeRoll = { ...s.lastChargeRoll!, status: 'failed', failureReason: 'no-reachable-targets' };
-    s.log = [...s.log, log(s, side, unit.profile.name, `${unit.profile.name} has no reachable charge targets and cannot charge.`, 'charge')];
-  }
-  return s;
+  return manualCombat.playChargeRoll(state, unitId, side, rules, manualChargeRollContext);
 }
 
 export function playChargeEligibilityReason(
