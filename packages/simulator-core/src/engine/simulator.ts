@@ -114,7 +114,6 @@ import * as firingDeck from './firingDeck';
 import * as movementPathing from './movementPathing';
 import * as aircraftMovement from './aircraftMovement';
 import * as movementLegality from './movementLegality';
-import * as takeToSkies from './takeToSkies';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -4866,7 +4865,7 @@ function unitHasStartedCurrentMove(unit: BattleUnit): boolean {
   });
 }
 
-const takeToSkiesContext: takeToSkies.TakeToSkiesContext = {
+const takeToSkiesContext: interactiveMovementState.TakeToSkiesContext = {
   clone,
   getUnit: (state, unitId, side) => state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId),
   attachedComponents: attachedUnitComponents,
@@ -4886,14 +4885,14 @@ export const playUnitCanTakeToSkies = (
   unitId: string,
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
-): boolean => takeToSkies.canDeclare(state, unitId, side, rules, takeToSkiesContext);
+): boolean => interactiveMovementState.canDeclareTakeToSkies(state, unitId, side, rules, takeToSkiesContext);
 
 export const declarePlayUnitTakeToSkies = (
   state: BattleState,
   unitId: string,
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
-): BattleState => takeToSkies.declare(state, unitId, side, rules, takeToSkiesContext);
+): BattleState => interactiveMovementState.declareTakeToSkies(state, unitId, side, rules, takeToSkiesContext);
 
 const scoutMoveContext: interactiveMovementState.ScoutMoveContext = {
   clone,
