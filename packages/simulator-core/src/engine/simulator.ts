@@ -94,7 +94,7 @@ import * as deadlyDemise from './deadlyDemise';
 import * as combatWounds from './combatWounds';
 import * as damageApplication from './damageApplication';
 import type { CombatAttackResolutionOptions } from './combatTypes';
-import * as combatAttackResolution from './combatAttackResolution';
+import * as combatAttackResolution from './manualCombat';
 import { createTransportDestruction } from './transportDestruction';
 import * as movementSimulation from './movementSimulation';
 import * as missionActionOptions from './missionActionOptions';

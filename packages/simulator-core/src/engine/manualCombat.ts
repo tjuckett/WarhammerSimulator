@@ -1,4 +1,4 @@
-// This module is being migrated from the simulator facade; the context is progressively narrowed.
+// Manual attack resolution and its progressively narrowed simulator facade context.
 // @ts-nocheck
 import type { BattleState, BattleUnit, LogEntry } from '../types/battle';
 import type { WeaponProfile } from '../types/army';
