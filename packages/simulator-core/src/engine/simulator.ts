@@ -1870,21 +1870,15 @@ export function playSnapShootingWeaponOptions(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): PlayShootingWeaponOption[] {
-  if (state.phase !== 'movement' || state.movementStep !== 'reinforcements' || state.activeArmy === side) return [];
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || (unit.activated && rules.metadata.edition !== '11e') || !unitHasActiveStratagem(state, unit, 'fire-overwatch', 'movement')) return [];
-  return eligibleShootingWeapons(unit, state, rules, rules.metadata.edition === '11e')
-    .map(weapon => {
-      const weaponIndex = unit.profile.weapons.indexOf(weapon);
-      return {
-        weaponIndex,
-        name: weapon.name,
-        targetIds: enemies(state, side)
-          .filter(target => snapShootingWeaponCanTarget(state, unit, target, weapon, rules))
-          .map(target => target.id),
-      };
-    })
-    .filter(option => option.weaponIndex >= 0);
+  return manualCombat.playSnapShootingWeaponOptions(state, unitId, side, rules, {
+    ...manualShootingSelectionContext,
+    unitHasActiveStratagem,
+    snapShootingWeaponCanTarget,
+    shootingWeaponSelectionForAll,
+    resolveShootingWeaponIntoTarget,
+    log,
+    clone,
+  });
 }
 
 export function shootPlayUnitWeapon(

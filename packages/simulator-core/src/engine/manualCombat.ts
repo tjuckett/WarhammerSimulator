@@ -22,7 +22,7 @@ export type PlayShootingAttackAllocation = {
 export interface ManualShootingSelectionContext {
   attachedUnitId(unit: BattleUnit): string;
   aliveWeaponModelCount(unit: BattleUnit, weaponIndex: number): number;
-  eligibleShootingWeapons(unit: BattleUnit, state: BattleState, rules: RulesEdition): WeaponProfile[];
+  eligibleShootingWeapons(unit: BattleUnit, state: BattleState, rules: RulesEdition, allowActivated?: boolean): WeaponProfile[];
   enemies(state: BattleState, side: Side): BattleUnit[];
   shootingWeaponCanTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, rules: RulesEdition): boolean;
   unitCanBeSelectedToShootWithoutAttacks(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean;
@@ -182,6 +182,48 @@ export function shootPlayUnitWeapon(
   s.log = [...s.log, ...logs];
   if (unit.activated && s.pendingDeadlyDemises?.length) s.log = [...s.log, ...context.resolvePendingDeadlyDemisesInPlace(s)];
   if (unit.activated) context.clearFiringDeckWeapons(unit);
+  return s;
+}
+
+export interface OverwatchContext extends ManualShootingSelectionContext {
+  clone(state: BattleState): BattleState;
+  unitHasActiveStratagem(state: BattleState, unit: BattleUnit, stratagemId: string, phase: string): boolean;
+  snapShootingWeaponCanTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, rules: RulesEdition): boolean;
+  shootingWeaponSelectionForAll(weapons: Array<{ weapon: WeaponProfile; weaponIndex: number }>): Array<{ weapon: WeaponProfile; weaponIndex: number }>;
+  resolveShootingWeaponIntoTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, rules: RulesEdition, options: { deferCasualties?: boolean; snapShooting?: boolean }): LogEntry[];
+  log(state: BattleState, side: Side, source: string, message: string, kind: 'shoot'): LogEntry;
+}
+
+export function playSnapShootingWeaponOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: OverwatchContext): PlayShootingWeaponOption[] {
+  if (state.phase !== 'movement' || state.movementStep !== 'reinforcements' || state.activeArmy === side) return [];
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || (unit.activated && rules.metadata.edition !== '11e') || !context.unitHasActiveStratagem(state, unit, 'fire-overwatch', 'movement')) return [];
+  return context.eligibleShootingWeapons(unit, state, rules, rules.metadata.edition === '11e')
+    .map(weapon => ({ weaponIndex: unit.profile.weapons.indexOf(weapon), name: weapon.name, targetIds: context.enemies(state, side)
+      .filter(target => context.snapShootingWeaponCanTarget(state, unit, target, weapon, rules)).map(target => target.id) }))
+    .filter(option => option.weaponIndex >= 0);
+}
+
+export function snapShootPlayUnitWeapon(state: BattleState, unitId: string, side: Side, targetUnitId: string, weaponIndex: number | 'all', rules: RulesEdition, context: OverwatchContext): BattleState {
+  if (state.phase !== 'movement' || state.movementStep !== 'reinforcements' || state.activeArmy === side) return state;
+  const s = context.clone(state);
+  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const target = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || !target || !context.unitHasActiveStratagem(s, unit, 'fire-overwatch', 'movement')) return state;
+  const eligibleWeapons = context.eligibleShootingWeapons(unit, s, rules, rules.metadata.edition === '11e')
+    .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
+    .filter(option => option.weaponIndex >= 0 && context.aliveWeaponModelCount(unit, option.weaponIndex) > 0 && context.snapShootingWeaponCanTarget(s, unit, target, option.weapon, rules));
+  const selectedWeapons = weaponIndex === 'all' ? context.shootingWeaponSelectionForAll(eligibleWeapons) : eligibleWeapons.filter(option => option.weaponIndex === weaponIndex);
+  if (!selectedWeapons.length) return state;
+  const logs: LogEntry[] = [context.log(s, side, unit.profile.name, `${unit.profile.name} snap shoots ${target.profile.name}:`, 'shoot')];
+  for (const option of selectedWeapons) {
+    logs.push(...context.resolveShootingWeaponIntoTarget(s, unit, target, option.weapon, option.weaponIndex, rules, { deferCasualties: true, snapShooting: true }));
+    if (unit.destroyed || target.destroyed) break;
+  }
+  if (logs.length <= 1) return state;
+  unit.activated = true;
+  unit.actionStartedThisTurn = true;
+  s.log = [...s.log, ...logs];
   return s;
 }
 
