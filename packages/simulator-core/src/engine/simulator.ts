@@ -788,27 +788,15 @@ function unitCanUseCloseQuartersShooting(unit: BattleUnit, state: BattleState, r
 }
 
 function resolveHazardousTests(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number, state: BattleState, testCount = aliveWeaponModelCount(unit, weaponIndex)): LogEntry[] {
-  if (!weaponHasKeyword(weapon, 'Hazardous') || unit.destroyed) return [];
-  if (testCount <= 0) return [];
-
-  const rolls = rollMultiple(testCount);
-  const failures = rolls.filter(roll => roll === 1).length;
-  const logs = [
-    log(state, unit.side, unit.profile.name,
-      `     Hazardous tests for ${weapon.name}: [${rolls.join(', ')}] -> ${failures} failure(s)`,
-      'roll',
-    ),
-  ];
-
-  for (let i = 0; i < failures && !unit.destroyed; i++) {
-    if (unitHasKeyword(unit, 'Character') || unitCanUseBigGunsNeverTire(unit)) {
-      logs.push(...applyDamage(unit, 3, state, unit.side));
-    } else {
-      logs.push(...applyDamage(unit, unit.woundsOnLeadModel, state, unit.side));
-    }
-  }
-
-  return logs;
+  return manualCombat.resolveHazardousTests(unit, weapon, weaponIndex, state, {
+    weaponHasKeyword,
+    rollMultiple,
+    log,
+    applyDamage,
+    aliveWeaponModelCount,
+    unitHasKeyword,
+    unitCanUseBigGunsNeverTire,
+  }, testCount);
 }
 
 const missionActionEligibilityContext: missionActions.MissionActionEligibilityContext = {

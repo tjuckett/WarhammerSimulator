@@ -7,6 +7,26 @@ import type { CombatAttackResolutionOptions } from './combatTypes';
 
 export type CombatAttackContext = Record<string, any>;
 
+export function resolveHazardousTests(
+  unit: BattleUnit,
+  weapon: WeaponProfile,
+  weaponIndex: number,
+  state: BattleState,
+  context: Record<string, any>,
+  testCount = context.aliveWeaponModelCount(unit, weaponIndex),
+): LogEntry[] {
+  if (!context.weaponHasKeyword(weapon, 'Hazardous') || unit.destroyed || testCount <= 0) return [];
+  const rolls = context.rollMultiple(testCount);
+  const failures = rolls.filter((roll: number) => roll === 1).length;
+  const logs = [context.log(state, unit.side, unit.profile.name,
+    `     Hazardous tests for ${weapon.name}: [${rolls.join(', ')}] -> ${failures} failure(s)`, 'roll')];
+  for (let i = 0; i < failures && !unit.destroyed; i++) {
+    logs.push(...context.applyDamage(unit, context.unitHasKeyword(unit, 'Character') || context.unitCanUseBigGunsNeverTire(unit)
+      ? 3 : unit.woundsOnLeadModel, state, unit.side));
+  }
+  return logs;
+}
+
 export interface AutomatedChargeContext {
   enemies(state: BattleState, side: Side): BattleUnit[];
   unitCanChargeTarget(unit: BattleUnit, target: BattleUnit): boolean;
