@@ -267,6 +267,75 @@ export interface ManualShootingSelectionContext {
   unitCanBeSelectedToShootWithoutAttacks(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean;
 }
 
+export type ShootingSelectionRulesContext = Record<string, any>;
+
+export function unitCanUseBigGunsNeverTire(unit: BattleUnit, context: ShootingSelectionRulesContext): boolean {
+  return context.unitHasKeyword(unit, 'Vehicle') || context.unitHasKeyword(unit, 'Monster');
+}
+
+export function weaponIsCloseQuarters(weapon: WeaponProfile, context: ShootingSelectionRulesContext): boolean {
+  return context.weaponHasKeyword(weapon, 'Close-Quarters');
+}
+
+export function unitCanUseCloseQuartersShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition, context: ShootingSelectionRulesContext): boolean {
+  if (rules.metadata.edition !== '11e' || unit.movementAction === 'advanced') return false;
+  if (!context.inEngagement(unit, context.enemies(state, unit.side), rules.engagementRange())) return false;
+  return unitCanUseBigGunsNeverTire(unit, context) || unit.profile.weapons.some((weapon: WeaponProfile) => weaponIsCloseQuarters(weapon, context));
+}
+
+export function eligibleShootingWeapons(
+  unit: BattleUnit,
+  state: BattleState,
+  rules: RulesEdition,
+  context: ShootingSelectionRulesContext,
+  allowActivated = false,
+): WeaponProfile[] {
+  if (unit.destroyed || unit.embarkedInUnitId || (!allowActivated && unit.activated) || state.firingDeckLockedUnitIds?.includes(unit.id)) return [];
+  if (unit.performingAction && !unitCanUseBigGunsNeverTire(unit, context)) return [];
+  if (unit.fellBack || unit.movementAction === 'fellBack') return [];
+  const firedSet = new Set(unit.firedWeaponIndices ?? []);
+  const oneShotSpentSet = new Set(unit.oneShotSpentWeaponIndices ?? []);
+  const firedProfileGroups = new Set(
+    unit.profile.weapons
+      .filter((_weapon: WeaponProfile, weaponIndex: number) => firedSet.has(weaponIndex))
+      .map((weapon: WeaponProfile) => context.weaponProfileGroup(weapon))
+      .filter((group: string | null): group is string => !!group),
+  );
+  const firedSidearm = unit.profile.weapons.some((weapon: WeaponProfile, weaponIndex: number) =>
+    firedSet.has(weaponIndex) && context.weaponIsSidearm(weapon));
+  const firedNonSidearm = unit.profile.weapons.some((weapon: WeaponProfile, weaponIndex: number) =>
+    firedSet.has(weaponIndex) && !weapon.isMelee && weapon.range > 0 && !context.weaponIsSidearm(weapon));
+  const foes = context.enemies(state, unit.side);
+  const engaged = context.inEngagement(unit, foes, rules.engagementRange());
+  const bigGunsNeverTire = engaged && unitCanUseBigGunsNeverTire(unit, context);
+  const advanced = unit.movementAction === 'advanced';
+  const closeQuartersShooting = unitCanUseCloseQuartersShooting(unit, state, rules, context);
+  const nonMonsterVehicle = rules.metadata.edition === '11e' && !unitCanUseBigGunsNeverTire(unit, context);
+  return unit.profile.weapons.filter((weapon: WeaponProfile, weaponIndex: number) =>
+    !weapon.isMelee
+    && weapon.range > 0
+    && !firedSet.has(weaponIndex)
+    && !(context.weaponHasKeyword(weapon, 'One Shot') && oneShotSpentSet.has(weaponIndex))
+    && !firedProfileGroups.has(context.weaponProfileGroup(weapon) ?? '')
+    && (!advanced || context.weaponHasKeyword(weapon, 'Assault'))
+    && (!engaged
+      || bigGunsNeverTire
+      || (closeQuartersShooting && weaponIsCloseQuarters(weapon, context))
+      || (!nonMonsterVehicle && context.weaponIsSidearm(weapon))),
+  ).filter((weapon: WeaponProfile) =>
+    (!firedSidearm || context.weaponIsSidearm(weapon))
+    && (!firedNonSidearm || !context.weaponIsSidearm(weapon)),
+  );
+}
+
+export function unitCanBeSelectedToShootWithoutAttacks(unit: BattleUnit, state: BattleState, rules: RulesEdition, context: ShootingSelectionRulesContext): boolean {
+  if (unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves || unit.activated) return false;
+  if (unit.performingAction && !unitCanUseBigGunsNeverTire(unit, context)) return false;
+  if (unit.fellBack || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return false;
+  const engaged = context.inEngagement(unit, context.enemies(state, unit.side), rules.engagementRange());
+  return !engaged || unitCanUseBigGunsNeverTire(unit, context);
+}
+
 export function fixedWeaponAttackCount(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number, context: ManualShootingSelectionContext): number | null {
   const attacks = Number(String(weapon.attacks).trim());
   if (!Number.isInteger(attacks) || attacks < 0) return null;
