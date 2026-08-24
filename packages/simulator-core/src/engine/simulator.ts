@@ -114,6 +114,7 @@ import * as aircraftMovement from './aircraftMovement';
 import * as movementLegality from './movementLegality';
 import * as scoutMoves from './scoutMoves';
 import * as takeToSkies from './takeToSkies';
+import * as surgeMoves from './surgeMoves';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -4929,108 +4930,52 @@ export const startPlayScoutMove = (state: BattleState, unitId: string, side: Sid
 export const completePlayScoutMove = (state: BattleState, unitId: string, side: Side): BattleState =>
   scoutMoves.complete(state, unitId, side, scoutMoveContext);
 
-export function playSurgeTargetUnitIds(
-  state: BattleState,
-  unitId: string,
-  side: Side,
-): string[] {
-  const pending = state.pendingSurgeMove;
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!pending || pending.unitId !== unitId || pending.side !== side || !unit) return [];
-  const candidates = enemies(state, side).filter(candidate =>
-    !candidate.destroyed
-    && !candidate.embarkedInUnitId
-    && (!isAircraft(candidate) || attachedUnitKeywordSet(state, unit).has('fly'))
-  );
-  if (!candidates.length) return [];
-  const distances = candidates.map(candidate => ({ candidate, distance: battleUnitToAttachedUnitDistance(state, unit, candidate) }));
-  const closest = Math.min(...distances.map(entry => entry.distance));
-  return distances.filter(entry => entry.distance <= closest + 0.001).map(entry => entry.candidate.id);
+function moveSurgeComponentTowardTarget(
+  state: BattleState, component: BattleUnit, target: BattleUnit, maximumDistance: number, rules: RulesEdition,
+): void {
+  const distance = dist(component.position, target.position);
+  const direction = distance > 0.001
+    ? { x: (target.position.x - component.position.x) / distance, y: (target.position.y - component.position.y) / distance }
+    : { x: 1, y: 0 };
+  const stopGap = rules.engagementRange()
+    + formationExtent(component.modelPositions, component.position, direction)
+    + formationExtent(target.modelPositions, target.position, { x: -direction.x, y: -direction.y }) + 0.02;
+  const reachable = findReachablePosition(component, target.position, maximumDistance, state.terrain, stopGap);
+  const candidate = avoidModelOverlap(component, reachable, state);
+  translateFormation(component, candidate.x - component.position.x, candidate.y - component.position.y);
+  resolveInternalModelOverlaps(component);
+  component.position = centroid(component.modelPositions);
 }
 
-export function grantPlaySurgeMove(
-  state: BattleState,
-  unitId: string,
-  side: Side,
-  maximumDistance: number,
-  source: string,
+const surgeMoveContext: surgeMoves.SurgeMoveContext = {
+  clone,
+  getUnit: (state, unitId, side) => state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId),
+  enemies,
+  attachedComponents: attachedUnitComponents,
+  attachedUnitId,
+  attachedUnitHasFly: (state, unit) => attachedUnitKeywordSet(state, unit).has('fly'),
+  isAircraft,
+  unitDistance: battleUnitToAttachedUnitDistance,
+  unitMovedThisPhase,
+  unitHasStartedCurrentMove,
+  inEngagement,
+  moveTowardTarget: moveSurgeComponentTowardTarget,
+  unitHasCollision: (state, unit) => unitHasBaseOverlap(state, unit) || unitHasWallOverlap(state, unit),
+  battleHasCoherencyIssues: (state, side) => battleCoherencyIssues(state, side).length > 0,
+  cancelUnitAction,
+  createLog: (state, side, actor, message) => { state.log = [...state.log, log(state, side, actor, message, 'move')]; },
+};
+
+export const playSurgeTargetUnitIds = (state: BattleState, unitId: string, side: Side): string[] =>
+  surgeMoves.targetUnitIds(state, unitId, side, surgeMoveContext);
+export const grantPlaySurgeMove = (
+  state: BattleState, unitId: string, side: Side, maximumDistance: number, source: string,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
-): BattleState {
-  if (rules.metadata.edition !== '11e'
-    || state.pendingSurgeMove
-    || !Number.isFinite(maximumDistance)
-    || maximumDistance <= 0
-    || !source.trim()) return state;
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit) return state;
-  const components = attachedUnitComponents(state, unit);
-  if (components.some(component =>
-    component.battleshocked
-    || unitMovedThisPhase(state, component)
-    || unitHasStartedCurrentMove(component)
-  )) return state;
-  if (components.some(component => inEngagement(component, enemies(state, side), rules.engagementRange()))) return state;
-  const s = clone(state);
-  s.pendingSurgeMove = { unitId, side, maximumDistance, source: source.trim(), triggeredPhase: state.phase };
-  s.log = [...s.log, log(s, side, unit.profile.name,
-    `${source.trim()} triggers a Surge Move of up to ${maximumDistance}" for ${unit.profile.name}.`, 'move')];
-  return s;
-}
-
-export function resolvePlaySurgeMove(
-  state: BattleState,
-  unitId: string,
-  side: Side,
-  targetUnitId: string,
+): BattleState => surgeMoves.grant(state, unitId, side, maximumDistance, source, rules, surgeMoveContext);
+export const resolvePlaySurgeMove = (
+  state: BattleState, unitId: string, side: Side, targetUnitId: string,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
-): BattleState {
-  const pending = state.pendingSurgeMove;
-  if (rules.metadata.edition !== '11e'
-    || !pending
-    || pending.unitId !== unitId
-    || pending.side !== side
-    || pending.triggeredPhase !== state.phase
-    || !playSurgeTargetUnitIds(state, unitId, side).includes(targetUnitId)) return state;
-  const s = clone(state);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  const target = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || !target) return state;
-
-  const components = attachedUnitComponents(s, unit);
-  for (const component of components) {
-    const distance = dist(component.position, target.position);
-    const direction = distance > 0.001
-      ? { x: (target.position.x - component.position.x) / distance, y: (target.position.y - component.position.y) / distance }
-      : { x: 1, y: 0 };
-    const myExtent = formationExtent(component.modelPositions, component.position, direction);
-    const targetExtent = formationExtent(target.modelPositions, target.position, { x: -direction.x, y: -direction.y });
-    const stopGap = rules.engagementRange() + myExtent + targetExtent + 0.02;
-    const reachable = findReachablePosition(component, target.position, pending.maximumDistance, s.terrain, stopGap);
-    const candidate = avoidModelOverlap(component, reachable, s);
-    translateFormation(component, candidate.x - component.position.x, candidate.y - component.position.y);
-    resolveInternalModelOverlaps(component);
-    component.position = centroid(component.modelPositions);
-  }
-  if (components.some(component => unitHasBaseOverlap(s, component) || unitHasWallOverlap(s, component))) return state;
-  const otherEnemies = enemies(s, side).filter(enemy => attachedUnitId(enemy) !== attachedUnitId(target));
-  if (components.some(component => inEngagement(component, otherEnemies, rules.engagementRange()))) return state;
-  if (battleCoherencyIssues(s, side).length) return state;
-
-  for (const component of components) {
-    cancelUnitAction(s, component, 'it made a Surge Move');
-    component.lastMovePhase = s.phase;
-    component.lastMoveTurn = s.turn;
-    component.surgeMovePhase = s.phase;
-    component.surgeMoveTurn = s.turn;
-    component.movementComplete = s.phase === 'movement' ? true : component.movementComplete;
-    component.inCombat = inEngagement(component, [target], rules.engagementRange());
-  }
-  target.inCombat = inEngagement(target, components, rules.engagementRange());
-  s.pendingSurgeMove = undefined;
-  s.log = [...s.log, log(s, side, unit.profile.name,
-    `${unit.profile.name} makes a Surge Move toward ${target.profile.name}.`, 'move')];
-  return s;
-}
+): BattleState => surgeMoves.resolve(state, unitId, side, targetUnitId, rules, surgeMoveContext);
 
 const interactiveMovementStateContext: interactiveMovementState.InteractiveMovementStateContext = {
   modelRotation,
