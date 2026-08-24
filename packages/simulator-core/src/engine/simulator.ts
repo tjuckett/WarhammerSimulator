@@ -112,6 +112,7 @@ import * as firingDeck from './firingDeck';
 import * as movementPathing from './movementPathing';
 import * as aircraftMovement from './aircraftMovement';
 import * as movementLegality from './movementLegality';
+import * as scoutMoves from './scoutMoves';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
 
 // ─── ID generators ────────────────────────────────────────────────────────────
@@ -4909,85 +4910,40 @@ export function declarePlayUnitTakeToSkies(
   return s;
 }
 
-function scoutsValue(profile: UnitProfile): number | null {
-  const texts = [
-    ...(profile.abilities ?? []).flatMap(rule => [rule.name, rule.description]),
-    ...(profile.rules ?? []).flatMap(rule => [rule.name, rule.description]),
-  ];
-  for (const text of texts) {
-    const match = text.match(/\bScouts?\s+(\d+)\s*["”]?/i);
-    if (match) return Number(match[1]);
-  }
-  return null;
-}
-
-export function playScoutMoveAllowance(state: BattleState, unitId: string, side: Side): number | null {
-  if (state.ruleset.edition !== '11e' || state.phase !== 'setup' || state.preBattleAbilitiesResolved) return null;
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || unit.inStrategicReserves || unit.scoutMoved || unit.scoutMoveStarted) return null;
-  const components = attachedUnitComponents(state, unit);
-  const values = components.map(component => scoutsValue(component.profile));
-  if (values.some(value => value === null)) return null;
-  const board = boardFormatForState(state);
-  const zone = zoneFor(side, setupDeploymentZoneSource(state.setup), board);
-  if (components.some(component => component.modelPositions.some((position, modelIndex) =>
-    !pointInDeploymentZone(position, zone, modelBaseRadius(component, modelIndex)),
-  ))) return null;
-  return Math.min(...values as number[]);
-}
-
-export function startPlayScoutMove(state: BattleState, unitId: string, side: Side): BattleState {
-  const allowance = playScoutMoveAllowance(state, unitId, side);
-  if (allowance === null) return state;
-  const s = clone(state);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
-  for (const component of attachedUnitComponents(s, unit)) {
-    component.scoutMoveStarted = true;
-    component.scoutMoveAllowance = allowance;
-    component.movementStartPositionsByModel = component.modelPositions.map(position => ({ ...position }));
-    component.movementStartRotationsByModel = component.modelPositions.map((_, modelIndex) => modelRotation(component, modelIndex));
-    component.movementAllowanceTotalByModel = component.modelPositions.map(() => allowance);
-    component.movementAllowanceRemainingByModel = component.modelPositions.map(() => allowance);
-    component.movementAllowanceRemaining = allowance;
-  }
-  s.log = [...s.log, log(s, side, unit.profile.name, `${unit.profile.name} begins a Scouts ${allowance}" Normal move.`, 'move')];
-  return s;
-}
-
-export function completePlayScoutMove(state: BattleState, unitId: string, side: Side): BattleState {
-  if (state.phase !== 'setup' || state.preBattleAbilitiesResolved) return state;
-  const existing = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!existing || !existing.scoutMoveStarted) return state;
-  const components = attachedUnitComponents(state, existing);
-  const enemyUnits = state.units.filter(candidate => candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId && !candidate.inStrategicReserves);
-  const tooClose = components.some(component => component.modelPositions.some((position, modelIndex) =>
-    enemyUnits.some(enemy => enemy.modelPositions.some((enemyPosition, enemyModelIndex) =>
-      baseFootprintDistance(position, modelFootprint(component, modelIndex), enemyPosition, modelFootprint(enemy, enemyModelIndex)) <= 8,
-    )),
-  ));
-  if (tooClose || components.some(component => {
+const scoutMoveContext: scoutMoves.ScoutMoveContext = {
+  clone,
+  attachedComponents: attachedUnitComponents,
+  componentsAreWithinDeploymentZone: (state, components, side) => {
+    const zone = zoneFor(side, setupDeploymentZoneSource(state.setup), boardFormatForState(state));
+    return components.every(component => component.modelPositions.every((position, modelIndex) =>
+      pointInDeploymentZone(position, zone, modelBaseRadius(component, modelIndex)),
+    ));
+  },
+  componentsAreTooCloseToEnemy: (state, components, side) => {
+    const enemyUnits = state.units.filter(candidate => candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId && !candidate.inStrategicReserves);
+    return components.some(component => component.modelPositions.some((position, modelIndex) =>
+      enemyUnits.some(enemy => enemy.modelPositions.some((enemyPosition, enemyModelIndex) =>
+        baseFootprintDistance(position, modelFootprint(component, modelIndex), enemyPosition, modelFootprint(enemy, enemyModelIndex)) <= 8,
+      )),
+    ));
+  },
+  componentsHaveMoveCollision: (state, components) => components.some(component => {
     const moving = new Set(component.modelPositions.map((_, index) => index));
     return !playMoveHasNoBaseOverlap(state, component, moving) || !playMoveHasNoWallOverlap(state, component, moving);
-  })) return state;
-  for (const list of coherencyModelLists(state)) {
-    if (list.models.some(model => components.some(component => component.id === model.unit.id)) && !modelListIsCoherent(list.models, coherencyEditionForState(state))) return state;
-  }
-  const s = clone(state);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
-  for (const component of attachedUnitComponents(s, unit)) {
-    component.scoutMoveStarted = undefined;
-    component.scoutMoveAllowance = undefined;
-    component.scoutMoved = true;
-    component.movementAllowanceRemaining = undefined;
-    component.movementAllowanceRemainingByModel = undefined;
-    component.movementAllowanceTotalByModel = undefined;
-    component.movementStartPositionsByModel = undefined;
-    component.movementStartRotationsByModel = undefined;
-    component.movementPathByModel = undefined;
-  }
-  s.log = [...s.log, log(s, side, unit.profile.name, `${unit.profile.name} completes its Scouts move.`, 'move')];
-  return s;
-}
+  }),
+  componentsAreCoherent: (state, components) => coherencyModelLists(state)
+    .filter(list => list.models.some(model => components.some(component => component.id === model.unit.id)))
+    .every(list => modelListIsCoherent(list.models, coherencyEditionForState(state))),
+  modelRotation,
+  createLog: (state, side, actor, message) => { state.log = [...state.log, log(state, side, actor, message, 'move')]; },
+};
+
+export const playScoutMoveAllowance = (state: BattleState, unitId: string, side: Side): number | null =>
+  scoutMoves.allowance(state, unitId, side, scoutMoveContext);
+export const startPlayScoutMove = (state: BattleState, unitId: string, side: Side): BattleState =>
+  scoutMoves.start(state, unitId, side, scoutMoveContext);
+export const completePlayScoutMove = (state: BattleState, unitId: string, side: Side): BattleState =>
+  scoutMoves.complete(state, unitId, side, scoutMoveContext);
 
 export function playSurgeTargetUnitIds(
   state: BattleState,
