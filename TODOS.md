@@ -473,9 +473,9 @@ engine modules.
 - [ ] **Next — extract interactive model-edit operations as one workflow:**
   horizontal/vertical movement, undo, rotation, casualty model removal, and
   movement completion. Its commands must record through the unified timeline.
-- [ ] Extract deployment and transport-placement workflows from battle creation, initial placement, embark, and disembark APIs.
-- [ ] Extract remaining mission-action start/completion orchestration around the existing mission option module.
-- [ ] Extract simulation phase/unit orchestration into a dedicated facade module.
+- [x] Extract deployment and transport-placement workflows from battle creation, initial placement, embark, and disembark APIs.
+- [x] Extract remaining mission-action start/completion orchestration around the existing mission option module.
+- [x] Extract simulation phase/unit orchestration into a dedicated facade module.
 - [ ] Audit the remaining simulator facade for cohesive rule boundaries, remove dead adapters, and ensure public API compatibility.
 - [ ] For every batch: run `npm test`, root `npm run build`, then make a focused commit.
 
