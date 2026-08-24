@@ -694,10 +694,13 @@ export type MeleeAttackAllocation = { weaponIndex: number; targetUnitId: string;
 
 export interface ManualFightResolutionContext extends FightPhaseContext {
   clone(state: BattleState): BattleState;
+  unitCanFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean;
+  aliveWeaponModelCount(unit: BattleUnit, weaponIndex: number): number;
   selectMeleeWeapons(unit: BattleUnit, options: Array<{ weapon: WeaponProfile; weaponIndex: number }>, requested: number | 'all'): Array<{ weapon: WeaponProfile; weaponIndex: number }>;
   chooseOneProfilePerGroup(options: Array<{ weapon: WeaponProfile; weaponIndex: number }>): Array<{ weapon: WeaponProfile; weaponIndex: number }>;
   fixedWeaponAttackCount(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number): number | null;
   resolveCombatAttacks(...args: any[]): LogEntry[];
+  resolveHazardousTests(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number, state: BattleState): LogEntry[];
   resolvePendingDeadlyDemisesInPlace(state: BattleState): LogEntry[];
   finishAttachedFightComponent(state: BattleState, unit: BattleUnit, rules: RulesEdition): void;
   log(state: BattleState, side: Side, source: string, message: string, kind: string): LogEntry;
@@ -750,6 +753,80 @@ export function fightPlayUnitWeapons(
     }
   }
   if (!logs.length) return state;
+  fightingUnit.activated = true;
+  context.finishAttachedFightComponent(next, fightingUnit, rules);
+  next.log = [...next.log, ...logs];
+  if (next.pendingDeadlyDemises?.length) next.log = [...next.log, ...context.resolvePendingDeadlyDemisesInPlace(next)];
+  return next;
+}
+
+export type MeleeAttackSplit = { targetUnitId: string; attacks: number };
+
+export function fightPlayUnitWeapon(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  targetUnitId: string,
+  weaponIndex: number | 'all',
+  rules: RulesEdition,
+  context: ManualFightResolutionContext & {
+    resolveHazardousTests(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number, state: BattleState): LogEntry[];
+  },
+  targetSplits?: MeleeAttackSplit[],
+): BattleState {
+  if (!sideCanSelectFightUnit(state, side, rules, context)) return state;
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const target = state.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const splitTargetIds = targetSplits?.map(split => split.targetUnitId) ?? [];
+  const splitTargets = splitTargetIds.map(splitTargetId => state.units.find(candidate => candidate.id === splitTargetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId));
+  if (!unit || !target || !context.unitCanFight(unit, state, rules) || !playFightActivationUnitIds(state, side, rules, context).includes(unit.id)) return state;
+  if (!context.canFightTarget(unit, target) || !context.inEngagement(unit, [target], rules.engagementRange())) return state;
+  if (targetSplits?.length && splitTargets.some(splitTarget => !splitTarget || !context.canFightTarget(unit, splitTarget) || !context.inEngagement(unit, [splitTarget], rules.engagementRange()))) return state;
+  const next = context.clone(state);
+  const fightingUnit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const fightTarget = next.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!fightingUnit || !fightTarget) return state;
+  if (weaponIndex === -1 || (weaponIndex === 'all' && !fightingUnit.profile.weapons.some(weapon => weapon.isMelee))) {
+    if (fightingUnit.profile.weapons.some(weapon => weapon.isMelee)) return state;
+    fightingUnit.activated = true;
+    context.finishAttachedFightComponent(next, fightingUnit, rules);
+    next.log = [...next.log, context.log(next, side, fightingUnit.profile.name, `${fightingUnit.profile.name} is selected to fight ${fightTarget.profile.name} but has no melee weapons, so it makes no attacks.`, 'fight')];
+    return next;
+  }
+  const meleeWeapons = fightingUnit.profile.weapons.map((weapon, index) => ({ weapon, weaponIndex: index })).filter(option => option.weapon.isMelee);
+  const selectedMeleeWeapons = rules.metadata.edition === '11e'
+    ? context.selectMeleeWeapons(fightingUnit, meleeWeapons, weaponIndex)
+    : weaponIndex === 'all' ? context.chooseOneProfilePerGroup(meleeWeapons) : meleeWeapons.filter(option => option.weaponIndex === weaponIndex);
+  if (!selectedMeleeWeapons.length || (targetSplits?.length && (weaponIndex === 'all' || selectedMeleeWeapons.length !== 1))) return state;
+  const logs: LogEntry[] = [context.log(next, side, fightingUnit.profile.name, fightingUnit.overrunFightSelected
+    ? `${fightingUnit.profile.name} makes an Overrun Fight against ${fightTarget.profile.name}:`
+    : `${fightingUnit.profile.name} fights ${fightTarget.profile.name}:`, 'fight')];
+  let madeAttacks = false;
+  if (targetSplits?.length) {
+    const option = selectedMeleeWeapons[0];
+    const maxTargets = Number.parseInt(String(option.weapon.attacks), 10);
+    const maxAttacks = maxTargets * context.aliveWeaponModelCount(fightingUnit, option.weaponIndex);
+    const declaredAttacks = targetSplits.reduce((total, split) => total + split.attacks, 0);
+    if (!Number.isFinite(maxTargets) || targetSplits.some(split => split.attacks < 1 || !Number.isInteger(split.attacks))
+      || new Set(targetSplits.map(split => split.targetUnitId)).size !== targetSplits.length || declaredAttacks !== maxAttacks) return state;
+    for (const split of targetSplits) {
+      const splitTarget = next.units.find(candidate => candidate.id === split.targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
+      if (!splitTarget || !context.canFightTarget(fightingUnit, splitTarget) || !context.inEngagement(fightingUnit, [splitTarget], rules.engagementRange())) continue;
+      const attackLogs = context.resolveCombatAttacks(fightingUnit, splitTarget, option.weapon, option.weaponIndex, rules, next, false, 0, '', { deferCasualties: true, attackCountOverride: split.attacks, selectedTargetCount: targetSplits.length });
+      logs.push(...attackLogs); madeAttacks = madeAttacks || attackLogs.length > 0;
+      if (fightingUnit.destroyed) break;
+    }
+    if (madeAttacks) logs.push(...context.resolveHazardousTests(fightingUnit, option.weapon, option.weaponIndex, next));
+  } else {
+    for (const option of selectedMeleeWeapons) {
+      const attackLogs = context.resolveCombatAttacks(fightingUnit, fightTarget, option.weapon, option.weaponIndex, rules, next, false, 0, '', { deferCasualties: true });
+      logs.push(...attackLogs);
+      if (attackLogs.length > 0) logs.push(...context.resolveHazardousTests(fightingUnit, option.weapon, option.weaponIndex, next));
+      madeAttacks = madeAttacks || attackLogs.length > 0;
+      if (fightingUnit.destroyed || fightTarget.destroyed) break;
+    }
+  }
+  if (!madeAttacks) return state;
   fightingUnit.activated = true;
   context.finishAttachedFightComponent(next, fightingUnit, rules);
   next.log = [...next.log, ...logs];
