@@ -715,6 +715,34 @@ export function playChargeRoll(
   return next;
 }
 
+export function completePlayChargeMovement(
+  state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: ManualChargeRollContext,
+): BattleState {
+  const { enemies, attachedUnitComponents, inEngagement, clone, log } = context;
+  const pending = state.pendingChargeMovement;
+  if (state.phase !== 'charge' || !pending || pending.unitId !== unitId || pending.side !== side) return state;
+  const unit = state.units.find((candidate: BattleUnit) => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const targets = pending.targetUnitIds.map((targetId: string) => state.units.find((candidate: BattleUnit) =>
+    candidate.id === targetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId)).filter(Boolean);
+  if (!unit || targets.length !== pending.targetUnitIds.length || !targets.length
+    || targets.some((target: BattleUnit) => !inEngagement(unit, [target], rules.engagementRange()))) return state;
+  const declaredTargetIds = new Set(targets.flatMap((target: BattleUnit) => attachedUnitComponents(state, target).map((component: BattleUnit) => component.id)));
+  if (enemies(state, side).some((enemy: BattleUnit) => !declaredTargetIds.has(enemy.id) && inEngagement(unit, [enemy], rules.engagementRange()))) return state;
+  const next = clone(state);
+  const movedUnit = next.units.find((candidate: BattleUnit) => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
+  for (const component of attachedUnitComponents(next, movedUnit)) {
+    component.activated = true; component.charged = state.activeArmy === side; component.inCombat = true; component.movementComplete = true;
+    component.lastMovePhase = next.phase; component.lastMoveTurn = next.turn; component.movementAllowanceRemaining = 0;
+    component.movementAllowanceRemainingByModel = component.modelPositions.map(() => 0);
+    component.heroicInterventionThisPhase = undefined; component.heroicInterventionMode = undefined;
+  }
+  for (const target of targets) target.inCombat = true;
+  next.pendingChargeMovement = undefined;
+  next.log = [...next.log, log(next, side, movedUnit.profile.name,
+    `${movedUnit.profile.name} completes its charge against ${targets.map((target: BattleUnit) => target.profile.name).join(', ')}.`, 'charge')];
+  return next;
+}
+
 export type ChargeTargetOption = { targetId: string; needed: number };
 
 export function chargeNeededDistance(unit: BattleUnit, target: BattleUnit, rules: RulesEdition, context: ChargeRulesContext): number {

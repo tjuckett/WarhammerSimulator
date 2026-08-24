@@ -1778,6 +1778,8 @@ const manualChargeRollContext: manualCombat.ManualChargeRollContext = {
   BATTLE_EVENT_TYPE,
   log,
   playChargeTargetOptions,
+  enemies,
+  inEngagement,
 };
 
 export function playChargeRoll(
@@ -2004,37 +2006,7 @@ export function completePlayChargeMovement(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
-  const pending = state.pendingChargeMovement;
-  if (state.phase !== 'charge' || !pending || pending.unitId !== unitId || pending.side !== side) return state;
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  const targets = pending.targetUnitIds
-    .map(targetId => state.units.find(candidate => candidate.id === targetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId))
-    .filter((target): target is BattleUnit => !!target);
-  if (!unit || targets.length !== pending.targetUnitIds.length || !targets.length) return state;
-  if (targets.some(target => !inEngagement(unit, [target], rules.engagementRange()))) return state;
-  const declaredTargetIds = new Set(targets.flatMap(target => attachedUnitComponents(state, target).map(component => component.id)));
-  if (enemies(state, side).some(enemy => !declaredTargetIds.has(enemy.id) && inEngagement(unit, [enemy], rules.engagementRange()))) return state;
-
-  const s = clone(state);
-  const movedUnit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
-  for (const component of attachedUnitComponents(s, movedUnit)) {
-    component.activated = true;
-    component.charged = state.activeArmy === side;
-    component.inCombat = true;
-    component.movementComplete = true;
-    component.lastMovePhase = s.phase;
-    component.lastMoveTurn = s.turn;
-    component.movementAllowanceRemaining = 0;
-    component.movementAllowanceRemainingByModel = component.modelPositions.map(() => 0);
-    component.heroicInterventionThisPhase = undefined;
-    component.heroicInterventionMode = undefined;
-  }
-  for (const target of targets) target.inCombat = true;
-  s.pendingChargeMovement = undefined;
-  s.log = [...s.log, log(s, side, movedUnit.profile.name,
-    `${movedUnit.profile.name} completes its charge against ${targets.map(target => target.profile.name).join(', ')}.`,
-    'charge')];
-  return s;
+  return manualCombat.completePlayChargeMovement(state, unitId, side, rules, manualChargeRollContext);
 }
 
 export type PlayFightWeaponOption = {
