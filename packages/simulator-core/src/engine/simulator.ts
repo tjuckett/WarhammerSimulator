@@ -106,6 +106,7 @@ import {
   strategicReserveUnitHasCloseQuartersIngress,
   type StrategicReservePlacementContext,
 } from './reinforcements';
+import * as reinforcementPlay from './reinforcements';
 import * as turnAdvance from './turnAdvance';
 import * as firingDeck from './firingDeck';
 import * as movementPathing from './movementPathing';
@@ -3274,90 +3275,11 @@ export function placePlayUnit(state: BattleState, side: Side, unitIndex: number,
 }
 
 export function placePlayReinforcement(state: BattleState, side: Side, armyUnitIndex: number, position: Position): BattleState {
-  if (state.phase !== 'movement' || movementStep(state) !== 'reinforcements' || state.activeArmy !== side) return state;
-  const profile = state.armies[side].army.units[armyUnitIndex];
-  if (!profile || !unitIsStagedReinforcement(profile)) return state;
-  if (profile.deployment?.mode === UNIT_DEPLOYMENT_MODE.StrategicReserve && battleRound(state) === 1) return state;
-  if (profile.deployment?.mode === UNIT_DEPLOYMENT_MODE.DeepStrike && !profileDropHasDeepStrike(state, side, profile)) return state;
-
-  const profileKey = unitRosterId(profile);
-  if (state.units.some(unit => unit.side === side && !unit.destroyed && unitRosterId(unit.profile) === profileKey)) return state;
-
-  const modelPositions = interactiveMovementState.gridFormation(profile, position, side);
-  if (!reinforcementPlacementIsOutsideEnemyRange(state, side, profile, modelPositions)) return state;
-
-  const s = clone(state);
-  const board = boardFormatForState(s);
-  const unit = makeBattleUnit(profile, side, modelPositions);
-  markUnitArrivedFromReinforcements(unit);
-  interactiveMovementState.resolveInternalModelOverlaps(unit, undefined, board);
-  s.units.push(unit);
-
-  const movingIndices = new Set(unit.modelPositions.map((_, modelIndex) => modelIndex));
-  if (
-    !playMoveHasNoBaseOverlap(s, unit, movingIndices)
-    || !playMoveHasNoWallOverlap(s, unit, movingIndices)
-    || (s.ruleset.edition === '11e'
-      && profile.deployment?.mode === UNIT_DEPLOYMENT_MODE.StrategicReserve
-      && !strategicReserveUnitHasCloseQuartersIngress(s, side, profile)
-      && (!reinforcementPlacementIsWithinStrategicReserveEdge(unit, s)
-        || !strategicReservePlacementIsOutsideOpponentDeploymentZone(unit, s)))
-  ) return state;
-
-  s.log = [...s.log, log(
-    s,
-    side,
-    profile.name,
-    `${s.armies[side].name} sets up ${profile.name} as Reinforcements more than ${rulesEditionForRuleset(s.ruleset).reinforcementRange()}" horizontally from enemy units.`,
-    'move',
-  )];
-  return s;
+  return reinforcementPlay.placePlayReinforcement(state, side, armyUnitIndex, position, reinforcementPlayContext);
 }
 
 export function placePlayStrategicReserveUnit(state: BattleState, side: Side, unitId: string, position: Position): BattleState {
-  if (state.phase !== 'movement' || movementStep(state) !== 'reinforcements') return state;
-  const existing = state.units.find(unit =>
-    unit.id === unitId
-    && unit.side === side
-    && !unit.destroyed
-    && unit.inStrategicReserves
-    && (
-      (state.activeArmy === side && (isAircraft(unit) || unit.deepStrikeUntilPhase === state.phase))
-      || (state.activeArmy !== side && unit.rapidIngressThisPhase)
-    )
-  );
-  if (!existing) return state;
-
-  const s = clone(state);
-  const board = boardFormatForState(s);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed)!;
-  if (battleRound(s) === 1 && unit.deepStrikeUntilPhase !== state.phase) return state;
-  unit.modelPositions = interactiveMovementState.gridFormation(unit.profile, position, side).slice(0, unit.remainingModels);
-  unit.modelRotations = unit.modelPositions.map(() => side === 0 ? 0 : 180);
-  unit.facingDeg = side === 0 ? 0 : 180;
-  unit.position = centroid(unit.modelPositions);
-  unit.inStrategicReserves = false;
-  unit.rapidIngressThisPhase = undefined;
-  markUnitArrivedFromReinforcements(unit);
-  interactiveMovementState.resolveInternalModelOverlaps(unit, undefined, board);
-
-  const movingIndices = new Set(unit.modelPositions.map((_, modelIndex) => modelIndex));
-  if (
-    !reinforcementPlacementIsOutsideEnemyRange(s, side, unit.profile, unit.modelPositions)
-    || (unit.deepStrikeUntilPhase !== state.phase && !reinforcementPlacementIsWithinStrategicReserveEdge(unit, s))
-    || (unit.deepStrikeUntilPhase !== state.phase && !strategicReservePlacementIsOutsideOpponentDeploymentZone(unit, s))
-    || !playMoveHasNoBaseOverlap(s, unit, movingIndices)
-    || !playMoveHasNoWallOverlap(s, unit, movingIndices)
-  ) return state;
-
-  s.log = [...s.log, log(
-    s,
-    side,
-    unit.profile.name,
-    `${s.armies[side].name} returns ${unit.profile.name} from Strategic Reserves more than ${rulesEditionForRuleset(s.ruleset).reinforcementRange()}" horizontally from enemy units${state.activeArmy !== side ? ' using Rapid Ingress' : ''}.`,
-    'move',
-  )];
-  return s;
+  return reinforcementPlay.placePlayStrategicReserveUnit(state, side, unitId, position, reinforcementPlayContext);
 }
 
 export function playUnitCanEmbark(
@@ -3910,6 +3832,21 @@ const strategicReservePlacementContext: StrategicReservePlacementContext = {
 };
 const strategicReservePlacementIsOutsideOpponentDeploymentZone = (unit: BattleUnit, state: BattleState): boolean =>
   isStrategicReservePlacementOutsideOpponentDeploymentZone(state, unit, strategicReservePlacementContext);
+
+const reinforcementPlayContext: reinforcementPlay.PlayReinforcementContext = {
+  movementStep,
+  clone,
+  makeBattleUnit,
+  gridFormation: interactiveMovementState.gridFormation,
+  resolveInternalModelOverlaps: (unit, board) => interactiveMovementState.resolveInternalModelOverlaps(unit, undefined, board),
+  hasNoBaseOverlap: playMoveHasNoBaseOverlap,
+  hasNoWallOverlap: playMoveHasNoWallOverlap,
+  isAircraft,
+  centroid,
+  battleRound,
+  modelIsInOpponentDeploymentZone: strategicReservePlacementContext.modelIsInOpponentDeploymentZone,
+  log,
+};
 
 export function selectPlayFiringDeckWeapons(
   state: BattleState,
