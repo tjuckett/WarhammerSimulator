@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import type { LogEntry } from '@warhammer-simulator/core/types/battle';
 import type { PlayModelSelection } from '../components/Battlefield';
 
 export const PLAY_DEPLOY_SELECTION_KIND = {
@@ -32,7 +31,7 @@ export function usePlayUiState() {
   const [selectedStratagemId, setSelectedStratagemId] = useState('');
   const [selectedAbilityKey, setSelectedAbilityKey] = useState('');
   const [casualtyRemovalShooterId, setCasualtyRemovalShooterId] = useState<string | null>(null);
-  const [shootingResultEntries, setShootingResultEntries] = useState<LogEntry[]>([]);
+  const [shootingResolutionStatus, setShootingResolutionStatus] = useState<'idle' | 'rolled'>('idle');
   const [targetErrorMsg, setTargetErrorMsg] = useState<string | null>(null);
   const [inspectedSelection, setInspectedSelection] = useState<InspectedSelection | null>(null);
   const lastShooterIdRef = useRef<string | null>(null);
@@ -81,8 +80,8 @@ export function usePlayUiState() {
       setSelectedAbilityKey,
     },
     feedback: {
-      shootingResultEntries,
-      setShootingResultEntries,
+      shootingResolutionStatus,
+      setShootingResolutionStatus,
       targetErrorMsg,
       setTargetErrorMsg,
     },

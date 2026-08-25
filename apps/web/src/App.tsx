@@ -306,8 +306,8 @@ export default function App() {
       setSelectedAbilityKey,
     },
     feedback: {
-      shootingResultEntries,
-      setShootingResultEntries,
+      shootingResolutionStatus,
+      setShootingResolutionStatus,
       targetErrorMsg,
       setTargetErrorMsg,
     },
@@ -1551,7 +1551,7 @@ export default function App() {
       if (side === battleState.activeArmy) {
         setInspectedSelection({ kind: 'battle', side, unitId });
         setCasualtyRemovalShooterId(null);
-        setShootingResultEntries([]);
+        setShootingResolutionStatus('idle');
         const name = clickedUnit.profile.name;
         if (clickedUnit.activated) {
           setTargetErrorMsg(`${name} has already shot this phase`);
@@ -1855,7 +1855,7 @@ export default function App() {
     pushPlayUndo,
     commitBattleState,
     setTargetErrorMsg,
-    setShootingResultEntries,
+    setShootingResolutionStatus,
     setOverwatchUnitId,
     setSelectedShootingTargetId,
     setSelectedShootingWeaponIndex,
@@ -1902,13 +1902,13 @@ export default function App() {
     selectedPlayShootingOptions,
     shootingAttackAllocations,
     damageAllocationLocked,
-    shootingResultEntries,
+    shootingResolutionStatus,
     casualtyRemovalShooterId,
     playUndoEntry,
     pushPlayUndo,
     selectPendingDamageUnit,
     commitBattleState,
-    setShootingResultEntries,
+    setShootingResolutionStatus,
     setTargetErrorMsg,
     setCasualtyRemovalShooterId,
     setPlayModelSelection,
@@ -1932,7 +1932,7 @@ export default function App() {
     selectPendingDamageUnit,
     commitBattleState,
     setTargetErrorMsg,
-    setShootingResultEntries,
+    setShootingResolutionStatus,
     setFightAttackAllocations,
     setSelectedFightWeaponIndex,
   });
@@ -2285,7 +2285,7 @@ export default function App() {
 
   const undoPlayAction = useCallback(() => {
     if (!isPlayMode) return;
-    setShootingResultEntries([]);
+    setShootingResolutionStatus('idle');
     if (pendingPlayModelMoveUndoRef.current) {
       const entry = pendingPlayModelMoveUndoRef.current;
       clearPendingPlayModelMove();
@@ -2319,14 +2319,14 @@ export default function App() {
 
   const redoPlayAction = useCallback(() => {
     if (!isPlayMode) return;
-    setShootingResultEntries([]);
+    setShootingResolutionStatus('idle');
     redoGameSessionTimelineAction();
-  }, [isPlayMode, redoGameSessionTimelineAction, setShootingResultEntries]);
+  }, [isPlayMode, redoGameSessionTimelineAction, setShootingResolutionStatus]);
 
   const undoDisplayedTimeline = useCallback(() => {
-    setShootingResultEntries([]);
+    setShootingResolutionStatus('idle');
     undoGameSessionTimelineAction();
-  }, [setShootingResultEntries, undoGameSessionTimelineAction]);
+  }, [setShootingResolutionStatus, undoGameSessionTimelineAction]);
 
   useEffect(() => {
     if (!isPlayMode) return;
@@ -2807,7 +2807,7 @@ export default function App() {
                       popup
                       structuredResult={battleState.lastShootingResolution}
                       resultSection="attacker"
-                      actionLabel={shootingResultEntries.length && damageAllocationLocked ? 'Resolve' : shootingResultEntries.length ? 'Done' : 'Shoot'}
+                      actionLabel={shootingResolutionStatus === 'rolled' && damageAllocationLocked ? 'Resolve' : shootingResolutionStatus === 'rolled' ? 'Done' : 'Shoot'}
                       coverSaveEnabled={activeRulesForBattle.metadata.edition !== '11e'}
                       targets={selectedPlayShootingTargets}
                       selectedTarget={selectedShootingTargetUnit}

@@ -1,4 +1,4 @@
-import type { BattleState, LogEntry } from '@warhammer-simulator/core/types/battle';
+import type { BattleState } from '@warhammer-simulator/core/types/battle';
 import { fightPlayUnitWeapon, fightPlayUnitWeapons } from '@warhammer-simulator/core/engine/simulator';
 import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
 import type { PlayModelSelection } from '../components/Battlefield';
@@ -26,7 +26,7 @@ export function createPlayFightResolution({
   selectPendingDamageUnit,
   commitBattleState,
   setTargetErrorMsg,
-  setShootingResultEntries,
+  setShootingResolutionStatus,
   setFightAttackAllocations,
   setSelectedFightWeaponIndex,
 }: {
@@ -45,7 +45,7 @@ export function createPlayFightResolution({
   selectPendingDamageUnit: (state: BattleState, shooterUnitId: string | null) => boolean;
   commitBattleState: (state: BattleState) => void;
   setTargetErrorMsg: (message: string | null) => void;
-  setShootingResultEntries: (entries: LogEntry[]) => void;
+  setShootingResolutionStatus: (status: 'idle' | 'rolled') => void;
   setFightAttackAllocations: (allocations: AllocationTable) => void;
   setSelectedFightWeaponIndex: (weaponIndex: 'all' | string) => void;
 }) {
@@ -64,7 +64,7 @@ export function createPlayFightResolution({
         setTargetErrorMsg('Allocate every selected melee weapon to valid engaged targets before rolling.');
         return;
       }
-      setShootingResultEntries(next.log.slice(prev.log.length));
+      setShootingResolutionStatus('rolled');
       const hasPendingDamage = selectPendingDamageUnit(next, selection.unitId);
       if (!hasPendingDamage) setTargetErrorMsg(null);
       setFightAttackAllocations({});
@@ -94,7 +94,7 @@ export function createPlayFightResolution({
     if (!targetUnitId) return;
     const next = fightPlayUnitWeapon(prev, selection.unitId, selection.side, targetUnitId, weaponIndex, activeRulesForBattle, usesSplit ? targetSplits : undefined);
     if (next === prev) return;
-    setShootingResultEntries(next.log.slice(prev.log.length));
+    setShootingResolutionStatus('rolled');
     const hasPendingDamage = selectPendingDamageUnit(next, selection.unitId);
     if (!hasPendingDamage) setTargetErrorMsg(null);
     if (weaponIndex !== 'all') setSelectedFightWeaponIndex('all');

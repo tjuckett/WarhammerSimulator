@@ -1,4 +1,4 @@
-import type { BattleState, BattleUnit, LogEntry } from '@warhammer-simulator/core/types/battle';
+import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { RulesEdition } from '@warhammer-simulator/core/engine/rulesEngine';
 import { snapShootPlayUnitWeapon, type PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
 import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
@@ -17,7 +17,7 @@ export function createPlayShootingActions({
   pushPlayUndo,
   commitBattleState,
   setTargetErrorMsg,
-  setShootingResultEntries,
+  setShootingResolutionStatus,
   setOverwatchUnitId,
   setSelectedShootingTargetId,
   setSelectedShootingWeaponIndex,
@@ -32,7 +32,7 @@ export function createPlayShootingActions({
   pushPlayUndo: (entry: PlayUndoEntry, stateAfter?: BattleState, action?: GameAction) => void;
   commitBattleState: (state: BattleState) => void;
   setTargetErrorMsg: (message: string | null) => void;
-  setShootingResultEntries: (entries: LogEntry[]) => void;
+  setShootingResolutionStatus: (status: 'idle' | 'rolled') => void;
   setOverwatchUnitId: (unitId: string) => void;
   setSelectedShootingTargetId: (targetId: string) => void;
   setSelectedShootingWeaponIndex: (weaponIndex: 'all' | string) => void;
@@ -64,7 +64,7 @@ export function createPlayShootingActions({
       targetUnitId: selectedShootingTargetId,
       weaponIndex,
     });
-    setShootingResultEntries(next.log.slice(prev.log.length));
+    setShootingResolutionStatus('rolled');
     setOverwatchUnitId('');
     setSelectedShootingTargetId('');
     setSelectedShootingWeaponIndex('all');
