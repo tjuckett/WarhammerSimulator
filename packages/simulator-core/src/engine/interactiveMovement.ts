@@ -65,6 +65,31 @@ export function unitHasStartedCurrentMove(unit: BattleUnit): boolean {
   });
 }
 
+/** Shared translation primitive for any rule that moves one model toward a point. */
+export function moveModelTowardPoint(
+  unit: BattleUnit,
+  modelIndex: number,
+  point: Position,
+  maxDistance: number,
+  centroidFor: (positions: Position[]) => Position,
+  stopGap = 0,
+): boolean {
+  const model = unit.modelPositions[modelIndex];
+  if (!model) return false;
+  const dx = point.x - model.x;
+  const dy = point.y - model.y;
+  const distance = Math.hypot(dx, dy);
+  const moveDistance = Math.min(maxDistance, Math.max(0, distance - stopGap));
+  if (distance < 0.001 || moveDistance < 0.001) return false;
+  unit.modelPositions[modelIndex] = {
+    ...model,
+    x: model.x + (dx / distance) * moveDistance,
+    y: model.y + (dy / distance) * moveDistance,
+  };
+  unit.position = centroidFor(unit.modelPositions);
+  return true;
+}
+
 export interface StationaryMovementContext {
   activeUnits(state: BattleState, side: Side): BattleUnit[];
   isAircraft(unit: BattleUnit): boolean;

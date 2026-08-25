@@ -4,6 +4,7 @@ import type { BattleState, BattleUnit, LogEntry, PendingFightOnDeath, Position, 
 import type { UnitProfile, WeaponProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import type { CombatAttackResolutionOptions } from './combatTypes';
+import { moveModelTowardPoint } from './interactiveMovement';
 
 export type CombatAttackContext = Record<string, any>;
 
@@ -945,24 +946,11 @@ export function nearestObjectiveToModel(model: Position, state: BattleState, con
   return state.objectives.reduce((best, objective) => context.distance(model, objective) < context.distance(model, best) ? objective : best);
 }
 
-export function moveModelTowardPoint(unit: BattleUnit, modelIndex: number, point: Position, maxDistance: number, context: FightMovementContext, stopGap = 0): boolean {
-  const model = unit.modelPositions[modelIndex];
-  if (!model) return false;
-  const dx = point.x - model.x;
-  const dy = point.y - model.y;
-  const distance = Math.hypot(dx, dy);
-  const moveDistance = Math.min(maxDistance, Math.max(0, distance - stopGap));
-  if (distance < 0.001 || moveDistance < 0.001) return false;
-  unit.modelPositions[modelIndex] = { ...model, x: model.x + (dx / distance) * moveDistance, y: model.y + (dy / distance) * moveDistance };
-  unit.position = context.centroid(unit.modelPositions);
-  return true;
-}
-
 export function moveModelTowardEnemy(unit: BattleUnit, modelIndex: number, state: BattleState, maxDistance: number, context: FightMovementContext): boolean {
   const closest = closestEnemyModelFor(unit, modelIndex, state, context);
   if (!closest) return false;
   const targetModel = closest.unit.modelPositions[closest.modelIndex];
-  return moveModelTowardPoint(unit, modelIndex, targetModel, maxDistance, context,
+  return moveModelTowardPoint(unit, modelIndex, targetModel, maxDistance, context.centroid,
     context.modelBaseRadius(unit, modelIndex) + context.modelBaseRadius(closest.unit, closest.modelIndex) + 0.02);
 }
 
@@ -1010,7 +998,7 @@ export function applyFightPhaseMove(
     const movedTowardObjective = !movedTowardEnemy && kind === 'consolidate'
       ? (() => {
           const objective = nearestObjectiveToModel(unit.modelPositions[modelIndex], next, context);
-          return objective ? moveModelTowardPoint(unit, modelIndex, objective, context.moveRange, context) : false;
+          return objective ? moveModelTowardPoint(unit, modelIndex, objective, context.moveRange, context.centroid) : false;
         })()
       : false;
     if (!movedTowardEnemy && !movedTowardObjective) continue;

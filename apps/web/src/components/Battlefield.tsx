@@ -1896,13 +1896,23 @@ function drawSelectedModelMovementHud(
   boardHeight: number,
 ) {
   if (!selectedModelIndices.length || unit.movementAction === 'fellBack' || unit.fellBack) return;
-  if (state.phase !== 'movement') return;
-  const activeMovementUnit = state.activeArmy === unit.side;
+  const isMovementPhase = state.phase === 'movement';
+  const isScoutMove = state.phase === 'setup' && !!unit.scoutMoveStarted;
+  const isChargeMove = state.phase === 'charge'
+    && state.pendingChargeMovement?.unitId === unit.id
+    && state.pendingChargeMovement.side === unit.side;
+  const isSurgeMove = state.pendingSurgeMove?.unitId === unit.id
+    && state.pendingSurgeMove.side === unit.side;
+  if (!isMovementPhase && !isScoutMove && !isChargeMove && !isSurgeMove) return;
+  const activeMovementUnit = isMovementPhase && state.activeArmy === unit.side;
   const shouldShow = unit.movementAction === 'normalMove'
     || unit.movementAction === 'advanced'
     || typeof unit.movementAllowanceRemaining === 'number'
     || !!unit.movementAllowanceRemainingByModel
-    || activeMovementUnit;
+    || activeMovementUnit
+    || isScoutMove
+    || isChargeMove
+    || isSurgeMove;
   if (!shouldShow) return;
 
   const topY = unit.modelPositions.reduce((min, position, index) =>
@@ -1910,7 +1920,11 @@ function drawSelectedModelMovementHud(
   const bottomY = unit.modelPositions.reduce((max, position, index) =>
     Math.max(max, position.y * scale + (modelRadii[index] ?? scale * 0.48)), -Infinity);
 
-  const defaultAllowance = unit.movementAllowanceRemaining ?? unit.profile.move;
+  const defaultAllowance = unit.movementAllowanceRemaining
+    ?? unit.scoutMoveAllowance
+    ?? state.pendingChargeMovement?.maximumDistance
+    ?? state.pendingSurgeMove?.maximumDistance
+    ?? unit.profile.move;
   for (const modelIndex of selectedModelIndices) {
     const position = unit.modelPositions[modelIndex];
     if (!position) continue;
