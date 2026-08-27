@@ -3,7 +3,7 @@ import { BATTLE_PHASE, BATTLE_ROUND_STEP, MOVEMENT_PHASE_STEP, MOVEMENT_STEP, PL
 export type BattleFlowNode =
   | { kind: 'pre-battle'; phase: typeof BATTLE_PHASE.Deployment | typeof BATTLE_PHASE.Setup }
   | { kind: 'battle-round'; step: typeof BATTLE_ROUND_STEP.Start | typeof BATTLE_ROUND_STEP.End }
-  | { kind: 'player-turn'; side: Side; step: PlayerTurnStep; phase?: Phase }
+  | { kind: 'player-turn'; side: Side; step: PlayerTurnStep; phase?: Phase; phaseStep?: MovementPhaseStep }
   | { kind: 'battle-end' };
 
 export interface BattleFlowState {
@@ -57,7 +57,7 @@ export function isTurnPhase(phase: Phase): boolean {
 
 /** Returns the hierarchical Battle Round/Player Turn view of legacy state. */
 export function battleFlowNode(
-  state: Pick<BattleState, 'phase' | 'activeArmy' | 'battleRoundStep' | 'playerTurnStep' | 'currentActivePlayer'>,
+  state: Pick<BattleState, 'phase' | 'activeArmy' | 'battleRoundStep' | 'playerTurnStep' | 'currentActivePlayer' | 'movementStep' | 'movementPhaseStep'>,
 ): BattleFlowNode {
   const roundStep = state.battleRoundStep
     ?? (state.phase === BATTLE_PHASE.Deployment || state.phase === BATTLE_PHASE.Setup
@@ -77,11 +77,16 @@ export function battleFlowNode(
     side: state.currentActivePlayer ?? state.activeArmy,
     step: state.playerTurnStep ?? PLAYER_TURN_STEP.Phase,
   };
-  if (isTurnPhase(state.phase)) playerTurnNode.phase = state.phase;
+  if (isTurnPhase(state.phase)) {
+    playerTurnNode.phase = state.phase;
+    if (state.phase === BATTLE_PHASE.Movement) {
+      playerTurnNode.phaseStep = movementPhaseNode(state)?.step;
+    }
+  }
   return playerTurnNode;
 }
 
-export function setBattleFlowNode(state: Pick<BattleState, 'phase' | 'activeArmy' | 'battleRoundStep' | 'playerTurnStep' | 'currentActivePlayer'>, node: BattleFlowNode): void {
+export function setBattleFlowNode(state: Pick<BattleState, 'phase' | 'activeArmy' | 'battleRoundStep' | 'playerTurnStep' | 'currentActivePlayer' | 'movementStep' | 'movementPhaseStep'>, node: BattleFlowNode): void {
   state.battleRoundStep = node.kind === 'pre-battle'
     ? BATTLE_ROUND_STEP.PreBattle
     : node.kind === 'battle-end'
@@ -110,6 +115,12 @@ export function setBattleFlowNode(state: Pick<BattleState, 'phase' | 'activeArmy
   state.currentActivePlayer = node.side;
   state.playerTurnStep = node.step;
   if (node.phase) state.phase = node.phase;
+  if (node.phase === BATTLE_PHASE.Movement && node.phaseStep) {
+    state.movementPhaseStep = node.phaseStep;
+    state.movementStep = node.phaseStep === MOVEMENT_PHASE_STEP.Reinforcements
+      ? MOVEMENT_STEP.Reinforcements
+      : MOVEMENT_STEP.MoveUnits;
+  }
 }
 
 export function initializeBattleRoundStart(state: BattleState, firstPlayer: Side = state.activeArmy): void {

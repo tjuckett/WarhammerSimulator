@@ -147,6 +147,7 @@ test('hierarchical battle flow separates pre-battle, round, and player-turn stat
     side: 1,
     step: PLAYER_TURN_STEP.Phase,
     phase: BATTLE_PHASE.Movement,
+    phaseStep: MOVEMENT_PHASE_STEP.MoveUnits,
   });
 
   current.currentActivePlayer = 0;
@@ -155,10 +156,17 @@ test('hierarchical battle flow separates pre-battle, round, and player-turn stat
     side: 0,
     step: PLAYER_TURN_STEP.Phase,
     phase: BATTLE_PHASE.Movement,
+    phaseStep: MOVEMENT_PHASE_STEP.MoveUnits,
   });
 
   beginPlayerTurnEnd(current);
-  assert.deepEqual(battleFlowNode(current), { kind: 'player-turn', side: 1, step: PLAYER_TURN_STEP.End, phase: BATTLE_PHASE.Movement });
+  assert.deepEqual(battleFlowNode(current), {
+    kind: 'player-turn',
+    side: 1,
+    step: PLAYER_TURN_STEP.End,
+    phase: BATTLE_PHASE.Movement,
+    phaseStep: MOVEMENT_PHASE_STEP.MoveUnits,
+  });
 
   beginBattleRoundEnd(current);
   assert.deepEqual(battleFlowNode(current), { kind: 'battle-round', step: BATTLE_ROUND_STEP.End });
