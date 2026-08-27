@@ -204,9 +204,12 @@ export function battlePhaseNode(state: Pick<BattleState, 'phase' | 'movementStep
   return { phase: state.phase } as BattlePhaseNode;
 }
 
-export function setBattlePhase(state: Pick<BattleState, 'phase' | 'movementStep'>, node: BattlePhaseNode): void {
+export function setBattlePhase(state: Pick<BattleState, 'phase' | 'movementStep' | 'movementPhaseStep'>, node: BattlePhaseNode): void {
   state.phase = node.phase;
   state.movementStep = node.phase === BATTLE_PHASE.Movement ? node.step : undefined;
+  state.movementPhaseStep = node.phase === BATTLE_PHASE.Movement
+    ? node.step === MOVEMENT_STEP.Reinforcements ? MOVEMENT_PHASE_STEP.Reinforcements : MOVEMENT_PHASE_STEP.MoveUnits
+    : undefined;
 }
 
 function clearShootingCursors(state: BattleState): void {

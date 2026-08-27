@@ -21,10 +21,11 @@ import {
 } from '../src/engine/battleStateMachine';
 import { BATTLE_EVENT_TYPE, createBattleEvent } from '../src/engine/battleEvents';
 
-function state(): Pick<BattleState, 'phase' | 'movementStep' | 'activeArmy' | 'battleRound' | 'turn' | 'maxBattleRounds' | 'maxTurns'> {
+function state(): Pick<BattleState, 'phase' | 'movementStep' | 'movementPhaseStep' | 'activeArmy' | 'battleRound' | 'turn' | 'maxBattleRounds' | 'maxTurns'> {
   return {
     phase: BATTLE_PHASE.Setup,
     movementStep: undefined,
+    movementPhaseStep: undefined,
     activeArmy: 0,
     battleRound: 1,
     turn: 1,
@@ -39,10 +40,12 @@ test('battle phase graph defines movement substeps and turn phases', () => {
   assert.equal(command?.kind, 'phase');
   assert.deepEqual(command && command.kind === 'phase' ? command.to : null, { phase: BATTLE_PHASE.Command });
   setBattlePhase(current, { phase: BATTLE_PHASE.Movement, step: MOVEMENT_STEP.MoveUnits });
+  assert.equal(current.movementPhaseStep, MOVEMENT_PHASE_STEP.MoveUnits);
   const reinforcements = nextBattlePhase(current);
   assert.equal(reinforcements?.kind, 'phase');
   assert.deepEqual(reinforcements && reinforcements.kind === 'phase' ? reinforcements.to : null, { phase: BATTLE_PHASE.Movement, step: MOVEMENT_STEP.Reinforcements });
   setBattlePhase(current, { phase: BATTLE_PHASE.Movement, step: MOVEMENT_STEP.Reinforcements });
+  assert.equal(current.movementPhaseStep, MOVEMENT_PHASE_STEP.Reinforcements);
   const shooting = nextBattlePhase(current);
   assert.equal(shooting?.kind, 'phase');
   assert.deepEqual(shooting && shooting.kind === 'phase' ? shooting.to : null, { phase: BATTLE_PHASE.Shooting });
@@ -82,6 +85,7 @@ test('shared phase advance applies movement substeps and boundary cursor cleanup
   advanceBattlePhase(current);
   assert.equal(current.phase, BATTLE_PHASE.Shooting);
   assert.equal(current.movementStep, undefined);
+  assert.equal(current.movementPhaseStep, undefined);
 });
 
 test('phase state handlers own entry cursor invariants', () => {
