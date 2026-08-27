@@ -1,12 +1,20 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { BATTLE_PHASE, MOVEMENT_STEP, type BattleState } from '../src/types/battle';
+import { BATTLE_PHASE, BATTLE_ROUND_STEP, MOVEMENT_PHASE_STEP, MOVEMENT_STEP, PLAYER_TURN_STEP, type BattleState } from '../src/types/battle';
 import {
   advanceBattlePhase,
+  battleFlowNode,
   battlePhaseNode,
   battlePhaseStateHandler,
   BATTLE_PHASE_STATE_HANDLERS,
+  beginBattleRoundEnd,
+  beginPlayerTurn,
+  beginPlayerTurnEnd,
+  beginPlayerTurnPhase,
+  advanceMovementPhase,
+  initializeBattleRoundStart,
   initializeBattlePhase,
+  movementPhaseNode,
   nextBattlePhase,
   nextTurnTransition,
   setBattlePhase,
@@ -111,4 +119,77 @@ test('typed battle events retain phase context without formatted log parsing', (
   });
   assert.equal(event.phase, BATTLE_PHASE.Shooting);
   assert.deepEqual(event.data, { rolls: [6, 2], target: 4, successes: 1 });
+});
+
+test('hierarchical battle flow separates pre-battle, round, and player-turn state', () => {
+  const current = {
+    ...state(),
+    phase: BATTLE_PHASE.Setup,
+    battleRoundStep: BATTLE_ROUND_STEP.PreBattle,
+  } as unknown as BattleState;
+
+  assert.deepEqual(battleFlowNode(current), { kind: 'pre-battle', phase: BATTLE_PHASE.Setup });
+
+  initializeBattleRoundStart(current, 1);
+  assert.deepEqual(battleFlowNode(current), { kind: 'battle-round', step: BATTLE_ROUND_STEP.Start });
+  assert.equal(current.currentActivePlayer, 1);
+
+  beginPlayerTurn(current, 1);
+  assert.deepEqual(battleFlowNode(current), { kind: 'player-turn', side: 1, step: PLAYER_TURN_STEP.Start });
+
+  beginPlayerTurnPhase(current, BATTLE_PHASE.Movement);
+  assert.deepEqual(battleFlowNode(current), {
+    kind: 'player-turn',
+    side: 1,
+    step: PLAYER_TURN_STEP.Phase,
+    phase: BATTLE_PHASE.Movement,
+  });
+
+  current.currentActivePlayer = 0;
+  assert.deepEqual(battleFlowNode(current), {
+    kind: 'player-turn',
+    side: 0,
+    step: PLAYER_TURN_STEP.Phase,
+    phase: BATTLE_PHASE.Movement,
+  });
+
+  beginPlayerTurnEnd(current);
+  assert.deepEqual(battleFlowNode(current), { kind: 'player-turn', side: 1, step: PLAYER_TURN_STEP.End, phase: BATTLE_PHASE.Movement });
+
+  beginBattleRoundEnd(current);
+  assert.deepEqual(battleFlowNode(current), { kind: 'battle-round', step: BATTLE_ROUND_STEP.End });
+});
+
+test('Movement has explicit start, movement, reinforcements, and end boundaries', () => {
+  const current = {
+    ...state(),
+    phase: BATTLE_PHASE.Movement,
+    movementStep: MOVEMENT_STEP.MoveUnits,
+    movementPhaseStep: MOVEMENT_PHASE_STEP.Start,
+  } as unknown as BattleState;
+
+  assert.deepEqual(movementPhaseNode(current), {
+    phase: BATTLE_PHASE.Movement,
+    step: MOVEMENT_PHASE_STEP.Start,
+  });
+
+  advanceMovementPhase(current);
+  assert.deepEqual(movementPhaseNode(current), {
+    phase: BATTLE_PHASE.Movement,
+    step: MOVEMENT_PHASE_STEP.MoveUnits,
+  });
+  assert.equal(current.movementStep, MOVEMENT_STEP.MoveUnits);
+
+  advanceMovementPhase(current);
+  assert.deepEqual(movementPhaseNode(current), {
+    phase: BATTLE_PHASE.Movement,
+    step: MOVEMENT_PHASE_STEP.Reinforcements,
+  });
+  assert.equal(current.movementStep, MOVEMENT_STEP.Reinforcements);
+
+  advanceMovementPhase(current);
+  assert.deepEqual(movementPhaseNode(current), {
+    phase: BATTLE_PHASE.Movement,
+    step: MOVEMENT_PHASE_STEP.End,
+  });
 });

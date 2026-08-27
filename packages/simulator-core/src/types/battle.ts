@@ -22,6 +22,24 @@ export type Phase = (typeof BATTLE_PHASE)[keyof typeof BATTLE_PHASE];
 
 export type Side = 0 | 1;
 
+export const BATTLE_ROUND_STEP = {
+  PreBattle: 'pre-battle',
+  Start: 'start-of-battle-round',
+  PlayerTurns: 'player-turns',
+  End: 'end-of-battle-round',
+  BattleEnd: 'battle-end',
+} as const;
+
+export type BattleRoundStep = (typeof BATTLE_ROUND_STEP)[keyof typeof BATTLE_ROUND_STEP];
+
+export const PLAYER_TURN_STEP = {
+  Start: 'start-of-turn',
+  Phase: 'phase',
+  End: 'end-of-turn',
+} as const;
+
+export type PlayerTurnStep = (typeof PLAYER_TURN_STEP)[keyof typeof PLAYER_TURN_STEP];
+
 export type MovementAction = 'remainedStationary' | 'normalMove' | 'advanced' | 'fellBack';
 export const MOVEMENT_STEP = {
   MoveUnits: 'moveUnits',
@@ -29,6 +47,16 @@ export const MOVEMENT_STEP = {
 } as const;
 
 export type MovementStep = (typeof MOVEMENT_STEP)[keyof typeof MOVEMENT_STEP];
+
+/** State-machine boundaries inside the Movement phase. */
+export const MOVEMENT_PHASE_STEP = {
+  Start: 'start',
+  MoveUnits: 'move-units',
+  Reinforcements: 'reinforcements',
+  End: 'end',
+} as const;
+
+export type MovementPhaseStep = (typeof MOVEMENT_PHASE_STEP)[keyof typeof MOVEMENT_PHASE_STEP];
 
 export interface Position {
   x: number;
@@ -66,6 +94,8 @@ export interface BattleUnit {
   modelRotations?: number[];   // facing for each model footprint in degrees
   facingDeg: number;
   charged: boolean;
+  /** Turn in which the unit successfully charged; survives later Fight-phase movement. */
+  chargedTurn?: number;
   movementAction?: MovementAction;
   movementAllowanceRemaining?: number;
   movementAllowanceRemainingByModel?: number[];
@@ -74,6 +104,8 @@ export interface BattleUnit {
   movementStartRotationsByModel?: number[];
   /** Waypoints traversed by each model during its current move. */
   movementPathByModel?: Position[][];
+  /** Explains why the last drag stopped before its requested endpoint. */
+  movementStopReason?: 'engagementRange';
   movementComplete?: boolean;
   /** 11e Core 21.03 declaration for the move currently being resolved. */
   takingToSkies?: boolean;
@@ -479,10 +511,28 @@ export interface BattleState {
   turn: number;
   maxTurns: number;
   activeArmy: Side;
+  /** Outer Battle Round workflow. Optional for backward-compatible saved states. */
+  battleRoundStep?: BattleRoundStep;
+  /** Player Turn boundary around the current phase. */
+  playerTurnStep?: PlayerTurnStep;
+  /** Temporary active-player context for unit resolution and reactions. */
+  currentActivePlayer?: Side;
   phase: Phase;
+  /** Explicit Movement-phase boundary. Legacy movementStep remains the action cursor. */
+  movementPhaseStep?: MovementPhaseStep;
   movementStep?: MovementStep;
   /** 11e Core 12.04 snapshot, captured after the phase's ordinary pile-in step. */
   fightStepStarted?: boolean;
+  /** 11e Core 12.04: side currently resolving its ordinary pile-ins before fights begin. */
+  fightPileInSide?: Side;
+  /** 11e Core 12.08: true once players have chosen to stop selecting fighters. */
+  consolidationStepStarted?: boolean;
+  /** 11e Core 12.08: side currently resolving consolidation moves. */
+  consolidationSide?: Side;
+  /** Units that were eligible to fight when the consolidation step began. */
+  consolidationEligibleUnitIds?: string[];
+  /** Enemy units newly engaged by Engaging Consolidation and awaiting their fight opportunity. */
+  consolidationPendingFightUnitIds?: string[];
   engagedUnitIdsAtFightStepStart?: string[];
   lastFightSelectionSide?: Side;
   /** 11e Core 15.12 target that must be selected next after Counteroffensive. */
@@ -504,7 +554,7 @@ export interface BattleState {
     maximumDistance: number;
   };
   /** Structured charge result for play UI; never reconstruct this from log text. */
-  lastChargeRoll?: {
+  chargeResolution?: {
     unitId: string;
     side: Side;
     dice: [number, number];
@@ -521,6 +571,13 @@ export interface BattleState {
     side: Side;
     targetUnitIds: string[];
     maximumDistance: number;
+  };
+  pendingFightMovement?: {
+    unitId: string;
+    side: Side;
+    kind: 'pileIn' | 'consolidate';
+    /** Models already in base contact when a Pile In or Consolidation begins cannot move. */
+    lockedModelIds?: string[];
   };
   winner: null | Side | 'draw';
   log: LogEntry[];
@@ -577,6 +634,8 @@ export interface ShootingRollGroup {
 export interface ShootingWeaponResult {
   weaponIndex: number;
   weaponName: string;
+  /** Number of attacker models that contributed to this weapon result. */
+  modelCount?: number;
   targetUnitId: string;
   targetUnitName: string;
   attackCount: number;
