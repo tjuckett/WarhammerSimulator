@@ -20,6 +20,7 @@ import {
   setBattlePhase,
 } from '../src/engine/battleStateMachine';
 import { BATTLE_EVENT_TYPE, createBattleEvent } from '../src/engine/battleEvents';
+import { createMovementPhase } from '../src/engine/movementPhase';
 
 function state(): Pick<BattleState, 'phase' | 'movementStep' | 'movementPhaseStep' | 'activeArmy' | 'battleRound' | 'turn' | 'maxBattleRounds' | 'maxTurns'> {
   return {
@@ -204,4 +205,38 @@ test('Movement has explicit start, movement, reinforcements, and end boundaries'
     phase: BATTLE_PHASE.Movement,
     step: MOVEMENT_PHASE_STEP.End,
   });
+});
+
+test('Movement phase facade isolates unit movement from reinforcement placement', () => {
+  const current = {
+    ...state(),
+    phase: BATTLE_PHASE.Movement,
+    movementStep: MOVEMENT_STEP.MoveUnits,
+    movementPhaseStep: MOVEMENT_PHASE_STEP.MoveUnits,
+  } as BattleState;
+  assert.deepEqual(createMovementPhase(current), {
+    step: MOVEMENT_PHASE_STEP.MoveUnits,
+    canSelectUnits: true,
+    canPlaceReinforcements: false,
+    canAdvance: true,
+  });
+
+  current.movementStep = MOVEMENT_STEP.Reinforcements;
+  current.movementPhaseStep = MOVEMENT_PHASE_STEP.Reinforcements;
+  assert.deepEqual(createMovementPhase(current), {
+    step: MOVEMENT_PHASE_STEP.Reinforcements,
+    canSelectUnits: false,
+    canPlaceReinforcements: true,
+    canAdvance: true,
+  });
+});
+
+test('Movement phase facade reads legacy saved movement cursors', () => {
+  const current = {
+    ...state(),
+    phase: BATTLE_PHASE.Movement,
+    movementStep: MOVEMENT_STEP.Reinforcements,
+    movementPhaseStep: undefined,
+  } as BattleState;
+  assert.equal(createMovementPhase(current)?.step, MOVEMENT_PHASE_STEP.Reinforcements);
 });
