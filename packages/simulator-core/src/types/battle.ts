@@ -121,7 +121,11 @@ export interface BattleUnit {
   surgeMovePhase?: Phase;
   surgeMoveTurn?: number;
   arrivedFromReinforcements?: boolean;
+  /** Once true, preserves the fact that this unit has made an Ingress Move during the battle. */
+  hasMadeIngressMove?: boolean;
   inStrategicReserves?: boolean;
+  /** This unit entered Strategic Reserves during the battle instead of before it. */
+  repositioned?: boolean;
   /** Temporary Deep Strike granted by a datasheet ability until the current phase ends. */
   deepStrikeUntilPhase?: Phase;
   rapidIngressThisPhase?: boolean;

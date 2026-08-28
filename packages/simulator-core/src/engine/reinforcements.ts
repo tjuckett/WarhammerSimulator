@@ -79,8 +79,27 @@ export function markUnitArrivedFromReinforcements(unit: BattleUnit): void {
   unit.movementStartRotationsByModel = unit.modelPositions.map((_, modelIndex) => unit.modelRotations?.[modelIndex] ?? unit.facingDeg ?? 0);
   unit.movementComplete = true;
   unit.arrivedFromReinforcements = true;
+  unit.hasMadeIngressMove = true;
   unit.inCombat = false;
   unit.fellBack = false;
+}
+
+/** Core 20.04: unarrived Strategic Reserves are destroyed at the end of round three. */
+export function destroyExpiredStrategicReserves(state: BattleState): string[] {
+  if (state.ruleset.edition !== '11e') return [];
+  const destroyedIds: string[] = [];
+  for (const unit of state.units) {
+    if (unit.destroyed || !unit.inStrategicReserves || unit.repositioned) continue;
+    const transport = unit.embarkedInUnitId
+      ? state.units.find(candidate => candidate.id === unit.embarkedInUnitId)
+      : undefined;
+    if (transport?.hasMadeIngressMove) continue;
+    unit.destroyed = true;
+    unit.remainingModels = 0;
+    unit.inStrategicReserves = false;
+    destroyedIds.push(unit.id);
+  }
+  return destroyedIds;
 }
 
 export interface PlayReinforcementContext {

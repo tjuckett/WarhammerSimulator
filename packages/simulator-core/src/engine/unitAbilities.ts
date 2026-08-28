@@ -164,6 +164,7 @@ export function useUnitAbility(
     const reservePosition = { x: side === 0 ? -100 : (next.board?.width ?? 60) + 100, y: (next.board?.height ?? 44) / 2 };
     for (const component of attachedUnitComponents(next, next.units.find(candidate => candidate.id === unitId) ?? unit, true)) {
       component.inStrategicReserves = true;
+      component.repositioned = true;
       component.deepStrikeUntilPhase = next.phase;
       component.modelPositions = component.modelPositions.map(() => ({ ...reservePosition }));
       component.position = { ...reservePosition };

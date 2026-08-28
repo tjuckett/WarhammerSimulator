@@ -21,6 +21,7 @@ import {
 } from '../src/engine/battleStateMachine';
 import { BATTLE_EVENT_TYPE, createBattleEvent } from '../src/engine/battleEvents';
 import { createMovementPhase } from '../src/engine/movementPhase';
+import { destroyExpiredStrategicReserves } from '../src/engine/reinforcements';
 
 function state(): Pick<BattleState, 'phase' | 'movementStep' | 'movementPhaseStep' | 'activeArmy' | 'battleRound' | 'turn' | 'maxBattleRounds' | 'maxTurns'> {
   return {
@@ -239,4 +240,22 @@ test('Movement phase facade reads legacy saved movement cursors', () => {
     movementPhaseStep: undefined,
   } as BattleState;
   assert.equal(createMovementPhase(current)?.step, MOVEMENT_PHASE_STEP.Reinforcements);
+});
+
+test('11th Strategic Reserves expire after battle round three with rule exceptions', () => {
+  const reserve = { id: 'reserve', destroyed: false, inStrategicReserves: true, remainingModels: 5 };
+  const repositioned = { id: 'repositioned', destroyed: false, inStrategicReserves: true, repositioned: true, remainingModels: 5 };
+  const transport = { id: 'transport', destroyed: false, inStrategicReserves: false, hasMadeIngressMove: true, remainingModels: 1 };
+  const passenger = { id: 'passenger', destroyed: false, inStrategicReserves: true, embarkedInUnitId: 'transport', remainingModels: 5 };
+  const current = {
+    ...state(),
+    ruleset: { edition: '11e' },
+    units: [reserve, repositioned, transport, passenger],
+  } as unknown as BattleState;
+
+  assert.deepEqual(destroyExpiredStrategicReserves(current), ['reserve']);
+  assert.equal(reserve.destroyed, true);
+  assert.equal(reserve.remainingModels, 0);
+  assert.equal(repositioned.destroyed, false);
+  assert.equal(passenger.destroyed, false);
 });

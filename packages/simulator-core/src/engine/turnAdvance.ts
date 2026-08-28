@@ -2,6 +2,7 @@ import type { BattleState } from '../types/battle';
 import { battleRound, setBattleRound } from './battleRound';
 import { battleRoundLimit, nextTurnTransition } from './battleStateMachine';
 import { completeMissionEventsForCurrentTurn } from './missionEvents';
+import { destroyExpiredStrategicReserves } from './reinforcements';
 
 export interface TurnAdvanceContext {
   clone(state: BattleState): BattleState;
@@ -13,6 +14,7 @@ export function advanceTurn(state: BattleState, context: TurnAdvanceContext): Ba
   if (next.winner !== null) return next;
   completeMissionEventsForCurrentTurn(next);
   const transition = nextTurnTransition(next);
+  if (transition.nextBattleRound === 4) destroyExpiredStrategicReserves(next);
   next.activeArmy = transition.nextSide;
   if (transition.nextBattleRound !== battleRound(next)) setBattleRound(next, transition.nextBattleRound);
   if (transition.nextBattleRound > battleRoundLimit(next)) {
@@ -30,6 +32,7 @@ export function advanceTurnInPlace(state: BattleState, context: TurnAdvanceConte
   if (state.winner !== null) return;
   completeMissionEventsForCurrentTurn(state);
   const transition = nextTurnTransition(state);
+  if (transition.nextBattleRound === 4) destroyExpiredStrategicReserves(state);
   state.activeArmy = transition.nextSide;
   if (transition.nextBattleRound !== battleRound(state)) setBattleRound(state, transition.nextBattleRound);
   if (transition.nextBattleRound > battleRoundLimit(state)) {
