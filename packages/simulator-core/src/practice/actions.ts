@@ -42,6 +42,7 @@ import {
   placePlayStrategicReserveUnit,
   placePlayUnit,
   placeNextUnit,
+  remainStationaryPlayUnit,
   removePlayCasualtyModels,
   removePlayModels,
   resolvePlaySurgeMove,
@@ -109,6 +110,7 @@ export const GAME_ACTION_TYPE = {
   DeclareSuperHeavyMobile: 'play.declareSuperHeavyMobile',
   GrantSurgeMove: 'play.grantSurgeMove',
   ResolveSurgeMove: 'play.resolveSurgeMove',
+  RemainStationary: 'play.remainStationary',
   AdvanceUnit: 'play.advanceUnit',
   FallBackUnit: 'play.fallBackUnit',
   CompleteUnitMovement: 'play.completeUnitMovement',
@@ -221,6 +223,11 @@ export type GameAction =
       side: Side;
       unitId: string;
       targetUnitId: string;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.RemainStationary;
+      side: Side;
+      unitId: string;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.FallBackUnit;
@@ -651,6 +658,9 @@ export function applyGameAction(
         context.rules,
       );
 
+    case GAME_ACTION_TYPE.RemainStationary:
+      return remainStationaryPlayUnit(state, normalizedAction.unitId, normalizedAction.side);
+
     case GAME_ACTION_TYPE.FallBackUnit:
       return fallBackPlayUnit(state, normalizedAction.unitId, normalizedAction.side, context.rules);
 
@@ -897,6 +907,7 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
     case GAME_ACTION_TYPE.UndeployUnit:
     case GAME_ACTION_TYPE.DeclareSuperHeavyMobile:
     case GAME_ACTION_TYPE.PlaceStrategicReserveUnit:
+    case GAME_ACTION_TYPE.RemainStationary:
     case GAME_ACTION_TYPE.FallBackUnit:
     case GAME_ACTION_TYPE.AdvanceUnit:
     case GAME_ACTION_TYPE.StartAction:

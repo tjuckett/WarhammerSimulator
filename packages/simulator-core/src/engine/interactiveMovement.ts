@@ -113,6 +113,44 @@ export function markRemainingStationaryUnits(
   }
 }
 
+export interface RemainStationaryContext {
+  clone(state: BattleState): BattleState;
+  movementStep(state: BattleState): string;
+  attachedComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
+  isAircraft(unit: BattleUnit): boolean;
+  modelRotation(unit: BattleUnit, modelIndex: number): number;
+}
+
+export function canRemainStationary(
+  state: BattleState, unitId: string, side: Side, context: RemainStationaryContext,
+): boolean {
+  if (state.phase !== 'movement' || context.movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || unit.inStrategicReserves || context.isAircraft(unit)) return false;
+  return context.attachedComponents(state, unit).every(component =>
+    !component.movementComplete && !component.movementAction && !component.fellBack,
+  );
+}
+
+export function remainStationary(
+  state: BattleState, unitId: string, side: Side, context: RemainStationaryContext,
+): BattleState {
+  if (!canRemainStationary(state, unitId, side, context)) return state;
+  const next = context.clone(state);
+  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit) return state;
+  for (const component of context.attachedComponents(next, unit)) {
+    component.movementAction = 'remainedStationary';
+    component.movementAllowanceRemaining = 0;
+    component.movementAllowanceRemainingByModel = component.modelPositions.map(() => 0);
+    component.movementAllowanceTotalByModel = component.modelPositions.map(() => 0);
+    component.movementStartPositionsByModel = component.modelPositions.map(position => ({ ...position }));
+    component.movementStartRotationsByModel = component.modelPositions.map((_, modelIndex) => context.modelRotation(component, modelIndex));
+    component.movementComplete = true;
+  }
+  return next;
+}
+
 export interface SingleModelMoveContext {
   clone(state: BattleState): BattleState;
   isModelEditPhase(phase: BattleState['phase']): boolean;

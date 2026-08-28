@@ -22,6 +22,7 @@ import {
 import { BATTLE_EVENT_TYPE, createBattleEvent } from '../src/engine/battleEvents';
 import { createMovementPhase } from '../src/engine/movementPhase';
 import { destroyExpiredStrategicReserves } from '../src/engine/reinforcements';
+import { remainStationary } from '../src/engine/interactiveMovement';
 
 function state(): Pick<BattleState, 'phase' | 'movementStep' | 'movementPhaseStep' | 'activeArmy' | 'battleRound' | 'turn' | 'maxBattleRounds' | 'maxTurns'> {
   return {
@@ -258,4 +259,31 @@ test('11th Strategic Reserves expire after battle round three with rule exceptio
   assert.equal(reserve.remainingModels, 0);
   assert.equal(repositioned.destroyed, false);
   assert.equal(passenger.destroyed, false);
+});
+
+test('Remain Stationary is a complete unit-level Movement action', () => {
+  const unit = {
+    id: 'unit', side: 0, destroyed: false, remainingModels: 1,
+    modelPositions: [{ x: 10, y: 10 }], facingDeg: 0,
+  };
+  const current = {
+    ...state(),
+    phase: BATTLE_PHASE.Movement,
+    movementStep: MOVEMENT_STEP.MoveUnits,
+    movementPhaseStep: MOVEMENT_PHASE_STEP.MoveUnits,
+    activeArmy: 0,
+    units: [unit],
+  } as unknown as BattleState;
+  const resolved = remainStationary(current, unit.id, 0, {
+    clone: value => JSON.parse(JSON.stringify(value)) as BattleState,
+    movementStep: value => value.movementStep ?? MOVEMENT_STEP.MoveUnits,
+    attachedComponents: (value, selected) => value.units.filter(candidate => candidate.id === selected.id),
+    isAircraft: () => false,
+    modelRotation: () => 0,
+  });
+
+  assert.notEqual(resolved, current);
+  assert.equal(resolved.units[0].movementAction, 'remainedStationary');
+  assert.equal(resolved.units[0].movementComplete, true);
+  assert.deepEqual(resolved.units[0].movementAllowanceRemainingByModel, [0]);
 });

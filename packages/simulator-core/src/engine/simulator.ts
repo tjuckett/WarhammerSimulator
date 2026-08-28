@@ -2604,6 +2604,18 @@ export function playUnitCanAdvance(
 
 }
 
+const remainStationaryContext: interactiveMovementState.RemainStationaryContext = {
+  clone,
+  movementStep,
+  attachedComponents: attachedUnitComponents,
+  isAircraft,
+  modelRotation,
+};
+
+export function playUnitCanRemainStationary(state: BattleState, unitId: string, side: Side): boolean {
+  return interactiveMovementState.canRemainStationary(state, unitId, side, remainStationaryContext);
+}
+
 export function declarePlaySuperHeavyMobile(state: BattleState, unitId: string, side: Side): BattleState {
   return interactiveMovementState.declareSuperHeavyMobile(state, unitId, side, {
     clone,
@@ -2690,6 +2702,10 @@ export function completePlayUnitMovement(
   side: Side,
 ): BattleState {
   return interactiveMovementState.completeUnitMovement(state, unitId, side, completeMovementContext);
+}
+
+export function remainStationaryPlayUnit(state: BattleState, unitId: string, side: Side): BattleState {
+  return interactiveMovementState.remainStationary(state, unitId, side, remainStationaryContext);
 }
 
 export function undeployPlayUnit(state: BattleState, unitId: string, side: Side): BattleState {

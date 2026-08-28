@@ -36,6 +36,7 @@ import {
   playUnitCanEmbark,
   playUnitCanFallBack,
   playUnitCanPileIn,
+  playUnitCanRemainStationary,
   playUnitCanStartAction,
   plunderTerrainOptions,
   punishmentCondemnedUnitOptions,
@@ -153,6 +154,15 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
   const units = activeUnits(state, side);
   const transports = units.filter(unit => unit.profile.transportCapacity);
   for (const unit of units) {
+    if (playUnitCanRemainStationary(state, unit.id, side)) {
+      actions.push({
+        action: { type: 'play.remainStationary', side, unitId: unit.id },
+        category: 'movement',
+        side,
+        unitId: unit.id,
+        label: `${unit.profile.name}: Remain Stationary`,
+      });
+    }
     if (playUnitCanAdvance(state, unit.id, side, rules)) {
       actions.push({
         action: { type: 'play.advanceUnit', side, unitId: unit.id },
