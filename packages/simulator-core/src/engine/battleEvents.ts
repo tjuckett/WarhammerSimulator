@@ -11,6 +11,7 @@ export const BATTLE_EVENT_TYPE = {
   DamagePending: 'damage-pending',
   DamageApplied: 'damage-applied',
   ScoringApplied: 'scoring-applied',
+  RuleTriggered: 'rule-triggered',
   RuleNotice: 'rule-notice',
 } as const;
 

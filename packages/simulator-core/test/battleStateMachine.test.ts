@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { BATTLE_PHASE, BATTLE_ROUND_STEP, MOVEMENT_PHASE_STEP, MOVEMENT_STEP, PLAYER_TURN_STEP, type BattleState } from '../src/types/battle';
+import { BATTLE_PHASE, BATTLE_ROUND_STEP, EVENT_REQUEST_KIND, EVENT_TRIGGER_TIMING, MOVEMENT_PHASE_STEP, MOVEMENT_STEP, PLAYER_TURN_STEP, type BattleState } from '../src/types/battle';
 import {
   advanceBattlePhase,
   battleFlowNode,
@@ -23,6 +23,7 @@ import { BATTLE_EVENT_TYPE, createBattleEvent } from '../src/engine/battleEvents
 import { createMovementPhase } from '../src/engine/movementPhase';
 import { destroyExpiredStrategicReserves } from '../src/engine/reinforcements';
 import { remainStationary } from '../src/engine/interactiveMovement';
+import { pendingEventRequests, queueTriggeredRequests, resolvePendingEventRequest, triggerBattleEvent, type BattleEventTrigger } from '../src/engine/eventTriggers';
 
 function state(): Pick<BattleState, 'phase' | 'movementStep' | 'movementPhaseStep' | 'activeArmy' | 'battleRound' | 'turn' | 'maxBattleRounds' | 'maxTurns'> {
   return {
@@ -126,6 +127,45 @@ test('typed battle events retain phase context without formatted log parsing', (
   });
   assert.equal(event.phase, BATTLE_PHASE.Shooting);
   assert.deepEqual(event.data, { rolls: [6, 2], target: 4, successes: 1 });
+});
+
+test('typed event triggers queue stable requests without UI or log coupling', () => {
+  const battle = {
+    ...state(),
+    phase: BATTLE_PHASE.Movement,
+    log: [],
+    events: [],
+  } as unknown as BattleState;
+  const triggers: BattleEventTrigger[] = [{
+    id: 'test-surge-trigger',
+    eventType: 'rule-triggered',
+    phase: BATTLE_PHASE.Movement,
+    timing: EVENT_TRIGGER_TIMING.RuleTriggered,
+    createRequest: (_state, event) => ({
+      kind: EVENT_REQUEST_KIND.SurgeMove,
+      side: event.side,
+      timing: EVENT_TRIGGER_TIMING.RuleTriggered,
+      source: 'Test rule',
+      data: { unitId: 'unit-a', maximumDistance: 6 },
+    }),
+  }];
+
+  const { event, requests } = triggerBattleEvent(battle, {
+    type: 'rule-triggered',
+    side: 0,
+    source: 'Test rule',
+    data: { triggerTiming: EVENT_TRIGGER_TIMING.RuleTriggered },
+  }, triggers);
+  assert.equal(requests.length, 1);
+  assert.equal(requests[0].id, `request-${event.id}-test-surge-trigger`);
+  assert.equal(pendingEventRequests(battle).length, 1);
+
+  // Reprocessing the same event cannot duplicate a pending choice during replay.
+  assert.equal(queueTriggeredRequests(battle, event, triggers)[0].id, requests[0].id);
+  assert.equal(pendingEventRequests(battle).length, 1);
+  const resolved = resolvePendingEventRequest(battle, requests[0].id);
+  assert.equal(resolved?.kind, EVENT_REQUEST_KIND.SurgeMove);
+  assert.equal(pendingEventRequests(battle).length, 0);
 });
 
 test('hierarchical battle flow separates pre-battle, round, and player-turn state', () => {

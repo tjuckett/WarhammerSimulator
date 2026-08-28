@@ -220,6 +220,39 @@ export interface BattleEvent {
   data: Record<string, unknown>;
 }
 
+/** A rule timing that may expose a typed choice to one of the players. */
+export const EVENT_TRIGGER_TIMING = {
+  PhaseStart: 'phase-start',
+  PhaseEnd: 'phase-end',
+  StepStart: 'step-start',
+  RuleTriggered: 'rule-triggered',
+} as const;
+
+export type EventTriggerTiming = (typeof EVENT_TRIGGER_TIMING)[keyof typeof EVENT_TRIGGER_TIMING];
+
+export const EVENT_REQUEST_KIND = {
+  BattleShock: 'battle-shock',
+  SurgeMove: 'surge-move',
+  EmergencyDisembark: 'emergency-disembark',
+  IngressMove: 'ingress-move',
+} as const;
+
+/**
+ * Rule-owned interaction waiting to be resolved. This is game state, not UI
+ * state: a phase chooses how to display and resolve it.
+ */
+export interface PendingEventRequest {
+  id: string;
+  triggerId: string;
+  causeEventId: string;
+  kind: (typeof EVENT_REQUEST_KIND)[keyof typeof EVENT_REQUEST_KIND] | (string & {});
+  side: Side;
+  phase: Phase;
+  timing: EventTriggerTiming;
+  source: string;
+  data: Record<string, unknown>;
+}
+
 export interface DestroyedUnitMissionEvent {
   unitId: string;
   side: Side;
@@ -587,6 +620,8 @@ export interface BattleState {
   log: LogEntry[];
   /** Typed gameplay events. Log messages are a presentation/audit projection only. */
   events?: BattleEvent[];
+  /** Typed rule choices awaiting their owning phase or rule resolver. */
+  pendingEventRequests?: PendingEventRequest[];
   units: BattleUnit[];
   pendingDeadlyDemises?: PendingDeadlyDemise[];
   pendingFightOnDeath?: PendingFightOnDeath[];
