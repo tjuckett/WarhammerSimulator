@@ -10,7 +10,9 @@ import {
   playUnitCanAdvance,
   playUnitCanEmbark,
   playUnitCanFallBack,
+  playUnitCanRemainStationary,
   playUnitCanTakeToSkies,
+  remainStationaryPlayUnit,
   resolvePlaySurgeMove,
 } from '@warhammer-simulator/core/engine/simulator';
 import { unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
@@ -31,6 +33,7 @@ export type PlayDisembarkOption = {
 type MovementUnitAction = Extract<
   GameAction,
   | { type: typeof GAME_ACTION_TYPE.AdvanceUnit }
+  | { type: typeof GAME_ACTION_TYPE.RemainStationary }
   | { type: typeof GAME_ACTION_TYPE.FallBackUnit }
   | { type: typeof GAME_ACTION_TYPE.CompleteUnitMovement }
   | { type: typeof GAME_ACTION_TYPE.DeclareTakeToSkies }
@@ -77,6 +80,19 @@ export function resolveAdvancePlayUnitAction(
       unitId: selection.unitId,
       side: selection.side,
     },
+  };
+}
+
+export function resolveRemainStationaryPlayUnitAction(
+  state: BattleState,
+  selection: PlayUnitSelection,
+): { next: BattleState; action: MovementUnitAction } | null {
+  if (!playUnitCanRemainStationary(state, selection.unitId, selection.side)) return null;
+  const next = remainStationaryPlayUnit(state, selection.unitId, selection.side);
+  if (next === state) return null;
+  return {
+    next,
+    action: { type: GAME_ACTION_TYPE.RemainStationary, ...selection },
   };
 }
 

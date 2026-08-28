@@ -1,7 +1,7 @@
 import type { BattleState } from '@warhammer-simulator/core/types/battle';
 import type { GameAction } from '@warhammer-simulator/core/practice/actions';
 import { rulesEditionForRuleset } from '@warhammer-simulator/core/engine/rulesEngine';
-import { resolveAdvancePlayUnitAction, resolveCompletePlayUnitMovementAction, resolveFallBackPlayUnitAction } from './playMovementActions';
+import { resolveAdvancePlayUnitAction, resolveCompletePlayUnitMovementAction, resolveFallBackPlayUnitAction, resolveRemainStationaryPlayUnitAction } from './playMovementActions';
 import { normalizePlaySelectionForState, primaryPlaySelectionPart } from './playSelectionHelpers';
 import type { PlayModelSelection } from '../components/Battlefield';
 import type { PlayUndoEntry } from './usePlayUndoState';
@@ -47,6 +47,17 @@ export function createPlayMovementActionHandlers({
     commitBattleState(result.next);
   }
 
+  function remainStationarySelectedPlayUnit() {
+    const selection = primaryPlaySelectionPart(playModelSelection);
+    const prev = battleStateRef.current;
+    if (!prev || !selection) return;
+    const result = resolveRemainStationaryPlayUnitAction(prev, selection);
+    if (!result) return;
+    pushPlayUndo(playUndoEntry(prev), result.next, result.action);
+    setPlayModelSelection(normalizePlaySelectionForState(result.next, playModelSelection));
+    commitBattleState(result.next);
+  }
+
   function completeSelectedPlayUnitMovement() {
     commitPendingPlayModelMove();
     const selection = primaryPlaySelectionPart(playModelSelection);
@@ -59,5 +70,5 @@ export function createPlayMovementActionHandlers({
     commitBattleState(result.next);
   }
 
-  return { advanceSelectedPlayUnit, fallBackSelectedPlayUnit, completeSelectedPlayUnitMovement };
+  return { advanceSelectedPlayUnit, fallBackSelectedPlayUnit, remainStationarySelectedPlayUnit, completeSelectedPlayUnitMovement };
 }
