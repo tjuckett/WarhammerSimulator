@@ -1,4 +1,4 @@
-import { BATTLE_PHASE, MOVEMENT_STEP, type BattleState } from '@warhammer-simulator/core/types/battle';
+import { BATTLE_PHASE, MOVEMENT_STEP, PHASE_STEP, type BattleState } from '@warhammer-simulator/core/types/battle';
 import { movementStep } from '@warhammer-simulator/core/engine/simulator';
 
 type PlayModelSelectionPart = {
@@ -15,12 +15,15 @@ export function canEditPlayModels(state: BattleState | null | undefined): state 
   return !!state && (
     state.phase === BATTLE_PHASE.Deployment
     || (state.phase === BATTLE_PHASE.Setup && state.units.some(unit => unit.scoutMoveStarted))
-    || (state.phase === BATTLE_PHASE.Movement && movementStep(state) === MOVEMENT_STEP.MoveUnits)
+    || (state.phase === BATTLE_PHASE.Movement
+      && movementStep(state) === MOVEMENT_STEP.MoveUnits
+      && (state.phaseStep === undefined || state.phaseStep === PHASE_STEP.MovementUnits))
   );
 }
 
 export function canEditMovementModels(state: BattleState | null | undefined): state is BattleState {
-  return !!state && state.phase === BATTLE_PHASE.Movement && movementStep(state) === MOVEMENT_STEP.MoveUnits;
+  return !!state && state.phase === BATTLE_PHASE.Movement && movementStep(state) === MOVEMENT_STEP.MoveUnits
+    && (state.phaseStep === undefined || state.phaseStep === PHASE_STEP.MovementUnits);
 }
 
 export function transformPlayModelSelection(

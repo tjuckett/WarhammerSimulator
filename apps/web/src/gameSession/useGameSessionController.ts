@@ -1,11 +1,10 @@
-import { useState, type MutableRefObject } from 'react';
+import { useRef, useState, type MutableRefObject } from 'react';
 import type { PracticeTimeline as GameSessionTimeline, TimelineStateResult } from '@warhammer-simulator/core/practice/timeline';
-import { currentTimelineState } from '@warhammer-simulator/core/practice/timeline';
+import { currentTimelineState, truncateTimelineAtCursor } from '@warhammer-simulator/core/practice/timeline';
 import { scenarioFromTimeline, type PracticeCheckpointKind as GameSessionCheckpointKind } from '@warhammer-simulator/core/practice/scenarios';
 import type { PracticeScenarioSummary as GameSessionScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
 import {
   CHECKPOINT_KIND_SAVED_LABELS,
-  checkpointDescendantIds,
   checkpointLabelForState,
   nextCheckpointSequence,
 } from './checkpointHelpers';
@@ -15,6 +14,12 @@ import type { PendingCheckpointDelete, PendingCheckpointLoad } from './useGameSe
 type LoadOptions = {
   branchOnNextSave?: boolean;
   statusPrefix?: string;
+};
+
+type SaveMode = 'current' | 'overwrite-rewound' | 'new-game';
+
+type SaveOptions = {
+  overwriteCheckpointId?: string;
 };
 
 type UseGameSessionControllerParams = {
@@ -29,6 +34,7 @@ type UseGameSessionControllerParams = {
   setPendingCheckpointLoad: (pendingLoad: PendingCheckpointLoad | null) => void;
   pendingCheckpointDelete: PendingCheckpointDelete | null;
   setPendingCheckpointDelete: (pendingDelete: PendingCheckpointDelete | null) => void;
+  setPendingCheckpointAutosave: (pendingAutosave: PendingCheckpointAutosave | null) => void;
   setActiveCheckpointId: (checkpointId: string | null) => void;
   setActiveGameId: (gameId: string | null) => void;
   restoreTimelineResult: (result: TimelineStateResult) => void;
@@ -47,6 +53,7 @@ export function useGameSessionController({
   setPendingCheckpointLoad,
   pendingCheckpointDelete,
   setPendingCheckpointDelete,
+  setPendingCheckpointAutosave,
   setActiveCheckpointId,
   setActiveGameId,
   restoreTimelineResult,
@@ -56,31 +63,53 @@ export function useGameSessionController({
   const [loadModalOpen, setLoadModalOpen] = useState(false);
   const [saveStatus, setSaveStatus] = useState('');
   const [saveInProgress, setSaveInProgress] = useState(false);
+  const pendingCheckpointIdRef = useRef<string | null>(null);
 
-  async function saveCheckpoint(kind: GameSessionCheckpointKind) {
-    const timeline = gameSessionTimelineRef.current;
+  async function saveCheckpoint(
+    kind: GameSessionCheckpointKind,
+    mode: SaveMode = 'current',
+    options: SaveOptions = {},
+  ) {
+    const sourceTimeline = gameSessionTimelineRef.current;
     setSaveInProgress(true);
     try {
-      if (!timeline) {
+      if (!sourceTimeline) {
         setSaveStatus('Save failed: no active game session is available. Start a battle first.');
         return null;
       }
+      const timeline = mode === 'current' && sourceTimeline.metadata.rewoundFromCursor === undefined
+        ? sourceTimeline
+        : truncateTimelineAtCursor(sourceTimeline);
+      const timelineWasRebased = timeline !== sourceTimeline;
       const state = currentTimelineState(timeline);
       const label = checkpointLabelForState(state, kind);
-      const gameId = activeGameIdRef.current ?? timeline.metadata.id;
+      const isNewGame = mode === 'new-game';
+      const gameId = isNewGame ? createBranchId() : activeGameIdRef.current ?? timeline.metadata.id;
+      const branchId = isNewGame ? createBranchId() : checkpointBranchIdRef.current;
+      const checkpointId = options.overwriteCheckpointId ?? activeCheckpointIdRef.current;
       const scenario = scenarioFromTimeline(timeline, {
+        id: mode === 'new-game' ? undefined : checkpointId ?? undefined,
         name: label,
         gameId,
-        branchId: checkpointBranchIdRef.current,
-        parentCheckpointId: activeCheckpointIdRef.current ?? undefined,
+        branchId,
+        parentCheckpointId: undefined,
         checkpointKind: kind,
         checkpointLabel: label,
         sequence: await nextCheckpointSequence(gameSessionRepository, gameId),
         timelineCursor: timeline.cursor,
       });
       const summaries = await gameSessionRepository.saveScenario(scenario);
+      if (timelineWasRebased) {
+        restoreTimelineResult({
+          timeline,
+          state: currentTimelineState(timeline),
+        });
+      }
       setSavedScenarios(summaries);
       setActiveCheckpointId(scenario.metadata.id);
+      setActiveGameId(gameId);
+      checkpointBranchIdRef.current = branchId;
+      setPendingCheckpointAutosave(null);
       setSaveStatus(`${CHECKPOINT_KIND_SAVED_LABELS[kind]} ${scenario.metadata.name}.`);
       return scenario;
     } catch (error) {
@@ -89,6 +118,46 @@ export function useGameSessionController({
     } finally {
       setSaveInProgress(false);
     }
+  }
+
+  async function saveAutoPhaseCheckpoint() {
+    const timeline = gameSessionTimelineRef.current;
+    if (!timeline) return null;
+    const activeCheckpoint = activeCheckpointIdRef.current
+      ? savedScenarios.find(scenario => scenario.id === activeCheckpointIdRef.current)
+      : null;
+    const savedCursor = activeCheckpoint?.cursor ?? 0;
+    const rewindIsBehindSavedCursor = timeline.metadata.rewoundFromCursor !== undefined
+      && timeline.metadata.rewoundFromCursor < savedCursor;
+    if (activeCheckpoint && (
+      timeline.cursor < savedCursor
+      || rewindIsBehindSavedCursor
+    )) {
+      setPendingCheckpointAutosave({
+        gameName: activeCheckpoint.name,
+        cursor: timeline.cursor,
+        savedCursor,
+        checkpointId: activeCheckpoint.id,
+      });
+      pendingCheckpointIdRef.current = activeCheckpoint.id;
+      return null;
+    }
+    return saveCheckpoint('auto-phase', 'current');
+  }
+
+  async function overwriteRewoundAutosave() {
+    const savedCheckpointId = pendingCheckpointIdRef.current;
+    const saved = await saveCheckpoint('auto-phase', 'overwrite-rewound', {
+      overwriteCheckpointId: savedCheckpointId ?? undefined,
+    });
+    if (saved) pendingCheckpointIdRef.current = null;
+    return saved;
+  }
+
+  async function saveRewoundAutosaveAsNewGame() {
+    const saved = await saveCheckpoint('auto-phase', 'new-game');
+    if (saved) pendingCheckpointIdRef.current = null;
+    return saved;
   }
 
   async function saveActiveScenarioAndClose() {
@@ -153,10 +222,14 @@ export function useGameSessionController({
       return;
     }
     setLoadModalOpen(false);
+    const gameId = scenario.gameId ?? scenario.id;
+    const gameScenarioIds = savedScenarios
+      .filter(candidate => (candidate.gameId ?? candidate.id) === gameId)
+      .map(candidate => candidate.id);
     setPendingCheckpointDelete({
       scenarioId,
       scenarioName: scenario.name,
-      deleteIds: checkpointDescendantIds(savedScenarios, scenarioId),
+      deleteIds: gameScenarioIds.length ? gameScenarioIds : [scenarioId],
     });
   }
 
@@ -166,9 +239,11 @@ export function useGameSessionController({
     setSavedScenarios(await gameSessionRepository.deleteScenarios(deleteIds));
     if (activeCheckpointIdRef.current && deleteIds.includes(activeCheckpointIdRef.current)) {
       setActiveCheckpointId(null);
+      setActiveGameId(null);
     }
     setPendingCheckpointDelete(null);
-    setSaveStatus(`Deleted ${deleteIds.length} checkpoint${deleteIds.length === 1 ? '' : 's'}.`);
+    setLoadModalOpen(true);
+    setSaveStatus(`Deleted saved game${deleteIds.length > 1 ? ' and its older records' : ''}.`);
   }
 
   return {
@@ -190,6 +265,13 @@ export function useGameSessionController({
       loadPendingCheckpointWithoutSaving,
       requestDeleteSavedScenario,
       confirmDeleteSavedScenario,
+      saveAutoPhaseCheckpoint,
+      overwriteRewoundAutosave,
+      saveRewoundAutosaveAsNewGame,
+      cancelAutoPhaseSave: () => {
+        pendingCheckpointIdRef.current = null;
+        setPendingCheckpointAutosave(null);
+      },
     },
   };
 }

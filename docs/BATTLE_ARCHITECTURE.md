@@ -4,6 +4,17 @@ Last updated: 2026-08-23
 
 This document describes the current battle-engine boundaries and the target architecture for completing the phase state machine and centralizing combat. It supplements [`architecture.md`](./architecture.md), which covers the wider web application.
 
+The implementation rules for isolating phase eligibility, selection, and popup
+visibility are defined in [`PHASE_SEPARATION.md`](./PHASE_SEPARATION.md).
+
+The detailed rewrite specifications are split into:
+
+- [`rules/11e/TURN_AND_PHASES.md`](./rules/11e/TURN_AND_PHASES.md)
+- [`rules/11e/MOVEMENT.md`](./rules/11e/MOVEMENT.md)
+- [`AI_AND_CONTROLLERS.md`](./AI_AND_CONTROLLERS.md)
+- [`EVENTS_AND_TRIGGERS.md`](./EVENTS_AND_TRIGGERS.md)
+- [`UNDO_AND_TIMELINE.md`](./UNDO_AND_TIMELINE.md)
+
 ## Design principles
 
 - `packages/simulator-core` owns rules, state, typed actions, typed results, and typed events.

@@ -58,10 +58,10 @@ export function buildMeleeAttackAllocations(allocations: AllocationTable): PlayM
   return Object.entries(allocations).flatMap(([weaponIndexText, targets]) => {
     const weaponIndex = Number(weaponIndexText);
     const entries = Object.entries(targets).filter(([, attacks]) => attacks > 0);
-    return entries.map(([targetUnitId, attacks]) => ({
+    return entries.map(([targetUnitId, modelCount]) => ({
       weaponIndex,
       targetUnitId,
-      ...(entries.length > 1 ? { attackCount: attacks } : {}),
+      modelCount,
     }));
   });
 }

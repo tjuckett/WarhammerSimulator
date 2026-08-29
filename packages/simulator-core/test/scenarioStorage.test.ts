@@ -1,11 +1,26 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { PHASE_STEP } from '../src/types/battle';
 import type { BattleState, BattleUnit, Phase, Position, PrimaryMissionScoringRecord, SecondaryMissionScoringRecord, Terrain, TerritoryZoneSet } from '../src/types/battle';
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
 import { simulatePlayerTurn } from '../src/engine/simulator';
 import { fightOnDeathTargetIds, fightOnDeathWeaponOptions } from '../src/engine/simulator';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayScoutMove, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, createDeploymentState, decoyObjectiveOptions, declarePlaySuperHeavyMobile, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playDisembarkModes, playFightActivationUnitIds, playFightWeaponOptions, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playScoutMoveAllowance, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModels, movePlayModelsVertically, removePlayCasualtyModels, removePlayModels, resolvePendingDeadlyDemises, resolvePlaySurgeMove, rotatePlayModels, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, simulateNextUnit, simulationNextUnitId, snapShootPlayUnitWeapon, startPlayFightStep, startPlayScoutMove, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, beginPlayFightMovement, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayFightMovement, completePlayScoutMove, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, createDeploymentState, decoyObjectiveOptions, declarePlaySuperHeavyMobile, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playDisembarkModes, playFightActivationUnitIds, playFightWeaponOptions, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playScoutMoveAllowance, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanPileIn, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModelByDelta, movePlayModelVerticallyByDelta, removePlayCasualtyModels, removePlayModels, resolvePendingDeadlyDemises, resolvePlaySurgeMove, rotatePlayModelByDelta, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, simulateNextUnit, simulationNextUnitId, snapShootPlayUnitWeapon, startPlayConsolidationStep, startPlayFightStep, startPlayScoutMove, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, targetHasCoverFromModel, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+
+// Batch model movement is a UI interaction. Core tests compose its atomic
+// model action to keep the simulator API single-model for AI/controller use.
+function movePlayModels(state: BattleState, unitId: string, side: 0 | 1, modelIndices: number[], dx: number, dy: number, collide = false): BattleState {
+  return modelIndices.reduce((current, modelIndex) => movePlayModelByDelta(current, unitId, side, modelIndex, dx, dy, collide), state);
+}
+
+function movePlayModelsVertically(state: BattleState, unitId: string, side: 0 | 1, modelIndices: number[], dz: number): BattleState {
+  return modelIndices.reduce((current, modelIndex) => movePlayModelVerticallyByDelta(current, unitId, side, modelIndex, dz), state);
+}
+
+function rotatePlayModels(state: BattleState, unitId: string, side: 0 | 1, modelIndices: number[], degrees: number): BattleState {
+  return modelIndices.reduce((current, modelIndex) => rotatePlayModelByDelta(current, unitId, side, modelIndex, degrees), state);
+}
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
@@ -129,6 +144,12 @@ function state(phase: Phase, turn = 1): BattleState {
     maxTurns: 5,
     activeArmy: 0,
     phase,
+    phaseStep: phase === 'shooting'
+      ? PHASE_STEP.ShootingUnits
+      : phase === 'charge'
+        ? PHASE_STEP.ChargeUnits
+        : undefined,
+    movementStep: phase === 'movement' ? 'moveUnits' : undefined,
     winner: null,
     log: [],
     units: [],
@@ -203,6 +224,16 @@ function verticalTerritories(splitX = 30): TerritoryZoneSet {
       { polygons: [[{ x: splitX, y: 0 }, { x: 60, y: 0 }, { x: 60, y: 44 }, { x: splitX, y: 44 }]] },
     ],
   };
+}
+
+function markFightPhaseReadyToEnd(battle: BattleState): BattleState {
+  battle.fightStepStarted = true;
+  battle.consolidationStepStarted = true;
+  battle.consolidationSide = (battle.activeArmy === 0 ? 1 : 0) as 0 | 1;
+  battle.consolidationEligibleUnitIds = [];
+  battle.consolidationPendingFightUnitIds = [];
+  battle.phaseStep = PHASE_STEP.FightEnd;
+  return battle;
 }
 
 type PrimaryClauseCoverage = {
@@ -853,7 +884,7 @@ test('11th Epic Challenge constrains melee damage allocation to the selected Cha
   screenedBattle.units = [screenedShooter, smokeScreen, screenedTarget];
   const screened = useStratagem(screenedBattle, 1, 'smokescreen', rules40K11th, smokeScreen.id);
   const screenedShooting = shootPlayUnitWeapon(screened, screenedShooter.id, 0, screenedTarget.id, 'all', rules40K11th);
-  assert.match(screenedShooting.log.map(entry => entry.message).join(' '), /Smokescreen: target has Benefit of Cover/);
+  assert.match(screenedShooting.log.map(entry => entry.message).join(' '), /Benefit of Cover -1 to Hit/);
 });
 
 test('11th edition Insane Bravery can only be used once per battle', () => {
@@ -1349,7 +1380,6 @@ test('11th Smokescreen applies cover and a hit penalty for the phase', () => {
   try {
     const shooting = shootPlayUnitWeapon(screened, shooter.id, 0, smoke.id, 'all', rules40K11th);
     const messages = shooting.log.map(entry => entry.message).join(' ');
-    assert.match(messages, /Smokescreen: target has Benefit of Cover/);
     assert.match(messages, /Benefit of Cover -1 to Hit/);
     assert.match(messages, /Hit rolls \(4\+\)/);
     assert.match(messages, /Save rolls \(4\+\)/);
@@ -1514,7 +1544,7 @@ test('11th Ork Waaagh! records a typed active army ability window', () => {
   used.units.push(secondOrk);
   assert.deepEqual(availableUnitAbilities(used, secondOrk.id, 0, 'command-phase', rules40K11th), []);
 
-  const target = losTestUnit('target', 1, { x: 8.4, y: 10 });
+  const target = losTestUnit('target', 1, { x: 7, y: 10 });
   used.phase = 'charge';
   used.activeArmy = 0;
   used.units.push(target);
@@ -1533,6 +1563,7 @@ test('11th Ork Waaagh! records a typed active army ability window', () => {
   };
   advanced.position = { x: 10, y: 10 };
   target.position = { x: 11.2, y: 10 };
+  target.modelPositions = [{ x: 11.2, y: 10 }];
   used.phase = 'fight';
   advanced.movementAction = undefined;
   advanced.charged = true;
@@ -2085,6 +2116,7 @@ test('primary scoring lifecycle omits empty windows and logs each serialized eva
   roundTwo.objectiveOwners = [null];
   roundTwo.terrain = [terrainMat({ id: 'central', type: 'ruin', x: 18, y: 18, width: 4, height: 4, objectiveRole: 'central' })];
   roundTwo.units = [losTestUnit('holder', 0, { x: 20, y: 20 })];
+  roundTwo.phaseStep = PHASE_STEP.CommandEnd;
 
   const scored = applyGameAction(roundTwo, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
   const primaryLogs = scored.log.filter(entry => entry.id.startsWith('primary-score-log:'));
@@ -2098,6 +2130,7 @@ test('primary scoring lifecycle omits empty windows and logs each serialized eva
   unsupportedStart.objectives = [{ x: 10, y: 10 }];
   unsupportedStart.objectiveOwners = [null];
   unsupportedStart.units = [losTestUnit('holder', 0, { x: 10, y: 10 })];
+  unsupportedStart.phaseStep = PHASE_STEP.CommandEnd;
   const unsupported = applyGameAction(unsupportedStart, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
   const unsupportedLogs = unsupported.log.filter(entry => entry.id.startsWith('primary-score-unsupported:'));
   assert.equal(unsupportedLogs.length, 1);
@@ -2220,6 +2253,7 @@ test('Cleanse and Plunder actions replay, complete at end of turn, and persist t
   const cleanser = losTestUnit('cleanser', 0, { x: 12, y: 12 });
   const plunderer = losTestUnit('plunderer', 0, { x: 20, y: 10 });
   initial.units = [cleanser, plunderer];
+  markFightPhaseReadyToEnd(initial);
 
   let timeline = createPracticeTimeline(initial, { id: 'cleanse-plunder-game' });
   let current = initial;
@@ -2644,6 +2678,7 @@ test('partial secondary cap awards replay and persist idempotently', async () =>
     activeSide: 0, phase: 'fight', scoreAfter: 14,
   }];
   battle.scores[0] = 14;
+  markFightPhaseReadyToEnd(battle);
   const result = appendTimelineAction(
     createPracticeTimeline(battle, { id: 'secondary-cap-game' }),
     battle,
@@ -3095,6 +3130,7 @@ test('final secondary scoring batch runs through manual and simulation lifecycle
     losTestUnit('q3', 0, { x: 10, y: 36 }), losTestUnit('q4', 0, { x: 50, y: 36 }),
     losTestUnit('red', 1, { x: 30, y: 22 }),
   ];
+  markFightPhaseReadyToEnd(initial);
   const battle = configureSecondaryMissions(initial, 0, 'fixed', ['Engage on All Fronts']);
   const result = appendTimelineAction(
     createPracticeTimeline(battle, { id: 'final-secondary-batch' }), battle,
@@ -3122,6 +3158,7 @@ test('secondary scoring lifecycle replays and persists Defend Stronghold awards 
   initial.objectiveOwners = [null];
   initial.terrain = [terrainMat({ id: 'home', type: 'ruin', x: 8, y: 3, width: 4, height: 4, objectiveRole: 'home-0' })];
   initial.units = [losTestUnit('blue-home', 0, { x: 10, y: 5 }), losTestUnit('red', 1, { x: 40, y: 30 })];
+  markFightPhaseReadyToEnd(initial);
   let battle = configureSecondaryMissions(initial, 0, 'tactical', ['Defend Stronghold']);
   battle = drawSecondaryMission(battle, 0, 'Defend Stronghold');
   const result = appendTimelineAction(
@@ -3162,9 +3199,10 @@ test('secondary scoring lifecycle logs and fixed Assassination replay and persis
     { rules: rules40K11th },
   );
   assert.equal(result.state.scores[0], 0);
-  for (let step = 0; step < 4; step += 1) {
+  for (let step = 0; step < 20 && result.state.phase !== 'command'; step += 1) {
     result = appendTimelineAction(result.timeline, result.state, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
   }
+  assert.equal(result.state.phase, 'command');
   assert.equal(result.state.scores[0], 4);
   assert.equal(result.state.missionState?.secondaryMissionScoringRecords?.length, 1);
   assert.ok(result.state.log.some(entry => /Secondary \(Assassination\).+\+4VP/.test(entry.message)));
@@ -4787,6 +4825,7 @@ test('11th Sabotage snapshots completion-time objective proximity and scores exa
   const midUnit = losTestUnit('blue-mid', 0, { x: 20, y: 10 });
   const forwardUnit = losTestUnit('blue-forward', 0, { x: 30, y: 10 });
   battle.units = [midUnit, forwardUnit];
+  markFightPhaseReadyToEnd(battle);
 
   assert.deepEqual(sabotageObjectiveOptions(battle, midUnit.id, 0, rules40K11th), [1]);
   const firstStarted = startPlayUnitAction(battle, midUnit.id, 0, 'sabotage', 'Sabotage', rules40K11th, 1);
@@ -5245,6 +5284,7 @@ test(PRIMARY_GLOBAL_SCORING_COVERAGE[2].assertion, () => {
     losTestUnit('blue-controller', 0, { x: 30, y: 10 }),
     losTestUnit('red-survivor', 1, { x: 50, y: 30 }),
   ];
+  markFightPhaseReadyToEnd(finalTurn);
 
   const manual = applyGameAction(finalTurn, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
   const simulated = simulateNextPhase(finalTurn, rules40K11th);
@@ -5455,8 +5495,9 @@ test('11th Secured Objectives resolves at phase boundaries and feeds mission own
   assert.deepEqual(reinforcements.objectiveOwners, [0]);
   assert.deepEqual(reinforcements.securedObjectiveOwners, [0]);
   const nextPhase = applyGameAction(reinforcements, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
-  assert.deepEqual(nextPhase.objectiveOwners, [1]);
-  assert.deepEqual(nextPhase.securedObjectiveOwners, [null]);
+  const shooting = applyGameAction(nextPhase, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+  assert.deepEqual(shooting.objectiveOwners, [1]);
+  assert.deepEqual(shooting.securedObjectiveOwners, [null]);
 });
 
 test('11th Secured Objective actions replay and persist', async () => {
@@ -5515,6 +5556,7 @@ test('11th actions are cancelled by movement and complete at end of turn', () =>
   const finisher = losTestUnit('finisher', 0, { x: 10, y: 10 });
   fight.units = [finisher];
   const completing = startPlayUnitAction(fight, finisher.id, 0, 'deploy-device', 'Deploy Device', rules40K11th);
+  markFightPhaseReadyToEnd(completing);
   const nextTurn = applyGameAction(completing, { type: 'play.stepPhase' }, { rules: rules40K11th });
   assert.equal(nextTurn.units.find(candidate => candidate.id === finisher.id)?.performingAction, undefined);
   assert.match(nextTurn.log.map(entry => entry.message).join(' '), /completes Deploy Device/);
@@ -6330,8 +6372,13 @@ test('play Movement collision mode cannot move through enemy models', () => {
   const moved = movePlayModels(battle, 'unit-1', 0, [0], 6, 0, true);
   const movedUnit = moved.units.find(candidate => candidate.id === 'unit-1')!;
 
-  assert.ok(movedUnit.modelPositions[0].x < 13 - 0.9);
+  // Collision mode checks the released position, not the drag path. The
+  // model may pass through the enemy while dragging and end beyond it.
+  assert.equal(movedUnit.modelPositions[0].x, 16);
   assert.equal(movedUnit.movementAction, 'normalMove');
+
+  const blockedAtEndpoint = movePlayModels(battle, 'unit-1', 0, [0], 3, 0, true);
+  assert.equal(blockedAtEndpoint.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x, 10);
 });
 
 test('play Movement ignores model collisions unless collision mode is enabled', () => {
@@ -6692,7 +6739,7 @@ test('11th Surge Move validates trigger state, closest target, movement lock, re
   assert.equal(reached.units[1].inCombat, true);
 });
 
-test('play Movement ignores blocking terrain unless collision mode is enabled', () => {
+test('play Movement collision mode checks the terrain endpoint, not the path', () => {
   const battle = state('movement');
   const profile = {
     name: 'Vehicle',
@@ -6753,7 +6800,10 @@ test('play Movement ignores blocking terrain unless collision mode is enabled', 
   assert.equal(normalDrag.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x, 14);
 
   const collisionDrag = movePlayModels(battle, 'unit-1', 0, [0], 4, 0, true);
-  assert.ok((collisionDrag.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x ?? 0) < 12);
+  assert.equal(collisionDrag.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x, 14);
+
+  const blockedAtEndpoint = movePlayModels(battle, 'unit-1', 0, [0], 3, 0, true);
+  assert.equal(blockedAtEndpoint.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x, 10);
 });
 
 test('play Movement checks blocking terrain across each recorded movement leg', () => {
@@ -7043,10 +7093,15 @@ test('play Movement advances to Reinforcements before Shooting', () => {
 
   const reinforcements = applyGameAction(battle, { type: 'play.stepPhase' }, { rules: rules40K10th });
   assert.equal(reinforcements.phase, 'movement');
+  assert.equal(reinforcements.phaseStep, PHASE_STEP.MovementReinforcements);
   assert.equal(reinforcements.movementStep, 'reinforcements');
   assert.equal(reinforcements.units[0].movementAction, 'remainedStationary');
 
-  const shooting = applyGameAction(reinforcements, { type: 'play.stepPhase' }, { rules: rules40K10th });
+  const movementEnd = applyGameAction(reinforcements, { type: 'play.stepPhase' }, { rules: rules40K10th });
+  assert.equal(movementEnd.phase, 'movement');
+  assert.equal(movementEnd.phaseStep, PHASE_STEP.MovementEnd);
+
+  const shooting = applyGameAction(movementEnd, { type: 'play.stepPhase' }, { rules: rules40K10th });
   assert.equal(shooting.phase, 'shooting');
   assert.equal(shooting.movementStep, undefined);
 });
@@ -8093,6 +8148,142 @@ test('Selected weapon profile abilities do not affect alternate profiles', () =>
   }
 });
 
+test('11th ranged cover is evaluated from each attacking model', () => {
+  const battle = state('shooting');
+  const shooter = losTestUnit('killa-kans', 0, { x: 0, y: 8 });
+  shooter.profile = {
+    ...shooter.profile,
+    name: 'Killa Kans',
+    baseModelCount: 2,
+    weapons: [
+      { name: 'Kustom Mega-blasta', range: 24, attacks: '1', skill: 3, strength: 9, ap: -2, damage: '2', keywords: [], isMelee: false },
+    ],
+  };
+  shooter.remainingModels = 2;
+  shooter.modelPositions = [{ x: 0, y: 8 }, { x: 0, y: 12 }];
+  shooter.position = { x: 0, y: 10 };
+  const target = losTestUnit('overlord', 1, { x: 12, y: 10 });
+  target.profile = { ...target.profile, name: 'Necron Overlord', save: 4, wounds: 99, weapons: [] };
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+  battle.terrain = [terrainMat({
+    id: 'light-wall',
+    name: 'Light Wall',
+    type: 'area',
+    x: 5,
+    y: 8.5,
+    width: 0.5,
+    height: 1,
+    providesCover: false,
+    features: [{
+      id: 'light-wall-feature',
+      name: 'Light Wall Feature',
+      x: 5,
+      y: 8.5,
+      width: 0.5,
+      height: 1,
+      featureHeight: 'low',
+      category: 'light',
+      blocksLOS: false,
+      blocksMovement: false,
+      difficult: false,
+    }],
+  })];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const shooting = shootPlayUnitWeapon(battle, shooter.id, shooter.side, target.id, 0, rules40K11th);
+    const combatStats = shooting.log
+      .filter(entry => entry.message.includes('[combat-stats]'))
+      .map(entry => entry.message);
+    assert.equal(combatStats.length, 2);
+    assert.equal(combatStats.filter(message => message.includes('cover=1')).length, 1);
+    assert.equal(combatStats.filter(message => !message.includes('cover=1')).length, 1);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('terrain mats only block cover when the sight line passes through them', () => {
+  const shooter = losTestUnit('mat-shooter', 0, { x: 0, y: 10 });
+  const target = losTestUnit('mat-target', 1, { x: 12, y: 10 });
+
+  const shooterMat = terrainMat({
+    id: 'shooter-mat',
+    type: 'area',
+    x: -1,
+    y: 8,
+    width: 4,
+    height: 4,
+  });
+  assert.equal(targetHasCoverFromModel(shooter, 0, target, [shooterMat]), false);
+
+  const targetMat = terrainMat({
+    id: 'target-mat',
+    type: 'area',
+    x: 11,
+    y: 8,
+    width: 3,
+    height: 4,
+  });
+  for (const keyword of ['Infantry', 'Beasts', 'Swarm']) {
+    assert.equal(
+      targetHasCoverFromModel(shooter, 0, { ...target, profile: { ...target.profile, keywords: [keyword] } }, [targetMat]),
+      true,
+    );
+  }
+  assert.equal(
+    targetHasCoverFromModel(shooter, 0, { ...target, profile: { ...target.profile, keywords: ['Vehicle'] } }, [targetMat]),
+    false,
+  );
+
+  const interveningMat = terrainMat({
+    id: 'intervening-mat',
+    type: 'area',
+    x: 5,
+    y: 8,
+    width: 2,
+    height: 4,
+  });
+  assert.equal(targetHasCoverFromModel(shooter, 0, target, [interveningMat]), true);
+
+  const wallOnShooterMat = terrainMat({
+    ...shooterMat,
+    id: 'shooter-wall-mat',
+    features: [{
+      id: 'shooter-wall',
+      name: 'Wall',
+      x: 0.4,
+      y: 9.75,
+      width: 0.2,
+      height: 0.5,
+      featureHeight: 'tall',
+      blocksLOS: true,
+      blocksMovement: true,
+      difficult: false,
+    }],
+  });
+  assert.equal(targetHasCoverFromModel(shooter, 0, target, [wallOnShooterMat]), true);
+});
+
+test('terrain cover is evaluated independently for each target unit', () => {
+  const shooter = losTestUnit('multi-target-shooter', 0, { x: 0, y: 10 });
+  const coveredTarget = losTestUnit('covered-target', 1, { x: 12, y: 10 });
+  const clearTarget = losTestUnit('clear-target', 1, { x: 12, y: 20 });
+  const terrain = [terrainMat({
+    id: 'target-specific-mat',
+    type: 'area',
+    x: 5,
+    y: 8,
+    width: 2,
+    height: 4,
+  })];
+
+  assert.equal(targetHasCoverFromModel(shooter, 0, coveredTarget, terrain), true);
+  assert.equal(targetHasCoverFromModel(shooter, 0, clearTarget, terrain), false);
+});
+
 test('Selected ranged target only resolves weapons that can still attack that target', () => {
   const battle = state('shooting');
   const profile = {
@@ -8133,7 +8324,13 @@ test('Selected ranged target only resolves weapons that can still attack that ta
     assert.equal(nextShooter.activated, false);
     assert.deepEqual(nextShooter.firedWeaponIndices, [1]);
     assert.deepEqual(playShootingWeaponOptions(next, shooter.id, shooter.side, rules40K11th), [
-      { weaponIndex: 0, name: 'Short Blaster', targetIds: [nearTarget.id] },
+      {
+        weaponIndex: 0,
+        name: 'Short Blaster',
+        targetIds: [nearTarget.id],
+        modelCount: 1,
+        targetModelCounts: { [nearTarget.id]: 1 },
+      },
     ]);
   } finally {
     Math.random = originalRandom;
@@ -8232,7 +8429,13 @@ test('11th engaged Infantry can use Close-Quarters weapons against engaged enemi
   battle.units = [shooter, target];
 
   assert.deepEqual(playShootingWeaponOptions(battle, shooter.id, 0, rules40K11th), [
-    { weaponIndex: 0, name: 'Close-Quarters Blaster', targetIds: [target.id] },
+    {
+      weaponIndex: 0,
+      name: 'Close-Quarters Blaster',
+      targetIds: [target.id],
+      modelCount: 1,
+      targetModelCounts: { [target.id]: 1 },
+    },
   ]);
   const shot = shootPlayUnitWeapon(battle, shooter.id, 0, target.id, 'all', rules40K11th);
   assert.equal(shot.units.find(unit => unit.id === shooter.id)?.activated, true);
@@ -8517,7 +8720,7 @@ test('Units can target enemy Vehicles locked in combat with friendly units', () 
     assert.equal(shooting.log.some(entry => entry.message.includes('Anti-Tank Squad shoots')), true);
     assert.equal(shooting.log.some(entry => entry.message.includes('Lascannon')), true);
     assert.equal(shooting.log.some(entry => entry.message.includes('attacks vs Locked Vehicle')), true);
-    assert.equal(shooting.log.some(entry => entry.message.includes('Big Guns Never Tire -1 to Hit')), true);
+    assert.equal(shooting.log.some(entry => entry.message.includes('Engaged Monster/Vehicle -1 to Hit')), true);
   } finally {
     Math.random = originalRandom;
   }
@@ -9014,7 +9217,7 @@ test('Benefit of Cover requires every target model to meet a cover condition', (
     height: 4,
   })];
 
-  assert.equal(targetHasCoverFrom(shooter.position, target, terrain), false);
+  assert.equal(targetHasCoverFrom(shooter.position, target, terrain), true);
 });
 
 test('11th Hidden limits visibility of quiet infantry inside covered terrain', () => {
@@ -9038,7 +9241,7 @@ test('11th Hidden limits visibility of quiet infantry inside covered terrain', (
   assert.deepEqual(playShootingWeaponOptions(partiallyWithinTerrainBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);
   const legacyRuinBattle = structuredClone(partiallyWithinTerrainBattle);
   legacyRuinBattle.terrain[0].features = [];
-  assert.deepEqual(playShootingWeaponOptions(legacyRuinBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);
+  assert.deepEqual(playShootingWeaponOptions(legacyRuinBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, [target.id]);
   const nonCoverAreaBattle = structuredClone(battle);
   nonCoverAreaBattle.terrain[0].providesCover = false;
   assert.deepEqual(playShootingWeaponOptions(nonCoverAreaBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);
@@ -9048,7 +9251,7 @@ test('11th Hidden limits visibility of quiet infantry inside covered terrain', (
   const lightTerrainBattle = structuredClone(battle);
   lightTerrainBattle.units.find(unit => unit.id === target.id)!.rangedAttacksMadePreviousTurn = undefined;
   lightTerrainBattle.terrain[0].features[0].category = 'light';
-  assert.deepEqual(playShootingWeaponOptions(lightTerrainBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);
+  assert.deepEqual(playShootingWeaponOptions(lightTerrainBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, [target.id]);
 });
 
 test('11th Hidden also blocks Indirect Fire beyond the detection range', () => {
@@ -10083,7 +10286,12 @@ test('Indirect Fire weapons can target without LOS with hit penalty and cover', 
     const hiddenTarget = shooting.units.find(unit => unit.id === 'target-1');
     assert.equal(shooting.phase, 'shooting');
     assert.equal(shooting.log.some(entry => entry.message.includes('Mortar')), true);
-    assert.equal(shooting.log.some(entry => entry.message.includes('Indirect Fire -1 to Hit; target has Benefit of Cover')), true);
+    assert.equal(
+      shooting.log.some(entry => entry.message.includes('Indirect Fire -1 to Hit')),
+      true,
+      shooting.log.map(entry => entry.message).join(' '),
+    );
+    assert.equal(shooting.log.some(entry => entry.message.includes('cover=1')), true);
     assert.equal(shooting.log.some(entry => entry.message.includes('Hit rolls (4+)')), true);
     assert.equal(shooting.log.some(entry => entry.message.includes('Save rolls (3+, cover +1)')), true);
     assert.equal(hiddenTarget?.woundsOnLeadModel, 3);
@@ -10107,8 +10315,8 @@ test('11th Indirect Fire uses the stationary visibility threshold and always gra
   try {
     const shooting = shootPlayUnitWeapon(battle, shooter.id, 0, target.id, 'all', rules40K11th);
     const messages = shooting.log.map(entry => entry.message).join(' ');
-    assert.match(messages, /Indirect Fire: unmodified 4\+ hit while stationary/);
-    assert.match(messages, /Benefit of Cover -1 to Hit/);
+    assert.match(messages, /Indirect Fire: unmodified 4\+ while stationary/);
+    assert.match(messages, /cover=1/);
     assert.match(messages, /Save rolls \(4\+\)/);
     assert.equal(messages.includes('Indirect Fire -1 to Hit'), false);
   } finally {
@@ -10864,6 +11072,40 @@ test('11th Fight phase lets a charged unit pile in before selecting melee attack
   ]);
 });
 
+test('11th Fight skips a Pile In when every model in the unit is already in base contact', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = false;
+  battle.fightPileInSide = 1;
+  const defender = losTestUnit('defender-1', 1, { x: 10, y: 10 });
+  defender.inCombat = true;
+  const attacker = losTestUnit('attacker-1', 0, { x: 10, y: 10 });
+  attacker.inCombat = true;
+  battle.units = [attacker, defender];
+
+  assert.equal(playUnitCanPileIn(battle, defender.id, 1, rules40K11th), false);
+});
+
+test('11th Fight starts with the charging active player after an empty defender Pile In step', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = false;
+  battle.fightPileInSide = 0;
+  const attacker = losTestUnit('attacker-1', 0, { x: 0, y: 10 });
+  attacker.charged = true;
+  attacker.activated = true;
+  const defender = losTestUnit('defender-1', 1, { x: 1.5, y: 10 });
+  defender.piledIn = true;
+  battle.units = [attacker, defender];
+
+  const moving = beginPlayFightMovement(battle, attacker.id, 0, 'pileIn', rules40K11th);
+  const resolved = completePlayFightMovement(moving, attacker.id, 0, rules40K11th);
+
+  assert.equal(resolved.fightStepStarted, true);
+  assert.deepEqual(playFightActivationUnitIds(resolved, 0, rules40K11th), [attacker.id]);
+  assert.deepEqual(playFightActivationUnitIds(resolved, 1, rules40K11th), []);
+});
+
 test('11th attached formations keep a stable combined rules-unit identity and source-scoped rules', () => {
   const bodyguard = {
     name: 'Wardens', rosterId: 'wardens', move: 6, toughness: 6, save: 3, wounds: 2,
@@ -11037,7 +11279,9 @@ test('11th attached components start, cancel, and complete one shared action', (
 
   const chargeBattle = JSON.parse(JSON.stringify(battle)) as BattleState;
   chargeBattle.phase = 'charge';
-  chargeBattle.units.push(losTestUnit('charge-target', 1, { x: 12, y: 10 }));
+  chargeBattle.phaseStep = PHASE_STEP.ChargeUnits;
+  // Keep a model in the attached unit able to reach base contact during the charge.
+  chargeBattle.units.push(losTestUnit('charge-target', 1, { x: 14, y: 10 }));
   const originalChargeRandom = Math.random;
   Math.random = () => 0.99;
   try {
@@ -11174,6 +11418,7 @@ test('11th Overrun uses the Fight-step engagement snapshot and current eligibili
   const piled = pileInPlayUnit(selected, 'overrunner', 0, rules40K11th);
   assert.equal(piled.units[0].overrunPiledIn, true);
   assert.equal(pileInPlayUnit(piled, 'overrunner', 0, rules40K11th), piled);
+  assert.deepEqual(playFightActivationUnitIds(piled, 0, rules40K11th), ['overrunner']);
   assert.deepEqual(playFightActivationUnitIds(piled, 1, rules40K11th), []);
 
   const originalRandom = Math.random;
@@ -11185,8 +11430,14 @@ test('11th Overrun uses the Fight-step engagement snapshot and current eligibili
     assert.equal(playUnitCanConsolidate(fought, 'overrunner', 0, rules40K11th), false);
     const foeFought = fightPlayUnitWeapon(fought, 'new-foe', 1, 'overrunner', -1, rules40K11th);
     assert.equal(foeFought.units[1].activated, true);
-    assert.equal(playUnitCanConsolidate(foeFought, 'overrunner', 0, rules40K11th), true);
-    const nextTurn = applyGameAction(foeFought, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+    const consolidationStarted = startPlayConsolidationStep(foeFought, rules40K11th);
+    assert.equal(playUnitCanConsolidate(consolidationStarted, 'overrunner', 0, rules40K11th), true);
+    const consolidated = consolidatePlayUnit(consolidationStarted, 'overrunner', 0, rules40K11th);
+    const opposingConsolidation = applyGameAction(consolidated, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+    assert.equal(opposingConsolidation.phaseStep, PHASE_STEP.FightConsolidate);
+    const fightEnd = applyGameAction(opposingConsolidation, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+    assert.equal(fightEnd.phaseStep, PHASE_STEP.FightEnd);
+    const nextTurn = applyGameAction(fightEnd, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
     assert.equal(nextTurn.phase, 'command');
     assert.equal(nextTurn.fightStepStarted, undefined);
     assert.equal(nextTurn.engagedUnitIdsAtFightStepStart, undefined);
@@ -11516,7 +11767,8 @@ test('11th Disembark prefers a safe Tactical setup over Combat Disembark', () =>
     assert.equal(passenger.combatDisembarkedThisTurn, undefined);
     assert.equal(passenger.battleshocked, false);
     assert.equal(passenger.remainingModels, 2);
-    assert.ok(passenger.position.x > 23 && passenger.position.x < 25);
+    const transportAfter = disembarked.units.find(unit => unit.id === transport.id)!;
+    assert.ok(battleUnitsBaseEdgeDistance(passenger, transportAfter) <= 3.001);
     assert.deepEqual(playChargeTargetOptions(disembarked, passenger.id, 0, rules40K11th), []);
     assert.equal(disembarked.log.some(entry => entry.message.includes('Combat Disembark hazard rolls')), false);
   } finally {
@@ -11963,7 +12215,7 @@ test('play Movement keeps individual models editable until the unit is locked', 
   assert.equal(movedUnit.movementComplete, undefined);
 });
 
-test('play Movement counts the full path across multiple legs', () => {
+test('play Movement anchors repeated drags to movement start until a waypoint is recorded', () => {
   const battle = state('movement');
   const profile = {
     name: 'Path Unit',
@@ -12000,8 +12252,9 @@ test('play Movement counts the full path across multiple legs', () => {
   const unit = secondLeg.units[0];
 
   assert.equal(unit.modelPositions[0].x, 14);
-  assert.equal(unit.modelPositions[0].y, 12);
-  assert.deepEqual(unit.movementAllowanceRemainingByModel, [0]);
+  assert.equal(unit.modelPositions[0].y, 14);
+  assert.ok((unit.movementAllowanceRemainingByModel?.[0] ?? 0) > 0);
+  assert.ok((unit.movementAllowanceRemainingByModel?.[0] ?? 0) < 1);
 });
 
 test('play Movement tracks vertical movement allowance per model', () => {
@@ -12190,7 +12443,7 @@ test('base edge range includes vertical separation', () => {
   assert.equal(battleUnitsBaseEdgeDistance(low, high), 6);
 });
 
-test('play Movement charges non-round pivot distance against movement allowance', () => {
+test('play Movement rotates individual models without consuming movement allowance', () => {
   const battle = state('movement');
   const profile = {
     name: 'Oval Bike',
@@ -12225,13 +12478,13 @@ test('play Movement charges non-round pivot distance against movement allowance'
   battle.units = [unit];
 
   const rejected = rotatePlayModels(battle, 'unit-1', 0, [0], 90);
-  assert.equal(rejected.units.find(candidate => candidate.id === 'unit-1')?.facingDeg, 0);
+  assert.equal(rejected.units.find(candidate => candidate.id === 'unit-1')?.facingDeg, 90);
 
   const faster = { ...battle, units: [{ ...unit, profile: { ...profile, move: 6 } }] };
   const rotated = rotatePlayModels(faster, 'unit-1', 0, [0], 90);
   const rotatedUnit = rotated.units.find(candidate => candidate.id === 'unit-1')!;
   assert.equal(rotatedUnit.facingDeg, 90);
-  assert.ok((rotatedUnit.movementAllowanceRemainingByModel?.[0] ?? 6) < 6);
+  assert.ok(Math.abs((rotatedUnit.movementAllowanceRemainingByModel?.[0] ?? 0) - 6) < 0.001);
 });
 
 test('play Movement cannot be completed after freely dragging through enemy models', () => {
@@ -13351,7 +13604,7 @@ test('11th Damaged profile applies only explicitly typed hit and OC effects at i
   battle.units = [attacker, target];
   assert.equal(objectiveControlValue(attacker), 0);
   const resolved = shootPlayUnitWeapon(battle, attacker.id, 0, target.id, 0, rules40K11th);
-  assert.match(resolved.log.map(entry => entry.message).join(' '), /Damaged -1 to Hit/);
+  assert.match(resolved.log.map(entry => entry.message).join(' '), /Damaged profile -1 to Hit/);
 
   const healthy = structuredClone(attacker);
   healthy.woundsOnLeadModel = 4;

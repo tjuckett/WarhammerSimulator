@@ -1,23 +1,31 @@
-import type { PendingCheckpointDelete, PendingCheckpointLoad } from './useGameSessionSelection';
+import type { PendingCheckpointAutosave, PendingCheckpointDelete, PendingCheckpointLoad } from './useGameSessionSelection';
 
 type GameSessionCheckpointDialogsProps = {
   pendingLoad: PendingCheckpointLoad | null;
   pendingDelete: PendingCheckpointDelete | null;
+  pendingAutosave: PendingCheckpointAutosave | null;
   onSaveAndLoad: () => void;
   onLoadWithoutSaving: () => void;
   onCancelLoad: () => void;
   onConfirmDelete: () => void;
   onCancelDelete: () => void;
+  onOverwriteAutosave: () => void;
+  onSaveAutosaveAsNew: () => void;
+  onCancelAutosave: () => void;
 };
 
 export function GameSessionCheckpointDialogs({
   pendingLoad,
   pendingDelete,
+  pendingAutosave,
   onSaveAndLoad,
   onLoadWithoutSaving,
   onCancelLoad,
   onConfirmDelete,
   onCancelDelete,
+  onOverwriteAutosave,
+  onSaveAutosaveAsNew,
+  onCancelAutosave,
 }: GameSessionCheckpointDialogsProps) {
   return (
     <>
@@ -57,11 +65,11 @@ export function GameSessionCheckpointDialogs({
             aria-modal="true"
             aria-labelledby="practice-delete-title"
           >
-            <div className="practice-load-title" id="practice-delete-title">Delete Checkpoint?</div>
+            <div className="practice-load-title" id="practice-delete-title">Delete Saved Game?</div>
             <p>
               {pendingDelete.deleteIds.length > 1
-                ? `Deleting ${pendingDelete.scenarioName} will also delete ${pendingDelete.deleteIds.length - 1} later checkpoint${pendingDelete.deleteIds.length - 1 === 1 ? '' : 's'} chained after it.`
-                : `Deleting ${pendingDelete.scenarioName} will remove this checkpoint.`}
+                ? `This removes ${pendingDelete.scenarioName} and its ${pendingDelete.deleteIds.length - 1} older save record${pendingDelete.deleteIds.length - 1 === 1 ? '' : 's'} for the same game.`
+                : `This removes the saved game ${pendingDelete.scenarioName}.`}
             </p>
             <div className="practice-load-actions">
               <button type="button" className="danger" onClick={onConfirmDelete}>
@@ -70,6 +78,23 @@ export function GameSessionCheckpointDialogs({
               <button type="button" onClick={onCancelDelete}>
                 Cancel
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {pendingAutosave && (
+        <div className="practice-load-modal-backdrop">
+          <div className="practice-load-modal" role="dialog" aria-modal="true" aria-labelledby="practice-autosave-title">
+            <div className="practice-load-title" id="practice-autosave-title">Rewound game detected</div>
+            <p>
+              This game was rewound from saved timeline position {pendingAutosave.savedCursor} to current position {pendingAutosave.cursor}.
+              The next automatic phase save needs your choice.
+            </p>
+            <div className="practice-load-actions">
+              <button type="button" className="primary" onClick={onSaveAutosaveAsNew}>Save as new game</button>
+              <button type="button" onClick={onOverwriteAutosave}>Overwrite current save</button>
+              <button type="button" onClick={onCancelAutosave}>Skip this autosave</button>
             </div>
           </div>
         </div>

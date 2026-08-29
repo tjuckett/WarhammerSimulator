@@ -39,6 +39,7 @@ export function createBattleEvent(state: BattleState, input: BattleEventInput): 
     turn: state.turn,
     battleRound: battleRound(state),
     phase: state.phase,
+    phaseStep: state.phaseStep,
     side: input.side,
     source: input.source,
     data: input.data ?? {},

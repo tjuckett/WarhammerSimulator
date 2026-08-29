@@ -1,4 +1,4 @@
-import type { BattleState, BattleUnit, BoardFormat, LogEntry, LogType, Position, Side, Terrain, TerrainFeature } from '../types/battle';
+import { EVENT_REQUEST_KIND, EVENT_TRIGGER_TIMING, type BattleState, type BattleUnit, type BoardFormat, type LogEntry, type LogType, type Position, type Side, type Terrain, type TerrainFeature } from '../types/battle';
 import type { UnitProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
@@ -6,8 +6,15 @@ import { zoneFor, pointInDeploymentZone, type DeploymentZone, type DeploymentZon
 import { baseFootprintDistance, baseFootprintIntersectsRect, baseFootprintMaxPointDistance, baseFootprintWithinRect, baseFootprintsOverlap, modelBaseFootprintInches, modelBaseRadiusInches } from './baseSizes';
 import { distance as dist, verticalDistance } from './coherency';
 import { centroid, translateFormation } from './unitModelState';
+import { BATTLE_EVENT_TYPE } from './battleEvents';
+import { resolvePendingEventRequest, triggerBattleEvent, type BattleEventTrigger } from './eventTriggers';
 
 /** Shared model-formation geometry used by setup, movement, charge, and formation editing. */
+// Pointer coordinates and base-footprint geometry can differ by a few thousandths
+// of an inch at the edge of a movement allowance. Keep the preview and committed
+// movement checks consistent so a legal max-distance drag is not rejected on commit.
+const MOVEMENT_ALLOWANCE_EPSILON = 0.02;
+
 function modelRadius(unit: BattleUnit, modelIndex = 0): number {
   return modelBaseRadiusInches(unit.profile, modelIndex);
 }
@@ -34,7 +41,6 @@ export function terrainMatBlocksMovementForUnit(
 ): boolean {
   if (unit.superHeavyMobile && terrain.type === 'ruin') return false;
   if (hasKeyword(unit, 'titanic')) return true;
-  if (terrain.type === 'ruin' && hasAnyKeyword(unit, ['vehicle', 'monster'])) return true;
   return terrain.type === 'impassable';
 }
 
@@ -261,6 +267,16 @@ export interface MovementBudgetContext {
 export function budgetAdjustedMove(unit: BattleUnit, modelIndices: number[], dx: number, dy: number, context: MovementBudgetContext): { dx: number; dy: number } {
   const requestedDistance = Math.hypot(dx, dy);
   if (requestedDistance < 0.001) return { dx, dy };
+  const startingFreshMove = !unit.movementAction
+    && !unit.movementStartPositionsByModel
+    && !unit.movementPathByModel;
+  if (startingFreshMove) {
+    // Older saves can retain only partial allowance/path fields. Do not let
+    // those per-model values cap the first move of the new movement phase.
+    unit.movementAllowanceTotalByModel = undefined;
+    unit.movementAllowanceRemainingByModel = undefined;
+    unit.movementAllowanceRemaining = undefined;
+  }
   context.ensureMovementStartPositions(unit);
   context.ensureMovementStartRotations(unit);
   context.ensureMovementAllowanceTotals(unit);
@@ -279,16 +295,12 @@ export function budgetAdjustedMove(unit: BattleUnit, modelIndices: number[], dx:
       }
       distance += Math.hypot(proposed.x - last.x, proposed.y - last.y)
         + (unit.takingToSkies && context.hasKeyword(unit, 'fly') ? 0 : verticalDistance(last, proposed));
-      return distance <= total + 0.000001;
+      return distance <= total + MOVEMENT_ALLOWANCE_EPSILON;
     }
     const start = unit.movementStartPositionsByModel?.[modelIndex] ?? current;
-    const startRotation = unit.movementStartRotationsByModel?.[modelIndex] ?? context.modelRotation(unit, modelIndex);
-    return baseFootprintMaxPointDistance(
-      start,
-      modelBaseFootprintInches(unit.profile, modelIndex, startRotation),
-      proposed,
-      modelBaseFootprintInches(unit.profile, modelIndex, context.modelRotation(unit, modelIndex)),
-    ) <= total + 0.000001;
+    return Math.hypot(proposed.x - start.x, proposed.y - start.y)
+      + (unit.takingToSkies && context.hasKeyword(unit, 'fly') ? 0 : verticalDistance(start, proposed))
+      <= total + MOVEMENT_ALLOWANCE_EPSILON;
   });
   if (moveWithinAllowance(1)) return { dx, dy };
   if (pathAware) {
@@ -430,6 +442,31 @@ export function collisionAdjustedMove(
   return { dx: dx * lo, dy: dy * lo };
 }
 
+export function endpointCollisionAdjustedMove(
+  state: BattleState, unitId: string, side: Side, modelIndices: number[], dx: number, dy: number,
+  context: MovementCollisionContext,
+): { dx: number; dy: number } {
+  const candidate = context.clone(state);
+  const unit = candidate.units.find(item => item.id === unitId && item.side === side && !item.destroyed && !item.embarkedInUnitId);
+  if (!unit) return { dx, dy };
+  applyHorizontalTranslation(unit, modelIndices, dx, dy, context.boardFormatForState(state));
+  const hasPhysicalWallOverlap = (testState: BattleState, testUnit: BattleUnit): boolean => {
+    for (const modelIndex of modelIndices) {
+      const model = testUnit.modelPositions[modelIndex];
+      const footprint = modelFootprint(testUnit, modelIndex);
+      for (const terrain of testState.terrain) {
+        if (terrain.type === 'impassable' && baseFootprintIntersectsRect(model, footprint, terrain)) return true;
+        for (const feature of terrain.features) {
+          if (feature.blocksMovement && baseFootprintIntersectsRect(model, footprint, feature)) return true;
+        }
+      }
+    }
+    return false;
+  };
+  return hasNoBaseOverlap(candidate, unit, new Set(modelIndices)) && !hasPhysicalWallOverlap(candidate, unit)
+    ? { dx, dy } : { dx: 0, dy: 0 };
+}
+
 export function profileModelRadii(profile: UnitProfile): number[] {
   return Array.from({ length: profile.baseModelCount }, (_, modelIndex) => modelBaseRadiusInches(profile, modelIndex));
 }
@@ -445,9 +482,10 @@ export function gridFormation(profile: UnitProfile, anchor: Position, side: Side
   const columns = Math.ceil(Math.sqrt(count));
   const rows = Math.ceil(count / columns);
   const forward = side === 0 ? 1 : -1;
+  const startX = anchor.x - forward * ((columns - 1) * spacing) / 2;
   const startY = anchor.y - ((rows - 1) * spacing) / 2;
   return Array.from({ length: count }, (_, modelIndex) => ({
-    x: anchor.x + forward * (modelIndex % columns) * spacing,
+    x: startX + forward * (modelIndex % columns) * spacing,
     y: startY + Math.floor(modelIndex / columns) * spacing,
   }));
 }
@@ -646,15 +684,8 @@ export function modelMovementDistanceFromStart(unit: BattleUnit, modelIndex: num
     return distance;
   }
   const start = unit.movementStartPositionsByModel?.[modelIndex] ?? position;
-  const startRotation = unit.movementStartRotationsByModel?.[modelIndex] ?? context.modelRotation(unit, modelIndex);
-  const currentRotation = context.modelRotation(unit, modelIndex);
-  const horizontal = context.baseFootprintMaxPointDistance(
-    start,
-    context.modelFootprint(unit, modelIndex, startRotation),
-    position,
-    context.modelFootprint(unit, modelIndex, currentRotation),
-  );
-  return horizontal + (unit.takingToSkies && context.hasKeyword(unit, 'fly') ? 0 : context.verticalDistance(start, position));
+  return Math.hypot(position.x - start.x, position.y - start.y)
+    + (unit.takingToSkies && context.hasKeyword(unit, 'fly') ? 0 : context.verticalDistance(start, position));
 }
 
 export function refreshModelMovementAllowances(unit: BattleUnit, context: InteractiveMovementStateContext): number[] {
@@ -793,6 +824,26 @@ export interface SurgeMoveContext {
   createLog(state: BattleState, side: Side, actor: string, message: string): void;
 }
 
+const SURGE_MOVE_TRIGGER: BattleEventTrigger = {
+  id: 'core-21.02-surge-move',
+  eventType: BATTLE_EVENT_TYPE.RuleTriggered,
+  timing: EVENT_TRIGGER_TIMING.RuleTriggered,
+  matches: (_state, event) => event.data.rule === EVENT_REQUEST_KIND.SurgeMove,
+  createRequest: (_state, event) => {
+    const unitId = event.data.unitId;
+    const maximumDistance = event.data.maximumDistance;
+    const source = event.source;
+    if (typeof unitId !== 'string' || typeof maximumDistance !== 'number' || !source) return null;
+    return {
+      kind: EVENT_REQUEST_KIND.SurgeMove,
+      side: event.side,
+      timing: EVENT_TRIGGER_TIMING.RuleTriggered,
+      source,
+      data: { unitId, maximumDistance },
+    };
+  },
+};
+
 export function surgeMoveTargetUnitIds(state: BattleState, unitId: string, side: Side, context: SurgeMoveContext): string[] {
   const pending = state.pendingSurgeMove;
   const unit = context.getUnit(state, unitId, side);
@@ -816,7 +867,27 @@ export function grantSurgeMove(
   if (components.some(component => component.battleshocked || context.unitMovedThisPhase(state, component) || context.unitHasStartedCurrentMove(component))) return state;
   if (components.some(component => context.inEngagement(component, context.enemies(state, side), rules.engagementRange()))) return state;
   const next = context.clone(state);
-  next.pendingSurgeMove = { unitId, side, maximumDistance, source: source.trim(), triggeredPhase: next.phase };
+  const { requests } = triggerBattleEvent(next, {
+    type: BATTLE_EVENT_TYPE.RuleTriggered,
+    side,
+    source: source.trim(),
+    data: {
+      triggerTiming: EVENT_TRIGGER_TIMING.RuleTriggered,
+      rule: EVENT_REQUEST_KIND.SurgeMove,
+      unitId,
+      maximumDistance,
+    },
+  }, [SURGE_MOVE_TRIGGER]);
+  const request = requests[0];
+  if (!request) return state;
+  next.pendingSurgeMove = {
+    unitId,
+    side,
+    maximumDistance,
+    source: source.trim(),
+    triggeredPhase: next.phase,
+    eventRequestId: request.id,
+  };
   context.createLog(next, side, unit.profile.name, `${source.trim()} triggers a Surge Move of up to ${maximumDistance}" for ${unit.profile.name}.`);
   return next;
 }
@@ -825,7 +896,10 @@ export function resolveSurgeMove(
   state: BattleState, unitId: string, side: Side, targetUnitId: string, rules: RulesEdition, context: SurgeMoveContext,
 ): BattleState {
   const pending = state.pendingSurgeMove;
-  if (rules.metadata.edition !== '11e' || !pending || pending.unitId !== unitId || pending.side !== side || pending.triggeredPhase !== state.phase || !surgeMoveTargetUnitIds(state, unitId, side, context).includes(targetUnitId)) return state;
+  const pendingMoveMatchesUnit = pending?.unitId === unitId && pending.side === side;
+  const pendingMoveMatchesPhase = pending?.triggeredPhase === state.phase;
+  const targetIsReachable = surgeMoveTargetUnitIds(state, unitId, side, context).includes(targetUnitId);
+  if (rules.metadata.edition !== '11e' || !pending || !pendingMoveMatchesUnit || !pendingMoveMatchesPhase || !targetIsReachable) return state;
   const next = context.clone(state);
   const unit = context.getUnit(next, unitId, side);
   const target = next.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
@@ -845,6 +919,7 @@ export function resolveSurgeMove(
     component.inCombat = context.inEngagement(component, [target], rules.engagementRange());
   }
   target.inCombat = context.inEngagement(target, components, rules.engagementRange());
+  if (pending.eventRequestId) resolvePendingEventRequest(next, pending.eventRequestId);
   next.pendingSurgeMove = undefined;
   context.createLog(next, side, unit.profile.name, `${unit.profile.name} makes a Surge Move toward ${target.profile.name}.`);
   return next;
@@ -980,7 +1055,7 @@ export function rotateModels(
   if (next.phase === 'movement' && context.isAircraft(unit)) return context.aircraftPivotWithinLimit(unit, uniqueIndices) ? next : state;
   if (next.phase === 'movement') {
     const totals = context.ensureMovementAllowanceTotals(unit);
-    if (uniqueIndices.some(index => context.movementDistanceFromStart(unit, index) > (totals[index] ?? 0) + 0.001)) return state;
+    if (uniqueIndices.some(index => context.movementDistanceFromStart(unit, index) > (totals[index] ?? 0) + MOVEMENT_ALLOWANCE_EPSILON)) return state;
     context.lockOtherMovedUnits(next, unit);
     unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
     context.updateMovementAllowances(unit);
@@ -1003,7 +1078,8 @@ export interface ModelMovementContext {
   aircraftMoveIsStraightForward(unit: BattleUnit, modelIndices: number[], dx: number, dy: number): boolean;
   budgetAdjustedMove(unit: BattleUnit, modelIndices: number[], dx: number, dy: number): { dx: number; dy: number };
   translatedMoveEndsInEngagement(state: BattleState, unit: BattleUnit, modelIndices: number[], dx: number, dy: number): boolean;
-  collisionAdjustedMove(state: BattleState, unitId: string, side: Side, modelIndices: number[], dx: number, dy: number, allowEngagement: boolean): { dx: number; dy: number };
+  collisionAdjustedMove(state: BattleState, unitId: string, side: Side, modelIndices: number[], dx: number, dy: number, allowEngagement: boolean, ignoreEnemyModelPath?: boolean): { dx: number; dy: number };
+  endpointCollisionAdjustedMove(state: BattleState, unitId: string, side: Side, modelIndices: number[], dx: number, dy: number): { dx: number; dy: number };
   unitHasModelOutsideBattlefield(unit: BattleUnit, state: BattleState): boolean;
   moveAircraftToStrategicReserves(state: BattleState, unit: BattleUnit): void;
   applyHorizontalTranslation(unit: BattleUnit, modelIndices: number[], dx: number, dy: number, state: BattleState): void;
@@ -1022,7 +1098,8 @@ export function moveModels(
   state: BattleState, unitId: string, side: Side, modelIndices: number[], dx: number, dy: number, collide: boolean, context: ModelMovementContext,
 ): BattleState {
   const chargeMovement = state.phase === 'charge' && state.pendingChargeMovement?.unitId === unitId && state.pendingChargeMovement?.side === side;
-  if (!context.isModelEditPhase(state.phase) && !chargeMovement) return state;
+  const fightMovement = state.phase === 'fight' && state.pendingFightMovement?.unitId === unitId && state.pendingFightMovement?.side === side;
+  if (!context.isModelEditPhase(state.phase) && !chargeMovement && !fightMovement) return state;
   if (state.phase === 'movement' && context.movementStep(state) !== 'moveUnits') return state;
   const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
   if (!existing || (state.phase === 'setup' && !existing.scoutMoveStarted)) return state;
@@ -1036,18 +1113,35 @@ export function moveModels(
   const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
   const indices = Array.from(new Set(modelIndices)).filter(index => unit.modelPositions[index]);
   if (!indices.length) return state;
+  if (fightMovement && (state.pendingFightMovement?.kind === 'pileIn' || state.pendingFightMovement?.kind === 'consolidate')
+    && indices.some(modelIndex => state.pendingFightMovement?.lockedModelIds?.includes(`${unitId}:${modelIndex}`))) return state;
   if (next.phase === 'movement' && context.isAircraft(unit)) {
     context.ensureMovementStartPositions(unit);
     context.ensureMovementStartRotations(unit);
     context.ensureMovementAllowanceTotals(unit);
     if (!context.aircraftMoveIsStraightForward(unit, indices, dx, dy)) return state;
   }
-  if (next.phase === 'movement') context.ensureMovementPaths(unit);
-  const budget = (next.phase === 'movement' || next.phase === 'setup' || chargeMovement) && !context.isAircraft(unit)
+  // Normal Movement stays anchored to movementStartPositionsByModel until an
+  // explicit waypoint is created. Charge and Fight movement use the same
+  // shared path representation, while retaining their phase-specific rules.
+  if (chargeMovement || fightMovement) context.ensureMovementPaths(unit);
+  const budget = (next.phase === 'movement' || next.phase === 'setup' || chargeMovement || fightMovement) && !context.isAircraft(unit)
     ? context.budgetAdjustedMove(unit, indices, dx, dy) : { dx, dy };
   if (Math.hypot(budget.dx, budget.dy) < 0.001) return state;
-  if ((next.phase === 'movement' || next.phase === 'setup') && context.translatedMoveEndsInEngagement(next, unit, indices, budget.dx, budget.dy)) return state;
-  const move = collide ? context.collisionAdjustedMove(next, unitId, side, indices, budget.dx, budget.dy, chargeMovement) : budget;
+  const requestedMoveEndsInEngagement = next.phase === 'movement'
+    && context.translatedMoveEndsInEngagement(next, unit, indices, budget.dx, budget.dy);
+  // During normal movement, collisionAdjustedMove below stops at the Engagement
+  // Range boundary. Setup still rejects an endpoint that would enter engagement.
+  if (next.phase === 'setup' && context.translatedMoveEndsInEngagement(next, unit, indices, budget.dx, budget.dy)) return state;
+  // During ordinary Movement, models may cross other models or terrain while
+  // being dragged. Endpoint legality is checked when the move is finalized;
+  // collision adjustment is reserved for movement types whose path itself is
+  // restricted (such as pile-in and consolidation).
+  const move = collide && next.phase === 'movement'
+    ? context.endpointCollisionAdjustedMove(next, unitId, side, indices, budget.dx, budget.dy)
+    : collide
+      ? context.collisionAdjustedMove(next, unitId, side, indices, budget.dx, budget.dy, chargeMovement || fightMovement, fightMovement)
+    : budget;
   if (Math.hypot(move.dx, move.dy) < 0.001) return state;
   if (next.phase === 'movement' && context.isAircraft(unit)) {
     const test = context.clone(next);
@@ -1060,10 +1154,19 @@ export function moveModels(
     }
   }
   context.applyHorizontalTranslation(unit, indices, move.dx, move.dy, next);
-  if (next.phase === 'movement') context.appendMovementWaypoints(unit, indices);
+  // Ordinary Movement uses the unit's movement-start position as its anchor.
+  // A left-button drag can therefore be released and continued from the new
+  // position without turning each release into another path segment. The
+  // path-aware behavior remains available to the specialized movement modes
+  // that explicitly establish waypoints.
   context.cancelUnitAction(next, unit, 'it made a move');
   if ((next.phase === 'movement' || next.phase === 'setup') && context.inEngagement(next, unit)) return state;
   if (next.phase === 'movement') {
+    unit.movementStopReason = undefined;
+    if (requestedMoveEndsInEngagement
+      && Math.hypot(move.dx, move.dy) + 0.01 < Math.hypot(budget.dx, budget.dy)) {
+      unit.movementStopReason = 'engagementRange';
+    }
     context.lockOtherMovedUnits(next, unit);
     unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
   }
@@ -1093,7 +1196,7 @@ export function moveModelsVertically(
   context.applyVerticalTranslation(unit, indices, dz);
   if (indices.every(index => Math.abs((unit.modelPositions[index].z ?? 0) - (before[index].z ?? 0)) < 0.001)) return state;
   if (next.phase === 'movement') context.appendMovementWaypoints(unit, indices);
-  if (indices.some(index => context.modelMovementDistanceFromStart(unit, index) > (totals[index] ?? 0) + 0.001) || context.inEngagement(next, unit)) return state;
+  if (indices.some(index => context.modelMovementDistanceFromStart(unit, index) > (totals[index] ?? 0) + MOVEMENT_ALLOWANCE_EPSILON) || context.inEngagement(next, unit)) return state;
   context.lockOtherMovedUnits(next, unit);
   context.cancelUnitAction(next, unit, 'it made a move');
   unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';

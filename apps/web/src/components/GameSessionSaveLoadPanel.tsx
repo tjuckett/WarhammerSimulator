@@ -5,7 +5,6 @@ import type {
 } from '@warhammer-simulator/core/practice/timeline';
 import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
 import type { PracticeScenarioSummary as GameSessionScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
-import { CHECKPOINT_KIND_SHORT_LABELS } from '../gameSession/checkpointHelpers';
 import type { GameSessionStorageHealth } from '../gameSession/gameSessionRepository';
 
 interface ControlsProps {
@@ -36,19 +35,11 @@ interface SaveModalProps {
 interface LoadModalProps {
   open: boolean;
   savedScenarios: GameSessionScenarioSummary[];
-  activeCheckpointId: string | null;
   activeGameId: string | null;
-  selectedGameId: string | null;
-  onSelectGame: (gameId: string | null) => void;
   onLoad: (scenarioId: string) => void;
   onDelete: (scenarioId: string) => void;
   onClose: () => void;
 }
-
-const NODE_W = 210;
-const NODE_H = 104;
-const COL_GAP = 42;
-const ROW_GAP = 18;
 
 function actionLabel(action: GameAction): string {
   switch (action.type) {
@@ -141,10 +132,6 @@ function actionLabel(action: GameAction): string {
 
 function visibleEntries(timeline: GameSessionTimeline): GameSessionTimelineEntry[] {
   return timeline.entries.slice(Math.max(0, timeline.cursor - 8), timeline.cursor);
-}
-
-function checkpointKindLabel(scenario: GameSessionScenarioSummary): string {
-  return CHECKPOINT_KIND_SHORT_LABELS[scenario.checkpointKind ?? 'play'];
 }
 
 function phaseTitleLines(scenario: GameSessionScenarioSummary): string[] {
@@ -312,127 +299,74 @@ export function GameSessionSaveModal({
 export function GameSessionLoadModal({
   open,
   savedScenarios,
-  activeCheckpointId,
   activeGameId,
-  selectedGameId,
-  onSelectGame,
   onLoad,
   onDelete,
   onClose,
 }: LoadModalProps) {
-  const gameOptions = useMemo(() => {
-    const games = new Map<string, { id: string; label: string; count: number; createdAt: string }>();
+  const games = useMemo(() => {
+    const grouped = new Map<string, GameSave>();
     for (const scenario of savedScenarios) {
-      const gameId = scenario.gameId ?? scenario.id;
-      const existing = games.get(gameId);
-      if (existing) {
-        existing.count++;
-        if (scenario.createdAt < existing.createdAt) existing.createdAt = scenario.createdAt;
+      const id = scenario.gameId ?? scenario.id;
+      const existing = grouped.get(id);
+      if (!existing) {
+        grouped.set(id, { id, latest: scenario, count: 1, createdAt: scenario.createdAt });
         continue;
       }
-      games.set(gameId, {
-        id: gameId,
-        label: scenario.setup?.missionCode ?? scenario.ruleset.edition,
-        count: 1,
-        createdAt: scenario.createdAt,
-      });
+      existing.count++;
+      if (scenario.createdAt < existing.createdAt) existing.createdAt = scenario.createdAt;
+      if (isLaterSave(scenario, existing.latest)) existing.latest = scenario;
     }
-    return Array.from(games.values()).sort((a, b) => {
+    return Array.from(grouped.values()).sort((a, b) => {
       if (a.id === activeGameId) return -1;
       if (b.id === activeGameId) return 1;
-      return b.createdAt.localeCompare(a.createdAt);
+      return b.latest.updatedAt.localeCompare(a.latest.updatedAt);
     });
   }, [savedScenarios, activeGameId]);
-
-  const effectiveGameId = selectedGameId ?? activeGameId ?? gameOptions[0]?.id ?? null;
-  const visibleScenarios = [...(effectiveGameId
-    ? savedScenarios.filter(scenario => (scenario.gameId ?? scenario.id) === effectiveGameId)
-    : savedScenarios)]
-    .sort((a, b) => {
-      const sequenceCompare = (a.sequence ?? 0) - (b.sequence ?? 0);
-      if (sequenceCompare !== 0) return sequenceCompare;
-      return a.createdAt.localeCompare(b.createdAt);
-    });
-  const tree = useMemo(() => buildSaveTree(visibleScenarios), [visibleScenarios]);
 
   if (!open) return null;
 
   return (
     <div className="practice-modal-backdrop">
-      <div className="practice-modal practice-load-tree-modal" role="dialog" aria-modal="true" aria-label="Load checkpoint">
+      <div className="practice-modal practice-load-tree-modal" role="dialog" aria-modal="true" aria-label="Load saved game">
         <div className="practice-modal-header">
           <div>
-            <div className="practice-modal-title">Load Checkpoint</div>
-            <div className="practice-modal-subtitle">Branch columns show alternate timelines from the same game.</div>
+            <div className="practice-modal-title">Load Saved Game</div>
+            <div className="practice-modal-subtitle">Each game contains one timeline. Automatic phase saves update that game.</div>
           </div>
           <button type="button" className="practice-modal-close" onClick={onClose}>Close</button>
         </div>
-        <div className="practice-game-filter">
-          <label htmlFor="practice-load-game-filter">Game</label>
-          <select
-            id="practice-load-game-filter"
-            value={effectiveGameId ?? 'all'}
-            onChange={event => onSelectGame(event.currentTarget.value === 'all' ? null : event.currentTarget.value)}
-          >
-            <option value="all">All Games</option>
-            {gameOptions.map(game => (
-              <option key={game.id} value={game.id}>
-                {game.id === activeGameId ? 'Current: ' : ''}{game.label} - {game.createdAt.slice(0, 10)} ({game.count})
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="practice-tree-scroll">
-          {visibleScenarios.length ? (
-            <div
-              className="practice-tree"
-              style={{
-                width: tree.width,
-                height: tree.height,
-              }}
-            >
-              <svg className="practice-tree-lines" width={tree.width} height={tree.height} aria-hidden="true">
-                {tree.edges.map(edge => (
-                  <path
-                    key={`${edge.from}-${edge.to}`}
-                    d={`M ${edge.x1} ${edge.y1} C ${edge.x1} ${edge.y1 + 24}, ${edge.x2} ${edge.y2 - 24}, ${edge.x2} ${edge.y2}`}
-                  />
-                ))}
-              </svg>
-              {tree.nodes.map(node => (
-                <div
-                  className={`practice-tree-node${node.scenario.id === activeCheckpointId ? ' is-active' : ''}${node.scenario.gameId === activeGameId ? ' is-current-game' : ''}`}
-                  key={node.scenario.id}
-                  style={{ left: node.x, top: node.y, width: NODE_W }}
-                >
-                  <button
-                    type="button"
-                    className="practice-tree-load"
-                    onClick={() => onLoad(node.scenario.id)}
-                    title={`${node.scenario.steps} steps - ${node.scenario.updatedAt}`}
-                  >
-                    <strong>
-                      {phaseTitleLines(node.scenario).map((line, index) => (
-                        <span key={`${node.scenario.id}-title-${index}`}>{line}</span>
-                      ))}
-                    </strong>
-                    <span>{checkpointKindLabel(node.scenario)} save - {node.scenario.steps} step{node.scenario.steps === 1 ? '' : 's'}</span>
-                    {scoreCpLabel(node.scenario) && <span>{scoreCpLabel(node.scenario)}</span>}
-                    {node.scenario.id === activeCheckpointId && <em>Current checkpoint</em>}
-                  </button>
-                  <button
-                    type="button"
-                    className="practice-tree-delete"
-                    onClick={() => onDelete(node.scenario.id)}
-                    title="Delete checkpoint and descendants"
-                  >
-                    X
-                  </button>
+        <div className="practice-game-list">
+          {games.length ? games.map(game => {
+            const scenario = game.latest;
+            const isCurrent = game.id === activeGameId;
+            return (
+              <article className={`practice-game-card${isCurrent ? ' is-current-game' : ''}`} key={game.id}>
+                <div className="practice-game-card-main">
+                  <div className="practice-game-card-title">
+                    {scenario.setup?.missionCode ?? 'Practice game'}
+                    {isCurrent && <span className="practice-game-current">Current game</span>}
+                  </div>
+                  <div className="practice-game-card-meta">
+                    {scenario.ruleset.edition} · Created {game.createdAt.slice(0, 10)}
+                  </div>
+                  <div className="practice-game-card-state">
+                    {phaseTitleLines(scenario).join(' · ')}
+                  </div>
+                  <div className="practice-game-card-meta">
+                    {scenario.steps} timeline step{scenario.steps === 1 ? '' : 's'} · Updated {scenario.updatedAt.slice(0, 16).replace('T', ' ')}
+                    {scoreCpLabel(scenario) && ` · ${scoreCpLabel(scenario)}`}
+                  </div>
+                  {game.count > 1 && <div className="practice-game-card-legacy">Includes {game.count - 1} older checkpoint record{game.count === 2 ? '' : 's'}.</div>}
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="practice-empty">{effectiveGameId ? 'No checkpoints for this game' : 'No saved scenarios'}</div>
+                <div className="practice-game-card-actions">
+                  <button type="button" className="primary" onClick={() => onLoad(scenario.id)}>Load Game</button>
+                  <button type="button" className="danger" onClick={() => onDelete(scenario.id)}>Delete Game</button>
+                </div>
+              </article>
+            );
+          }) : (
+            <div className="practice-empty">No saved games</div>
           )}
         </div>
       </div>
@@ -440,78 +374,15 @@ export function GameSessionLoadModal({
   );
 }
 
-type TreeNode = {
-  scenario: GameSessionScenarioSummary;
-  x: number;
-  y: number;
+type GameSave = {
+  id: string;
+  latest: GameSessionScenarioSummary;
+  count: number;
+  createdAt: string;
 };
 
-type TreeEdge = {
-  from: string;
-  to: string;
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-};
-
-function buildSaveTree(scenarios: GameSessionScenarioSummary[]): {
-  nodes: TreeNode[];
-  edges: TreeEdge[];
-  width: number;
-  height: number;
-} {
-  const ordered = [...scenarios].sort((a, b) => {
-    const sequenceCompare = (a.sequence ?? 0) - (b.sequence ?? 0);
-    if (sequenceCompare !== 0) return sequenceCompare;
-    return a.createdAt.localeCompare(b.createdAt);
-  });
-  const columnByBranch = new Map<string, number>();
-  const parentChildren = new Map<string, GameSessionScenarioSummary[]>();
-  for (const scenario of ordered) {
-    if (!scenario.parentCheckpointId) continue;
-    parentChildren.set(scenario.parentCheckpointId, [
-      ...(parentChildren.get(scenario.parentCheckpointId) ?? []),
-      scenario,
-    ]);
-  }
-
-  let nextColumn = 0;
-  const nodes: TreeNode[] = ordered.map((scenario, row) => {
-    const branchId = scenario.branchId ?? scenario.gameId ?? scenario.id;
-    if (!columnByBranch.has(branchId)) {
-      const parentId = scenario.parentCheckpointId;
-      const siblingIndex = parentId
-        ? (parentChildren.get(parentId) ?? []).findIndex(child => child.id === scenario.id)
-        : 0;
-      if (parentId && siblingIndex > 0) columnByBranch.set(branchId, ++nextColumn);
-      else columnByBranch.set(branchId, columnByBranch.size === 0 ? 0 : nextColumn);
-    }
-    const column = columnByBranch.get(branchId) ?? 0;
-    return {
-      scenario,
-      x: column * (NODE_W + COL_GAP),
-      y: row * (NODE_H + ROW_GAP),
-    };
-  });
-
-  const nodesById = new Map(nodes.map(node => [node.scenario.id, node]));
-  const edges: TreeEdge[] = [];
-  for (const node of nodes) {
-    if (!node.scenario.parentCheckpointId) continue;
-    const parent = nodesById.get(node.scenario.parentCheckpointId);
-    if (!parent) continue;
-    edges.push({
-      from: parent.scenario.id,
-      to: node.scenario.id,
-      x1: parent.x + NODE_W / 2,
-      y1: parent.y + NODE_H,
-      x2: node.x + NODE_W / 2,
-      y2: node.y,
-    });
-  }
-
-  const width = Math.max(NODE_W + 24, Math.max(0, ...nodes.map(node => node.x + NODE_W)) + 24);
-  const height = Math.max(NODE_H + 24, Math.max(0, ...nodes.map(node => node.y + NODE_H)) + 24);
-  return { nodes, edges, width, height };
+function isLaterSave(candidate: GameSessionScenarioSummary, current: GameSessionScenarioSummary): boolean {
+  const sequenceCompare = (candidate.sequence ?? 0) - (current.sequence ?? 0);
+  if (sequenceCompare !== 0) return sequenceCompare > 0;
+  return candidate.updatedAt > current.updatedAt;
 }

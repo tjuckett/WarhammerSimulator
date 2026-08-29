@@ -65,6 +65,13 @@ export function PlayTacticsPanel({
   const selectedExplosivesSourceModelIndex = selectedUnit?.modelPositions.length
     ? Math.min(explosivesSourceModelIndex, selectedUnit.modelPositions.length - 1)
     : 0;
+  const stratagemDisabled = (stratagem: StratagemDefinition): boolean => {
+    if (stratagem.id === 'crushing-impact') return !crushingImpactTargetId;
+    if (stratagem.id === 'explosives') return !explosivesTargetId;
+    return stratagem.id === 'heroic-intervention'
+      && heroicInterventionMode === 'into-the-fray'
+      && cp[selectedUnit?.side ?? 0] < 2;
+  };
 
   return (
     <Box sx={playPanelSx}>
@@ -191,7 +198,7 @@ export function PlayTacticsPanel({
             variant={stratagem.id === selectedStratagemId ? 'contained' : 'outlined'}
             onMouseEnter={() => onStratagemChange(stratagem.id)}
             onFocus={() => onStratagemChange(stratagem.id)}
-            disabled={(stratagem.id === 'crushing-impact' && !crushingImpactTargetId) || (stratagem.id === 'explosives' && !explosivesTargetId) || (stratagem.id === 'heroic-intervention' && heroicInterventionMode === 'into-the-fray' && cp[selectedUnit?.side ?? 0] < 2)}
+            disabled={stratagemDisabled(stratagem)}
             onClick={() => onUseStratagem(
               stratagem.id,
               stratagem.id === 'epic-challenge' ? selectedEpicChallengeModelIndex : undefined,
@@ -254,4 +261,3 @@ export function PlayTacticsPanel({
     </Box>
   );
 }
-

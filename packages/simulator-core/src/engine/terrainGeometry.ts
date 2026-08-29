@@ -200,6 +200,41 @@ export function hasLOS(
   return true;
 }
 
+interface ModelRaySamplePoints {
+  fromPoints: Position[];
+  toPoints: Position[];
+}
+
+function modelRaySamplePoints(
+  fromCenter: Position,
+  fromRadius: number,
+  toCenter: Position,
+  toRadius: number,
+): ModelRaySamplePoints {
+  const dx = toCenter.x - fromCenter.x;
+  const dy = toCenter.y - fromCenter.y;
+  const d = Math.hypot(dx, dy);
+  if (d < 0.001) return { fromPoints: [fromCenter], toPoints: [toCenter] };
+
+  const dir = { x: dx / d, y: dy / d };
+  const perp = { x: -dir.y, y: dir.x };
+  return {
+    fromPoints: [
+      fromCenter,
+      { x: fromCenter.x + perp.x * fromRadius, y: fromCenter.y + perp.y * fromRadius, z: fromCenter.z },
+      { x: fromCenter.x - perp.x * fromRadius, y: fromCenter.y - perp.y * fromRadius, z: fromCenter.z },
+      { x: fromCenter.x + dir.x * fromRadius, y: fromCenter.y + dir.y * fromRadius, z: fromCenter.z },
+    ],
+    toPoints: [
+      toCenter,
+      { x: toCenter.x + perp.x * toRadius, y: toCenter.y + perp.y * toRadius, z: toCenter.z },
+      { x: toCenter.x - perp.x * toRadius, y: toCenter.y - perp.y * toRadius, z: toCenter.z },
+      { x: toCenter.x - dir.x * toRadius, y: toCenter.y - dir.y * toRadius, z: toCenter.z },
+      { x: toCenter.x + dir.x * toRadius, y: toCenter.y + dir.y * toRadius, z: toCenter.z },
+    ],
+  };
+}
+
 // Returns the first unblocked edge-to-edge ray between two bounding-circle models, or null if all blocked.
 // Samples perpendicular tangents + near edge on the shooter against center/tangents/near/far on the target.
 // Works for circular, square, and oval bases — callers pass the bounding radius.
@@ -209,26 +244,7 @@ export function findUnblockedLOSRay(
   terrain: Terrain[],
   edition?: '10e' | '11e',
 ): { from: Position; to: Position } | null {
-  const dx = toCenter.x - fromCenter.x;
-  const dy = toCenter.y - fromCenter.y;
-  const d = Math.hypot(dx, dy);
-  if (d < 0.001) return { from: fromCenter, to: toCenter };
-
-  const dir  = { x: dx / d, y: dy / d };
-  const perp = { x: -dir.y, y: dir.x };
-
-  const fromPoints: Position[] = [
-    { x: fromCenter.x + perp.x * fromRadius, y: fromCenter.y + perp.y * fromRadius, z: fromCenter.z },
-    { x: fromCenter.x - perp.x * fromRadius, y: fromCenter.y - perp.y * fromRadius, z: fromCenter.z },
-    { x: fromCenter.x + dir.x  * fromRadius, y: fromCenter.y + dir.y  * fromRadius, z: fromCenter.z },
-  ];
-  const toPoints: Position[] = [
-    toCenter,
-    { x: toCenter.x + perp.x * toRadius, y: toCenter.y + perp.y * toRadius, z: toCenter.z },
-    { x: toCenter.x - perp.x * toRadius, y: toCenter.y - perp.y * toRadius, z: toCenter.z },
-    { x: toCenter.x - dir.x  * toRadius, y: toCenter.y - dir.y  * toRadius, z: toCenter.z },
-    { x: toCenter.x + dir.x  * toRadius, y: toCenter.y + dir.y  * toRadius, z: toCenter.z },
-  ];
+  const { fromPoints, toPoints } = modelRaySamplePoints(fromCenter, fromRadius, toCenter, toRadius);
 
   const obscuringTerrain = edition === '11e'
     ? terrain
@@ -279,16 +295,84 @@ function modelHasCoverFromTerrainFootprint(
   context: TerrainCoverContext,
 ): boolean {
   const model = unit.modelPositions[modelIndex];
-  if (!terrain.providesCover || !model || !circleFullyInTerrain(model, context.modelRadius(unit, modelIndex), terrain)) return false;
+  const canBenefitFromTerrain = ['Infantry', 'Beasts', 'Swarm'].some(keyword => context.hasKeyword(unit, keyword));
+  if (!canBenefitFromTerrain
+    || !terrain.providesCover
+    || !model
+    || !circleFullyInTerrain(model, context.modelRadius(unit, modelIndex), terrain)) return false;
   if (terrain.type === 'ruin' || terrainIsWoods(terrain)) return true;
-  if (terrainIsCraterOrRubble(terrain)) return context.hasKeyword(unit, 'Infantry');
+  if (terrainIsCraterOrRubble(terrain)) return true;
   return terrain.type === 'area';
 }
 
-function terrainFootprintObscures(from: Position, to: Position, terrain: Terrain): boolean {
-  if (!terrain.providesCover) return false;
-  if (terrain.type === 'ruin' || terrainIsWoods(terrain)) return linePassesThroughTerrain(from, to, terrain);
+function linePassesThroughTerrainFromModel(
+  from: Position,
+  fromRadius: number,
+  to: Position,
+  toRadius: number,
+  terrain: RectShape,
+): boolean {
+  if (fromRadius > 0 && circleIntersectsTerrain(from, fromRadius, terrain)) return false;
+  if (toRadius > 0 && circleIntersectsTerrain(to, toRadius, terrain)) return false;
+  return linePassesThroughTerrain(from, to, terrain);
+}
+
+function terrainFootprintObscures(from: Position, to: Position, terrain: Terrain, fromRadius = 0, toRadius = 0): boolean {
+  // A terrain mat between the attacker and target blocks sight to anything
+  // beyond it. The mat containing the attacker is not itself intervening.
+  // Obstacle mats without a blocking feature remain non-blocking.
+  const isTerrainArea = terrain.type === 'ruin' || terrain.type === 'area';
+  if (!terrain.providesCover && !isTerrainArea) return false;
+  if (fromRadius > 0 && circleIntersectsTerrain(from, fromRadius, terrain)) return false;
+  if (toRadius > 0 && circleIntersectsTerrain(to, toRadius, terrain)) return false;
+  if (isTerrainArea || terrainIsWoods(terrain)) {
+    return linePassesThroughTerrainFromModel(from, fromRadius, to, toRadius, terrain);
+  }
   return terrain.type === 'impassable' && lineIntersectsTerrain(from, to, terrain);
+}
+
+function terrainCoverBlocksRay(
+  from: Position,
+  to: Position,
+  terrain: Terrain[],
+  fromRadius: number,
+  toRadius: number,
+): boolean {
+  return terrain.some(feature =>
+    terrainFootprintObscures(from, to, feature, fromRadius, toRadius)
+    || feature.features.some(part => linePassesThroughTerrainFromModel(
+      from,
+      // Attached wall geometry is evaluated against the actual ray. The
+      // parent terrain mat is handled separately above.
+      0,
+      to,
+      toRadius,
+      part,
+    )),
+  );
+}
+
+function targetModelHasTerrainCoverBySight(
+  shooterPosition: Position,
+  shooterRadius: number,
+  targetPosition: Position,
+  targetRadius: number,
+  terrain: Terrain[],
+): boolean {
+  const { fromPoints, toPoints } = modelRaySamplePoints(
+    shooterPosition,
+    shooterRadius,
+    targetPosition,
+    targetRadius,
+  );
+
+  // Cover applies when any sampled line from the attacking footprint to the
+  // target footprint is blocked. This keeps a wall that intersects the line
+  // of sight at the edge of the attacking model relevant; the terrain area
+  // containing the attacker is still ignored by terrainFootprintObscures.
+  return toPoints.some(to => fromPoints.some(from =>
+    terrainCoverBlocksRay(from, to, terrain, shooterRadius, targetRadius),
+  ));
 }
 
 export function targetHasTerrainCoverFrom(
@@ -296,14 +380,23 @@ export function targetHasTerrainCoverFrom(
   target: BattleUnit,
   terrain: Terrain[],
   context: TerrainCoverContext,
+  shooterRadii: number[] = [],
 ): boolean {
-  return target.modelPositions.every((model, modelIndex) => shooterPositions.some(from =>
-    terrain.some(feature =>
-      modelHasCoverFromTerrainFootprint(target, modelIndex, feature, context)
-      || terrainFootprintObscures(from, model, feature)
-      || feature.features.some(part => linePassesThroughTerrain(from, model, part)),
-    ),
-  ));
+  return target.modelPositions.every((model, modelIndex) => {
+    const targetRadius = context.modelRadius(target, modelIndex);
+    return shooterPositions.some((from, shooterIndex) => {
+      if (terrain.some(feature => modelHasCoverFromTerrainFootprint(target, modelIndex, feature, context))) {
+        return true;
+      }
+      return targetModelHasTerrainCoverBySight(
+        from,
+        shooterRadii[shooterIndex] ?? 0,
+        model,
+        targetRadius,
+        terrain,
+      );
+    });
+  });
 }
 
 export interface TerrainVisibilityContext extends TerrainCoverContext {
@@ -323,30 +416,6 @@ export function hasAnyModelLOS(
   );
 }
 
-function terrainCanHideModels(terrain: Terrain): boolean {
-  if (terrain.features.some(feature => feature.category === 'light' || feature.category === 'dense')) return true;
-  return terrain.type === 'ruin' || (terrain.type === 'area' && /woods?|forest/i.test(terrain.name));
-}
-
-function modelIsGoneToGroundFromDenseTerrain(
-  state: BattleState,
-  source: BattleUnit,
-  sourceModelIndex: number,
-  target: BattleUnit,
-  targetModelIndex: number,
-  context: TerrainVisibilityContext,
-): boolean {
-  const denseTerrain = state.terrain
-    .map(terrain => ({ ...terrain, features: terrain.features.filter(feature => feature.category === 'dense') }))
-    .filter(terrain => terrain.features.length > 0);
-  if (!denseTerrain.length) return false;
-  return !hasLOSEdgeToEdge(
-    source.modelPositions[sourceModelIndex], context.modelRadius(source, sourceModelIndex),
-    target.modelPositions[targetModelIndex], context.modelRadius(target, targetModelIndex),
-    denseTerrain, state.ruleset?.edition,
-  );
-}
-
 export function modelIsHiddenFrom(
   state: BattleState,
   source: BattleUnit,
@@ -361,10 +430,9 @@ export function modelIsHiddenFrom(
   const targetModel = target.modelPositions[targetModelIndex];
   const sourceModel = source.modelPositions[sourceModelIndex];
   if (!targetModel || !sourceModel) return false;
-  if (!state.terrain.some(terrain => terrainCanHideModels(terrain)
+  if (!state.terrain.some(terrain => terrain.features.some(feature => feature.category === 'dense')
     && circleIntersectsTerrain(targetModel, context.modelRadius(target, targetModelIndex), terrain))) return false;
-  const detectionRange = modelIsGoneToGroundFromDenseTerrain(state, source, sourceModelIndex, target, targetModelIndex, context) ? 12 : 15;
-  return context.modelBaseEdgeDistance(source, sourceModelIndex, target, targetModelIndex) > detectionRange;
+  return context.modelBaseEdgeDistance(source, sourceModelIndex, target, targetModelIndex) > 15;
 }
 
 export function hasAnyModelLOSConsideringHidden(

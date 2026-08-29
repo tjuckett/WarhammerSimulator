@@ -1,11 +1,12 @@
-import { useRef, useEffect, useLayoutEffect, useState, useCallback, type PointerEvent, type ReactNode } from 'react';
+import { useRef, useEffect, useLayoutEffect, useState, useCallback, type DragEvent, type MouseEvent, type PointerEvent, type ReactNode } from 'react';
 import type { BattleState, BattleUnit, Position } from '@warhammer-simulator/core/types/battle';
+import type { UnitProfile } from '@warhammer-simulator/core/types/army';
 import { pointInTerrain, terrainCenter, terrainCorners } from '@warhammer-simulator/core/engine/terrainGeometry';
 import { featureColor } from '@warhammer-simulator/core/engine/terrain';
 import { zoneFor } from '@warhammer-simulator/core/engine/deployment';
 import { battleRound, maxBattleRounds } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
-import { battleModelIdsWithCoherencyIssues, movePlayModels, type LOSRay } from '@warhammer-simulator/core/engine/simulator';
+import { battleModelIdsWithCoherencyIssues, type LOSRay } from '@warhammer-simulator/core/engine/simulator';
 import { rulesEditionForRuleset } from '@warhammer-simulator/core/engine/rulesEngine';
 import { boardFormatForState } from '@warhammer-simulator/core/data/boardFormats';
 import {
@@ -13,6 +14,9 @@ import {
 } from '@warhammer-simulator/core/engine/objectiveGeometry';
 import type { DeploymentZoneShape } from '@warhammer-simulator/core/data/deploymentZoneTypes';
 import { unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
+import { attachedBattleUnitIdsForSelection } from '../play/playSelectionHelpers';
+import { moveSelectedPlayModels } from '../play/playInteractiveMovement';
+import { gridFormation, gridFormationByRows } from '@warhammer-simulator/core/engine/interactiveMovement';
 import {
   baseFootprintsOverlap,
   baseFootprintIntersectsRect,
@@ -31,7 +35,10 @@ export type PlayModelSelection = {
   parts: Array<{ unitId: string; side: 0 | 1; modelIndices: number[] }>;
 };
 
-type ModelVisualState = 'los-visible' | 'los-visible-out-of-range' | 'los-blocked';
+type LOSModelVisibility = {
+  visibleModelIds: Set<string>;
+  blockedModelIds: Set<string>;
+};
 
 function useStableLayoutEvent<T extends (...args: never[]) => unknown>(callback: T): T {
   const callbackRef = useRef(callback);
@@ -48,7 +55,13 @@ interface Props {
   activeSimulationUnitId?: string | null;
   shooterUnitId?: string | null;
   targetUnitId?: string | null;
+  targetUnitIds?: Set<string>;
+  shootingTargetIds?: Set<string>;
+  movementReadyUnitIds?: Set<string>;
   shootingReadyUnitIds?: Set<string>;
+  shootingNoTargetUnitIds?: Set<string>;
+  shootingModelStates?: Map<string, 'eligible' | 'ineligible'>;
+  fightReadyUnitIds?: Set<string>;
   fightFirstUnitIds?: Set<string>;
   coverUnitIds?: Set<string>;
   losRays?: LOSRay[];
@@ -58,17 +71,28 @@ interface Props {
   unitWarningUnitId?: string | null;
   unitWarning?: string | null;
   onSelectUnit?: (unitId: string, side: 0 | 1) => void;
+  onClearSelection?: () => void;
   deployer?: {
     enabled: boolean;
-    onPlace: (boardX: number, boardY: number) => void;
+    onPlace: (boardX: number, boardY: number, rotationDeg?: number, rows?: number) => void;
     selectedModel?: PlayModelSelection | null;
     canPlaceUnit?: boolean;
+    placementPreview?: { profile: UnitProfile; side: 0 | 1 } | null;
     onSelectModel?: (selection: PlayModelSelection | null, additive?: boolean) => void;
     onBeginModelMove?: (selection: PlayModelSelection) => void;
-    onMoveModel?: (selection: PlayModelSelection, dx: number, dy: number, collide: boolean) => void;
+    onMoveModel?: (selection: PlayModelSelection, dx: number, dy: number, collide: boolean, previewState?: BattleState) => void;
     onEndModelMove?: () => void;
+    onMarkMovementWaypoint?: (point: Position) => BattleState | null | void;
     onRotateModel?: (selection: PlayModelSelection, degrees: number, batched?: boolean) => void;
     selectedModelActions?: ReactNode;
+    selectedModelActionsClassName?: string;
+  };
+  deploymentTray?: {
+    activeSide: 0 | 1;
+    selectedUnit?: { side: 0 | 1; unitIndex: number } | null;
+    units: [Array<{ index: number; name: string; modelCount: number; profile: UnitProfile; staged: boolean }>, Array<{ index: number; name: string; modelCount: number; profile: UnitProfile; staged: boolean }>];
+    onSelect: (side: 0 | 1, unitIndex: number) => void;
+    onDrop: (side: 0 | 1, unitIndex: number, boardX: number, boardY: number) => void;
   };
   editor?: {
     enabled: boolean;
@@ -87,11 +111,35 @@ const MAX_ZOOM = 3;
 const ZOOM_STEP = 0.25;
 const NO_MANS_LAND_FILL = 'rgb(240, 240, 232)';
 const ALIGN_VERTEX_PICK_RADIUS = 0.22;
+const DEPLOYMENT_TRAY_WIDTH = 112;
+const DEPLOYMENT_TRAY_GUTTER = 14;
+const BATTLEFIELD_SETTINGS_KEY = 'warhammer-battlefield-settings';
 
-export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], activeSimulationUnitId = null, shooterUnitId = null, targetUnitId = null, shootingReadyUnitIds, fightFirstUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showTerrainLabels = true, showUnitLabels = false, unitWarningUnitId = null, unitWarning = null, onSelectUnit, deployer, editor }: Props) {
+type BattlefieldSettings = {
+  showMovementCircles: boolean;
+  showLosDebug: boolean;
+};
+
+function loadBattlefieldSettings(): BattlefieldSettings {
+  const defaults: BattlefieldSettings = { showMovementCircles: true, showLosDebug: false };
+  if (typeof window === 'undefined') return defaults;
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(BATTLEFIELD_SETTINGS_KEY) ?? '{}') as Partial<BattlefieldSettings>;
+    return {
+      showMovementCircles: parsed.showMovementCircles ?? defaults.showMovementCircles,
+      showLosDebug: parsed.showLosDebug ?? defaults.showLosDebug,
+    };
+  } catch {
+    return defaults;
+  }
+}
+
+export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], activeSimulationUnitId = null, shooterUnitId = null, targetUnitId = null, targetUnitIds, shootingTargetIds, movementReadyUnitIds, shootingReadyUnitIds, shootingNoTargetUnitIds, shootingModelStates, fightReadyUnitIds, fightFirstUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showTerrainLabels = true, showUnitLabels = false, unitWarningUnitId = null, unitWarning = null, onSelectUnit, onClearSelection, deployer, deploymentTray, editor }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedActionsRef = useRef<HTMLDivElement>(null);
+  const selectedActionsDragRef = useRef<null | { pointerId: number; clientX: number; clientY: number; left: number; top: number }>(null);
+  const manuallyPositionedActionsKeyRef = useRef<string | null>(null);
   const dragRef = useRef<null | { selection: TerrainEditSelection; offsetX: number; offsetY: number }>(null);
   const modelDragRef = useRef<null | {
     selection: PlayModelSelection;
@@ -103,18 +151,40 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     frameId: number | null;
     moved: boolean;
   }>(null);
+  const waypointPointerDownRef = useRef(false);
   const boxSelectRef = useRef<null | { start: Position; current: Position; moved: boolean }>(null);
   const panRef = useRef<null | { clientX: number; clientY: number; scrollLeft: number; scrollTop: number }>(null);
   const sizeRef = useRef({ scale: 1, width: 0, height: 0 });
   const [zoom, setZoom] = useState(1);
   const [hoverGridPoint, setHoverGridPoint] = useState<null | { x: number; y: number }>(null);
+  const [deploymentHoverPoint, setDeploymentHoverPoint] = useState<Position | null>(null);
+  const [deploymentRotationDeg, setDeploymentRotationDeg] = useState(0);
+  const [deploymentRows, setDeploymentRows] = useState<number | undefined>();
   const [hoveredUnitId, setHoveredUnitId] = useState<string | null>(null);
   const [hoveredTransport, setHoveredTransport] = useState<null | { x: number; y: number; label: string }>(null);
   const [boxSelect, setBoxSelect] = useState<null | { start: Position; current: Position }>(null);
   const [spacePanning, setSpacePanning] = useState(false);
   const [collisionMode, setCollisionMode] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [showMovementCircles, setShowMovementCircles] = useState(() => loadBattlefieldSettings().showMovementCircles);
+  const [showLosDebug, setShowLosDebug] = useState(() => loadBattlefieldSettings().showLosDebug);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(BATTLEFIELD_SETTINGS_KEY, JSON.stringify({ showMovementCircles, showLosDebug }));
+    } catch {
+      // Settings persistence is best effort when storage is unavailable.
+    }
+  }, [showMovementCircles, showLosDebug]);
   const [selectedActionsPosition, setSelectedActionsPosition] = useState<null | { left: number; top: number }>(null);
   const [hideSelectedActions, setHideSelectedActions] = useState(false);
+  const [boardPixelsPerInch, setBoardPixelsPerInch] = useState(1);
+
+  function selectedActionsKey(selection: PlayModelSelection | null | undefined): string {
+    return selection?.parts
+      .map(part => `${part.side}:${part.unitId}:${part.modelIndices.join(',')}`)
+      .join('|') ?? '';
+  }
 
   function renderCanvas(
     drawState: BattleState = state,
@@ -127,7 +197,12 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     const cw = container.clientWidth;
     const ch = container.clientHeight;
     const board = boardFormatForState(drawState);
-    const scale = Math.min(cw / board.width, ch / board.height);
+    // The trays are overlaid so their contents can scroll independently, but
+    // their width is still reserved by the board layout. This guarantees a
+    // narrow viewport scales the battlefield down instead of hiding its edges.
+    const reservedTrayWidth = deploymentTray ? (DEPLOYMENT_TRAY_WIDTH + DEPLOYMENT_TRAY_GUTTER) * 2 : 0;
+    const availableWidth = Math.max(1, cw - reservedTrayWidth);
+    const scale = Math.min(availableWidth / board.width, ch / board.height);
     const W = board.width * scale;
     const H = board.height * scale;
     const bitmapW = Math.max(1, Math.round(W));
@@ -140,6 +215,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     if (canvas.style.width !== styleW) canvas.style.width = styleW;
     if (canvas.style.height !== styleH) canvas.style.height = styleH;
     sizeRef.current = { scale: scale * zoom, width: W * zoom, height: H * zoom };
+    if (Math.abs(boardPixelsPerInch - scale * zoom) > 0.01) setBoardPixelsPerInch(scale * zoom);
 
     const ctx = canvas.getContext('2d')!;
     draw(
@@ -156,7 +232,13 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       activeSimulationUnitId,
       shooterUnitId,
       targetUnitId,
+      targetUnitIds,
+      shootingTargetIds,
+      movementReadyUnitIds,
       shootingReadyUnitIds,
+      shootingNoTargetUnitIds,
+      shootingModelStates,
+      fightReadyUnitIds,
       fightFirstUnitIds,
       boxSelect,
       hoveredTransport,
@@ -165,10 +247,13 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       coverUnitIds,
       losRays,
       visibleOutOfRangeUnitIds,
+      showLosDebug,
+      showMovementCircles,
       showTerrainLabels,
       showUnitLabels,
       unitWarningUnitId,
       unitWarning,
+      deployer?.placementPreview && deploymentHoverPoint ? { ...deployer.placementPreview, position: deploymentHoverPoint, rotationDeg: deploymentRotationDeg, rows: deploymentRows } : null,
     );
     return true;
   }
@@ -176,16 +261,27 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
   const renderCanvasEvent = useStableLayoutEvent(renderCanvas);
   const updateSelectedActionsPositionEvent = useStableLayoutEvent(updateSelectedActionsPosition);
 
+  useLayoutEffect(() => {
+    manuallyPositionedActionsKeyRef.current = null;
+    selectedActionsDragRef.current = null;
+    updateSelectedActionsPositionEvent();
+  }, [deployer?.selectedModel, updateSelectedActionsPositionEvent]);
+
   useEffect(() => {
     renderCanvasEvent();
     updateSelectedActionsPositionEvent();
     window.addEventListener('resize', updateSelectedActionsPositionEvent);
     return () => window.removeEventListener('resize', updateSelectedActionsPositionEvent);
-  }, [state, editor?.selected, hoverGridPoint, zoom, deployer?.selectedModel, deployer?.selectedModelActions, hideSelectedActions, selectedUnitId, selectedUnitIds, activeSimulationUnitId, shooterUnitId, targetUnitId, shootingReadyUnitIds, fightFirstUnitIds, boxSelect, hoveredTransport, hoveredUnitId, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showTerrainLabels, showUnitLabels, unitWarningUnitId, unitWarning, renderCanvasEvent, updateSelectedActionsPositionEvent]);
+  }, [state, editor?.selected, hoverGridPoint, deploymentHoverPoint, deploymentRotationDeg, deploymentRows, zoom, deployer?.placementPreview, deployer?.selectedModel, deployer?.selectedModelActions, deployer?.selectedModelActionsClassName, hideSelectedActions, selectedUnitId, selectedUnitIds, activeSimulationUnitId, shooterUnitId, targetUnitId, targetUnitIds, shootingTargetIds, movementReadyUnitIds, shootingReadyUnitIds, shootingNoTargetUnitIds, shootingModelStates, fightReadyUnitIds, fightFirstUnitIds, boxSelect, hoveredTransport, hoveredUnitId, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showLosDebug, showMovementCircles, showTerrainLabels, showUnitLabels, unitWarningUnitId, unitWarning, renderCanvasEvent, updateSelectedActionsPositionEvent]);
 
   useEffect(() => {
     setHideSelectedActions(false);
   }, [deployer?.selectedModel]);
+
+  useEffect(() => {
+    setDeploymentRotationDeg(0);
+    setDeploymentRows(undefined);
+  }, [deployer?.placementPreview?.profile, deployer?.placementPreview?.side]);
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -194,6 +290,10 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       if (e.code === 'Space') {
         e.preventDefault();
         setSpacePanning(true);
+      }
+      if (deployer?.placementPreview && /^[0-9]$/.test(e.key)) {
+        e.preventDefault();
+        setDeploymentRows(e.key === '0' ? undefined : Number(e.key));
       }
     }
     function onKeyUp(e: KeyboardEvent) {
@@ -205,20 +305,39 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       window.removeEventListener('keydown', onKeyDown);
       window.removeEventListener('keyup', onKeyUp);
     };
-  }, []);
+  }, [deployer?.placementPreview]);
 
   useEffect(() => () => {
     const frameId = modelDragRef.current?.frameId;
     if (frameId !== null && frameId !== undefined) cancelAnimationFrame(frameId);
   }, []);
 
-  function boardPoint(e: PointerEvent<HTMLCanvasElement>) {
+  function boardPoint(e: { clientX: number; clientY: number; currentTarget: HTMLCanvasElement }) {
     const rect = e.currentTarget.getBoundingClientRect();
     const scale = sizeRef.current.scale;
     return {
       x: (e.clientX - rect.left) / scale,
       y: (e.clientY - rect.top) / scale,
     };
+  }
+
+  function onDeploymentTrayDrop(e: DragEvent<HTMLCanvasElement>) {
+    const trayValue = e.dataTransfer.getData('application/x-warhammer-deployment-unit');
+    if (!trayValue || !deploymentTray) return;
+    e.preventDefault();
+    const [sideText, indexText] = trayValue.split(':');
+    const side = Number(sideText);
+    const unitIndex = Number(indexText);
+    if ((side !== 0 && side !== 1) || !Number.isInteger(unitIndex)) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const scale = sizeRef.current.scale;
+    deploymentTray.onDrop(side, unitIndex, (e.clientX - rect.left) / scale, (e.clientY - rect.top) / scale);
+  }
+
+  function selectDeploymentTrayUnit(side: 0 | 1, unitIndex: number) {
+    setDeploymentRotationDeg(0);
+    setDeploymentRows(undefined);
+    deploymentTray?.onSelect(side, unitIndex);
   }
 
   function nearestGridPoint(point: { x: number; y: number }) {
@@ -236,10 +355,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     dy: number,
     collide: boolean,
   ): BattleState {
-    return selection.parts.reduce(
-      (next, part) => movePlayModels(next, part.unitId, part.side, part.modelIndices, dx, dy, collide || next.phase === 'movement' || !!next.pendingChargeMovement),
-      sourceState,
-    );
+    return moveSelectedPlayModels(sourceState, selection, dx, dy, collide);
   }
 
   function firstSelectedModelPosition(sourceState: BattleState, selection: PlayModelSelection): Position | null {
@@ -286,12 +402,12 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
 
   function updateSelectedActionsPosition() {
     const canvas = canvasRef.current;
-    const container = containerRef.current;
     const selection = deployer?.selectedModel;
-    if (!canvas || !container || !selection || !deployer?.selectedModelActions || hideSelectedActions) {
+    if (!canvas || !selection || !deployer?.selectedModelActions || hideSelectedActions) {
       setSelectedActionsPosition(null);
       return;
     }
+    if (manuallyPositionedActionsKeyRef.current === selectedActionsKey(selection)) return;
     const selectionGeometry = selectedModelActionAnchor(state, selection);
     if (!selectionGeometry) {
       setSelectedActionsPosition(null);
@@ -299,29 +415,26 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     }
     const { anchor, bounds } = selectionGeometry;
     const canvasRect = canvas.getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
     const scale = sizeRef.current.scale;
     const actionRect = selectedActionsRef.current?.getBoundingClientRect();
-    const canvasLeft = canvasRect.left - containerRect.left;
-    const canvasTop = canvasRect.top - containerRect.top;
-    const boardLeft = canvasLeft + 4;
-    const boardRight = canvasLeft + canvasRect.width - 4;
-    const boardTop = canvasTop + 4;
-    const boardBottom = canvasTop + canvasRect.height - 4;
+    const boardLeft = canvasRect.left + 4;
+    const boardRight = canvasRect.left + canvasRect.width - 4;
+    const boardTop = canvasRect.top + 4;
+    const boardBottom = canvasRect.top + canvasRect.height - 4;
     if (!actionRect) {
       setSelectedActionsPosition({
-        left: Math.max(4, canvasLeft + anchor.x * scale + 18),
-        top: Math.max(boardTop, canvasTop + anchor.y * scale),
+        left: Math.max(boardLeft, canvasRect.left + anchor.x * scale + 18),
+        top: Math.max(boardTop, canvasRect.top + anchor.y * scale),
       });
       return;
     }
     const unitBounds = {
-      left: canvasLeft + bounds.left * scale,
-      right: canvasLeft + bounds.right * scale,
-      top: canvasTop + bounds.top * scale,
-      bottom: canvasTop + bounds.bottom * scale,
+      left: canvasRect.left + bounds.left * scale,
+      right: canvasRect.left + bounds.right * scale,
+      top: canvasRect.top + bounds.top * scale,
+      bottom: canvasRect.top + bounds.bottom * scale,
     };
-    const centerY = canvasTop + anchor.y * scale;
+    const centerY = canvasRect.top + anchor.y * scale;
     const gap = 18;
     const candidates = [
       { left: unitBounds.right + gap, top: centerY },
@@ -346,6 +459,38 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
         ? current
         : nextPosition,
     );
+  }
+
+  function beginSelectedActionsDrag(e: PointerEvent<HTMLDivElement>) {
+    const target = e.target as HTMLElement;
+    if (target.closest('button, input, select, textarea, a, [role="button"]')) return;
+    const position = selectedActionsPosition;
+    if (!position) return;
+    selectedActionsDragRef.current = {
+      pointerId: e.pointerId,
+      clientX: e.clientX,
+      clientY: e.clientY,
+      left: position.left,
+      top: position.top,
+    };
+    manuallyPositionedActionsKeyRef.current = selectedActionsKey(deployer?.selectedModel);
+    e.currentTarget.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  }
+
+  function moveSelectedActionsDrag(e: PointerEvent<HTMLDivElement>) {
+    const drag = selectedActionsDragRef.current;
+    if (!drag || drag.pointerId !== e.pointerId) return;
+    setSelectedActionsPosition({
+      left: drag.left + e.clientX - drag.clientX,
+      top: drag.top + e.clientY - drag.clientY,
+    });
+  }
+
+  function endSelectedActionsDrag(e: PointerEvent<HTMLDivElement>) {
+    if (selectedActionsDragRef.current?.pointerId !== e.pointerId) return;
+    selectedActionsDragRef.current = null;
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
   }
 
   function appliedDragDelta(drag: NonNullable<typeof modelDragRef.current>): Position {
@@ -401,6 +546,20 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     return null;
   }
 
+  function hitTestFightReadyUnit(point: Position): { unitId: string; side: 0 | 1 } | null {
+    if (!fightReadyUnitIds?.size) return null;
+    for (let ui = state.units.length - 1; ui >= 0; ui--) {
+      const unit = state.units[ui];
+      if (unit.destroyed || unit.embarkedInUnitId || !fightReadyUnitIds.has(unit.id)) continue;
+      const hit = unit.modelPositions.some((model, modelIndex) => {
+        const radius = modelBaseRadiusInches(unit.profile, modelIndex);
+        return Math.hypot(point.x - model.x, point.y - model.y) <= radius + 0.55;
+      });
+      if (hit) return { unitId: unit.id, side: unit.side };
+    }
+    return null;
+  }
+
   function transportHoverAt(point: Position): { x: number; y: number; label: string } | null {
     const modelHit = hitTestModel(point);
     if (!modelHit) return null;
@@ -418,7 +577,9 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
 
   function selectedIndicesForHit(hit: { unitId: string; side: 0 | 1; modelIndex: number }): PlayModelSelection {
     const current = deployer?.selectedModel;
-    if (deployer?.onMoveModel && current && selectionContainsHit(current, hit)) {
+    const isPendingFightModel = state.pendingFightMovement?.unitId === hit.unitId
+      && state.pendingFightMovement.side === hit.side;
+    if (deployer?.onMoveModel && !isPendingFightModel && current && selectionContainsHit(current, hit)) {
       return current;
     }
     return {
@@ -495,6 +656,22 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
   }
 
   function onPointerDown(e: PointerEvent<HTMLCanvasElement>) {
+    if (e.button === 2 && deployer?.enabled && deployer.onMarkMovementWaypoint
+      && (state.phase === 'movement' || state.phase === 'charge' || state.phase === 'fight')) {
+      e.preventDefault();
+      waypointPointerDownRef.current = true;
+      const point = boardPoint(e);
+      commitDragPreviewBeforeWaypoint();
+      const drag = modelDragRef.current;
+      if (drag?.moved) {
+        drag.originState = drag.previewState;
+        drag.start = point;
+        drag.current = point;
+        drag.moved = false;
+      }
+      deployer.onMarkMovementWaypoint(point);
+      return;
+    }
     if (e.button === 1 || (spacePanning && e.button === 0)) {
       beginPan(e);
       return;
@@ -504,9 +681,23 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       const modelHit = hitTestModel(point);
       if (modelHit) {
         const modelSelection = selectedIndicesForHit(modelHit);
-        onSelectUnit?.(modelHit.unitId, modelHit.side);
-        deployer.onSelectModel?.(modelSelection, false);
-        if (deployer.onMoveModel) {
+        const pendingChargeUnitIds = state.pendingChargeMovement
+          ? attachedBattleUnitIdsForSelection(state, state.pendingChargeMovement.unitId)
+          : [];
+        const isPendingChargeModel = state.pendingChargeMovement?.side === modelHit.side
+          && pendingChargeUnitIds.includes(modelHit.unitId);
+        const isPendingFightModel = state.pendingFightMovement?.side === modelHit.side
+          && state.pendingFightMovement.unitId === modelHit.unitId;
+        const isLockedPendingFightModel = isPendingFightModel
+          && state.pendingFightMovement?.lockedModelIds?.includes(`${modelHit.unitId}:${modelHit.modelIndex}`);
+        // Selecting a model during charge movement should not re-run unit-level
+        // charge selection, which can replace the active charge popup.
+        if (!isPendingChargeModel) onSelectUnit?.(modelHit.unitId, modelHit.side);
+        // Base-to-base models are part of the selected unit, but cannot be
+        // moved during pile-in/consolidation. Keep the unit selected so its
+        // Complete action remains available, without starting a model drag.
+        if (!isLockedPendingFightModel) deployer.onSelectModel?.(modelSelection, false);
+        if (deployer.onMoveModel && !isLockedPendingFightModel) {
           deployer.onBeginModelMove?.(modelSelection);
           modelDragRef.current = {
             selection: modelSelection,
@@ -523,10 +714,16 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
         }
         return;
       }
-      if (deployer.canPlaceUnit) {
-        deployer.onPlace(point.x, point.y);
+      const readyUnitHit = hitTestFightReadyUnit(point);
+      if (readyUnitHit) {
+        onSelectUnit?.(readyUnitHit.unitId, readyUnitHit.side);
         return;
       }
+      if (deployer.canPlaceUnit) {
+        deployer.onPlace(point.x, point.y, deploymentRotationDeg, deploymentRows);
+        return;
+      }
+      onClearSelection?.();
       boxSelectRef.current = { start: point, current: point, moved: false };
       e.currentTarget.setPointerCapture(e.pointerId);
       return;
@@ -534,6 +731,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     if (!editor?.enabled) {
       const modelHit = hitTestModel(point);
       if (modelHit) onSelectUnit?.(modelHit.unitId, modelHit.side);
+      else onClearSelection?.();
       return;
     }
     if (editor.alignVertexIndex !== null && editor.selected) {
@@ -563,21 +761,55 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       return;
     }
     const point = boardPoint(e);
+    const bothMouseButtonsHeld = (e.buttons & 3) === 3;
+    if (!bothMouseButtonsHeld) waypointPointerDownRef.current = false;
+    if (bothMouseButtonsHeld && !waypointPointerDownRef.current
+      && deployer?.enabled && deployer.onMarkMovementWaypoint
+      && modelDragRef.current?.moved
+      && (state.phase === 'movement' || state.phase === 'charge' || state.phase === 'fight')) {
+      waypointPointerDownRef.current = true;
+      const point = boardPoint(e);
+      commitDragPreviewBeforeWaypoint();
+      const drag = modelDragRef.current;
+      if (drag?.moved) {
+        drag.originState = drag.previewState;
+        drag.start = point;
+        drag.current = point;
+        drag.moved = false;
+      }
+      const markedState = deployer.onMarkMovementWaypoint(point);
+      if (drag?.moved === false && markedState) {
+        drag.originState = markedState;
+        drag.previewState = markedState;
+      }
+      return;
+    }
+    if (deployer?.placementPreview && !modelDragRef.current) setDeploymentHoverPoint(point);
     if (deployer?.enabled && modelDragRef.current && deployer.onMoveModel) {
       const drag = modelDragRef.current;
       const movedDistance = Math.hypot(point.x - drag.start.x, point.y - drag.start.y);
       if (!drag.moved && movedDistance <= 0.25) return;
-      if (!drag.moved) setHideSelectedActions(true);
+      if (!drag.moved && !state.pendingChargeMovement && !state.pendingFightMovement) setHideSelectedActions(true);
       drag.moved = true;
       const dx = point.x - drag.current.x;
       const dy = point.y - drag.current.y;
       drag.current = point;
-      drag.collide = e.shiftKey;
+      // Normal movement previews from the original start position so the drag
+      // represents one move. Charge and pile-in movement need incremental
+      // previews because each leg is part of their movement path.
+      drag.collide = e.shiftKey || !!state.pendingChargeMovement || !!state.pendingFightMovement;
       setCollisionMode(drag.collide);
       if (drag.collide) {
-        if (Math.abs(dx) >= 0.001 || Math.abs(dy) >= 0.001) {
-          drag.previewState = movedStateForSelection(drag.previewState, drag.selection, dx, dy, true);
-        }
+        // Collision mode constrains the preview, but movement distance is
+        // still measured from the model's position when this drag began.
+        const collisionPreview = movedStateForSelection(
+          drag.originState,
+          drag.selection,
+          point.x - drag.start.x,
+          point.y - drag.start.y,
+          true,
+        );
+        if (collisionPreview !== drag.originState) drag.previewState = collisionPreview;
       } else {
         drag.previewState = movedStateForSelection(
           drag.originState,
@@ -621,6 +853,10 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
       return;
     }
+    if (e.button === 2) {
+      waypointPointerDownRef.current = false;
+      return;
+    }
     if (deployer?.enabled && boxSelectRef.current) {
       const box = boxSelectRef.current;
       deployer.onSelectModel?.(box.moved ? modelsInBox(box.start, boardPoint(e)) : null, false);
@@ -632,25 +868,14 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       const drag = modelDragRef.current;
       cancelModelDragFrame();
       if (drag.moved && deployer?.onMoveModel) {
-        const point = boardPoint(e);
-        const finalDx = point.x - drag.current.x;
-        const finalDy = point.y - drag.current.y;
-        if (Math.abs(finalDx) >= 0.001 || Math.abs(finalDy) >= 0.001) {
-          if (e.shiftKey) {
-            drag.previewState = movedStateForSelection(drag.previewState, drag.selection, finalDx, finalDy, true);
-          } else {
-            drag.previewState = movedStateForSelection(
-              drag.originState,
-              drag.selection,
-              point.x - drag.start.x,
-              point.y - drag.start.y,
-              false,
-            );
-          }
-        }
+        // The preview is updated by pointermove. Do not calculate another
+        // delta from the last pointermove to pointerup: browsers commonly
+        // report a slightly different release coordinate, which would make
+        // releasing the mouse consume extra movement. Right-click is the
+        // explicit gesture for creating a waypoint/anchor.
         const applied = appliedDragDelta(drag);
         if (Math.abs(applied.x) >= 0.001 || Math.abs(applied.y) >= 0.001) {
-          deployer.onMoveModel(drag.selection, applied.x, applied.y, drag.collide);
+          deployer.onMoveModel(drag.selection, applied.x, applied.y, drag.collide, drag.previewState);
         }
       }
       deployer?.onEndModelMove?.();
@@ -668,8 +893,46 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     setHoveredTransport(null);
   }
 
+  function commitDragPreviewBeforeWaypoint() {
+    const drag = modelDragRef.current;
+    if (!drag?.moved || !deployer?.onMoveModel) return;
+    cancelModelDragFrame();
+    const applied = appliedDragDelta(drag);
+    if (Math.abs(applied.x) >= 0.001 || Math.abs(applied.y) >= 0.001) {
+      deployer.onMoveModel(drag.selection, applied.x, applied.y, drag.collide, drag.previewState);
+    }
+  }
+
+  function onContextMenu(e: MouseEvent<HTMLCanvasElement>) {
+    const canMarkWaypoint = deployer?.enabled
+      && deployer.onMarkMovementWaypoint
+      && (state.phase === 'movement' || state.phase === 'charge' || state.phase === 'fight');
+    if (canMarkWaypoint) {
+      e.preventDefault();
+      if (waypointPointerDownRef.current) {
+        waypointPointerDownRef.current = false;
+        return;
+      }
+      commitDragPreviewBeforeWaypoint();
+      const markedState = deployer.onMarkMovementWaypoint(boardPoint(e));
+      const drag = modelDragRef.current;
+      if (drag?.moved && markedState) {
+        drag.originState = markedState;
+        drag.previewState = markedState;
+      }
+      return;
+    }
+    e.preventDefault();
+  }
+
   function onWheel(e: React.WheelEvent<HTMLCanvasElement>) {
-    if (deployer?.enabled && deployer.selectedModel && deployer.onRotateModel && e.shiftKey) {
+    const rotateWithWheel = e.shiftKey;
+    if (deployer?.placementPreview && rotateWithWheel) {
+      e.preventDefault();
+      setDeploymentRotationDeg(current => (current + (e.deltaY < 0 ? -5 : 5) + 360) % 360);
+      return;
+    }
+    if (deployer?.enabled && deployer.selectedModel && deployer.onRotateModel && rotateWithWheel) {
       e.preventDefault();
       deployer.onRotateModel(deployer.selectedModel, e.deltaY < 0 ? -5 : 5, true);
       return;
@@ -713,6 +976,51 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
         >
           {collisionMode ? 'Collision mode — Shift held' : battlefieldStatusLabel(state)}
         </span>
+        <button
+          type="button"
+          onClick={() => setSettingsOpen(current => !current)}
+          title="Open battlefield display settings"
+          style={{ position: 'absolute', left: 10 }}
+        >
+          Settings
+        </button>
+        {settingsOpen && (
+          <div
+            style={{
+              position: 'absolute',
+              zIndex: 20,
+              top: 'calc(100% + 4px)',
+              left: 10,
+              minWidth: 210,
+              padding: 10,
+              background: 'rgba(12, 16, 22, 0.97)',
+              border: '1px solid #56616d',
+              borderRadius: 5,
+              boxShadow: '0 8px 20px rgba(0,0,0,0.45)',
+              color: '#e0e0e0',
+              font: '600 11px monospace',
+              textAlign: 'left',
+            }}
+          >
+            <div style={{ marginBottom: 7, color: '#fff', fontWeight: 800 }}>Battlefield display</div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 7, cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={showMovementCircles}
+                onChange={event => setShowMovementCircles(event.target.checked)}
+              />
+              Show movement circles
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={showLosDebug}
+                onChange={event => setShowLosDebug(event.target.checked)}
+              />
+              Show LOS debug rays
+            </label>
+          </div>
+        )}
         <div style={{ position: 'absolute', right: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
           <button type="button" onClick={() => setZoom(current => clampZoom(current - ZOOM_STEP))} title="Zoom out">-</button>
           <span style={{ minWidth: 44, textAlign: 'center' }}>{Math.round(zoom * 100)}%</span>
@@ -740,18 +1048,78 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerLeave={onPointerLeave}
+          onContextMenu={onContextMenu}
           onWheel={onWheel}
           onAuxClick={e => e.preventDefault()}
+          onDragOver={e => { if (deploymentTray) e.preventDefault(); }}
+          onDrop={onDeploymentTrayDrop}
           style={{
             border: '2px solid #444',
             borderRadius: 4,
             cursor: panRef.current || spacePanning ? 'grab' : editor?.enabled ? 'grab' : deployer?.canPlaceUnit ? 'crosshair' : 'default',
           }}
         />
+        {deploymentTray && ([0, 1] as const).map(side => (
+          <div
+            key={side}
+            className={`deployment-tray deployment-tray--${side}${deploymentTray.activeSide === side ? ' deployment-tray--active' : ''}`}
+          >
+            <div className="deployment-tray__title">
+              {state.armies[side].name} staging
+              {deploymentTray.activeSide === side && <span>Deploying now</span>}
+            </div>
+            {deploymentTray.units[side].map(unit => (
+              <button
+                key={`${side}:${unit.index}:${unit.name}`}
+                type="button"
+                disabled={unit.staged || deploymentTray.activeSide !== side}
+                draggable={!unit.staged && deploymentTray.activeSide === side}
+                className={`deployment-tray__unit${unit.staged ? ' deployment-tray__unit--staged' : ''}${deploymentTray.selectedUnit?.side === side && deploymentTray.selectedUnit.unitIndex === unit.index ? ' deployment-tray__unit--selected' : ''}`}
+                onClick={() => !unit.staged && deploymentTray.activeSide === side && selectDeploymentTrayUnit(side, unit.index)}
+                onDragStart={event => {
+                  selectDeploymentTrayUnit(side, unit.index);
+                  event.dataTransfer.effectAllowed = 'move';
+                  event.dataTransfer.setData('application/x-warhammer-deployment-unit', `${side}:${unit.index}`);
+                }}
+                title={unit.staged ? 'This unit deploys later, not onto the battlefield.' : `Drag ${unit.name} onto the battlefield.`}
+              >
+                <span>{unit.name}</span>
+                <small>{unit.staged ? 'Reserves' : `${unit.modelCount} models`}</small>
+                <span className="deployment-tray__footprint" aria-label={`${unit.name} tabletop footprint preview`}>
+                  <strong>Tabletop footprint</strong>
+                  {(() => {
+                    const count = Math.min(unit.modelCount, 30);
+                    const positions = gridFormation(unit.profile, { x: 0, y: 0 }, 0).slice(0, count);
+                    const diameters = positions.map((_, index) => modelBaseRadiusInches(unit.profile, index) * 2 * boardPixelsPerInch);
+                    const minX = Math.min(...positions.map(position => position.x * boardPixelsPerInch));
+                    const minY = Math.min(...positions.map(position => position.y * boardPixelsPerInch));
+                    const maxX = Math.max(...positions.map((position, index) => position.x * boardPixelsPerInch + diameters[index]));
+                    const maxY = Math.max(...positions.map((position, index) => position.y * boardPixelsPerInch + diameters[index]));
+                    return (
+                      <span className="deployment-tray__footprint-models" style={{ width: maxX - minX, height: maxY - minY }}>
+                        {positions.map((position, index) => <i key={index} style={{
+                          width: diameters[index], height: diameters[index],
+                          left: position.x * boardPixelsPerInch - minX,
+                          top: position.y * boardPixelsPerInch - minY,
+                        }} />)}
+                      </span>
+                    );
+                  })()}
+                  <small>Base sizes shown to scale relative to each other</small>
+                </span>
+              </button>
+            ))}
+          </div>
+        ))}
         {selectedActionsPosition && deployer?.selectedModelActions && (
           <div
+            key={selectedActionsKey(deployer.selectedModel) ?? 'selected-actions'}
             ref={selectedActionsRef}
-            className="selected-unit-actions"
+            className={`selected-unit-actions ${deployer.selectedModelActionsClassName ?? ''}`.trim()}
+            onPointerDown={beginSelectedActionsDrag}
+            onPointerMove={moveSelectedActionsDrag}
+            onPointerUp={endSelectedActionsDrag}
+            onPointerCancel={endSelectedActionsDrag}
             style={{
               left: selectedActionsPosition.left,
               top: selectedActionsPosition.top,
@@ -807,7 +1175,13 @@ function draw(
   activeSimulationUnitId: string | null,
   shooterUnitId: string | null,
   targetUnitId: string | null,
+  targetUnitIds: Set<string> | undefined,
+  shootingTargetIds: Set<string> | undefined,
+  movementReadyUnitIds: Set<string> = new Set(),
   shootingReadyUnitIds: Set<string> = new Set(),
+  shootingNoTargetUnitIds: Set<string> = new Set(),
+  shootingModelStates: Map<string, 'eligible' | 'ineligible'> = new Map(),
+  fightReadyUnitIds: Set<string> = new Set(),
   fightFirstUnitIds: Set<string> = new Set(),
   boxSelect: { start: Position; current: Position } | null,
   hoveredTransport: { x: number; y: number; label: string } | null,
@@ -816,10 +1190,13 @@ function draw(
   coverUnitIds: Set<string> = new Set(),
   losRays?: LOSRay[],
   visibleOutOfRangeUnitIds: Set<string> = new Set(),
+  showLosDebug = false,
+  showMovementCircles = true,
   showTerrainLabels = true,
   showUnitLabels = false,
   unitWarningUnitId: string | null = null,
   unitWarning: string | null = null,
+  deploymentPreview: { profile: UnitProfile; side: 0 | 1; position: Position; rotationDeg: number; rows?: number } | null = null,
 ) {
   // ── Background ───────────────────────────────────────────────────────────
   const board = boardFormatForState(state);
@@ -982,6 +1359,10 @@ function draw(
     ctx.fillText(`${i + 1}${securedOwner !== null ? ' S' : ''}`, cx, cy);
   }
 
+  if (showLosDebug && losRays?.length) {
+    drawShootingLosDebug(ctx, losRays, scale, visibleOutOfRangeUnitIds);
+  }
+
   if (selected) drawEdgeGuides(ctx, state, selected, scale, W, H);
   if (hoverGridPoint) drawGridHover(ctx, hoverGridPoint, scale, W, H);
   if (boxSelect) drawSelectionBox(ctx, boxSelect, scale);
@@ -989,22 +1370,96 @@ function draw(
   // ── Units ─────────────────────────────────────────────────────────────────
   const highlightedUnitIds = new Set([selectedUnitId, ...selectedUnitIds].filter(Boolean));
   const coherencyIssueModelIds = modelDragPreview ? new Set<string>() : battleModelIdsWithCoherencyIssues(state);
-  const losModelStates = losVisualStates(losRays ?? [], visibleOutOfRangeUnitIds);
+  const losModelVisibility = losModelVisibilityForRays(losRays ?? []);
   const activeSelectedModel = modelDragPreview?.selection ?? selectedModel;
+  for (const unit of state.units) {
+    const waypointSets = unit.movementWaypointsByModel
+      ?? (unit.movementWaypoints?.length ? [unit.movementWaypoints] : []);
+    if (!waypointSets.some(waypoints => waypoints?.length) || unit.destroyed) continue;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(126, 188, 255, 0.9)';
+    ctx.fillStyle = 'rgba(126, 188, 255, 0.95)';
+    ctx.setLineDash([5, 5]);
+    ctx.lineWidth = 1.5;
+    for (let modelIndex = 0; modelIndex < waypointSets.length; modelIndex++) {
+      const waypoints = waypointSets[modelIndex];
+      if (!waypoints?.length) continue;
+      const origin = unit.movementStartPositionsByModel?.[modelIndex]
+        ?? unit.modelPositions[modelIndex]
+        ?? unit.position;
+      ctx.beginPath();
+      ctx.moveTo(origin.x * scale, origin.y * scale);
+      for (const waypoint of waypoints) ctx.lineTo(waypoint.x * scale, waypoint.y * scale);
+      ctx.stroke();
+      for (const waypoint of waypoints) {
+        ctx.beginPath();
+        ctx.arc(waypoint.x * scale, waypoint.y * scale, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+  if (deploymentPreview) {
+    const radians = deploymentPreview.rotationDeg * Math.PI / 180;
+    const formation = deploymentPreview.rows === undefined
+      ? gridFormation(deploymentPreview.profile, deploymentPreview.position, deploymentPreview.side)
+      : gridFormationByRows(deploymentPreview.profile, deploymentPreview.position, deploymentPreview.side, deploymentPreview.rows);
+    const positions = formation.map(model => ({
+      ...model,
+      x: deploymentPreview.position.x + (model.x - deploymentPreview.position.x) * Math.cos(radians) - (model.y - deploymentPreview.position.y) * Math.sin(radians),
+      y: deploymentPreview.position.y + (model.x - deploymentPreview.position.x) * Math.sin(radians) + (model.y - deploymentPreview.position.y) * Math.cos(radians),
+    }));
+    const ghost = {
+      id: '__deployment-preview__',
+      side: deploymentPreview.side,
+      profile: deploymentPreview.profile,
+      position: displayCentroid(positions),
+      modelPositions: positions,
+      modelRotations: positions.map(() => (deploymentPreview.side === 0 ? 0 : 180) + deploymentPreview.rotationDeg),
+      facingDeg: deploymentPreview.side === 0 ? 0 : 180,
+      remainingModels: positions.length,
+      woundsOnLeadModel: 0,
+      charged: false,
+      inCombat: false,
+      battleshocked: false,
+      activated: false,
+      destroyed: false,
+    } as BattleUnit;
+    ctx.save();
+    ctx.globalAlpha = 0.75;
+    drawUnit(ctx, ghost, state, scale, [], false, new Set(), true);
+    ctx.restore();
+  }
   for (const unit of state.units) {
     if (unit.destroyed || unit.embarkedInUnitId) continue;
     const selectedPart = selectedModelPartForUnit(activeSelectedModel, unit.id, unit.side);
     const previewUnit = modelDragPreview ? unitWithModelDragPreview(unit, modelDragPreview, state) : unit;
-    const unitHasLosTint = unit.modelPositions.some((_, index) => losModelStates.has(`${unit.id}:${index}`));
-    const selectedModelIndices = selectedPart
+    const unitHasLosTint = unit.modelPositions.some((_, index) => {
+      const modelId = `${unit.id}:${index}`;
+      return losModelVisibility.visibleModelIds.has(modelId) || losModelVisibility.blockedModelIds.has(modelId);
+    });
+    const isPendingFightMovementUnit = state.pendingFightMovement?.unitId === unit.id
+      && state.pendingFightMovement.side === unit.side;
+    const lockedPendingFightModelIds = isPendingFightMovementUnit
+      ? new Set(state.pendingFightMovement?.lockedModelIds ?? [])
+      : null;
+    const selectedModelIndices = isPendingFightMovementUnit
+      ? unit.modelPositions
+        .map((_, index) => index)
+        .filter(index => !lockedPendingFightModelIds?.has(`${unit.id}:${index}`))
+      : selectedPart
       ? selectedPart.modelIndices
       : highlightedUnitIds.has(unit.id) && !unitHasLosTint
         ? unit.modelPositions.map((_, index) => index)
         : [];
+    const waypointModelIndices = unit.movementWaypointsByModel
+      ?.map((waypoints, index) => waypoints.length ? index : -1)
+      .filter(index => index >= 0) ?? [];
+    const movementHudIndices = selectedModelIndices.length ? selectedModelIndices : waypointModelIndices;
     const shootingRole = unit.id === shooterUnitId
       ? state.phase === 'charge' ? 'charger' : 'shooter'
-      : unit.id === targetUnitId ? 'target' : null;
-    drawUnit(ctx, previewUnit, state, scale, selectedModelIndices, showUnitLabels || hoveredUnitId === unit.id, coherencyIssueModelIds, !!modelDragPreview, coverUnitIds?.has(unit.id) ?? false, losModelStates, shootingRole, shootingReadyUnitIds.has(unit.id), fightFirstUnitIds.has(unit.id), activeSimulationUnitId === unit.id, unitWarningUnitId === unit.id ? unitWarning : null);
+      : (shootingTargetIds?.has(unit.id) || targetUnitIds?.has(unit.id) || unit.id === targetUnitId) ? 'target' : null;
+    drawUnit(ctx, previewUnit, state, scale, movementHudIndices, showUnitLabels || hoveredUnitId === unit.id, coherencyIssueModelIds, !!modelDragPreview, coverUnitIds?.has(unit.id) ?? false, losModelVisibility, shootingRole === 'shooter' ? shootingModelStates : undefined, shootingRole, shootingRole === 'target' && selectedUnitIds.includes(unit.id), movementReadyUnitIds.has(unit.id) || shootingReadyUnitIds.has(unit.id) || fightReadyUnitIds.has(unit.id), shootingNoTargetUnitIds.has(unit.id), fightFirstUnitIds.has(unit.id), activeSimulationUnitId === unit.id, unitWarningUnitId === unit.id ? unitWarning : null, showMovementCircles);
   }
 
   if (hoveredTransport) drawTransportTooltip(ctx, hoveredTransport, scale, W, H);
@@ -1021,17 +1476,44 @@ function selectedModelPartForUnit(
   return selection.parts.find(part => part.unitId === unitId && part.side === side) ?? null;
 }
 
-function losVisualStates(rays: LOSRay[], visibleOutOfRangeUnitIds: Set<string>): Map<string, ModelVisualState> {
-  const states = new Map<string, ModelVisualState>();
+function losModelVisibilityForRays(rays: LOSRay[]): LOSModelVisibility {
+  const visibleModelIds = new Set<string>();
+  const blockedModelIds = new Set<string>();
   for (const ray of rays) {
     const key = `${ray.toUnitId}:${ray.toModelIndex}`;
     if (!ray.blocked) {
-      states.set(key, visibleOutOfRangeUnitIds.has(ray.toUnitId) ? 'los-visible-out-of-range' : 'los-visible');
-    } else if (!states.has(key)) {
-      states.set(key, 'los-blocked');
+      visibleModelIds.add(key);
+      blockedModelIds.delete(key);
+    } else if (!visibleModelIds.has(key)) {
+      blockedModelIds.add(key);
     }
   }
-  return states;
+  return { visibleModelIds, blockedModelIds };
+}
+
+/** Draws the exact model-to-model rays used by the shooting LOS inspection. */
+function drawShootingLosDebug(
+  ctx: CanvasRenderingContext2D,
+  rays: LOSRay[],
+  scale: number,
+  visibleOutOfRangeUnitIds: Set<string>,
+) {
+  ctx.save();
+  ctx.lineWidth = Math.max(1, scale * 0.1);
+  for (const ray of rays) {
+    ctx.beginPath();
+    ctx.moveTo(ray.from.x * scale, ray.from.y * scale);
+    ctx.lineTo(ray.to.x * scale, ray.to.y * scale);
+    ctx.setLineDash(ray.blocked ? [Math.max(4, scale * 0.55), Math.max(3, scale * 0.4)] : []);
+    ctx.strokeStyle = ray.blocked
+      ? 'rgba(255, 55, 55, 0.8)'
+      : visibleOutOfRangeUnitIds.has(ray.toUnitId)
+        ? 'rgba(255, 205, 55, 0.85)'
+        : 'rgba(55, 245, 115, 0.85)';
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  ctx.restore();
 }
 
 function displayCentroid(positions: Position[]): Position {
@@ -1476,12 +1958,16 @@ function drawUnit(
   coherencyIssueModelIds: Set<string> = new Set(),
   skipWarnings = false,
   hasCover = false,
-  losModelStates: Map<string, ModelVisualState> = new Map(),
+  losModelVisibility: LOSModelVisibility = { visibleModelIds: new Set(), blockedModelIds: new Set() },
+  shootingModelStates: Map<string, 'eligible' | 'ineligible'> = new Map(),
   shootingRole: 'shooter' | 'charger' | 'target' | null = null,
+  shootingTargetSelected = false,
   shootingReady = false,
+  shootingNoTarget = false,
   fightFirst = false,
   activeSimulationUnit = false,
   unitWarning: string | null = null,
+  showMovementCircles = true,
 ) {
   const board = boardFormatForState(state);
   const color = state.armies[unit.side].color;
@@ -1492,6 +1978,7 @@ function drawUnit(
   const fillColor = unit.battleshocked ? '#888' : color;
   const outlineColor = unit.charged ? '#ffe000' : unit.inCombat ? '#ff8800' : unit.fellBack ? '#66d9ff' : unit.movementAction === 'advanced' ? '#7cff9b' : unit.movementAction === 'remainedStationary' ? '#b9d7ff' : 'rgba(255,255,255,0.5)';
   const outlineWidth = unit.charged || unit.inCombat || unit.fellBack || unit.movementAction === 'advanced' || unit.movementAction === 'remainedStationary' ? 1.7 : 0.9;
+  const unitAlpha = ctx.globalAlpha;
 
   if (activeSimulationUnit) {
     const ringRadius = unit.modelPositions.length > 0
@@ -1515,6 +2002,12 @@ function drawUnit(
     const { x, y } = unit.modelPositions[i];
     const mx = x * scale;
     const my = y * scale;
+    const shootingModelState = shootingModelStates.get(`${unit.id}:${i}`);
+    const modelId = `${unit.id}:${i}`;
+    const modelIsVisible = losModelVisibility.visibleModelIds.has(modelId);
+    const modelIsBlocked = !modelIsVisible && losModelVisibility.blockedModelIds.has(modelId);
+    ctx.save();
+    ctx.globalAlpha = unitAlpha * (shootingModelState === 'ineligible' || modelIsBlocked ? 0.28 : 1);
 
     ctx.shadowColor = 'rgba(0,0,0,0.65)';
     ctx.shadowBlur = 4;
@@ -1527,12 +2020,8 @@ function drawUnit(
     ctx.lineWidth = outlineWidth;
     ctx.stroke();
 
-    const visualState = losModelStates.get(`${unit.id}:${i}`);
     const overlayColors: string[] = [];
-    if (hasCover) overlayColors.push('rgba(0, 220, 195, 0.24)');
-    if (visualState === 'los-blocked') overlayColors.push('rgba(255, 45, 45, 0.58)');
-    if (visualState === 'los-visible-out-of-range') overlayColors.push('rgba(255, 200, 40, 0.66)');
-    if (visualState === 'los-visible') overlayColors.push('rgba(40, 235, 95, 0.62)');
+    if (shootingModelState === 'eligible') overlayColors.push('rgba(40, 235, 95, 0.5)');
 
     let warningColor: string | null = null;
     if (!skipWarnings) {
@@ -1569,9 +2058,10 @@ function drawUnit(
     if ((unit.modelPositions[i].z ?? 0) > 0.05) {
       drawModelHeightBadge(ctx, mx, my, modelRadii[i] ?? maxModelR, unit.modelPositions[i].z ?? 0, scale);
     }
+    ctx.restore();
   }
 
-  drawSelectedModelMovementHud(ctx, unit, state, scale, selectedModelIndices, modelRadii, board.width, board.height);
+  drawSelectedModelMovementHud(ctx, unit, state, scale, selectedModelIndices, modelRadii, board.width, board.height, showMovementCircles);
 
   const passengers = transportPassengersForUnit(state, unit);
   if (passengers.length) {
@@ -1600,15 +2090,11 @@ function drawUnit(
   const rightX  = unit.modelPositions.reduce((m, p, i) => Math.max(m, p.x * scale + (modelRadii[i] ?? maxModelR)), -Infinity);
   const formW   = rightX - leftX;
 
-  if (shootingRole) {
-    drawShootingRoleOutline(ctx, shootingRole, leftX, topY, rightX, bottomY, scale);
-  } else if (shootingReady) {
-    drawShootingReadyOutline(ctx, leftX, topY, rightX, bottomY, scale);
+  if (shootingRole && !shootingNoTarget) {
+    drawShootingRoleOutline(ctx, shootingRole, leftX, topY, rightX, bottomY, scale, shootingTargetSelected);
+  } else if (shootingReady || shootingNoTarget) {
+    drawShootingReadyOutline(ctx, leftX, topY, rightX, bottomY, scale, shootingNoTarget);
   }
-  if (fightFirst && !shootingRole) {
-    drawFightFirstOutline(ctx, leftX, topY, rightX, bottomY, scale);
-  }
-
   if (unitWarning) {
     const warningFontSize = Math.max(5.5, scale * 0.52);
     ctx.font = `bold ${warningFontSize}px monospace`;
@@ -1792,6 +2278,7 @@ function drawShootingRoleOutline(
   rightX: number,
   bottomY: number,
   scale: number,
+  targetSelected = false,
 ) {
   const pad = Math.max(7, scale * 0.55);
   const x = leftX - pad;
@@ -1802,23 +2289,26 @@ function drawShootingRoleOutline(
   const isActingUnit = role === 'shooter' || role === 'charger';
   const stroke = isActingUnit ? 'rgba(80, 160, 255, 0.96)' : 'rgba(255, 190, 75, 0.98)';
   const glow = isActingUnit ? 'rgba(60, 135, 255, 0.55)' : 'rgba(255, 175, 45, 0.58)';
-  const fill = isActingUnit ? 'rgba(50, 130, 255, 0.07)' : 'rgba(255, 178, 40, 0.08)';
 
   ctx.save();
   roundedRectPath(ctx, x, y, w, h, radius);
-  ctx.fillStyle = fill;
-  ctx.fill();
+  if (isActingUnit) {
+    ctx.fillStyle = 'rgba(50, 130, 255, 0.07)';
+    ctx.fill();
+  }
   ctx.shadowColor = glow;
   ctx.shadowBlur = Math.max(5, scale * 0.45);
   ctx.strokeStyle = stroke;
   ctx.lineWidth = Math.max(2, scale * 0.18);
   ctx.stroke();
   ctx.shadowBlur = 0;
-  ctx.setLineDash([Math.max(5, scale * 0.42), Math.max(3, scale * 0.24)]);
-  roundedRectPath(ctx, x + 3, y + 3, Math.max(0, w - 6), Math.max(0, h - 6), Math.max(0, radius - 2));
-  ctx.strokeStyle = isActingUnit ? 'rgba(205, 230, 255, 0.72)' : 'rgba(255, 241, 185, 0.78)';
-  ctx.lineWidth = 1;
-  ctx.stroke();
+  if (isActingUnit || targetSelected) {
+    ctx.setLineDash([Math.max(5, scale * 0.42), Math.max(3, scale * 0.24)]);
+    roundedRectPath(ctx, x + 3, y + 3, Math.max(0, w - 6), Math.max(0, h - 6), Math.max(0, radius - 2));
+    ctx.strokeStyle = isActingUnit ? 'rgba(205, 230, 255, 0.72)' : 'rgba(255, 241, 185, 0.78)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
   ctx.restore();
 }
 
@@ -1829,6 +2319,7 @@ function drawShootingReadyOutline(
   rightX: number,
   bottomY: number,
   scale: number,
+  noTarget = false,
 ) {
   const pad = Math.max(5, scale * 0.42);
   const x = leftX - pad;
@@ -1840,32 +2331,8 @@ function drawShootingReadyOutline(
   ctx.save();
   roundedRectPath(ctx, x, y, w, h, radius);
   ctx.setLineDash([Math.max(4, scale * 0.32), Math.max(3, scale * 0.22)]);
-  ctx.strokeStyle = 'rgba(105, 235, 255, 0.82)';
+  ctx.strokeStyle = noTarget ? 'rgba(255, 205, 70, 0.92)' : 'rgba(105, 235, 255, 0.82)';
   ctx.lineWidth = Math.max(1.4, scale * 0.12);
-  ctx.stroke();
-  ctx.restore();
-}
-
-function drawFightFirstOutline(
-  ctx: CanvasRenderingContext2D,
-  leftX: number,
-  topY: number,
-  rightX: number,
-  bottomY: number,
-  scale: number,
-) {
-  const pad = Math.max(5, scale * 0.5);
-  const x = leftX - pad;
-  const y = topY - pad;
-  const w = Math.max(rightX - leftX + pad * 2, scale * 1.5);
-  const h = Math.max(bottomY - topY + pad * 2, scale * 1.5);
-  const radius = Math.min(Math.max(3, scale * 0.22), Math.min(w, h) / 4);
-
-  ctx.save();
-  roundedRectPath(ctx, x, y, w, h, radius);
-  ctx.setLineDash([Math.max(5, scale * 0.38), Math.max(3, scale * 0.22)]);
-  ctx.strokeStyle = 'rgba(255, 218, 76, 0.95)';
-  ctx.lineWidth = Math.max(1.8, scale * 0.14);
   ctx.stroke();
   ctx.restore();
 }
@@ -1894,6 +2361,7 @@ function drawSelectedModelMovementHud(
   modelRadii: number[],
   boardWidth: number,
   boardHeight: number,
+  showMovementCircles: boolean,
 ) {
   if (!selectedModelIndices.length || unit.movementAction === 'fellBack' || unit.fellBack) return;
   const isMovementPhase = state.phase === 'movement';
@@ -1901,9 +2369,12 @@ function drawSelectedModelMovementHud(
   const isChargeMove = state.phase === 'charge'
     && state.pendingChargeMovement?.unitId === unit.id
     && state.pendingChargeMovement.side === unit.side;
+  const isFightMove = state.phase === 'fight'
+    && state.pendingFightMovement?.unitId === unit.id
+    && state.pendingFightMovement.side === unit.side;
   const isSurgeMove = state.pendingSurgeMove?.unitId === unit.id
     && state.pendingSurgeMove.side === unit.side;
-  if (!isMovementPhase && !isScoutMove && !isChargeMove && !isSurgeMove) return;
+  if (!isMovementPhase && !isScoutMove && !isChargeMove && !isFightMove && !isSurgeMove) return;
   const activeMovementUnit = isMovementPhase && state.activeArmy === unit.side;
   const shouldShow = unit.movementAction === 'normalMove'
     || unit.movementAction === 'advanced'
@@ -1912,6 +2383,7 @@ function drawSelectedModelMovementHud(
     || activeMovementUnit
     || isScoutMove
     || isChargeMove
+    || isFightMove
     || isSurgeMove;
   if (!shouldShow) return;
 
@@ -1923,6 +2395,7 @@ function drawSelectedModelMovementHud(
   const defaultAllowance = unit.movementAllowanceRemaining
     ?? unit.scoutMoveAllowance
     ?? state.pendingChargeMovement?.maximumDistance
+    ?? (isFightMove ? 3 : undefined)
     ?? state.pendingSurgeMove?.maximumDistance
     ?? unit.profile.move;
   for (const modelIndex of selectedModelIndices) {
@@ -1935,7 +2408,7 @@ function drawSelectedModelMovementHud(
     const radius = Math.max(0, remaining) * scale;
     const baseRadius = modelRadii[modelIndex] ?? scale * 0.48;
 
-    if (radius > 0.5) {
+    if (showMovementCircles && radius > 0.5) {
       ctx.save();
       ctx.beginPath();
       ctx.arc(mx, my, radius + baseRadius, 0, Math.PI * 2);

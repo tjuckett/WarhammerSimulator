@@ -14,6 +14,7 @@ export function createPlayFightResolution({
   battleStateRef,
   playModelSelection,
   damageAllocationLocked,
+  shootingResolutionStatus,
   fightAttackAllocations,
   selectedFightWeaponIndex,
   selectedPlayFightTargets,
@@ -24,15 +25,16 @@ export function createPlayFightResolution({
   playUndoEntry,
   pushPlayUndo,
   selectPendingDamageUnit,
+  selectShootingResolutionTarget,
   commitBattleState,
   setTargetErrorMsg,
   setShootingResolutionStatus,
-  setFightAttackAllocations,
   setSelectedFightWeaponIndex,
 }: {
   battleStateRef: StateRef;
   playModelSelection: PlayModelSelection | null;
   damageAllocationLocked: boolean;
+  shootingResolutionStatus: 'idle' | 'rolled';
   fightAttackAllocations: AllocationTable;
   selectedFightWeaponIndex: 'all' | string;
   selectedPlayFightTargets: Array<{ id: string }>;
@@ -43,17 +45,24 @@ export function createPlayFightResolution({
   playUndoEntry: (state: BattleState) => PlayUndoEntry;
   pushPlayUndo: (entry: PlayUndoEntry, stateAfter?: BattleState, action?: GameAction) => void;
   selectPendingDamageUnit: (state: BattleState, shooterUnitId: string | null) => boolean;
+  selectShootingResolutionTarget: (state: BattleState, shooterUnitId: string | null, targetId?: string) => boolean;
   commitBattleState: (state: BattleState) => void;
   setTargetErrorMsg: (message: string | null) => void;
   setShootingResolutionStatus: (status: 'idle' | 'rolled') => void;
-  setFightAttackAllocations: (allocations: AllocationTable) => void;
   setSelectedFightWeaponIndex: (weaponIndex: 'all' | string) => void;
 }) {
   function resolveSelectedPlayFight() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'fight' || !selection) return;
+    if (!damageAllocationLocked && shootingResolutionStatus === 'rolled') {
+      if (selectShootingResolutionTarget(prev, selection.unitId)) return;
+      setShootingResolutionStatus('idle');
+      setTargetErrorMsg(null);
+      return;
+    }
     if (damageAllocationLocked) {
+      if (shootingResolutionStatus === 'rolled' && selectPendingDamageUnit(prev, selection.unitId)) return;
       setTargetErrorMsg('Allocate pending damage before fighting again');
       return;
     }
@@ -65,9 +74,7 @@ export function createPlayFightResolution({
         return;
       }
       setShootingResolutionStatus('rolled');
-      const hasPendingDamage = selectPendingDamageUnit(next, selection.unitId);
-      if (!hasPendingDamage) setTargetErrorMsg(null);
-      setFightAttackAllocations({});
+      setTargetErrorMsg(null);
       pushPlayUndo(playUndoEntry(prev), next, {
         type: GAME_ACTION_TYPE.FightUnitWeapon,
         unitId: selection.unitId,
@@ -95,8 +102,7 @@ export function createPlayFightResolution({
     const next = fightPlayUnitWeapon(prev, selection.unitId, selection.side, targetUnitId, weaponIndex, activeRulesForBattle, usesSplit ? targetSplits : undefined);
     if (next === prev) return;
     setShootingResolutionStatus('rolled');
-    const hasPendingDamage = selectPendingDamageUnit(next, selection.unitId);
-    if (!hasPendingDamage) setTargetErrorMsg(null);
+    setTargetErrorMsg(null);
     if (weaponIndex !== 'all') setSelectedFightWeaponIndex('all');
     pushPlayUndo(playUndoEntry(prev), next, {
       type: GAME_ACTION_TYPE.FightUnitWeapon,

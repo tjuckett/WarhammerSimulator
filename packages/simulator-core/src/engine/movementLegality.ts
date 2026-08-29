@@ -105,7 +105,9 @@ export function unitIssues(state: BattleState, unit: BattleUnit, context: Moveme
   if (context.unitHasModelOutsideBattlefield(state, unit)) issues.push(`${unit.profile.name} has a model across the battlefield edge.`);
   if (context.unitHasBaseOverlap(state, unit)) issues.push(`${unit.profile.name} cannot end its move on top of another model.`);
   if (context.unitHasWallOverlap(state, unit)) issues.push(`${unit.profile.name} cannot end its move inside blocking terrain.`);
-  if ((unit.movementAction === 'normalMove' || unit.movementAction === 'advanced') && context.inEngagement(unit, context.enemies(state, unit.side), context.rulesForState(state).engagementRange())) {
+  const makesRestrictedMove = unit.movementAction === 'normalMove' || unit.movementAction === 'advanced';
+  const endsInEngagementRange = context.inEngagement(unit, context.enemies(state, unit.side), context.rulesForState(state).engagementRange());
+  if (makesRestrictedMove && endsInEngagementRange) {
     issues.push(`${unit.profile.name} cannot end a Normal or Advance move within Engagement Range.`);
   }
   if (crossedEnemyModels(state, unit, context)) issues.push(`${unit.profile.name} moved across an enemy model.`);

@@ -1,10 +1,11 @@
-import type { BattleState, BattleUnit, Position, Side } from '../types/battle';
+import { EVENT_REQUEST_KIND, type BattleState, type BattleUnit, type Position, type Side } from '../types/battle';
 import { UNIT_DEPLOYMENT_MODE, type UnitProfile } from '../types/army';
 import { attachedUnitProfilesFor, unitHasRule, unitRosterId } from './armyUnits';
 import { baseFootprintDistance, baseFootprintWithinRect, modelBaseFootprintInches } from './baseSizes';
 import { boardFormatForState } from '../data/boardFormats';
 import { modelWeaponLoadout } from './unitModelState';
 import { rulesEditionForRuleset, weaponHasKeyword } from './rulesEngine';
+import { resolvePendingEventRequest } from './eventTriggers';
 
 function modelFootprint(unit: BattleUnit, modelIndex: number) {
   return modelBaseFootprintInches(unit.profile, modelIndex, unit.modelRotations?.[modelIndex] ?? unit.facingDeg ?? 0);
@@ -168,6 +169,12 @@ export function placePlayStrategicReserveUnit(state: BattleState, side: Side, un
     || (unit.deepStrikeUntilPhase !== state.phase && !reinforcementPlacementIsWithinStrategicReserveEdge(unit, next))
     || (unit.deepStrikeUntilPhase !== state.phase && !strategicReservePlacementIsOutsideOpponentDeploymentZone(next, unit, context))
     || !context.hasNoBaseOverlap(next, unit, indices) || !context.hasNoWallOverlap(next, unit, indices)) return state;
+  const ingressRequest = next.pendingEventRequests?.find(request =>
+    request.kind === EVENT_REQUEST_KIND.IngressMove
+    && request.side === side
+    && request.data.unitId === unit.id,
+  );
+  if (ingressRequest) resolvePendingEventRequest(next, ingressRequest.id);
   next.log = [...next.log, context.log(next, side, unit.profile.name,
     `${next.armies[side].name} returns ${unit.profile.name} from Strategic Reserves more than ${rulesEditionForRuleset(next.ruleset).reinforcementRange()}" horizontally from enemy units${state.activeArmy !== side ? ' using Rapid Ingress' : ''}.`, 'move')];
   return next;

@@ -1,9 +1,15 @@
 // Manual attack resolution and its progressively narrowed simulator facade context.
 // @ts-nocheck
-import type { BattleState, BattleUnit, LogEntry, PendingFightOnDeath, Position, ShootingWeaponResult, Side } from '../types/battle';
+import { type BattleState, type BattleUnit, type LogEntry, type PendingFightOnDeath, type Position, type ShootingWeaponResult, type Side } from '../types/battle';
 import type { UnitProfile, WeaponProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
-import type { CombatAttackResolutionOptions } from './combatTypes';
+import type {
+  CombatAttackResolutionOptions,
+  CombatHitCalculation,
+  CombatHitModifier,
+  CombatHitPreview,
+  CombatHitPreviewGroup,
+} from './combatTypes';
 import { moveModelTowardPoint } from './interactiveMovement';
 
 export type CombatAttackContext = Record<string, any>;
@@ -108,6 +114,7 @@ export function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdit
     context.translateFormation(unit, newPosition.x - unit.position.x, newPosition.y - unit.position.y);
     context.resolveInternalModelOverlaps(unit);
     unit.charged = true;
+    unit.chargedTurn = state.turn;
     unit.lastMovePhase = state.phase;
     unit.lastMoveTurn = state.turn;
     unit.takingToSkies = undefined;
@@ -267,6 +274,10 @@ export type PlayShootingWeaponOption = {
   weaponIndex: number;
   name: string;
   targetIds: string[];
+  /** Number of models carrying this weapon that can contribute to at least one listed target. */
+  modelCount?: number;
+  /** Eligible model count for each target, used by the UI and AI allocation layer. */
+  targetModelCounts?: Record<string, number>;
 };
 
 export type PlayShootingAttackAllocation = {
@@ -283,6 +294,7 @@ export interface ManualShootingSelectionContext {
   enemies(state: BattleState, side: Side): BattleUnit[];
   shootingWeaponCanTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, rules: RulesEdition): boolean;
   unitCanBeSelectedToShootWithoutAttacks(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean;
+  participatingWeaponModelIndexes?(unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, terrain: BattleState['terrain'], state: BattleState): number[];
 }
 
 export type ShootingSelectionRulesContext = Record<string, any>;
@@ -295,133 +307,268 @@ export function weaponIsCloseQuarters(weapon: WeaponProfile, context: ShootingSe
   return context.weaponHasKeyword(weapon, 'Close-Quarters');
 }
 
-export function unitCanUseCloseQuartersShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition, context: ShootingSelectionRulesContext): boolean {
-  if (rules.metadata.edition !== '11e' || unit.movementAction === 'advanced') return false;
-  if (!context.inEngagement(unit, context.enemies(state, unit.side), rules.engagementRange())) return false;
-  return unitCanUseBigGunsNeverTire(unit, context) || unit.profile.weapons.some((weapon: WeaponProfile) => weaponIsCloseQuarters(weapon, context));
-}
-
-export function eligibleShootingWeapons(
-  unit: BattleUnit,
-  state: BattleState,
-  rules: RulesEdition,
-  context: ShootingSelectionRulesContext,
-  allowActivated = false,
-): WeaponProfile[] {
-  if (unit.destroyed || unit.embarkedInUnitId || (!allowActivated && unit.activated) || state.firingDeckLockedUnitIds?.includes(unit.id)) return [];
-  if (unit.performingAction && !unitCanUseBigGunsNeverTire(unit, context)) return [];
-  if (unit.fellBack || unit.movementAction === 'fellBack') return [];
-  const firedSet = new Set(unit.firedWeaponIndices ?? []);
-  const oneShotSpentSet = new Set(unit.oneShotSpentWeaponIndices ?? []);
-  const firedProfileGroups = new Set(
-    unit.profile.weapons
-      .filter((_weapon: WeaponProfile, weaponIndex: number) => firedSet.has(weaponIndex))
-      .map((weapon: WeaponProfile) => context.weaponProfileGroup(weapon))
-      .filter((group: string | null): group is string => !!group),
-  );
-  const firedSidearm = unit.profile.weapons.some((weapon: WeaponProfile, weaponIndex: number) =>
-    firedSet.has(weaponIndex) && context.weaponIsSidearm(weapon));
-  const firedNonSidearm = unit.profile.weapons.some((weapon: WeaponProfile, weaponIndex: number) =>
-    firedSet.has(weaponIndex) && !weapon.isMelee && weapon.range > 0 && !context.weaponIsSidearm(weapon));
-  const foes = context.enemies(state, unit.side);
-  const engaged = context.inEngagement(unit, foes, rules.engagementRange());
-  const bigGunsNeverTire = engaged && unitCanUseBigGunsNeverTire(unit, context);
-  const advanced = unit.movementAction === 'advanced';
-  const closeQuartersShooting = unitCanUseCloseQuartersShooting(unit, state, rules, context);
-  const nonMonsterVehicle = rules.metadata.edition === '11e' && !unitCanUseBigGunsNeverTire(unit, context);
-  return unit.profile.weapons.filter((weapon: WeaponProfile, weaponIndex: number) =>
-    !weapon.isMelee
-    && weapon.range > 0
-    && !firedSet.has(weaponIndex)
-    && !(context.weaponHasKeyword(weapon, 'One Shot') && oneShotSpentSet.has(weaponIndex))
-    && !firedProfileGroups.has(context.weaponProfileGroup(weapon) ?? '')
-    && (!advanced || context.weaponHasKeyword(weapon, 'Assault'))
-    && (!engaged
-      || bigGunsNeverTire
-      || (closeQuartersShooting && weaponIsCloseQuarters(weapon, context))
-      || (!nonMonsterVehicle && context.weaponIsSidearm(weapon))),
-  ).filter((weapon: WeaponProfile) =>
-    (!firedSidearm || context.weaponIsSidearm(weapon))
-    && (!firedNonSidearm || !context.weaponIsSidearm(weapon)),
-  );
-}
-
-export function unitCanBeSelectedToShootWithoutAttacks(unit: BattleUnit, state: BattleState, rules: RulesEdition, context: ShootingSelectionRulesContext): boolean {
-  if (unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves || unit.activated) return false;
-  if (unit.performingAction && !unitCanUseBigGunsNeverTire(unit, context)) return false;
-  if (unit.fellBack || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return false;
-  const engaged = context.inEngagement(unit, context.enemies(state, unit.side), rules.engagementRange());
-  return !engaged || unitCanUseBigGunsNeverTire(unit, context);
-}
-
-export function shootingWeaponCanTarget(
-  state: BattleState,
-  unit: BattleUnit,
-  target: BattleUnit,
-  weapon: WeaponProfile,
-  rules: RulesEdition,
-  context: ShootingSelectionRulesContext,
-): boolean {
-  if (target.destroyed || target.embarkedInUnitId || target.side === unit.side) return false;
-  const engagementRange = rules.engagementRange();
-  const foes = context.enemies(state, unit.side);
-  const engaged = context.inEngagement(unit, foes, engagementRange);
-  const bigGunsNeverTire = engaged && unitCanUseBigGunsNeverTire(unit, context);
-  const closeQuarters = weaponIsCloseQuarters(weapon, context);
-  const targetPool = engaged && !bigGunsNeverTire ? context.engagedEnemies(state, unit, rules) : foes;
-  if (!targetPool.some((candidate: BattleUnit) => candidate.id === target.id && candidate.side === target.side)) return false;
-
-  const representative = context.attachedUnitTargetRepresentative(state, target);
-  const epicChallengeModelIndex = weapon.isMelee ? context.activeEpicChallengeModelIndex(state, target) : undefined;
-  const epicChallengeVisible = epicChallengeModelIndex !== undefined
-    && target.modelPositions[epicChallengeModelIndex] !== undefined
-    && unit.modelPositions.some((from, modelIndex) => context.hasLOSEdgeToEdge(
-      from,
-      context.modelBaseRadius(unit, modelIndex),
-      target.modelPositions[epicChallengeModelIndex],
-      context.modelBaseRadius(target, epicChallengeModelIndex),
-      state.terrain,
-      state.ruleset?.edition,
-    ));
-  const precisionCharacter = (context.weaponHasKeyword(weapon, 'Precision') || epicChallengeModelIndex !== undefined)
-    && context.unitHasKeyword(target, 'Character')
-    && (epicChallengeModelIndex === undefined
-      ? unit.modelPositions.some((from, modelIndex) => context.hasAnyModelLOS(from, context.modelBaseRadius(unit, modelIndex), target, state.terrain, state.ruleset?.edition))
-      : epicChallengeVisible);
-  if (representative?.id !== target.id && !precisionCharacter) return false;
-  if (engaged && !bigGunsNeverTire && rules.metadata.edition === '11e' && !closeQuarters) return false;
-
-  const targetEngagedWithFriendly = context.targetWithinFriendlyEngagement(state, target, unit.side, rules);
-  const targetEngagedWithShooter = context.inEngagement(unit, [target], engagementRange);
-  if (context.unitHasDatasheetRule(target, 'Lone Operative') && context.battleUnitsBaseEdgeDistance(unit, target) > 12) return false;
-  if (context.weaponHasKeyword(weapon, 'Blast') && targetEngagedWithFriendly) return false;
-  if (
-    targetEngagedWithFriendly
-    && !(context.weaponIsSidearm(weapon) && targetEngagedWithShooter)
-    && !(rules.metadata.edition === '11e' && closeQuarters && targetEngagedWithShooter)
-    && !(bigGunsNeverTire && targetEngagedWithShooter)
-    && !unitCanUseBigGunsNeverTire(target, context)
-  ) return false;
-  const targetVisible = precisionCharacter || context.battleUnitHasLosToAttachedUnit(state, unit, target);
-  const targetHidden = !targetVisible && context.attachedUnitComponents(state, target).some((component: BattleUnit) =>
-    context.hasAnyHiddenModelPair(state, unit, component));
-  return context.battleUnitToAttachedUnitDistance(state, unit, target) <= weapon.range
-    && (targetVisible || (context.weaponHasKeyword(weapon, 'Indirect Fire') && !targetHidden));
-}
-
 export interface ShootingResolutionContext extends ShootingSelectionRulesContext {
   targetHasTerrainCoverFrom(state: BattleState, unit: BattleUnit, target: BattleUnit): boolean;
+  targetHasTerrainCoverFromModel(state: BattleState, unit: BattleUnit, modelIndex: number, target: BattleUnit): boolean;
   targetIsScreenedBySmoke(state: BattleState, unit: BattleUnit, target: BattleUnit): boolean;
   hasAnyModelLOSConsideringHidden(state: BattleState, unit: BattleUnit, target: BattleUnit): boolean;
+  targetVisibleToFriendlyUnit(state: BattleState, target: BattleUnit, side: Side): boolean;
   attachedUnitHasRule(state: BattleState, unit: BattleUnit, rule: string): boolean;
+  attachedUnitIsFormed(state: BattleState, unit: BattleUnit): boolean;
+  leadingAttackModifiers(state: BattleState, unit: BattleUnit, weapon: WeaponProfile): { hit: number; wound: number; strength: number; attacks: number };
+  unitHasRule(profile: UnitProfile, rule: string): boolean;
   targetWithinFriendlyEngagement(state: BattleState, target: BattleUnit, side: Side, rules: RulesEdition): boolean;
   unitHasActiveStratagem(state: BattleState, unit: BattleUnit, stratagemId: string, phase: string): boolean;
   markRangedAttackMade(unit: BattleUnit): void;
   markOneShotWeaponSpent(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number): void;
+  participatingWeaponModelIndexes(unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, terrain: BattleState['terrain'], state: BattleState): number[];
   participatingWeaponModelCount(unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, terrain: BattleState['terrain'], state: BattleState): number;
   resolveCombatAttacks(attacker: BattleUnit, defender: BattleUnit, weapon: WeaponProfile, weaponIndex: number, rules: RulesEdition, state: BattleState, hasCover: boolean, hitModifier: number, hitModifierNote: string, options: object): LogEntry[];
   resolveHazardousTests(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number, state: BattleState, testCount: number): LogEntry[];
   log(state: BattleState, side: Side, source: string, message: string, kind: string): LogEntry;
+}
+
+interface ShootingCoverRules {
+  alwaysHasCover: boolean;
+  usesIndirectFirePenalty: boolean;
+  usesIndirectFireCover: boolean;
+  usesSmokescreen: boolean;
+}
+
+interface CombatHitCalculationOptions {
+  hasCover: boolean;
+  snapShooting?: boolean;
+  plunging?: boolean;
+  additionalHitModifier?: number;
+  additionalHitModifierNote?: string;
+}
+
+function shootingCoverRules(
+  state: BattleState,
+  attacker: BattleUnit,
+  defender: BattleUnit,
+  weapon: WeaponProfile,
+  rules: RulesEdition,
+  context: ShootingResolutionContext,
+): ShootingCoverRules {
+  const usesIndirectFirePenalty = context.weaponHasKeyword(weapon, 'Indirect Fire')
+    && rules.metadata.edition !== '11e'
+    && !context.hasAnyModelLOSConsideringHidden(state, attacker, defender);
+  const usesIndirectFireCover = context.weaponHasKeyword(weapon, 'Indirect Fire')
+    && (rules.metadata.edition === '11e' || usesIndirectFirePenalty);
+  const usesSmokescreen = context.unitHasActiveStratagem(state, defender, 'smokescreen', 'shooting')
+    || context.targetIsScreenedBySmoke(state, attacker, defender);
+  return {
+    alwaysHasCover: usesIndirectFireCover || usesSmokescreen,
+    usesIndirectFirePenalty,
+    usesIndirectFireCover,
+    usesSmokescreen,
+  };
+}
+
+function formatHitModifierForLog(modifier: CombatHitModifier): string {
+  if (modifier.requiredRollModifier > 0) return `${modifier.label} -${modifier.requiredRollModifier} to Hit`;
+  if (modifier.requiredRollModifier < 0) return `${modifier.label} +${Math.abs(modifier.requiredRollModifier)} to Hit`;
+  return modifier.label;
+}
+
+/**
+ * Calculates the required hit roll without rolling dice. This is deliberately
+ * shared by the pre-roll query and the authoritative attack resolver so the
+ * UI cannot drift from the rules engine.
+ */
+function calculateCombatHit(
+  state: BattleState,
+  attacker: BattleUnit,
+  defender: BattleUnit,
+  weapon: WeaponProfile,
+  rules: RulesEdition,
+  options: CombatHitCalculationOptions,
+  context: ShootingResolutionContext,
+): CombatHitCalculation {
+  const modifiers: CombatHitModifier[] = [];
+  const addModifier = (label: string, requiredRollModifier: number) => {
+    if (requiredRollModifier !== 0) modifiers.push({ label, requiredRollModifier });
+  };
+  const hasCover = options.hasCover;
+  const snapShooting = options.snapShooting ?? false;
+  const shootingRules = !weapon.isMelee ? shootingCoverRules(state, attacker, defender, weapon, rules, context) : null;
+  const isIndirectFire = !weapon.isMelee && context.weaponHasKeyword(weapon, 'Indirect Fire');
+  const indirectHitTarget = isIndirectFire && rules.metadata.edition === '11e'
+    ? attacker.movementAction === 'remainedStationary' && context.targetVisibleToFriendlyUnit(state, defender, attacker.side)
+      ? 4
+      : 7
+    : undefined;
+  const autoHits = context.weaponHasKeyword(weapon, 'Torrent');
+
+  let specialRule: string | undefined;
+  if (autoHits) {
+    specialRule = 'Torrent: auto-hits';
+  } else if (snapShooting) {
+    specialRule = 'Snap Shooting: unmodified 6s only';
+  } else if (indirectHitTarget !== undefined) {
+    specialRule = indirectHitTarget === 4
+      ? 'Indirect Fire: unmodified 4+ while stationary and visible to a friendly unit'
+      : 'Indirect Fire: only unmodified 6s hit';
+  } else {
+    if (shootingRules) {
+      const foes = context.enemies(state, attacker.side);
+      const engaged = context.inEngagement(attacker, foes, rules.engagementRange());
+      const bigGunsNeverTire = engaged && unitCanUseBigGunsNeverTire(attacker, context);
+      const closeQuartersTarget = rules.metadata.edition === '11e'
+        && weaponIsCloseQuarters(weapon, context)
+        && context.inEngagement(attacker, [defender], rules.engagementRange());
+      const targetIsEngagedMonsterOrVehicle = context.targetWithinFriendlyEngagement(state, defender, attacker.side, rules)
+        && unitCanUseBigGunsNeverTire(defender, context);
+      if (bigGunsNeverTire && !closeQuartersTarget && !context.weaponIsSidearm(weapon)) {
+        addModifier('Big Guns Never Tire', 1);
+      }
+      if (targetIsEngagedMonsterOrVehicle && !closeQuartersTarget) {
+        addModifier('Engaged Monster/Vehicle', 1);
+      }
+      if (context.weaponHasKeyword(weapon, 'Heavy') && attacker.movementAction === 'remainedStationary') {
+        addModifier('Heavy', -1);
+      }
+      if (shootingRules.usesIndirectFirePenalty) {
+        addModifier('Indirect Fire', 1);
+      }
+      if (context.attachedUnitHasRule(state, defender, 'Stealth')) {
+        addModifier('Stealth', 1);
+      }
+      if (rules.metadata.edition === '11e' && hasCover && !context.weaponHasKeyword(weapon, 'Ignores Cover')) {
+        addModifier('Benefit of Cover', 1);
+      }
+    }
+
+    const damagedProfile = attacker.profile.damagedProfile;
+    const damagedHitModifier = damagedProfile
+      && attacker.remainingModels === 1
+      && attacker.woundsOnLeadModel <= damagedProfile.maxRemainingWounds
+      ? damagedProfile.hitRollModifier ?? 0
+      : 0;
+    addModifier('Damaged profile', damagedHitModifier);
+
+    const leadingModifiers = rules.metadata.edition === '11e'
+      ? context.leadingAttackModifiers(state, attacker, weapon)
+      : { hit: 0, wound: 0, strength: 0, attacks: 0 };
+    addModifier('Leading unit', leadingModifiers.hit);
+
+    const prophetActive = rules.metadata.edition === '11e'
+      && state.activeArmyAbilities?.[attacker.side]?.includes('waaagh') === true
+      && context.attachedUnitIsFormed(state, attacker)
+      && context.attachedUnitHasRule(state, attacker, 'Prophet of Da Great Waaagh!');
+    if (prophetActive) addModifier('Prophet of Da Great Waaagh!', -1);
+    if (options.plunging && !weapon.isMelee) addModifier('Plunging Fire', -1);
+  }
+
+  const requiredRollModifier = modifiers.reduce((total, modifier) => total + modifier.requiredRollModifier, 0)
+    + (options.additionalHitModifier ?? 0);
+  if (options.additionalHitModifier) {
+    modifiers.push({
+      label: options.additionalHitModifierNote || 'Additional modifier',
+      requiredRollModifier: options.additionalHitModifier,
+    });
+  }
+  const requiredHit = autoHits
+    ? null
+    : snapShooting
+      ? 6
+      : indirectHitTarget !== undefined
+        ? indirectHitTarget
+        : Math.min(6, Math.max(2, weapon.skill + requiredRollModifier));
+  const coverSaveModifier = hasCover && !context.weaponHasKeyword(weapon, 'Ignores Cover')
+    ? rules.metadata.edition === '11e' ? 0 : rules.coverSaveBonus(defender)
+    : 0;
+  const hitProbability = autoHits
+    ? 1
+    : requiredHit === null
+      ? 0
+      : requiredHit > 6
+        ? 1 / 6
+        : Math.max(0, (7 - requiredHit) / 6);
+  return {
+    baseSkill: weapon.skill,
+    requiredRollModifier,
+    requiredHit,
+    modifiers,
+    hasCover,
+    coverSaveModifier,
+    autoHits,
+    hitProbability,
+    specialRule,
+  };
+}
+
+/** Return the authoritative pre-roll hit/cover breakdown for one declaration. */
+export function previewCombatHit(
+  state: BattleState,
+  attacker: BattleUnit,
+  defender: BattleUnit,
+  weapon: WeaponProfile,
+  weaponIndex: number,
+  rules: RulesEdition,
+  options: { modelIndexes?: number[]; snapShooting?: boolean } = {},
+  context: ShootingResolutionContext,
+): CombatHitPreview {
+  const modelIndexes = [...new Set(options.modelIndexes
+    ?? context.participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, state.terrain, state))]
+    .filter(modelIndex => !!attacker.modelPositions[modelIndex]);
+  const coverRules = !weapon.isMelee ? shootingCoverRules(state, attacker, defender, weapon, rules, context) : null;
+  const groupMap = new Map<string, { modelIndexes: number[]; hasCover: boolean; plunging: boolean }>();
+  for (const modelIndex of modelIndexes) {
+    const position = attacker.modelPositions[modelIndex];
+    const visible = !weapon.isMelee && !options.snapShooting && !!position
+      ? context.hasAnyModelLOS(position, context.modelBaseRadius(attacker, modelIndex), defender, state.terrain, state.ruleset?.edition)
+      : false;
+    const plunging = !weapon.isMelee && !options.snapShooting && visible
+      && context.attackingModelHasPlungingFire(state, attacker, modelIndex, defender, visible);
+    const hasCover = !weapon.isMelee && !!coverRules
+      && (coverRules.alwaysHasCover || context.targetHasTerrainCoverFromModel(state, attacker, modelIndex, defender));
+    const key = `${hasCover ? 'cover' : 'open'}:${plunging ? 'plunging' : 'normal'}`;
+    const group = groupMap.get(key) ?? { modelIndexes: [], hasCover, plunging };
+    group.modelIndexes.push(modelIndex);
+    groupMap.set(key, group);
+  }
+  const groups: CombatHitPreviewGroup[] = [...groupMap.values()].map(group => ({
+    ...calculateCombatHit(state, attacker, defender, weapon, rules, {
+      hasCover: group.hasCover,
+      snapShooting: options.snapShooting,
+      plunging: group.plunging,
+    }, context),
+    modelIndexes: group.modelIndexes,
+    plunging: group.plunging,
+  }));
+  const coveredModelCount = groups.reduce((total, group) => total + (group.hasCover ? group.modelIndexes.length : 0), 0);
+  const coverStatus = coveredModelCount === 0
+    ? 'none'
+    : coveredModelCount === modelIndexes.length
+      ? 'all'
+      : 'mixed';
+  const hitTokens = groups.map(group => group.autoHits ? 'auto' : String(group.requiredHit));
+  const hitTargetVaries = new Set(hitTokens).size > 1;
+  const commonHitTarget = !hitTargetVaries && groups.length > 0 && !groups[0].autoHits
+    ? groups[0].requiredHit ?? undefined
+    : undefined;
+  const commonCoverSaveModifier = groups.length > 0 && groups.every(group => group.coverSaveModifier === groups[0].coverSaveModifier)
+    ? groups[0].coverSaveModifier
+    : null;
+  const weightedHitProbability = modelIndexes.length > 0
+    ? groups.reduce((total, group) => total + group.hitProbability * group.modelIndexes.length, 0) / modelIndexes.length
+    : 0;
+  return {
+    weaponIndex,
+    weaponName: weapon.name,
+    targetUnitId: defender.id,
+    targetUnitName: defender.profile.name,
+    modelIndexes,
+    coverStatus,
+    groups,
+    commonHitTarget,
+    hitTargetVaries,
+    autoHits: groups.length > 0 && groups.every(group => group.autoHits),
+    commonCoverSaveModifier,
+    hitProbability: weightedHitProbability,
+  };
 }
 
 function linePassesThroughModel(from: Position, to: Position, model: Position, radius: number): boolean {
@@ -449,6 +596,36 @@ export function targetIsScreenedBySmoke(state: BattleState, attacker: BattleUnit
       linePassesThroughModel(from, to, smokeModel, context.modelBaseRadius(smokeUnit, modelIndex))))));
 }
 
+export function createCombatWeaponResult(unit: BattleUnit, target: BattleUnit, weapon: { name: string }, weaponIndex: number): ShootingWeaponResult {
+  return {
+    weaponIndex,
+    weaponName: weapon.name,
+    targetUnitId: target.id,
+    targetUnitName: target.profile.name,
+    attackCount: 0,
+    hits: 0,
+    wounds: 0,
+    unsavedWounds: 0,
+    groups: [],
+  };
+}
+
+export function finalizeCombatWeaponResult(result: ShootingWeaponResult): ShootingWeaponResult {
+  result.hits = result.groups.filter(group => group.kind === 'hit').reduce((total, group) => total + (group.successes ?? 0), 0);
+  result.wounds = result.groups.filter(group => group.kind === 'wound').reduce((total, group) => total + (group.successes ?? 0), 0);
+  result.unsavedWounds = result.groups.filter(group => group.kind === 'save')
+    .reduce((total, group) => total + (group.noSave ? (group.successes ?? 0) : (group.rolls.length - (group.successes ?? 0))), 0);
+  return result;
+}
+
+export function appendCombatWeaponResult(state: BattleState, unit: BattleUnit, result: ShootingWeaponResult) {
+  state.lastShootingResolution = {
+    shooterUnitId: unit.id,
+    shooterSide: unit.side,
+    weapons: [...(state.lastShootingResolution?.shooterUnitId === unit.id ? state.lastShootingResolution.weapons : []), finalizeCombatWeaponResult(result)],
+  };
+}
+
 export function resolveShootingWeaponIntoTarget(
   state: BattleState,
   unit: BattleUnit,
@@ -459,42 +636,36 @@ export function resolveShootingWeaponIntoTarget(
   options: { deferCasualties?: boolean; snapShooting?: boolean; attackCountOverride?: number; modelIndexes?: number[] } = {},
   context: ShootingResolutionContext,
 ): LogEntry[] {
-  const foes = context.enemies(state, unit.side);
-  const bigGunsNeverTire = context.inEngagement(unit, foes, rules.engagementRange()) && unitCanUseBigGunsNeverTire(unit, context);
-  const closeQuartersTarget = rules.metadata.edition === '11e'
-    && weaponIsCloseQuarters(weapon, context)
-    && context.inEngagement(unit, [target], rules.engagementRange());
-  const usesIndirectFirePenalty = context.weaponHasKeyword(weapon, 'Indirect Fire')
-    && rules.metadata.edition !== '11e'
-    && !context.hasAnyModelLOSConsideringHidden(state, unit, target);
-  const usesIndirectFireCover = context.weaponHasKeyword(weapon, 'Indirect Fire')
-    && (rules.metadata.edition === '11e' || usesIndirectFirePenalty);
-  const usesSmokescreen = context.unitHasActiveStratagem(state, target, 'smokescreen', 'shooting')
-    || context.targetIsScreenedBySmoke(state, unit, target);
-  const cover = context.targetHasTerrainCoverFrom(state, unit, target) || usesIndirectFireCover || usesSmokescreen;
-  const usesCoverHitPenalty = rules.metadata.edition === '11e' && cover && !context.weaponHasKeyword(weapon, 'Ignores Cover');
-  const usesBigGunsPenalty = (bigGunsNeverTire || context.targetWithinFriendlyEngagement(state, target, unit.side, rules))
-    && !closeQuartersTarget && !context.weaponIsSidearm(weapon);
-  const usesHeavyBonus = context.weaponHasKeyword(weapon, 'Heavy') && unit.movementAction === 'remainedStationary';
-  const usesStealth = context.attachedUnitHasRule(state, target, 'Stealth');
-  const hitModifier = (usesBigGunsPenalty ? 1 : 0) + (usesHeavyBonus ? -1 : 0)
-    + (usesIndirectFirePenalty ? 1 : 0) + (usesStealth ? 1 : 0) + (usesCoverHitPenalty ? 1 : 0);
-  const hitModifierNotes = [
-    usesBigGunsPenalty ? 'Big Guns Never Tire -1 to Hit' : '',
-    usesHeavyBonus ? 'Heavy +1 to Hit' : '',
-    usesIndirectFirePenalty ? 'Indirect Fire -1 to Hit; target has Benefit of Cover' : '',
-    usesCoverHitPenalty ? 'Benefit of Cover -1 to Hit' : '',
-    rules.metadata.edition === '11e' && context.weaponHasKeyword(weapon, 'Indirect Fire') ? 'Indirect Fire: target has Benefit of Cover' : '',
-    usesSmokescreen ? 'Smokescreen: target has Benefit of Cover' : '',
-    usesStealth ? 'Stealth -1 to Hit' : '',
-  ].filter(Boolean).join('; ');
+  const coverRules = shootingCoverRules(state, unit, target, weapon, rules, context);
   const snapShooting = options.snapShooting ?? false;
   const result: ShootingWeaponResult = {
     weaponIndex, weaponName: weapon.name, targetUnitId: target.id, targetUnitName: target.profile.name,
     attackCount: 0, hits: 0, wounds: 0, unsavedWounds: 0, groups: [],
   };
-  const logs = context.resolveCombatAttacks(unit, target, weapon, weaponIndex, rules, state, cover,
-    snapShooting ? 0 : hitModifier, snapShooting ? '' : hitModifierNotes, { ...options, result });
+  const participatingModelIndexes = options.modelIndexes
+    ?? context.participatingWeaponModelIndexes(unit, target, weapon, weaponIndex, state.terrain, state);
+  if (!weapon.isMelee) {
+    result.hitPreview = previewCombatHit(
+      state,
+      unit,
+      target,
+      weapon,
+      weaponIndex,
+      rules,
+      { modelIndexes: participatingModelIndexes, snapShooting },
+      context,
+    );
+  }
+  const modelCoverGroups = new Map<boolean, number[]>();
+  for (const modelIndex of participatingModelIndexes) {
+    const hasCover = coverRules.alwaysHasCover || context.targetHasTerrainCoverFromModel(state, unit, modelIndex, target);
+    modelCoverGroups.set(hasCover, [...(modelCoverGroups.get(hasCover) ?? []), modelIndex]);
+  }
+  const logs = [...modelCoverGroups.entries()].flatMap(([hasCover, modelIndexes]) => {
+    return context.resolveCombatAttacks(unit, target, weapon, weaponIndex, rules, state, hasCover,
+      0, '',
+      { ...options, modelIndexes, result });
+  });
   result.hits = result.groups.filter(group => group.kind === 'hit').reduce((total, group) => total + (group.successes ?? 0), 0);
   result.wounds = result.groups.filter(group => group.kind === 'wound').reduce((total, group) => total + (group.successes ?? 0), 0);
   result.unsavedWounds = result.groups.filter(group => group.kind === 'save')
@@ -528,39 +699,6 @@ export function playShootingWeaponModelCount(unit: BattleUnit, weaponIndex: numb
   return context.aliveWeaponModelCount(unit, weaponIndex);
 }
 
-export function playShootingWeaponOptions(
-  state: BattleState,
-  unitId: string,
-  side: Side,
-  rules: RulesEdition,
-  context: ManualShootingSelectionContext,
-): PlayShootingWeaponOption[] {
-  if (state.phase !== 'shooting' || state.activeArmy !== side) return [];
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit) return [];
-  if (state.activeAttachedShootingUnitId && context.attachedUnitId(unit) !== state.activeAttachedShootingUnitId) return [];
-  const lockedTargetId = state.activeAttachedShootingUnitId === context.attachedUnitId(unit)
-    ? state.attachedShootingTargetUnitId
-    : undefined;
-  const options = context.eligibleShootingWeapons(unit, state, rules)
-    .map(weapon => {
-      const weaponIndex = unit.profile.weapons.indexOf(weapon);
-      return {
-        weaponIndex,
-        name: weapon.name,
-        targetIds: context.enemies(state, side)
-          .filter(target => context.shootingWeaponCanTarget(state, unit, target, weapon, rules))
-          .filter(target => !lockedTargetId || target.id === lockedTargetId)
-          .map(target => target.id),
-      };
-    })
-    .filter(option => option.weaponIndex >= 0);
-  if (options.length === 0 && context.unitCanBeSelectedToShootWithoutAttacks(unit, state, rules)) {
-    return [{ weaponIndex: -1, name: 'No ranged weapons', targetIds: [] }];
-  }
-  return options;
-}
-
 export interface ManualShootingResolutionContext extends ManualShootingSelectionContext {
   clone(state: BattleState): BattleState;
   aliveWeaponModelIndexes(unit: BattleUnit, weaponIndex: number): number[];
@@ -576,27 +714,6 @@ export interface AttachedShootingContext extends ManualShootingSelectionContext 
   attachedUnitIsFormed(state: BattleState, unit: BattleUnit): boolean;
 }
 
-export function updateAttachedShootingActivation(
-  state: BattleState,
-  unit: BattleUnit,
-  rules: RulesEdition,
-  context: AttachedShootingContext,
-  targetUnitId?: string,
-): void {
-  if (rules.metadata.edition !== '11e' || !context.attachedUnitIsFormed(state, unit)) return;
-  state.activeAttachedShootingUnitId = context.attachedUnitId(unit);
-  state.attachedShootingTargetUnitId ??= targetUnitId;
-  const remaining = context.attachedUnitComponents(state, unit).filter(component =>
-    !component.activated
-    && (context.eligibleShootingWeapons(component, state, rules).length > 0
-      || context.unitCanBeSelectedToShootWithoutAttacks(component, state, rules)),
-  );
-  if (remaining.length) return;
-  for (const component of context.attachedUnitComponents(state, unit)) component.activated = true;
-  state.activeAttachedShootingUnitId = undefined;
-  state.attachedShootingTargetUnitId = undefined;
-}
-
 export interface PlayShootingExecutionContext extends ManualShootingSelectionContext {
   clone(state: BattleState): BattleState;
   clearFiringDeckWeapons(unit: BattleUnit): void;
@@ -605,69 +722,6 @@ export interface PlayShootingExecutionContext extends ManualShootingSelectionCon
   shootingWeaponSelectionForAll(weapons: Array<{ weapon: WeaponProfile; weaponIndex: number }>): Array<{ weapon: WeaponProfile; weaponIndex: number }>;
   updateAttachedShootingActivation(state: BattleState, unit: BattleUnit, rules: RulesEdition, targetUnitId?: string): void;
   log(state: BattleState, side: Side, source: string, message: string, kind: 'shoot' | 'info'): LogEntry;
-}
-
-export function shootPlayUnitWeapon(
-  state: BattleState,
-  unitId: string,
-  side: Side,
-  targetUnitId: string | undefined,
-  weaponIndex: number | 'all',
-  rules: RulesEdition,
-  context: PlayShootingExecutionContext,
-): BattleState {
-  if (state.phase !== 'shooting' || state.activeArmy !== side) return state;
-  const s = context.clone(state);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || unit.activated) return state;
-  if (s.activeAttachedShootingUnitId && context.attachedUnitId(unit) !== s.activeAttachedShootingUnitId) return state;
-  if (s.attachedShootingTargetUnitId && targetUnitId !== s.attachedShootingTargetUnitId) return state;
-
-  if (weaponIndex === -1 || (weaponIndex === 'all' && !context.eligibleShootingWeapons(unit, s, rules).length)) {
-    if (!context.unitCanBeSelectedToShootWithoutAttacks(unit, s, rules) || context.eligibleShootingWeapons(unit, s, rules).length > 0) return state;
-    unit.activated = true;
-    context.updateAttachedShootingActivation(s, unit, rules);
-    s.log = [...s.log, context.log(s, side, unit.profile.name, `${unit.profile.name} is selected to shoot but has no ranged weapons, so it makes no attacks.`, 'shoot')];
-    return s;
-  }
-
-  const target = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!target) return state;
-  const eligibleWeapons = context.eligibleShootingWeapons(unit, s, rules)
-    .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
-    .filter(option => option.weaponIndex >= 0 && context.aliveWeaponModelCount(unit, option.weaponIndex) > 0);
-  const selectedWeapons = weaponIndex === 'all'
-    ? context.shootingWeaponSelectionForAll(eligibleWeapons)
-    : eligibleWeapons.filter(option => option.weaponIndex === weaponIndex);
-  if (!selectedWeapons.length) return state;
-
-  const logs: LogEntry[] = [context.log(s, side, unit.profile.name, `🔫 ${unit.profile.name} shoots ${target.profile.name}:`, 'shoot')];
-  const firedWeaponIndices: number[] = [];
-  for (const option of selectedWeapons) {
-    if (!context.shootingWeaponCanTarget(s, unit, target, option.weapon, rules)) {
-      logs.push(context.log(s, side, unit.profile.name, `  ${option.weapon.name}: ${target.profile.name} is not a valid target`, 'info'));
-      continue;
-    }
-    const attackLogs = context.resolveShootingWeaponIntoTarget(s, unit, target, option.weapon, option.weaponIndex, rules, { deferCasualties: true });
-    logs.push(...attackLogs);
-    if (attackLogs.length > 0) firedWeaponIndices.push(option.weaponIndex);
-    if (unit.destroyed || target.destroyed) break;
-  }
-  if (firedWeaponIndices.length === 0) return state;
-  if (weaponIndex === 'all' && firedWeaponIndices.length === selectedWeapons.length) unit.activated = true;
-  else {
-    unit.firedWeaponIndices = [...new Set([...(unit.firedWeaponIndices ?? []), ...firedWeaponIndices])];
-    const remainingEligibleWeapons = context.eligibleShootingWeapons(unit, s, rules);
-    const hasRemainingTargets = remainingEligibleWeapons.some(weapon =>
-      context.enemies(s, side).some(candidate => context.shootingWeaponCanTarget(s, unit, candidate, weapon, rules)),
-    );
-    if (remainingEligibleWeapons.length === 0 || !hasRemainingTargets) unit.activated = true;
-  }
-  context.updateAttachedShootingActivation(s, unit, rules, target.id);
-  s.log = [...s.log, ...logs];
-  if (unit.activated && s.pendingDeadlyDemises?.length) s.log = [...s.log, ...context.resolvePendingDeadlyDemisesInPlace(s)];
-  if (unit.activated) context.clearFiringDeckWeapons(unit);
-  return s;
 }
 
 export interface OverwatchContext extends ManualShootingSelectionContext {
@@ -679,39 +733,6 @@ export interface OverwatchContext extends ManualShootingSelectionContext {
   log(state: BattleState, side: Side, source: string, message: string, kind: 'shoot'): LogEntry;
 }
 
-export function playSnapShootingWeaponOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: OverwatchContext): PlayShootingWeaponOption[] {
-  if (state.phase !== 'movement' || state.movementStep !== 'reinforcements' || state.activeArmy === side) return [];
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || (unit.activated && rules.metadata.edition !== '11e') || !context.unitHasActiveStratagem(state, unit, 'fire-overwatch', 'movement')) return [];
-  return context.eligibleShootingWeapons(unit, state, rules, rules.metadata.edition === '11e')
-    .map(weapon => ({ weaponIndex: unit.profile.weapons.indexOf(weapon), name: weapon.name, targetIds: context.enemies(state, side)
-      .filter(target => context.snapShootingWeaponCanTarget(state, unit, target, weapon, rules)).map(target => target.id) }))
-    .filter(option => option.weaponIndex >= 0);
-}
-
-export function snapShootPlayUnitWeapon(state: BattleState, unitId: string, side: Side, targetUnitId: string, weaponIndex: number | 'all', rules: RulesEdition, context: OverwatchContext): BattleState {
-  if (state.phase !== 'movement' || state.movementStep !== 'reinforcements' || state.activeArmy === side) return state;
-  const s = context.clone(state);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  const target = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || !target || !context.unitHasActiveStratagem(s, unit, 'fire-overwatch', 'movement')) return state;
-  const eligibleWeapons = context.eligibleShootingWeapons(unit, s, rules, rules.metadata.edition === '11e')
-    .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
-    .filter(option => option.weaponIndex >= 0 && context.aliveWeaponModelCount(unit, option.weaponIndex) > 0 && context.snapShootingWeaponCanTarget(s, unit, target, option.weapon, rules));
-  const selectedWeapons = weaponIndex === 'all' ? context.shootingWeaponSelectionForAll(eligibleWeapons) : eligibleWeapons.filter(option => option.weaponIndex === weaponIndex);
-  if (!selectedWeapons.length) return state;
-  const logs: LogEntry[] = [context.log(s, side, unit.profile.name, `${unit.profile.name} snap shoots ${target.profile.name}:`, 'shoot')];
-  for (const option of selectedWeapons) {
-    logs.push(...context.resolveShootingWeaponIntoTarget(s, unit, target, option.weapon, option.weaponIndex, rules, { deferCasualties: true, snapShooting: true }));
-    if (unit.destroyed || target.destroyed) break;
-  }
-  if (logs.length <= 1) return state;
-  unit.activated = true;
-  unit.actionStartedThisTurn = true;
-  s.log = [...s.log, ...logs];
-  return s;
-}
-
 export interface AutomatedShootingContext extends ManualShootingSelectionContext {
   aliveWeaponModelCount(unit: BattleUnit, weaponIndex: number): number;
   nearest(unit: BattleUnit, targets: BattleUnit[]): BattleUnit | null;
@@ -720,39 +741,9 @@ export interface AutomatedShootingContext extends ManualShootingSelectionContext
   log(state: BattleState, side: Side, source: string, message: string, kind: 'shoot' | 'info'): LogEntry;
 }
 
-export function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEdition, context: AutomatedShootingContext): LogEntry[] {
-  const rangedWeapons = context.shootingWeaponSelectionForAll(context.eligibleShootingWeapons(unit, state, rules)
-    .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) })).filter(option => option.weaponIndex >= 0));
-  if (!rangedWeapons.length) return [];
-  const logs: LogEntry[] = [context.log(state, unit.side, unit.profile.name, `🔫 ${unit.profile.name} shoots:`, 'shoot')];
-  for (const { weapon, weaponIndex } of rangedWeapons) {
-    if (context.aliveWeaponModelCount(unit, weaponIndex) <= 0) continue;
-    const validTargets = context.enemies(state, unit.side).filter(target => context.shootingWeaponCanTarget(state, unit, target, weapon, rules));
-    if (!validTargets.length) {
-      logs.push(context.log(state, unit.side, unit.profile.name, `  ${weapon.name}: no valid targets in range/LOS`, 'info'));
-      continue;
-    }
-    logs.push(...context.resolveShootingWeaponIntoTarget(state, unit, context.nearest(unit, validTargets)!, weapon, weaponIndex, rules));
-    if (unit.destroyed) break;
-  }
-  return logs;
-}
-
 export interface ShootingLockContext {
   clone(state: BattleState): BattleState;
   attachedUnitComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
-}
-
-export function lockPlayUnitShooting(state: BattleState, unitId: string, side: Side, context: ShootingLockContext): BattleState {
-  if (state.phase !== 'shooting') return state;
-  const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed);
-  if (!existing || existing.activated) return state;
-  const next = context.clone(state);
-  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
-  for (const component of context.attachedUnitComponents(next, unit)) component.activated = true;
-  next.activeAttachedShootingUnitId = undefined;
-  next.attachedShootingTargetUnitId = undefined;
-  return next;
 }
 
 export interface AutomatedShootingPhaseContext extends AutomatedShootingContext {
@@ -763,128 +754,6 @@ export interface AutomatedShootingPhaseContext extends AutomatedShootingContext 
   autoSelectFiringDeckInPlace(state: BattleState, unit: BattleUnit): void;
   clearFiringDeckWeapons(unit: BattleUnit): void;
   resolvePendingDeadlyDemisesInPlace(state: BattleState): LogEntry[];
-}
-
-export function runShootingPhaseUnits(state: BattleState, side: Side, rules: RulesEdition, context: AutomatedShootingPhaseContext): LogEntry[] {
-  if (rules.metadata.edition !== '11e') return context.activeUnits(state, side).flatMap(unit => runShooting(unit, state, rules, context));
-  const logs: LogEntry[] = [];
-  const handled = new Set<string>();
-  for (const selected of context.activeUnits(state, side)) {
-    const groupId = context.attachedUnitId(selected);
-    if (handled.has(groupId)) continue;
-    handled.add(groupId);
-    context.autoSelectFiringDeckInPlace(state, selected);
-    if (!context.attachedUnitIsFormed(state, selected)) {
-      logs.push(...runShooting(selected, state, rules, context), ...context.resolvePendingDeadlyDemisesInPlace(state));
-      context.clearFiringDeckWeapons(selected);
-      continue;
-    }
-    const components = context.attachedUnitComponents(state, selected);
-    const declarations: Array<{ componentId: string; targetId: string; weapon: WeaponProfile; weaponIndex: number }> = [];
-    for (const component of components) {
-      const weapons = context.shootingWeaponSelectionForAll(context.eligibleShootingWeapons(component, state, rules).map(weapon => ({ weapon, weaponIndex: component.profile.weapons.indexOf(weapon) })).filter(option => option.weaponIndex >= 0));
-      if (weapons.length) logs.push(context.log(state, component.side, component.profile.name, `${component.profile.name} shoots:`, 'shoot'));
-      for (const option of weapons) {
-        const target = context.nearest(component, context.enemies(state, side).filter(candidate => context.shootingWeaponCanTarget(state, component, candidate, option.weapon, rules)));
-        if (target) declarations.push({ componentId: component.id, targetId: target.id, ...option });
-        else logs.push(context.log(state, component.side, component.profile.name, `  ${option.weapon.name}: no valid targets in range/LOS`, 'info'));
-      }
-    }
-    for (const declaration of declarations) {
-      const component = state.units.find(unit => unit.id === declaration.componentId && !unit.destroyed);
-      const target = state.units.find(unit => unit.id === declaration.targetId && !unit.destroyed);
-      if (component && target) logs.push(...context.resolveShootingWeaponIntoTarget(state, component, target, declaration.weapon, declaration.weaponIndex, rules));
-    }
-    for (const component of components) component.activated = true;
-    logs.push(...context.resolvePendingDeadlyDemisesInPlace(state));
-    components.forEach(context.clearFiringDeckWeapons);
-  }
-  return logs;
-}
-
-/** Resolve a unit's complete shooting declaration only after every weapon target is locked. */
-export function shootPlayUnitWeapons(
-  state: BattleState,
-  unitId: string,
-  side: Side,
-  allocations: PlayShootingAttackAllocation[],
-  rules: RulesEdition,
-  context: ManualShootingResolutionContext,
-): BattleState {
-  if (state.phase !== 'shooting' || state.activeArmy !== side || !allocations.length) return state;
-  const s = context.clone(state);
-  const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || unit.activated) return state;
-  if (s.activeAttachedShootingUnitId && context.attachedUnitId(unit) !== s.activeAttachedShootingUnitId) return state;
-
-  const eligibleWeapons = context.eligibleShootingWeapons(unit, s, rules)
-    .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
-    .filter(option => option.weaponIndex >= 0 && context.aliveWeaponModelCount(unit, option.weaponIndex) > 0);
-  const selectableWeapons = context.shootingWeaponSelectionForAll(eligibleWeapons);
-  const selectableIndexes = new Set(selectableWeapons.map(option => option.weaponIndex));
-  const allocationByWeapon = new Map<number, PlayShootingAttackAllocation[]>();
-  for (const allocation of allocations) {
-    if (!selectableIndexes.has(allocation.weaponIndex)) return state;
-    if (!s.units.some(candidate => candidate.id === allocation.targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId)) return state;
-    const weaponAllocations = allocationByWeapon.get(allocation.weaponIndex) ?? [];
-    weaponAllocations.push(allocation);
-    allocationByWeapon.set(allocation.weaponIndex, weaponAllocations);
-  }
-  if (allocationByWeapon.size !== selectableIndexes.size) return state;
-
-  for (const selected of selectableWeapons) {
-    const weaponAllocations = allocationByWeapon.get(selected.weaponIndex) ?? [];
-    const availableModelIndexes = context.aliveWeaponModelIndexes(unit, selected.weaponIndex);
-    const assignedModelIndexes = new Set<number>();
-    if (weaponAllocations.length > 1) {
-      const declaredModels = weaponAllocations.reduce((total, allocation) => total + (allocation.modelCount ?? 0), 0);
-      if (declaredModels !== availableModelIndexes.length) return state;
-    }
-    const allocationCandidates = weaponAllocations.map(allocation => {
-      const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
-      const eligibleModelIndexes = context.participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, s.terrain, s);
-      return { allocation, eligibleModelIndexes };
-    }).sort((a, b) => a.eligibleModelIndexes.length - b.eligibleModelIndexes.length);
-    for (const { allocation, eligibleModelIndexes } of allocationCandidates) {
-      if (allocation.modelCount !== undefined && (!Number.isInteger(allocation.modelCount) || allocation.modelCount < 1)) return state;
-      if (s.attachedShootingTargetUnitId && allocation.targetUnitId !== s.attachedShootingTargetUnitId) return state;
-      const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
-      if (!context.shootingWeaponCanTarget(s, unit, target, selected.weapon, rules)) return state;
-      const remainingModelIndexes = eligibleModelIndexes.filter(modelIndex => !assignedModelIndexes.has(modelIndex));
-      const modelCount = allocation.modelCount ?? remainingModelIndexes.length;
-      if (modelCount > remainingModelIndexes.length) return state;
-      remainingModelIndexes.slice(0, modelCount).forEach(modelIndex => assignedModelIndexes.add(modelIndex));
-    }
-  }
-
-  const logs: LogEntry[] = [context.log(s, side, unit.profile.name, `🔫 ${unit.profile.name} locks all ranged targets before rolling:`, 'shoot')];
-  for (const selected of selectableWeapons) {
-    const weaponAllocations = allocationByWeapon.get(selected.weaponIndex)!;
-    const assignedModelIndexes = new Set<number>();
-    const orderedWeaponAllocations = [...weaponAllocations].sort((a, b) => {
-      const targetA = s.units.find(candidate => candidate.id === a.targetUnitId && !candidate.destroyed)!;
-      const targetB = s.units.find(candidate => candidate.id === b.targetUnitId && !candidate.destroyed)!;
-      return context.participatingWeaponModelIndexes(unit, targetA, selected.weapon, selected.weaponIndex, s.terrain, s).length
-        - context.participatingWeaponModelIndexes(unit, targetB, selected.weapon, selected.weaponIndex, s.terrain, s).length;
-    });
-    for (const allocation of orderedWeaponAllocations) {
-      const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
-      const eligibleModelIndexes = context.participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, s.terrain, s)
-        .filter(modelIndex => !assignedModelIndexes.has(modelIndex));
-      const modelCount = allocation.modelCount ?? eligibleModelIndexes.length;
-      const modelIndexes = eligibleModelIndexes.slice(0, modelCount);
-      modelIndexes.forEach(modelIndex => assignedModelIndexes.add(modelIndex));
-      logs.push(...context.resolveShootingWeaponIntoTarget(s, unit, target, selected.weapon, selected.weaponIndex, rules, {
-        deferCasualties: true,
-        modelIndexes,
-      }));
-    }
-  }
-  unit.firedWeaponIndices = [...new Set([...(unit.firedWeaponIndices ?? []), ...selectableWeapons.map(option => option.weaponIndex)])];
-  unit.activated = true;
-  context.updateAttachedShootingActivation(s, unit, rules);
-  s.log = [...s.log, ...logs];
-  return s;
 }
 
 export function unitCanChargeTarget(unit: BattleUnit, target: BattleUnit, hasKeyword: (unit: BattleUnit, keyword: string) => boolean): boolean {
@@ -913,11 +782,23 @@ export function unitWasEngagedAtFightStepStart(state: BattleState, unit: BattleU
   return state.engagedUnitIdsAtFightStepStart?.includes(unit.id) ?? false;
 }
 
+/** `charged` is retained until that army's next Command phase; scope it to the current turn. */
+export function unitChargedThisTurn(state: BattleState, unit: BattleUnit): boolean {
+  if (!unit.charged) return false;
+  if (unit.chargedTurn !== undefined) return unit.chargedTurn === state.turn;
+  // Older states do not have chargedTurn. Fight-step pile-in and
+  // consolidation update lastMovePhase, but they must not erase the charge
+  // priority that was earned earlier in the turn.
+  return unit.lastMovePhase === undefined
+    || ((unit.lastMovePhase === 'charge' || unit.lastMovePhase === 'fight')
+      && (unit.lastMoveTurn === undefined || unit.lastMoveTurn === state.turn));
+}
+
 export function unitEligibleToFight(unit: BattleUnit, state: BattleState, rules: RulesEdition, context: FightEligibilityContext): boolean {
   if (unit.destroyed || unit.embarkedInUnitId || unit.activated) return false;
   if (rules.metadata.edition !== '11e') return unitCanFight(unit, state, rules, context);
   if (state.fightStepStarted === false) return false;
-  return unit.charged || unitWasEngagedAtFightStepStart(state, unit)
+  return unitChargedThisTurn(state, unit) || unitWasEngagedAtFightStepStart(state, unit)
     || context.enemies(state, unit.side).some(enemy => context.canFightTarget(unit, enemy)
       && context.inEngagement(unit, [enemy], rules.engagementRange()));
 }
@@ -980,10 +861,13 @@ export function applyFightPhaseMove(
   const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
   if (!existing || context.attachedComponents(state, existing).some(component => context.unitSurgedThisPhase(state, component))) return state;
   const isOverrunPileIn = kind === 'pileIn' && rules.metadata.edition === '11e' && state.fightStepStarted && existing.overrunFightSelected;
+  const pileInSide = state.fightPileInSide ?? state.activeArmy;
+  if (kind === 'pileIn' && rules.metadata.edition === '11e'
+    && ((state.fightStepStarted === false && pileInSide !== side)
+      || (state.fightStepStarted === true && !isOverrunPileIn))) return state;
   if (kind === 'pileIn' && (isOverrunPileIn ? existing.overrunPiledIn : existing.piledIn)) return state;
   if (kind === 'consolidate' && existing.consolidated) return state;
   if (kind === 'pileIn' && isOverrunPileIn && !context.unitEligibleToFight(existing, state, rules)) return state;
-  if (kind === 'pileIn' && !isOverrunPileIn && rules.metadata.edition === '11e' && state.fightStepStarted) return state;
   if (kind === 'pileIn' && !isOverrunPileIn && !context.unitCanFight(existing, state, rules)
     && !(existing.charged && context.enemies(state, side).length > 0)) return state;
   if (kind === 'consolidate' && !context.canConsolidate(state, unitId, side, rules)) return state;
@@ -1022,7 +906,7 @@ export function applyFightPhaseMove(
   return next;
 }
 
-export type MeleeAttackAllocation = { weaponIndex: number; targetUnitId: string; attackCount?: number };
+export type MeleeAttackAllocation = { weaponIndex: number; targetUnitId: string; modelCount?: number };
 
 export function selectMeleeWeapons(
   unit: BattleUnit,
@@ -1050,6 +934,8 @@ export interface ManualFightResolutionContext extends FightPhaseContext {
   nearest(unit: BattleUnit, targets: BattleUnit[]): BattleUnit | null;
   unitCanFight(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean;
   aliveWeaponModelCount(unit: BattleUnit, weaponIndex: number): number;
+  aliveWeaponModelIndexes(unit: BattleUnit, weaponIndex: number): number[];
+  participatingWeaponModelIndexes(unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, terrain: BattleState['terrain'], state: BattleState): number[];
   selectMeleeWeapons(unit: BattleUnit, options: Array<{ weapon: WeaponProfile; weaponIndex: number }>, requested: number | 'all'): Array<{ weapon: WeaponProfile; weaponIndex: number }>;
   chooseOneProfilePerGroup(options: Array<{ weapon: WeaponProfile; weaponIndex: number }>): Array<{ weapon: WeaponProfile; weaponIndex: number }>;
   fixedWeaponAttackCount(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number): number | null;
@@ -1086,10 +972,21 @@ export function fightPlayUnitWeapons(
   if (grouped.size !== selectableIndexes.size) return state;
   for (const selected of selectableWeapons) {
     const entries = grouped.get(selected.weaponIndex) ?? [];
-    const fixedAttacks = context.fixedWeaponAttackCount(unit, selected.weapon, selected.weaponIndex);
-    if (fixedAttacks === null && entries.length !== 1) return state;
-    if (entries.length > 1 && entries.reduce((total, entry) => total + (entry.attackCount ?? 0), 0) !== fixedAttacks) return state;
-    if (entries.some(entry => entry.attackCount !== undefined && (!Number.isInteger(entry.attackCount) || entry.attackCount < 1))) return state;
+    const availableModelIndexes = context.aliveWeaponModelIndexes(unit, selected.weaponIndex);
+    const assignedModelIndexes = new Set<number>();
+    if (entries.length > 1 && entries.reduce((total, entry) => total + (entry.modelCount ?? 0), 0) !== availableModelIndexes.length) return state;
+    const allocationCandidates = entries.map(entry => {
+      const target = state.units.find(candidate => candidate.id === entry.targetUnitId && !candidate.destroyed)!;
+      const eligibleModelIndexes = context.participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, state.terrain, state);
+      return { entry, eligibleModelIndexes };
+    }).sort((a, b) => a.eligibleModelIndexes.length - b.eligibleModelIndexes.length);
+    for (const { entry, eligibleModelIndexes } of allocationCandidates) {
+      if (entry.modelCount !== undefined && (!Number.isInteger(entry.modelCount) || entry.modelCount < 1)) return state;
+      const remainingModelIndexes = eligibleModelIndexes.filter(modelIndex => !assignedModelIndexes.has(modelIndex));
+      const modelCount = entry.modelCount ?? remainingModelIndexes.length;
+      if (modelCount > remainingModelIndexes.length) return state;
+      remainingModelIndexes.slice(0, modelCount).forEach(modelIndex => assignedModelIndexes.add(modelIndex));
+    }
   }
   const next = context.clone(state);
   const fightingUnit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
@@ -1097,13 +994,28 @@ export function fightPlayUnitWeapons(
   const logs: LogEntry[] = [context.log(next, side, fightingUnit.profile.name, `${fightingUnit.profile.name} locks all melee targets before rolling:`, 'fight')];
   for (const selected of selectableWeapons) {
     const entries = grouped.get(selected.weaponIndex)!;
-    for (const entry of entries) {
+    const assignedModelIndexes = new Set<number>();
+    const orderedEntries = [...entries].sort((a, b) => {
+      const targetA = next.units.find(candidate => candidate.id === a.targetUnitId && !candidate.destroyed)!;
+      const targetB = next.units.find(candidate => candidate.id === b.targetUnitId && !candidate.destroyed)!;
+      return context.participatingWeaponModelIndexes(fightingUnit, targetA, selected.weapon, selected.weaponIndex, next.terrain, next).length
+        - context.participatingWeaponModelIndexes(fightingUnit, targetB, selected.weapon, selected.weaponIndex, next.terrain, next).length;
+    });
+    for (const entry of orderedEntries) {
       const target = next.units.find(candidate => candidate.id === entry.targetUnitId && !candidate.destroyed)!;
+      const eligibleModelIndexes = context.participatingWeaponModelIndexes(fightingUnit, target, selected.weapon, selected.weaponIndex, next.terrain, next)
+        .filter(modelIndex => !assignedModelIndexes.has(modelIndex));
+      const modelCount = entry.modelCount ?? eligibleModelIndexes.length;
+      const modelIndexes = eligibleModelIndexes.slice(0, modelCount);
+      modelIndexes.forEach(modelIndex => assignedModelIndexes.add(modelIndex));
+      const result = createCombatWeaponResult(fightingUnit, target, selected.weapon, selected.weaponIndex);
       logs.push(...context.resolveCombatAttacks(fightingUnit, target, selected.weapon, selected.weaponIndex, rules, next, false, 0, '', {
         deferCasualties: true,
-        ...(entries.length > 1 && entry.attackCount !== undefined ? { attackCountOverride: entry.attackCount } : {}),
+        modelIndexes,
         selectedTargetCount: entries.length,
+        result,
       }));
+      appendCombatWeaponResult(next, fightingUnit, result);
     }
   }
   if (!logs.length) return state;
@@ -1166,14 +1078,26 @@ export function fightPlayUnitWeapon(
     for (const split of targetSplits) {
       const splitTarget = next.units.find(candidate => candidate.id === split.targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
       if (!splitTarget || !context.canFightTarget(fightingUnit, splitTarget) || !context.inEngagement(fightingUnit, [splitTarget], rules.engagementRange())) continue;
-      const attackLogs = context.resolveCombatAttacks(fightingUnit, splitTarget, option.weapon, option.weaponIndex, rules, next, false, 0, '', { deferCasualties: true, attackCountOverride: split.attacks, selectedTargetCount: targetSplits.length });
+      const result = createCombatWeaponResult(fightingUnit, splitTarget, option.weapon, option.weaponIndex);
+      const attackLogs = context.resolveCombatAttacks(fightingUnit, splitTarget, option.weapon, option.weaponIndex, rules, next, false, 0, '', { deferCasualties: true, attackCountOverride: split.attacks, selectedTargetCount: targetSplits.length, result });
+      appendCombatWeaponResult(next, fightingUnit, result);
       logs.push(...attackLogs); madeAttacks = madeAttacks || attackLogs.length > 0;
       if (fightingUnit.destroyed) break;
     }
     if (madeAttacks) logs.push(...context.resolveHazardousTests(fightingUnit, option.weapon, option.weaponIndex, next));
   } else {
     for (const option of selectedMeleeWeapons) {
-      const attackLogs = context.resolveCombatAttacks(fightingUnit, fightTarget, option.weapon, option.weaponIndex, rules, next, false, 0, '', { deferCasualties: true });
+      const result = createCombatWeaponResult(fightingUnit, fightTarget, option.weapon, option.weaponIndex);
+      const modelIndexes = context.participatingWeaponModelIndexes(
+        fightingUnit,
+        fightTarget,
+        option.weapon,
+        option.weaponIndex,
+        next.terrain,
+        next,
+      );
+      const attackLogs = context.resolveCombatAttacks(fightingUnit, fightTarget, option.weapon, option.weaponIndex, rules, next, false, 0, '', { deferCasualties: true, modelIndexes, result });
+      appendCombatWeaponResult(next, fightingUnit, result);
       logs.push(...attackLogs);
       if (attackLogs.length > 0) logs.push(...context.resolveHazardousTests(fightingUnit, option.weapon, option.weaponIndex, next));
       madeAttacks = madeAttacks || attackLogs.length > 0;
@@ -1242,7 +1166,9 @@ export function fightOnDeathUnitWeapon(
   next.units.push(fighter);
   const weapon = fighter.profile.weapons[weaponIndex];
   const logs = [context.log(next, side, fighter.profile.name, `${fighter.profile.name} makes a Fight On Death attack against ${fightTarget.profile.name}:`, 'fight')];
-  logs.push(...context.resolveCombatAttacks(fighter, fightTarget, weapon, weaponIndex, rules, next, false, 0, '', { deferCasualties: true }));
+  const result = createCombatWeaponResult(fighter, fightTarget, weapon, weaponIndex);
+  logs.push(...context.resolveCombatAttacks(fighter, fightTarget, weapon, weaponIndex, rules, next, false, 0, '', { deferCasualties: true, result }));
+  appendCombatWeaponResult(next, fighter, result);
   next.units = next.units.filter(unit => unit !== fighter);
   next.log = [...next.log, ...logs, ...context.resolvePendingDeadlyDemisesInPlace(next)];
   return next;
@@ -1330,6 +1256,7 @@ export function processWoundsAgainstDefender(
 export interface ChargeRulesContext {
   attachedComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
   enemies(state: BattleState, side: Side): BattleUnit[];
+  inEngagement(state: BattleState, unit: BattleUnit): boolean;
   isAircraft(unit: BattleUnit): boolean;
   unitSurgedThisPhase(state: BattleState, unit: BattleUnit): boolean;
   canChargeTarget(unit: BattleUnit, target: BattleUnit): boolean;
@@ -1355,7 +1282,7 @@ export function playChargeRoll(
   const rolledUnit = next.units.find((candidate: BattleUnit) => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
   if (rules.metadata.edition === '11e' && hasKeyword(rolledUnit, 'fly')) rolledUnit.takingToSkies = true;
   const maximumDistance = Math.max(0, roll - takeToSkiesDistanceCost(rolledUnit));
-  next.lastChargeRoll = { unitId, side, dice: [r1, r2], rawTotal: rawRoll, total: roll, maximumDistance, status: 'pending-target' };
+  next.chargeResolution = { unitId, side, dice: [r1, r2], rawTotal: rawRoll, total: roll, maximumDistance, status: 'pending-target' };
   next.pendingChargeRoll = { unitId, side, maximumDistance };
   recordBattleEvent(next, { type: BATTLE_EVENT_TYPE.DiceRolled, side, source: unitId, data: { rollKind: 'charge', dice: [r1, r2], rawTotal: rawRoll, total: roll, maximumDistance } });
   next.log = [...next.log, log(next, side, unit.profile.name,
@@ -1366,7 +1293,7 @@ export function playChargeRoll(
       component.takingToSkies = undefined;
     }
     next.pendingChargeRoll = undefined;
-    next.lastChargeRoll = { ...next.lastChargeRoll, status: 'failed', failureReason: 'no-reachable-targets' };
+    next.chargeResolution = { ...next.chargeResolution, status: 'failed', failureReason: 'no-reachable-targets' };
     next.log = [...next.log, log(next, side, unit.profile.name, `${unit.profile.name} has no reachable charge targets and cannot charge.`, 'charge')];
   }
   return next;
@@ -1375,20 +1302,26 @@ export function playChargeRoll(
 export function completePlayChargeMovement(
   state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: ManualChargeRollContext,
 ): BattleState {
-  const { enemies, attachedUnitComponents, inEngagement, clone, log } = context;
+  const { enemies, attachedUnitComponents, inEngagement, baseEdgeDistance, clone, log } = context;
   const pending = state.pendingChargeMovement;
   if (state.phase !== 'charge' || !pending || pending.unitId !== unitId || pending.side !== side) return state;
   const unit = state.units.find((candidate: BattleUnit) => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   const targets = pending.targetUnitIds.map((targetId: string) => state.units.find((candidate: BattleUnit) =>
     candidate.id === targetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId)).filter(Boolean);
+  const hasBaseContact = (source: BattleUnit, target: BattleUnit) =>
+    attachedUnitComponents(state, source).some(sourceComponent =>
+      attachedUnitComponents(state, target).some(targetComponent => baseEdgeDistance(sourceComponent, targetComponent) <= 0.15));
   if (!unit || targets.length !== pending.targetUnitIds.length || !targets.length
-    || targets.some((target: BattleUnit) => !inEngagement(unit, [target], rules.engagementRange()))) return state;
+    || targets.some((target: BattleUnit) => !inEngagement(unit, [target], rules.engagementRange()))
+    || !targets.some((target: BattleUnit) => hasBaseContact(unit, target))) return state;
   const declaredTargetIds = new Set(targets.flatMap((target: BattleUnit) => attachedUnitComponents(state, target).map((component: BattleUnit) => component.id)));
   if (enemies(state, side).some((enemy: BattleUnit) => !declaredTargetIds.has(enemy.id) && inEngagement(unit, [enemy], rules.engagementRange()))) return state;
   const next = clone(state);
   const movedUnit = next.units.find((candidate: BattleUnit) => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
   for (const component of attachedUnitComponents(next, movedUnit)) {
-    component.activated = true; component.charged = state.activeArmy === side; component.inCombat = true; component.movementComplete = true;
+    component.activated = true; component.charged = state.activeArmy === side;
+    component.chargedTurn = component.charged ? next.turn : undefined;
+    component.inCombat = true; component.movementComplete = true;
     component.lastMovePhase = next.phase; component.lastMoveTurn = next.turn; component.movementAllowanceRemaining = 0;
     component.movementAllowanceRemainingByModel = component.modelPositions.map(() => 0);
     component.heroicInterventionThisPhase = undefined; component.heroicInterventionMode = undefined;
@@ -1403,12 +1336,17 @@ export function completePlayChargeMovement(
 export type ChargeTargetOption = { targetId: string; needed: number };
 
 export function chargeNeededDistance(unit: BattleUnit, target: BattleUnit, rules: RulesEdition, context: ChargeRulesContext): number {
-  return Math.max(0, context.baseEdgeDistance(unit, target) - rules.engagementRange());
+  return Math.max(0, context.baseEdgeDistance(unit, target));
 }
 
 export function unitCanDeclareCharge(state: BattleState, unit: BattleUnit, context: ChargeRulesContext): boolean {
-  return !unit.destroyed && !unit.embarkedInUnitId && !unit.performingAction && !context.isAircraft(unit)
-    && !unit.inCombat && !unit.fellBack && !unit.arrivedFromReinforcements
+  const isAlreadyEngaged = unit.inCombat
+    || context.attachedComponents(state, unit).some(component => context.inEngagement(state, component));
+  return !unit.destroyed && !unit.embarkedInUnitId && !unit.activated && !unit.performingAction && !context.isAircraft(unit)
+    // `inCombat` is serialized for replay; geometry is authoritative when an
+    // enemy moved into Engagement Range or an attached component is engaged.
+    && !isAlreadyEngaged
+    && !unit.fellBack && !unit.arrivedFromReinforcements
     && !unit.emergencyDisembarkedThisTurn && !unit.combatDisembarkedThisTurn && !unit.rapidDisembarkedThisTurn
     && unit.movementAction !== 'fellBack'
     && (unit.movementAction !== 'advanced' || state.activeArmyAbilities?.[unit.side]?.includes('waaagh') === true);
@@ -1422,10 +1360,15 @@ export function playChargeEligibilityReason(state: BattleState, unitId: string, 
   if (state.phase !== 'charge') return 'The battle is not in the Charge phase.';
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit) return 'Select a living unit that is on the battlefield.';
+  if (state.chargeResolution?.unitId === unitId && state.chargeResolution.side === side && state.chargeResolution.status === 'failed') {
+    return 'This unit already failed its charge this phase.';
+  }
   if (!sideCanDeclareCharge(state, side, unit)) return 'This army cannot declare a charge right now.';
   if (context.attachedComponents(state, unit).some(component => context.unitSurgedThisPhase(state, component))) return 'This unit already surged this phase.';
   if (context.isAircraft(unit)) return 'Aircraft cannot declare charges.';
-  if (unit.inCombat) return 'This unit is already in combat.';
+  if (unit.inCombat || context.attachedComponents(state, unit).some(component => context.inEngagement(state, component))) {
+    return 'This unit is already within Engagement Range and cannot declare a charge.';
+  }
   if (unit.fellBack || unit.movementAction === 'fellBack') return 'A unit that fell back cannot charge this phase.';
   if (unit.arrivedFromReinforcements) return 'A unit arriving from Reinforcements cannot charge this phase.';
   if (unit.emergencyDisembarkedThisTurn || unit.combatDisembarkedThisTurn || unit.rapidDisembarkedThisTurn) return 'This unit cannot charge after disembarking this turn.';
@@ -1461,6 +1404,7 @@ export type ManualChargeDeclarationContext = ManualChargeRollContext & {
   resolveInternalModelOverlaps: (...args: any[]) => void;
   translateFormation: (...args: any[]) => void;
   formationExtent: (...args: any[]) => number;
+  modelBaseRadius: (unit: BattleUnit, modelIndex?: number) => number;
   centroid: (...args: any[]) => Position;
   modelRotation: (...args: any[]) => number;
   unitTakesToSkiesForState: (...args: any[]) => boolean;
@@ -1477,7 +1421,7 @@ export function chargePlayUnitTargets(
 ): BattleState {
   const { attachedUnitComponents, unitSurgedThisPhase, clone, d6, takeToSkiesDistanceCost, log,
     enemies, inEngagement, findReachablePosition, avoidModelOverlap, resolveInternalModelOverlaps,
-    translateFormation, formationExtent, centroid, modelRotation, unitTakesToSkiesForState,
+    translateFormation, formationExtent, modelBaseRadius, centroid, modelRotation, unitTakesToSkiesForState,
     distance, unitCanChargeTarget, chargeRules } = context;
   if (state.phase !== 'charge') return state;
   const unit = state.units.find((candidate: BattleUnit) => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
@@ -1485,13 +1429,23 @@ export function chargePlayUnitTargets(
   const targets = uniqueTargetIds.map(targetId => state.units.find((candidate: BattleUnit) => candidate.id === targetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId))
     .filter((target): target is BattleUnit => !!target);
   const target = targets[0];
-  if (!unit || attachedUnitComponents(state, unit).some((component: BattleUnit) => unitSurgedThisPhase(state, component))
-    || !target || targets.length !== uniqueTargetIds.length || uniqueTargetIds.length === 0
-    || !sideCanDeclareCharge(state, side, unit) || !unitCanDeclareCharge(state, unit, chargeRules)
-    || targets.some(candidate => !unitCanChargeTarget(unit, candidate))
-    || (state.activeArmy !== side && (unit.heroicInterventionMode === 'leap-to-defend'
-      ? targets.some(candidate => !candidate.charged)
-      : unit.heroicInterventionMode === 'into-the-fray' ? targets.some(candidate => chargeRules.baseEdgeDistance(unit, candidate) > 6) : true))) return state;
+  const chargeUnitIsValid = !!unit
+    && !attachedUnitComponents(state, unit).some((component: BattleUnit) => unitSurgedThisPhase(state, component))
+    && sideCanDeclareCharge(state, side, unit)
+    && unitCanDeclareCharge(state, unit, chargeRules);
+  const chargeTargetsAreValid = !!target
+    && targets.length === uniqueTargetIds.length
+    && uniqueTargetIds.length > 0
+    && !!unit
+    && targets.every(candidate => unitCanChargeTarget(unit, candidate));
+  const heroicInterventionTargetsAreValid = state.activeArmy === side || (!!unit && (
+    unit.heroicInterventionMode === 'leap-to-defend'
+      ? targets.every(candidate => candidate.charged)
+      : unit.heroicInterventionMode === 'into-the-fray'
+        ? targets.every(candidate => chargeRules.baseEdgeDistance(unit, candidate) <= 6)
+        : false
+  ));
+  if (!chargeUnitIsValid || !chargeTargetsAreValid || !heroicInterventionTargetsAreValid) return state;
   const needed = Math.max(...targets.map(candidate => chargeNeededDistance(unit, candidate, rules, chargeRules)));
   const pendingRoll = state.pendingChargeRoll?.unitId === unitId && state.pendingChargeRoll.side === side ? state.pendingChargeRoll : undefined;
   if (needed > (pendingRoll?.maximumDistance ?? rules.chargeRange())) return state;
@@ -1524,7 +1478,7 @@ export function chargePlayUnitTargets(
     }
     next.pendingChargeMovement = { unitId, side, targetUnitIds: uniqueTargetIds, maximumDistance };
     next.pendingChargeRoll = undefined;
-    if (next.lastChargeRoll?.unitId === unitId && next.lastChargeRoll.side === side) next.lastChargeRoll = { ...next.lastChargeRoll, status: 'resolved' };
+    if (next.chargeResolution?.unitId === unitId && next.chargeResolution.side === side) next.chargeResolution = { ...next.chargeResolution, status: 'resolved' };
     next.log = [...next.log, ...logs, log(next, side, chargingUnit.profile.name, `${chargingUnit.profile.name} must now make its charge move (${maximumDistance.toFixed(1)}" maximum).`, 'charge')];
     return next;
   }
@@ -1534,7 +1488,7 @@ export function chargePlayUnitTargets(
     }
     logs.push(log(next, side, chargingUnit.profile.name, `${chargingUnit.profile.name} fails the charge.`, 'charge'));
     next.log = [...next.log, ...logs]; next.pendingChargeRoll = undefined;
-    if (next.lastChargeRoll?.unitId === unitId && next.lastChargeRoll.side === side) next.lastChargeRoll = { ...next.lastChargeRoll, status: 'failed', failureReason: 'cannot-reach-engagement' };
+    if (next.chargeResolution?.unitId === unitId && next.chargeResolution.side === side) next.chargeResolution = { ...next.chargeResolution, status: 'failed', failureReason: 'cannot-reach-engagement' };
     return next;
   }
 
@@ -1543,7 +1497,9 @@ export function chargePlayUnitTargets(
   const dirY = d > 0 ? (chargeTarget.position.y - chargingUnit.position.y) / d : 0;
   const myExtent = formationExtent(chargingUnit.modelPositions, chargingUnit.position, { x: dirX, y: dirY });
   const tgtExtent = formationExtent(chargeTarget.modelPositions, chargeTarget.position, { x: -dirX, y: -dirY });
-  const stopGap = rules.engagementRange() + myExtent + tgtExtent + 0.05;
+  const myRadius = Math.max(...chargingUnit.modelPositions.map((_: Position, modelIndex: number) => modelBaseRadius(chargingUnit, modelIndex)), 0);
+  const targetRadius = Math.max(...chargeTarget.modelPositions.map((_: Position, modelIndex: number) => modelBaseRadius(chargeTarget, modelIndex)), 0);
+  const stopGap = myExtent + tgtExtent + myRadius + targetRadius + 0.05;
   const reachablePos = findReachablePosition(chargingUnit, chargeTarget.position, maximumDistance, next.terrain, stopGap, unitTakesToSkiesForState(next, chargingUnit));
   const newPos = avoidModelOverlap(chargingUnit, reachablePos, next);
   translateFormation(chargingUnit, newPos.x - chargingUnit.position.x, newPos.y - chargingUnit.position.y);
@@ -1557,24 +1513,30 @@ export function chargePlayUnitTargets(
     }
     logs.push(log(failed, side, failedUnit.profile.name, reason, 'charge'));
     failed.log = [...failed.log, ...logs]; failed.pendingChargeRoll = undefined;
-    if (failureReason && failed.lastChargeRoll?.unitId === unitId && failed.lastChargeRoll.side === side) {
-      failed.lastChargeRoll = { ...failed.lastChargeRoll, status: 'failed', failureReason };
+    if (failureReason && failed.chargeResolution?.unitId === unitId && failed.chargeResolution.side === side) {
+      failed.chargeResolution = { ...failed.chargeResolution, status: 'failed', failureReason };
     }
     return failed;
   };
-  if (chargeTargets.some(candidate => !inEngagement(chargingUnit, [candidate], rules.engagementRange()))) return failCharge(`${chargingUnit.profile.name} cannot reach engagement range.`, 'undeclared-enemy');
+  if (chargeTargets.some(candidate => !inEngagement(chargingUnit, [candidate], rules.engagementRange()))
+    || !chargeTargets.some(candidate => chargeRules.attachedComponents(next, chargingUnit).some(sourceComponent =>
+      chargeRules.attachedComponents(next, candidate).some(targetComponent => chargeRules.baseEdgeDistance(sourceComponent, targetComponent) <= 0.15)))) {
+    return failCharge(`${chargingUnit.profile.name} cannot reach base contact.`, 'cannot-reach-engagement');
+  }
   const declaredTargetComponentIds = new Set(chargeTargets.flatMap(candidate => attachedUnitComponents(next, candidate).map((component: BattleUnit) => component.id)));
   if (enemies(next, side).some((enemy: BattleUnit) => !declaredTargetComponentIds.has(enemy.id) && inEngagement(chargingUnit, [enemy], rules.engagementRange()))) {
     return failCharge(`${chargingUnit.profile.name} cannot complete the charge while engaging an undeclared enemy unit.`);
   }
   for (const component of attachedUnitComponents(next, chargingUnit)) {
-    component.activated = true; component.charged = !heroicIntervention; component.heroicInterventionThisPhase = undefined;
+    component.activated = true; component.charged = !heroicIntervention;
+    component.chargedTurn = component.charged ? next.turn : undefined;
+    component.heroicInterventionThisPhase = undefined;
     component.heroicInterventionMode = undefined; component.inCombat = true; component.lastMovePhase = next.phase; component.lastMoveTurn = next.turn; component.takingToSkies = undefined;
   }
   for (const chargeTargetUnit of chargeTargets) chargeTargetUnit.inCombat = true;
   logs.push(log(next, side, chargingUnit.profile.name, `${chargingUnit.profile.name} makes a successful${state.activeArmy !== side ? ' Heroic Intervention' : ''} charge.`, 'charge'));
   next.log = [...next.log, ...logs]; next.pendingChargeRoll = undefined;
-  if (next.lastChargeRoll?.unitId === unitId && next.lastChargeRoll.side === side) next.lastChargeRoll = { ...next.lastChargeRoll, status: 'resolved' };
+  if (next.chargeResolution?.unitId === unitId && next.chargeResolution.side === side) next.chargeResolution = { ...next.chargeResolution, status: 'resolved' };
   return next;
 }
 
@@ -1608,7 +1570,7 @@ export function unitHasCounteroffensive(state: BattleState, unit: BattleUnit, co
 }
 
 export function unitHasFightsFirst(state: BattleState, unit: BattleUnit, context: FightPhaseContext): boolean {
-  return unit.charged || unitHasCounteroffensive(state, unit, context) || context.attachedUnitHasRule(state, unit, 'Fights First');
+  return unitChargedThisTurn(state, unit) || unitHasCounteroffensive(state, unit, context) || context.attachedUnitHasRule(state, unit, 'Fights First');
 }
 
 export function finishAttachedFightComponent(state: BattleState, unit: BattleUnit, rules: RulesEdition, context: FightPhaseContext): void {
@@ -1619,6 +1581,9 @@ export function finishAttachedFightComponent(state: BattleState, unit: BattleUni
   const forcedUnit = state.units.find(candidate => candidate.id === state.forcedFightUnitId);
   if (forcedUnit && context.attachedUnitId(forcedUnit) === context.attachedUnitId(unit)) state.forcedFightUnitId = undefined;
   state.lastFightSelectionSide = unit.side;
+  if (state.consolidationStepStarted && state.consolidationPendingFightUnitIds?.includes(unit.id)) {
+    state.consolidationPendingFightUnitIds = state.consolidationPendingFightUnitIds.filter(unitId => unitId !== unit.id);
+  }
 }
 
 export function sideCanSelectFightUnit(state: BattleState, side: Side, rules: RulesEdition, context: FightPhaseContext): boolean {
@@ -1718,9 +1683,20 @@ export function runAutomaticEleventhFightPhase(
     nextSide = (selectedSide === 0 ? 1 : 0) as Side;
   }
 
-  for (const unit of next.units.filter(candidate => candidate.activated && !candidate.destroyed)) {
-    const consolidated = context.consolidate(next, unit.id, unit.side, rules);
-    if (consolidated !== next) next = consolidated;
+  next.consolidationStepStarted = true;
+  next.consolidationSide = startingSide;
+  const engagedAtFightStart = new Set(next.engagedUnitIdsAtFightStepStart ?? []);
+  next.consolidationEligibleUnitIds = next.units
+    .filter(unit => !unit.destroyed && !unit.embarkedInUnitId
+      && (unitChargedThisTurn(next, unit) || engagedAtFightStart.has(unit.id)))
+    .map(unit => unit.id);
+  next.consolidationPendingFightUnitIds = [];
+  for (const consolidationSide of [startingSide, (startingSide === 0 ? 1 : 0) as Side]) {
+    next.consolidationSide = consolidationSide;
+    for (const unit of next.units.filter(candidate => candidate.side === consolidationSide && candidate.activated && !candidate.destroyed)) {
+      const consolidated = context.consolidate(next, unit.id, consolidationSide, rules);
+      if (consolidated !== next) next = consolidated;
+    }
   }
   return next;
 }
@@ -1740,18 +1716,6 @@ export function resolveCombatAttacks(
 ): LogEntry[] {
   const { dist, battleUnitToAttachedUnitDistance, activeEpicChallengeModelIndex, participatingWeaponModelIndexes, unitHasRule, attachedUnitIsFormed, attachedUnitHasRule, attachedUnitComponents, leadingAttackModifiers, leadingRerolls, leadingWeaponKeywords, unitGrantedWeaponKeywords, auraAbilitiesInRange, attachedUnitRemainingModels, attackingModelToAttachedUnitDistance, weaponHasKeyword, weaponKeywordValue, log, attachedUnitToughness, rollExpression, hasAnyModelLOS, modelBaseRadius, attackingModelHasPlungingFire, targetVisibleToFriendlyUnit, rollMultiple, d6, processWoundsAgainstDefender, attachedInvulnerableSave, rangedSaveModifier, resolveSaveOutcome, applyDamage, objectiveIndexesWithinRange, recordBattleEvent, BATTLE_EVENT_TYPE } = context;
   const logs: LogEntry[] = [];
-  const damagedProfile = attacker.profile.damagedProfile;
-  const damagedHitModifier = damagedProfile
-    && attacker.remainingModels === 1
-    && attacker.woundsOnLeadModel <= damagedProfile.maxRemainingWounds
-    ? damagedProfile.hitRollModifier ?? 0
-    : 0;
-  hitModifier += damagedHitModifier;
-  if (damagedHitModifier) {
-    hitModifierNote = [hitModifierNote, `Damaged ${damagedHitModifier > 0 ? '-' : '+'}${Math.abs(damagedHitModifier)} to Hit`]
-      .filter(Boolean)
-      .join('; ');
-  }
   const rangeDistance = weapon.isMelee
     ? dist(attacker.position, defender.position)
     : battleUnitToAttachedUnitDistance(state, attacker, defender);
@@ -1766,6 +1730,7 @@ export function resolveCombatAttacks(
     ?? participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, state.terrain, state);
   const weaponModelCount = participatingModelIndexes.length;
   if (weaponModelCount <= 0) return logs;
+  if (options.result) options.result.modelCount = (options.result.modelCount ?? 0) + weaponModelCount;
   const waaaghActive = rules.metadata.edition === '11e'
     && state.activeArmyAbilities?.[attacker.side]?.includes('waaagh') === true
     && unitHasRule(attacker.profile, 'Waaagh!');
@@ -1787,6 +1752,7 @@ export function resolveCombatAttacks(
   const leadingRerollRules = rules.metadata.edition === '11e'
     ? leadingRerolls(state, attacker)
     : { hit: false, wound: false };
+  const indirectFire = rules.metadata.edition === '11e' && weaponHasKeyword(weapon, 'Indirect Fire');
   const derivedLeadingKeywords = rules.metadata.edition === '11e'
     ? [...leadingWeaponKeywords(state, attacker, weapon), ...unitGrantedWeaponKeywords(state, attacker, weapon)]
     : [];
@@ -1803,8 +1769,19 @@ export function resolveCombatAttacks(
   const bannerWeapon = bannerAuraActive
     ? { ...ghazghkullWeapon, keywords: [...ghazghkullWeapon.keywords, 'Lethal Hits'] }
     : ghazghkullWeapon;
-  hitModifier += leadingModifiers.hit;
-  if (prophetActive) hitModifier -= 1;
+  const normalHitCalculation = calculateCombatHit(state, attacker, defender, weapon, rules, {
+    hasCover,
+    snapShooting: options.snapShooting,
+    additionalHitModifier: options.snapShooting ? 0 : hitModifier,
+    additionalHitModifierNote: hitModifierNote,
+  }, context);
+  const plungingHitCalculation = calculateCombatHit(state, attacker, defender, weapon, rules, {
+    hasCover,
+    snapShooting: options.snapShooting,
+    plunging: true,
+    additionalHitModifier: options.snapShooting ? 0 : hitModifier,
+    additionalHitModifierNote: hitModifierNote,
+  }, context);
   const isVariableAttacks = !/^\d+$/i.test(String(weapon.attacks).trim());
   const perModelRolls: number[] = [];
   for (let i = 0; i < weaponModelCount; i++) {
@@ -1843,7 +1820,7 @@ export function resolveCombatAttacks(
     `  ${weapon.isMelee ? 'âš”ï¸' : 'ðŸ”«'} ${weapon.name} â€” ${weaponModelCount} model(s) Ã— ${weapon.attacks} = ${numAttacks} attacks vs ${defender.profile.name}`,
     weapon.isMelee ? 'fight' : 'shoot',
   ));
-  if (options.result) options.result.attackCount = numAttacks;
+  if (options.result) options.result.attackCount = (options.result.attackCount ?? 0) + numAttacks;
   const effectiveStrength = weapon.strength + waaaghMeleeBonus + (weapon.isMelee ? leadingModifiers.strength : 0);
   logs.push(log(state, attacker.side, attacker.profile.name,
     `[combat-stats] skill=${weapon.skill} s=${effectiveStrength} ap=${weapon.ap} d=${weapon.damage} t=${attachedUnitToughness(state, defender)}${hasCover ? ' cover=1' : ''}`,
@@ -1866,8 +1843,9 @@ export function resolveCombatAttacks(
   const isTorrent = weaponHasKeyword(weapon, 'Torrent');
   if (options.snapShooting && !isTorrent) {
     logs.push(log(state, attacker.side, attacker.profile.name, '     Snap Shooting: unmodified 6s to hit; hit rolls cannot be re-rolled', 'info'));
-  } else if (hitModifierNote && !isTorrent) {
-    logs.push(log(state, attacker.side, attacker.profile.name, `     ${hitModifierNote}`, 'info'));
+  } else if (!isTorrent) {
+    const hitModifierSummary = normalHitCalculation.modifiers.map(formatHitModifierForLog).join('; ');
+    if (hitModifierSummary) logs.push(log(state, attacker.side, attacker.profile.name, `     ${hitModifierSummary}`, 'info'));
   }
   let hitResult = { hits: numAttacks, rolls: [] as number[], mortalsFromCrits: 0, logNote: 'Torrent - auto-hits' };
   let lethalAutoWounds = 0;
@@ -1891,25 +1869,17 @@ export function resolveCombatAttacks(
     const hitRolls = rollMultiple(numAttacks);
     const plungingRolls = hitRolls.slice(0, plungingAttackCount);
     const normalRolls = hitRolls.slice(plungingAttackCount);
-    const indirectHitTarget = rules.metadata.edition === '11e' && weaponHasKeyword(weapon, 'Indirect Fire')
-      ? (attacker.movementAction === 'remainedStationary' && targetVisibleToFriendlyUnit(state, defender, attacker.side) ? 4 : 7)
-      : undefined;
-    const normalTarget = indirectHitTarget ?? (options.snapShooting ? 6 : Math.min(6, Math.max(2, weapon.skill + hitModifier)));
-    const plungingTarget = indirectHitTarget ?? Math.min(6, Math.max(2, weapon.skill - 1 + hitModifier));
-    if (indirectHitTarget !== undefined) {
-      logs.push(log(state, attacker.side, attacker.profile.name,
-        indirectHitTarget === 4
-          ? '     Indirect Fire: unmodified 4+ hit while stationary and target is visible to a friendly unit'
-          : '     Indirect Fire: only unmodified 6s hit',
-        'info',
-      ));
+    const normalTarget = normalHitCalculation.requiredHit ?? 6;
+    const plungingTarget = plungingHitCalculation.requiredHit ?? normalTarget;
+    if (normalHitCalculation.specialRule?.startsWith('Indirect Fire')) {
+      logs.push(log(state, attacker.side, attacker.profile.name, `     ${normalHitCalculation.specialRule}`, 'info'));
     }
     const hitPools = [
       ...(plungingRolls.length ? [{ rolls: plungingRolls, target: plungingTarget, plunging: true }] : []),
       ...(normalRolls.length ? [{ rolls: normalRolls, target: normalTarget, plunging: false }] : []),
     ];
     const results = hitPools.map(pool => {
-      const rolls = leadingRerollRules.hit
+      const rolls = leadingRerollRules.hit && !indirectFire
         ? pool.rolls.map(roll => roll < pool.target ? d6() : roll)
         : pool.rolls;
       return { ...pool, rolls, result: rules.processHits(rolls, pool.target, bannerWeapon) };

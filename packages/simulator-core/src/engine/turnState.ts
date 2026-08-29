@@ -10,6 +10,7 @@ export function resetUnitForActiveTurn(unit: BattleUnit, options: ActiveTurnRese
   unit.rangedAttacksMadeThisTurn = false;
   unit.activated = false;
   unit.charged = false;
+  unit.chargedTurn = undefined;
   unit.piledIn = undefined;
   unit.consolidated = undefined;
   unit.firedWeaponIndices = undefined;

@@ -1,7 +1,7 @@
 import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
 import { rulesEditionForRuleset } from '@warhammer-simulator/core/engine/rulesEngine';
-import { shootPlayUnitWeapon, shootPlayUnitWeapons } from '@warhammer-simulator/core/engine/simulator';
+import { lockPlayUnitShooting, shootPlayUnitWeapon, shootPlayUnitWeapons } from '@warhammer-simulator/core/engine/simulator';
 import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
 import type { PlayModelSelection } from '../components/Battlefield';
 import { primaryPlaySelectionPart } from './playSelectionHelpers';
@@ -22,6 +22,7 @@ export function createPlayShootingResolution({
   playUndoEntry,
   pushPlayUndo,
   selectPendingDamageUnit,
+  selectShootingResolutionTarget,
   commitBattleState,
   setShootingResolutionStatus,
   setTargetErrorMsg,
@@ -40,6 +41,7 @@ export function createPlayShootingResolution({
   playUndoEntry: (state: BattleState) => PlayUndoEntry;
   pushPlayUndo: (entry: PlayUndoEntry, stateAfter?: BattleState, action?: GameAction) => void;
   selectPendingDamageUnit: (state: BattleState, shooterUnitId: string | null) => boolean;
+  selectShootingResolutionTarget: (state: BattleState, shooterUnitId: string | null, targetId?: string) => boolean;
   commitBattleState: (state: BattleState) => void;
   setShootingResolutionStatus: (status: 'idle' | 'rolled') => void;
   setTargetErrorMsg: (message: string | null) => void;
@@ -53,6 +55,7 @@ export function createPlayShootingResolution({
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'shooting' || !selection) return;
     if (!damageAllocationLocked && shootingResolutionStatus === 'rolled') {
+      if (selectShootingResolutionTarget(prev, casualtyRemovalShooterId ?? selection.unitId)) return;
       setShootingResolutionStatus('idle');
       setTargetErrorMsg(null);
       setCasualtyRemovalShooterId(null);
@@ -63,6 +66,26 @@ export function createPlayShootingResolution({
     if (damageAllocationLocked) {
       if (shootingResolutionStatus === 'rolled' && selectPendingDamageUnit(prev, casualtyRemovalShooterId)) return;
       setTargetErrorMsg('Allocate pending damage before shooting again');
+      return;
+    }
+    const hasRangedWeaponsWithoutTargets = selectedPlayShootingOptions.some(option => option.weaponIndex >= 0)
+      && selectedPlayShootingOptions.every(option => option.weaponIndex < 0 || option.targetIds.length === 0);
+    if (hasRangedWeaponsWithoutTargets) {
+      const next = lockPlayUnitShooting(prev, selection.unitId, selection.side);
+      if (next === prev) return;
+      pushPlayUndo(playUndoEntry(prev), next, {
+        type: GAME_ACTION_TYPE.ShootUnitWeapon,
+        unitId: selection.unitId,
+        side: selection.side,
+        targetUnitId: '',
+        weaponIndex: 'all',
+      });
+      setShootingResolutionStatus('idle');
+      setTargetErrorMsg(null);
+      setCasualtyRemovalShooterId(null);
+      setPlayModelSelection(null);
+      setInspectedSelection(null);
+      commitBattleState(next);
       return;
     }
     const noRangedWeapons = selectedPlayShootingOptions.length === 1 && selectedPlayShootingOptions[0].weaponIndex < 0;
@@ -83,7 +106,6 @@ export function createPlayShootingResolution({
     const pendingDamageUnit = next.units.find(unit => !unit.destroyed && !unit.embarkedInUnitId && (unit.pendingDamageAllocations?.length ?? 0) > 0);
     setCasualtyRemovalShooterId(pendingDamageUnit ? selection.unitId : null);
     setTargetErrorMsg(null);
-    setShootingAttackAllocations({});
     pushPlayUndo(playUndoEntry(prev), next, {
       type: GAME_ACTION_TYPE.ShootUnitWeapon,
       unitId: selection.unitId,

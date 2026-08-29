@@ -12,6 +12,8 @@ export interface PracticeTimelineMetadata {
   ruleset: RulesetMetadata;
   tags: string[];
   notes?: string;
+  /** Set when editing begins after undo/seek, so persistence can protect the old save. */
+  rewoundFromCursor?: number;
 }
 
 export interface PracticeTimelineEntry {
@@ -139,7 +141,12 @@ export function appendTimelineAction(
   return {
     timeline: {
       ...timeline,
-      metadata: updateMetadata(timeline.metadata, createdAt),
+      metadata: {
+        ...updateMetadata(timeline.metadata, createdAt),
+        rewoundFromCursor: timeline.cursor < timeline.entries.length
+          ? timeline.cursor
+          : timeline.metadata.rewoundFromCursor,
+      },
       entries,
       cursor: entries.length,
     },
@@ -171,7 +178,12 @@ export function appendResolvedTimelineAction(
 
   return {
     ...timeline,
-    metadata: updateMetadata(timeline.metadata, createdAt),
+    metadata: {
+      ...updateMetadata(timeline.metadata, createdAt),
+      rewoundFromCursor: timeline.cursor < timeline.entries.length
+        ? timeline.cursor
+        : timeline.metadata.rewoundFromCursor,
+    },
     entries,
     cursor: entries.length,
   };
@@ -226,6 +238,20 @@ export function seekTimeline(
     timeline: { ...timeline, cursor: nextCursor },
     state: clone(entry.stateAfter),
     interactionState: entry.action.interactionAfter ? clone(entry.action.interactionAfter) : undefined,
+  };
+}
+
+/** Return a timeline whose future history has been discarded at the cursor. */
+export function truncateTimelineAtCursor(timeline: PracticeTimeline): PracticeTimeline {
+  const entries = timeline.entries.slice(0, Math.max(0, Math.min(timeline.cursor, timeline.entries.length)));
+  return {
+    ...clone(timeline),
+    metadata: {
+      ...clone(timeline.metadata),
+      rewoundFromCursor: undefined,
+    },
+    entries,
+    cursor: entries.length,
   };
 }
 

@@ -68,6 +68,11 @@ export function parseDiceInput(value: string): number[] {
   return rolls;
 }
 
+/** Present every roll group consistently, with the highest results first. */
+export function orderedDice(rolls: number[]): number[] {
+  return [...rolls].sort((left, right) => right - left);
+}
+
 export function sanitizeMeleeAttackAllocation(value: number): number {
   return Number.isFinite(value) && value >= 0 ? value : 0;
 }

@@ -1,6 +1,8 @@
 // Context typing is narrowed after the movement-domain extraction is complete.
 // @ts-nocheck
-import type { BattleState, BattleUnit, LogEntry, Side } from '../types/battle';
+import { EVENT_REQUEST_KIND, EVENT_TRIGGER_TIMING, type BattleState, type BattleUnit, type LogEntry, type Side } from '../types/battle';
+import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
+import { queueEventRequest, resolvePendingEventRequest } from './eventTriggers';
 
 export type TransportDestructionContext = Record<string, any>;
 
@@ -54,6 +56,24 @@ export function createTransportDestruction(context: TransportDestructionContext)
     for (const passenger of passengers) {
       const existingPassenger = state.units.find(unit => unit.id === passenger.id);
       const unit = existingPassenger ?? passenger;
+      const event = recordBattleEvent(state, {
+        type: BATTLE_EVENT_TYPE.RuleTriggered,
+        side,
+        source: 'Emergency Disembark',
+        data: {
+          triggerTiming: EVENT_TRIGGER_TIMING.RuleTriggered,
+          rule: EVENT_REQUEST_KIND.EmergencyDisembark,
+          transportUnitId: transport.id,
+          unitId: unit.id,
+        },
+      });
+      const request = queueEventRequest(state, 'core-18.05-emergency-disembark', event, {
+        kind: EVENT_REQUEST_KIND.EmergencyDisembark,
+        side,
+        timing: EVENT_TRIGGER_TIMING.RuleTriggered,
+        source: 'Emergency Disembark',
+        data: { transportUnitId: transport.id, unitId: unit.id },
+      });
       const positions = disembarkPositions(state, transport, unit.profile, false, false, true);
       if (!positions) {
         recordDestroyedModelMissionEvents(
@@ -72,6 +92,7 @@ export function createTransportDestruction(context: TransportDestructionContext)
           `${unit.profile.name} cannot disembark from the destroyed ${transport.profile.name} and is destroyed.`,
           'death',
         ));
+        resolvePendingEventRequest(state, request.id);
         continue;
       }
   
@@ -107,6 +128,7 @@ export function createTransportDestruction(context: TransportDestructionContext)
         `${unit.profile.name} emergency disembarks from ${transport.profile.name}; rolls ${rolls.join(', ')}${destroyedModels ? `; ${destroyedModels} model${destroyedModels === 1 ? '' : 's'} destroyed` : '; no models destroyed'}.`,
         destroyedModels && unit.destroyed ? 'death' : 'roll',
       ));
+      resolvePendingEventRequest(state, request.id);
     }
   
     return logs;

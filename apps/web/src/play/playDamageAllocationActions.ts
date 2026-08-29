@@ -39,5 +39,24 @@ export function createPendingDamageSelectionAction({
     return true;
   }
 
-  return { selectPendingDamageUnit };
+  function selectShootingResolutionTarget(next: BattleState, shooterUnitId: string | null, requestedTargetId?: string) {
+    const resolution = shooterUnitId
+      ? next.lastShootingResolution?.shooterUnitId === shooterUnitId ? next.lastShootingResolution : null
+      : next.lastShootingResolution;
+    const targetId = requestedTargetId ?? resolution?.weapons.find(weapon => weapon.wounds > 0)?.targetUnitId;
+    const target = targetId
+      ? next.units.find(unit => unit.id === targetId && !unit.destroyed && !unit.embarkedInUnitId)
+      : null;
+    if (!target) return false;
+    if (shooterUnitId) setCasualtyRemovalShooterId(shooterUnitId);
+    setPlayModelSelection(normalizePlaySelectionForState(next, {
+      side: target.side,
+      parts: [{ unitId: target.id, side: target.side, modelIndices: target.modelPositions.map((_, index) => index) }],
+    }));
+    setInspectedSelection({ kind: 'battle', side: target.side, unitId: target.id });
+    setTargetErrorMsg(null);
+    return true;
+  }
+
+  return { selectPendingDamageUnit, selectShootingResolutionTarget };
 }

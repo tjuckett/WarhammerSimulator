@@ -196,6 +196,7 @@ export function startCommandPhase(state: BattleState, rules: RulesEdition, conte
   const armyName = state.armies[side].name;
   context.startMissionEventsForNewTurn(state, rules);
   state.fightStepStarted = undefined;
+  state.fightPileInSide = undefined;
   state.engagedUnitIdsAtFightStepStart = undefined;
   state.lastFightSelectionSide = undefined;
   state.activeAttachedFightUnitId = undefined;

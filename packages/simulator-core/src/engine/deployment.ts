@@ -421,6 +421,7 @@ export interface ManualDeploymentContext {
   canInfiltrate(state: BattleState, side: 0 | 1, profile: UnitProfile): boolean;
   infiltratorPlacementIsLegal(state: BattleState, side: 0 | 1, profile: UnitProfile, positions: Position[], deployment: DeploymentZoneSource, board: BoardFormat): boolean;
   gridFormation(profile: UnitProfile, position: Position, side: 0 | 1): Position[];
+  gridFormationByRows(profile: UnitProfile, position: Position, side: 0 | 1, rows: number): Position[];
   makeBattleUnit(profile: UnitProfile, side: 0 | 1, positions: Position[], attachedToUnitId?: string, tabletopUnitId?: string): BattleUnit;
   attachedFollowers(army: BattleState['armies'][number]['army'], profile: UnitProfile): UnitProfile[];
   leaderAnchor(bodyguard: BattleUnit, leader: UnitProfile, leaderIndex: number, side: 0 | 1, deployment: DeploymentZoneSource, board: BoardFormat): Position;
@@ -430,7 +431,28 @@ export interface ManualDeploymentContext {
   log(state: BattleState, side: 0 | 1, title: string, message: string, type: string): BattleState['log'][number];
 }
 
-export function placePlayUnit(state: BattleState, side: 0 | 1, unitIndex: number, position: Position, context: ManualDeploymentContext): BattleState {
+function rotateFormation(positions: Position[], anchor: Position, degrees: number): Position[] {
+  if (!degrees) return positions;
+  const radians = degrees * Math.PI / 180;
+  const cos = Math.cos(radians);
+  const sin = Math.sin(radians);
+  return positions.map(model => ({
+    ...model,
+    x: anchor.x + (model.x - anchor.x) * cos - (model.y - anchor.y) * sin,
+    y: anchor.y + (model.x - anchor.x) * sin + (model.y - anchor.y) * cos,
+  }));
+}
+
+export function placePlayUnit(
+  state: BattleState,
+  side: 0 | 1,
+  unitIndex: number,
+  position: Position,
+  context: ManualDeploymentContext,
+  rotationDeg = 0,
+  rows?: number,
+  modelPositions?: Position[],
+): BattleState {
   const next = context.clone(state);
   if (next.phase !== 'deployment') return next;
   const profile = next.unplacedUnits[side][unitIndex];
@@ -439,17 +461,23 @@ export function placePlayUnit(state: BattleState, side: 0 | 1, unitIndex: number
   const deployment = context.setupDeploymentZoneSource(next.setup);
   const zone = zoneFor(side, deployment, board);
   const canInfiltrate = context.canInfiltrate(next, side, profile);
-  if (!canInfiltrate && !pointInDeploymentZone(position, zone, modelBaseRadiusInches(profile))) {
+  const formation = modelPositions?.length === profile.baseModelCount
+    ? modelPositions.map(model => ({ ...model }))
+    : rows === undefined
+    ? context.gridFormation(profile, position, side)
+    : context.gridFormationByRows(profile, position, side, rows);
+  const positions = rotateFormation(formation, position, rotationDeg);
+  if (!canInfiltrate && !positions.every((model, modelIndex) => pointInDeploymentZone(model, zone, modelBaseRadiusInches(profile, modelIndex)))) {
     next.log = [...next.log, context.log(next, side, profile.name, `${profile.name} must be placed wholly inside ${zone.name}.`, 'info')];
     return next;
   }
-  const positions = context.gridFormation(profile, position, side);
   if (canInfiltrate && !context.infiltratorPlacementIsLegal(next, side, profile, positions, deployment, board)) {
     next.log = [...next.log, context.log(next, side, profile.name,
       `${profile.name} must be more than 8" horizontally from the enemy deployment zone and every enemy unit.`, 'info')];
     return next;
   }
   const unit = context.makeBattleUnit(profile, side, positions);
+  unit.modelRotations = unit.modelPositions.map(() => (side === 0 ? 0 : 180) + rotationDeg);
   next.units.push(unit);
   next.unplacedUnits[side] = [...next.unplacedUnits[side].slice(0, unitIndex), ...next.unplacedUnits[side].slice(unitIndex + 1)];
   context.attachedFollowers(next.armies[side].army, profile).forEach((leader, leaderIndex) => {
@@ -463,7 +491,10 @@ export function placePlayUnit(state: BattleState, side: 0 | 1, unitIndex: number
   });
   next.log = [...next.log, context.log(next, side, profile.name,
     `${next.armies[side].name} deploys ${profile.name} at (${unit.position.x.toFixed(1)}", ${unit.position.y.toFixed(1)}").`, 'info')];
-  next.activeArmy = next.unplacedUnits[side].length ? side : (1 - side) as 0 | 1;
+  // Players alternate deployment drops. If the opponent has finished all of
+  // theirs, this player continues until deployment is complete.
+  const opposingSide = (1 - side) as 0 | 1;
+  next.activeArmy = next.unplacedUnits[opposingSide].length ? opposingSide : side;
   return next;
 }
 
@@ -538,6 +569,15 @@ export interface BattleSetupContext extends AutomatedDeploymentContext {
   rulesetMetadata(rules: { metadata: { edition: string }; objectiveControl: BattleState['objectiveControl'] }): BattleState['ruleset'];
   defaultObjectives: Position[];
   addAircraftStrategicReserves(units: BattleUnit[], army: ImportedArmy, side: 0 | 1, board: BoardFormat): void;
+  d6(): number;
+}
+
+function rollOff(context: Pick<BattleSetupContext, 'd6'>): { winner: 0 | 1; rolls: Array<[number, number]> } {
+  const rolls: Array<[number, number]> = [];
+  do {
+    rolls.push([context.d6(), context.d6()]);
+  } while (rolls.at(-1)![0] === rolls.at(-1)![1]);
+  return { winner: rolls.at(-1)![0] > rolls.at(-1)![1] ? 0 : 1, rolls };
 }
 
 function initialBattleState(
@@ -608,13 +648,19 @@ export function createDeploymentState(
     context.deployableProfiles(army1, rules.metadata.edition), context.deployableProfiles(army2, rules.metadata.edition),
   ], context);
   if (rules.metadata.edition === '11e') armies.forEach((army, side) => context.addAircraftStrategicReserves(state.units, army, side as 0 | 1, board));
+  const deploymentRollOff = rollOff(context);
+  state.activeArmy = deploymentRollOff.winner;
+  state.currentActivePlayer = deploymentRollOff.winner;
   state.log = [context.log(state, 0, '', '═══ DEPLOYMENT PHASE ═══', 'phase')];
+  const rollSummary = deploymentRollOff.rolls.map(([roll0, roll1]) => `${state.armies[0].name} ${roll0} vs ${state.armies[1].name} ${roll1}`).join('; ');
+  state.log.push(context.log(state, 0, '', `Deployment roll-off: ${rollSummary}. ${state.armies[deploymentRollOff.winner].name} deploys first.`, 'roll'));
   return state;
 }
 
 export interface DeploymentStartContext {
   clone(state: BattleState): BattleState;
   deploymentIssues(state: BattleState): string[];
+  d6(): number;
   enterSetup(state: BattleState, side: 0 | 1): void;
   log(state: BattleState, side: 0 | 1, title: string, message: string, type: string): BattleState['log'][number];
 }
@@ -665,8 +711,20 @@ export function beginPlayBattle(state: BattleState, context: DeploymentStartCont
     next.log = [...next.log, context.log(next, 0, '', `Deployment is not legal: ${issues.join(' ')}`, 'info')];
     return next;
   }
-  context.enterSetup(next, next.activeArmy);
-  next.log = [...next.log, context.log(next, 0, '', 'DEPLOYMENT COMPLETE - BATTLE BEGINS', 'phase')];
+  const rolls: Array<[number, number]> = [];
+  let firstPlayer: 0 | 1;
+  do {
+    const roll0 = context.d6();
+    const roll1 = context.d6();
+    rolls.push([roll0, roll1]);
+    firstPlayer = roll0 > roll1 ? 0 : 1;
+  } while (rolls.at(-1)![0] === rolls.at(-1)![1]);
+  context.enterSetup(next, firstPlayer);
+  const rollSummary = rolls.map(([roll0, roll1]) => `${next.armies[0].name} ${roll0} vs ${next.armies[1].name} ${roll1}`).join('; ');
+  next.log = [...next.log,
+    context.log(next, 0, '', `First turn roll-off: ${rollSummary}. ${next.armies[firstPlayer].name} takes the first turn.`, 'roll'),
+    context.log(next, 0, '', 'DEPLOYMENT COMPLETE - BATTLE BEGINS', 'phase'),
+  ];
   return next;
 }
 

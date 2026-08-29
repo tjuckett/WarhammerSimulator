@@ -58,6 +58,32 @@ export const MOVEMENT_PHASE_STEP = {
 
 export type MovementPhaseStep = (typeof MOVEMENT_PHASE_STEP)[keyof typeof MOVEMENT_PHASE_STEP];
 
+/** Canonical player-facing steps inside each turn phase. */
+export const PHASE_STEP = {
+  CommandStart: 'command-start',
+  CommandGainCoreCp: 'command-gain-core-cp',
+  CommandBattleShock: 'command-battle-shock',
+  CommandAbilities: 'command-abilities',
+  CommandEnd: 'command-end',
+  MovementStart: 'movement-start',
+  MovementUnits: 'movement-units',
+  MovementReinforcements: 'movement-reinforcements',
+  MovementEnd: 'movement-end',
+  ShootingStart: 'shooting-start',
+  ShootingUnits: 'shooting-units',
+  ShootingEnd: 'shooting-end',
+  ChargeStart: 'charge-start',
+  ChargeUnits: 'charge-units',
+  ChargeEnd: 'charge-end',
+  FightStart: 'fight-start',
+  FightPileIn: 'fight-pile-in',
+  FightUnits: 'fight-units',
+  FightConsolidate: 'fight-consolidate',
+  FightEnd: 'fight-end',
+} as const;
+
+export type PhaseStep = (typeof PHASE_STEP)[keyof typeof PHASE_STEP];
+
 export interface Position {
   x: number;
   y: number;
@@ -104,6 +130,10 @@ export interface BattleUnit {
   movementStartRotationsByModel?: number[];
   /** Waypoints traversed by each model during its current move. */
   movementPathByModel?: Position[][];
+  /** Waypoints selected during an interactive move, stored per model. */
+  movementWaypointsByModel?: Position[][];
+  /** Legacy unit-level waypoints retained so older saves can still render. */
+  movementWaypoints?: Position[];
   /** Explains why the last drag stopped before its requested endpoint. */
   movementStopReason?: 'engagementRange';
   movementComplete?: boolean;
@@ -215,6 +245,8 @@ export interface BattleEvent {
   turn: number;
   battleRound: number;
   phase: Phase;
+  /** Canonical player-facing step within the active turn phase. */
+  phaseStep?: PhaseStep;
   side: Side;
   source?: string;
   data: Record<string, unknown>;
@@ -555,6 +587,8 @@ export interface BattleState {
   /** Temporary active-player context for unit resolution and reactions. */
   currentActivePlayer?: Side;
   phase: Phase;
+  /** Canonical player-facing step within the active turn phase. */
+  phaseStep?: PhaseStep;
   /** Explicit Movement-phase boundary. Legacy movementStep remains the action cursor. */
   movementPhaseStep?: MovementPhaseStep;
   movementStep?: MovementStep;
@@ -584,6 +618,8 @@ export interface BattleState {
     maximumDistance: number;
     source: string;
     triggeredPhase: Phase;
+    /** Links the legacy movement cursor to the typed rule request. */
+    eventRequestId?: string;
   };
   pendingChargeRoll?: {
     unitId: string;
@@ -670,6 +706,45 @@ export interface ShootingRollGroup {
   noSave?: boolean;
 }
 
+export type ShootingCoverStatus = 'none' | 'all' | 'mixed';
+
+export interface ShootingHitModifier {
+  label: string;
+  requiredRollModifier: number;
+}
+
+export interface ShootingHitCalculation {
+  baseSkill: number;
+  requiredRollModifier: number;
+  requiredHit: number | null;
+  modifiers: ShootingHitModifier[];
+  hasCover: boolean;
+  coverSaveModifier: number;
+  autoHits: boolean;
+  hitProbability: number;
+  specialRule?: string;
+}
+
+export interface ShootingHitPreviewGroup extends ShootingHitCalculation {
+  modelIndexes: number[];
+  plunging: boolean;
+}
+
+export interface ShootingHitPreview {
+  weaponIndex: number;
+  weaponName: string;
+  targetUnitId: string;
+  targetUnitName: string;
+  modelIndexes: number[];
+  coverStatus: ShootingCoverStatus;
+  groups: ShootingHitPreviewGroup[];
+  commonHitTarget?: number;
+  hitTargetVaries: boolean;
+  autoHits: boolean;
+  commonCoverSaveModifier: number | null;
+  hitProbability: number;
+}
+
 export interface ShootingWeaponResult {
   weaponIndex: number;
   weaponName: string;
@@ -682,6 +757,8 @@ export interface ShootingWeaponResult {
   wounds: number;
   unsavedWounds: number;
   groups: ShootingRollGroup[];
+  /** The authoritative pre-roll hit/cover calculation used for this result. */
+  hitPreview?: ShootingHitPreview;
 }
 
 export interface ShootingResolution {

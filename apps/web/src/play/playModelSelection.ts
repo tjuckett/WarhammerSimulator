@@ -16,6 +16,7 @@ export function createPlayModelSelection({
   isPlayMode,
   damageAllocationLocked,
   pendingDamageAllocationUnitIds,
+  shootingResolutionShooterId,
   casualtyRemovalShooterId,
   playModelSelection,
   playUndoEntry,
@@ -32,6 +33,7 @@ export function createPlayModelSelection({
   isPlayMode: boolean;
   damageAllocationLocked: boolean;
   pendingDamageAllocationUnitIds: Set<string>;
+  shootingResolutionShooterId: string | null;
   casualtyRemovalShooterId: string | null;
   playModelSelection: PlayModelSelection | null;
   playUndoEntry: (state: BattleState) => PlayUndoEntry;
@@ -90,7 +92,27 @@ export function createPlayModelSelection({
         const actingUnit = next.phase === 'fight' && casualtyRemovalShooterId
           ? next.units.find(unit => unit.id === casualtyRemovalShooterId && unit.side === next.activeArmy && !unit.destroyed && !unit.embarkedInUnitId)
           : null;
-        if (actingUnit) {
+        const shootingResolution = next.phase === 'shooting' && casualtyRemovalShooterId
+          && next.lastShootingResolution?.shooterUnitId === casualtyRemovalShooterId
+          ? next.lastShootingResolution
+          : null;
+        const shootingResolutionTargetIds = shootingResolution
+          ? [...new Set(shootingResolution.weapons.filter(weapon => weapon.wounds > 0).map(weapon => weapon.targetUnitId))]
+          : [];
+        const shootingResolutionHasDamage = !!shootingResolution?.weapons.some(weapon => weapon.unsavedWounds > 0);
+        const keepShootingResolutionOpen = shootingResolutionTargetIds.length > 1
+          || !shootingResolutionHasDamage;
+        const shootingResolutionTargetId = keepShootingResolutionOpen ? shootingResolutionTargetIds[0] : undefined;
+        const shootingResolutionTarget = shootingResolutionTargetId
+          ? next.units.find(unit => unit.id === shootingResolutionTargetId && !unit.destroyed && !unit.embarkedInUnitId)
+          : null;
+        if (shootingResolutionTarget) {
+          setPlayModelSelection(normalizePlaySelectionForState(next, {
+            side: shootingResolutionTarget.side,
+            parts: [{ unitId: shootingResolutionTarget.id, side: shootingResolutionTarget.side, modelIndices: shootingResolutionTarget.modelPositions.map((_, index) => index) }],
+          }));
+          setInspectedSelection({ kind: 'battle', side: shootingResolutionTarget.side, unitId: shootingResolutionTarget.id });
+        } else if (actingUnit) {
           setPlayModelSelection(normalizePlaySelectionForState(next, {
             side: actingUnit.side,
             parts: [{ unitId: actingUnit.id, side: actingUnit.side, modelIndices: actingUnit.modelPositions.map((_, index) => index) }],
@@ -100,7 +122,7 @@ export function createPlayModelSelection({
           setPlayModelSelection(null);
           setInspectedSelection(null);
         }
-        setCasualtyRemovalShooterId(null);
+        if (!shootingResolutionTarget) setCasualtyRemovalShooterId(null);
         setTargetErrorMsg(null);
       }
       commitBattleState(next);
@@ -113,9 +135,16 @@ export function createPlayModelSelection({
       return;
     }
     const primary = normalized.parts[0];
+    if (isPlayMode
+      && battleState?.phase === 'shooting'
+      && shootingResolutionShooterId
+      && (primary.unitId !== shootingResolutionShooterId || primary.side !== battleState.activeArmy)) {
+      setTargetErrorMsg('Resolve the current shooting result before selecting another unit');
+      return;
+    }
     if (isPlayMode && battleState?.phase === 'shooting') {
       const unit = battleState.units.find(candidate => candidate.id === primary.unitId && candidate.side === primary.side && !candidate.destroyed);
-      if (!unit || primary.side !== battleState.activeArmy || unit.activated) return;
+      if (!unit || primary.side !== battleState.activeArmy || (unit.activated && primary.unitId !== shootingResolutionShooterId)) return;
     }
     if (isPlayMode && (battleState?.phase === 'charge' || battleState?.phase === 'fight')) {
       const unit = battleState.units.find(candidate => candidate.id === primary.unitId && candidate.side === primary.side && !candidate.destroyed);

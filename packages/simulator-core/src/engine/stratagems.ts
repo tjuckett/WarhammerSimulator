@@ -1,4 +1,4 @@
-import type { BattleState, BattleUnit, Phase, Side } from '../types/battle';
+import { EVENT_REQUEST_KIND, EVENT_TRIGGER_TIMING, type BattleState, type BattleUnit, type Phase, type Side } from '../types/battle';
 import type { CommandRerollRollType, HeroicInterventionMode, StratagemDefinition, StratagemUse } from '../types/stratagem';
 import { battleRound } from './battleRound';
 import { canSpendCommandPoints, spendCommandPoints } from './commandPoints';
@@ -9,6 +9,8 @@ import { battleUnitMaxBaseRadiusInches } from './baseSizes';
 import { applyDamage, battleModelBaseEdgeDistance, battleUnitsBaseEdgeDistance } from './simulator';
 import type { RulesEdition } from './rulesEngine';
 import { unitHasRule } from './armyUnits';
+import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
+import { queueEventRequest } from './eventTriggers';
 
 let _stratagemUseId = 0;
 
@@ -299,6 +301,24 @@ function applyRapidIngressStratagemEffect(
   if (!unit) return;
 
   unit.rapidIngressThisPhase = true;
+  const event = recordBattleEvent(state, {
+    type: BATTLE_EVENT_TYPE.RuleTriggered,
+    side,
+    source: stratagem.name,
+    data: {
+      triggerTiming: EVENT_TRIGGER_TIMING.PhaseEnd,
+      rule: EVENT_REQUEST_KIND.IngressMove,
+      unitId: unit.id,
+      stratagemId: stratagem.id,
+    },
+  });
+  queueEventRequest(state, 'core-stratagem-rapid-ingress', event, {
+    kind: EVENT_REQUEST_KIND.IngressMove,
+    side,
+    timing: EVENT_TRIGGER_TIMING.PhaseEnd,
+    source: stratagem.name,
+    data: { unitId: unit.id, stratagemId: stratagem.id },
+  });
   appendStratagemEffectLog(state, side, unit.profile.name, `${unit.profile.name} can be set up from Strategic Reserves this phase.`, 'info');
 }
 

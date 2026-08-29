@@ -50,6 +50,7 @@ import {
 } from './simulator';
 import type { BattleState, BattleUnit } from '../types/battle';
 import type { AbilityTiming } from '../types/ability';
+import { PHASE_STEP } from '../types/battle';
 
 export type LegalActionCategory =
   | 'phase'
@@ -97,7 +98,9 @@ function activeUnits(state: BattleState, side: Side): BattleUnit[] {
 
 export function phaseCanAdvance(state: BattleState, side: Side, rules: RulesEdition): boolean {
   if (state.activeArmy !== side || state.phase === 'deployment' || state.phase === 'end') return false;
-  if (state.phase === 'movement' && !createMovementPhase(state)?.canAdvance) return false;
+  if (state.phase === 'movement'
+    && state.phaseStep !== PHASE_STEP.MovementEnd
+    && !createMovementPhase(state)?.canAdvance) return false;
   if (state.phase === 'fight' && rules.metadata.edition === '11e' && state.fightStepStarted === false) return false;
   if (state.phase === 'fight' && rules.metadata.edition === '11e'
     && (playFightActivationUnitIds(state, 0, rules).length || playFightActivationUnitIds(state, 1, rules).length)) return false;

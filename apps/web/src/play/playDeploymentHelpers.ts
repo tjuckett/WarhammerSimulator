@@ -61,17 +61,21 @@ export function resolvePlayPlacement(
   state: BattleState,
   selection: PlayDeploySelection,
   position: Position,
+  rotationDeg = 0,
+  rows?: number,
 ): { next: BattleState; placed: boolean; action: PlayPlacementAction } {
   if (selection.kind === PLAY_DEPLOY_SELECTION_KIND.Deployment) {
-    const next = placePlayUnit(state, selection.side, selection.unitIndex, position);
+    const next = placePlayUnit(state, selection.side, selection.unitIndex, position, rotationDeg, rows);
     return {
       next,
       placed: next.unplacedUnits[selection.side].length < state.unplacedUnits[selection.side].length,
       action: {
         type: GAME_ACTION_TYPE.PlaceUnit,
         side: selection.side,
-        unitIndex: selection.unitIndex,
-        position,
+      unitIndex: selection.unitIndex,
+      position,
+      rotationDeg,
+      rows,
       },
     };
   }

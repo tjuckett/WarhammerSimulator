@@ -84,6 +84,16 @@ Use this section as the current high-level pickup order before starting large ne
   - Audit charge, overwatch, mortal wounds, saves, Feel No Pain, damage allocation, and simulation paths for duplicated hit/wound/save/damage logic.
   - Keep phase modules responsible for declarations, eligibility, and sequencing while shared combat services own dice and attack-result resolution.
   - Return typed combat results/events from the shared boundary and remove phase-specific reimplementations where behavior is equivalent.
+- [ ] Refactor `packages/simulator-core/src/engine/manualCombat.ts` before adding more combat rules.
+  - Current size: ~2,210 lines; it combines shooting declarations/resolution, charge resolution, Fight eligibility/priority, manual Fight resolution, Overwatch, and automated Fight sequencing.
+  - Preserve one shared combat-resolution path, but split phase-specific declaration/eligibility/state-transition code into cohesive modules (for example shooting, charge, fight, and out-of-phase attacks) behind a small compatibility facade.
+  - Keep typed actions/events, timeline replay, and public simulator exports stable; do not reintroduce log parsing or duplicate hit/wound/save/damage logic.
+  - Do this after the current Fight-phase behavior is correct and covered by regression tests.
+- [ ] Split `packages/simulator-core/test/scenarioStorage.test.ts` into focused domain test files.
+  - Current size: ~13,394 lines. It has accumulated scenario persistence, timeline/replay, deployment, movement, shooting, charge, Fight, abilities, terrain, and mission cases.
+  - Move tests by domain without weakening integration coverage: keep a small scenario-storage/timeline integration suite, and relocate rule behavior to focused files alongside their owning modules.
+  - Extract shared battle/roster fixtures and test helpers so new tests do not continue expanding one monolithic file.
+  - Do this after the current Fight-phase behavior is correct; preserve every existing assertion while moving tests.
 - [x] Add a dedicated Army Builder mode.
   - Add a fourth app mode for army/list management with no battlefield canvas.
   - Top bar should show army-focused controls instead of play controls: army slot, army type/faction, saved army dropdown, New, Save, Import JSON, and Export JSON.
@@ -165,6 +175,15 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Use deployment zone polygons/triangles and center exclusions where required by the layout.
 
 ### Remaining 11th Rules TODOs
+
+- [ ] Finish Stratagem system design for the phase refactor.
+  - Define typed Stratagem timing windows, including opponent-turn reactions.
+  - Define player priority, eligibility, CP costs, once-per-phase/battle limits,
+    target selection, effect resolution, and same-phase registration.
+  - Define Stratagem popup/action state for human play and equivalent legal
+    actions for AI controllers.
+  - Ensure Stratagem use, pending choices, events, results, and popup state are
+    fully undoable and replayable without reading log text.
 - [x] Create a mission scoring definition table keyed by 11th primary mission name.
 - [x] Stop known 11th primary missions from awarding generic fallback VP while scoring text is missing.
 - [x] Show an unsupported-scoring warning during manual play when a known 11th primary mission has no transcribed scoring text.
@@ -257,6 +276,10 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: Rapid Disembark is also available during the Reinforcements step when the transport arrived via Ingress; ordinary disembark remains restricted to the Movement Units step.
   - Progress: final Core 05.04.02 damage handling now clamps weapon damage to the minimum characteristic value of 1 before allocation, with regression coverage.
   - Progress: final Core 18.04 now selects Tactical versus Combat Disembark per passenger based on whether a valid 3-inch non-engaged setup exists; stale/replayed Combat flags are revalidated, while Rapid Disembark remains tied to Normal/Ingress movement.
+  - [ ] Replace the temporary automatic Emergency Disembark resolver (Core 18.05) with a typed pending, per-model placement interaction.
+    - Keep each passenger pending when its TRANSPORT is destroyed; show a transport-adjacent popup and let the player place every model wholly within 6" and as close as possible to the wreck.
+    - Validate set-up legality, overlap/terrain, coherency, and destruction of models that cannot be placed; then make the required hazard rolls and apply Battle-shock/charge restrictions.
+    - Serialize the pending request, placements, rolls, and popup interaction state so undo, replay, save/load, AI, and non-UI controllers use the same action path.
   - Progress: final Core 23.02 now applies the Aircraft-only Engagement Range exception to automatic movement as well as manual legality, so non-Aircraft units are not incorrectly locked in place.
   - Progress: final Core 08.03 now retests already Battle-shocked units even after they recover above half-strength, and treats exact half-strength as eligible; a unit clears Battle-shock only when that single command-step roll succeeds.
   - Progress: charge/stratagem proximity and engagement checks now use model base-edge distance consistently, including Heroic Intervention boundary coverage.
@@ -279,6 +302,13 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
   - Progress: final Core 13.11.01 Gone to Ground now applies the 12-inch detection range only when dense terrain blocks every sampled model-footprint LOS ray; narrow screens can be seen around and retain the 15-inch range.
   - Progress: 11th Obscuring terrain is also honored by deployment-screening and AI placement LOS evaluation; 10th deployment screening remains unchanged.
   - Progress: final Core 03.04 now uses a 2-inch Engagement Range in 11th Edition while retaining 10th Edition's 1-inch value.
+- [ ] Finish the remaining shared Shooting/combat rules audit and extraction.
+  - [ ] Complete the shared Making Attacks implementation audit against the final 11th wording, including typed dice results, attack sequencing, modifiers, and reroll restrictions.
+  - [ ] Complete the weapon-ability audit for Shooting, including Blast, Hazardous, Heavy, Torrent, Twin-linked, Rapid Fire, Pistol/Sidearm, Anti, Devastating Wounds, Feel No Pain, Ignores Cover, Lethal Hits, Melta, One Shot, Precision, Stealth, and Sustained Hits.
+  - [ ] Complete the Aircraft-specific Shooting audit, including target eligibility, visibility, Plunging Fire exclusions, and AIRCRAFT/FLY melee restrictions where they interact with attack resolution.
+  - [ ] Complete the Transport/Firing Deck Shooting audit, including passenger weapon selection, capacity locking, activation state, target validation, and replay/save behavior.
+  - [ ] Add typed event registrations for Shooting abilities and mission rules as source data becomes available; do not infer effects from log text.
+  - [ ] Finish the Shooting Stratagem audit and UI flow, including reactive timing, opponent-turn use, pending choices, CP spending, and undo/replay state.
 - [x] Narrow the 11th preview notice while final-source implementation remains partial.
   - Progress: the ruleset and UI now present 11th Edition as source-audited and partial; stable preview-era metadata IDs remain only for saved-game compatibility, and the complete final-source re-audit remains tracked separately above.
 - [x] Keep edition-specific differences behind `RulesEdition` or focused helper functions instead of branching in React UI where possible.

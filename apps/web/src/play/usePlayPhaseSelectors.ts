@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { BATTLE_PHASE, type BattleState, type BattleUnit } from '@warhammer-simulator/core/types/battle';
+import { BATTLE_PHASE, PHASE_STEP, type BattleState, type BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { RulesEdition } from '@warhammer-simulator/core/engine/rulesEngine';
 import {
   playChargeEligibilityReason,
@@ -15,6 +15,7 @@ import {
   type PlayShootingWeaponOption,
 } from '@warhammer-simulator/core/engine/simulator';
 import { enemyTargetsForIds, targetIdsForOptions, unitForSelection } from './playBattleSelectors';
+import { orderedDice } from './playUiHelpers';
 
 export type PlayPhaseSelectorsInput = {
   isPlayMode: boolean;
@@ -52,6 +53,7 @@ const selectedPlayShootingOptions = useMemo(
     () => (
       isPlayMode
       && battleState?.phase === 'shooting'
+      && battleState.phaseStep === PHASE_STEP.ShootingUnits
       && selectedShootingUnit
       && selectedShootingUnit.side === battleState.activeArmy
         ? playShootingWeaponOptions(battleState, selectedShootingUnit.id, selectedShootingUnit.side, activeRulesForBattle)
@@ -60,7 +62,10 @@ const selectedPlayShootingOptions = useMemo(
     [isPlayMode, battleState, selectedShootingUnit, activeRulesForBattle],
   );
   const selectedPlayShootingTargets = useMemo(() => {
-    if (!battleState || !selectedShootingUnit) return [];
+    if (!battleState
+      || battleState.phase !== BATTLE_PHASE.Shooting
+      || battleState.phaseStep !== PHASE_STEP.ShootingUnits
+      || !selectedShootingUnit) return [];
     const selectedOption = selectedShootingWeaponIndex === 'all'
       ? null
       : selectedPlayShootingOptions.find(option => String(option.weaponIndex) === selectedShootingWeaponIndex) ?? null;
@@ -71,7 +76,9 @@ const selectedPlayShootingOptions = useMemo(
     );
   }, [battleState, selectedShootingUnit, selectedPlayShootingOptions, selectedShootingWeaponIndex]);
   const selectedShootingTargetUnit = useMemo(() => {
-    return selectedShootingUnit
+    return battleState?.phase === BATTLE_PHASE.Shooting
+      && battleState.phaseStep === PHASE_STEP.ShootingUnits
+      && selectedShootingUnit
       ? unitForSelection(battleState, selectedShootingTargetId, selectedShootingUnit.side === 0 ? 1 : 0)
       : null;
   }, [battleState, selectedShootingUnit, selectedShootingTargetId]);
@@ -138,9 +145,9 @@ const selectedPlayShootingOptions = useMemo(
     && battleState?.phase === 'charge'
     && selectedChargeUnit
     && !pendingChargeRoll
-    && (battleState?.lastChargeRoll?.unitId !== selectedChargeUnit.id
-      || battleState.lastChargeRoll.side !== selectedChargeUnit.side
-      || battleState.lastChargeRoll.status !== 'failed')
+    && (battleState?.chargeResolution?.unitId !== selectedChargeUnit.id
+      || battleState.chargeResolution.side !== selectedChargeUnit.side
+      || battleState.chargeResolution.status !== 'failed')
     && selectedPlayChargeOptions.length > 0
   );
   const selectedPlayChargeActive = !!(
@@ -161,18 +168,17 @@ const selectedPlayShootingOptions = useMemo(
   );
   const selectedPlayChargeResult = useMemo(() => {
     if (!battleState || !selectedChargeUnit) return null;
-    const result = battleState.lastChargeRoll;
+    const result = battleState.chargeResolution;
     return result?.unitId === selectedChargeUnit.id && result.side === selectedChargeUnit.side ? result : null;
-  }, [battleState?.lastChargeRoll, selectedChargeUnit?.id, selectedChargeUnit?.side]);
+  }, [battleState?.chargeResolution, selectedChargeUnit?.id, selectedChargeUnit?.side]);
   const selectedPlayChargeDice = useMemo(() => {
-    return selectedPlayChargeResult?.dice ?? [];
+    return selectedPlayChargeResult ? orderedDice(selectedPlayChargeResult.dice) : [];
   }, [selectedPlayChargeResult]);
   const selectedPlayFightOptions = useMemo(
     () => (
       isPlayMode
       && battleState?.phase === 'fight'
       && selectedFightUnit
-      && selectedFightUnit.side === battleState.activeArmy
         ? playFightWeaponOptions(battleState, selectedFightUnit.id, selectedFightUnit.side, activeRulesForBattle)
         : []
     ),

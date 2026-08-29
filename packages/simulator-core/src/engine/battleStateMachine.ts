@@ -1,4 +1,6 @@
-import { BATTLE_PHASE, BATTLE_ROUND_STEP, MOVEMENT_PHASE_STEP, MOVEMENT_STEP, PLAYER_TURN_STEP, type BattleRoundStep, type BattleState, type MovementPhaseStep, type MovementStep, type Phase, type PlayerTurnStep, type Side } from '../types/battle';
+import { BATTLE_PHASE, BATTLE_ROUND_STEP, EVENT_TRIGGER_TIMING, MOVEMENT_PHASE_STEP, MOVEMENT_STEP, PHASE_STEP, PLAYER_TURN_STEP, type BattleRoundStep, type BattleState, type MovementPhaseStep, type MovementStep, type Phase, type PhaseStep, type PlayerTurnStep, type Side } from '../types/battle';
+import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
+import { phaseDefinitionFor } from './phases/phaseRegistry';
 
 export type BattleFlowNode =
   | { kind: 'pre-battle'; phase: typeof BATTLE_PHASE.Deployment | typeof BATTLE_PHASE.Setup }
@@ -53,6 +55,26 @@ const TURN_PHASES: Phase[] = [
 
 export function isTurnPhase(phase: Phase): boolean {
   return TURN_PHASES.includes(phase);
+}
+
+export function phaseStepsFor(phase: Phase): readonly PhaseStep[] {
+  return phaseDefinitionFor(phase)?.steps ?? [];
+}
+
+export function initialPhaseStep(phase: Phase): PhaseStep | undefined {
+  return phaseStepsFor(phase)[0];
+}
+
+/** Returns a compatible step for old saved games that predate `phaseStep`. */
+export function phaseStepFor(state: Pick<BattleState, 'phase' | 'phaseStep' | 'movementStep' | 'fightStepStarted' | 'consolidationStepStarted'>): PhaseStep | undefined {
+  return phaseDefinitionFor(state.phase)?.currentStep(state) ?? initialPhaseStep(state.phase);
+}
+
+export function nextPhaseStep(state: Pick<BattleState, 'phase' | 'phaseStep' | 'movementStep' | 'fightStepStarted' | 'consolidationStepStarted'>): PhaseStep | undefined {
+  const steps = phaseStepsFor(state.phase);
+  const current = phaseStepFor(state);
+  const index = current ? steps.indexOf(current) : -1;
+  return index >= 0 && index < steps.length - 1 ? steps[index + 1] : undefined;
 }
 
 /** Returns the hierarchical Battle Round/Player Turn view of legacy state. */
@@ -175,11 +197,18 @@ export function movementPhaseNode(
 
 /** Updates the explicit Movement boundary and its legacy action cursor together. */
 export function setMovementPhaseNode(
-  state: Pick<BattleState, 'phase' | 'movementStep' | 'movementPhaseStep'>,
+  state: Pick<BattleState, 'phase' | 'phaseStep' | 'movementStep' | 'movementPhaseStep'>,
   node: MovementPhaseNode,
 ): void {
   state.phase = node.phase;
   state.movementPhaseStep = node.step;
+  state.phaseStep = node.step === MOVEMENT_PHASE_STEP.Start
+    ? PHASE_STEP.MovementStart
+    : node.step === MOVEMENT_PHASE_STEP.MoveUnits
+      ? PHASE_STEP.MovementUnits
+      : node.step === MOVEMENT_PHASE_STEP.Reinforcements
+        ? PHASE_STEP.MovementReinforcements
+        : PHASE_STEP.MovementEnd;
   if (node.step === MOVEMENT_PHASE_STEP.MoveUnits) state.movementStep = MOVEMENT_STEP.MoveUnits;
   if (node.step === MOVEMENT_PHASE_STEP.Reinforcements) state.movementStep = MOVEMENT_STEP.Reinforcements;
 }
@@ -215,8 +244,13 @@ export function battlePhaseNode(state: Pick<BattleState, 'phase' | 'movementStep
   return { phase: state.phase } as BattlePhaseNode;
 }
 
-export function setBattlePhase(state: Pick<BattleState, 'phase' | 'movementStep' | 'movementPhaseStep'>, node: BattlePhaseNode): void {
+export function setBattlePhase(state: Pick<BattleState, 'phase' | 'phaseStep' | 'movementStep' | 'movementPhaseStep'>, node: BattlePhaseNode): void {
   state.phase = node.phase;
+  state.phaseStep = node.phase === BATTLE_PHASE.Movement
+    ? node.step === MOVEMENT_STEP.Reinforcements
+      ? PHASE_STEP.MovementReinforcements
+      : PHASE_STEP.MovementStart
+    : initialPhaseStep(node.phase);
   state.movementStep = node.phase === BATTLE_PHASE.Movement ? node.step : undefined;
   state.movementPhaseStep = node.phase === BATTLE_PHASE.Movement
     ? node.step === MOVEMENT_STEP.Reinforcements ? MOVEMENT_PHASE_STEP.Reinforcements : MOVEMENT_PHASE_STEP.MoveUnits
@@ -267,6 +301,11 @@ export const BATTLE_PHASE_STATE_HANDLERS: Record<Phase, BattlePhaseStateHandler>
     phase: BATTLE_PHASE.Shooting,
     enter(state) {
       resetPhaseActivations(state);
+      for (const unit of state.units ?? []) {
+        if (unit.side !== state.activeArmy || unit.destroyed || unit.embarkedInUnitId) continue;
+        unit.firedWeaponIndices = undefined;
+        unit.rangedAttacksMadeThisTurn = false;
+      }
       clearChargeCursors(state);
       clearFightCursors(state);
     },
@@ -356,7 +395,27 @@ export function nextBattlePhase(state: Pick<BattleState, 'phase' | 'movementStep
 export function advanceBattlePhase(state: BattleState): Extract<BattlePhaseTransition, { kind: 'phase' }> | null {
   const transition = nextBattlePhase(state);
   if (!transition || transition.kind !== 'phase') return null;
+  const changesPhase = transition.from.phase !== transition.to.phase;
+  if (changesPhase) {
+    recordBattleEvent(state, {
+      type: BATTLE_EVENT_TYPE.PhaseCompleted,
+      side: state.activeArmy,
+      source: state.armies?.[state.activeArmy]?.name,
+      data: { triggerTiming: EVENT_TRIGGER_TIMING.PhaseEnd, from: transition.from.phase },
+    });
+  }
   initializeBattlePhase(state, transition.to);
+  recordBattleEvent(state, {
+    type: changesPhase ? BATTLE_EVENT_TYPE.PhaseStarted : BATTLE_EVENT_TYPE.StepStarted,
+    side: state.activeArmy,
+    source: state.armies?.[state.activeArmy]?.name,
+    data: {
+      triggerTiming: changesPhase ? EVENT_TRIGGER_TIMING.PhaseStart : EVENT_TRIGGER_TIMING.StepStart,
+      from: transition.from.phase,
+      to: transition.to.phase,
+      ...(transition.to.phase === BATTLE_PHASE.Movement ? { step: transition.to.step } : {}),
+    },
+  });
   return transition;
 }
 
