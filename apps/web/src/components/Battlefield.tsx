@@ -1,5 +1,5 @@
 import { useRef, useEffect, useLayoutEffect, useState, useCallback, type DragEvent, type MouseEvent, type PointerEvent, type ReactNode } from 'react';
-import type { BattleState, BattleUnit, Position } from '@warhammer-simulator/core/types/battle';
+import { PHASE_STEP, type BattleState, type BattleUnit, type Position } from '@warhammer-simulator/core/types/battle';
 import type { UnitProfile } from '@warhammer-simulator/core/types/army';
 import { pointInTerrain, terrainCenter, terrainCorners } from '@warhammer-simulator/core/engine/terrainGeometry';
 import { featureColor } from '@warhammer-simulator/core/engine/terrain';
@@ -39,6 +39,12 @@ type LOSModelVisibility = {
   visibleModelIds: Set<string>;
   blockedModelIds: Set<string>;
 };
+
+function hasPendingChargeMovement(state: BattleState): boolean {
+  return state.phase === 'charge'
+    && state.phaseStep === PHASE_STEP.ChargeUnits
+    && !!state.pendingChargeMovement;
+}
 
 function useStableLayoutEvent<T extends (...args: never[]) => unknown>(callback: T): T {
   const callbackRef = useRef(callback);
@@ -657,7 +663,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
 
   function onPointerDown(e: PointerEvent<HTMLCanvasElement>) {
     if (e.button === 2 && deployer?.enabled && deployer.onMarkMovementWaypoint
-      && (state.phase === 'movement' || state.phase === 'charge' || state.phase === 'fight')) {
+      && (state.phase === 'movement' || hasPendingChargeMovement(state) || state.phase === 'fight')) {
       e.preventDefault();
       waypointPointerDownRef.current = true;
       const point = boardPoint(e);
@@ -681,10 +687,11 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       const modelHit = hitTestModel(point);
       if (modelHit) {
         const modelSelection = selectedIndicesForHit(modelHit);
-        const pendingChargeUnitIds = state.pendingChargeMovement
+        const pendingChargeUnitIds = hasPendingChargeMovement(state)
           ? attachedBattleUnitIdsForSelection(state, state.pendingChargeMovement.unitId)
           : [];
-        const isPendingChargeModel = state.pendingChargeMovement?.side === modelHit.side
+        const isPendingChargeModel = hasPendingChargeMovement(state)
+          && state.pendingChargeMovement?.side === modelHit.side
           && pendingChargeUnitIds.includes(modelHit.unitId);
         const isPendingFightModel = state.pendingFightMovement?.side === modelHit.side
           && state.pendingFightMovement.unitId === modelHit.unitId;
@@ -766,7 +773,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     if (bothMouseButtonsHeld && !waypointPointerDownRef.current
       && deployer?.enabled && deployer.onMarkMovementWaypoint
       && modelDragRef.current?.moved
-      && (state.phase === 'movement' || state.phase === 'charge' || state.phase === 'fight')) {
+      && (state.phase === 'movement' || hasPendingChargeMovement(state) || state.phase === 'fight')) {
       waypointPointerDownRef.current = true;
       const point = boardPoint(e);
       commitDragPreviewBeforeWaypoint();
@@ -789,7 +796,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       const drag = modelDragRef.current;
       const movedDistance = Math.hypot(point.x - drag.start.x, point.y - drag.start.y);
       if (!drag.moved && movedDistance <= 0.25) return;
-      if (!drag.moved && !state.pendingChargeMovement && !state.pendingFightMovement) setHideSelectedActions(true);
+      if (!drag.moved && !hasPendingChargeMovement(state) && !state.pendingFightMovement) setHideSelectedActions(true);
       drag.moved = true;
       const dx = point.x - drag.current.x;
       const dy = point.y - drag.current.y;
@@ -797,7 +804,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       // Normal movement previews from the original start position so the drag
       // represents one move. Charge and pile-in movement need incremental
       // previews because each leg is part of their movement path.
-      drag.collide = e.shiftKey || !!state.pendingChargeMovement || !!state.pendingFightMovement;
+      drag.collide = e.shiftKey || hasPendingChargeMovement(state) || !!state.pendingFightMovement;
       setCollisionMode(drag.collide);
       if (drag.collide) {
         // Collision mode constrains the preview, but movement distance is
@@ -906,7 +913,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
   function onContextMenu(e: MouseEvent<HTMLCanvasElement>) {
     const canMarkWaypoint = deployer?.enabled
       && deployer.onMarkMovementWaypoint
-      && (state.phase === 'movement' || state.phase === 'charge' || state.phase === 'fight');
+      && (state.phase === 'movement' || hasPendingChargeMovement(state) || state.phase === 'fight');
     if (canMarkWaypoint) {
       e.preventDefault();
       if (waypointPointerDownRef.current) {
@@ -2366,7 +2373,7 @@ function drawSelectedModelMovementHud(
   if (!selectedModelIndices.length || unit.movementAction === 'fellBack' || unit.fellBack) return;
   const isMovementPhase = state.phase === 'movement';
   const isScoutMove = state.phase === 'setup' && !!unit.scoutMoveStarted;
-  const isChargeMove = state.phase === 'charge'
+  const isChargeMove = hasPendingChargeMovement(state)
     && state.pendingChargeMovement?.unitId === unit.id
     && state.pendingChargeMovement.side === unit.side;
   const isFightMove = state.phase === 'fight'
@@ -2394,7 +2401,7 @@ function drawSelectedModelMovementHud(
 
   const defaultAllowance = unit.movementAllowanceRemaining
     ?? unit.scoutMoveAllowance
-    ?? state.pendingChargeMovement?.maximumDistance
+    ?? (isChargeMove ? state.pendingChargeMovement?.maximumDistance : undefined)
     ?? (isFightMove ? 3 : undefined)
     ?? state.pendingSurgeMove?.maximumDistance
     ?? unit.profile.move;

@@ -86,6 +86,8 @@ import * as deadlyDemise from './deadlyDemise';
 import * as damageApplication from './damageApplication';
 import type { CombatAttackResolutionOptions, CombatHitPreview } from './combatTypes';
 import * as manualCombat from './manualCombat';
+import * as chargePhaseActions from './phases/chargePhaseActions';
+import * as chargePhaseRules from './phases/chargePhaseRules';
 import * as shootingPhaseActions from './phases/shootingPhaseActions';
 import * as shootingPhaseRules from './phases/shootingPhaseRules';
 import { createTransportDestruction } from './transportDestruction';
@@ -457,7 +459,7 @@ function targetVisibleToFriendlyUnit(state: BattleState, target: BattleUnit, sid
   return activeUnits(state, side).some(unit => battleUnitHasLosToAttachedUnit(state, unit, target));
 }
 
-const unitCanChargeTarget = (unit: BattleUnit, target: BattleUnit): boolean => manualCombat.unitCanChargeTarget(unit, target, hasKeyword);
+const unitCanChargeTarget = (unit: BattleUnit, target: BattleUnit): boolean => chargePhaseRules.unitCanChargeTarget(unit, target, hasKeyword);
 const unitCanFightTarget = (unit: BattleUnit, target: BattleUnit): boolean => manualCombat.unitCanFightTarget(unit, target, hasKeyword);
 
 // ─── Combat resolution ────────────────────────────────────────────────────────
@@ -1353,7 +1355,7 @@ export function lockPlayUnitShooting(state: BattleState, unitId: string, side: S
 }
 
 function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
-  return manualCombat.runCharge(unit, state, rules, {
+  return chargePhaseActions.runCharge(unit, state, rules, {
     enemies,
     unitCanChargeTarget,
     unitSurgedThisPhase,
@@ -1372,12 +1374,9 @@ function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): L
   });
 }
 
-export type PlayChargeTargetOption = {
-  targetId: string;
-  needed: number;
-};
+export type PlayChargeTargetOption = chargePhaseRules.ChargeTargetOption;
 
-const chargeRulesContext: manualCombat.ChargeRulesContext = {
+const chargeRulesContext: chargePhaseRules.ChargePhaseRulesContext = {
   attachedComponents: attachedUnitComponents,
   enemies,
   inEngagement: (state, unit) => inEngagement(unit, enemies(state, unit.side), rulesEditionForRuleset(state.ruleset).engagementRange()),
@@ -1387,27 +1386,18 @@ const chargeRulesContext: manualCombat.ChargeRulesContext = {
   baseEdgeDistance: battleUnitsBaseEdgeDistance,
 };
 
-const manualChargeRollContext: manualCombat.ManualChargeRollContext = {
+const chargePhaseActionContext: chargePhaseActions.ChargePhaseActionContext = {
   attachedUnitComponents,
   unitSurgedThisPhase,
-  sideCanDeclareCharge: manualCombat.sideCanDeclareCharge,
-  unitCanDeclareCharge: (state: BattleState, unit: BattleUnit) => manualCombat.unitCanDeclareCharge(state, unit, chargeRulesContext),
   d6,
   clone,
   hasKeyword,
   takeToSkiesDistanceCost,
-  recordBattleEvent,
-  BATTLE_EVENT_TYPE,
   log,
-  playChargeTargetOptions,
+  chargeRules: chargeRulesContext,
   enemies,
   inEngagement,
   baseEdgeDistance: battleUnitsBaseEdgeDistance,
-};
-
-const manualChargeDeclarationContext: manualCombat.ManualChargeDeclarationContext = {
-  ...manualChargeRollContext,
-  chargeRules: chargeRulesContext,
   findReachablePosition,
   avoidModelOverlap: interactiveMovementState.avoidModelOverlap,
   resolveInternalModelOverlaps: interactiveMovementState.resolveInternalModelOverlaps,
@@ -1418,7 +1408,6 @@ const manualChargeDeclarationContext: manualCombat.ManualChargeDeclarationContex
   modelRotation,
   unitTakesToSkiesForState,
   distance: dist,
-  unitCanChargeTarget,
 };
 
 export function playChargeRoll(
@@ -1427,7 +1416,7 @@ export function playChargeRoll(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
-  return manualCombat.playChargeRoll(state, unitId, side, rules, manualChargeRollContext);
+  return chargePhaseActions.playChargeRoll(state, unitId, side, rules, chargePhaseActionContext);
 }
 
 export function playChargeEligibilityReason(
@@ -1436,7 +1425,7 @@ export function playChargeEligibilityReason(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): string | null {
-  return manualCombat.playChargeEligibilityReason(state, unitId, side, rules, chargeRulesContext);
+  return chargePhaseRules.playChargeEligibilityReason(state, unitId, side, rules, chargeRulesContext);
 }
 
 export function playChargeTargetOptions(
@@ -1445,8 +1434,7 @@ export function playChargeTargetOptions(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): PlayChargeTargetOption[] {
-  if (state.phase !== 'charge') return [];
-  return manualCombat.playChargeTargetOptions(state, unitId, side, rules, chargeRulesContext);
+  return chargePhaseRules.playChargeTargetOptions(state, unitId, side, rules, chargeRulesContext);
 }
 
 export function chargePlayUnitTarget(
@@ -1466,7 +1454,7 @@ export function chargePlayUnitTargets(
   targetUnitIds: string[],
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
-  return manualCombat.chargePlayUnitTargets(state, unitId, side, targetUnitIds, rules, manualChargeDeclarationContext);
+  return chargePhaseActions.chargePlayUnitTargets(state, unitId, side, targetUnitIds, rules, chargePhaseActionContext);
 }
 
 export function completePlayChargeMovement(
@@ -1475,7 +1463,7 @@ export function completePlayChargeMovement(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
-  return manualCombat.completePlayChargeMovement(state, unitId, side, rules, manualChargeRollContext);
+  return chargePhaseActions.completePlayChargeMovement(state, unitId, side, rules, chargePhaseActionContext);
 }
 
 export type PlayFightWeaponOption = {
@@ -2654,7 +2642,10 @@ const takeToSkiesContext: interactiveMovementState.TakeToSkiesContext = {
   unitSurgedThisPhase,
   hasFlyKeyword: (state, unit) => attachedUnitKeywordSet(state, unit).has('fly'),
   movementCanBegin: (state, side) => state.activeArmy === side && movementStep(state) === 'moveUnits',
-  chargeCanBegin: (state, side, unit) => manualCombat.sideCanDeclareCharge(state, side, unit) && manualCombat.unitCanDeclareCharge(state, unit, chargeRulesContext),
+  chargeCanBegin: (state, side, unit) => state.phase === 'charge'
+    && state.phaseStep === PHASE_STEP.ChargeUnits
+    && chargePhaseRules.sideCanDeclareCharge(state, side, unit)
+    && chargePhaseRules.unitCanDeclareCharge(state, unit, chargeRulesContext),
   unitHasStartedCurrentMove,
   unitHasHover: unit => unitHasRule(unit.profile, 'Hover'),
   updateMovementAllowances: unit => updateModelMovementAllowances(unit),

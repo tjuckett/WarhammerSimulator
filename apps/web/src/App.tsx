@@ -133,6 +133,13 @@ function chargeAttemptFailed(state: BattleState, unitId: string, side: 0 | 1): b
   return result?.unitId === unitId && result.side === side && result.status === 'failed';
 }
 
+function hasPendingChargeMovement(state: BattleState | null | undefined): boolean {
+  return !!state
+    && state.phase === BATTLE_PHASE.Charge
+    && state.phaseStep === PHASE_STEP.ChargeUnits
+    && !!state.pendingChargeMovement;
+}
+
 type SimulationGranularity = 'unit' | 'phase' | 'turn';
 
 function useStableEvent<T extends (...args: never[]) => unknown>(callback: T): T {
@@ -525,7 +532,7 @@ export default function App() {
   const canEditTerrain = isEditorMode && !battleState;
   const playMovementStep = battleState?.phase === BATTLE_PHASE.Movement ? movementStep(battleState) : null;
   const isPlayReinforcementsStep = playMovementStep === MOVEMENT_STEP.Reinforcements;
-  const canEditPlayModelsNow = canEditPlayModels(battleState) || !!battleState?.pendingChargeMovement || !!battleState?.pendingFightMovement;
+  const canEditPlayModelsNow = canEditPlayModels(battleState) || hasPendingChargeMovement(battleState) || !!battleState?.pendingFightMovement;
   const getSelectedPlayUnit = () => {
     if (!playDeploySelection || !battleState) return null;
     if (playDeploySelection.kind === PLAY_DEPLOY_SELECTION_KIND.Deployment
@@ -632,17 +639,19 @@ export default function App() {
   const shootingResolutionTargetUnit = shootingResolutionStatus === 'rolled' && activeCombatResolution
     ? battleState?.units.find(unit => unit.id === selectedShootingResolutionTargetId && !unit.destroyed && !unit.embarkedInUnitId) ?? null
     : null;
-  const chargeResolutionUnit = battleState?.phase === 'charge' && battleState.chargeResolution
+  const chargeUnitsStepActive = battleState?.phase === BATTLE_PHASE.Charge
+    && battleState.phaseStep === PHASE_STEP.ChargeUnits;
+  const chargeResolutionUnit = chargeUnitsStepActive && battleState.chargeResolution
     ? battleState.units.find(unit => unit.id === battleState.chargeResolution?.unitId
       && unit.side === battleState.chargeResolution?.side && !unit.destroyed) ?? null
     : null;
-  const selectedChargeUnit = battleState?.phase === 'charge' && selectedPlayBattleUnit?.side === battleState.activeArmy
+  const selectedChargeUnit = chargeUnitsStepActive && selectedPlayBattleUnit?.side === battleState.activeArmy
     ? selectedPlayBattleUnit
-    : battleState?.phase === 'charge' && battleState.pendingChargeMovement
+    : chargeUnitsStepActive && battleState.pendingChargeMovement
       ? battleState.units.find(unit => unit.id === battleState.pendingChargeMovement?.unitId
         && unit.side === battleState.pendingChargeMovement?.side && !unit.destroyed) ?? null
       : chargeResolutionUnit;
-  const pendingChargeRoll = battleState?.phase === 'charge'
+  const pendingChargeRoll = chargeUnitsStepActive
     && selectedChargeUnit
     && battleState.pendingChargeRoll?.unitId === selectedChargeUnit.id
     && battleState.pendingChargeRoll?.side === selectedChargeUnit.side
@@ -1078,7 +1087,7 @@ export default function App() {
     );
   }, [battleState, activeRulesForBattle, isPlayReinforcementsStep]);
   const chargeReadyUnitIds = useMemo<Set<string>>(() => {
-    if (!battleState || battleState.phase !== 'charge') return new Set();
+    if (!battleState || battleState.phase !== 'charge' || battleState.phaseStep !== PHASE_STEP.ChargeUnits) return new Set();
     return new Set(
       battleState.units
         .filter(unit => unit.side === battleState.activeArmy && !unit.destroyed && !unit.embarkedInUnitId)
@@ -1420,7 +1429,7 @@ export default function App() {
   ]);
 
   useEffect(() => {
-    if (!battleState || battleState.phase !== 'charge' || !selectedChargeUnit) {
+    if (!chargeUnitsStepActive || !selectedChargeUnit) {
       if (selectedChargeTargetIds.length) setSelectedChargeTargetIds([]);
       return;
     }
@@ -1430,7 +1439,7 @@ export default function App() {
     } else if (!selectedChargeTargetIds.length && selectedPlayChargeOptions[0]?.targetId) {
       setSelectedChargeTargetIds([selectedPlayChargeOptions[0].targetId]);
     }
-  }, [battleState?.phase, battleState?.units, selectedChargeUnit?.id, selectedChargeTargetIds, selectedPlayChargeOptions, battleState, selectedChargeUnit, setSelectedChargeTargetIds]);
+  }, [battleState?.phase, battleState?.phaseStep, battleState?.units, chargeUnitsStepActive, selectedChargeUnit?.id, selectedChargeTargetIds, selectedPlayChargeOptions, battleState, selectedChargeUnit, setSelectedChargeTargetIds]);
 
   useEffect(() => {
     const fightSelectionUnavailable = !battleState || battleState.phase !== 'fight' || !selectedFightUnit;
@@ -1850,7 +1859,7 @@ export default function App() {
       return;
     }
 
-    if (isPlayMode && battleState?.phase === 'charge') {
+    if (isPlayMode && battleState?.phase === 'charge' && battleState.phaseStep === PHASE_STEP.ChargeUnits) {
       const clickedUnit = battleState.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
       if (!clickedUnit) return;
       const failedCharge = chargeAttemptFailed(battleState, unitId, side);
@@ -2029,7 +2038,7 @@ export default function App() {
     const selection = playModelSelection;
     if (!selection) return;
     const prev = battleStateRef.current;
-    if (!canEditPlayModels(prev) && !prev?.pendingChargeMovement && !prev?.pendingFightMovement) return;
+    if (!canEditPlayModels(prev) && !hasPendingChargeMovement(prev) && !prev?.pendingFightMovement) return;
     const next = rotateSelectedPlayModelsInUi(prev, selection, degrees);
     if (next === prev) return;
 
@@ -2108,7 +2117,7 @@ export default function App() {
 
   function beginPlayModelMove(selection: PlayModelSelection) {
     const current = battleStateRef.current;
-    if (!canEditPlayModels(current) && !current?.pendingChargeMovement && !current?.pendingFightMovement) return;
+    if (!canEditPlayModels(current) && !hasPendingChargeMovement(current) && !current?.pendingFightMovement) return;
     const normalized = normalizePlaySelectionForState(current, selection);
     if (!normalized) return;
     pendingPlayModelMoveUndoRef.current = {
@@ -2133,7 +2142,7 @@ export default function App() {
 
   function moveSelectedPlayModel(selection: PlayModelSelection, dx: number, dy: number, collide: boolean, previewState?: BattleState) {
     const prev = battleStateRef.current;
-    if (!canEditPlayModels(prev) && !prev?.pendingChargeMovement && !prev?.pendingFightMovement) return;
+    if (!canEditPlayModels(prev) && !hasPendingChargeMovement(prev) && !prev?.pendingFightMovement) return;
     const normalized = normalizePlaySelectionForState(prev, selection);
     if (!normalized) return;
     const next = previewState ?? moveSelectedPlayModels(prev, normalized, dx, dy, collide);
@@ -2268,7 +2277,7 @@ export default function App() {
     const prev = movementDraftState ?? battleStateRef.current;
     const canMarkWaypoint = !!prev && (
       prev.phase === BATTLE_PHASE.Movement
-      || !!prev.pendingChargeMovement
+      || hasPendingChargeMovement(prev)
       || !!prev.pendingFightMovement
     );
     if (!canMarkWaypoint || !selection) return null;
@@ -2535,7 +2544,7 @@ export default function App() {
   function rollSelectedPlayCharge() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
-    if (!prev || prev.phase !== 'charge' || !selection) return;
+    if (!prev || prev.phase !== 'charge' || prev.phaseStep !== PHASE_STEP.ChargeUnits || !selection) return;
     const next = playChargeRoll(prev, selection.unitId, selection.side, activeRulesForBattle);
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
@@ -3231,18 +3240,18 @@ export default function App() {
             selectedUnitIds={isPlayMode
               ? (shootingUnitsStepActive && selectedShootingTargetId
                   ? [selectedShootingTargetId]
-                  : battleState?.phase === 'charge' && pendingChargeRoll
+                  : chargeUnitsStepActive && pendingChargeRoll
                     ? selectedPlayChargeTargets.map(unit => unit.id)
                     : battleState?.phase === 'fight' && selectedFightTargetId
                       ? [selectedFightTargetId]
-                      : battleState?.phase === 'charge'
+                      : chargeUnitsStepActive
                         ? selectedChargeTargetIds
                         : [])
               : inspectedBattleUnitIds}
             shooterUnitId={isPlayMode
               ? shootingUnitsStepActive
                 ? selectedShootingUnit?.id ?? null
-                : battleState?.phase === 'charge'
+                : chargeUnitsStepActive
                   ? selectedChargeUnit?.id ?? null
                   : battleState?.phase === 'fight'
                     ? selectedFightUnit?.id ?? null
@@ -3251,7 +3260,7 @@ export default function App() {
             targetUnitId={isPlayMode
               ? shootingUnitsStepActive
                 ? null
-                : battleState?.phase === 'charge'
+                : chargeUnitsStepActive
                   ? selectedChargeTargetIds[0] ?? null
                   : battleState?.phase === 'fight'
                     ? selectedFightTargetId
@@ -3262,7 +3271,7 @@ export default function App() {
             movementReadyUnitIds={isPlayMode && battleState?.phase === BATTLE_PHASE.Movement ? movementReadyUnitIds : undefined}
             shootingReadyUnitIds={isPlayMode && shootingUnitsStepActive
               ? shootingReadyUnitIds
-              : isPlayMode && battleState?.phase === 'charge'
+              : isPlayMode && chargeUnitsStepActive
                 ? chargeReadyUnitIds
                 : undefined}
             shootingNoTargetUnitIds={isPlayMode && shootingUnitsStepActive ? shootingNoTargetUnitIds : undefined}
@@ -3470,7 +3479,7 @@ export default function App() {
                       )}
                     </>
                   )}
-                  {battleState.phase === 'charge' && selectedChargeUnit && (pendingChargeRoll || pendingPlayChargeMovement) && (
+                  {chargeUnitsStepActive && selectedChargeUnit && (pendingChargeRoll || pendingPlayChargeMovement) && (
                     <>
                       {selectedPlayChargeResult && (
                         <>
@@ -3530,7 +3539,7 @@ export default function App() {
                       </>}
                     </>
                   )}
-                  {battleState.phase === 'charge' && selectedChargeUnit && !pendingChargeRoll && !selectedPlayCanRollCharge && selectedPlayChargeResult?.status === 'failed' && !chargeResultDismissed && (
+                  {chargeUnitsStepActive && selectedChargeUnit && !pendingChargeRoll && !selectedPlayCanRollCharge && selectedPlayChargeResult?.status === 'failed' && !chargeResultDismissed && (
                     <>
                       <Typography variant="caption" sx={{ color: '#ffcf66' }}>
                         Charge roll: {selectedPlayChargeResult.total}&quot;

@@ -1334,6 +1334,9 @@ test('11th Heroic Intervention lets the targeted defender declare a charge in th
   const defender = losTestUnit('defender', 1, { x: 16, y: 10 });
   battle.units = [attacker, defender];
 
+  const startOfCharge = { ...battle, phaseStep: PHASE_STEP.ChargeStart };
+  assert.deepEqual(playChargeTargetOptions(startOfCharge, defender.id, 1, rules40K11th), []);
+  assert.equal(chargePlayUnitTarget(startOfCharge, defender.id, 1, attacker.id, rules40K11th), startOfCharge);
   assert.deepEqual(playChargeTargetOptions(battle, defender.id, 1, rules40K11th), []);
 
   const intervening = useStratagem(battle, 1, 'heroic-intervention', rules40K11th, defender.id, undefined, undefined, undefined, 'leap-to-defend');
@@ -1546,6 +1549,7 @@ test('11th Ork Waaagh! records a typed active army ability window', () => {
 
   const target = losTestUnit('target', 1, { x: 7, y: 10 });
   used.phase = 'charge';
+  used.phaseStep = PHASE_STEP.ChargeUnits;
   used.activeArmy = 0;
   used.units.push(target);
   const advanced = used.units.find(unit => unit.id === ork.id)!;
@@ -6586,7 +6590,7 @@ test('11th shooting types prevent an action but still allow a charge after parti
   assert.equal(afterShotUnit.activated, false);
   assert.deepEqual(afterShotUnit.firedWeaponIndices, [0]);
   assert.equal(playUnitCanStartAction(afterShot, shooter.id, 0, rules40K11th), false);
-  const chargeState = { ...afterShot, phase: 'charge' as Phase };
+  const chargeState = { ...afterShot, phase: 'charge' as Phase, phaseStep: PHASE_STEP.ChargeUnits };
   assert.equal(playChargeTargetOptions(chargeState, shooter.id, 0, rules40K11th).length, 1);
   assert.notEqual(chargePlayUnitTarget(chargeState, shooter.id, 0, target.id, rules40K11th), chargeState);
 });

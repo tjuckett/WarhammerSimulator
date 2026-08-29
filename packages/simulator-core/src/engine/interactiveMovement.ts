@@ -1,4 +1,4 @@
-import { EVENT_REQUEST_KIND, EVENT_TRIGGER_TIMING, type BattleState, type BattleUnit, type BoardFormat, type LogEntry, type LogType, type Position, type Side, type Terrain, type TerrainFeature } from '../types/battle';
+import { EVENT_REQUEST_KIND, EVENT_TRIGGER_TIMING, PHASE_STEP, type BattleState, type BattleUnit, type BoardFormat, type LogEntry, type LogType, type Position, type Side, type Terrain, type TerrainFeature } from '../types/battle';
 import type { UnitProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
@@ -1097,7 +1097,10 @@ export interface ModelMovementContext {
 export function moveModels(
   state: BattleState, unitId: string, side: Side, modelIndices: number[], dx: number, dy: number, collide: boolean, context: ModelMovementContext,
 ): BattleState {
-  const chargeMovement = state.phase === 'charge' && state.pendingChargeMovement?.unitId === unitId && state.pendingChargeMovement?.side === side;
+  const chargeMovement = state.phase === 'charge'
+    && state.phaseStep === PHASE_STEP.ChargeUnits
+    && state.pendingChargeMovement?.unitId === unitId
+    && state.pendingChargeMovement?.side === side;
   const fightMovement = state.phase === 'fight' && state.pendingFightMovement?.unitId === unitId && state.pendingFightMovement?.side === side;
   if (!context.isModelEditPhase(state.phase) && !chargeMovement && !fightMovement) return state;
   if (state.phase === 'movement' && context.movementStep(state) !== 'moveUnits') return state;

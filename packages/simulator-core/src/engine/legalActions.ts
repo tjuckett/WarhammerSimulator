@@ -350,7 +350,7 @@ function addSnapShootingActions(actions: LegalAction[], state: BattleState, side
 }
 
 function addChargeActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
-  if (state.phase !== 'charge' || state.activeArmy !== side) return;
+  if (state.phase !== 'charge' || state.phaseStep !== PHASE_STEP.ChargeUnits || state.activeArmy !== side) return;
   for (const unit of activeUnits(state, side)) {
     const options = playChargeTargetOptions(state, unit.id, side, rules);
     const selections = options.reduce<Array<PlayChargeTargetOption[]>>(

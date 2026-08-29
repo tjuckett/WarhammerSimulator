@@ -44,7 +44,9 @@ export function usePlayPhaseSelectors({
   selectedFightTargetId,
   selectedFightWeaponIndex,
 }: PlayPhaseSelectorsInput) {
-  const pendingChargeRoll = battleState?.phase === BATTLE_PHASE.Charge
+  const chargeUnitsStepActive = battleState?.phase === BATTLE_PHASE.Charge
+    && battleState.phaseStep === PHASE_STEP.ChargeUnits;
+  const pendingChargeRoll = chargeUnitsStepActive
     && battleState.pendingChargeRoll?.unitId === selectedChargeUnit?.id
     && battleState.pendingChargeRoll?.side === selectedChargeUnit?.side
     ? battleState.pendingChargeRoll
@@ -125,6 +127,7 @@ const selectedPlayShootingOptions = useMemo(
     () => (
       isPlayMode
       && battleState?.phase === 'charge'
+      && battleState.phaseStep === PHASE_STEP.ChargeUnits
       && !battleState.pendingChargeMovement
       && selectedChargeUnit
         ? playChargeTargetOptions(battleState, selectedChargeUnit.id, selectedChargeUnit.side, activeRulesForBattle)
@@ -133,16 +136,17 @@ const selectedPlayShootingOptions = useMemo(
     [isPlayMode, battleState, selectedChargeUnit, activeRulesForBattle],
   );
   const selectedPlayChargeTargets = useMemo(() => {
-    if (!battleState || !selectedChargeUnit) return [];
+    if (!chargeUnitsStepActive || !battleState || !selectedChargeUnit) return [];
     return enemyTargetsForIds(
       battleState,
       selectedChargeUnit.side,
       new Set(selectedPlayChargeOptions.map(option => option.targetId)),
     );
-  }, [battleState, selectedChargeUnit, selectedPlayChargeOptions]);
+  }, [battleState, chargeUnitsStepActive, selectedChargeUnit, selectedPlayChargeOptions]);
   const selectedPlayCanRollCharge = !!(
     isPlayMode
     && battleState?.phase === 'charge'
+    && battleState.phaseStep === PHASE_STEP.ChargeUnits
     && selectedChargeUnit
     && !pendingChargeRoll
     && (battleState?.chargeResolution?.unitId !== selectedChargeUnit.id
@@ -153,9 +157,10 @@ const selectedPlayShootingOptions = useMemo(
   const selectedPlayChargeActive = !!(
     isPlayMode
     && battleState?.phase === 'charge'
+    && battleState.phaseStep === PHASE_STEP.ChargeUnits
     && selectedChargeUnit
   );
-  const pendingPlayChargeMovement = battleState?.phase === 'charge'
+  const pendingPlayChargeMovement = chargeUnitsStepActive
     && battleState.pendingChargeMovement?.unitId === selectedChargeUnit?.id
     && battleState.pendingChargeMovement?.side === selectedChargeUnit?.side
     ? battleState.pendingChargeMovement
@@ -167,10 +172,10 @@ const selectedPlayShootingOptions = useMemo(
     [selectedPlayChargeActive, selectedChargeUnit, battleState, activeRulesForBattle],
   );
   const selectedPlayChargeResult = useMemo(() => {
-    if (!battleState || !selectedChargeUnit) return null;
+    if (!chargeUnitsStepActive || !battleState || !selectedChargeUnit) return null;
     const result = battleState.chargeResolution;
     return result?.unitId === selectedChargeUnit.id && result.side === selectedChargeUnit.side ? result : null;
-  }, [battleState?.chargeResolution, selectedChargeUnit?.id, selectedChargeUnit?.side]);
+  }, [battleState?.chargeResolution, chargeUnitsStepActive, selectedChargeUnit?.id, selectedChargeUnit?.side]);
   const selectedPlayChargeDice = useMemo(() => {
     return selectedPlayChargeResult ? orderedDice(selectedPlayChargeResult.dice) : [];
   }, [selectedPlayChargeResult]);

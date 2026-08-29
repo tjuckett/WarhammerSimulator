@@ -1,4 +1,4 @@
-import type { BattleState } from '@warhammer-simulator/core/types/battle';
+import { PHASE_STEP, type BattleState } from '@warhammer-simulator/core/types/battle';
 import type { RulesEdition } from '@warhammer-simulator/core/engine/rulesEngine';
 import { chargePlayUnitTargets, completePlayChargeMovement } from '@warhammer-simulator/core/engine/simulator';
 import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
@@ -36,7 +36,8 @@ export function createPlayChargeActions({
   function resolveSelectedPlayCharge() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
-    if (!prev || prev.phase !== 'charge' || !selection || !selectedChargeTargetIds.length) return;
+    if (!prev || prev.phase !== 'charge' || prev.phaseStep !== PHASE_STEP.ChargeUnits
+      || !selection || !selectedChargeTargetIds.length) return;
     const next = chargePlayUnitTargets(prev, selection.unitId, selection.side, selectedChargeTargetIds, activeRulesForBattle);
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
@@ -53,7 +54,7 @@ export function createPlayChargeActions({
   function completeSelectedPlayChargeMovement() {
     const selection = primaryPlaySelectionPart(playModelSelection);
     const prev = battleStateRef.current;
-    if (!prev || prev.phase !== 'charge' || !selection) return;
+    if (!prev || prev.phase !== 'charge' || prev.phaseStep !== PHASE_STEP.ChargeUnits || !selection) return;
     const next = completePlayChargeMovement(prev, selection.unitId, selection.side, activeRulesForBattle);
     if (next === prev) {
       setTargetErrorMsg('Move every model into Engagement Range of each declared charge target before completing the charge.');
