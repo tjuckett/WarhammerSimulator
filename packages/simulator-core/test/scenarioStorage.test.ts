@@ -11711,6 +11711,75 @@ test('11th Tactical Disembark remains available after a transport is marked stat
   assert.equal(disembarked.units.some(unit => unit.profile.name === 'Stationary Passengers'), true);
 });
 
+test('11th Tactical Disembark permits a Normal Move followed by a Charge', () => {
+  const battle = state('movement');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const passengerProfile = {
+    name: 'Tactical Passengers',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+    deployment: { mode: 'transport' as const, transportUnitId: 'tactical-transport-roster', transportName: 'Tactical Transport' },
+  };
+  const transportProfile = {
+    ...passengerProfile,
+    rosterId: 'tactical-transport-roster',
+    name: 'Tactical Transport',
+    keywords: ['Transport'],
+    oc: 0,
+    transportCapacity: 2,
+    deployment: undefined,
+  };
+  const transport: BattleUnit = {
+    id: 'tactical-transport',
+    side: 0,
+    profile: transportProfile,
+    remainingModels: 1,
+    woundsOnLeadModel: 10,
+    position: { x: 20, y: 20 },
+    modelPositions: [{ x: 20, y: 20 }],
+    facingDeg: 0,
+    charged: false,
+    inCombat: false,
+    battleshocked: false,
+    activated: false,
+    destroyed: false,
+  };
+  const enemy = {
+    ...transport,
+    id: 'tactical-enemy',
+    side: 1 as const,
+    profile: { ...transportProfile, name: 'Tactical Enemy', keywords: [] },
+    position: { x: 32, y: 20 },
+    modelPositions: [{ x: 32, y: 20 }],
+  };
+  battle.armies[0].army = { ...battle.armies[0].army, units: [transportProfile, passengerProfile] };
+  battle.units = [transport, enemy];
+
+  assert.equal(playUnitCanDisembark(battle, 0, transport.id, undefined, 1), true);
+  const disembarked = disembarkPlayUnit(battle, 0, transport.id, undefined, 1);
+  const passenger = disembarked.units.find(unit => unit.profile.name === 'Tactical Passengers')!;
+  const moved = movePlayModels(disembarked, passenger.id, 0, [0], 1, 0);
+  const completed = completePlayUnitMovement(moved, passenger.id, 0);
+  const charge = structuredClone(completed);
+  charge.phase = 'charge';
+  charge.phaseStep = PHASE_STEP.ChargeUnits;
+
+  assert.equal(passenger.disembarkedThisTurn, true);
+  assert.equal(completed.units.find(unit => unit.id === passenger.id)?.movementAction, 'normalMove');
+  assert.equal(completed.units.find(unit => unit.id === passenger.id)?.rapidDisembarkedThisTurn, undefined);
+  assert.equal(completed.units.find(unit => unit.id === passenger.id)?.combatDisembarkedThisTurn, undefined);
+  assert.deepEqual(playChargeTargetOptions(charge, passenger.id, 0, rules40K11th).map(option => option.targetId), [enemy.id]);
+});
+
 test('11th Disembark prefers a safe Tactical setup over Combat Disembark', () => {
   const battle = state('movement');
   battle.ruleset = rulesetMetadataForState(rules40K11th);

@@ -1347,7 +1347,11 @@ export function unitCanDeclareCharge(state: BattleState, unit: BattleUnit, conte
     // enemy moved into Engagement Range or an attached component is engaged.
     && !isAlreadyEngaged
     && !unit.fellBack && !unit.arrivedFromReinforcements
-    && !unit.emergencyDisembarkedThisTurn && !unit.combatDisembarkedThisTurn && !unit.rapidDisembarkedThisTurn
+    // Tactical Disembark intentionally does not appear here: after a Tactical
+    // Disembark, a unit may make a Normal Move and still declare a Charge.
+    && !unit.emergencyDisembarkedThisTurn
+    && !unit.combatDisembarkedThisTurn
+    && !unit.rapidDisembarkedThisTurn
     && unit.movementAction !== 'fellBack'
     && (unit.movementAction !== 'advanced' || state.activeArmyAbilities?.[unit.side]?.includes('waaagh') === true);
 }
@@ -1371,7 +1375,9 @@ export function playChargeEligibilityReason(state: BattleState, unitId: string, 
   }
   if (unit.fellBack || unit.movementAction === 'fellBack') return 'A unit that fell back cannot charge this phase.';
   if (unit.arrivedFromReinforcements) return 'A unit arriving from Reinforcements cannot charge this phase.';
-  if (unit.emergencyDisembarkedThisTurn || unit.combatDisembarkedThisTurn || unit.rapidDisembarkedThisTurn) return 'This unit cannot charge after disembarking this turn.';
+  if (unit.emergencyDisembarkedThisTurn || unit.combatDisembarkedThisTurn || unit.rapidDisembarkedThisTurn) {
+    return 'This unit cannot charge after a Rapid, Combat, or Emergency Disembark this turn.';
+  }
   if (unit.performingAction) return 'This unit is performing an action.';
   if (unit.movementAction === 'advanced' && state.activeArmyAbilities?.[side]?.includes('waaagh') !== true) return 'A unit that advanced cannot charge this phase.';
   const candidates = context.enemies(state, side).filter(target => context.canChargeTarget(unit, target));

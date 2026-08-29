@@ -123,9 +123,12 @@ off the battlefield.
   the unit from the battlefield and record it as embarked within that Transport.
 - Disembark Move: only eligible units embarked in a battlefield Transport;
   Rapid/Tactical setup distance is 3" and Combat is 6". Rapid is mandatory after
-  a Transport Normal or Ingress Move; Tactical follows with a Normal or Advance
-  Move; Combat requests shared Hazard Rolls, may allow engagement with units engaging
-  the Transport, makes the unit Battle-shocked, and prevents Charge.
+  a Transport Normal or Ingress Move and prevents Charge for the rest of the turn.
+  Tactical follows with a Normal or Advance Move. Tactical Disembark itself does
+  not prevent Charge: after making a Normal Move, the unit may still declare a
+  Charge. If it chooses an Advance Move, the normal Advance restriction prevents
+  Charge. Combat requests shared Hazard Rolls, may allow engagement with units
+  engaging the Transport, makes the unit Battle-shocked, and prevents Charge.
 - Ingress Move: Strategic Reserves units, excluding passengers in Transports
   that are themselves in Strategic Reserves; set up within 6" of battlefield
   edges and more than 8" horizontally from enemies, with the pre-Third Battle

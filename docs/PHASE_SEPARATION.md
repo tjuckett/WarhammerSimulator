@@ -817,10 +817,14 @@ Phase: Charge
         is eligible to declare a charge.
       - A unit is eligible if it is on the battlefield, unless another rule
         states otherwise.
-      - A unit is not eligible when any of these restrictions apply:
-          - It is not within 12 inches of one or more enemy units.
-          - It is engaged.
-          - It made an Advance or Fall Back move this turn.
+       - A unit is not eligible when any of these restrictions apply:
+         - It is not within 12 inches of one or more enemy units.
+         - It is engaged.
+         - It made an Advance or Fall Back move this turn.
+         - It made a Rapid, Combat, or Emergency Disembark this turn.
+       - Tactical Disembark does not itself prevent a Charge. The unit may
+         make a Normal Move after Tactical Disembark and then declare a Charge;
+         choosing an Advance Move still applies the normal Advance restriction.
       - Resolve declaration-specific triggers and choices.
 
    b. Make Charge Roll
@@ -1283,7 +1287,9 @@ While moving:
 After moving:
   - Rapid Disembark: until the end of the turn, the unit is not eligible to
     declare a charge.
-  - Tactical Disembark: select the unit to make a Normal or Advance Move.
+  - Tactical Disembark: select the unit to make a Normal or Advance Move. A
+    Tactical Disembark followed by a Normal Move still permits the unit to
+    declare a Charge; an Advance Move applies the normal Advance restriction.
   - Combat Disembark: the unit becomes Battle-shocked and is not eligible to
     declare a charge until the end of the turn.
 
