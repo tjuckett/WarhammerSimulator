@@ -20,6 +20,7 @@ import {
   playDisembarkModes,
   playFightActivationUnitIds,
   playFightPhaseHasPendingActivations,
+  playFightPileInUnitIds,
   playConsolidationUnitIds,
   playConsolidationPendingFightUnitIds,
   fightOnDeathTargetIds,
@@ -51,6 +52,7 @@ import {
 import type { BattleState, BattleUnit } from '../types/battle';
 import type { AbilityTiming } from '../types/ability';
 import { PHASE_STEP } from '../types/battle';
+import { fightPhaseStep, isFightConsolidationStep, isFightPileInStep, isFightUnitsStep } from './phases/fightPhaseRules';
 
 export type LegalActionCategory =
   | 'phase'
@@ -101,12 +103,14 @@ export function phaseCanAdvance(state: BattleState, side: Side, rules: RulesEdit
   if (state.phase === 'movement'
     && state.phaseStep !== PHASE_STEP.MovementEnd
     && !createMovementPhase(state)?.canAdvance) return false;
-  if (state.phase === 'fight' && rules.metadata.edition === '11e' && state.fightStepStarted === false) return false;
+  const currentFightStep = state.phase === 'fight' ? fightPhaseStep(state) : null;
   if (state.phase === 'fight' && rules.metadata.edition === '11e'
+    && (currentFightStep === PHASE_STEP.FightStart || currentFightStep === PHASE_STEP.FightPileIn)) return false;
+  if (state.phase === 'fight' && rules.metadata.edition === '11e' && isFightUnitsStep(state)
     && (playFightActivationUnitIds(state, 0, rules).length || playFightActivationUnitIds(state, 1, rules).length)) return false;
-  if (state.phase === 'fight' && rules.metadata.edition === '11e' && state.consolidationStepStarted
+  if (state.phase === 'fight' && rules.metadata.edition === '11e' && isFightConsolidationStep(state)
     && (playConsolidationPendingFightUnitIds(state, 0, rules).length || playConsolidationPendingFightUnitIds(state, 1, rules).length)) return false;
-  if (state.phase === 'fight' && rules.metadata.edition === '11e' && state.consolidationStepStarted
+  if (state.phase === 'fight' && rules.metadata.edition === '11e' && isFightConsolidationStep(state)
     && playConsolidationUnitIds(state, state.consolidationSide ?? state.activeArmy, rules).length) return false;
   return playPhaseCoherencyIssues(state).length === 0;
 }
@@ -124,16 +128,23 @@ function addPhaseActions(actions: LegalAction[], state: BattleState, side: Side,
     }
     return;
   }
-  if (state.phase === 'fight' && rules.metadata.edition === '11e' && state.fightStepStarted === false) {
+  const currentFightStep = state.phase === 'fight' ? fightPhaseStep(state) : null;
+  if (state.phase === 'fight' && rules.metadata.edition === '11e' && currentFightStep === PHASE_STEP.FightStart) {
     actions.push({
-      action: { type: 'play.startFightStep' },
+      action: { type: 'play.stepPhase' },
       category: 'phase',
       side,
-      label: 'Start Fight step',
+      label: 'Advance Fight start step',
     });
     return;
   }
-  if (state.phase === 'fight' && rules.metadata.edition === '11e' && !state.consolidationStepStarted) {
+  if (state.phase === 'fight' && rules.metadata.edition === '11e' && currentFightStep === PHASE_STEP.FightPileIn) {
+    if (!playFightPileInUnitIds(state, state.fightPileInSide ?? state.activeArmy, rules).length) {
+      actions.push({ action: { type: 'play.advanceFightPileInStep' }, category: 'phase', side, label: 'Finish Pile In step' });
+    }
+    return;
+  }
+  if (state.phase === 'fight' && rules.metadata.edition === '11e' && isFightUnitsStep(state) && !state.consolidationStepStarted) {
     if (!playFightPhaseHasPendingActivations(state, rules)) {
       actions.push({ action: { type: 'play.stepPhase' }, category: 'phase', side, label: 'Start Consolidation step' });
     }
@@ -384,7 +395,7 @@ function addChargeActions(actions: LegalAction[], state: BattleState, side: Side
 
 function addFightActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
   if (state.phase !== 'fight') return;
-  if (rules.metadata.edition === '11e' && state.consolidationStepStarted) {
+  if (rules.metadata.edition === '11e' && isFightConsolidationStep(state)) {
     const pendingFightIds = playConsolidationPendingFightUnitIds(state, side, rules);
     if (pendingFightIds.length) {
       for (const unitId of pendingFightIds) {
@@ -411,7 +422,7 @@ function addFightActions(actions: LegalAction[], state: BattleState, side: Side,
     return;
   }
   const overrunUnitIds = new Set(playOverrunFightUnitIds(state, side, rules));
-  const unitIds = rules.metadata.edition === '11e' && state.fightStepStarted === false
+  const unitIds = rules.metadata.edition === '11e' && isFightPileInStep(state)
     ? activeUnits(state, side).map(unit => unit.id)
     : playFightActivationUnitIds(state, side, rules);
   for (const unitId of unitIds) {

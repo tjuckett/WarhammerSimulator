@@ -59,6 +59,7 @@ import {
   startPlayScoutMove,
   completePlayScoutMove,
   startPlayFightStep,
+  advanceFightPhaseStep,
   startPlayConsolidationStep,
   advancePlayConsolidationStep,
   playConsolidationUnitIds,
@@ -540,30 +541,8 @@ function clone<T>(value: T): T {
 }
 
 function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
-  if (state.phase === BATTLE_PHASE.Fight && rules.metadata.edition === '11e'
-    && state.phaseStep !== PHASE_STEP.FightEnd) {
-    if (state.phaseStep === PHASE_STEP.FightStart) {
-      const next = clone(state);
-      next.phaseStep = PHASE_STEP.FightPileIn;
-      return next;
-    }
-    if (state.fightStepStarted === false) {
-      // The Fight phase has an explicit pile-in step before activations. Keep
-      // StepPhase on that step until both sides have resolved (or declined)
-      // their eligible pile-ins instead of jumping straight to Fight.
-      const next = advancePlayFightPileInStep(state, rules);
-      if (next !== state) return next;
-      return state;
-    }
-    if (state.consolidationStepStarted && playFightPhaseHasPendingActivations(state, rules)) return state;
-    if (!state.consolidationStepStarted) return startPlayConsolidationStep(state, rules);
-    const consolidationSide = state.consolidationSide ?? state.activeArmy;
-    if (playConsolidationUnitIds(state, consolidationSide, rules).length > 0) return state;
-    if (consolidationSide === state.activeArmy) return advancePlayConsolidationStep(state, rules);
-    const next = clone(state);
-    next.phaseStep = PHASE_STEP.FightEnd;
-    return next;
-  }
+  const fightStep = advanceFightPhaseStep(state, rules);
+  if (fightStep) return fightStep;
 
   // Standard phase steps are owned by their phase modules. Keep the replay,
   // AI, and manual core action paths on the same transition contract as the

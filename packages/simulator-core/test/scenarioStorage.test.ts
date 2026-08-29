@@ -11039,6 +11039,47 @@ test('play Fight pile-in and consolidate move a selected unit once each', () => 
   assert.equal(consolidatePlayUnit(consolidated, 'mover-1', 0, rules40K10th), consolidated);
 });
 
+test('11th Fight actions stay inside their explicit Fight steps', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const meleeWeapon = { name: 'Blade', range: 0, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: true };
+  const fighter = losTestUnit('step-fighter', 0, { x: 10, y: 10 });
+  fighter.profile = { ...fighter.profile, weapons: [meleeWeapon] };
+  fighter.charged = true;
+  fighter.inCombat = true;
+  const target = losTestUnit('step-target', 1, { x: 10.9, y: 10 });
+  target.inCombat = true;
+  battle.units = [fighter, target];
+  battle.fightStepStarted = false;
+  battle.phaseStep = PHASE_STEP.FightStart;
+
+  const startActions = getLegalActions(battle, 0, rules40K11th).map(option => option.action.type);
+  assert.equal(startActions.includes('play.stepPhase'), true);
+  assert.equal(startActions.includes('play.startFightStep'), false);
+  assert.deepEqual(playFightActivationUnitIds(battle, 0, rules40K11th), []);
+  assert.deepEqual(playFightWeaponOptions(battle, fighter.id, 0, rules40K11th), []);
+
+  battle.phaseStep = PHASE_STEP.FightPileIn;
+  assert.deepEqual(playFightActivationUnitIds(battle, 0, rules40K11th), []);
+  assert.deepEqual(playFightWeaponOptions(battle, fighter.id, 0, rules40K11th), []);
+
+  battle.phaseStep = PHASE_STEP.FightUnits;
+  battle.fightStepStarted = true;
+  battle.engagedUnitIdsAtFightStepStart = [fighter.id];
+  assert.deepEqual(playFightActivationUnitIds(battle, 0, rules40K11th), [fighter.id]);
+  assert.equal(playFightWeaponOptions(battle, fighter.id, 0, rules40K11th).length, 1);
+
+  battle.phaseStep = PHASE_STEP.FightConsolidate;
+  battle.consolidationStepStarted = true;
+  battle.consolidationSide = 0;
+  battle.consolidationPendingFightUnitIds = [fighter.id];
+  assert.equal(playFightWeaponOptions(battle, fighter.id, 0, rules40K11th).length, 1);
+
+  battle.phaseStep = PHASE_STEP.FightEnd;
+  assert.deepEqual(playFightActivationUnitIds(battle, 0, rules40K11th), []);
+  assert.deepEqual(playFightWeaponOptions(battle, fighter.id, 0, rules40K11th), []);
+});
+
 test('11th Fight phase lets a charged unit pile in before selecting melee attacks', () => {
   const battle = state('fight');
   battle.ruleset = rulesetMetadataForState(rules40K11th);

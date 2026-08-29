@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { BATTLE_PHASE, PHASE_STEP, type BattleState, type BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { RulesEdition } from '@warhammer-simulator/core/engine/rulesEngine';
+import { isFightResolutionStep } from '@warhammer-simulator/core/engine/phases/fightPhaseRules';
 import {
   playChargeEligibilityReason,
   playChargeTargetOptions,
@@ -182,7 +183,8 @@ const selectedPlayShootingOptions = useMemo(
   const selectedPlayFightOptions = useMemo(
     () => (
       isPlayMode
-      && battleState?.phase === 'fight'
+      && battleState
+      && isFightResolutionStep(battleState)
       && selectedFightUnit
         ? playFightWeaponOptions(battleState, selectedFightUnit.id, selectedFightUnit.side, activeRulesForBattle)
         : []
@@ -190,7 +192,7 @@ const selectedPlayShootingOptions = useMemo(
     [isPlayMode, battleState, selectedFightUnit, activeRulesForBattle],
   );
   const selectedPlayFightTargets = useMemo(() => {
-    if (!battleState || !selectedFightUnit) return [];
+    if (!battleState || !isFightResolutionStep(battleState) || !selectedFightUnit) return [];
     return enemyTargetsForIds(
       battleState,
       selectedFightUnit.side,
@@ -202,12 +204,12 @@ const selectedPlayShootingOptions = useMemo(
     );
   }, [battleState, selectedFightUnit, selectedPlayFightOptions, selectedFightWeaponIndex]);
   const selectedFightTargetUnit = useMemo(() => {
-    return selectedFightUnit
+    return battleState && isFightResolutionStep(battleState) && selectedFightUnit
       ? unitForSelection(battleState, selectedFightTargetId, selectedFightUnit.side === 0 ? 1 : 0)
       : null;
   }, [battleState, selectedFightUnit, selectedFightTargetId]);
   const selectedFightAttackCount = useMemo(() => {
-    if (!battleState || !selectedFightUnit || selectedFightWeaponIndex === 'all') return null;
+    if (!battleState || !isFightResolutionStep(battleState) || !selectedFightUnit || selectedFightWeaponIndex === 'all') return null;
     const weaponIndex = Number(selectedFightWeaponIndex);
     return Number.isInteger(weaponIndex)
       ? playMeleeFixedAttackCount(battleState, selectedFightUnit.id, selectedFightUnit.side, weaponIndex, activeRulesForBattle)
