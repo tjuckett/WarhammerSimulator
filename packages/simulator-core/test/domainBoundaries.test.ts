@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import type { ImportedArmy, UnitProfile } from '../src/types/army';
-import type { BattleState, BattleUnit, Position } from '../src/types/battle';
+import { PHASE_STEP, type BattleState, type BattleUnit, type Position } from '../src/types/battle';
 import { boardFormatForId } from '../src/data/boardFormats';
 import {
   addAircraftStrategicReserves,
@@ -23,6 +23,13 @@ import {
 } from '../src/practice/timeline';
 import { GAME_ACTION_TYPE } from '../src/practice/actions';
 import { getLegalActions } from '../src/engine/legalActions';
+import {
+  closePendingCombatAction,
+  declinePendingCombatAction,
+  normalShootingActionWindowOpen,
+  openPendingCombatAction,
+  shootingActionWindowOpen,
+} from '../src/engine/combatActionWindows';
 import { localPracticeScenarioRepository, PRACTICE_SCENARIO_STORAGE_KEY } from '../src/practice/scenarioStorage';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 
@@ -218,4 +225,32 @@ test('legal actions do not expose phase-specific actions outside their phase', (
   assert.equal(actions.includes(GAME_ACTION_TYPE.ShootUnitWeapon), false);
   assert.equal(actions.includes(GAME_ACTION_TYPE.ChargeUnitTarget), false);
   assert.equal(actions.includes(GAME_ACTION_TYPE.FightUnitWeapon), false);
+});
+
+test('combat action windows keep normal steps strict while allowing typed event exceptions', () => {
+  const state = battleState({ phase: 'shooting', phaseStep: PHASE_STEP.ShootingStart });
+  assert.equal(normalShootingActionWindowOpen(state, 0), false);
+  assert.equal(shootingActionWindowOpen(state, 'shooter', 0), false);
+
+  state.phase = 'movement';
+  state.phaseStep = PHASE_STEP.MovementReinforcements;
+  openPendingCombatAction(state, {
+    id: 'combat-event-1',
+    kind: 'shooting',
+    unitId: 'shooter',
+    side: 1,
+    source: 'Test ability',
+    triggeredPhase: state.phase,
+    triggeredPhaseStep: state.phaseStep,
+  });
+
+  assert.equal(normalShootingActionWindowOpen(state, 1), false);
+  assert.equal(shootingActionWindowOpen(state, 'shooter', 1), true);
+  assert.equal(shootingActionWindowOpen(state, 'other-unit', 1), false);
+
+  const declined = declinePendingCombatAction(state, 1, 'combat-event-1');
+  assert.equal(declined.pendingCombatActions, undefined);
+  assert.equal(state.pendingCombatActions?.length, 1);
+  closePendingCombatAction(state, 'combat-event-1');
+  assert.equal(state.pendingCombatActions, undefined);
 });

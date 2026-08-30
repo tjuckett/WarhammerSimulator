@@ -1,4 +1,4 @@
-import { BATTLE_PHASE, MOVEMENT_STEP, PHASE_STEP, type BeaconWhenDrawnSelection, type BurdenOfTrustWhenDrawnSelection, type Phase, type Position, type SecondaryMissionMode, type SecondaryMissionSelectionValue, type Side, type BattleState, type TemptingTargetWhenDrawnSelection } from '../types/battle';
+import { BATTLE_PHASE, MOVEMENT_STEP, PHASE_STEP, type BeaconWhenDrawnSelection, type BurdenOfTrustWhenDrawnSelection, type FightConsolidationMode, type Phase, type Position, type SecondaryMissionMode, type SecondaryMissionSelectionValue, type Side, type BattleState, type TemptingTargetWhenDrawnSelection } from '../types/battle';
 import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
 import { primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, securePlayObjective, unsupportedPrimaryMissionScoringLogs, updateObjectiveControl } from '../engine/missionScoring';
@@ -64,6 +64,7 @@ import {
   advancePlayConsolidationStep,
   playConsolidationUnitIds,
   playFightPhaseHasPendingActivations,
+  passPlayFight,
   snapShootPlayUnitWeapon,
   startPlayUnitAction,
   togglePunishmentCondemnedUnit,
@@ -77,6 +78,7 @@ import { advancePhaseStep } from '../engine/phases/phaseStepDispatcher';
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
 import { phaseCanAdvance } from '../engine/legalActions';
 import { resetUnitForActiveTurn } from '../engine/turnState';
+import { declinePendingCombatAction } from '../engine/combatActionWindows';
 
 export interface GameActionBase {
   id?: string;
@@ -136,6 +138,7 @@ export const GAME_ACTION_TYPE = {
   StartScoutMove: 'play.startScoutMove',
   CompleteScoutMove: 'play.completeScoutMove',
   SnapShootUnitWeapon: 'play.snapShootUnitWeapon',
+  DeclineCombatAction: 'play.declineCombatAction',
   LockUnitShooting: 'play.lockUnitShooting',
   RollCharge: 'play.rollCharge',
   ChargeUnitTarget: 'play.chargeUnitTarget',
@@ -152,6 +155,7 @@ export const GAME_ACTION_TYPE = {
   AdvanceFightPileInStep: 'play.advanceFightPileInStep',
   StartConsolidationStep: 'play.startConsolidationStep',
   AdvanceConsolidationStep: 'play.advanceConsolidationStep',
+  PassFight: 'play.passFight',
   BeginBattle: 'play.beginBattle',
   StepPhase: 'play.stepPhase',
   UseStratagem: 'play.useStratagem',
@@ -337,6 +341,11 @@ export type GameAction =
       weaponIndex: number | 'all';
     })
   | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.DeclineCombatAction;
+      side: Side;
+      combatActionId: string;
+    })
+  | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.LockUnitShooting;
       side: Side;
       unitId: string;
@@ -399,6 +408,9 @@ export type GameAction =
       side: Side;
       unitId: string;
       kind: 'pileIn' | 'consolidate';
+      targetUnitIds?: string[];
+      consolidationMode?: FightConsolidationMode;
+      objectiveIndex?: number;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.CompleteFightMovement;
@@ -413,6 +425,10 @@ export type GameAction =
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.AdvanceConsolidationStep;
+    })
+  | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.PassFight;
+      side: Side;
     })
   | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.BeginBattle;
@@ -812,6 +828,9 @@ export function applyGameAction(
         context.rules,
       );
 
+    case GAME_ACTION_TYPE.DeclineCombatAction:
+      return declinePendingCombatAction(state, normalizedAction.side, normalizedAction.combatActionId);
+
     case GAME_ACTION_TYPE.LockUnitShooting:
       return lockPlayUnitShooting(state, normalizedAction.unitId, normalizedAction.side);
 
@@ -860,7 +879,11 @@ export function applyGameAction(
       return consolidatePlayUnit(state, normalizedAction.unitId, normalizedAction.side, context.rules);
 
     case GAME_ACTION_TYPE.BeginFightMovement:
-      return beginPlayFightMovement(state, normalizedAction.unitId, normalizedAction.side, normalizedAction.kind, context.rules);
+      return beginPlayFightMovement(state, normalizedAction.unitId, normalizedAction.side, normalizedAction.kind, context.rules, {
+        targetUnitIds: normalizedAction.targetUnitIds,
+        consolidationMode: normalizedAction.consolidationMode,
+        objectiveIndex: normalizedAction.objectiveIndex,
+      });
 
     case GAME_ACTION_TYPE.CompleteFightMovement:
       return completePlayFightMovement(state, normalizedAction.unitId, normalizedAction.side, context.rules);
@@ -873,6 +896,9 @@ export function applyGameAction(
 
     case GAME_ACTION_TYPE.AdvanceConsolidationStep:
       return advancePlayConsolidationStep(state, context.rules);
+
+    case GAME_ACTION_TYPE.PassFight:
+      return passPlayFight(state, normalizedAction.side, context.rules);
 
     case GAME_ACTION_TYPE.BeginBattle:
       return beginPlayBattle(state);
@@ -1004,6 +1030,7 @@ export function actionTouchesUnit(action: GameAction, unitId: string): boolean {
     case GAME_ACTION_TYPE.CompleteScoutMove:
       return normalizedAction.unitId === unitId;
     case GAME_ACTION_TYPE.AdvanceFightPileInStep:
+    case GAME_ACTION_TYPE.PassFight:
       return false;
     case GAME_ACTION_TYPE.StartConsolidationStep:
     case GAME_ACTION_TYPE.AdvanceConsolidationStep:

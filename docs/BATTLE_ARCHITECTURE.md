@@ -181,9 +181,29 @@ Effect resolver:     How does that typed effect change state?
 Combat resolver:     How do attacks, saves, and damage resolve?
 ```
 
+Normal combat and event combat use different gates:
+
+- Normal Shooting actions are legal only for the active player during the
+  Shooting step. Normal Fight activations are legal only through the Fight
+  step's priority and activation rules.
+- An ability, army rule, or Stratagem that grants shooting or fighting outside
+  those steps must first create a typed `PendingCombatAction` in `BattleState`.
+  The opportunity identifies its unit, owner, source event, and any special
+  mode such as Snap Shooting.
+- Legal-action generation, local UI controllers, remote controllers, and AI
+  all consume that same pending opportunity. They must not infer it from the
+  display log or from a broad `phase === 'shooting'`/`phase === 'fight'` check.
+- The pending opportunity blocks phase advancement until it is resolved or
+  explicitly declined, and the state is included in normal timeline snapshots
+  for undo, replay, and save/load.
+
 Examples:
 
-- Fire Overwatch is validated by the Stratagem Service and resolved through the Combat Resolver.
+- Fire Overwatch is validated by the Stratagem Service, recorded as a typed
+  rule event, and opened as an event-backed Snap Shooting opportunity resolved
+  through the Combat Resolver.
+- Future out-of-phase combat abilities should use the same typed opportunity;
+  they should not relax the normal phase-step predicates.
 - Command Re-roll modifies a pending typed roll through the Stratagem Service.
 - Smokescreen grants a typed defensive effect consumed by targeting/combat rules.
 - Deadly Demise is an ability-triggered effect that uses the shared mortal-wound/damage path.

@@ -2,11 +2,18 @@
 // Shared attack resolution remains in manualCombat; this module owns when and
 // how Fight can call it.
 // @ts-nocheck
-import { PHASE_STEP, type BattleState, type BattleUnit, type LogEntry, type Position, type Side } from '../../types/battle';
+import { PHASE_STEP, type BattleState, type BattleUnit, type FightMovementIntent, type LogEntry, type Position, type Side } from '../../types/battle';
 import type { UnitProfile, WeaponProfile } from '../../types/army';
 import type { RulesEdition } from '../rulesEngine';
 import { moveModelTowardPoint } from '../interactiveMovement';
+import {
+  canReachModelDistance,
+  closestModelDistanceToTargets,
+  modelPositionChanged,
+  MOVEMENT_RULE_EPSILON,
+} from '../modelMovementRules';
 import * as manualCombat from '../manualCombat';
+import { closePendingCombatAction, pendingCombatActionFor } from '../combatActionWindows';
 import {
   fightPhaseStep,
   isFightConsolidationStep,
@@ -15,6 +22,9 @@ import {
   isFightUnitsStep,
   playFightActivationUnitIds,
   playFightFirstUnitIds,
+  playFightConsolidationOptions,
+  playFightPileInTargetOptions,
+  playFightSideCanPass,
   playOverrunFightUnitIds,
   playUnitCanConsolidate,
   playUnitCanPileIn,
@@ -90,6 +100,7 @@ export function startFightStepInPlace(state: BattleState, rules: RulesEdition, c
   state.fightStepStarted = true;
   state.forcedFightUnitId = undefined;
   state.lastFightSelectionSide = undefined;
+  state.fightPassedSides = undefined;
   state.activeAttachedFightUnitId = undefined;
   state.activeAttachedShootingUnitId = undefined;
   state.attachedShootingTargetUnitId = undefined;
@@ -97,6 +108,10 @@ export function startFightStepInPlace(state: BattleState, rules: RulesEdition, c
     .filter(unit => !unit.destroyed && !unit.embarkedInUnitId
       && context.enemies(state, unit.side).some(enemy => context.canFightTarget(unit, enemy)
         && context.inEngagement(unit, [enemy], rules.engagementRange())))
+    .map(unit => unit.id);
+  state.fightEligibleUnitIds = state.units
+    .filter(unit => !unit.destroyed && !unit.embarkedInUnitId
+      && context.unitEligibleToFight(unit, state, rules))
     .map(unit => unit.id);
 }
 
@@ -112,6 +127,7 @@ export function finishAttachedFightComponent(state: BattleState, unit: BattleUni
   const forcedUnit = state.units.find(candidate => candidate.id === state.forcedFightUnitId);
   if (forcedUnit && context.attachedUnitId(forcedUnit) === context.attachedUnitId(unit)) state.forcedFightUnitId = undefined;
   state.lastFightSelectionSide = unit.side;
+  state.fightPassedSides = undefined;
   if (state.consolidationStepStarted && state.consolidationPendingFightUnitIds?.includes(unit.id)) {
     state.consolidationPendingFightUnitIds = state.consolidationPendingFightUnitIds.filter(unitId => unitId !== unit.id);
   }
@@ -178,6 +194,25 @@ export function playFightPhaseHasPendingActivations(state: BattleState, rules: R
       || playFightActivationUnitIds(state, 1, rules, context).length > 0;
 }
 
+/** Records an 11e Fight pass and hands the selection opportunity to the opponent. */
+export function passPlayFight(
+  state: BattleState,
+  side: Side,
+  rules: RulesEdition,
+  context: FightPhaseActionContext,
+): BattleState {
+  if (!playFightSideCanPass(state, side, rules, context)) return state;
+  const next = context.clone(state);
+  next.fightPassedSides = [...new Set([...(next.fightPassedSides ?? []), side])];
+  next.lastFightSelectionSide = side;
+  next.log = [...next.log, context.log(next, side, next.armies[side].name,
+    `${next.armies[side].name} passes its Fight selection opportunity.`, 'fight')];
+  if (!playFightPhaseHasPendingActivations(next, rules, context)) {
+    return startPlayConsolidationStep(next, rules, context);
+  }
+  return next;
+}
+
 export function startPlayConsolidationStep(state: BattleState, rules: RulesEdition, context: FightPhaseActionContext): BattleState {
   if (rules.metadata.edition !== '11e' || !isFightUnitsStep(state) || state.consolidationStepStarted
     || playFightPhaseHasPendingActivations(state, rules, context)) return state;
@@ -185,9 +220,12 @@ export function startPlayConsolidationStep(state: BattleState, rules: RulesEditi
   next.consolidationStepStarted = true;
   next.consolidationSide = next.activeArmy;
   const engagedAtFightStart = new Set(next.engagedUnitIdsAtFightStepStart ?? []);
+  const fightEligible = new Set(next.fightEligibleUnitIds ?? []);
   next.consolidationEligibleUnitIds = next.units
     .filter(unit => !unit.destroyed && !unit.embarkedInUnitId
-      && (unitChargedThisTurn(next, unit) || engagedAtFightStart.has(unit.id)))
+      && (fightEligible.has(unit.id)
+        || unitChargedThisTurn(next, unit)
+        || engagedAtFightStart.has(unit.id)))
     .map(unit => unit.id);
   next.consolidationPendingFightUnitIds = [];
   next.phaseStep = PHASE_STEP.FightConsolidate;
@@ -249,9 +287,15 @@ export function advanceFightPhaseStep(state: BattleState, rules: RulesEdition, c
   return null;
 }
 
-function closestEnemyModelFor(unit: BattleUnit, modelIndex: number, state: BattleState, context: FightPhaseActionContext) {
+function closestEnemyModelFor(
+  unit: BattleUnit,
+  modelIndex: number,
+  state: BattleState,
+  context: FightPhaseActionContext,
+  selectedTargets = context.enemies(state, unit.side),
+) {
   let closest: { unit: BattleUnit; modelIndex: number; distance: number } | null = null;
-  for (const enemy of context.enemies(state, unit.side)) {
+  for (const enemy of selectedTargets) {
     for (let enemyModelIndex = 0; enemyModelIndex < enemy.modelPositions.length; enemyModelIndex++) {
       const distance = context.modelBaseEdgeHorizontalDistance(unit, modelIndex, enemy, enemyModelIndex);
       if (!closest || distance < closest.distance) closest = { unit: enemy, modelIndex: enemyModelIndex, distance };
@@ -266,8 +310,15 @@ export function nearestObjectiveToModel(model: Position, state: BattleState, con
     context.distance(model, objective) < context.distance(model, best) ? objective : best);
 }
 
-export function moveModelTowardEnemy(unit: BattleUnit, modelIndex: number, state: BattleState, maxDistance: number, context: FightPhaseActionContext): boolean {
-  const closest = closestEnemyModelFor(unit, modelIndex, state, context);
+export function moveModelTowardEnemy(
+  unit: BattleUnit,
+  modelIndex: number,
+  state: BattleState,
+  maxDistance: number,
+  context: FightPhaseActionContext,
+  selectedTargets?: BattleUnit[],
+): boolean {
+  const closest = closestEnemyModelFor(unit, modelIndex, state, context, selectedTargets);
   if (!closest) return false;
   const targetModel = closest.unit.modelPositions[closest.modelIndex];
   return moveModelTowardPoint(unit, modelIndex, targetModel, maxDistance, context.centroid,
@@ -290,6 +341,9 @@ export function applyFightPhaseMove(
   if (kind === 'consolidate' && !playUnitCanConsolidate(state, unitId, side, rules, context)) return state;
   const isOverrunPileIn = kind === 'pileIn' && rules.metadata.edition === '11e'
     && isFightUnitsStep(state) && existing.overrunFightSelected;
+  const intent = normalizeFightMovementIntent(state, existing, side, kind, rules, context);
+  if (!intent) return state;
+  const selectedTargets = liveFightTargetUnits(state, side, intent.targetUnitIds ?? []);
 
   const next = context.clone(state);
   const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
@@ -297,10 +351,11 @@ export function applyFightPhaseMove(
   let movedModels = 0;
   for (let modelIndex = 0; modelIndex < unit.modelPositions.length; modelIndex++) {
     const before = unit.modelPositions[modelIndex];
-    const movedTowardEnemy = moveModelTowardEnemy(unit, modelIndex, next, context.moveRange, context);
-    const movedTowardObjective = !movedTowardEnemy && kind === 'consolidate'
+    const movedTowardEnemy = selectedTargets.length > 0
+      && moveModelTowardEnemy(unit, modelIndex, next, context.moveRange, context, selectedTargets);
+    const movedTowardObjective = !movedTowardEnemy && kind === 'consolidate' && intent.consolidationMode === 'objective'
       ? (() => {
-          const objective = nearestObjectiveToModel(unit.modelPositions[modelIndex], next, context);
+          const objective = intent.objectiveIndex === undefined ? null : next.objectives[intent.objectiveIndex] ?? null;
           return objective ? moveModelTowardPoint(unit, modelIndex, objective, context.moveRange, context.centroid) : false;
         })()
       : false;
@@ -313,7 +368,7 @@ export function applyFightPhaseMove(
     }
     movedModels++;
   }
-  if (kind === 'pileIn' && !context.inEngagement(unit, context.enemies(next, side), rules.engagementRange())) return state;
+  if (kind === 'pileIn' && !unitEngagedWithTargets(next, unit, selectedTargets, rules.engagementRange(), context)) return state;
   if (kind === 'pileIn' && isOverrunPileIn) unit.overrunPiledIn = true;
   else if (kind === 'pileIn') unit.piledIn = true;
   else unit.consolidated = true;
@@ -354,9 +409,11 @@ export function fightPlayUnitWeapons(
   rules: RulesEdition,
   context: FightPhaseActionContext,
 ): BattleState {
-  if (!sideCanSelectFightUnit(state, side, rules, context) || !allocations.length) return state;
+  const pending = pendingCombatActionFor(state, 'fight', unitId, side);
+  if ((!pending && !sideCanSelectFightUnit(state, side, rules, context)) || !allocations.length) return state;
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || !context.unitCanFight(unit, state, rules) || !playFightActivationUnitIds(state, side, rules, context).includes(unit.id)) return state;
+  if (!unit || !context.unitCanFight(unit, state, rules)
+    || (!pending && !playFightActivationUnitIds(state, side, rules, context).includes(unit.id))) return state;
   const meleeWeapons = unit.profile.weapons.map((weapon, weaponIndex) => ({ weapon, weaponIndex })).filter(option => option.weapon.isMelee);
   const selectableWeapons = rules.metadata.edition === '11e'
     ? selectMeleeWeapons(unit, meleeWeapons, 'all', context)
@@ -420,7 +477,8 @@ export function fightPlayUnitWeapons(
   }
   if (!logs.length) return state;
   fightingUnit.activated = true;
-  finishAttachedFightComponent(next, fightingUnit, rules, context);
+  if (pending) closePendingCombatAction(next, pending.id);
+  else finishAttachedFightComponent(next, fightingUnit, rules, context);
   next.log = [...next.log, ...logs];
   if (next.pendingDeadlyDemises?.length) next.log = [...next.log, ...context.resolvePendingDeadlyDemisesInPlace(next)];
   return next;
@@ -436,12 +494,14 @@ export function fightPlayUnitWeapon(
   context: FightPhaseActionContext,
   targetSplits?: PlayMeleeAttackSplit[],
 ): BattleState {
-  if (!sideCanSelectFightUnit(state, side, rules, context)) return state;
+  const pending = pendingCombatActionFor(state, 'fight', unitId, side);
+  if (!pending && !sideCanSelectFightUnit(state, side, rules, context)) return state;
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   const target = state.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
   const splitTargetIds = targetSplits?.map(split => split.targetUnitId) ?? [];
   const splitTargets = splitTargetIds.map(splitTargetId => state.units.find(candidate => candidate.id === splitTargetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId));
-  if (!unit || !target || !context.unitCanFight(unit, state, rules) || !playFightActivationUnitIds(state, side, rules, context).includes(unit.id)) return state;
+  if (!unit || !target || !context.unitCanFight(unit, state, rules)
+    || (!pending && !playFightActivationUnitIds(state, side, rules, context).includes(unit.id))) return state;
   if (!context.canFightTarget(unit, target) || !context.inEngagement(unit, [target], rules.engagementRange())) return state;
   if (targetSplits?.length && splitTargets.some(splitTarget => !splitTarget || !context.canFightTarget(unit, splitTarget) || !context.inEngagement(unit, [splitTarget], rules.engagementRange()))) return state;
   const next = context.clone(state);
@@ -451,7 +511,8 @@ export function fightPlayUnitWeapon(
   if (weaponIndex === -1 || (weaponIndex === 'all' && !fightingUnit.profile.weapons.some(weapon => weapon.isMelee))) {
     if (fightingUnit.profile.weapons.some(weapon => weapon.isMelee)) return state;
     fightingUnit.activated = true;
-    finishAttachedFightComponent(next, fightingUnit, rules, context);
+    if (pending) closePendingCombatAction(next, pending.id);
+    else finishAttachedFightComponent(next, fightingUnit, rules, context);
     next.log = [...next.log, context.log(next, side, fightingUnit.profile.name, `${fightingUnit.profile.name} is selected to fight ${fightTarget.profile.name} but has no melee weapons, so it makes no attacks.`, 'fight')];
     return next;
   }
@@ -504,17 +565,19 @@ export function fightPlayUnitWeapon(
   }
   if (!madeAttacks) return state;
   fightingUnit.activated = true;
-  finishAttachedFightComponent(next, fightingUnit, rules, context);
+  if (pending) closePendingCombatAction(next, pending.id);
+  else finishAttachedFightComponent(next, fightingUnit, rules, context);
   next.log = [...next.log, ...logs];
   if (next.pendingDeadlyDemises?.length) next.log = [...next.log, ...context.resolvePendingDeadlyDemisesInPlace(next)];
   return next;
 }
 
 export function playFightWeaponOptions(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: FightPhaseActionContext): PlayFightWeaponOption[] {
-  if (!sideCanSelectFightUnit(state, side, rules, context)) return [];
+  const pending = pendingCombatActionFor(state, 'fight', unitId, side);
+  if (!pending && !sideCanSelectFightUnit(state, side, rules, context)) return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit || !context.unitCanFight(unit, state, rules)) return [];
-  if (!playFightActivationUnitIds(state, side, rules, context).includes(unit.id)) return [];
+  if (!pending && !playFightActivationUnitIds(state, side, rules, context).includes(unit.id)) return [];
   const targetIds = context.enemies(state, side)
     .filter(target => context.canFightTarget(unit, target) && context.inEngagement(unit, [target], rules.engagementRange()))
     .map(target => target.id);
@@ -579,8 +642,106 @@ export function selectPlayOverrunFight(state: BattleState, unitId: string, side:
   const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side);
   if (!unit) return state;
   unit.overrunFightSelected = true;
+  next.fightEligibleUnitIds = [...new Set([...(next.fightEligibleUnitIds ?? []), unit.id])];
   next.log = [...next.log, context.log(next, side, unit.profile.name, `${unit.profile.name} is selected to make an Overrun Fight.`, 'fight')];
   return next;
+}
+
+function liveFightTargetUnits(state: BattleState, side: Side, targetIds: string[]): BattleUnit[] {
+  return [...new Set(targetIds)].map(targetId => state.units.find(candidate =>
+    candidate.id === targetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId,
+  )).filter((target): target is BattleUnit => !!target);
+}
+
+function sameIdSet(left: string[], right: string[]): boolean {
+  const a = new Set(left);
+  const b = new Set(right);
+  return a.size === b.size && [...a].every(id => b.has(id));
+}
+
+function defaultFightMovementIntent(
+  state: BattleState,
+  unit: BattleUnit,
+  side: Side,
+  kind: 'pileIn' | 'consolidate',
+  rules: RulesEdition,
+  context: FightPhaseActionContext,
+): FightMovementIntent | null {
+  if (kind === 'pileIn') {
+    const targetUnitIds = playFightPileInTargetOptions(state, unit.id, side, rules, context);
+    if (!targetUnitIds.length) return null;
+    const engaged = context.enemies(state, side)
+      .filter(enemy => targetUnitIds.includes(enemy.id) && context.inEngagement(unit, [enemy], rules.engagementRange()));
+    return { targetUnitIds: engaged.length ? engaged.map(enemy => enemy.id) : [targetUnitIds[0]] };
+  }
+  const options = playFightConsolidationOptions(state, unit.id, side, rules, context);
+  const option = options[0];
+  if (!option) return null;
+  return option.mode === 'objective'
+    ? { consolidationMode: option.mode, objectiveIndex: option.objectiveIndex }
+    : { consolidationMode: option.mode, targetUnitIds: option.mode === 'ongoing'
+      ? option.targetUnitIds
+      : option.targetUnitIds.slice(0, 1) };
+}
+
+function normalizeFightMovementIntent(
+  state: BattleState,
+  unit: BattleUnit,
+  side: Side,
+  kind: 'pileIn' | 'consolidate',
+  rules: RulesEdition,
+  context: FightPhaseActionContext,
+  intent?: FightMovementIntent,
+): FightMovementIntent | null {
+  const requested = intent ?? defaultFightMovementIntent(state, unit, side, kind, rules, context);
+  if (!requested) return null;
+  if (kind === 'pileIn') {
+    const available = playFightPileInTargetOptions(state, unit.id, side, rules, context);
+    const targetUnitIds = [...new Set(requested.targetUnitIds ?? [])];
+    if (!targetUnitIds.length || targetUnitIds.some(id => !available.includes(id))) return null;
+    const engaged = available.filter(id => {
+      const target = state.units.find(candidate => candidate.id === id);
+      return target && context.inEngagement(unit, [target], rules.engagementRange());
+    });
+    // An Ongoing Pile In must select every enemy unit currently engaged with
+    // the unit. An unengaged unit may select one or more units within 5".
+    if (engaged.length && !sameIdSet(targetUnitIds, engaged)) return null;
+    return { targetUnitIds };
+  }
+
+  const options = playFightConsolidationOptions(state, unit.id, side, rules, context);
+  const mode = requested.consolidationMode ?? options[0]?.mode;
+  const option = options.find(candidate => candidate.mode === mode);
+  if (!option) return null;
+  if (option.mode === 'objective') {
+    return option.objectiveIndex === requested.objectiveIndex
+      ? { consolidationMode: 'objective', objectiveIndex: option.objectiveIndex }
+      : null;
+  }
+  const targetUnitIds = [...new Set(requested.targetUnitIds ?? [])];
+  if (!targetUnitIds.length || targetUnitIds.some(id => !option.targetUnitIds.includes(id))) return null;
+  // Ongoing Consolidation selects every enemy unit already engaged.
+  if (option.mode === 'ongoing' && !sameIdSet(targetUnitIds, option.targetUnitIds)) return null;
+  return { consolidationMode: option.mode, targetUnitIds };
+}
+
+function initiallyEngagedEnemyUnitIdsByModel(
+  state: BattleState,
+  unit: BattleUnit,
+  side: Side,
+  rules: RulesEdition,
+  context: FightPhaseActionContext,
+): Record<string, string[]> {
+  const enemies = context.enemies(state, side).filter(enemy => context.canFightTarget(unit, enemy));
+  const result: Record<string, string[]> = {};
+  for (const component of context.attachedComponents(state, unit)) {
+    for (let modelIndex = 0; modelIndex < component.modelPositions.length; modelIndex++) {
+      result[`${component.id}:${modelIndex}`] = enemies
+        .filter(enemy => context.inEngagement(component, context.attachedComponents(state, enemy), rules.engagementRange()))
+        .map(enemy => enemy.id);
+    }
+  }
+  return result;
 }
 
 /** Opens the interactive model-movement window for a Pile In or Consolidation. */
@@ -591,6 +752,7 @@ export function beginPlayFightMovement(
   kind: 'pileIn' | 'consolidate',
   rules: RulesEdition,
   context: FightPhaseActionContext,
+  intent?: FightMovementIntent,
 ): BattleState {
   const canMove = kind === 'pileIn'
     ? playUnitCanPileIn(state, unitId, side, rules, context)
@@ -599,6 +761,10 @@ export function beginPlayFightMovement(
   const next = context.clone(state);
   const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit) return state;
+  const normalizedIntent = normalizeFightMovementIntent(state, unit, side, kind, rules, context, intent);
+  if (!normalizedIntent) return state;
+  const targetUnitIds = normalizedIntent.targetUnitIds ?? [];
+  const targetUnits = liveFightTargetUnits(state, side, targetUnitIds);
   for (const component of context.attachedComponents(next, unit)) {
     component.movementStartPositionsByModel = component.modelPositions.map(position => ({ ...position }));
     component.movementPathByModel = undefined;
@@ -607,13 +773,130 @@ export function beginPlayFightMovement(
     component.movementAllowanceRemaining = 3;
   }
   const lockedModelIds = context.attachedComponents(next, unit).flatMap(component => component.modelPositions.flatMap((_, modelIndex) =>
-    next.units.some(enemy => enemy.side !== side && !enemy.destroyed && !enemy.embarkedInUnitId
-      && enemy.modelPositions.some((__, enemyModelIndex) => context.modelBaseEdgeDistance(component, modelIndex, enemy, enemyModelIndex) <= 0.001))
+    targetUnits.some(enemy => context.attachedComponents(next, enemy).some(targetComponent =>
+      targetComponent.modelPositions.some((__, enemyModelIndex) => context.modelBaseEdgeDistance(component, modelIndex, targetComponent, enemyModelIndex) <= 0.001)))
       ? [`${component.id}:${modelIndex}`]
       : [],
   ));
-  next.pendingFightMovement = { unitId, side, kind, lockedModelIds };
+  next.pendingFightMovement = {
+    unitId,
+    side,
+    kind,
+    targetUnitIds,
+    consolidationMode: normalizedIntent.consolidationMode,
+    objectiveIndex: normalizedIntent.objectiveIndex,
+    initiallyEngagedEnemyUnitIdsByModel: kind === 'pileIn' || normalizedIntent.consolidationMode === 'ongoing'
+      ? initiallyEngagedEnemyUnitIdsByModel(state, unit, side, rules, context)
+      : undefined,
+    overrun: kind === 'pileIn' && isFightUnitsStep(state) && unit.overrunFightSelected === true,
+    lockedModelIds,
+  };
   return next;
+}
+
+function targetComponents(state: BattleState, targets: BattleUnit[], context: FightPhaseContext): BattleUnit[] {
+  return targets.flatMap(target => context.attachedComponents(state, target));
+}
+
+function unitEngagedWithTargets(
+  state: BattleState,
+  unit: BattleUnit,
+  targets: BattleUnit[],
+  range: number,
+  context: FightPhaseContext,
+): boolean {
+  return context.attachedComponents(state, unit).some(component =>
+    targets.some(target => context.inEngagement(component, context.attachedComponents(state, target), range)));
+}
+
+function validateFightMovement(
+  state: BattleState,
+  pending: NonNullable<BattleState['pendingFightMovement']>,
+  unit: BattleUnit,
+  rules: RulesEdition,
+  context: FightPhaseActionContext,
+): boolean {
+  const targets = liveFightTargetUnits(state, pending.side, pending.targetUnitIds ?? []);
+  const targetParts = targetComponents(state, targets, context);
+  const range = rules.engagementRange();
+
+  for (const component of context.attachedComponents(state, unit)) {
+    const starts = component.movementStartPositionsByModel;
+    if (!starts || starts.length !== component.modelPositions.length) return false;
+    for (let modelIndex = 0; modelIndex < component.modelPositions.length; modelIndex++) {
+      const start = starts[modelIndex];
+      const current = component.modelPositions[modelIndex];
+      if (!start || !current) return false;
+      const isLocked = pending.lockedModelIds?.includes(`${component.id}:${modelIndex}`) === true;
+      if (isLocked) {
+        if (modelPositionChanged(start, current)) return false;
+        continue;
+      }
+      if (!modelPositionChanged(start, current)) continue;
+
+      if (targetParts.length) {
+        const startDistance = closestModelDistanceToTargets(
+          component, modelIndex, start, targetParts, context.modelBaseEdgeDistance,
+        );
+        const endDistance = closestModelDistanceToTargets(
+          component, modelIndex, current, targetParts, context.modelBaseEdgeDistance,
+        );
+        if (endDistance >= startDistance - MOVEMENT_RULE_EPSILON) return false;
+        const remaining = component.movementAllowanceRemainingByModel?.[modelIndex] ?? 0;
+        if (endDistance > range + MOVEMENT_RULE_EPSILON
+          && canReachModelDistance(endDistance, remaining, range)) return false;
+      } else if (pending.objectiveIndex !== undefined) {
+        const objective = state.objectives[pending.objectiveIndex];
+        if (!objective) return false;
+        if (context.distance(current, objective) >= context.distance(start, objective) - MOVEMENT_RULE_EPSILON) return false;
+      }
+    }
+  }
+
+  if (pending.kind === 'pileIn') {
+    if (!unitEngagedWithTargets(state, unit, targets, range, context)) return false;
+    for (const [key, engagedEnemyIds] of Object.entries(pending.initiallyEngagedEnemyUnitIdsByModel ?? {})) {
+      const separator = key.lastIndexOf(':');
+      const componentId = key.slice(0, separator);
+      const modelIndex = Number(key.slice(separator + 1));
+      const component = context.attachedComponents(state, unit).find(candidate => candidate.id === componentId);
+      if (!component || !Number.isInteger(modelIndex)) return false;
+      const model = component.modelPositions[modelIndex];
+      if (!model) return false;
+      for (const enemyId of engagedEnemyIds) {
+        const enemy = state.units.find(candidate => candidate.id === enemyId && !candidate.destroyed && !candidate.embarkedInUnitId);
+        if (enemy && closestModelDistanceToTargets(
+          component, modelIndex, model, context.attachedComponents(state, enemy), context.modelBaseEdgeDistance,
+        ) > range + MOVEMENT_RULE_EPSILON) return false;
+      }
+    }
+    return true;
+  }
+
+  switch (pending.consolidationMode) {
+    case 'ongoing':
+      return Object.entries(pending.initiallyEngagedEnemyUnitIdsByModel ?? {}).every(([key, engagedEnemyIds]) => {
+        const separator = key.lastIndexOf(':');
+        const componentId = key.slice(0, separator);
+        const modelIndex = Number(key.slice(separator + 1));
+        const component = context.attachedComponents(state, unit).find(candidate => candidate.id === componentId);
+        const model = component?.modelPositions[modelIndex];
+        return !!component && !!model && engagedEnemyIds.every(enemyId => {
+          const enemy = state.units.find(candidate => candidate.id === enemyId && !candidate.destroyed && !candidate.embarkedInUnitId);
+          return !enemy || closestModelDistanceToTargets(
+            component, modelIndex, model, context.attachedComponents(state, enemy), context.modelBaseEdgeDistance,
+          ) <= range + MOVEMENT_RULE_EPSILON;
+        });
+      });
+    case 'engaging':
+      return targets.length > 0 && targets.every(target => unitEngagedWithTargets(state, unit, [target], range, context));
+    case 'objective':
+      return pending.objectiveIndex !== undefined
+        && !unitEngagedWithTargets(state, unit, context.enemies(state, pending.side), range, context)
+        && context.objectiveIndexesWithinRange(state, unit, rules).includes(pending.objectiveIndex);
+    default:
+      return false;
+  }
 }
 
 /** Commits the interactive Pile In or Consolidation movement window. */
@@ -628,14 +911,17 @@ export function completePlayFightMovement(
   if (!pending || pending.unitId !== unitId || pending.side !== side) return state;
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit) return state;
-  if (pending.kind === 'pileIn' && !context.inEngagement(unit, context.enemies(state, side), rules.engagementRange())) return state;
-  const wasEngaged = context.inEngagement(unit, context.enemies(state, side), rules.engagementRange());
+  if (!validateFightMovement(state, pending, unit, rules, context)) return state;
   const next = context.clone(state);
   const movedUnit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!movedUnit) return state;
   for (const component of context.attachedComponents(next, movedUnit)) {
-    if (pending.kind === 'pileIn') component.piledIn = true;
+    if (pending.kind === 'pileIn') {
+      if (pending.overrun) component.overrunPiledIn = true;
+      else component.piledIn = true;
+    }
     else component.consolidated = true;
+    component.inCombat = context.inEngagement(component, context.enemies(next, side), rules.engagementRange());
     component.lastMovePhase = next.phase;
     component.lastMoveTurn = next.turn;
     component.movementStartPositionsByModel = undefined;
@@ -646,12 +932,12 @@ export function completePlayFightMovement(
     component.movementAllowanceRemaining = undefined;
   }
   next.pendingFightMovement = undefined;
-  if (pending.kind === 'consolidate' && rules.metadata.edition === '11e' && !wasEngaged
-    && context.inEngagement(movedUnit, context.enemies(next, side), rules.engagementRange())) {
+  if (pending.kind === 'consolidate' && rules.metadata.edition === '11e') {
     const newlyEngaged = context.enemies(next, side)
       .filter(enemy => !enemy.activated && context.inEngagement(movedUnit, [enemy], rules.engagementRange()))
       .map(enemy => enemy.id);
     next.consolidationPendingFightUnitIds = [...new Set([...(next.consolidationPendingFightUnitIds ?? []), ...newlyEngaged])];
+    next.fightEligibleUnitIds = [...new Set([...(next.fightEligibleUnitIds ?? []), ...newlyEngaged])];
   }
   if (pending.kind === 'pileIn' && rules.metadata.edition === '11e' && isFightPileInStep(next)) {
     return advancePlayFightPileInStep(next, rules, context);
@@ -712,9 +998,10 @@ export function runAutomaticEleventhFightPhase(
   next.phaseStep = PHASE_STEP.FightConsolidate;
   next.consolidationSide = startingSide;
   const engagedAtFightStart = new Set(next.engagedUnitIdsAtFightStepStart ?? []);
+  const fightEligible = new Set(next.fightEligibleUnitIds ?? []);
   next.consolidationEligibleUnitIds = next.units
     .filter(unit => !unit.destroyed && !unit.embarkedInUnitId
-      && (unitChargedThisTurn(next, unit) || engagedAtFightStart.has(unit.id)))
+      && (fightEligible.has(unit.id) || unitChargedThisTurn(next, unit) || engagedAtFightStart.has(unit.id)))
     .map(unit => unit.id);
   next.consolidationPendingFightUnitIds = [];
   for (const consolidationSide of [startingSide, (startingSide === 0 ? 1 : 0) as Side]) {

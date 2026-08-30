@@ -1,5 +1,155 @@
 # Warhammer Simulator — TODOs
 
+## Rules Data Catalog and Declarative Effects Plan - 2026-08-29
+
+The unit, shared-faction, army-rule, detachment, Stratagem, versioning, and
+JSON catalog design is documented in
+[`docs/RULES_DATA_CATALOG.md`](docs/RULES_DATA_CATALOG.md). This is the source
+of truth for the catalog plan; the implementation remains pending.
+
+- [ ] Define versioned catalog types and a simulator-core catalog loader.
+- [ ] Build the Ork catalog as the first normalized unit-data pilot.
+- [ ] Model shared Space Marine units through canonical unit references and
+  chapter/faction overlays instead of duplicated datasheets.
+- [ ] Keep `ImportedArmy` as the resolved army snapshot and record catalog
+  revisions for saved armies and battles.
+- [ ] Connect unit, army, detachment, and Stratagem references to the typed
+  event/effect runtime.
+- [ ] Add catalog validation, source-refresh comparison, external-ID mapping,
+  and Legends exclusion rules.
+- [ ] Keep canonical rules data in versioned JSON; use the database for user and
+  session state only unless a future live-catalog requirement justifies more.
+
+## 11th Edition Core Rules Audit - 2026-08-29
+
+This is the audit handoff after capturing the Wahapedia Core Rules reference. It is intentionally a TODO list, not an implementation change.
+
+Audit basis:
+
+- `docs/core-rules/wahapedia/core-rules.md` contains 239 normalized source sections, including FAQs, errata, examples, and the Core Rules source link.
+- The current simulator-core state machine, phase modules, legal-action layer, event infrastructure, combat engine, transport/reinforcement code, UI controllers, and AI/controller seams were compared against that source.
+- `npm test` currently passes all 333 simulator-core tests. Passing tests establish a working baseline, not complete 11th Edition coverage.
+- The Wahapedia army-reference collector and its generated army data remain owned by the other workstream. This audit must not modify those scripts or generated references.
+- Logs remain presentation history only. No item below should be implemented by parsing log text.
+
+### Audit verdict
+
+- [x] Capture and index the current Core Rules source for repeatable review.
+- [ ] Treat the 11th Edition implementation as partial until every source section has a coverage status, a typed core owner, and either a focused regression test or an explicit fail-closed reason.
+- [ ] Finish the state-machine refactor before adding broad new rule behavior. The hierarchy exists in types and helpers, but several callers still use separate orchestration paths and some source timing windows are compressed.
+- [ ] Keep UI, human play, simulation, AI, replay, save/load, and undo on the same typed `GameAction` and state-transition path.
+
+### P0 - authoritative battle flow and state ownership
+
+- [ ] Build a source-to-code coverage matrix for every Core Rules section, FAQ, and erratum from sections 01-25. Track source section, rules owner, typed state, legal actions, UI interaction, AI action, tests, and status (`implemented`, `partial`, `unsupported`, or `not applicable`). Do not mark a rule complete from a broad integration test alone.
+- [ ] Make one authoritative hierarchical transition graph for `Pre-battle -> Start of Battle Round -> Player Turn -> End of Turn -> End of Battle Round -> next round or Battle End`.
+  - [ ] Give Start of Battle Round, Start of Turn, End of Turn, and End of Battle Round explicit transition handlers and event windows rather than only storing enum values in `BattleState`.
+  - [ ] Keep Battle-shock as the Command phase step plus typed on-demand Battle-shock events; retire `BATTLE_PHASE.BattleShock` from the canonical 11th Edition path unless it is proven to be only a legacy-save compatibility value.
+  - [ ] Preserve the source ordering at each boundary: objective control updates, non-mission rules, mission rules, scoring, cleanup, and then the next node.
+- [ ] Remove duplicate phase-transition paths. `battleStateMachine.ts`, `battleSimulation.ts`, `practice/actions.ts`, and `apps/web/src/App.tsx` currently all participate in boundary orchestration; route them through one core transition/action service.
+- [ ] Make each phase-step effect execute exactly once. In particular, audit the Command entry path: `battleSimulation.startCommandPhase` currently performs CP gain and Battle-shock work while `commandPhase.ts` also owns CP gain when entering the Gain Core CP step. Add an invariant that a step cannot apply its effect twice.
+- [ ] Make full-phase simulation and step-by-step play use the same ordered step transitions. Full-phase mode may choose decisions automatically, but it must not skip or reorder source timing windows.
+- [ ] Expand the phase registry/dispatcher to own every real workflow node, including deployment/setup, round boundaries, turn boundaries, and all phase steps. Do not use a large fallback branch in the facade for a phase that has its own rules.
+- [x] Gate normal Shooting legal actions by phase step and add a typed event-backed combat window for exceptions. Fire Overwatch now records a rule event and opens a serializable Snap Shooting opportunity; future ability/Stratagem combat exceptions should use the same `PendingCombatAction` contract.
+- [ ] Add the generic UI presentation and selection flow for non-Overwatch `PendingCombatAction` windows; the current Overwatch panel remains a dedicated compatibility path.
+- [ ] Add controller/AI integration tests that resolve and decline event-backed Shooting and Fight actions through `GameAction` and restore them through undo/replay/save/load.
+- [ ] Define a typed pending-interaction contract for every choice that pauses the battle. It must include owner, opposing-player reactions, source event, legal options, resolution result, cancellation/rollback behavior, and a stable identifier.
+- [ ] Make pending interactions, event queues, phase cursors, popup restoration state, and selection state serialize and restore atomically through undo, redo, replay, and save/load.
+- [ ] Add transition invariants: active/opposing player correctness, no action outside its step, no unresolved request bypass, no duplicate step effect, no stale unit activation, and no phase advance while a required interaction is pending.
+
+### P0 - event-driven timing and reactions
+
+- [ ] Turn `eventTriggers.ts` from infrastructure into the actual timing authority. Register and resolve typed triggers for start/end battle round, start/end turn, start/end phase, each phase step, rules triggered during a phase, and mission scoring windows.
+- [ ] Model abilities, army rules, missions, and Stratagems as typed event registrations/effects instead of scattered direct calls or text-pattern execution.
+- [ ] Support events that become active and resolve in the same phase, including combat abilities, as well as events triggered during the opposing player's turn.
+- [ ] Add deterministic priority/ordering rules for simultaneous triggers and opposing-player responses. Store the order in state so AI, replay, and undo reproduce it exactly.
+- [ ] Make event resolution idempotent and undoable. An event must not fire twice after a retry, popup reopen, undo/redo, save/load, or replay seek.
+- [ ] Replace automatic resolution of interactions that require player choices with typed pending requests. The current emergency-disembark and some other event paths still resolve immediately or deterministically.
+- [ ] Add typed source/event provenance to rule results. Formatted logs may explain a result, but may never be the source of the result or pending state.
+
+### Verification checkpoint - 2026-08-29
+
+- [x] Core typecheck passes with the current refactor.
+- [x] Core test suite passes all 333 tests.
+- [x] Root web production build passes.
+- [ ] Manual browser smoke test of phase-step controls and event-backed combat popups.
+
+### P1 - deployment, battle-round, and army legality
+
+- [ ] Audit the complete pre-battle workflow against sections 23 and 25: deployment roll-off, alternating deployments after one side runs out, strategic-reserve declarations, transport assignments, first-turn roll, winner-must-go-first, and pre-battle abilities.
+- [ ] Add a typed deployment/pre-battle state for Scouts and other pre-battle abilities, including alternating priority and all reserve/deployment-zone restrictions.
+- [ ] Implement the complete Muster Armies contract: battle size limits, points, unit-copy limits, Battleline/Dedicated Transport exceptions, Epic Hero limit, detachment choice, Warlord, enhancements, faction, Leader/Support restrictions, and strategic-reserve 50% limit.
+- [ ] Add explicit save migration/versioning for old states that have the preview-era 11th metadata, legacy movement cursors, or the standalone Battle-shock phase.
+- [ ] Implement the End of Turn coherency rule for every phase, including removing models one at a time until coherent, marking those models destroyed without firing destroyed-model triggers, and making the result undoable.
+- [ ] Centralize the end-of-phase and end-of-turn objective-control update. Section 14 requires control to be updated before other rules triggered at that boundary; do not rely on individual callers to remember `updateObjectiveControl`.
+- [ ] Finish mission timing/geometry audit for primary and secondary missions, including end-of-phase, end-of-turn, end-of-battle-round, secured objectives, terrain objectives, and mission-specific source data.
+
+### P1 - Movement, terrain, reserves, and transports
+
+- [ ] Reconcile the source's three Movement phase steps with the current explicit `MovementReinforcements` cursor. Decide and document whether Reinforcements is a subordinate part of Move Units or a displayed internal step, then make the state machine, legal actions, UI, simulation, and source matrix agree.
+- [ ] Verify all Movement move types against the captured source: Remain Stationary, Normal, Advance, Fall Back, Disembark, Ingress, and rule-provided Surge moves. Each must have independent eligibility, before/while/after effects, rollback, and tests.
+- [ ] Finish exact movement geometry: base-edge distance, FRAME models, model rotation, vertical distance, battlefield edge, friendly/enemy model traversal, terrain surfaces, terrain heights, and end-position overlap checks.
+- [ ] Keep the interactive multi-model drag/rotate/waypoint behavior as a UI convenience only. Core actions and AI must still move one model at a time with serializable per-model positions, rotations, remaining distance, and validation results.
+- [ ] Complete terrain movement and collision coverage for Exposed, Light, Dense, INFANTRY/BEASTS/SWARM/MOBILE, MONSTER/VEHICLE, FLY, TITANIC, ceilings/floors, ground level, elevated surfaces, and the Solid rule. Distinguish path traversal from final placement.
+- [ ] Implement all Transport rules from section 18: capacity, eligibility, embark timing, dedicated transport requirements, embarked abilities, Firing Deck, and transport destruction lifecycle.
+- [ ] Add Assault Disembark and Shock Disembark from sections 18.06 and 18.07. The current movement work covers Rapid, Tactical, Combat, and an emergency path but does not yet cover every source disembark mode.
+- [ ] Replace automatic Emergency Disembark with an interactive per-model placement request, including the safe setup attempt, engaged fallback allowed by the erratum, hazard rolls, destroyed models, Battle-shock, retry, undo, and AI resolution.
+- [ ] Complete Strategic Reserves/Repositioned Units/Ingress coverage: pre-battle 50% cap, round-two arrival, edge placement, 8-inch enemy restriction, opponent deployment-zone restriction before round three, Deep Strike exception, persistent effects, same-turn movement history, and end-of-round-three destruction without destroyed triggers.
+- [ ] Make Rapid Ingress a typed Stratagem event at the end of the opponent's Movement phase, excluding Aircraft and first-round use, with the same pending ingress interaction used by normal arrivals.
+- [ ] Finish Surge Move as an event-driven move with rule-provided maximum distance, target selection, Battle-shock/engagement/moved-this-phase restrictions, target-only engagement, and no-repeat movement.
+- [ ] Audit Flying/Take to the Skies and Aircraft together: optional take-to-skies choice, distance reduction, ignored vertical movement, model/terrain traversal, Hover, Aircraft reserve return, Aircraft shooting/charge/fight restrictions, and interaction with pile-in/consolidation/surge.
+- [ ] Add movement validation tests for every invalid final state and every rollback path, including undo from a partially edited unit and retry after a popup or pending event is reopened.
+
+### P1 - Shooting and shared combat resolution
+
+- [ ] Finish the Shooting phase-step audit: Start of Shooting only resolves start triggers, Shoot alone exposes shooting declarations, and End of Shooting resolves end triggers. A unit must not receive a combat popup in the wrong step unless a typed event explicitly allows it.
+- [ ] Verify per-model ranged eligibility and target visibility/range. Keep models that cannot see or reach a target out of the weapon allocation pool, while allowing other models in the same unit to allocate to that target.
+- [ ] Make combat preview and combat resolution consume the same typed calculation/result. Hit numbers, cover, Plunging Fire, Indirect Fire, Hidden, Obscuring, Solid, and per-model line of sight must not be recalculated differently by the UI after a target is selected.
+- [ ] Finish the terrain/visibility audit per attacking model and target model. Cover is evaluated for the target unit against each attack, and a wall or terrain area touching the attacker must not incorrectly grant cover when it does not intersect the line of sight.
+- [ ] Complete the section 04/05 attack-sequence matrix: weapon selection, target selection, identical attack grouping, split attacks, target validity changes, hit/wound criticals, modifiers and rerolls, saves and invulnerable saves, Character/wounded allocation order, Precision, Devastating Wounds, damage spillover, Feel No Pain, mortal wounds, Hazardous, and destruction triggers.
+- [ ] Audit every Core 24 weapon ability against the source and FAQs/errata: Anti, Assault, Blast, Cleave, Close-Quarters, Deadly Demise, Devastating Wounds, Extra Attacks, Firing Deck, Hazardous, Heavy, Hover, Ignores Cover, Indirect Fire, Lance, Lethal Hits, Lone Operative, Melta, One Shot, Pistol, Precision, Psychic, Rapid Fire, Scouts, Stealth, Super-heavy Walker, Sustained Hits, Torrent, and Twin-linked.
+- [ ] Split `manualCombat.ts` by declaration/eligibility domain while retaining one shared hit/wound/save/damage service. The recent Fight extraction still leaves shooting, charge, Fight, Overwatch, and automated sequencing coupled, and `fightPhaseActions.ts` currently uses `@ts-nocheck`.
+- [ ] Add focused shooting tests outside the oversized scenario test for line of sight, cover per target, mixed visible models, no-target completion, preview/result parity, and unresolved-damage popup restoration.
+- [ ] Audit Aircraft and engaged MONSTER/VEHICLE shooting restrictions, including Close-Quarters, Blast, Indirect Fire, and the exact hit modifiers.
+
+### P1 - Charge and Fight
+
+- [ ] Complete the Charge source audit: declaration eligibility, 12-inch target range, Advance/Fall Back/engagement/disembark restrictions, charge roll modifiers, declared target set, model-by-model closer requirement, Engagement Range, target engagement completion, failed-charge activation, and Fights First result.
+- [ ] Verify charge movement against the shared model movement contract without weakening the special charge rules. Include terrain, Fly, Aircraft, MONSTER/VEHICLE, base-edge distance, and rollback behavior.
+- [ ] Verify the current Fight implementation against every FAQ/erratum: Pile In, base-contact model locks, nearest selected enemy, 5-inch targeting, Normal Fight, Overrun Fight, Fights First priority, passing, alternating selection, newly eligible units, Fight On Death, and the transition to Consolidate.
+- [ ] Complete Consolidation edge cases: ongoing/engaging/objective modes, selected enemy units, model-by-model closer/end conditions, retaining existing engagements, newly engaged enemy units receiving their fight opportunity, objective range, and the rule that no new Fight selection can begin after Consolidation starts.
+- [ ] Ensure a unit that is eligible to Fight but cannot make a melee attack can still complete the Fight activation and proceed correctly.
+- [ ] Replace `@ts-nocheck` in the Fight phase action module with typed contexts and add focused tests for every legal-action and pending-popup branch.
+- [ ] Add integration tests proving Charge and Fight cannot affect Movement or Shooting cursors, popups, activations, or pending requests after undo/redo or a phase transition.
+
+### P1 - Stratagems, abilities, and actions
+
+- [ ] Finish the Stratagem system design and implementation: timing windows, once-per-phase same-stratagem limit, same-unit target limit, CP payment, illegal-target behavior (no effect/no CP but used), target choices, opponent-turn reactions, event priority, and undo/replay/save/AI state.
+- [ ] Convert Core Stratagem definitions into typed declarations/effects and add the remaining pending choices for Command Re-roll, Epic Challenge, Insane Bravery, Explosives, Crushing Impact, Rapid Ingress, Fire Overwatch, Snap Shooting, Smokescreen, Heroic Intervention, and Counteroffensive.
+- [ ] Replace regex interpretation of imported ability prose with typed ability data/effects wherever behavior is required. Keep unsupported wording fail-closed and never infer behavior from logs.
+- [ ] Add typed support for Aura, Faction, Psychic, Wargear, Leader/Support, attached-unit scope, duration, selectable targets, conditional effects, and interrupt effects.
+- [ ] Implement Actions as a shared timed mechanic: start eligibility, use limits, completion timing/effects, cancellation when a unit moves or leaves the battlefield, and the exclusion rules for shooting/charging.
+- [ ] Verify abilities and Stratagems can register triggers in another player's turn and can create a same-phase pending interaction without bypassing the active/opposing-player rules.
+
+### P1 - AI, controllers, and observations
+
+- [ ] Expand legal actions to describe every human or AI decision, including phase steps, unit/model movement, target allocation, terrain/formation placement, event reactions, Stratagems, abilities, damage allocation, and pending choices.
+- [ ] Expand `battleObservation` with phase/step, active and opposing player, pending requests, legal-action reasons, model positions/rotations, visibility/line of sight, targets, terrain, objectives, scores, CP, and typed dice/results without exposing UI-only state.
+- [ ] Ensure local human, remote human, heuristic AI, AI-vs-AI simulation, replay, and suggestions all call the same legal-action/apply-action boundary.
+- [ ] Add a deterministic fast AI-vs-AI runner with seeded dice, decision traces, maximum-step protection, and a way to compare rule outcomes across policies.
+- [ ] Improve the baseline heuristic policy only after its observation and action contracts cover the full state. Do not encode UI click sequences as the AI interface.
+
+### P2 - edition/versioning, source maintenance, and test quality
+
+- [ ] Quarantine legacy 10th Edition compatibility from the 11th Edition implementation path. Current `rules40K11th` spreads `rules40K10th` and carries preview-era compatibility metadata; make 11th behavior explicit and fail closed when unsupported.
+- [ ] Define a versioned rules-package boundary so a future 12th Edition can be added without changing 11th behavior or silently falling back to another edition.
+- [ ] Add source provenance metadata to the rules snapshot: retrieval date, source URL, source revision/hash when available, parser version, and a review status for FAQs/errata.
+- [ ] Add a repeatable source-refresh audit that reports added, removed, or changed source sections before implementation status is changed. The normalized Markdown is a reference, not runtime rules data.
+- [ ] Split `packages/simulator-core/test/scenarioStorage.test.ts` into focused domain suites as rules coverage grows. Keep scenario/integration tests, but do not use one giant file as the only proof of a rule.
+- [ ] Add property/invariant tests for serializable state, undo/redo equivalence, event idempotence, no log parsing, legal-action completeness, active-player transitions, and phase isolation.
+- [ ] Add browser-level smoke coverage for the most fragile pending flows: popup dismissal/reopen, undo restoration, pending damage, charge movement, pile-in, consolidation, disembark, emergency disembark, and event reactions.
+- [ ] Keep the phase documentation synchronized with implementation after each phase refactor; link each completed item to its source section and focused test.
+
 ## Architecture and Feature Roadmap Handoff - 2026-07-02
 
 Use this section as the current high-level pickup order before starting large new feature work. The goal is to keep the repo easy to continue from another computer and avoid adding Army Builder or remaining 11th Edition rules work through oversized React components or scattered core logic.

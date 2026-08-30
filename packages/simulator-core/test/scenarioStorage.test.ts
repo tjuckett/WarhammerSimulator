@@ -6,7 +6,7 @@ import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
 import { simulatePlayerTurn } from '../src/engine/simulator';
 import { fightOnDeathTargetIds, fightOnDeathWeaponOptions } from '../src/engine/simulator';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, beginPlayFightMovement, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayFightMovement, completePlayScoutMove, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, createDeploymentState, decoyObjectiveOptions, declarePlaySuperHeavyMobile, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playDisembarkModes, playFightActivationUnitIds, playFightWeaponOptions, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playScoutMoveAllowance, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanPileIn, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModelByDelta, movePlayModelVerticallyByDelta, removePlayCasualtyModels, removePlayModels, resolvePendingDeadlyDemises, resolvePlaySurgeMove, rotatePlayModelByDelta, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, simulateNextUnit, simulationNextUnitId, snapShootPlayUnitWeapon, startPlayConsolidationStep, startPlayFightStep, startPlayScoutMove, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, targetHasCoverFromModel, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, beginPlayFightMovement, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayFightMovement, completePlayScoutMove, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, createDeploymentState, decoyObjectiveOptions, declarePlaySuperHeavyMobile, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, passPlayFight, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playDisembarkModes, playFightActivationUnitIds, playFightConsolidationOptions, playFightPileInTargetOptions, playFightSideCanPass, playFightWeaponOptions, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playScoutMoveAllowance, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanPileIn, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModelByDelta, movePlayModelVerticallyByDelta, removePlayCasualtyModels, removePlayModels, resolvePendingDeadlyDemises, resolvePlaySurgeMove, rotatePlayModelByDelta, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, simulateNextUnit, simulationNextUnitId, snapShootPlayUnitWeapon, startPlayConsolidationStep, startPlayFightStep, startPlayScoutMove, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, targetHasCoverFromModel, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 
 // Batch model movement is a UI interaction. Core tests compose its atomic
 // model action to keep the simulator API single-model for AI/controller use.
@@ -947,6 +947,8 @@ test('11th Fire Overwatch is only available in the opponent Movement phase', () 
   const used = useStratagem(battle, 1, 'fire-overwatch', rules40K11th, overwatcher.id);
   assert.deepEqual(used.commandPoints, [1, 0]);
   assert.equal(used.stratagemUses?.at(-1)?.side, 1);
+  assert.equal(used.pendingCombatActions?.[0]?.kind, 'shooting');
+  assert.equal(used.pendingCombatActions?.[0]?.snapShooting, true);
 });
 
 test('11th battle round flow starts player turns at Command and advances rounds after both players', () => {
@@ -11115,6 +11117,131 @@ test('11th Fight phase lets a charged unit pile in before selecting melee attack
   assert.deepEqual(playFightWeaponOptions(piled, fighter.id, 0, rules40K11th), [
     { weaponIndex: 0, name: 'Blade', targetIds: [target.id] },
   ]);
+});
+
+test('11th Pile In selects all ongoing engagements and keeps base-contact models locked', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = false;
+  battle.fightPileInSide = 0;
+  const source = losTestUnit('pile-source', 0, { x: 0, y: 10 });
+  source.profile = { ...source.profile, baseModelCount: 2, weapons: [] };
+  source.remainingModels = 2;
+  source.modelPositions = [{ x: 0, y: 10 }, { x: 0, y: 12 }];
+  source.position = { x: 0, y: 11 };
+  source.inCombat = true;
+  const engagedTarget = losTestUnit('engaged-target', 1, { x: 0.9, y: 10 });
+  const nearbyTarget = losTestUnit('nearby-target', 1, { x: 4.8, y: 10 });
+  battle.units = [source, engagedTarget, nearbyTarget];
+
+  assert.deepEqual(playFightPileInTargetOptions(battle, source.id, 0, rules40K11th), [engagedTarget.id]);
+  assert.equal(playUnitCanPileIn(battle, source.id, 0, rules40K11th), true);
+  assert.equal(
+    beginPlayFightMovement(battle, source.id, 0, 'pileIn', rules40K11th, { targetUnitIds: [nearbyTarget.id] }),
+    battle,
+  );
+
+  const pending = beginPlayFightMovement(
+    battle,
+    source.id,
+    0,
+    'pileIn',
+    rules40K11th,
+    { targetUnitIds: [engagedTarget.id] },
+  );
+  assert.notEqual(pending, battle);
+  assert.equal(pending.pendingFightMovement?.lockedModelIds?.includes(`${source.id}:0`), true);
+
+  const invalid = structuredClone(pending);
+  invalid.units.find(unit => unit.id === source.id)!.modelPositions[0] = { x: 0.5, y: 10 };
+  assert.equal(completePlayFightMovement(invalid, source.id, 0, rules40K11th), invalid);
+
+  const completed = completePlayFightMovement(pending, source.id, 0, rules40K11th);
+  assert.notEqual(completed, pending);
+  assert.equal(completed.units.find(unit => unit.id === source.id)?.piledIn, true);
+  assert.equal(completed.pendingFightMovement, undefined);
+});
+
+test('11th Consolidation exposes ongoing, engaging, and objective modes', () => {
+  const baseBattle = state('fight');
+  baseBattle.ruleset = rulesetMetadataForState(rules40K11th);
+  baseBattle.phaseStep = PHASE_STEP.FightConsolidate;
+  baseBattle.consolidationStepStarted = true;
+  baseBattle.consolidationSide = 0;
+  const source = losTestUnit('consolidator', 0, { x: 10, y: 10 });
+  baseBattle.consolidationEligibleUnitIds = [source.id];
+
+  const ongoing = structuredClone(baseBattle);
+  const ongoingTarget = losTestUnit('ongoing-target', 1, { x: 10.9, y: 10 });
+  ongoing.units = [source, ongoingTarget];
+  assert.deepEqual(playFightConsolidationOptions(ongoing, source.id, 0, rules40K11th), [
+    { mode: 'ongoing', targetUnitIds: [ongoingTarget.id] },
+  ]);
+
+  const engaging = structuredClone(baseBattle);
+  const engagingTarget = losTestUnit('engaging-target', 1, { x: 13, y: 10 });
+  engaging.units = [source, engagingTarget];
+  assert.deepEqual(playFightConsolidationOptions(engaging, source.id, 0, rules40K11th), [
+    { mode: 'engaging', targetUnitIds: [engagingTarget.id] },
+  ]);
+
+  const objective = structuredClone(baseBattle);
+  objective.objectives = [{ x: 12, y: 10 }];
+  objective.units = [source];
+  assert.deepEqual(playFightConsolidationOptions(objective, source.id, 0, rules40K11th), [
+    { mode: 'objective', targetUnitIds: [], objectiveIndex: 0 },
+  ]);
+});
+
+test('11th Fight allows a side to pass when all eligible fighters are more than 5 inches away', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.phaseStep = PHASE_STEP.FightUnits;
+  battle.fightStepStarted = true;
+  const first = losTestUnit('pass-first', 0, { x: 0, y: 10 });
+  first.charged = true;
+  const second = losTestUnit('pass-second', 1, { x: 10, y: 10 });
+  second.charged = true;
+  battle.units = [first, second];
+
+  assert.equal(playFightSideCanPass(battle, 0, rules40K11th), true);
+  assert.equal(playFightSideCanPass(battle, 1, rules40K11th), false);
+  assert.equal(getLegalActions(battle, 0, rules40K11th).some(action => action.action.type === GAME_ACTION_TYPE.PassFight), true);
+
+  const firstPassed = passPlayFight(battle, 0, rules40K11th);
+  assert.deepEqual(firstPassed.fightPassedSides, [0]);
+  assert.deepEqual(playFightActivationUnitIds(firstPassed, 1, rules40K11th), [second.id]);
+  assert.equal(playFightSideCanPass(firstPassed, 1, rules40K11th), true);
+
+  const bothPassed = passPlayFight(firstPassed, 1, rules40K11th);
+  assert.equal(bothPassed.phaseStep, PHASE_STEP.FightConsolidate);
+  assert.equal(bothPassed.consolidationStepStarted, true);
+});
+
+test('11th Consolidation can reopen a Fight opportunity for a side that previously passed', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.phaseStep = PHASE_STEP.FightConsolidate;
+  battle.fightStepStarted = true;
+  battle.fightPassedSides = [1];
+  battle.consolidationStepStarted = true;
+  battle.consolidationSide = 0;
+  const source = losTestUnit('consolidating-source', 0, { x: 10, y: 10 });
+  const target = losTestUnit('consolidating-target', 1, { x: 13.5, y: 10 });
+  battle.consolidationEligibleUnitIds = [source.id];
+  battle.units = [source, target];
+
+  const pending = beginPlayFightMovement(battle, source.id, 0, 'consolidate', rules40K11th, {
+    consolidationMode: 'engaging',
+    targetUnitIds: [target.id],
+  });
+  const moved = structuredClone(pending);
+  moved.units.find(unit => unit.id === source.id)!.modelPositions[0] = { x: 11.5, y: 10 };
+  const completed = completePlayFightMovement(moved, source.id, 0, rules40K11th);
+
+  assert.equal(completed.pendingFightMovement, undefined);
+  assert.deepEqual(completed.consolidationPendingFightUnitIds, [target.id]);
+  assert.deepEqual(playFightActivationUnitIds(completed, 1, rules40K11th), [target.id]);
 });
 
 test('11th Fight skips a Pile In when every model in the unit is already in base contact', () => {

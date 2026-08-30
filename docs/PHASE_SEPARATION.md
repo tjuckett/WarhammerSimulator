@@ -69,6 +69,22 @@ The central rule is:
 > action visibility. Shared code may provide reusable mechanics or presentation,
 > but it must not decide when another phase's actions or popups appear.
 
+### Event-backed combat exceptions
+
+The phase rule does not mean that a unit can never shoot or fight outside the
+corresponding phase. It means that an exception must be explicit. An ability,
+army rule, or Stratagem registers or resolves a typed event and opens a
+`PendingCombatAction` in `BattleState` for the affected unit. That state carries
+the owner, source event, combat kind, and special mode, so legal actions and AI
+can expose the opportunity without weakening the ordinary phase-step checks.
+
+Normal Shooting and Fight actions remain owned by their phase handlers. The
+event-backed window is a shared timing seam only; it does not move the battle
+into another phase, change the active player, or grant unrelated units access
+to the phase's actions. It must be resolved or declined before a phase can
+advance, and because it is part of `BattleState`, undo, replay, and save/load
+restore it with the rest of the pending interaction state.
+
 ## Rules edition policy
 
 This rewrite targets 11th edition only. Older-edition behavior is out of scope

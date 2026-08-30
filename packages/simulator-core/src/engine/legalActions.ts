@@ -21,6 +21,7 @@ import {
   playFightActivationUnitIds,
   playFightPhaseHasPendingActivations,
   playFightPileInUnitIds,
+  playFightSideCanPass,
   playConsolidationUnitIds,
   playConsolidationPendingFightUnitIds,
   fightOnDeathTargetIds,
@@ -53,6 +54,7 @@ import type { BattleState, BattleUnit } from '../types/battle';
 import type { AbilityTiming } from '../types/ability';
 import { PHASE_STEP } from '../types/battle';
 import { fightPhaseStep, isFightConsolidationStep, isFightPileInStep, isFightUnitsStep } from './phases/fightPhaseRules';
+import { pendingCombatActionFor } from './combatActionWindows';
 
 export type LegalActionCategory =
   | 'phase'
@@ -100,6 +102,7 @@ function activeUnits(state: BattleState, side: Side): BattleUnit[] {
 
 export function phaseCanAdvance(state: BattleState, side: Side, rules: RulesEdition): boolean {
   if (state.activeArmy !== side || state.phase === 'deployment' || state.phase === 'end') return false;
+  if (state.pendingFightOnDeath?.length || state.pendingCombatActions?.length) return false;
   if (state.phase === 'movement'
     && state.phaseStep !== PHASE_STEP.MovementEnd
     && !createMovementPhase(state)?.canAdvance) return false;
@@ -315,7 +318,7 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
 }
 
 function addShootingActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
-  if (state.phase !== 'shooting' || state.activeArmy !== side) return;
+  if (state.phase !== 'shooting' || state.phaseStep !== PHASE_STEP.ShootingUnits || state.activeArmy !== side) return;
   for (const unit of activeUnits(state, side)) {
     const options = playShootingWeaponOptions(state, unit.id, side, rules);
     for (const option of options) {
@@ -339,6 +342,71 @@ function addShootingActions(actions: LegalAction[], state: BattleState, side: Si
         label: `${unit.profile.name}: No shooting targets`,
       });
     }
+  }
+}
+
+/**
+ * Event-backed combat windows are resolved before the owning phase's normal
+ * actions. This keeps an opponent-turn reaction available without making the
+ * normal Shooting or Fight step permissive.
+ */
+function addPendingCombatActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
+  const pending = state.pendingCombatActions?.[0];
+  if (!pending || pending.side !== side) return;
+  const unit = state.units.find(candidate =>
+    candidate.id === pending.unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId,
+  );
+  if (!unit) {
+    actions.push({
+      action: { type: 'play.declineCombatAction', side, combatActionId: pending.id },
+      category: pending.kind,
+      side,
+      unitId: pending.unitId,
+      label: `${pending.source}: Decline combat opportunity`,
+    });
+    return;
+  }
+  if (pending.kind === 'shooting') {
+    const options = pending.snapShooting
+      ? playSnapShootingWeaponOptions(state, pending.unitId, side, rules)
+      : playShootingWeaponOptions(state, pending.unitId, side, rules);
+    for (const option of options) {
+      if (option.weaponIndex < 0) continue;
+      for (const targetUnitId of option.targetIds) {
+        actions.push({
+          action: pending.snapShooting
+            ? { type: 'play.snapShootUnitWeapon', side, unitId: pending.unitId, targetUnitId, weaponIndex: option.weaponIndex }
+            : { type: 'play.shootUnitWeapon', side, unitId: pending.unitId, targetUnitId, weaponIndex: option.weaponIndex },
+          category: 'shooting',
+          side,
+          unitId: pending.unitId,
+          targetUnitId,
+          label: `${unit.profile.name}: ${pending.snapShooting ? 'Snap shoot' : 'Shoot'} ${option.name}`,
+        });
+      }
+    }
+  } else {
+    for (const option of playFightWeaponOptions(state, pending.unitId, side, rules)) {
+      for (const targetUnitId of option.targetIds) {
+        actions.push({
+          action: { type: 'play.fightUnitWeapon', side, unitId: pending.unitId, targetUnitId, weaponIndex: option.weaponIndex },
+          category: 'fight',
+          side,
+          unitId: pending.unitId,
+          targetUnitId,
+          label: `${unit.profile.name}: Fight with ${option.name}`,
+        });
+      }
+    }
+  }
+  if (!actions.some(action => action.unitId === pending.unitId && action.side === side && action.category === pending.kind)) {
+    actions.push({
+      action: { type: 'play.declineCombatAction', side, combatActionId: pending.id },
+      category: pending.kind,
+      side,
+      unitId: pending.unitId,
+      label: `${pending.source}: Decline combat opportunity`,
+    });
   }
 }
 
@@ -395,6 +463,15 @@ function addChargeActions(actions: LegalAction[], state: BattleState, side: Side
 
 function addFightActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
   if (state.phase !== 'fight') return;
+  if (rules.metadata.edition === '11e' && isFightUnitsStep(state)
+    && playFightSideCanPass(state, side, rules)) {
+    actions.push({
+      action: { type: 'play.passFight', side },
+      category: 'fight',
+      side,
+      label: `${state.armies[side].name}: Pass Fight selection`,
+    });
+  }
   if (rules.metadata.edition === '11e' && isFightConsolidationStep(state)) {
     const pendingFightIds = playConsolidationPendingFightUnitIds(state, side, rules);
     if (pendingFightIds.length) {
@@ -503,7 +580,7 @@ function addDamageActions(actions: LegalAction[], state: BattleState, side: Side
 
 function addFightOnDeathActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
   const pending = state.pendingFightOnDeath?.[0];
-  if (!pending || pending.side !== side) return;
+  if (!pending || pending.side !== side || !['shooting', 'fight'].includes(state.phase)) return;
   for (const targetUnitId of fightOnDeathTargetIds(state, side, rules)) {
     for (const option of fightOnDeathWeaponOptions(state, side, targetUnitId, rules)) {
       actions.push({
@@ -660,13 +737,11 @@ const PHASE_LEGAL_ACTION_HANDLERS: Partial<Record<BattleState['phase'], PhaseLeg
   shooting: {
     phase: 'shooting',
     appendActions: addShootingActions,
-    appendInterrupts: addFightOnDeathActions,
   },
   charge: { phase: 'charge', appendActions: addChargeActions },
   fight: {
     phase: 'fight',
     appendActions: addFightActions,
-    appendInterrupts: addFightOnDeathActions,
   },
 };
 
@@ -685,11 +760,14 @@ export function getLegalActions(
   const includeAbilities = options.includeAbilities ?? true;
   const actions: LegalAction[] = [];
 
-  activePhaseLegalActionHandler(state)?.appendInterrupts?.(actions, state, side, rules);
+  addFightOnDeathActions(actions, state, side, rules);
   if (state.pendingFightOnDeath?.length) return actions;
 
   addDamageActions(actions, state, side);
   if (actions.length) return actions;
+
+  addPendingCombatActions(actions, state, side, rules);
+  if (state.pendingCombatActions?.length) return actions;
 
   addPhaseActions(actions, state, side, rules, includePhaseStep);
   activePhaseLegalActionHandler(state)?.appendActions(actions, state, side, rules);

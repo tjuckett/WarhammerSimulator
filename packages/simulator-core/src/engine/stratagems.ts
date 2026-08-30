@@ -11,6 +11,7 @@ import type { RulesEdition } from './rulesEngine';
 import { unitHasRule } from './armyUnits';
 import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
 import { queueEventRequest } from './eventTriggers';
+import { openPendingCombatAction } from './combatActionWindows';
 
 let _stratagemUseId = 0;
 
@@ -322,6 +323,43 @@ function applyRapidIngressStratagemEffect(
   appendStratagemEffectLog(state, side, unit.profile.name, `${unit.profile.name} can be set up from Strategic Reserves this phase.`, 'info');
 }
 
+function applyFireOverwatchStratagemEffect(
+  state: BattleState,
+  side: Side,
+  stratagem: StratagemDefinition,
+  targetUnitId?: string,
+): void {
+  if (stratagem.id !== 'fire-overwatch') return;
+  const unit = targetUnitFor(state, targetUnitId);
+  if (!unit) return;
+
+  const event = recordBattleEvent(state, {
+    type: BATTLE_EVENT_TYPE.RuleTriggered,
+    side,
+    source: stratagem.name,
+    data: {
+      triggerTiming: EVENT_TRIGGER_TIMING.RuleTriggered,
+      rule: 'combat-action-window',
+      combatAction: 'shooting',
+      unitId: unit.id,
+      stratagemId: stratagem.id,
+    },
+  });
+  openPendingCombatAction(state, {
+    id: `combat-action-${event.id}`,
+    kind: 'shooting',
+    unitId: unit.id,
+    side,
+    source: stratagem.name,
+    triggeredPhase: state.phase,
+    triggeredPhaseStep: state.phaseStep,
+    sourceEventId: event.id,
+    allowActivated: true,
+    snapShooting: true,
+  });
+  appendStratagemEffectLog(state, side, unit.profile.name, `${unit.profile.name} has an event-backed Snap Shooting opportunity.`, 'info');
+}
+
 function applyHeroicInterventionStratagemEffect(
   state: BattleState,
   side: Side,
@@ -574,6 +612,7 @@ export function useStratagem(
   applyCommandRerollStratagemEffect(next, side, use);
   applyInsaneBraveryStratagemEffect(next, side, stratagem, targetUnitId);
   applyRapidIngressStratagemEffect(next, side, stratagem, targetUnitId);
+  applyFireOverwatchStratagemEffect(next, side, stratagem, targetUnitId);
   applyHeroicInterventionStratagemEffect(next, side, stratagem, targetUnitId, heroicInterventionMode);
   applyCounteroffensiveStratagemEffect(next, stratagem, targetUnitId);
   applyMortalWoundStratagemEffect(next, side, stratagem, rules, targetUnitId, secondaryTargetUnitId, effectiveSourceModelIndex);

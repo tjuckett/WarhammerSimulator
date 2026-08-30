@@ -3,6 +3,7 @@ import type { RulesEdition } from '../rulesEngine';
 import type { WeaponProfile } from '../../types/army';
 import { unitCanUseBigGunsNeverTire, weaponIsCloseQuarters } from '../manualCombat';
 import type { ManualShootingSelectionContext, PlayShootingWeaponOption, ShootingSelectionRulesContext } from '../manualCombat';
+import { pendingCombatActionFor, shootingActionWindowOpen } from '../combatActionWindows';
 
 export type ShootingPhaseRulesContext = ManualShootingSelectionContext & ShootingSelectionRulesContext & {
   inEngagement(unit: BattleUnit, targets: BattleUnit[], range: number): boolean;
@@ -18,6 +19,22 @@ export function canSelectShootingUnit(state: BattleState, unitId: string, side: 
     && !unit.destroyed
     && !unit.embarkedInUnitId
     && !unit.activated
+    && (!unit.performingAction || unit.profile.keywords.some(keyword => keyword.toLowerCase() === 'titanic'));
+}
+
+/**
+ * Normal shooting remains step-gated, while an event-backed window can
+ * explicitly authorize a non-snap shooting action outside that step.
+ */
+export function canResolveShootingUnit(state: BattleState, unitId: string, side: Side): boolean {
+  const pending = pendingCombatActionFor(state, 'shooting', unitId, side);
+  if (pending?.snapShooting || !shootingActionWindowOpen(state, unitId, side)) return false;
+  if (!pending && canSelectShootingUnit(state, unitId, side)) return true;
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  return !!unit
+    && !unit.destroyed
+    && !unit.embarkedInUnitId
+    && (pending?.allowActivated === true || !unit.activated)
     && (!unit.performingAction || unit.profile.keywords.some(keyword => keyword.toLowerCase() === 'titanic'));
 }
 
@@ -222,16 +239,17 @@ export function playShootingWeaponOptions(
   rules: RulesEdition,
   context: ShootingPhaseRulesContext,
 ): PlayShootingWeaponOption[] {
-  if (!canSelectShootingUnit(state, unitId, side)) return [];
+  if (!canResolveShootingUnit(state, unitId, side)) return [];
   const unit = state.units.find(candidate =>
     candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId,
   );
   if (!unit) return [];
+  const pending = pendingCombatActionFor(state, 'shooting', unitId, side);
   if (state.activeAttachedShootingUnitId && context.attachedUnitId(unit) !== state.activeAttachedShootingUnitId) return [];
   const lockedTargetId = state.activeAttachedShootingUnitId === context.attachedUnitId(unit)
     ? state.attachedShootingTargetUnitId
     : undefined;
-  const options = context.eligibleShootingWeapons(unit, state, rules)
+  const options = context.eligibleShootingWeapons(unit, state, rules, pending?.allowActivated === true)
     .map((weapon: WeaponProfile) => {
       const weaponIndex = unit.profile.weapons.indexOf(weapon);
       const targetModelCounts = Object.fromEntries(context.enemies(state, side).flatMap(target => {

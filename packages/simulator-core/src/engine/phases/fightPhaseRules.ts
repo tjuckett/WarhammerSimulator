@@ -1,4 +1,4 @@
-import { PHASE_STEP, type BattleState, type BattleUnit, type PhaseStep, type Side } from '../../types/battle';
+import { PHASE_STEP, type BattleState, type BattleUnit, type FightConsolidationMode, type PhaseStep, type Side } from '../../types/battle';
 import { phaseStepFor } from '../battleStateMachine';
 import type { RulesEdition } from '../rulesEngine';
 
@@ -18,6 +18,7 @@ export interface FightPhaseContext extends FightEligibilityContext {
   attachedUnitId(unit: BattleUnit): string;
   attachedUnitHasRule(state: BattleState, unit: BattleUnit, rule: string): boolean;
   unitHasActiveStratagem(state: BattleState, unit: BattleUnit, stratagemId: string, phase: string): boolean;
+  objectiveIndexesWithinRange(state: BattleState, unit: BattleUnit, rules: RulesEdition): number[];
 }
 
 export interface FightMovementRulesContext extends FightPhaseContext {
@@ -29,6 +30,10 @@ export interface FightMovementRulesContext extends FightPhaseContext {
     targetModelIndex: number,
   ): number;
 }
+
+export type FightConsolidationOption =
+  | { mode: Exclude<FightConsolidationMode, 'objective'>; targetUnitIds: string[] }
+  | { mode: 'objective'; targetUnitIds: []; objectiveIndex: number };
 
 /** Returns the Fight step, including compatibility for saves made before phaseStep existed. */
 export function fightPhaseStep(state: Pick<BattleState, 'phase' | 'phaseStep' | 'fightStepStarted' | 'consolidationStepStarted'>): PhaseStep {
@@ -129,6 +134,7 @@ export function unitHasFightsFirst(state: BattleState, unit: BattleUnit, context
 }
 
 export function sideCanSelectFightUnit(state: BattleState, side: Side, rules: RulesEdition, context: FightPhaseContext): boolean {
+  if (state.pendingCombatActions?.length) return false;
   return isFightResolutionStep(state)
     && (rules.metadata.edition === '11e' || state.activeArmy === side
       || context.activeUnits(state, side).some(unit => unitHasCounteroffensive(state, unit, context)));
@@ -141,6 +147,7 @@ export function playFightActivationUnitIds(
   context: FightPhaseContext,
 ): string[] {
   if (!sideCanSelectFightUnit(state, side, rules, context)) return [];
+  if (isFightUnitsStep(state) && state.fightPassedSides?.includes(side)) return [];
   const eligible = context.activeUnits(state, side).filter(unit => context.unitEligibleToFight(unit, state, rules));
   if (isFightConsolidationStep(state)) {
     const pending = new Set(state.consolidationPendingFightUnitIds ?? []);
@@ -176,6 +183,23 @@ export function playFightActivationUnitIds(
   return (fightsFirst.length ? fightsFirst : eligible).map(unit => unit.id);
 }
 
+/** 11e Appendix: a player may pass when all of their eligible fighters are more than 5" from every enemy. */
+export function playFightSideCanPass(
+  state: BattleState,
+  side: Side,
+  rules: RulesEdition,
+  context: FightMovementRulesContext,
+): boolean {
+  if (rules.metadata.edition !== '11e' || !isFightUnitsStep(state)
+    || !sideCanSelectFightUnit(state, side, rules, context)
+    || state.fightPassedSides?.includes(side)) return false;
+  const eligible = context.activeUnits(state, side)
+    .filter(unit => context.unitEligibleToFight(unit, state, rules));
+  if (!eligible.length || !playFightActivationUnitIds(state, side, rules, context).length) return false;
+  return eligible.every(unit => context.enemies(state, side).every(enemy =>
+    attachedUnitBaseEdgeDistance(state, unit, enemy, context) > 5 + 0.001));
+}
+
 export function playFightFirstUnitIds(state: BattleState, side: Side, rules: RulesEdition, context: FightPhaseContext): string[] {
   if (rules.metadata.edition !== '11e' || !isFightResolutionStep(state)) return [];
   return context.activeUnits(state, side)
@@ -208,6 +232,103 @@ export function unitHasUnlockedFightMovementModel(
   ));
 }
 
+function attachedUnitBaseEdgeDistance(
+  state: BattleState,
+  unit: BattleUnit,
+  target: BattleUnit,
+  context: FightMovementRulesContext,
+): number {
+  return Math.min(...context.attachedComponents(state, unit).flatMap(source =>
+    context.attachedComponents(state, target).map(enemy => {
+      let closest = Number.POSITIVE_INFINITY;
+      for (let modelIndex = 0; modelIndex < source.modelPositions.length; modelIndex++) {
+        for (let targetModelIndex = 0; targetModelIndex < enemy.modelPositions.length; targetModelIndex++) {
+          closest = Math.min(closest, context.modelBaseEdgeDistance(source, modelIndex, enemy, targetModelIndex));
+        }
+      }
+      return closest;
+    })), Number.POSITIVE_INFINITY);
+}
+
+function attachedUnitInEngagement(
+  state: BattleState,
+  unit: BattleUnit,
+  target: BattleUnit,
+  range: number,
+  context: FightMovementRulesContext,
+): boolean {
+  return context.attachedComponents(state, unit).some(component =>
+    context.inEngagement(component, context.attachedComponents(state, target), range));
+}
+
+function canStartPileIn(
+  state: BattleState,
+  unit: BattleUnit,
+  side: Side,
+  rules: RulesEdition,
+  context: FightMovementRulesContext,
+): boolean {
+  if (state.phase !== 'fight' || state.pendingFightMovement
+    || (state.activeArmy !== side && rules.metadata.edition !== '11e')) return false;
+  const pileInSide = state.fightPileInSide ?? state.activeArmy;
+  if (rules.metadata.edition === '11e' && isFightPileInStep(state) && pileInSide !== side) return false;
+  const isOverrunPileIn = rules.metadata.edition === '11e' && isFightUnitsStep(state) && unit.overrunFightSelected;
+  if (isOverrunPileIn) {
+    return !unit.overrunPiledIn && context.unitEligibleToFight(unit, state, rules);
+  }
+  if (rules.metadata.edition === '11e' && !isFightPileInStep(state)) return false;
+  return !unit.piledIn
+    && (context.unitCanFight(unit, state, rules)
+      || (unitChargedThisTurn(state, unit) && context.enemies(state, side).some(enemy => context.canFightTarget(unit, enemy))));
+}
+
+/** Enemy units a legal Pile In may select before the models are moved. */
+export function playFightPileInTargetOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+  context: FightMovementRulesContext,
+): string[] {
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side
+    && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || !canStartPileIn(state, unit, side, rules, context)) return [];
+  const enemies = context.enemies(state, side).filter(enemy => context.canFightTarget(unit, enemy));
+  const engaged = enemies.filter(enemy => attachedUnitInEngagement(state, unit, enemy, rules.engagementRange(), context));
+  if (engaged.length) return engaged.map(enemy => enemy.id);
+  return enemies
+    .filter(enemy => attachedUnitBaseEdgeDistance(state, unit, enemy, context) <= 5 + 0.001)
+    .map(enemy => enemy.id);
+}
+
+/** Consolidation modes and their legal target choices for the selected unit. */
+export function playFightConsolidationOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+  context: FightMovementRulesContext,
+): FightConsolidationOption[] {
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side
+    && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || state.pendingFightMovement || state.phase !== 'fight'
+    || (state.activeArmy !== side && rules.metadata.edition !== '11e')
+    || (rules.metadata.edition === '11e' && (!isFightConsolidationStep(state)
+      || state.consolidationSide !== side || !state.consolidationEligibleUnitIds?.includes(unit.id)))
+    || rules.metadata.edition === '11e' && !state.consolidationStepStarted
+    || unit.consolidated) return [];
+
+  const enemies = context.enemies(state, side).filter(enemy => context.canFightTarget(unit, enemy));
+  const engaged = enemies.filter(enemy => attachedUnitInEngagement(state, unit, enemy, rules.engagementRange(), context));
+  if (engaged.length) return [{ mode: 'ongoing', targetUnitIds: engaged.map(enemy => enemy.id) }];
+
+  const engaging = enemies.filter(enemy => attachedUnitBaseEdgeDistance(state, unit, enemy, context) <= 3 + 0.001);
+  if (engaging.length) return [{ mode: 'engaging', targetUnitIds: engaging.map(enemy => enemy.id) }];
+
+  return context.objectiveIndexesWithinRange(state, unit, rules)
+    .map(objectiveIndex => ({ mode: 'objective' as const, targetUnitIds: [] as [], objectiveIndex }));
+}
+
 export function playUnitCanPileIn(
   state: BattleState,
   unitId: string,
@@ -220,16 +341,8 @@ export function playUnitCanPileIn(
   if (state.pendingFightMovement) return false;
   const pileInSide = state.fightPileInSide ?? state.activeArmy;
   if (rules.metadata.edition === '11e' && isFightPileInStep(state) && pileInSide !== side) return false;
-  const isOverrunPileIn = rules.metadata.edition === '11e' && isFightUnitsStep(state) && unit.overrunFightSelected;
-  if (isOverrunPileIn) {
-    return !unit.overrunPiledIn
-      && context.unitEligibleToFight(unit, state, rules)
-      && unitHasUnlockedFightMovementModel(state, unit, side, context);
-  }
-  if (rules.metadata.edition === '11e' && !isFightPileInStep(state)) return false;
-  return !unit.piledIn
-    && (context.unitCanFight(unit, state, rules)
-      || (unitChargedThisTurn(state, unit) && context.enemies(state, side).length > 0))
+  return canStartPileIn(state, unit, side, rules, context)
+    && playFightPileInTargetOptions(state, unitId, side, rules, context).length > 0
     && unitHasUnlockedFightMovementModel(state, unit, side, context);
 }
 
@@ -238,17 +351,7 @@ export function playUnitCanConsolidate(
   unitId: string,
   side: Side,
   rules: RulesEdition,
-  context: FightPhaseContext,
+  context: FightMovementRulesContext,
 ): boolean {
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  return !state.pendingFightMovement
-    && !!unit
-    && state.phase === 'fight'
-    && (state.activeArmy === side || rules.metadata.edition === '11e')
-    && (rules.metadata.edition !== '11e'
-      ? unit.activated
-      : isFightConsolidationStep(state)
-        && state.consolidationSide === side
-        && state.consolidationEligibleUnitIds?.includes(unit.id) === true)
-    && !unit.consolidated;
+  return playFightConsolidationOptions(state, unitId, side, rules, context).length > 0;
 }

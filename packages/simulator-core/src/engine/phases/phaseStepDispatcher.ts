@@ -20,6 +20,7 @@ export function advancePhaseStep(
   state: BattleState,
   context: PhaseStepTransitionContext,
 ): BattleState | null {
+  if (state.pendingFightOnDeath?.length || state.pendingCombatActions?.length) return null;
   const next = state.phase === 'command'
     ? advanceCommandPhaseStep(state, context)
     : state.phase === 'movement'

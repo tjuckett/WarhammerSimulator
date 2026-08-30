@@ -691,6 +691,9 @@ function currentFightOnDeathWindow(state: BattleState, side: Side): PendingFight
 
 export function fightOnDeathTargetIds(state: BattleState, side: Side, rules: RulesEdition, context: FightOnDeathContext): string[] {
   const pending = currentFightOnDeathWindow(state, side);
+  // This existing ability currently has a combat-phase-only timing contract.
+  // Other abilities/Stratagems must use PendingCombatAction instead of
+  // broadening this legacy rule implicitly.
   if (!pending || !['shooting', 'fight'].includes(state.phase)) return [];
   return state.units.filter(target => target.side !== side && !target.destroyed && !target.embarkedInUnitId
     && context.canFightTarget(pending.unit, target)

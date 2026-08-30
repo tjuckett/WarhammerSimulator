@@ -13,6 +13,8 @@ import type {
   PlayShootingWeaponOption,
   ShootingLockContext,
 } from '../manualCombat';
+import { closePendingCombatAction, pendingCombatActionFor } from '../combatActionWindows';
+import { canResolveShootingUnit } from './shootingPhaseRules';
 
 /** Keeps attached units on the same target until every component has resolved. */
 export function updateAttachedShootingActivation(
@@ -46,24 +48,27 @@ export function shootPlayUnitWeapon(
   rules: RulesEdition,
   context: PlayShootingExecutionContext,
 ): BattleState {
-  if (state.phase !== 'shooting' || state.phaseStep !== PHASE_STEP.ShootingUnits || state.activeArmy !== side) return state;
+  const pending = pendingCombatActionFor(state, 'shooting', unitId, side);
+  if (pending?.snapShooting || !canResolveShootingUnit(state, unitId, side)) return state;
   const s = context.clone(state);
   const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit || unit.activated) return state;
   if (s.activeAttachedShootingUnitId && context.attachedUnitId(unit) !== s.activeAttachedShootingUnitId) return state;
   if (s.attachedShootingTargetUnitId && targetUnitId !== s.attachedShootingTargetUnitId) return state;
 
-  if (weaponIndex === -1 || (weaponIndex === 'all' && !context.eligibleShootingWeapons(unit, s, rules).length)) {
-    if (!context.unitCanBeSelectedToShootWithoutAttacks(unit, s, rules) || context.eligibleShootingWeapons(unit, s, rules).length > 0) return state;
+  if (weaponIndex === -1 || (weaponIndex === 'all' && !context.eligibleShootingWeapons(unit, s, rules, pending?.allowActivated === true).length)) {
+    if (!context.unitCanBeSelectedToShootWithoutAttacks(unit, s, rules)
+      || context.eligibleShootingWeapons(unit, s, rules, pending?.allowActivated === true).length > 0) return state;
     unit.activated = true;
     context.updateAttachedShootingActivation(s, unit, rules);
+    if (pending) closePendingCombatAction(s, pending.id);
     s.log = [...s.log, context.log(s, side, unit.profile.name, `${unit.profile.name} is selected to shoot but has no ranged weapons, so it makes no attacks.`, 'shoot')];
     return s;
   }
 
   const target = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!target) return state;
-  const eligibleWeapons = context.eligibleShootingWeapons(unit, s, rules)
+  const eligibleWeapons = context.eligibleShootingWeapons(unit, s, rules, pending?.allowActivated === true)
     .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
     .filter(option => option.weaponIndex >= 0 && context.aliveWeaponModelCount(unit, option.weaponIndex) > 0);
   const selectedWeapons = weaponIndex === 'all'
@@ -87,7 +92,7 @@ export function shootPlayUnitWeapon(
   if (weaponIndex === 'all' && firedWeaponIndices.length === selectedWeapons.length) unit.activated = true;
   else {
     unit.firedWeaponIndices = [...new Set([...(unit.firedWeaponIndices ?? []), ...firedWeaponIndices])];
-    const remainingEligibleWeapons = context.eligibleShootingWeapons(unit, s, rules);
+    const remainingEligibleWeapons = context.eligibleShootingWeapons(unit, s, rules, pending?.allowActivated === true);
     const hasRemainingTargets = remainingEligibleWeapons.some(weapon =>
       context.enemies(s, side).some(candidate => context.shootingWeaponCanTarget(s, unit, candidate, weapon, rules)),
     );
@@ -97,6 +102,7 @@ export function shootPlayUnitWeapon(
   s.log = [...s.log, ...logs];
   if (unit.activated && s.pendingDeadlyDemises?.length) s.log = [...s.log, ...context.resolvePendingDeadlyDemisesInPlace(s)];
   if (unit.activated) context.clearFiringDeckWeapons(unit);
+  if (pending && unit.activated) closePendingCombatAction(s, pending.id);
   return s;
 }
 
@@ -109,13 +115,14 @@ export function shootPlayUnitWeapons(
   rules: RulesEdition,
   context: ManualShootingResolutionContext,
 ): BattleState {
-  if (state.phase !== 'shooting' || state.phaseStep !== PHASE_STEP.ShootingUnits || state.activeArmy !== side || !allocations.length) return state;
+  const pending = pendingCombatActionFor(state, 'shooting', unitId, side);
+  if (pending?.snapShooting || !canResolveShootingUnit(state, unitId, side) || !allocations.length) return state;
   const s = context.clone(state);
   const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit || unit.activated) return state;
   if (s.activeAttachedShootingUnitId && context.attachedUnitId(unit) !== s.activeAttachedShootingUnitId) return state;
 
-  const eligibleWeapons = context.eligibleShootingWeapons(unit, s, rules)
+  const eligibleWeapons = context.eligibleShootingWeapons(unit, s, rules, pending?.allowActivated === true)
     .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
     .filter(option => option.weaponIndex >= 0 && context.aliveWeaponModelCount(unit, option.weaponIndex) > 0);
   const selectableWeapons = context.shootingWeaponSelectionForAll(eligibleWeapons);
@@ -182,6 +189,7 @@ export function shootPlayUnitWeapons(
   unit.activated = true;
   context.updateAttachedShootingActivation(s, unit, rules);
   s.log = [...s.log, ...logs];
+  if (pending) closePendingCombatAction(s, pending.id);
   return s;
 }
 
@@ -193,10 +201,17 @@ export function playSnapShootingWeaponOptions(
   rules: RulesEdition,
   context: OverwatchContext,
 ): PlayShootingWeaponOption[] {
-  if (state.phase !== 'movement' || state.movementStep !== 'reinforcements' || state.activeArmy === side) return [];
+  const pending = pendingCombatActionFor(state, 'shooting', unitId, side);
+  const legacyOverwatch = state.phase === 'movement'
+    && state.movementStep === 'reinforcements'
+    && state.activeArmy !== side
+    && !pending;
+  if (pending && !pending.snapShooting) return [];
+  if (!pending && !legacyOverwatch) return [];
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || (unit.activated && rules.metadata.edition !== '11e') || !context.unitHasActiveStratagem(state, unit, 'fire-overwatch', 'movement')) return [];
-  return context.eligibleShootingWeapons(unit, state, rules, rules.metadata.edition === '11e')
+  if (!unit || (unit.activated && rules.metadata.edition !== '11e' && pending?.allowActivated !== true)
+    || (!pending && !context.unitHasActiveStratagem(state, unit, 'fire-overwatch', 'movement'))) return [];
+  return context.eligibleShootingWeapons(unit, state, rules, rules.metadata.edition === '11e' || pending?.allowActivated === true)
     .map(weapon => ({ weaponIndex: unit.profile.weapons.indexOf(weapon), name: weapon.name, targetIds: context.enemies(state, side)
       .filter(target => context.snapShootingWeaponCanTarget(state, unit, target, weapon, rules)).map(target => target.id) }))
     .filter(option => option.weaponIndex >= 0);
@@ -211,12 +226,18 @@ export function snapShootPlayUnitWeapon(
   rules: RulesEdition,
   context: OverwatchContext,
 ): BattleState {
-  if (state.phase !== 'movement' || state.movementStep !== 'reinforcements' || state.activeArmy === side) return state;
+  const pending = pendingCombatActionFor(state, 'shooting', unitId, side);
+  const legacyOverwatch = state.phase === 'movement'
+    && state.movementStep === 'reinforcements'
+    && state.activeArmy !== side
+    && !pending;
+  if (pending && !pending.snapShooting) return state;
+  if (!pending && !legacyOverwatch) return state;
   const s = context.clone(state);
   const unit = s.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   const target = s.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || !target || !context.unitHasActiveStratagem(s, unit, 'fire-overwatch', 'movement')) return state;
-  const eligibleWeapons = context.eligibleShootingWeapons(unit, s, rules, rules.metadata.edition === '11e')
+  if (!unit || !target || (!pending && !context.unitHasActiveStratagem(s, unit, 'fire-overwatch', 'movement'))) return state;
+  const eligibleWeapons = context.eligibleShootingWeapons(unit, s, rules, rules.metadata.edition === '11e' || pending?.allowActivated === true)
     .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
     .filter(option => option.weaponIndex >= 0 && context.aliveWeaponModelCount(unit, option.weaponIndex) > 0 && context.snapShootingWeaponCanTarget(s, unit, target, option.weapon, rules));
   const selectedWeapons = weaponIndex === 'all' ? context.shootingWeaponSelectionForAll(eligibleWeapons) : eligibleWeapons.filter(option => option.weaponIndex === weaponIndex);
@@ -229,6 +250,7 @@ export function snapShootPlayUnitWeapon(
   if (logs.length <= 1) return state;
   unit.activated = true;
   unit.actionStartedThisTurn = true;
+  if (pending) closePendingCombatAction(s, pending.id);
   s.log = [...s.log, ...logs];
   return s;
 }
@@ -252,7 +274,8 @@ export function runShooting(unit: BattleUnit, state: BattleState, rules: RulesEd
 }
 
 export function lockPlayUnitShooting(state: BattleState, unitId: string, side: Side, context: ShootingLockContext): BattleState {
-  if (state.phase !== 'shooting' || state.phaseStep !== PHASE_STEP.ShootingUnits) return state;
+  const pending = pendingCombatActionFor(state, 'shooting', unitId, side);
+  if (pending?.snapShooting || (!pending && (state.phase !== 'shooting' || state.phaseStep !== PHASE_STEP.ShootingUnits))) return state;
   const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed);
   if (!existing || existing.activated) return state;
   const next = context.clone(state);
@@ -260,6 +283,7 @@ export function lockPlayUnitShooting(state: BattleState, unitId: string, side: S
   for (const component of context.attachedUnitComponents(next, unit)) component.activated = true;
   next.activeAttachedShootingUnitId = undefined;
   next.attachedShootingTargetUnitId = undefined;
+  if (pending) closePendingCombatAction(next, pending.id);
   return next;
 }
 

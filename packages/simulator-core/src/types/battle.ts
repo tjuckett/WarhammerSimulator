@@ -84,6 +84,16 @@ export const PHASE_STEP = {
 
 export type PhaseStep = (typeof PHASE_STEP)[keyof typeof PHASE_STEP];
 
+export type FightMovementKind = 'pileIn' | 'consolidate';
+export type FightConsolidationMode = 'ongoing' | 'engaging' | 'objective';
+
+/** Explicit intent selected before an interactive Pile In or Consolidation. */
+export interface FightMovementIntent {
+  targetUnitIds?: string[];
+  consolidationMode?: FightConsolidationMode;
+  objectiveIndex?: number;
+}
+
 export interface Position {
   x: number;
   y: number;
@@ -283,6 +293,34 @@ export interface PendingEventRequest {
   timing: EventTriggerTiming;
   source: string;
   data: Record<string, unknown>;
+}
+
+/**
+ * A typed shooting or melee opportunity opened by a rule event.
+ *
+ * Ordinary phase actions are still gated by their owning phase step. This
+ * state is the explicit exception for abilities and Stratagems that grant a
+ * unit a combat action outside that step. It is serialized with BattleState
+ * so controllers, replay, and undo all see the same opportunity.
+ */
+export type CombatActionKind = 'shooting' | 'fight';
+
+export interface PendingCombatAction {
+  id: string;
+  kind: CombatActionKind;
+  unitId: string;
+  side: Side;
+  source: string;
+  triggeredPhase: Phase;
+  triggeredPhaseStep?: PhaseStep;
+  /** Optional source event or pending event request that opened the window. */
+  sourceEventId?: string;
+  /** A rule can allow an already-activated unit to use this opportunity. */
+  allowActivated?: boolean;
+  /** This shooting window uses snap-shooting rules instead of normal shooting. */
+  snapShooting?: boolean;
+  /** Optional rule-specific target lock. */
+  targetUnitId?: string;
 }
 
 export interface DestroyedUnitMissionEvent {
@@ -604,6 +642,10 @@ export interface BattleState {
   consolidationEligibleUnitIds?: string[];
   /** Enemy units newly engaged by Engaging Consolidation and awaiting their fight opportunity. */
   consolidationPendingFightUnitIds?: string[];
+  /** Every unit that became eligible to fight during this Fight step, including Overrun/new engagements. */
+  fightEligibleUnitIds?: string[];
+  /** Players that passed their current Fight selection opportunity. */
+  fightPassedSides?: Side[];
   engagedUnitIdsAtFightStepStart?: string[];
   lastFightSelectionSide?: Side;
   /** 11e Core 15.12 target that must be selected next after Counteroffensive. */
@@ -648,7 +690,15 @@ export interface BattleState {
   pendingFightMovement?: {
     unitId: string;
     side: Side;
-    kind: 'pileIn' | 'consolidate';
+    kind: FightMovementKind;
+    /** Enemy units selected by the Pile In or Engaging Consolidation mode. */
+    targetUnitIds?: string[];
+    consolidationMode?: FightConsolidationMode;
+    objectiveIndex?: number;
+    /** Enemy units each model was engaged with when an Ongoing Pile In began. */
+    initiallyEngagedEnemyUnitIdsByModel?: Record<string, string[]>;
+    /** True when this is the additional Pile In granted by Overrun. */
+    overrun?: boolean;
     /** Models already in base contact when a Pile In or Consolidation begins cannot move. */
     lockedModelIds?: string[];
   };
@@ -658,6 +708,8 @@ export interface BattleState {
   events?: BattleEvent[];
   /** Typed rule choices awaiting their owning phase or rule resolver. */
   pendingEventRequests?: PendingEventRequest[];
+  /** Typed out-of-phase shooting/fighting opportunities opened by rule events. */
+  pendingCombatActions?: PendingCombatAction[];
   units: BattleUnit[];
   pendingDeadlyDemises?: PendingDeadlyDemise[];
   pendingFightOnDeath?: PendingFightOnDeath[];
