@@ -11,6 +11,7 @@ export const shootingPhaseDefinition: PhaseDefinition = {
 
 export interface ShootingPhaseStepTransitionContext {
   clone(state: BattleState): BattleState;
+  startShootingStep?(state: BattleState): void;
 }
 
 /** Advances only within the Shooting phase. Phase boundaries are handled by the battle flow. */
@@ -25,5 +26,6 @@ export function advanceShootingPhaseStep(
   if (!nextStep) return null;
   const next = context.clone(state);
   next.phaseStep = nextStep;
+  if (nextStep === PHASE_STEP.ShootingUnits) context.startShootingStep?.(next);
   return next;
 }

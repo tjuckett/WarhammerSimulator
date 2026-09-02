@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { BattleUnit, Terrain } from '../src/types/battle';
 import { findReachablePosition } from '../src/engine/simulator';
-import { generateRandomLayout, terrainLayoutFromData } from '../src/engine/terrain';
+import { generateRandomLayout, TERRAIN_LAYOUTS, terrainLayoutFromData } from '../src/engine/terrain';
 import { terrainCorners } from '../src/engine/terrainGeometry';
 
 test('terrain pathing helper is reusable and respects movement distance', () => {
@@ -60,6 +60,38 @@ test('terrain conversion preserves explicit light and dense feature categories',
 
   assert.deepEqual(layout.terrain[0].features.map(feature => feature.category), ['light', 'dense']);
   assert.notEqual(layout.terrain[0].features[0].color, layout.terrain[0].features[1].color);
+});
+
+test('terrain conversion infers light and dense categories for legacy walls', () => {
+  const layout = terrainLayoutFromData({
+    id: 'legacy-categories',
+    name: 'Legacy Categories',
+    description: 'legacy category test',
+    terrain: [{
+      kind: 'ruin', x: 0, y: 0, width: 10, height: 10,
+      features: [
+        { x: 1, y: 1, width: 1, height: 1, featureHeight: 'low' },
+        { x: 2, y: 2, width: 1, height: 1, featureHeight: 'tall' },
+      ],
+    }],
+  });
+
+  assert.deepEqual(layout.terrain[0].features.map(feature => feature.category), ['light', 'dense']);
+});
+
+test('bundled terrain layouts materialize light and dense categories for their walls', () => {
+  const bundledLayouts = TERRAIN_LAYOUTS.filter(layout => /^layout-\d+$/.test(layout.id));
+  const features = bundledLayouts.flatMap(layout => layout.terrain.flatMap(terrain => terrain.features));
+
+  assert.equal(bundledLayouts.length, 8);
+  assert.ok(features.length > 0);
+  assert.ok(features.every(feature => feature.category === 'light' || feature.category === 'dense'));
+  assert.ok(features.some(feature => feature.category === 'light'));
+  assert.ok(features.some(feature => feature.category === 'dense'));
+  assert.ok(bundledLayouts.some(layout => layout.terrain.some(terrain => {
+    const categories = new Set(terrain.features.map(feature => feature.category));
+    return categories.has('light') && categories.has('dense');
+  })));
 });
 
 test('random terrain layout keeps rotated mats and features within the Strike Force board', () => {

@@ -659,6 +659,12 @@ export function appendModelMovementWaypoints(unit: BattleUnit, modelIndices: num
   }
 }
 
+/** Waypoints are transient interaction markers, not persisted movement state. */
+export function clearModelMovementWaypoints(unit: BattleUnit): void {
+  unit.movementWaypointsByModel = undefined;
+  unit.movementWaypoints = undefined;
+}
+
 export function ensureModelMovementAllowanceTotals(unit: BattleUnit, context: InteractiveMovementStateContext): number[] {
   const allowance = context.movementAllowanceForPlayMove(unit);
   if (!unit.movementAllowanceTotalByModel || unit.movementAllowanceTotalByModel.length !== unit.modelPositions.length) {
@@ -730,6 +736,7 @@ export function markMovementGroupComplete(state: BattleState, currentUnit: Battl
     unit.lastMovePhase = state.phase;
     unit.lastMoveTurn = state.turn;
     unit.takingToSkies = undefined;
+    clearModelMovementWaypoints(unit);
     context.removeOpponentMarkersAfterMove(state, unit);
   }
 }
@@ -800,6 +807,7 @@ export function completeScoutMove(state: BattleState, unitId: string, side: Side
     component.movementStartPositionsByModel = undefined;
     component.movementStartRotationsByModel = undefined;
     component.movementPathByModel = undefined;
+    clearModelMovementWaypoints(component);
   }
   context.createLog(next, side, unit.profile.name, `${unit.profile.name} completes its Scouts move.`);
   return next;
@@ -1091,6 +1099,7 @@ export interface ModelMovementContext {
   updateMovementAllowances(unit: BattleUnit): void;
   modelMovementDistanceFromStart(unit: BattleUnit, modelIndex: number): number;
   attachedComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
+  fightMovementLockedModelIds?(state: BattleState): string[];
   centroid(positions: Position[]): Position;
 }
 
@@ -1101,11 +1110,17 @@ export function moveModels(
     && state.phaseStep === PHASE_STEP.ChargeUnits
     && state.pendingChargeMovement?.unitId === unitId
     && state.pendingChargeMovement?.side === side;
-  const fightMovement = state.phase === 'fight' && state.pendingFightMovement?.unitId === unitId && state.pendingFightMovement?.side === side;
-  if (!context.isModelEditPhase(state.phase) && !chargeMovement && !fightMovement) return state;
+  const hasPendingFightMovement = state.phase === 'fight' && !!state.pendingFightMovement;
+  if (!context.isModelEditPhase(state.phase) && !chargeMovement && !hasPendingFightMovement) return state;
   if (state.phase === 'movement' && context.movementStep(state) !== 'moveUnits') return state;
   const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
   if (!existing || (state.phase === 'setup' && !existing.scoutMoveStarted)) return state;
+  const pendingFightMovement = state.phase === 'fight' ? state.pendingFightMovement : undefined;
+  const fightMovement = !!pendingFightMovement
+    && pendingFightMovement.side === side
+    && (pendingFightMovement.unitId === unitId
+      || context.attachedComponents(state, existing).some(component => component.id === pendingFightMovement.unitId));
+  if (hasPendingFightMovement && !fightMovement) return state;
   if (state.phase === 'movement') {
     if (state.activeArmy !== side || existing.movementComplete || context.isSurgedThisPhase(state, existing) || existing.fellBack
       || existing.movementAction === 'fellBack' || existing.movementAction === 'remainedStationary') return state;
@@ -1116,8 +1131,12 @@ export function moveModels(
   const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
   const indices = Array.from(new Set(modelIndices)).filter(index => unit.modelPositions[index]);
   if (!indices.length) return state;
-  if (fightMovement && (state.pendingFightMovement?.kind === 'pileIn' || state.pendingFightMovement?.kind === 'consolidate')
-    && indices.some(modelIndex => state.pendingFightMovement?.lockedModelIds?.includes(`${unitId}:${modelIndex}`))) return state;
+  if (fightMovement && (pendingFightMovement?.kind === 'pileIn' || pendingFightMovement?.kind === 'consolidate')) {
+    const lockedModelIds = new Set(
+      context.fightMovementLockedModelIds?.(state) ?? pendingFightMovement.lockedModelIds ?? [],
+    );
+    if (indices.some(modelIndex => lockedModelIds.has(`${unitId}:${modelIndex}`))) return state;
+  }
   if (next.phase === 'movement' && context.isAircraft(unit)) {
     context.ensureMovementStartPositions(unit);
     context.ensureMovementStartRotations(unit);
@@ -1131,19 +1150,16 @@ export function moveModels(
   const budget = (next.phase === 'movement' || next.phase === 'setup' || chargeMovement || fightMovement) && !context.isAircraft(unit)
     ? context.budgetAdjustedMove(unit, indices, dx, dy) : { dx, dy };
   if (Math.hypot(budget.dx, budget.dy) < 0.001) return state;
-  const requestedMoveEndsInEngagement = next.phase === 'movement'
-    && context.translatedMoveEndsInEngagement(next, unit, indices, budget.dx, budget.dy);
-  // During normal movement, collisionAdjustedMove below stops at the Engagement
-  // Range boundary. Setup still rejects an endpoint that would enter engagement.
+  // Setup still rejects an endpoint that would enter Engagement Range. During
+  // the Movement phase, keep the user's released position so final movement
+  // validation can report the invalid endpoint and the user can undo it.
   if (next.phase === 'setup' && context.translatedMoveEndsInEngagement(next, unit, indices, budget.dx, budget.dy)) return state;
   // During ordinary Movement, models may cross other models or terrain while
   // being dragged. Endpoint legality is checked when the move is finalized;
   // collision adjustment is reserved for movement types whose path itself is
   // restricted (such as pile-in and consolidation).
-  const move = collide && next.phase === 'movement'
+  const move = collide
     ? context.endpointCollisionAdjustedMove(next, unitId, side, indices, budget.dx, budget.dy)
-    : collide
-      ? context.collisionAdjustedMove(next, unitId, side, indices, budget.dx, budget.dy, chargeMovement || fightMovement, fightMovement)
     : budget;
   if (Math.hypot(move.dx, move.dy) < 0.001) return state;
   if (next.phase === 'movement' && context.isAircraft(unit)) {
@@ -1163,13 +1179,8 @@ export function moveModels(
   // path-aware behavior remains available to the specialized movement modes
   // that explicitly establish waypoints.
   context.cancelUnitAction(next, unit, 'it made a move');
-  if ((next.phase === 'movement' || next.phase === 'setup') && context.inEngagement(next, unit)) return state;
+  if (next.phase === 'setup' && context.inEngagement(next, unit)) return state;
   if (next.phase === 'movement') {
-    unit.movementStopReason = undefined;
-    if (requestedMoveEndsInEngagement
-      && Math.hypot(move.dx, move.dy) + 0.01 < Math.hypot(budget.dx, budget.dy)) {
-      unit.movementStopReason = 'engagementRange';
-    }
     context.lockOtherMovedUnits(next, unit);
     unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
   }
@@ -1199,7 +1210,7 @@ export function moveModelsVertically(
   context.applyVerticalTranslation(unit, indices, dz);
   if (indices.every(index => Math.abs((unit.modelPositions[index].z ?? 0) - (before[index].z ?? 0)) < 0.001)) return state;
   if (next.phase === 'movement') context.appendMovementWaypoints(unit, indices);
-  if (indices.some(index => context.modelMovementDistanceFromStart(unit, index) > (totals[index] ?? 0) + MOVEMENT_ALLOWANCE_EPSILON) || context.inEngagement(next, unit)) return state;
+  if (indices.some(index => context.modelMovementDistanceFromStart(unit, index) > (totals[index] ?? 0) + MOVEMENT_ALLOWANCE_EPSILON)) return state;
   context.lockOtherMovedUnits(next, unit);
   context.cancelUnitAction(next, unit, 'it made a move');
   unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
@@ -1226,6 +1237,7 @@ export function undoUnitMovement(state: BattleState, unitId: string, side: Side,
     component.movementStartPositionsByModel = undefined;
     component.movementStartRotationsByModel = undefined;
     component.movementPathByModel = undefined;
+    clearModelMovementWaypoints(component);
     component.takingToSkies = undefined;
   }
   return next;

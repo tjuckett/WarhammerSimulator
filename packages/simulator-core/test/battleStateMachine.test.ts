@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { BATTLE_PHASE, BATTLE_ROUND_STEP, EVENT_REQUEST_KIND, EVENT_TRIGGER_TIMING, MOVEMENT_PHASE_STEP, MOVEMENT_STEP, PLAYER_TURN_STEP, type BattleState } from '../src/types/battle';
+import { BATTLE_PHASE, BATTLE_ROUND_STEP, EVENT_REQUEST_KIND, EVENT_TRIGGER_TIMING, MOVEMENT_PHASE_STEP, MOVEMENT_STEP, PHASE_STEP, PLAYER_TURN_STEP, type BattleState } from '../src/types/battle';
 import {
   advanceBattlePhase,
   battleFlowNode,
@@ -24,6 +24,8 @@ import { createMovementPhase } from '../src/engine/movementPhase';
 import { destroyExpiredStrategicReserves } from '../src/engine/reinforcements';
 import { remainStationary } from '../src/engine/interactiveMovement';
 import { pendingEventRequests, queueTriggeredRequests, resolvePendingEventRequest, triggerBattleEvent, type BattleEventTrigger } from '../src/engine/eventTriggers';
+import { appendPhaseStepActions, availablePhaseStepActionUnitIds, completePhaseStepAction, hasPendingRequiredPhaseStepActions, phaseStepActionLedgerFor, phaseStepActionsFor, setPhaseStepActions } from '../src/engine/phaseStepActions';
+import { advancePhaseStep } from '../src/engine/phases/phaseStepDispatcher';
 
 function state(): Pick<BattleState, 'phase' | 'movementStep' | 'movementPhaseStep' | 'activeArmy' | 'battleRound' | 'turn' | 'maxBattleRounds' | 'maxTurns'> {
   return {
@@ -112,6 +114,26 @@ test('phase state handlers own entry cursor invariants', () => {
   assert.equal(current.fightStepStarted, false);
 });
 
+test('Fight entry resets Fight-step flags for both armies', () => {
+  const current = {
+    ...state(),
+    phase: BATTLE_PHASE.Charge,
+    units: [
+      { id: 'active', piledIn: true, overrunFightSelected: true, overrunPiledIn: true, consolidated: true },
+      { id: 'opponent', piledIn: true, overrunFightSelected: true, overrunPiledIn: true, consolidated: true },
+    ],
+  } as unknown as BattleState;
+
+  initializeBattlePhase(current, { phase: BATTLE_PHASE.Fight });
+
+  for (const unit of current.units) {
+    assert.equal(unit.piledIn, undefined);
+    assert.equal(unit.overrunFightSelected, undefined);
+    assert.equal(unit.overrunPiledIn, undefined);
+    assert.equal(unit.consolidated, undefined);
+  }
+});
+
 test('typed battle events retain phase context without formatted log parsing', () => {
   const battle = {
     ...state(),
@@ -166,6 +188,73 @@ test('typed event triggers queue stable requests without UI or log coupling', ()
   const resolved = resolvePendingEventRequest(battle, requests[0].id);
   assert.equal(resolved?.kind, EVENT_REQUEST_KIND.SurgeMove);
   assert.equal(pendingEventRequests(battle).length, 0);
+});
+
+test('typed phase-step actions are required-gated, appendable, and scoped to the current step', () => {
+  const battle = {
+    ...state(),
+    phase: BATTLE_PHASE.Command,
+    phaseStep: PHASE_STEP.CommandAbilities,
+  } as unknown as BattleState;
+  assert.equal(setPhaseStepActions(battle, PHASE_STEP.CommandAbilities, [{
+    id: 'ability-a',
+    phase: BATTLE_PHASE.Command,
+    step: PHASE_STEP.CommandAbilities,
+    kind: 'ability',
+    side: 0,
+    unitId: 'unit-a',
+    requiredToAdvance: true,
+    status: 'available',
+  }]), true);
+  assert.ok(phaseStepActionLedgerFor(battle));
+  assert.equal(setPhaseStepActions(battle, PHASE_STEP.CommandEnd, []), false);
+  assert.deepEqual(phaseStepActionsFor(battle).map(action => action.id), ['ability-a']);
+
+  assert.equal(hasPendingRequiredPhaseStepActions(battle), true);
+  assert.deepEqual([...availablePhaseStepActionUnitIds(battle)], ['unit-a']);
+
+  appendPhaseStepActions(battle, [{
+    id: 'ability-b',
+    phase: BATTLE_PHASE.Command,
+    step: PHASE_STEP.CommandAbilities,
+    kind: 'ability',
+    side: 0,
+    unitId: 'unit-b',
+    requiredToAdvance: false,
+    status: 'available',
+  }, {
+    id: 'ability-b',
+    phase: BATTLE_PHASE.Command,
+    step: PHASE_STEP.CommandAbilities,
+    kind: 'ability',
+    side: 0,
+    unitId: 'unit-b',
+    requiredToAdvance: false,
+    status: 'available',
+  }]);
+  assert.deepEqual(phaseStepActionsFor(battle).map(action => action.id), ['ability-a', 'ability-b']);
+
+  const blocked = advancePhaseStep(battle, {
+    clone: value => JSON.parse(JSON.stringify(value)),
+    gainCoreCommandPoints: () => undefined,
+    beginBattleshockStep: () => undefined,
+    markRemainingStationaryUnits: () => undefined,
+  });
+  assert.equal(blocked, null);
+
+  assert.equal(completePhaseStepAction(battle, 'ability-a'), true);
+  assert.equal(hasPendingRequiredPhaseStepActions(battle), false);
+  const advanced = advancePhaseStep(battle, {
+    clone: value => JSON.parse(JSON.stringify(value)),
+    gainCoreCommandPoints: () => undefined,
+    beginBattleshockStep: () => undefined,
+    markRemainingStationaryUnits: () => undefined,
+  });
+  assert.equal(advanced?.phaseStep, PHASE_STEP.CommandEnd);
+  assert.equal(advanced?.phaseStepActions, undefined);
+
+  battle.phaseStep = PHASE_STEP.CommandEnd;
+  assert.deepEqual(phaseStepActionsFor(battle), []);
 });
 
 test('hierarchical battle flow separates pre-battle, round, and player-turn state', () => {

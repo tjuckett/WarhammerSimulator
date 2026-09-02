@@ -49,6 +49,7 @@ import {
   removePlayModels,
   resolvePlaySurgeMove,
   reorganizePlayModelsGrid,
+  rollPlayBattleshock,
   rotatePlayModelByDelta,
   shootPlayUnitWeapon,
   simulateNextPhase,
@@ -61,11 +62,13 @@ import {
   startPlayFightStep,
   advanceFightPhaseStep,
   startPlayConsolidationStep,
+  startPlayShootingStep,
   advancePlayConsolidationStep,
   playConsolidationUnitIds,
   playFightPhaseHasPendingActivations,
   passPlayFight,
   snapShootPlayUnitWeapon,
+  startPlayChargeStep,
   startPlayUnitAction,
   togglePunishmentCondemnedUnit,
   undeployPlayUnit,
@@ -76,6 +79,7 @@ import { scoreSecondaryMissionsAtEndOfTurn, secondaryMissionScoringLogs } from '
 import { advanceBattlePhase, initializeBattlePhase } from '../engine/battleStateMachine';
 import { advancePhaseStep } from '../engine/phases/phaseStepDispatcher';
 import { gainCommandPhaseCommandPoints } from '../engine/commandPoints';
+import { beginBattleshockStep } from '../engine/battleshockPhase';
 import { phaseCanAdvance } from '../engine/legalActions';
 import { resetUnitForActiveTurn } from '../engine/turnState';
 import { declinePendingCombatAction } from '../engine/combatActionWindows';
@@ -157,6 +161,7 @@ export const GAME_ACTION_TYPE = {
   AdvanceConsolidationStep: 'play.advanceConsolidationStep',
   PassFight: 'play.passFight',
   BeginBattle: 'play.beginBattle',
+  RollBattleshock: 'play.rollBattleshock',
   StepPhase: 'play.stepPhase',
   UseStratagem: 'play.useStratagem',
   ResolveCommandReroll: 'play.resolveCommandReroll',
@@ -434,6 +439,11 @@ export type GameAction =
       type: typeof GAME_ACTION_TYPE.BeginBattle;
     })
   | (GameActionBase & {
+      type: typeof GAME_ACTION_TYPE.RollBattleshock;
+      side: Side;
+      unitId: string;
+    })
+  | (GameActionBase & {
       type: typeof GAME_ACTION_TYPE.StepPhase;
     })
   | (GameActionBase & {
@@ -567,7 +577,10 @@ function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   const standardStep = advancePhaseStep(state, {
     clone,
     gainCoreCommandPoints: next => { gainCommandPhaseCommandPoints(next); },
+    beginBattleshockStep,
     markRemainingStationaryUnits: (next, side) => { markRemainingStationaryUnits(next, side); },
+    startShootingStep: next => { startPlayShootingStep(next, rules); },
+    startChargeStep: next => { startPlayChargeStep(next, rules); },
   });
   if (standardStep) return standardStep;
 
@@ -902,6 +915,9 @@ export function applyGameAction(
 
     case GAME_ACTION_TYPE.BeginBattle:
       return beginPlayBattle(state);
+
+    case GAME_ACTION_TYPE.RollBattleshock:
+      return rollPlayBattleshock(state, normalizedAction.unitId, normalizedAction.side);
 
     case GAME_ACTION_TYPE.StepPhase:
       return stepPlayPhase(state, context.rules);

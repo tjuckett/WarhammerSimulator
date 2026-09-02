@@ -206,6 +206,17 @@ export const prismaPracticeScenarioRepository: PracticeScenarioRepository = {
     const timelineCursor = scenario.metadata.timelineCursor ?? scenario.timeline.cursor;
     const checkpointState = currentTimelineState(scenario.timeline);
     const now = new Date(scenario.metadata.updatedAt);
+    const checkpointMetadata = metadataValue(scenario);
+    const timelineEntryData = scenario.timeline.entries.map((entry, index) => ({
+      id: databaseTimelineEntryId(branchId, index),
+      branchId,
+      index,
+      action: entry.action,
+      stateBefore: entry.stateBefore,
+      stateAfter: entry.stateAfter,
+      note: entry.note,
+      createdAt: new Date(entry.createdAt),
+    }));
 
     await prisma.$transaction(async tx => {
       await tx.practiceGame.upsert({
@@ -248,18 +259,9 @@ export const prismaPracticeScenarioRepository: PracticeScenarioRepository = {
       });
 
       await tx.practiceTimelineEntry.deleteMany({ where: { branchId } });
-      if (scenario.timeline.entries.length) {
+      if (timelineEntryData.length) {
         await tx.practiceTimelineEntry.createMany({
-          data: scenario.timeline.entries.map((entry, index) => ({
-            id: databaseTimelineEntryId(branchId, index),
-            branchId,
-            index,
-            action: entry.action,
-            stateBefore: entry.stateBefore,
-            stateAfter: entry.stateAfter,
-            note: entry.note,
-            createdAt: new Date(entry.createdAt),
-          })),
+          data: timelineEntryData,
         });
       }
 
@@ -275,7 +277,7 @@ export const prismaPracticeScenarioRepository: PracticeScenarioRepository = {
           sequence,
           timelineCursor,
           state: checkpointState,
-          metadata: metadataValue(scenario),
+          metadata: checkpointMetadata,
           createdAt: new Date(scenario.metadata.createdAt),
           updatedAt: now,
         },
@@ -288,11 +290,11 @@ export const prismaPracticeScenarioRepository: PracticeScenarioRepository = {
           sequence,
           timelineCursor,
           state: checkpointState,
-          metadata: metadataValue(scenario),
+          metadata: checkpointMetadata,
           updatedAt: now,
         },
       });
-    });
+    }, { maxWait: 10_000, timeout: 30_000 });
 
     return this.listSummaries();
   },

@@ -46,9 +46,7 @@ export function modelBaseEdgeHorizontalDistance(
 export function unitsInEngagementRange(unit: BattleUnit, others: BattleUnit[], range: number): boolean {
   return others.some(other => unit.modelPositions.some((unitModel, unitModelIndex) =>
     other.modelPositions.some((otherModel, otherModelIndex) => {
-      const unitFootprint = modelBaseFootprintInches(unit.profile, unitModelIndex, unit.modelRotations?.[unitModelIndex] ?? unit.facingDeg ?? 0);
-      const otherFootprint = modelBaseFootprintInches(other.profile, otherModelIndex, other.modelRotations?.[otherModelIndex] ?? other.facingDeg ?? 0);
-      return baseFootprintDistance(unitModel, unitFootprint, otherModel, otherFootprint) <= range
+      return modelBaseEdgeHorizontalDistance(unit, unitModelIndex, other, otherModelIndex) <= range
         && verticalDistance(unitModel, otherModel) <= COHERENCY_VERTICAL_RANGE;
     }),
   ));

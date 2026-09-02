@@ -1,5 +1,6 @@
 import { PHASE_STEP, type BattleState, type BattleUnit, type FightConsolidationMode, type PhaseStep, type Side } from '../../types/battle';
 import { phaseStepFor } from '../battleStateMachine';
+import { closestModelDistanceBetweenUnits } from '../modelMovementRules';
 import type { RulesEdition } from '../rulesEngine';
 
 /** Dependencies supplied by the simulator facade for Fight-specific rules. */
@@ -123,6 +124,23 @@ export function unitEligibleToFight(
       && context.inEngagement(unit, [enemy], rules.engagementRange()));
 }
 
+/**
+ * Returns the deployed units that cannot qualify for the current Fight
+ * selection. This is intentionally separate from activation IDs: a unit can
+ * be eligible to fight while waiting for its side or priority opportunity.
+ */
+export function playFightIneligibleUnitIds(
+  state: BattleState,
+  rules: RulesEdition,
+  context: FightPhaseContext,
+): string[] {
+  if (!isFightResolutionStep(state)) return [];
+  return state.units
+    .filter(unit => !unit.destroyed && !unit.embarkedInUnitId && !unit.inStrategicReserves)
+    .filter(unit => !context.unitEligibleToFight(unit, state, rules))
+    .map(unit => unit.id);
+}
+
 export function unitHasCounteroffensive(state: BattleState, unit: BattleUnit, context: FightPhaseContext): boolean {
   return context.unitHasActiveStratagem(state, unit, 'counteroffensive', 'fight');
 }
@@ -134,7 +152,7 @@ export function unitHasFightsFirst(state: BattleState, unit: BattleUnit, context
 }
 
 export function sideCanSelectFightUnit(state: BattleState, side: Side, rules: RulesEdition, context: FightPhaseContext): boolean {
-  if (state.pendingCombatActions?.length) return false;
+  if (state.pendingFightMovement || state.pendingCombatActions?.length) return false;
   return isFightResolutionStep(state)
     && (rules.metadata.edition === '11e' || state.activeArmy === side
       || context.activeUnits(state, side).some(unit => unitHasCounteroffensive(state, unit, context)));
@@ -218,20 +236,6 @@ export function playOverrunFightUnitIds(state: BattleState, side: Side, rules: R
   });
 }
 
-export function unitHasUnlockedFightMovementModel(
-  state: BattleState,
-  unit: BattleUnit,
-  side: Side,
-  context: FightMovementRulesContext,
-): boolean {
-  const enemyUnits = context.enemies(state, side);
-  return context.attachedComponents(state, unit).some(component => component.modelPositions.some((_, modelIndex) =>
-    enemyUnits.every(enemy => enemy.modelPositions.every((__, enemyModelIndex) =>
-      context.modelBaseEdgeDistance(component, modelIndex, enemy, enemyModelIndex) > 0.001,
-    )),
-  ));
-}
-
 function attachedUnitBaseEdgeDistance(
   state: BattleState,
   unit: BattleUnit,
@@ -239,15 +243,8 @@ function attachedUnitBaseEdgeDistance(
   context: FightMovementRulesContext,
 ): number {
   return Math.min(...context.attachedComponents(state, unit).flatMap(source =>
-    context.attachedComponents(state, target).map(enemy => {
-      let closest = Number.POSITIVE_INFINITY;
-      for (let modelIndex = 0; modelIndex < source.modelPositions.length; modelIndex++) {
-        for (let targetModelIndex = 0; targetModelIndex < enemy.modelPositions.length; targetModelIndex++) {
-          closest = Math.min(closest, context.modelBaseEdgeDistance(source, modelIndex, enemy, targetModelIndex));
-        }
-      }
-      return closest;
-    })), Number.POSITIVE_INFINITY);
+    context.attachedComponents(state, target).map(enemy =>
+      closestModelDistanceBetweenUnits(source, enemy, context.modelBaseEdgeDistance))), Number.POSITIVE_INFINITY);
 }
 
 function attachedUnitInEngagement(
@@ -336,14 +333,7 @@ export function playUnitCanPileIn(
   rules: RulesEdition,
   context: FightMovementRulesContext,
 ): boolean {
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!unit || state.phase !== 'fight' || (state.activeArmy !== side && rules.metadata.edition !== '11e')) return false;
-  if (state.pendingFightMovement) return false;
-  const pileInSide = state.fightPileInSide ?? state.activeArmy;
-  if (rules.metadata.edition === '11e' && isFightPileInStep(state) && pileInSide !== side) return false;
-  return canStartPileIn(state, unit, side, rules, context)
-    && playFightPileInTargetOptions(state, unitId, side, rules, context).length > 0
-    && unitHasUnlockedFightMovementModel(state, unit, side, context);
+  return playFightPileInTargetOptions(state, unitId, side, rules, context).length > 0;
 }
 
 export function playUnitCanConsolidate(

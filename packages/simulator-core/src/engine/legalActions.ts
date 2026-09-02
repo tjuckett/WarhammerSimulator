@@ -55,6 +55,8 @@ import type { AbilityTiming } from '../types/ability';
 import { PHASE_STEP } from '../types/battle';
 import { fightPhaseStep, isFightConsolidationStep, isFightPileInStep, isFightUnitsStep } from './phases/fightPhaseRules';
 import { pendingCombatActionFor } from './combatActionWindows';
+import { battleshockPendingUnitIds, battleshockStepComplete } from './battleshockPhase';
+import { hasPendingRequiredPhaseStepActions, phaseStepActionLedgerFor, phaseStepActionsFor } from './phaseStepActions';
 
 export type LegalActionCategory =
   | 'phase'
@@ -102,19 +104,21 @@ function activeUnits(state: BattleState, side: Side): BattleUnit[] {
 
 export function phaseCanAdvance(state: BattleState, side: Side, rules: RulesEdition): boolean {
   if (state.activeArmy !== side || state.phase === 'deployment' || state.phase === 'end') return false;
-  if (state.pendingFightOnDeath?.length || state.pendingCombatActions?.length) return false;
+  if (state.pendingFightOnDeath?.length || state.pendingCombatActions?.length || state.pendingFightMovement) return false;
+  if (hasPendingRequiredPhaseStepActions(state)) return false;
   if (state.phase === 'movement'
     && state.phaseStep !== PHASE_STEP.MovementEnd
     && !createMovementPhase(state)?.canAdvance) return false;
+  if (state.phase === 'command'
+    && state.phaseStep === PHASE_STEP.CommandBattleShock
+    && !battleshockStepComplete(state)) return false;
   const currentFightStep = state.phase === 'fight' ? fightPhaseStep(state) : null;
   if (state.phase === 'fight' && rules.metadata.edition === '11e'
-    && (currentFightStep === PHASE_STEP.FightStart || currentFightStep === PHASE_STEP.FightPileIn)) return false;
+    && currentFightStep === PHASE_STEP.FightStart) return false;
   if (state.phase === 'fight' && rules.metadata.edition === '11e' && isFightUnitsStep(state)
     && (playFightActivationUnitIds(state, 0, rules).length || playFightActivationUnitIds(state, 1, rules).length)) return false;
   if (state.phase === 'fight' && rules.metadata.edition === '11e' && isFightConsolidationStep(state)
     && (playConsolidationPendingFightUnitIds(state, 0, rules).length || playConsolidationPendingFightUnitIds(state, 1, rules).length)) return false;
-  if (state.phase === 'fight' && rules.metadata.edition === '11e' && isFightConsolidationStep(state)
-    && playConsolidationUnitIds(state, state.consolidationSide ?? state.activeArmy, rules).length) return false;
   return playPhaseCoherencyIssues(state).length === 0;
 }
 
@@ -131,6 +135,28 @@ function addPhaseActions(actions: LegalAction[], state: BattleState, side: Side,
     }
     return;
   }
+  if (state.phase === 'command' && state.phaseStep === PHASE_STEP.CommandBattleShock) {
+    const stepActions = phaseStepActionsFor(state);
+    const hasBattleShockLedger = !!phaseStepActionLedgerFor(state)
+      && stepActions.some(action => action.kind === 'battle-shock');
+    const pendingUnitIds = hasBattleShockLedger
+      ? stepActions
+        .filter(action => action.kind === 'battle-shock' && action.status === 'available' && action.unitId)
+        .map(action => action.unitId!)
+      : battleshockPendingUnitIds(state);
+    for (const unitId of pendingUnitIds) {
+      const unit = state.units.find(candidate => candidate.id === unitId && !candidate.destroyed);
+      if (!unit) continue;
+      actions.push({
+        action: { type: 'play.rollBattleshock', side, unitId },
+        category: 'phase',
+        side,
+        unitId,
+        label: `${unit.profile.name}: Roll Battle-shock`,
+      });
+    }
+    if (!battleshockStepComplete(state)) return;
+  }
   const currentFightStep = state.phase === 'fight' ? fightPhaseStep(state) : null;
   if (state.phase === 'fight' && rules.metadata.edition === '11e' && currentFightStep === PHASE_STEP.FightStart) {
     actions.push({
@@ -142,8 +168,15 @@ function addPhaseActions(actions: LegalAction[], state: BattleState, side: Side,
     return;
   }
   if (state.phase === 'fight' && rules.metadata.edition === '11e' && currentFightStep === PHASE_STEP.FightPileIn) {
-    if (!playFightPileInUnitIds(state, state.fightPileInSide ?? state.activeArmy, rules).length) {
+    if (!state.pendingFightMovement) {
       actions.push({ action: { type: 'play.advanceFightPileInStep' }, category: 'phase', side, label: 'Finish Pile In step' });
+    }
+    return;
+  }
+  if (state.phase === 'fight' && rules.metadata.edition === '11e' && isFightConsolidationStep(state)) {
+    if (!state.pendingFightMovement
+      && !playFightPhaseHasPendingActivations(state, rules)) {
+      actions.push({ action: { type: 'play.advanceConsolidationStep' }, category: 'phase', side, label: 'Finish Consolidation step' });
     }
     return;
   }
@@ -319,7 +352,16 @@ function addMovementActions(actions: LegalAction[], state: BattleState, side: Si
 
 function addShootingActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
   if (state.phase !== 'shooting' || state.phaseStep !== PHASE_STEP.ShootingUnits || state.activeArmy !== side) return;
-  for (const unit of activeUnits(state, side)) {
+  const shootingLedger = phaseStepActionLedgerFor(state);
+  const ledgerUnitIds = shootingLedger
+    ? new Set(shootingLedger.actions
+      .filter(action => action.kind === 'shoot'
+        && action.side === side
+        && (action.status === 'available' || action.status === 'in-progress')
+        && !!action.unitId)
+      .map(action => action.unitId!))
+    : null;
+  for (const unit of activeUnits(state, side).filter(candidate => !ledgerUnitIds || ledgerUnitIds.has(candidate.id))) {
     const options = playShootingWeaponOptions(state, unit.id, side, rules);
     for (const option of options) {
       for (const targetUnitId of option.targetIds) {
@@ -430,7 +472,16 @@ function addSnapShootingActions(actions: LegalAction[], state: BattleState, side
 
 function addChargeActions(actions: LegalAction[], state: BattleState, side: Side, rules: RulesEdition) {
   if (state.phase !== 'charge' || state.phaseStep !== PHASE_STEP.ChargeUnits || state.activeArmy !== side) return;
-  for (const unit of activeUnits(state, side)) {
+  const chargeLedger = phaseStepActionLedgerFor(state);
+  const ledgerUnitIds = chargeLedger
+    ? new Set(chargeLedger.actions
+      .filter(action => action.kind === 'charge'
+        && action.side === side
+        && (action.status === 'available' || action.status === 'in-progress')
+        && !!action.unitId)
+      .map(action => action.unitId!))
+    : null;
+  for (const unit of activeUnits(state, side).filter(candidate => !ledgerUnitIds || ledgerUnitIds.has(candidate.id))) {
     const options = playChargeTargetOptions(state, unit.id, side, rules);
     const selections = options.reduce<Array<PlayChargeTargetOption[]>>(
       (all, option) => [...all, ...all.map(selection => [...selection, option])],
@@ -475,7 +526,16 @@ function addFightActions(actions: LegalAction[], state: BattleState, side: Side,
   if (rules.metadata.edition === '11e' && isFightConsolidationStep(state)) {
     const pendingFightIds = playConsolidationPendingFightUnitIds(state, side, rules);
     if (pendingFightIds.length) {
-      for (const unitId of pendingFightIds) {
+      const fightLedger = phaseStepActionLedgerFor(state);
+      const fightLedgerUnitIds = fightLedger?.actions.some(action => action.kind === 'fight')
+        ? new Set(fightLedger.actions
+          .filter(action => action.kind === 'fight'
+            && action.side === side
+            && (action.status === 'available' || action.status === 'in-progress')
+            && !!action.unitId)
+          .map(action => action.unitId!))
+        : null;
+      for (const unitId of pendingFightIds.filter(unitId => !fightLedgerUnitIds || fightLedgerUnitIds.has(unitId))) {
         const unit = state.units.find(candidate => candidate.id === unitId);
         if (!unit) continue;
         for (const option of playFightWeaponOptions(state, unitId, side, rules)) {
@@ -488,10 +548,18 @@ function addFightActions(actions: LegalAction[], state: BattleState, side: Side,
       }
       return;
     }
-    const unitIds = playConsolidationUnitIds(state, side, rules);
+    const consolidationLedger = phaseStepActionLedgerFor(state);
+    const unitIds = consolidationLedger
+      ? [...new Set(consolidationLedger.actions
+        .filter(action => action.kind === 'consolidate'
+          && action.side === side
+          && action.status === 'available'
+          && !!action.unitId)
+        .map(action => action.unitId!))]
+      : playConsolidationUnitIds(state, side, rules);
     for (const unitId of unitIds) {
       const unit = state.units.find(candidate => candidate.id === unitId);
-      if (unit) actions.push({
+      if (unit && playUnitCanConsolidate(state, unitId, side, rules)) actions.push({
         action: { type: 'play.consolidateUnit', side, unitId },
         category: 'fight', side, unitId, label: `${unit.profile.name}: Consolidate`,
       });
@@ -499,9 +567,30 @@ function addFightActions(actions: LegalAction[], state: BattleState, side: Side,
     return;
   }
   const overrunUnitIds = new Set(playOverrunFightUnitIds(state, side, rules));
+  const pileInLedger = rules.metadata.edition === '11e' && isFightPileInStep(state)
+    ? phaseStepActionLedgerFor(state)
+    : null;
+  const fightLedger = rules.metadata.edition === '11e' && isFightUnitsStep(state)
+    ? phaseStepActionLedgerFor(state)
+    : null;
+  const fightLedgerUnitIds = fightLedger?.actions.some(action => action.kind === 'fight')
+    ? new Set(fightLedger.actions
+      .filter(action => action.kind === 'fight'
+        && (action.status === 'available' || action.status === 'in-progress')
+        && !!action.unitId)
+      .map(action => action.unitId!))
+    : null;
   const unitIds = rules.metadata.edition === '11e' && isFightPileInStep(state)
-    ? activeUnits(state, side).map(unit => unit.id)
-    : playFightActivationUnitIds(state, side, rules);
+    ? pileInLedger
+      ? pileInLedger.actions
+        .filter(action => action.kind === 'pile-in'
+          && action.side === side
+          && action.status === 'available'
+          && !!action.unitId)
+        .map(action => action.unitId!)
+      : activeUnits(state, side).map(unit => unit.id)
+    : playFightActivationUnitIds(state, side, rules)
+      .filter(unitId => !fightLedgerUnitIds || fightLedgerUnitIds.has(unitId));
   for (const unitId of unitIds) {
     const unit = state.units.find(candidate => candidate.id === unitId);
     if (!unit) continue;

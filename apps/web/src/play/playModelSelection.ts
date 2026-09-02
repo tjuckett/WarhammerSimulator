@@ -1,5 +1,6 @@
-import type { BattleState } from '@warhammer-simulator/core/types/battle';
+import { PHASE_STEP, type BattleState } from '@warhammer-simulator/core/types/battle';
 import { allocatePlayDamageToModel } from '@warhammer-simulator/core/engine/simulator';
+import { phaseStepFor } from '@warhammer-simulator/core/engine/battleStateMachine';
 import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
 import type { PlayModelSelection } from '../components/Battlefield';
 import { normalizePlaySelectionForState } from './playSelectionHelpers';
@@ -26,6 +27,7 @@ export function createPlayModelSelection({
   setPlayModelSelection,
   setInspectedSelection,
   setCasualtyRemovalShooterId,
+  setShootingResolutionStatus,
   setTargetErrorMsg,
 }: {
   battleStateRef: StateRef;
@@ -43,6 +45,7 @@ export function createPlayModelSelection({
   setPlayModelSelection: (selection: PlayModelSelection | null) => void;
   setInspectedSelection: (selection: InspectedSelection) => void;
   setCasualtyRemovalShooterId: (unitId: string | null) => void;
+  setShootingResolutionStatus: (status: 'idle' | 'rolled') => void;
   setTargetErrorMsg: (message: string | null) => void;
 }) {
   function selectPlayModels(selection: PlayModelSelection | null) {
@@ -89,6 +92,18 @@ export function createPlayModelSelection({
           commitBattleState(next);
           return;
         }
+        if (next.phase === 'shooting' || next.phase === 'fight') {
+          // The final damage allocation completes the combat result. Clear
+          // the UI-only resolution cursor so another eligible unit can be
+          // selected immediately.
+          setShootingResolutionStatus('idle');
+          setCasualtyRemovalShooterId(null);
+          setPlayModelSelection(null);
+          setInspectedSelection(null);
+          setTargetErrorMsg(null);
+          commitBattleState(next);
+          return;
+        }
         const actingUnit = next.phase === 'fight' && casualtyRemovalShooterId
           ? next.units.find(unit => unit.id === casualtyRemovalShooterId && unit.side === next.activeArmy && !unit.destroyed && !unit.embarkedInUnitId)
           : null;
@@ -128,7 +143,11 @@ export function createPlayModelSelection({
       commitBattleState(next);
       return;
     }
-    const normalized = normalizePlaySelectionForState(battleState, selection);
+    // Pointer events can arrive between the state commit and React's next
+    // render. Use the ref's state for validation so a selection made after a
+    // Fight Pile In side handoff is not checked against the previous side.
+    const currentState = battleStateRef.current ?? battleState;
+    const normalized = normalizePlaySelectionForState(currentState, selection);
     if (!normalized) {
       setPlayModelSelection(null);
       setInspectedSelection(null);
@@ -136,19 +155,31 @@ export function createPlayModelSelection({
     }
     const primary = normalized.parts[0];
     if (isPlayMode
-      && battleState?.phase === 'shooting'
+      && currentState?.phase === 'shooting'
       && shootingResolutionShooterId
-      && (primary.unitId !== shootingResolutionShooterId || primary.side !== battleState.activeArmy)) {
+      && (primary.unitId !== shootingResolutionShooterId || primary.side !== currentState.activeArmy)) {
       setTargetErrorMsg('Resolve the current shooting result before selecting another unit');
       return;
     }
-    if (isPlayMode && battleState?.phase === 'shooting') {
-      const unit = battleState.units.find(candidate => candidate.id === primary.unitId && candidate.side === primary.side && !candidate.destroyed);
-      if (!unit || primary.side !== battleState.activeArmy || (unit.activated && primary.unitId !== shootingResolutionShooterId)) return;
+    if (isPlayMode && currentState?.phase === 'shooting') {
+      const unit = currentState.units.find(candidate => candidate.id === primary.unitId && candidate.side === primary.side && !candidate.destroyed);
+      if (!unit || primary.side !== currentState.activeArmy || (unit.activated && primary.unitId !== shootingResolutionShooterId)) return;
     }
-    if (isPlayMode && (battleState?.phase === 'charge' || battleState?.phase === 'fight')) {
-      const unit = battleState.units.find(candidate => candidate.id === primary.unitId && candidate.side === primary.side && !candidate.destroyed);
-      if (!unit || primary.side !== battleState.activeArmy || (battleState.phase === 'fight' && unit.activated)) return;
+    if (isPlayMode && currentState?.pendingFightMovement) {
+      const pending = currentState.pendingFightMovement;
+      if (primary.unitId !== pending.unitId || primary.side !== pending.side) return;
+    }
+    if (isPlayMode && (currentState?.phase === 'charge' || currentState?.phase === 'fight')) {
+      const unit = currentState.units.find(candidate => candidate.id === primary.unitId && candidate.side === primary.side && !candidate.destroyed);
+      const fightStep = currentState.phase === 'fight' ? phaseStepFor(currentState) : undefined;
+      const fightSelectionSide = currentState.phase === 'fight'
+        && fightStep === PHASE_STEP.FightPileIn
+        ? (currentState.fightPileInSide ?? currentState.activeArmy)
+        : currentState.phase === 'fight'
+          && fightStep === PHASE_STEP.FightConsolidate
+          ? (currentState.consolidationSide ?? currentState.activeArmy)
+          : currentState.activeArmy;
+      if (!unit || primary.side !== fightSelectionSide || (currentState.phase === 'fight' && unit.activated)) return;
     }
     setPlayDeploySelection(null);
     setInspectedSelection({ kind: 'battle', side: primary.side, unitId: primary.unitId });

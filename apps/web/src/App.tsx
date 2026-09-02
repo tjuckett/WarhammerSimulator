@@ -15,7 +15,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SpeedIcon from '@mui/icons-material/Speed';
 import StopIcon from '@mui/icons-material/Stop';
-import { BATTLE_PHASE, MOVEMENT_STEP, PHASE_STEP, type BattleState, type BattleUnit, type Phase } from '@warhammer-simulator/core/types/battle';
+import { BATTLE_PHASE, MOVEMENT_STEP, PHASE_STEP, type BattleState, type BattleUnit, type Phase, type PhaseStep } from '@warhammer-simulator/core/types/battle';
 import { nextPhaseStep, phaseStepFor } from '@warhammer-simulator/core/engine/battleStateMachine';
 import { isFightResolutionStep } from '@warhammer-simulator/core/engine/phases/fightPhaseRules';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile } from '@warhammer-simulator/core/types/army';
@@ -25,11 +25,13 @@ import { rulesEditionForRuleset, rulesetMetadataForState } from '@warhammer-simu
 import { modelWeaponLoadout } from '@warhammer-simulator/core/engine/unitModelState';
 import { TERRAIN_LAYOUTS } from '@warhammer-simulator/core/engine/terrain';
 import {
-  battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, completePlayScoutMove, createDeploymentState, declarePlaySuperHeavyMobile, enterBattlePhase, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playDisembarkModes, playPhaseCoherencyIssues, playScoutMoveAllowance, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, placeNextUnit, removePlayModels, startPlayScoutMove,
-  advancePlayFightPileInStep, advancePlayConsolidationStep, allocatePlayDamageToModel, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, chargePlayUnitTargets, completePlayChargeMovement, playChargeEligibilityReason, playChargeRoll, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, fightPlayUnitWeapons, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playConsolidationPendingFightUnitIds, playConsolidationUnitIds, playFightActivationUnitIds, playFightFirstUnitIds, playFightPhaseHasPendingActivations, playFightPileInUnitIds, playFightStepNeedsStart, playFightWeaponOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponModelIndexes, playShootingWeaponModelCount, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayConsolidationStep, startPlayFightStep, startPlayUnitAction, surveilTargetOptions, playCombatHitPreview, shootingLOSRays, reorganizePlayModelsGrid, shootPlayUnitWeapon, shootPlayUnitWeapons, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undoPlayUnitMovement, undeployPlayUnit, vanguardOperationTerrainOptions, type CombatHitPreview, type DeploymentStrategy, type FiringDeckSelection, type LOSRay, type PlayShootingAttackAllocation, type PlayMeleeAttackAllocation,
+  battleModelIdsWithCoherencyIssues, beginPlayBattle, completeEndOfTurnActions, completePlayScoutMove, createDeploymentState, declarePlaySuperHeavyMobile, enterBattlePhase, markRemainingStationaryUnits, movementStep, playDeploymentIssues, playDisembarkModes, playPhaseCoherencyIssues, playScoutMoveAllowance, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanTakeToSkies, placeNextUnit, removePlayModels, rollPlayBattleshock, startPlayScoutMove,
+  advancePlayFightPileInStep, advancePlayConsolidationStep, allocatePlayDamageToModel, battleModelBaseEdgeDistance, battleUnitsBaseEdgeDistance, modelIsHiddenFrom, boobyTrapTerrainOptions, chargePlayUnitTargets, completePlayChargeMovement, playChargeEligibilityReason, playChargeRoll, consecrateObjectiveOptions, consolidatePlayUnit, decoyObjectiveOptions, extractIntelligenceObjectiveOptions, fightPlayUnitWeapon, fightPlayUnitWeapons, lockPlayUnitShooting, maintainControlObjectiveOptions, pileInPlayUnit, playChargeTargetOptions, playConsolidationPendingFightUnitIds, playConsolidationUnitIds, playFightActivationUnitIds, playFightFirstUnitIds, playFightIneligibleUnitIds, playFightPhaseHasPendingActivations, playFightPileInUnitIds, playFightSideCanPass, playFightStepNeedsStart, playFightWeaponOptions, playFightPileInTargetOptions, playFightConsolidationOptions, playFiringDeckCapacity, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playShootingWeaponModelIndexes, playShootingWeaponModelCount, playShootingWeaponOptions, playSnapShootingWeaponOptions, playUnitCanConsolidate, playUnitCanPileIn, playUnitCanStartAction, punishmentCondemnedUnitOptions, returnOpponentAircraftToStrategicReserves, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, simulationNextUnitId, simulateNextPhase, simulateNextUnit, simulatePlayerTurn, snapShootPlayUnitWeapon, startPlayChargeStep, startPlayConsolidationStep, startPlayFightPileInStep, startPlayFightStep, startPlayShootingStep, startPlayUnitAction, surveilTargetOptions, playCombatHitPreview, shootingLOSRays, reorganizePlayModelsGrid, shootPlayUnitWeapon, shootPlayUnitWeapons, togglePunishmentCondemnedUnit, triangulateObjectiveOptions, undoPlayUnitMovement, undeployPlayUnit, vanguardOperationTerrainOptions, type CombatHitPreview, type DeploymentStrategy, type FiringDeckSelection, type LOSRay, type PlayShootingAttackAllocation, type PlayMeleeAttackAllocation,
 } from '@warhammer-simulator/core/engine/simulator';
 import { battleRound, maxBattleRounds, setBattleRound } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints, gainCommandPhaseCommandPoints } from '@warhammer-simulator/core/engine/commandPoints';
+import { beginBattleshockStep, battleshockEligibleUnits } from '@warhammer-simulator/core/engine/battleshockPhase';
+import { availablePhaseStepActionUnitIds, hasPendingRequiredPhaseStepActions, phaseStepActionLedgerFor } from '@warhammer-simulator/core/engine/phaseStepActions';
 import { formatPrimaryScoringResult, primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, unsupportedPrimaryMissionScoringLogs, updateObjectiveControl } from '@warhammer-simulator/core/engine/missionScoring';
 import { completeMissionEventsForCurrentTurn, startMissionEventsForNewTurn } from '@warhammer-simulator/core/engine/missionEvents';
 import { availableStratagems, resolveCommandReroll, useStratagem as applyStratagem } from '@warhammer-simulator/core/engine/stratagems';
@@ -40,6 +42,7 @@ import {
 } from '@warhammer-simulator/core/engine/deploymentBrain';
 import { SAMPLE_ARMIES } from '@warhammer-simulator/core/data/sampleArmies';
 import { Battlefield, type PlayModelSelection } from './components/Battlefield';
+import { uiTokens } from './theme/uiTokens';
 import { moveSelectedPlayModels, moveSelectedPlayModelsVertically, rotateSelectedPlayModels as rotateSelectedPlayModelsInUi } from './play/playInteractiveMovement';
 import { PhaseStepper } from './components/PhaseStepper';
 import { BattleLog } from './components/BattleLog';
@@ -125,6 +128,7 @@ import { advanceStandardPlayPhaseStep } from './play/playPhaseStepDispatcher';
 import { transitionFightConsolidation, transitionFightPileIn, transitionFightStart } from './play/fightPhaseTransition';
 import {
   PendingDamageAllocationHud,
+  BattleShockPanel,
   CombatPanel,
   PlayTacticsPanel,
 } from './play/PlayPanels';
@@ -161,6 +165,29 @@ const PLAY_TURN_PHASES: Phase[] = [
   BATTLE_PHASE.Charge,
   BATTLE_PHASE.Fight,
 ];
+
+const PHASE_STEP_BUTTON_LABELS: Record<PhaseStep, string> = {
+  [PHASE_STEP.CommandStart]: 'Start Command Phase',
+  [PHASE_STEP.CommandGainCoreCp]: 'Gain Core CP',
+  [PHASE_STEP.CommandBattleShock]: 'Start Battle-shock',
+  [PHASE_STEP.CommandAbilities]: 'Start Command Abilities',
+  [PHASE_STEP.CommandEnd]: 'End Command Phase',
+  [PHASE_STEP.MovementStart]: 'Start Movement Phase',
+  [PHASE_STEP.MovementUnits]: 'Start Moving Units',
+  [PHASE_STEP.MovementReinforcements]: 'Start Reinforcements',
+  [PHASE_STEP.MovementEnd]: 'End Movement Phase',
+  [PHASE_STEP.ShootingStart]: 'Start Shooting Phase',
+  [PHASE_STEP.ShootingUnits]: 'Start Shooting',
+  [PHASE_STEP.ShootingEnd]: 'End Shooting Phase',
+  [PHASE_STEP.ChargeStart]: 'Start Charge Phase',
+  [PHASE_STEP.ChargeUnits]: 'Start Charges',
+  [PHASE_STEP.ChargeEnd]: 'End Charge Phase',
+  [PHASE_STEP.FightStart]: 'Start Fight Phase',
+  [PHASE_STEP.FightPileIn]: 'Start Pile-ins',
+  [PHASE_STEP.FightUnits]: 'Start Fights',
+  [PHASE_STEP.FightConsolidate]: 'Start Consolidation',
+  [PHASE_STEP.FightEnd]: 'End Fight Phase',
+};
 
 function makeGameSessionId(prefix: string): string {
   const randomId = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -304,6 +331,12 @@ export default function App() {
       setSelectedChargeTargetIds,
       selectedFightTargetId,
       setSelectedFightTargetId,
+      selectedFightMovementTargetIds,
+      setSelectedFightMovementTargetIds,
+      selectedFightConsolidationMode,
+      setSelectedFightConsolidationMode,
+      selectedFightObjectiveIndex,
+      setSelectedFightObjectiveIndex,
       selectedFightWeaponIndex,
       setSelectedFightWeaponIndex,
       fightAttackSplits,
@@ -658,9 +691,18 @@ export default function App() {
     && battleState.pendingChargeRoll?.side === selectedChargeUnit.side
     ? battleState.pendingChargeRoll
     : null;
-  const selectedFightUnit = battleState && isFightResolutionStep(battleState)
+  const fightStep = battleState?.phase === BATTLE_PHASE.Fight ? phaseStepFor(battleState) : undefined;
+  const fightPileInStepActive = battleState?.phase === BATTLE_PHASE.Fight
+    && fightStep === PHASE_STEP.FightPileIn;
+  const selectedFightUnit = battleState && battleState.phase === BATTLE_PHASE.Fight
+    && (isFightResolutionStep(battleState) || fightPileInStepActive)
     ? selectedPlayBattleUnit
     : null;
+  const fightCombatStepActive = !!(
+    battleState
+    && battleState.phase === BATTLE_PHASE.Fight
+    && (fightStep === PHASE_STEP.FightUnits || isFightResolutionStep(battleState) && fightStep !== PHASE_STEP.FightPileIn)
+  );
   const activeFightResolution = battleState?.phase === BATTLE_PHASE.Fight
     && shootingResolutionStatus === 'rolled'
     ? battleState.lastShootingResolution ?? null
@@ -669,6 +711,12 @@ export default function App() {
     ? battleState?.units.find(unit => unit.id === activeFightResolution.shooterUnitId && !unit.destroyed && !unit.embarkedInUnitId) ?? null
     : selectedFightUnit;
   const activeRulesForBattle = battleState ? rulesEditionForRuleset(battleState.ruleset) : edition;
+  const fightIneligibleUnitIds = useMemo(
+    () => battleState?.phase === BATTLE_PHASE.Fight
+      ? new Set(playFightIneligibleUnitIds(battleState, activeRulesForBattle))
+      : new Set<string>(),
+    [battleState, activeRulesForBattle],
+  );
   const fightFirstUnitIds = useMemo(
     () => battleState?.phase === BATTLE_PHASE.Fight
       ? new Set([
@@ -681,17 +729,49 @@ export default function App() {
   const fightReadyUnitIds = useMemo(
     () => {
       if (battleState?.phase !== BATTLE_PHASE.Fight) return new Set<string>();
-      if (battleState.phaseStep === PHASE_STEP.FightPileIn) {
-        return new Set(playFightPileInUnitIds(battleState, battleState.fightPileInSide ?? battleState.activeArmy, activeRulesForBattle));
+      if (fightPileInStepActive) {
+        const pileInSide = battleState.fightPileInSide ?? battleState.activeArmy;
+        const pileInLedger = phaseStepActionLedgerFor(battleState);
+        if (pileInLedger) {
+          return new Set(pileInLedger.actions
+            .filter(action => action.kind === 'pile-in'
+              && action.side === pileInSide
+              && action.status === 'available'
+              && !!action.unitId)
+            .map(action => action.unitId!));
+        }
+        return new Set(playFightPileInUnitIds(battleState, pileInSide, activeRulesForBattle));
       }
-      if (battleState.phaseStep === PHASE_STEP.FightConsolidate) {
-        return new Set([
-          ...playConsolidationUnitIds(battleState, battleState.consolidationSide ?? battleState.activeArmy, activeRulesForBattle),
+      if (fightStep === PHASE_STEP.FightConsolidate) {
+        const consolidationSide = battleState.consolidationSide ?? battleState.activeArmy;
+        const consolidationLedger = phaseStepActionLedgerFor(battleState);
+        const consolidationIds = consolidationLedger
+          ? consolidationLedger.actions
+            .filter(action => action.kind === 'consolidate'
+              && action.side === consolidationSide
+              && action.status === 'available'
+              && !!action.unitId)
+            .map(action => action.unitId!)
+          : playConsolidationUnitIds(battleState, consolidationSide, activeRulesForBattle);
+        const pendingFightIds = [
           ...playConsolidationPendingFightUnitIds(battleState, 0, activeRulesForBattle),
           ...playConsolidationPendingFightUnitIds(battleState, 1, activeRulesForBattle),
+        ];
+        const hasFightLedger = !!consolidationLedger
+          && consolidationLedger.actions.some(action => action.kind === 'fight');
+        const fightLedgerIds = hasFightLedger
+          ? new Set(consolidationLedger!.actions
+            .filter(action => action.kind === 'fight'
+              && (action.status === 'available' || action.status === 'in-progress')
+              && !!action.unitId)
+            .map(action => action.unitId!))
+          : null;
+        return new Set([
+          ...consolidationIds,
+          ...pendingFightIds.filter(unitId => !fightLedgerIds || fightLedgerIds.has(unitId)),
         ]);
       }
-      if (battleState.phaseStep !== PHASE_STEP.FightUnits && !isFightResolutionStep(battleState)) return new Set<string>();
+      if (fightStep !== PHASE_STEP.FightUnits && !isFightResolutionStep(battleState)) return new Set<string>();
       const activationIds = [
         ...playFightActivationUnitIds(battleState, 0, activeRulesForBattle),
         ...playFightActivationUnitIds(battleState, 1, activeRulesForBattle),
@@ -700,9 +780,20 @@ export default function App() {
         ...playFightFirstUnitIds(battleState, 0, activeRulesForBattle),
         ...playFightFirstUnitIds(battleState, 1, activeRulesForBattle),
       ];
-      return new Set(fightFirstIds.length ? fightFirstIds : activationIds);
+      const fightLedger = phaseStepActionLedgerFor(battleState);
+      const hasFightLedger = !!fightLedger
+        && fightLedger.actions.some(action => action.kind === 'fight');
+      const fightLedgerIds = hasFightLedger
+        ? new Set(fightLedger!.actions
+          .filter(action => action.kind === 'fight'
+            && (action.status === 'available' || action.status === 'in-progress')
+            && !!action.unitId)
+          .map(action => action.unitId!))
+        : null;
+      const readyIds = fightFirstIds.length ? fightFirstIds : activationIds;
+      return new Set(readyIds.filter(unitId => !fightLedgerIds || fightLedgerIds.has(unitId)));
     },
-    [battleState, activeRulesForBattle],
+    [battleState, activeRulesForBattle, fightStep],
   );
   const selectedFightUnitEligible = !!(
     battleState
@@ -718,15 +809,102 @@ export default function App() {
     const unitId = [...fightReadyUnitIds][0];
     return battleState.units.find(unit => unit.id === unitId)?.side ?? null;
   }, [battleState, fightReadyUnitIds]);
+  const fightPassSide = useMemo(() => {
+    if (!battleState || battleState.phase !== BATTLE_PHASE.Fight || !isFightResolutionStep(battleState)) return null;
+    const otherSide = (side: 0 | 1): 0 | 1 => side === 0 ? 1 : 0;
+    const candidateSides: Array<0 | 1> = fightPrioritySide === null
+      ? [battleState.activeArmy, otherSide(battleState.activeArmy)]
+      : [fightPrioritySide, otherSide(fightPrioritySide)];
+    return candidateSides.find(side => playFightSideCanPass(battleState, side, activeRulesForBattle)) ?? null;
+  }, [battleState, fightPrioritySide, activeRulesForBattle]);
   const resolvingFightsFirst = battleState?.phase === BATTLE_PHASE.Fight
     && isFightResolutionStep(battleState)
     && visibleFightFirstUnitIds.size > 0;
-  const fightPileInReadyToAdvance = !!(
+  const fightPileInCanAdvance = !!(
     isPlayMode
     && battleState?.phase === BATTLE_PHASE.Fight
+    && fightPileInStepActive
     && battleState.fightStepStarted === false
-    && playFightPileInUnitIds(battleState, battleState.fightPileInSide ?? battleState.activeArmy, activeRulesForBattle).length === 0
+    && !battleState.pendingFightMovement
   );
+  const fightReadyToStartPileIn = !!(
+    isPlayMode
+    && battleState?.phase === BATTLE_PHASE.Fight
+    && fightStep === PHASE_STEP.FightStart
+  );
+  const fightConsolidationCanAdvance = !!(
+    isPlayMode
+    && battleState?.phase === BATTLE_PHASE.Fight
+    && fightStep === PHASE_STEP.FightConsolidate
+    && battleState.consolidationStepStarted
+    && !battleState.pendingFightMovement
+    && !playFightPhaseHasPendingActivations(battleState, activeRulesForBattle)
+  );
+  const fightReadyToStartConsolidation = !!(
+    isPlayMode
+    && battleState?.phase === BATTLE_PHASE.Fight
+    && fightStep === PHASE_STEP.FightUnits
+    && !battleState.consolidationStepStarted
+    && !playFightPhaseHasPendingActivations(battleState, activeRulesForBattle)
+  );
+  const nextPhaseButtonLabel = (() => {
+    if (!battleState) return 'Next Phase';
+
+    const otherSide = (side: 0 | 1): 0 | 1 => side === 0 ? 1 : 0;
+    const armyName = (side: 0 | 1) => battleState.armies[side]?.name ?? `Player ${side + 1}`;
+
+    if (battleState.phase === BATTLE_PHASE.Fight) {
+      if (fightReadyToStartPileIn) {
+        return `Start ${armyName(battleState.activeArmy)} Pile-ins`;
+      }
+
+      if (fightPileInStepActive) {
+        const side = battleState.fightPileInSide ?? battleState.activeArmy;
+        const hasEligiblePileIns = playFightPileInUnitIds(battleState, side, activeRulesForBattle).length > 0;
+        if (hasEligiblePileIns) return `Finish ${armyName(side)} Pile-ins`;
+        if (fightPileInCanAdvance) {
+          return side === battleState.activeArmy
+            ? `Start ${armyName(otherSide(side))} Pile-ins`
+            : 'Begin Fights';
+        }
+      }
+
+      if (fightStep === PHASE_STEP.FightUnits) {
+        if (playFightPhaseHasPendingActivations(battleState, activeRulesForBattle)) return 'Finish Fights';
+        if (fightReadyToStartConsolidation) return `Start ${armyName(battleState.activeArmy)} Consolidation`;
+      }
+
+      if (fightStep === PHASE_STEP.FightConsolidate) {
+        if (playFightPhaseHasPendingActivations(battleState, activeRulesForBattle)) return 'Resolve Fights';
+        const side = battleState.consolidationSide ?? battleState.activeArmy;
+        const hasEligibleConsolidations = playConsolidationUnitIds(battleState, side, activeRulesForBattle).length > 0;
+        if (hasEligibleConsolidations) return `Finish ${armyName(side)} Consolidation`;
+        if (fightConsolidationCanAdvance) {
+          return side === battleState.activeArmy
+            ? `Start ${armyName(otherSide(side))} Consolidation`
+            : 'End Consolidation';
+        }
+      }
+    }
+
+    const nextStep = nextPhaseStep(battleState);
+    if (nextStep) return PHASE_STEP_BUTTON_LABELS[nextStep];
+
+    switch (battleState.phase) {
+      case BATTLE_PHASE.Command:
+        return 'Start Movement Phase';
+      case BATTLE_PHASE.Movement:
+        return 'Start Shooting Phase';
+      case BATTLE_PHASE.Shooting:
+        return 'Start Charge Phase';
+      case BATTLE_PHASE.Charge:
+        return 'Start Fight Phase';
+      case BATTLE_PHASE.Fight:
+        return 'End Turn';
+      default:
+        return 'Next Phase';
+    }
+  })();
   const {
     selectedPlayShootingOptions,
     selectedPlayShootingTargets,
@@ -747,6 +925,8 @@ export default function App() {
     selectedPlayChargeDice,
     selectedPlayFightOptions,
     selectedPlayFightTargets,
+    selectedPlayFightPileInTargetIds,
+    selectedPlayFightConsolidationOptions,
     selectedFightTargetUnit,
     selectedFightAttackCount,
   } = usePlayPhaseSelectors({
@@ -1029,14 +1209,40 @@ export default function App() {
     if (!battleState || !shootingUnitsStepActive || !selectedShootingUnit) return [];
     return battleState.units
       .filter(unit => unit.side !== selectedShootingUnit.side && !unit.destroyed && !unit.embarkedInUnitId)
-      .flatMap(unit => shootingLOSRays(selectedShootingUnit, unit, battleState.terrain, battleState.ruleset?.edition));
+      .flatMap(unit => shootingLOSRays(selectedShootingUnit, unit, battleState.terrain, battleState.ruleset?.edition, battleState));
   }, [battleState, selectedShootingUnit, shootingUnitsStepActive]);
+  const shootingTargetDistances = useMemo<ReadonlyMap<string, number>>(() => {
+    const distances = new Map<string, number>();
+    if (!battleState || !shootingUnitsStepActive || !selectedShootingUnit) return distances;
+    const unitsById = new Map(battleState.units.map(unit => [unit.id, unit]));
+    for (const ray of losRays) {
+      if (ray.blocked || ray.hidden) continue;
+      const target = unitsById.get(ray.toUnitId);
+      if (!target) continue;
+      if (modelIsHiddenFrom(
+        battleState,
+        selectedShootingUnit,
+        ray.fromModelIndex,
+        target,
+        ray.toModelIndex,
+      )) continue;
+      const distance = battleModelBaseEdgeDistance(
+        selectedShootingUnit,
+        ray.fromModelIndex,
+        target,
+        ray.toModelIndex,
+      );
+      const current = distances.get(ray.toUnitId);
+      if (current === undefined || distance < current) distances.set(ray.toUnitId, distance);
+    }
+    return distances;
+  }, [battleState, selectedShootingUnit, shootingUnitsStepActive, losRays]);
   const visibleOutOfRangeUnitIds = useMemo<Set<string>>(() => {
     if (!battleState || !shootingUnitsStepActive || !selectedShootingUnit) return new Set();
     const options = selectedShootingWeaponIndex === 'all'
       ? selectedPlayShootingOptions
       : selectedPlayShootingOptions.filter(option => String(option.weaponIndex) === selectedShootingWeaponIndex);
-    const visibleUnitIds = new Set(losRays.filter(ray => !ray.blocked).map(ray => ray.toUnitId));
+    const visibleUnitIds = new Set(losRays.filter(ray => !ray.blocked && !ray.hidden).map(ray => ray.toUnitId));
     const maxRange = Math.max(
       0,
       ...options.map(option => selectedShootingUnit.profile.weapons[option.weaponIndex]?.range ?? 0),
@@ -1052,19 +1258,47 @@ export default function App() {
   }, [battleState, selectedShootingUnit, selectedPlayShootingOptions, selectedShootingWeaponIndex, losRays, shootingUnitsStepActive]);
   const shootingReadyUnitIds = useMemo<Set<string>>(() => {
     if (!battleState || !shootingUnitsStepActive) return new Set();
+    const shootingLedger = phaseStepActionLedgerFor(battleState);
+    const ledgerUnitIds = shootingLedger
+      ? new Set(shootingLedger.actions
+        .filter(action => action.kind === 'shoot'
+          && action.side === battleState.activeArmy
+          && (action.status === 'available' || action.status === 'in-progress')
+          && !!action.unitId)
+        .map(action => action.unitId!))
+      : null;
     return new Set(
       battleState.units
-        .filter(unit => unit.side === battleState.activeArmy && !unit.destroyed && !unit.embarkedInUnitId && !unit.activated)
+        .filter(unit => unit.side === battleState.activeArmy
+          && !unit.destroyed
+          && !unit.embarkedInUnitId
+          && !unit.inStrategicReserves
+          && !unit.activated
+          && (!ledgerUnitIds || ledgerUnitIds.has(unit.id)))
         .filter(unit => playShootingWeaponOptions(battleState, unit.id, unit.side, activeRulesForBattle)
           .some(option => option.weaponIndex >= 0 && option.targetIds.length > 0))
         .map(unit => unit.id),
     );
-  }, [battleState, activeRulesForBattle]);
+  }, [battleState, activeRulesForBattle, shootingUnitsStepActive]);
   const shootingNoTargetUnitIds = useMemo<Set<string>>(() => {
     if (!battleState || !shootingUnitsStepActive) return new Set();
+    const shootingLedger = phaseStepActionLedgerFor(battleState);
+    const ledgerUnitIds = shootingLedger
+      ? new Set(shootingLedger.actions
+        .filter(action => action.kind === 'shoot'
+          && action.side === battleState.activeArmy
+          && (action.status === 'available' || action.status === 'in-progress')
+          && !!action.unitId)
+        .map(action => action.unitId!))
+      : null;
     return new Set(
       battleState.units
-        .filter(unit => unit.side === battleState.activeArmy && !unit.destroyed && !unit.embarkedInUnitId && !unit.activated)
+        .filter(unit => unit.side === battleState.activeArmy
+          && !unit.destroyed
+          && !unit.embarkedInUnitId
+          && !unit.inStrategicReserves
+          && !unit.activated
+          && (!ledgerUnitIds || ledgerUnitIds.has(unit.id)))
         .filter(unit => {
           const options = playShootingWeaponOptions(battleState, unit.id, unit.side, activeRulesForBattle);
           return options.some(option => option.weaponIndex >= 0)
@@ -1072,7 +1306,7 @@ export default function App() {
         })
         .map(unit => unit.id),
     );
-  }, [battleState, activeRulesForBattle]);
+  }, [battleState, activeRulesForBattle, shootingUnitsStepActive]);
   const movementReadyUnitIds = useMemo<Set<string>>(() => {
     if (!battleState || battleState.phase !== BATTLE_PHASE.Movement || isPlayReinforcementsStep
       || movementStep(battleState) !== MOVEMENT_STEP.MoveUnits
@@ -1091,9 +1325,21 @@ export default function App() {
   }, [battleState, activeRulesForBattle, isPlayReinforcementsStep]);
   const chargeReadyUnitIds = useMemo<Set<string>>(() => {
     if (!battleState || battleState.phase !== 'charge' || battleState.phaseStep !== PHASE_STEP.ChargeUnits) return new Set();
+    const chargeLedger = phaseStepActionLedgerFor(battleState);
+    const ledgerUnitIds = chargeLedger
+      ? new Set(chargeLedger.actions
+        .filter(action => action.kind === 'charge'
+          && action.side === battleState.activeArmy
+          && (action.status === 'available' || action.status === 'in-progress')
+          && !!action.unitId)
+        .map(action => action.unitId!))
+      : null;
     return new Set(
       battleState.units
-        .filter(unit => unit.side === battleState.activeArmy && !unit.destroyed && !unit.embarkedInUnitId)
+        .filter(unit => unit.side === battleState.activeArmy
+          && !unit.destroyed
+          && !unit.embarkedInUnitId
+          && (!ledgerUnitIds || ledgerUnitIds.has(unit.id)))
         .filter(unit => playChargeEligibilityReason(battleState, unit.id, unit.side, activeRulesForBattle) === null)
         .map(unit => unit.id),
     );
@@ -1159,9 +1405,49 @@ export default function App() {
     )
   );
   const playCoherencyIssues = isPlayMode && battleState ? playPhaseCoherencyIssues(battleState) : [];
+  const battleShockStepActive = !!(
+    isPlayMode
+    && battleState?.phase === BATTLE_PHASE.Command
+    && battleState.phaseStep === PHASE_STEP.CommandBattleShock
+  );
+  const battleShockEligibleUnits = useMemo(
+    () => battleShockStepActive && battleState
+      ? battleState.battleshockEligibility ?? battleshockEligibleUnits(battleState, battleState.activeArmy)
+      : [],
+    [battleShockStepActive, battleState],
+  );
+  const battleShockPendingUnitIds = useMemo(() => {
+    if (!battleShockStepActive || !battleState) return [];
+    const resolved = new Set((battleState.battleshockResults ?? []).map(result => result.unitId));
+    return (battleState.battleshockEligibleUnitIds ?? []).filter(unitId => !resolved.has(unitId));
+  }, [battleShockStepActive, battleState]);
+  const battleShockReadyUnitIds = useMemo(
+    () => {
+      if (!battleShockStepActive || !battleState) return new Set<string>();
+      return phaseStepActionLedgerFor(battleState)
+        ? availablePhaseStepActionUnitIds(battleState)
+        : new Set(battleShockPendingUnitIds);
+    },
+    [battleShockStepActive, battleState, battleShockPendingUnitIds],
+  );
+  const hasPendingRequiredStepActions = battleState
+    ? hasPendingRequiredPhaseStepActions(battleState)
+    : false;
+  // Keep the legacy Battle-shock cursor as a fallback for older saved states
+  // that do not yet contain the typed step-action ledger.
+  const requiredStepActionPending = battleShockPendingUnitIds.length > 0 || hasPendingRequiredStepActions;
+  const selectedBattleShockUnit = battleShockStepActive && battleState && primaryPlaySelection
+    ? battleShockEligibleUnits.find(unit =>
+        attachedBattleUnitIdsForSelection(battleState, primaryPlaySelection.unitId).includes(unit.unitId),
+      ) ?? null
+    : null;
   const phaseAdvanceDisabledReason = playCoherencyIssues.length
     ? `Cannot advance phase: ${playCoherencyIssues.join(' ')}`
-    : '';
+    : battleShockPendingUnitIds.length
+      ? 'Cannot advance Command phase: resolve every Battle-shock roll first.'
+      : hasPendingRequiredStepActions
+        ? 'Cannot advance this step: resolve every required action first.'
+      : '';
   const selectedPlayCoherencyIssueModelIds = useMemo(
     () => battleState ? battleModelIdsWithCoherencyIssues(battleState) : new Set<string>(),
     [battleState],
@@ -1308,6 +1594,17 @@ export default function App() {
       setCasualtyRemovalShooterId(null);
       return;
     }
+    const activeShootingResult = shootingResolutionStatus === 'rolled'
+      && battleState.lastShootingResolution?.shooterUnitId === selectedShootingUnit.id
+      ? battleState.lastShootingResolution
+      : null;
+    if (activeShootingResult) {
+      const resultWeaponIndices = new Set(activeShootingResult.weapons.map(result => String(result.weaponIndex)));
+      if (selectedShootingWeaponIndex === 'all' || resultWeaponIndices.has(selectedShootingWeaponIndex)) return;
+      const firstResultWeaponIndex = activeShootingResult.weapons[0]?.weaponIndex;
+      if (firstResultWeaponIndex !== undefined) setSelectedShootingWeaponIndex(String(firstResultWeaponIndex));
+      return;
+    }
     if (!selectedPlayShootingOptions.length) {
       if (selectedShootingWeaponIndex !== 'all') setSelectedShootingWeaponIndex('all');
       return;
@@ -1346,6 +1643,7 @@ export default function App() {
     setSelectedShootingWeaponIndex,
     battleState,
     shootingUnitsStepActive,
+    shootingResolutionStatus,
   ]);
 
   useEffect(() => {
@@ -1434,9 +1732,7 @@ export default function App() {
     }
     const validTargetIds = selectedChargeTargetIds.filter(targetId => selectedPlayChargeOptions.some(option => option.targetId === targetId));
     if (validTargetIds.length !== selectedChargeTargetIds.length) {
-      setSelectedChargeTargetIds(validTargetIds.length ? validTargetIds : (selectedPlayChargeOptions[0]?.targetId ? [selectedPlayChargeOptions[0].targetId] : []));
-    } else if (!selectedChargeTargetIds.length && selectedPlayChargeOptions[0]?.targetId) {
-      setSelectedChargeTargetIds([selectedPlayChargeOptions[0].targetId]);
+      setSelectedChargeTargetIds(validTargetIds);
     }
   }, [battleState?.phase, battleState?.phaseStep, battleState?.units, chargeUnitsStepActive, selectedChargeUnit?.id, selectedChargeTargetIds, selectedPlayChargeOptions, battleState, selectedChargeUnit, setSelectedChargeTargetIds]);
 
@@ -1470,6 +1766,52 @@ export default function App() {
     selectedFightUnit,
     setSelectedFightTargetId,
     setSelectedFightWeaponIndex,
+  ]);
+
+  useEffect(() => {
+    if (!battleState || battleState.phase !== BATTLE_PHASE.Fight || battleState.pendingFightMovement || !selectedFightUnit) {
+      setSelectedFightMovementTargetIds([]);
+      setSelectedFightConsolidationMode(null);
+      setSelectedFightObjectiveIndex(null);
+      return;
+    }
+    if (selectedPlayFightPileInTargetIds.length > 0) {
+      setSelectedFightMovementTargetIds(current => {
+        const valid = current.filter(targetId => selectedPlayFightPileInTargetIds.includes(targetId));
+        return valid.length > 0 ? valid : selectedPlayFightPileInTargetIds;
+      });
+      setSelectedFightConsolidationMode(null);
+      setSelectedFightObjectiveIndex(null);
+      return;
+    }
+    const consolidationOption = selectedPlayFightConsolidationOptions[0];
+    if (!consolidationOption) {
+      setSelectedFightMovementTargetIds([]);
+      setSelectedFightConsolidationMode(null);
+      setSelectedFightObjectiveIndex(null);
+      return;
+    }
+    setSelectedFightConsolidationMode(consolidationOption.mode);
+    if (consolidationOption.mode === 'objective') {
+      setSelectedFightMovementTargetIds([]);
+      setSelectedFightObjectiveIndex(consolidationOption.objectiveIndex);
+    } else {
+      setSelectedFightObjectiveIndex(null);
+      setSelectedFightMovementTargetIds(current => {
+        const valid = current.filter(targetId => consolidationOption.targetUnitIds.includes(targetId));
+        return valid.length > 0
+          ? (consolidationOption.mode === 'ongoing' ? consolidationOption.targetUnitIds : valid)
+          : (consolidationOption.mode === 'ongoing' ? consolidationOption.targetUnitIds : consolidationOption.targetUnitIds.slice(0, 1));
+      });
+    }
+  }, [
+    battleState,
+    selectedFightUnit?.id,
+    selectedPlayFightPileInTargetIds,
+    selectedPlayFightConsolidationOptions,
+    setSelectedFightMovementTargetIds,
+    setSelectedFightConsolidationMode,
+    setSelectedFightObjectiveIndex,
   ]);
 
   useEffect(() => {
@@ -1739,14 +2081,16 @@ export default function App() {
     setPlayModelSelection,
     setInspectedSelection,
     setCasualtyRemovalShooterId,
+    setShootingResolutionStatus,
     setTargetErrorMsg,
   });
 
   function selectionForPlacedGroup(unitId: string, side: 0 | 1): PlayModelSelection | null {
-    if (!battleState) return null;
-    const primary = battleState.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+    const currentState = battleStateRef.current ?? battleState;
+    if (!currentState) return null;
+    const primary = currentState.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
     if (!primary) return null;
-    const groupIds = attachedBattleUnitIdsForSelection(battleState, unitId).filter(id => id !== unitId);
+    const groupIds = attachedBattleUnitIdsForSelection(currentState, unitId).filter(id => id !== unitId);
     return {
       side,
       parts: [
@@ -1756,7 +2100,7 @@ export default function App() {
           modelIndices: primary.modelPositions.map((_, modelIndex) => modelIndex),
         },
         ...groupIds.flatMap(groupId => {
-        const linked = battleState.units.find(u => u.id === groupId && u.side === side && !u.destroyed);
+        const linked = currentState.units.find(u => u.id === groupId && u.side === side && !u.destroyed);
         return linked
           ? [{
             unitId: linked.id,
@@ -1777,6 +2121,12 @@ export default function App() {
     setPlayModelSelection(selection);
   }
 
+  function toggleSelectedChargeTarget(targetUnitId: string) {
+    setSelectedChargeTargetIds(current => current.includes(targetUnitId)
+      ? current.filter(id => id !== targetUnitId)
+      : [...current, targetUnitId]);
+  }
+
   function invalidShootingTargetMessage(target: BattleUnit, shooter: BattleUnit) {
     const weaponText = selectedShootingWeaponIndex === 'all' ? '' : ' with the selected weapon';
     if (visibleOutOfRangeUnitIds.has(target.id)) {
@@ -1793,6 +2143,7 @@ export default function App() {
       setTargetErrorMsg('Allocate pending damage before selecting another unit');
       return;
     }
+    const currentState = battleStateRef.current ?? battleState;
     if (isPlayMode && shootingUnitsStepActive) {
       const clickedUnit = battleState.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
       if (!clickedUnit) return;
@@ -1861,6 +2212,34 @@ export default function App() {
     if (isPlayMode && battleState?.phase === 'charge' && battleState.phaseStep === PHASE_STEP.ChargeUnits) {
       const clickedUnit = battleState.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
       if (!clickedUnit) return;
+
+      // Once an active-army charger is selected, enemy clicks are target
+      // selection. Check this before `activated`: the opposing unit may have
+      // been activated during its own turn and is still a valid charge target.
+      const selectingCurrentChargeTarget = !!selectedChargeUnit
+        && selectedChargeUnit.side === battleState.activeArmy
+        && side !== selectedChargeUnit.side;
+      if (selectingCurrentChargeTarget) {
+        setInspectedSelection({ kind: 'battle', side, unitId });
+        const canCharge = selectedPlayChargeOptions.some(option => option.targetId === unitId);
+        if (canCharge) {
+          toggleSelectedChargeTarget(unitId);
+        }
+        setTargetErrorMsg(canCharge ? null : `${clickedUnit.profile.name} is not an eligible charge target`);
+        return;
+      }
+
+      // Do not replace a charger while its roll still needs target selection.
+      const rollBelongsToSelectedCharger = !!selectedChargeUnit
+        && battleState.pendingChargeRoll?.unitId === selectedChargeUnit.id
+        && battleState.pendingChargeRoll.side === selectedChargeUnit.side;
+      if (rollBelongsToSelectedCharger
+        && side === selectedChargeUnit.side
+        && unitId !== selectedChargeUnit.id) {
+        setTargetErrorMsg('Resolve the current charge before selecting another charger');
+        return;
+      }
+
       const failedCharge = chargeAttemptFailed(battleState, unitId, side);
       if (clickedUnit.activated || failedCharge) {
         setSelectedChargeTargetIds([]);
@@ -1878,7 +2257,7 @@ export default function App() {
       const options = playChargeTargetOptions(battleState, unitId, side, activeRulesForBattle);
       if (options.length > 0 || side === battleState.activeArmy) {
         selectPlacedPlayUnit(unitId, side);
-        setSelectedChargeTargetIds(options[0]?.targetId ? [options[0].targetId] : []);
+        setSelectedChargeTargetIds([]);
         setTargetErrorMsg(options.length ? null : playChargeEligibilityReason(battleState, unitId, side, activeRulesForBattle));
         return;
       }
@@ -1889,46 +2268,125 @@ export default function App() {
       }
       const canCharge = selectedPlayChargeOptions.some(option => option.targetId === unitId);
       if (canCharge) {
-        setSelectedChargeTargetIds(current => current.includes(unitId)
-          ? current.filter(targetId => targetId !== unitId)
-          : [...current, unitId]);
+        toggleSelectedChargeTarget(unitId);
       }
       setTargetErrorMsg(canCharge ? null : `${clickedUnit.profile.name} is not an eligible charge target`);
       return;
     }
 
-    if (isPlayMode && battleState?.phase === 'fight') {
-      const clickedUnit = battleState.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
+    if (isPlayMode && currentState?.phase === 'fight') {
+      const fightState = currentState;
+      const fightStep = phaseStepFor(fightState);
+      const clickedUnit = fightState.units.find(u => u.id === unitId && u.side === side && !u.destroyed);
       if (!clickedUnit) return;
-      if (battleState.phaseStep === PHASE_STEP.FightStart || battleState.phaseStep === PHASE_STEP.FightEnd) {
+      if (fightState.pendingFightMovement) {
+        const pending = fightState.pendingFightMovement;
+        if (pending.unitId === unitId && pending.side === side) {
+          // The pending movement owns this unit. Re-selecting any of its
+          // models, including a locked base-contact model, must restore the
+          // movement popup instead of rechecking ordinary Pile In eligibility.
+          selectPlacedPlayUnit(unitId, side);
+          setTargetErrorMsg(null);
+        } else {
+          setTargetErrorMsg(`Complete the current ${pending.kind === 'pileIn' ? 'Pile In' : 'Consolidation'} move before selecting another unit`);
+        }
+        return;
+      }
+      if (fightStep === PHASE_STEP.FightStart || fightStep === PHASE_STEP.FightEnd) {
         setInspectedSelection({ kind: 'battle', side, unitId });
         setTargetErrorMsg('The Fight step is not active. Advance to Pile In or Fight.');
         return;
       }
-      if (battleState.phaseStep === PHASE_STEP.FightPileIn) {
+      if (fightStep === PHASE_STEP.FightPileIn) {
+        const pileInSide = fightState.fightPileInSide ?? fightState.activeArmy;
+        const fightRules = rulesEditionForRuleset(fightState.ruleset);
+        const selectedPileInUnit = primaryPlaySelection
+          ? fightState.units.find(candidate => candidate.id === primaryPlaySelection.unitId
+            && candidate.side === primaryPlaySelection.side
+            && !candidate.destroyed
+            && !candidate.embarkedInUnitId)
+          : null;
+        const selectedPileInUnitIsEligible = !!selectedPileInUnit
+          && selectedPileInUnit.side === pileInSide
+          && playFightPileInUnitIds(fightState, pileInSide, fightRules).includes(selectedPileInUnit.id);
+        const selectedPileInTargetIds = selectedPileInUnitIsEligible && selectedPileInUnit
+          ? playFightPileInTargetOptions(fightState, selectedPileInUnit.id, pileInSide, fightRules)
+          : [];
+
+        // An opposing-side click is a target choice only after a legal
+        // current-side Pile In unit has been selected. Otherwise it must not
+        // fall through and be reported as an ineligible Pile In unit.
+        if (side !== pileInSide) {
+          if (!selectedPileInUnitIsEligible) {
+            setTargetErrorMsg(`Select a highlighted ${fightState.armies[pileInSide].name} unit to Pile In first`);
+            return;
+          }
+          const validTarget = selectedPileInTargetIds.includes(unitId);
+          if (validTarget) {
+            setSelectedFightMovementTargetIds(current => current.includes(unitId)
+              ? current.filter(targetId => targetId !== unitId)
+              : [...current, unitId]);
+            setTargetErrorMsg(null);
+          } else {
+            setTargetErrorMsg(`${clickedUnit.profile.name} is not a legal Pile In target`);
+          }
+          return;
+        }
+        const canPileIn = playFightPileInUnitIds(fightState, pileInSide, fightRules).includes(unitId);
         selectPlacedPlayUnit(unitId, side);
         setCasualtyRemovalShooterId(null);
         setShootingResolutionStatus('idle');
-        setTargetErrorMsg(playFightPileInUnitIds(
-          battleState,
-          battleState.fightPileInSide ?? battleState.activeArmy,
-          activeRulesForBattle,
-        ).includes(unitId)
+        if (canPileIn) {
+          setSelectedFightMovementTargetIds(playFightPileInTargetOptions(
+            fightState,
+            unitId,
+            side,
+            fightRules,
+          ));
+        }
+        setTargetErrorMsg(canPileIn
           ? null
           : `${clickedUnit.profile.name} is not eligible to Pile In during this side's step`);
         return;
       }
-      if (battleState.pendingFightMovement?.unitId === unitId && battleState.pendingFightMovement.side === side) {
-        selectPlacedPlayUnit(unitId, side);
-        setTargetErrorMsg(null);
+      if (fightStep === PHASE_STEP.FightConsolidate
+        && side !== (fightState.consolidationSide ?? fightState.activeArmy)
+        && selectedFightUnit?.side === (fightState.consolidationSide ?? fightState.activeArmy)) {
+        const consolidationOption = selectedPlayFightConsolidationOptions[0];
+        const validTarget = consolidationOption?.mode === 'engaging'
+          && consolidationOption.targetUnitIds.includes(unitId);
+        if (validTarget) {
+          setSelectedFightMovementTargetIds(current => current.includes(unitId)
+            ? current.filter(targetId => targetId !== unitId)
+            : [...current, unitId]);
+          setTargetErrorMsg(null);
+        } else if (consolidationOption?.mode === 'ongoing') {
+          setTargetErrorMsg('Ongoing Consolidation must select every enemy unit already engaged with this unit');
+        } else {
+          setTargetErrorMsg(`${clickedUnit.profile.name} is not a legal Consolidation target`);
+        }
         return;
       }
-      if (battleState.phaseStep === PHASE_STEP.FightConsolidate
-        && battleState.consolidationSide === side
-        && battleState.consolidationEligibleUnitIds?.includes(unitId)) {
+      if (fightStep === PHASE_STEP.FightConsolidate
+        && fightState.consolidationSide === side
+        && playConsolidationUnitIds(fightState, side, activeRulesForBattle).includes(unitId)) {
         selectPlacedPlayUnit(unitId, side);
         setCasualtyRemovalShooterId(null);
         setShootingResolutionStatus('idle');
+        const consolidationOptions = playFightConsolidationOptions(fightState, unitId, side, activeRulesForBattle);
+        const consolidationOption = consolidationOptions[0];
+        if (consolidationOption) {
+          setSelectedFightConsolidationMode(consolidationOption.mode);
+          if (consolidationOption.mode === 'objective') {
+            setSelectedFightMovementTargetIds([]);
+            setSelectedFightObjectiveIndex(consolidationOption.objectiveIndex);
+          } else {
+            setSelectedFightObjectiveIndex(null);
+            setSelectedFightMovementTargetIds(consolidationOption.mode === 'ongoing'
+              ? consolidationOption.targetUnitIds
+              : consolidationOption.targetUnitIds.slice(0, 1));
+          }
+        }
         setTargetErrorMsg(null);
         return;
       }
@@ -1937,17 +2395,20 @@ export default function App() {
         return;
       }
       setInspectedSelection({ kind: 'battle', side, unitId });
-      if (fightReadyUnitIds.has(unitId)) {
+      const readyUnitIds = fightStep === PHASE_STEP.FightPileIn
+        ? new Set(playFightPileInUnitIds(fightState, fightState.fightPileInSide ?? fightState.activeArmy, activeRulesForBattle))
+        : fightReadyUnitIds;
+      if (readyUnitIds.has(unitId)) {
         selectPlacedPlayUnit(unitId, side);
-        if (!isFightResolutionStep(battleState)) {
+        if (!isFightResolutionStep(fightState)) {
           setTargetErrorMsg(null);
           return;
         }
-        if (battleState.phaseStep === PHASE_STEP.FightConsolidate && playUnitCanConsolidate(battleState, unitId, side, activeRulesForBattle)) {
+        if (fightStep === PHASE_STEP.FightConsolidate && playUnitCanConsolidate(fightState, unitId, side, activeRulesForBattle)) {
           setTargetErrorMsg(null);
           return;
         }
-        const options = playFightWeaponOptions(battleState, unitId, side, activeRulesForBattle);
+        const options = playFightWeaponOptions(fightState, unitId, side, activeRulesForBattle);
         setSelectedFightWeaponIndex('all');
         setSelectedFightTargetId(options.flatMap(option => option.targetIds)[0] ?? '');
         setTargetErrorMsg(options.length ? null : `${clickedUnit.profile.name} is not eligible to fight`);
@@ -2192,6 +2653,7 @@ export default function App() {
     commitPendingPlayModelMove,
     setPlayModelSelection,
     commitBattleState,
+    setTargetErrorMsg,
   });
 
   const { resolveSelectedPlayOverwatch } = createPlayShootingActions({
@@ -2225,9 +2687,12 @@ export default function App() {
     setInspectedSelection,
   });
 
-  const { pileInSelectedPlayUnit, consolidateSelectedPlayUnit, completeSelectedPlayFightMovement } = createPlayFightActions({
+  const { pileInSelectedPlayUnit, consolidateSelectedPlayUnit, completeSelectedPlayFightMovement, passSelectedPlayFight } = createPlayFightActions({
     battleStateRef,
     playModelSelection,
+    selectedFightMovementTargetIds,
+    selectedFightConsolidationMode,
+    selectedFightObjectiveIndex,
     activeRulesForBattle,
     playUndoEntry,
     pushPlayUndo,
@@ -2404,6 +2869,19 @@ export default function App() {
       rollType,
     });
     setTargetErrorMsg('Command Re-roll resolved.');
+    commitBattleState(next);
+  }
+
+  function rollSelectedPlayBattleshock(unitId: string) {
+    const prev = battleStateRef.current;
+    if (!prev || !isPlayMode || prev.phase !== BATTLE_PHASE.Command || prev.phaseStep !== PHASE_STEP.CommandBattleShock) return;
+    const next = rollPlayBattleshock(prev, unitId, prev.activeArmy);
+    if (next === prev) return;
+    pushPlayUndo(playUndoEntry(prev), next, {
+      type: GAME_ACTION_TYPE.RollBattleshock,
+      side: prev.activeArmy,
+      unitId,
+    });
     commitBattleState(next);
   }
 
@@ -2889,7 +3367,7 @@ export default function App() {
     // opportunities, so it remains on its specialized path below.
     const fightStart = transitionFightStart(prev, clone);
     if (fightStart && 'state' in fightStart) {
-      const next = fightStart.state;
+      const next = startPlayFightPileInStep(fightStart.state, activeRulesForBattle);
       recordGameSessionAction(prev, next, { type: GAME_ACTION_TYPE.StepPhase });
       commitBattleState(next);
       return;
@@ -2906,7 +3384,10 @@ export default function App() {
       prev,
       clone,
       gainCommandPhaseCommandPoints,
+      beginBattleshockStep,
       markRemainingStationaryUnits,
+      next => { startPlayShootingStep(next, activeRulesForBattle); },
+      next => { startPlayChargeStep(next, activeRulesForBattle); },
     );
     if (standardStep.kind === 'advanced') {
       recordGameSessionAction(prev, standardStep.state, { type: GAME_ACTION_TYPE.StepPhase });
@@ -2921,7 +3402,7 @@ export default function App() {
       return;
     }
     const fightConsolidation = activeRulesForBattle.metadata.edition === '11e'
-      ? transitionFightConsolidation(prev, clone, state => startPlayConsolidationStep(state, activeRulesForBattle), state => playFightPhaseHasPendingActivations(state, activeRulesForBattle), (state, side) => playConsolidationUnitIds(state, side, activeRulesForBattle).length > 0, state => advancePlayConsolidationStep(state, activeRulesForBattle))
+      ? transitionFightConsolidation(prev, state => startPlayConsolidationStep(state, activeRulesForBattle), state => playFightPhaseHasPendingActivations(state, activeRulesForBattle), state => advancePlayConsolidationStep(state, activeRulesForBattle))
       : null;
     if (fightConsolidation) {
       if ('warning' in fightConsolidation) { setPlayPhaseWarning(fightConsolidation.warning); return; }
@@ -3040,8 +3521,18 @@ export default function App() {
     if (!prev) return;
     const next = advancePlayFightPileInStep(prev, activeRulesForBattle);
     if (next === prev) return;
-    if (next.fightStepStarted) next.phaseStep = PHASE_STEP.FightUnits;
     recordGameSessionAction(prev, next, { type: GAME_ACTION_TYPE.AdvanceFightPileInStep });
+    setPlayModelSelection(null);
+    setInspectedSelection(null);
+    commitBattleState(next);
+  }, [activeRulesForBattle, recordGameSessionAction]);
+
+  const advanceConsolidationStep = useCallback(() => {
+    const prev = battleStateRef.current;
+    if (!prev) return;
+    const next = advancePlayConsolidationStep(prev, activeRulesForBattle);
+    if (next === prev) return;
+    recordGameSessionAction(prev, next, { type: GAME_ACTION_TYPE.AdvanceConsolidationStep });
     setPlayModelSelection(null);
     setInspectedSelection(null);
     commitBattleState(next);
@@ -3134,6 +3625,7 @@ export default function App() {
     || hasChargeActions()
     || hasMovementActions()
     || hasFightActions()
+    || !!selectedBattleShockUnit
   );
   const selectedModelActionsVisible = !!battleState
     && battleState.phase !== 'deployment'
@@ -3240,14 +3732,26 @@ export default function App() {
           <Battlefield
             state={movementDraftState ?? battleState ?? previewState}
             selectedUnitId={inspectedBattleUnitId}
+            movementEngagementUnitId={isPlayMode
+              && battleState?.phase === BATTLE_PHASE.Movement
+              && battleState.phaseStep === PHASE_STEP.MovementUnits
+              ? primaryPlaySelection?.unitId ?? null
+              : null}
+            movementEngagementSide={isPlayMode
+              && battleState?.phase === BATTLE_PHASE.Movement
+              && battleState.phaseStep === PHASE_STEP.MovementUnits
+              ? primaryPlaySelection?.side ?? null
+              : null}
             activeSimulationUnitId={activeSimulationUnitId}
             selectedUnitIds={isPlayMode
               ? (shootingUnitsStepActive && selectedShootingTargetId
                   ? [selectedShootingTargetId]
                   : chargeUnitsStepActive && pendingChargeRoll
-                    ? selectedPlayChargeTargets.map(unit => unit.id)
-                    : battleState?.phase === 'fight' && selectedFightTargetId
-                      ? [selectedFightTargetId]
+                    ? selectedChargeTargetIds
+                  : chargeUnitsStepActive && pendingPlayChargeMovement
+                    ? pendingPlayChargeMovement.targetUnitIds
+                  : fightCombatStepActive && selectedFightTargetId
+                    ? [selectedFightTargetId]
                       : chargeUnitsStepActive
                         ? selectedChargeTargetIds
                         : [])
@@ -3257,7 +3761,7 @@ export default function App() {
                 ? selectedShootingUnit?.id ?? null
                 : chargeUnitsStepActive
                   ? selectedChargeUnit?.id ?? null
-                  : battleState?.phase === 'fight'
+                  : fightCombatStepActive
                     ? selectedFightUnit?.id ?? null
                     : null
               : null}
@@ -3265,12 +3769,18 @@ export default function App() {
               ? shootingUnitsStepActive
                 ? null
                 : chargeUnitsStepActive
-                  ? selectedChargeTargetIds[0] ?? null
-                  : battleState?.phase === 'fight'
+                  ? pendingPlayChargeMovement?.targetUnitIds[0] ?? selectedChargeTargetIds[0] ?? null
+                  : fightCombatStepActive
                     ? selectedFightTargetId
                     : null
               : null}
-            targetUnitIds={isPlayMode && shootingUnitsStepActive ? allocatedShootingTargetIds : undefined}
+            targetUnitIds={isPlayMode && shootingUnitsStepActive
+              ? allocatedShootingTargetIds
+              : isPlayMode && chargeUnitsStepActive && pendingChargeRoll
+                ? new Set(selectedPlayChargeTargets.map(unit => unit.id))
+                : isPlayMode && chargeUnitsStepActive && pendingPlayChargeMovement
+                  ? new Set(pendingPlayChargeMovement.targetUnitIds)
+                : undefined}
             shootingTargetIds={isPlayMode && shootingUnitsStepActive ? shootingEligibleTargetIds : undefined}
             movementReadyUnitIds={isPlayMode && battleState?.phase === BATTLE_PHASE.Movement ? movementReadyUnitIds : undefined}
             shootingReadyUnitIds={isPlayMode && shootingUnitsStepActive
@@ -3282,6 +3792,8 @@ export default function App() {
             shootingModelStates={isPlayMode && shootingUnitsStepActive ? shootingModelStates : undefined}
             fightReadyUnitIds={isPlayMode && battleState?.phase === BATTLE_PHASE.Fight ? fightReadyUnitIds : undefined}
             fightFirstUnitIds={isPlayMode && battleState?.phase === BATTLE_PHASE.Fight ? visibleFightFirstUnitIds : undefined}
+            fightIneligibleUnitIds={isPlayMode && battleState?.phase === BATTLE_PHASE.Fight ? fightIneligibleUnitIds : undefined}
+            battleShockReadyUnitIds={isPlayMode && battleShockStepActive ? battleShockReadyUnitIds : undefined}
             coverUnitIds={isPlayMode && shootingUnitsStepActive ? coverUnitIds : undefined}
             losRays={isPlayMode && shootingUnitsStepActive ? losRays : undefined}
             visibleOutOfRangeUnitIds={isPlayMode && shootingUnitsStepActive ? visibleOutOfRangeUnitIds : undefined}
@@ -3292,11 +3804,7 @@ export default function App() {
               : battleState?.phase === BATTLE_PHASE.Movement ? primaryPlaySelection?.unitId ?? null : null}
             unitWarning={selectedPlayChargeActive && !pendingChargeRoll && !pendingPlayChargeMovement && !selectedPlayChargeResult
               ? selectedPlayChargeBlocker
-              : battleState?.phase === BATTLE_PHASE.Movement
-                ? battleState.units.find(unit => unit.id === primaryPlaySelection?.unitId)?.movementStopReason === 'engagementRange'
-                  ? 'Stopped at Engagement Range (2")'
-                  : null
-                : null}
+              : null}
             onSelectUnit={inspectBattleUnit}
             onClearSelection={clearPlayBattlefieldSelection}
             deploymentTray={isPlayMode && battleState?.phase === BATTLE_PHASE.Deployment ? {
@@ -3338,6 +3846,16 @@ export default function App() {
                 : undefined,
               selectedModelActions: selectedModelActionsVisible ? (
                 <>
+                  {battleShockStepActive && selectedBattleShockUnit && (
+                    <BattleShockPanel
+                      popup
+                      armyName={battleState.armies[battleState.activeArmy]?.name ?? `Player ${battleState.activeArmy + 1}`}
+                      eligibleUnits={battleShockEligibleUnits}
+                      results={battleState.battleshockResults ?? []}
+                      pendingUnitId={battleState.battleshockPendingUnitId}
+                      onRoll={rollSelectedPlayBattleshock}
+                    />
+                  )}
                   {shootingUnitsStepActive && activeSelectedShootingUnit && primaryPlaySelection?.unitId === activeSelectedShootingUnit.id && (
                     <CombatPanel
                       shooter={activeSelectedShootingUnit}
@@ -3346,7 +3864,15 @@ export default function App() {
                         ? battleState.lastShootingResolution
                         : null}
                       resultSection="attacker"
-                      actionLabel={shootingResolutionStatus === 'rolled' && (damageAllocationLocked || shootingResolutionHasWounds) ? 'Resolve' : shootingResolutionStatus === 'rolled' ? 'Done' : selectedShootingHasNoEligibleTargets ? 'Done' : 'Shoot'}
+                      actionLabel={shootingResolutionStatus === 'rolled' && (damageAllocationLocked || shootingResolutionHasWounds) ? 'Resolve All' : shootingResolutionStatus === 'rolled' ? 'Done' : selectedShootingHasNoEligibleTargets ? 'Done' : 'Shoot all weapons'}
+                      pendingDamageActionLabel="Resolve All"
+                      warning={shootingResolutionStatus === 'rolled' && activeShootingResolution?.weapons.length > 1
+                        ? 'Pressing "Resolve" will resolve all weapon damage.'
+                        : shootingResolutionStatus === 'idle'
+                        && activeSelectedShootingUnit.profile.weapons.length > 1
+                        && selectedPlayShootingOptions.some(option => option.weaponIndex >= 0)
+                        ? 'Every assigned weapon will fire when you press “Shoot all weapons”.'
+                        : undefined}
                       coverSaveEnabled={activeRulesForBattle.metadata.edition !== '11e'}
                       targets={selectedPlayShootingTargets}
                       resultTargets={battleState.units}
@@ -3364,6 +3890,7 @@ export default function App() {
                       selectedWeaponIndex={selectedShootingWeaponIndex}
                       onTargetChange={setSelectedShootingTargetId}
                       onWeaponChange={setSelectedShootingWeaponIndex}
+                      targetDistances={shootingTargetDistances}
                       weaponModelCountFor={weaponIndex => {
                         const option = selectedPlayShootingOptions.find(candidate => candidate.weaponIndex === weaponIndex);
                         return option?.modelCount
@@ -3390,9 +3917,39 @@ export default function App() {
                     />
                   )}
                   {selectedPlayCanPileIn && (
-                    <Button size="small" color="secondary" variant="contained" onClick={pileInSelectedPlayUnit}>
-                      Pile In
-                    </Button>
+                    <>
+                      {selectedPlayFightPileInTargetIds.length > 0 && (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, maxWidth: 290 }} aria-label="Pile In targets">
+                          {selectedPlayFightPileInTargetIds.map(targetId => {
+                            const target = battleState?.units.find(unit => unit.id === targetId);
+                            const selected = selectedFightMovementTargetIds.includes(targetId);
+                            return (
+                              <Button
+                                key={`pile-in-target-${targetId}`}
+                                size="small"
+                                color={selected ? 'primary' : 'inherit'}
+                                variant="outlined"
+                                onClick={() => setSelectedFightMovementTargetIds(current => selected
+                                  ? current.filter(id => id !== targetId)
+                                  : [...current, targetId])}
+                                sx={{ textTransform: 'none', borderWidth: selected ? 2 : 1 }}
+                              >
+                                {target?.profile.name ?? targetId}
+                              </Button>
+                            );
+                          })}
+                        </Box>
+                      )}
+                      <Button
+                        size="small"
+                        color="secondary"
+                        variant="contained"
+                        disabled={!selectedFightMovementTargetIds.length}
+                        onClick={pileInSelectedPlayUnit}
+                      >
+                        Pile In
+                      </Button>
+                    </>
                   )}
                   {battleState.pendingFightMovement && (
                     <Button size="small" color="primary" variant="contained" onClick={completeSelectedPlayFightMovement}>
@@ -3506,46 +4063,67 @@ export default function App() {
                           )}
                         </>
                       )}
-                      {pendingChargeRoll && <>
-                      <Box aria-label="Charge targets" sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, maxWidth: 290 }}>
-                        {selectedPlayChargeTargets.map(target => {
-                          const needed = selectedPlayChargeOptions.find(option => option.targetId === target.id)?.needed ?? 0;
-                          const selected = selectedChargeTargetIds.includes(target.id);
-                          return (
-                            <Button
-                              key={target.id}
-                              size="small"
-                              color={selected ? 'primary' : 'inherit'}
-                              variant="outlined"
-                              onClick={() => setSelectedChargeTargetIds(current => selected
-                                ? current.filter(targetId => targetId !== target.id)
-                                : [...current, target.id])}
-                              sx={{
-                                minWidth: 0,
-                                width: selectedPlayChargeTargets.length === 1 ? '100%' : 'auto',
-                                px: 1,
-                                py: 0.5,
-                                textTransform: 'none',
-                                whiteSpace: 'nowrap',
-                                borderWidth: selected ? 2 : 1,
-                              }}
-                            >
-                              {target.profile.name} · {needed.toFixed(1)}&quot;
-                            </Button>
-                          );
-                        })}
-                      </Box>
-                      <Button
-                        size="small"
-                        color="primary"
-                        variant="contained"
-                        disabled={!selectedChargeTargetIds.length || !selectedChargeTargetIds.every(targetId => selectedPlayChargeOptions.some(option => option.targetId === targetId))}
-                        onClick={resolveSelectedPlayCharge}
-                        sx={{ width: selectedPlayChargeTargets.length === 1 ? '100%' : 'auto' }}
-                      >
-                        Resolve Charge
-                      </Button>
-                      </>}
+                      {pendingPlayChargeMovement && (
+                        <>
+                          <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, fontWeight: 700 }}>
+                            Move into Engagement Range of:
+                          </Typography>
+                          <Box aria-label="Declared charge targets" sx={{ display: 'grid', gap: 0.35, maxWidth: 290 }}>
+                            {pendingPlayChargeMovement.targetUnitIds.map(targetUnitId => (
+                              <Typography key={targetUnitId} variant="body2" sx={{ color: '#ffe39a', fontWeight: 700 }}>
+                                {battleState.units.find(unit => unit.id === targetUnitId)?.profile.name ?? targetUnitId}
+                              </Typography>
+                            ))}
+                          </Box>
+                          <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, maxWidth: 290 }}>
+                            Move up to {pendingPlayChargeMovement.maximumDistance.toFixed(1)}&quot; and finish in Engagement Range of every declared target.
+                          </Typography>
+                        </>
+                      )}
+                      {pendingChargeRoll && (
+                        <>
+                          <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, fontWeight: 700 }}>
+                            Select charge targets
+                          </Typography>
+                          <Box aria-label="Charge targets" sx={{ display: 'grid', gap: 0.5, maxWidth: 290 }}>
+                            {selectedPlayChargeTargets.map(target => {
+                              const needed = selectedPlayChargeOptions.find(option => option.targetId === target.id)?.needed ?? 0;
+                              const selected = selectedChargeTargetIds.includes(target.id);
+                              return (
+                                <Button
+                                  key={target.id}
+                                  size="small"
+                                  color={selected ? 'primary' : 'inherit'}
+                                  variant={selected ? 'contained' : 'outlined'}
+                                  aria-pressed={selected}
+                                  onClick={() => toggleSelectedChargeTarget(target.id)}
+                                  sx={{
+                                    width: '100%',
+                                    minWidth: 0,
+                                    minHeight: 36,
+                                    px: 1,
+                                    textTransform: 'none',
+                                    whiteSpace: 'nowrap',
+                                    justifyContent: 'space-between',
+                                  }}
+                                >
+                                  {target.profile.name} · {needed.toFixed(1)}&quot;
+                                </Button>
+                              );
+                            })}
+                          </Box>
+                          <Button
+                            size="small"
+                            color="primary"
+                            variant="contained"
+                            disabled={!selectedChargeTargetIds.length || !selectedChargeTargetIds.every(targetId => selectedPlayChargeOptions.some(option => option.targetId === targetId))}
+                            onClick={resolveSelectedPlayCharge}
+                            sx={{ width: '100%' }}
+                          >
+                            Resolve Charge
+                          </Button>
+                        </>
+                      )}
                     </>
                   )}
                   {chargeUnitsStepActive && selectedChargeUnit && !pendingChargeRoll && !selectedPlayCanRollCharge && selectedPlayChargeResult?.status === 'failed' && !chargeResultDismissed && (
@@ -3598,9 +4176,56 @@ export default function App() {
                     </Button>
                   )}
                   {selectedPlayCanConsolidate && shootingResolutionStatus !== 'rolled' && (
-                    <Button size="small" color="secondary" variant="outlined" onClick={consolidateSelectedPlayUnit}>
-                      Consolidate
-                    </Button>
+                    <>
+                      {selectedPlayFightConsolidationOptions.length > 0 && (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, maxWidth: 290 }} aria-label="Consolidation choices">
+                          {selectedPlayFightConsolidationOptions.flatMap(option => option.mode === 'objective'
+                            ? [{ id: `objective-${option.objectiveIndex}`, label: `Objective ${option.objectiveIndex + 1}`, selected: selectedFightObjectiveIndex === option.objectiveIndex, onClick: () => {
+                              setSelectedFightConsolidationMode('objective');
+                              setSelectedFightObjectiveIndex(option.objectiveIndex);
+                              setSelectedFightMovementTargetIds([]);
+                            } }]
+                            : option.targetUnitIds.map(targetId => {
+                              const target = battleState?.units.find(unit => unit.id === targetId);
+                              const selected = selectedFightMovementTargetIds.includes(targetId);
+                              return {
+                                id: `${option.mode}-${targetId}`,
+                                label: target?.profile.name ?? targetId,
+                                selected,
+                                onClick: () => {
+                                  setSelectedFightConsolidationMode(option.mode);
+                                  setSelectedFightObjectiveIndex(null);
+                                  setSelectedFightMovementTargetIds(current => selected
+                                    ? current.filter(id => id !== targetId)
+                                    : [...current, targetId]);
+                                },
+                              };
+                            })).map(choice => (
+                            <Button
+                              key={`consolidate-choice-${choice.id}`}
+                              size="small"
+                              color={choice.selected ? 'primary' : 'inherit'}
+                              variant="outlined"
+                              onClick={choice.onClick}
+                              sx={{ textTransform: 'none', borderWidth: choice.selected ? 2 : 1 }}
+                            >
+                              {choice.label}
+                            </Button>
+                          ))}
+                        </Box>
+                      )}
+                      <Button
+                        size="small"
+                        color="secondary"
+                        variant="outlined"
+                        disabled={selectedFightConsolidationMode === 'objective'
+                          ? selectedFightObjectiveIndex === null
+                          : !selectedFightMovementTargetIds.length}
+                        onClick={consolidateSelectedPlayUnit}
+                      >
+                        Consolidate
+                      </Button>
+                    </>
                   )}
                   {battleState.phase === 'movement' && selectedPlayHasCoherencyIssue && (
                     <Button size="small" color="warning" variant="contained" onClick={removeSelectedPlayModelsForCoherency}>
@@ -3662,7 +4287,7 @@ export default function App() {
                 ? isPlayReinforcementsStep
                   ? `Play Reinforcements step - select staged Deep Strike, Reserve, or off-board Aircraft units${canUndoPlayAction ? ' - Ctrl+Z to undo' : ''}`
                   : `Play Movement phase - drag selected models to move${canUndoPlayAction ? ' - Ctrl+Z to undo' : ''}`
-                : battleState.phase === BATTLE_PHASE.Fight && battleState.fightStepStarted === false
+                : battleState.phase === BATTLE_PHASE.Fight && fightPileInStepActive
                   ? `Fight phase - ${battleState.armies[battleState.fightPileInSide ?? battleState.activeArmy].name} Pile In step: select each highlighted eligible unit`
                   : battleState.phase === BATTLE_PHASE.Fight && battleState.consolidationStepStarted
                     ? `Fight phase - ${battleState.armies[battleState.consolidationSide ?? battleState.activeArmy].name} Consolidation step`
@@ -3784,6 +4409,7 @@ export default function App() {
                   selectedWeaponIndex={selectedShootingWeaponIndex}
                   onTargetChange={setSelectedShootingTargetId}
                   onWeaponChange={setSelectedShootingWeaponIndex}
+                  targetDistances={shootingTargetDistances}
                   combatHitPreviews={combatHitPreviews}
                   onResolve={resolveSelectedPlayShooting}
                 />
@@ -3821,13 +4447,6 @@ export default function App() {
           ) : (
             <div className="log-empty">
               Choose mission details, then start {isPlayMode ? 'play' : 'the simulation'}.
-            </div>
-          )}
-          {fightPileInReadyToAdvance && battleState && (
-            <div className="preview-caption">
-              <Button size="small" color="primary" variant="contained" onClick={advanceFightPileInStep}>
-                {battleState.fightPileInSide === battleState.activeArmy ? 'Finish Pile-ins' : 'Begin Fights'}
-              </Button>
             </div>
           )}
         </div>
@@ -3999,20 +4618,30 @@ export default function App() {
               variant="contained"
               size="large"
               startIcon={<PlayArrowIcon />}
-              onClick={stepPlayPhase}
-              disabled={playCoherencyIssues.length > 0}
+              onClick={fightPileInCanAdvance
+                ? advanceFightPileInStep
+                : fightConsolidationCanAdvance
+                  ? advanceConsolidationStep
+                  : stepPlayPhase}
+              disabled={playCoherencyIssues.length > 0 || requiredStepActionPending}
               title={phaseAdvanceDisabledReason}
             >
-              {nextPhaseStep(battleState)
-                ? 'Next Step'
-                : battleState.phase === 'movement'
-                  ? isPlayReinforcementsStep ? 'Start Shooting' : 'Start Reinforcements'
-                  : 'Next Phase'}
+              {nextPhaseButtonLabel}
             </Button>
             {phaseAdvanceDisabledReason && (
               <span className="phase-blocker phase-blocker--floating coherency-warning" role="alert">
-                {phaseAdvanceDisabledReason}
-              </span>
+              {phaseAdvanceDisabledReason}
+            </span>
+            )}
+            {fightPassSide !== null && (
+              <Button
+                color="warning"
+                variant="outlined"
+                size="large"
+                onClick={() => passSelectedPlayFight(fightPassSide)}
+              >
+                Pass Fight
+              </Button>
             )}
           </>
         )}

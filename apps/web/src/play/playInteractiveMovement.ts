@@ -1,12 +1,6 @@
 import { movePlayModelByDelta, movePlayModelVerticallyByDelta, rotatePlayModelByDelta } from '@warhammer-simulator/core/engine/simulator';
-import { PHASE_STEP, type BattleState } from '@warhammer-simulator/core/types/battle';
+import type { BattleState } from '@warhammer-simulator/core/types/battle';
 import type { PlayModelSelection } from '../components/Battlefield';
-
-function hasPendingChargeMovement(state: BattleState): boolean {
-  return state.phase === 'charge'
-    && state.phaseStep === PHASE_STEP.ChargeUnits
-    && !!state.pendingChargeMovement;
-}
 
 /**
  * Expands a grouped UI gesture into single-model core operations. The core
@@ -30,7 +24,7 @@ export function moveSelectedPlayModels(
         modelIndex,
         dx,
         dy,
-        collide || hasPendingChargeMovement(modelState) || !!modelState.pendingFightMovement,
+        collide,
       ),
       next,
     ),

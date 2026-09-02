@@ -248,7 +248,10 @@ export function findUnblockedLOSRay(
 
   const obscuringTerrain = edition === '11e'
     ? terrain
-      .filter(t => t.features.some(feature => feature.category === 'light' || feature.category === 'dense'))
+      .filter(t => t.features.some(feature => {
+        const category = effectiveTerrainFeatureCategory(t, feature);
+        return category === 'light' || category === 'dense';
+      }))
       .filter(t => !circleIntersectsTerrain(fromCenter, fromRadius, t) && !circleIntersectsTerrain(toCenter, toRadius, t))
     : [];
   const rayTerrain = terrain.map(t =>
@@ -403,6 +406,17 @@ export interface TerrainVisibilityContext extends TerrainCoverContext {
   modelBaseEdgeDistance(source: BattleUnit, sourceModelIndex: number, target: BattleUnit, targetModelIndex: number): number;
 }
 
+type TerrainFeatureCategory = NonNullable<TerrainFeature['category']>;
+
+// Older saved layouts may not have serialized feature.category. Keep the
+// default in one place with terrain.ts so those states still use the terrain
+// feature's rules-defined light/dense classification.
+function effectiveTerrainFeatureCategory(terrain: Terrain, feature: TerrainFeature): TerrainFeatureCategory {
+  const explicitCategory = typeof feature.category === 'string' ? feature.category.trim().toLowerCase() : '';
+  if (explicitCategory === 'light' || explicitCategory === 'dense') return explicitCategory;
+  return terrain.type === 'ruin' && feature.featureHeight !== 'low' ? 'dense' : 'light';
+}
+
 export function hasAnyModelLOS(
   fromCenter: Position,
   fromRadius: number,
@@ -430,7 +444,10 @@ export function modelIsHiddenFrom(
   const targetModel = target.modelPositions[targetModelIndex];
   const sourceModel = source.modelPositions[sourceModelIndex];
   if (!targetModel || !sourceModel) return false;
-  if (!state.terrain.some(terrain => terrain.features.some(feature => feature.category === 'dense')
+  if (!state.terrain.some(terrain => terrain.features.some(feature => {
+    const category = effectiveTerrainFeatureCategory(terrain, feature);
+    return category === 'light' || category === 'dense';
+  })
     && circleIntersectsTerrain(targetModel, context.modelRadius(target, targetModelIndex), terrain))) return false;
   return context.modelBaseEdgeDistance(source, sourceModelIndex, target, targetModelIndex) > 15;
 }

@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import type { FightConsolidationMode } from '@warhammer-simulator/core/types/battle';
 import type { PlayModelSelection } from '../components/Battlefield';
 
 export const PLAY_DEPLOY_SELECTION_KIND = {
@@ -24,6 +25,9 @@ export function usePlayUiState() {
   const [shootingAttackAllocations, setShootingAttackAllocations] = useState<Record<string, Record<string, number>>>({});
   const [selectedChargeTargetIds, setSelectedChargeTargetIds] = useState<string[]>([]);
   const [selectedFightTargetId, setSelectedFightTargetId] = useState('');
+  const [selectedFightMovementTargetIds, setSelectedFightMovementTargetIds] = useState<string[]>([]);
+  const [selectedFightConsolidationMode, setSelectedFightConsolidationMode] = useState<FightConsolidationMode | null>(null);
+  const [selectedFightObjectiveIndex, setSelectedFightObjectiveIndex] = useState<number | null>(null);
   const [selectedFightWeaponIndex, setSelectedFightWeaponIndex] = useState<'all' | string>('all');
   const [fightAttackSplits, setFightAttackSplits] = useState<Record<string, number>>({});
   const [fightAttackAllocations, setFightAttackAllocations] = useState<Record<string, Record<string, number>>>({});
@@ -39,6 +43,7 @@ export function usePlayUiState() {
   function clearPlayUiSelection() {
     setPlayDeploySelection(null);
     setPlayModelSelection(null);
+    setSelectedChargeTargetIds([]);
     setInspectedSelection(null);
   }
 
@@ -62,6 +67,12 @@ export function usePlayUiState() {
       setSelectedChargeTargetIds,
       selectedFightTargetId,
       setSelectedFightTargetId,
+      selectedFightMovementTargetIds,
+      setSelectedFightMovementTargetIds,
+      selectedFightConsolidationMode,
+      setSelectedFightConsolidationMode,
+      selectedFightObjectiveIndex,
+      setSelectedFightObjectiveIndex,
       selectedFightWeaponIndex,
       setSelectedFightWeaponIndex,
       fightAttackSplits,

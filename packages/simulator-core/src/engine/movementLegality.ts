@@ -22,6 +22,11 @@ export interface MovementLegalityContext {
   enemies(state: BattleState, side: Side): BattleUnit[];
 }
 
+export interface MovementLegalityOptions {
+  /** Charge and other special moves are allowed to end within Engagement Range. */
+  allowEndingInEngagement?: boolean;
+}
+
 function movedModelDeltasFromStart(unit: BattleUnit): Array<{ modelIndex: number; dx: number; dy: number }> {
   const starts = unit.movementStartPositionsByModel;
   if (!starts?.length) return [];
@@ -40,10 +45,8 @@ function crossedEnemyModels(state: BattleState, unit: BattleUnit, context: Movem
   const starts = unit.movementStartPositionsByModel;
   if (!starts?.length) return false;
   return movedModelDeltasFromStart(unit).some(({ modelIndex }) => {
-    const from = starts[modelIndex] ?? unit.modelPositions[modelIndex];
-    const to = unit.modelPositions[modelIndex];
     const movingRadius = context.modelBaseRadius(unit, modelIndex);
-    return state.units.some(otherUnit => {
+    return movementSegments(unit, modelIndex).some(({ from, to }) => state.units.some(otherUnit => {
       if (otherUnit.destroyed || otherUnit.embarkedInUnitId || otherUnit.side === unit.side) return false;
       if (context.isAircraft(otherUnit)) return false;
       return otherUnit.modelPositions.some((otherModel, otherModelIndex) => {
@@ -52,7 +55,7 @@ function crossedEnemyModels(state: BattleState, unit: BattleUnit, context: Movem
         if (context.distance(otherModel, from) < clearance || context.distance(otherModel, to) < clearance) return false;
         return context.distancePointToSegment(otherModel, from, to) < clearance;
       });
-    });
+    }));
   });
 }
 
@@ -61,18 +64,14 @@ function crossedBlockingTerrain(state: BattleState, unit: BattleUnit, context: M
   const starts = unit.movementStartPositionsByModel;
   if (!starts?.length) return false;
   return movedModelDeltasFromStart(unit).some(({ modelIndex }) => {
-    const from = starts[modelIndex] ?? unit.modelPositions[modelIndex];
-    const to = unit.modelPositions[modelIndex];
-    const path = unit.movementPathByModel?.[modelIndex];
-    const segments = path && path.length > 1
-      ? path.slice(1).map((point, index) => ({ from: path[index], to: point }))
-      : [{ from, to }];
-    return segments.some(segment => state.terrain.some(terrain =>
-      (context.terrainBlocksMovement(terrain, unit) && context.lineIntersectsTerrain(segment.from, segment.to, terrain))
-      || terrain.features.some(feature =>
-        context.featureBlocksMovement(feature, terrain, unit) && context.lineIntersectsTerrain(segment.from, segment.to, feature),
-      ),
-    ));
+    return movementSegments(unit, modelIndex).some(segment => {
+      return state.terrain.some(terrain => (
+        (context.terrainBlocksMovement(terrain, unit) && context.lineIntersectsTerrain(segment.from, segment.to, terrain))
+        || terrain.features.some(feature =>
+          context.featureBlocksMovement(feature, terrain, unit) && context.lineIntersectsTerrain(segment.from, segment.to, feature),
+        )
+      ));
+    });
   });
 }
 
@@ -81,10 +80,8 @@ function movedOverFriendlyMonsterVehicle(state: BattleState, unit: BattleUnit, c
   const starts = unit.movementStartPositionsByModel;
   if (!starts?.length) return false;
   return movedModelDeltasFromStart(unit).some(({ modelIndex }) => {
-    const from = starts[modelIndex] ?? unit.modelPositions[modelIndex];
-    const to = unit.modelPositions[modelIndex];
     const movingRadius = context.modelBaseRadius(unit, modelIndex);
-    return state.units.some(otherUnit => {
+    return movementSegments(unit, modelIndex).some(({ from, to }) => state.units.some(otherUnit => {
       if (otherUnit.id === unit.id || otherUnit.side !== unit.side || otherUnit.destroyed || otherUnit.embarkedInUnitId || !context.hasAnyKeyword(otherUnit, ['monster', 'vehicle'])) return false;
       return otherUnit.modelPositions.some((otherModel, otherModelIndex) => {
         if (context.verticalDistance(from, otherModel) > 0.5) return false;
@@ -92,11 +89,29 @@ function movedOverFriendlyMonsterVehicle(state: BattleState, unit: BattleUnit, c
         if (context.distance(otherModel, from) < clearance || context.distance(otherModel, to) < clearance) return false;
         return context.distancePointToSegment(otherModel, from, to) < clearance;
       });
-    });
+    }));
   });
 }
 
-export function unitIssues(state: BattleState, unit: BattleUnit, context: MovementLegalityContext): string[] {
+function movementSegments(unit: BattleUnit, modelIndex: number): Array<{ from: Position; to: Position }> {
+  const current = unit.modelPositions[modelIndex];
+  const start = unit.movementStartPositionsByModel?.[modelIndex] ?? current;
+  if (!current || !start) return [];
+  const path = unit.movementPathByModel?.[modelIndex];
+  if (!path || path.length < 2) return [{ from: start, to: current }];
+  const points = path[path.length - 1] && (
+    Math.hypot(current.x - path[path.length - 1].x, current.y - path[path.length - 1].y) > 0.0001
+      || Math.abs((current.z ?? 0) - (path[path.length - 1].z ?? 0)) > 0.0001
+  ) ? [...path, current] : path;
+  return points.slice(1).map((to, index) => ({ from: points[index], to }));
+}
+
+export function unitIssues(
+  state: BattleState,
+  unit: BattleUnit,
+  context: MovementLegalityContext,
+  options: MovementLegalityOptions = {},
+): string[] {
   if (unit.destroyed || unit.embarkedInUnitId || unit.inStrategicReserves) return [];
   const issues: string[] = [];
   if (context.isAircraft(unit) && context.aircraftCanMakeNormalMove(context.rulesForState(state)) && !context.movementDistanceRequirementMet(unit)) {
@@ -107,7 +122,7 @@ export function unitIssues(state: BattleState, unit: BattleUnit, context: Moveme
   if (context.unitHasWallOverlap(state, unit)) issues.push(`${unit.profile.name} cannot end its move inside blocking terrain.`);
   const makesRestrictedMove = unit.movementAction === 'normalMove' || unit.movementAction === 'advanced';
   const endsInEngagementRange = context.inEngagement(unit, context.enemies(state, unit.side), context.rulesForState(state).engagementRange());
-  if (makesRestrictedMove && endsInEngagementRange) {
+  if (makesRestrictedMove && endsInEngagementRange && !options.allowEndingInEngagement) {
     issues.push(`${unit.profile.name} cannot end a Normal or Advance move within Engagement Range.`);
   }
   if (crossedEnemyModels(state, unit, context)) issues.push(`${unit.profile.name} moved across an enemy model.`);

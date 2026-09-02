@@ -11,6 +11,7 @@ export const chargePhaseDefinition: PhaseDefinition = {
 
 export interface ChargePhaseStepTransitionContext {
   clone(state: BattleState): BattleState;
+  startChargeStep?(state: BattleState): void;
 }
 
 /** Advances only within the Charge phase. Phase boundaries are handled by the battle flow. */
@@ -25,5 +26,6 @@ export function advanceChargePhaseStep(
   if (!nextStep) return null;
   const next = context.clone(state);
   next.phaseStep = nextStep;
+  if (nextStep === PHASE_STEP.ChargeUnits) context.startChargeStep?.(next);
   return next;
 }

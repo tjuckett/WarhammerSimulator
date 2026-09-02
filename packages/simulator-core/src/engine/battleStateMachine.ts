@@ -1,4 +1,5 @@
 import { BATTLE_PHASE, BATTLE_ROUND_STEP, EVENT_TRIGGER_TIMING, MOVEMENT_PHASE_STEP, MOVEMENT_STEP, PHASE_STEP, PLAYER_TURN_STEP, type BattleRoundStep, type BattleState, type MovementPhaseStep, type MovementStep, type Phase, type PhaseStep, type PlayerTurnStep, type Side } from '../types/battle';
+import { clearPhaseStepActions } from './phaseStepActions';
 import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
 import { phaseDefinitionFor } from './phases/phaseRegistry';
 
@@ -268,6 +269,13 @@ function clearChargeCursors(state: BattleState): void {
   state.chargeResolution = undefined;
 }
 
+function clearBattleshockCursors(state: BattleState): void {
+  state.battleshockEligibleUnitIds = undefined;
+  state.battleshockEligibility = undefined;
+  state.battleshockPendingUnitId = undefined;
+  state.battleshockResults = undefined;
+}
+
 function clearFightCursors(state: BattleState): void {
   state.fightStepStarted = undefined;
   state.fightPileInSide = undefined;
@@ -289,6 +297,7 @@ function resetPhaseActivations(state: BattleState): void {
 }
 
 function enterNonCombatPhase(state: BattleState): void {
+  clearBattleshockCursors(state);
   clearShootingCursors(state);
   clearChargeCursors(state);
   clearFightCursors(state);
@@ -324,6 +333,16 @@ export const BATTLE_PHASE_STATE_HANDLERS: Record<Phase, BattlePhaseStateHandler>
     phase: BATTLE_PHASE.Fight,
     enter(state) {
       resetPhaseActivations(state);
+      // Pile-in, Overrun, and Consolidation are scoped to this Fight phase,
+      // not to the active player's turn. Clear them for both armies so a unit
+      // that fought during the previous player's turn can still participate
+      // in this Fight phase as the opposing player.
+      for (const unit of state.units ?? []) {
+        unit.piledIn = undefined;
+        unit.overrunFightSelected = undefined;
+        unit.overrunPiledIn = undefined;
+        unit.consolidated = undefined;
+      }
       clearShootingCursors(state);
       clearChargeCursors(state);
       state.fightStepStarted = false;
@@ -354,6 +373,7 @@ export function battlePhaseStateHandler(node: BattlePhaseNode): BattlePhaseState
  */
 export function initializeBattlePhase(state: BattleState, node: BattlePhaseNode): void {
   setBattlePhase(state, node);
+  clearPhaseStepActions(state);
   if (node.phase === BATTLE_PHASE.Deployment || node.phase === BATTLE_PHASE.Setup) {
     state.battleRoundStep = BATTLE_ROUND_STEP.PreBattle;
     state.playerTurnStep = undefined;

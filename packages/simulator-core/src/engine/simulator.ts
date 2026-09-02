@@ -1,4 +1,4 @@
-import { MOVEMENT_STEP, PHASE_STEP, type BattleSetup, type BattleState, type BattleUnit, type LogEntry, type MovementStep, type PendingFightOnDeath, type Phase, type Position, type Side, type Terrain, type TerrainFeature, type ShootingWeaponResult } from '../types/battle';
+import { BATTLE_PHASE, MOVEMENT_STEP, PHASE_STEP, type BattleSetup, type BattleState, type BattleUnit, type FightMovementIntent, type LogEntry, type MovementStep, type PendingFightOnDeath, type Phase, type Position, type Side, type Terrain, type TerrainFeature, type ShootingWeaponResult } from '../types/battle';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile, type WeaponProfile } from '../types/army';
 import { rules40K10th, rulesEditionForRuleset, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
@@ -52,6 +52,7 @@ import {
   battleUnitMaxBaseRadiusInches,
   modelBaseFootprintInches,
   modelBaseRadiusInches,
+  type ModelBaseFootprint,
 } from './baseSizes';
 import { attackingModelHasPlungingFire, auraAbilitiesInRange } from './otherRules';
 import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
@@ -81,7 +82,7 @@ import {
   unitHasDatasheetRule,
   unitHasKeyword,
 } from './unitCombatModifiers';
-import { bestLeadership, isBelowHalfStrength, runBattleshockPhase } from './battleshockPhase';
+import { bestLeadership, isBelowHalfStrength, resolveBattleshockUnit, runBattleshockPhase } from './battleshockPhase';
 import * as deadlyDemise from './deadlyDemise';
 import * as damageApplication from './damageApplication';
 import type { CombatAttackResolutionOptions, CombatHitPreview } from './combatTypes';
@@ -97,6 +98,7 @@ import { createTransportDestruction } from './transportDestruction';
 import * as movementSimulation from './movementSimulation';
 import * as missionActions from './missionActions';
 import * as interactiveMovementState from './interactiveMovement';
+import { closestModelDistanceBetweenUnits } from './modelMovementRules';
 import { battleCoherencyIssues, coherencyEditionForState, coherencyModelLists } from './battleCoherency';
 import {
   markUnitArrivedFromReinforcements,
@@ -115,6 +117,20 @@ import * as aircraftMovement from './aircraftMovement';
 import * as movementLegality from './movementLegality';
 import * as battleSimulation from './battleSimulation';
 export { battleCoherencyIssues, battleModelIdsWithCoherencyIssues, battleUnitIdsWithCoherencyIssues } from './battleCoherency';
+export {
+  appendPhaseStepActions,
+  availablePhaseStepActionModelIds,
+  availablePhaseStepActionUnitIds,
+  clearPhaseStepActions,
+  completePhaseStepAction,
+  hasPendingRequiredPhaseStepActions,
+  pendingRequiredPhaseStepActions,
+  phaseStepActionLedgerFor,
+  phaseStepActionFor,
+  phaseStepActionsFor,
+  setPhaseStepActionStatus,
+  setPhaseStepActions,
+} from './phaseStepActions';
 
 const makeBattleUnit = deploymentActions.makeBattleUnit;
 const removeUnitFromUnplaced = deploymentActions.removeUnitFromUnplaced;
@@ -276,7 +292,7 @@ function terrainVisibilityContext() {
   };
 }
 
-function modelIsHiddenFrom(state: BattleState, source: BattleUnit, sourceModelIndex: number, target: BattleUnit, targetModelIndex: number): boolean {
+export function modelIsHiddenFrom(state: BattleState, source: BattleUnit, sourceModelIndex: number, target: BattleUnit, targetModelIndex: number): boolean {
   return modelIsHiddenFromGeometry(state, source, sourceModelIndex, target, targetModelIndex, terrainVisibilityContext());
 }
 
@@ -1040,17 +1056,17 @@ function unitHasActiveStratagem(state: BattleState, unit: BattleUnit, stratagemI
 }
 
 export function battleUnitsBaseEdgeDistance(a: BattleUnit, b: BattleUnit): number {
-  let closest = Infinity;
-  for (let ai = 0; ai < a.modelPositions.length; ai++) {
-    const aModel = a.modelPositions[ai];
-    const aFootprint = modelFootprint(a, ai);
-    for (let bi = 0; bi < b.modelPositions.length; bi++) {
-      const bModel = b.modelPositions[bi];
-      const bFootprint = modelFootprint(b, bi);
-      closest = Math.min(closest, modelBaseEdgeDistance3d(aModel, aFootprint, bModel, bFootprint));
-    }
-  }
-  return closest;
+  return closestModelDistanceBetweenUnits(a, b, (source, sourceModelIndex, target, targetModelIndex) => {
+    const sourceModel = source.modelPositions[sourceModelIndex];
+    const targetModel = target.modelPositions[targetModelIndex];
+    if (!sourceModel || !targetModel) return Infinity;
+    return modelBaseEdgeDistance3d(
+      sourceModel,
+      modelFootprint(source, sourceModelIndex),
+      targetModel,
+      modelFootprint(target, targetModelIndex),
+    );
+  });
 }
 
 export function battleModelBaseEdgeDistance(
@@ -1067,6 +1083,38 @@ export function battleModelBaseEdgeDistance(
 
 export function battleUnitsWithinBaseEdgeRange(a: BattleUnit, b: BattleUnit, range: number): boolean {
   return battleUnitsBaseEdgeDistance(a, b) <= range;
+}
+
+export type PlayEngagementRangeRing = {
+  unitId: string;
+  modelIndex: number;
+  position: Position;
+  footprint: ModelBaseFootprint;
+  range: number;
+};
+
+/**
+ * Supplies the UI with the same base geometry and Engagement Range used by
+ * movement legality. This is display data only; it does not make a move legal.
+ */
+export function playMovementEngagementRangeRings(
+  state: BattleState,
+  movingUnitId: string,
+  movingSide: Side,
+): PlayEngagementRangeRing[] {
+  const movingUnit = state.units.find(unit => unit.id === movingUnitId && unit.side === movingSide && !unit.destroyed);
+  if (!movingUnit) return [];
+  const range = rulesEditionForRuleset(state.ruleset).engagementRange();
+  return enemies(state, movingSide).flatMap(unit => unit.modelPositions.flatMap((position, modelIndex) => {
+    if (!position) return [];
+    return [{
+      unitId: unit.id,
+      modelIndex,
+      position: { ...position },
+      footprint: modelFootprint(unit, modelIndex),
+      range,
+    }];
+  }));
 }
 
 function activeEpicChallengeModelIndex(state: BattleState, target: BattleUnit): number | undefined {
@@ -1148,6 +1196,13 @@ const manualShootingSelectionContext: manualCombat.ManualShootingSelectionContex
   shootingWeaponCanTarget,
   unitCanBeSelectedToShootWithoutAttacks,
 };
+
+export function startPlayShootingStep(
+  state: BattleState,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): void {
+  shootingPhaseActions.startPlayShootingStep(state, rules, manualShootingSelectionContext);
+}
 
 const shootingPhaseRulesContext: shootingPhaseRules.ShootingPhaseRulesContext = {
   ...shootingTargetRulesContext,
@@ -1281,11 +1336,15 @@ export function snapShootPlayUnitWeapon(
 export interface LOSRay {
   from: Position;
   to: Position;
+  /** Edge-to-edge length of the ray in tabletop inches. */
+  distance: number;
   fromUnitId: string;
   toUnitId: string;
   fromModelIndex: number;
   toModelIndex: number;
   blocked: boolean;
+  /** The target model is hidden by the 11th-edition terrain/detection rule. */
+  hidden: boolean;
 }
 
 export function shootingLOSRays(
@@ -1293,6 +1352,7 @@ export function shootingLOSRays(
   target: BattleUnit,
   terrain: Terrain[],
   edition?: '10e' | '11e',
+  state?: BattleState,
 ): LOSRay[] {
   const fromModels = shooter.modelPositions;
   const toModels = target.modelPositions;
@@ -1301,26 +1361,39 @@ export function shootingLOSRays(
     return toModels.map((toCenter, toIdx) => {
       const toRadius = modelBaseRadius(target, toIdx);
       const ray = findUnblockedLOSRay(fromCenter, fromRadius, toCenter, toRadius, terrain, edition);
+      const hidden = state ? modelIsHiddenFrom(state, shooter, fromIdx, target, toIdx) : false;
       // Unblocked: draw the actual edge-to-edge ray that has clear sight.
       // Blocked: fall back to center-to-center so the red dashed line shows the obstructed path.
       return ray
         ? {
           from: ray.from,
           to: ray.to,
+          distance: Math.hypot(
+            ray.to.x - ray.from.x,
+            ray.to.y - ray.from.y,
+            (ray.to.z ?? 0) - (ray.from.z ?? 0),
+          ),
           fromUnitId: shooter.id,
           toUnitId: target.id,
           fromModelIndex: fromIdx,
           toModelIndex: toIdx,
           blocked: false,
+          hidden,
         }
         : {
           from: fromCenter,
           to: toCenter,
+          distance: Math.hypot(
+            toCenter.x - fromCenter.x,
+            toCenter.y - fromCenter.y,
+            (toCenter.z ?? 0) - (fromCenter.z ?? 0),
+          ),
           fromUnitId: shooter.id,
           toUnitId: target.id,
           fromModelIndex: fromIdx,
           toModelIndex: toIdx,
           blocked: true,
+          hidden,
         };
     });
   });
@@ -1353,8 +1426,15 @@ export function targetHasCoverFromModel(
     : false;
 }
 
-export function lockPlayUnitShooting(state: BattleState, unitId: string, side: Side): BattleState {
-  return shootingPhaseActions.lockPlayUnitShooting(state, unitId, side, { clone, attachedUnitComponents });
+export function lockPlayUnitShooting(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): BattleState {
+  const next = shootingPhaseActions.lockPlayUnitShooting(state, unitId, side, { clone, attachedUnitComponents });
+  if (next !== state) shootingPhaseActions.refreshPlayShootingActions(next, rules, manualShootingSelectionContext);
+  return next;
 }
 
 function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition): LogEntry[] {
@@ -1407,11 +1487,19 @@ const chargePhaseActionContext: chargePhaseActions.ChargePhaseActionContext = {
   translateFormation,
   formationExtent,
   modelBaseRadius,
+  movementLegalityIssues: (state, unit) => movementLegality.unitIssues(state, unit, movementLegalityContext, { allowEndingInEngagement: true }),
   centroid,
   modelRotation,
   unitTakesToSkiesForState,
   distance: dist,
 };
+
+export function startPlayChargeStep(
+  state: BattleState,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): void {
+  chargePhaseActions.startPlayChargeStep(state, rules, chargeRulesContext);
+}
 
 export function playChargeRoll(
   state: BattleState,
@@ -1469,6 +1557,17 @@ export function completePlayChargeMovement(
   return chargePhaseActions.completePlayChargeMovement(state, unitId, side, rules, chargePhaseActionContext);
 }
 
+export type PlayChargeMovementValidation = chargePhaseActions.ChargeMovementValidation;
+
+export function playChargeMovementValidation(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): PlayChargeMovementValidation {
+  return chargePhaseActions.validatePlayChargeMovement(state, unitId, side, rules, chargePhaseActionContext);
+}
+
 export type {
   PlayFightWeaponOption,
   PlayMeleeAttackAllocation,
@@ -1515,6 +1614,7 @@ const fightPhaseContext: fightPhaseRules.FightPhaseContext = {
   attachedUnitId,
   attachedUnitHasRule,
   unitHasActiveStratagem,
+  objectiveIndexesWithinRange: attachedObjectiveIndexesWithinRange,
 };
 
 function startFightStepInPlace(s: BattleState, rules: RulesEdition): void {
@@ -1546,6 +1646,13 @@ const fightPhaseActionContext: fightPhaseActions.FightPhaseActionContext = {
   resolveHazardousTests,
   resolvePendingDeadlyDemisesInPlace,
 };
+
+export function startPlayFightPileInStep(
+  state: BattleState,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): BattleState {
+  return fightPhaseActions.startPlayFightPileInStep(state, rules, fightPhaseActionContext);
+}
 
 export function startPlayFightStep(
   state: BattleState,
@@ -1581,6 +1688,14 @@ export function playFightPhaseHasPendingActivations(
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): boolean {
   return fightPhaseActions.playFightPhaseHasPendingActivations(state, rules, fightPhaseActionContext);
+}
+
+export function passPlayFight(
+  state: BattleState,
+  side: Side,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): BattleState {
+  return fightPhaseActions.passPlayFight(state, side, rules, fightPhaseActionContext);
 }
 
 export function startPlayConsolidationStep(
@@ -1635,6 +1750,21 @@ export function playFightActivationUnitIds(
   return fightPhaseRules.playFightActivationUnitIds(state, side, rules, fightPhaseContext);
 }
 
+export function playFightIneligibleUnitIds(
+  state: BattleState,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): string[] {
+  return fightPhaseRules.playFightIneligibleUnitIds(state, rules, fightPhaseContext);
+}
+
+export function playFightSideCanPass(
+  state: BattleState,
+  side: Side,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): boolean {
+  return fightPhaseRules.playFightSideCanPass(state, side, rules, fightPhaseActionContext);
+}
+
 export function playFightFirstUnitIds(
   state: BattleState,
   side: Side,
@@ -1675,7 +1805,27 @@ export function playUnitCanConsolidate(
   side: Side,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): boolean {
-  return fightPhaseRules.playUnitCanConsolidate(state, unitId, side, rules, fightPhaseContext);
+  return fightPhaseRules.playUnitCanConsolidate(state, unitId, side, rules, fightPhaseActionContext);
+}
+
+export type PlayFightConsolidationOption = fightPhaseRules.FightConsolidationOption;
+
+export function playFightPileInTargetOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): string[] {
+  return fightPhaseRules.playFightPileInTargetOptions(state, unitId, side, rules, fightPhaseActionContext);
+}
+
+export function playFightConsolidationOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): PlayFightConsolidationOption[] {
+  return fightPhaseRules.playFightConsolidationOptions(state, unitId, side, rules, fightPhaseActionContext);
 }
 
 export function pileInPlayUnit(
@@ -1702,8 +1852,9 @@ export function beginPlayFightMovement(
   side: Side,
   kind: 'pileIn' | 'consolidate',
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+  intent?: FightMovementIntent,
 ): BattleState {
-  return fightPhaseActions.beginPlayFightMovement(state, unitId, side, kind, rules, fightPhaseActionContext);
+  return fightPhaseActions.beginPlayFightMovement(state, unitId, side, kind, rules, fightPhaseActionContext, intent);
 }
 
 export function completePlayFightMovement(
@@ -1713,6 +1864,30 @@ export function completePlayFightMovement(
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
   return fightPhaseActions.completePlayFightMovement(state, unitId, side, rules, fightPhaseActionContext);
+}
+
+export function playFightMovementNotCloserModelIds(
+  state: BattleState,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): string[] {
+  return fightPhaseActions.playFightMovementNotCloserModelIds(state, rules, fightPhaseActionContext);
+}
+
+export function playFightMovementLockedModelIds(state: BattleState): string[] {
+  return fightPhaseActions.playFightMovementLockedModelIds(state, fightPhaseActionContext);
+}
+
+export function playFightMovementLockedModelIdsForUnit(state: BattleState, unitId: string, side: Side): string[] {
+  return fightPhaseActions.playFightMovementLockedModelIdsForUnit(state, unitId, side, fightPhaseActionContext);
+}
+
+export type PlayFightMovementValidation = fightPhaseActions.PlayFightMovementValidation;
+
+export function playFightMovementValidation(
+  state: BattleState,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): PlayFightMovementValidation {
+  return fightPhaseActions.playFightMovementValidation(state, rules, fightPhaseActionContext);
 }
 
 export function playFightWeaponOptions(
@@ -1946,6 +2121,18 @@ function advanceTurnInPlace(s: BattleState): void {
 }
 
 function clone<T>(v: T): T { return JSON.parse(JSON.stringify(v)); }
+
+/** Resolves one unit's interactive Battle-shock roll for play/replay/AI. */
+export function rollPlayBattleshock(state: BattleState, unitId: string, side: Side): BattleState {
+  if (state.phase !== BATTLE_PHASE.Command
+    || state.phaseStep !== PHASE_STEP.CommandBattleShock
+    || state.activeArmy !== side) return state;
+  const next = clone(state);
+  const resolution = resolveBattleshockUnit(next, side, unitId);
+  if (!resolution) return state;
+  next.log = [...next.log, resolution.log];
+  return next;
+}
 
 function leaderAnchor(bodyguard: BattleUnit, leader: UnitProfile, leaderIndex: number, side: Side, deployment: DeploymentZoneSource = 'Default', board = boardFormatForId()): Position {
   const forward = side === 0 ? -1 : 1;
@@ -2235,7 +2422,7 @@ const movementLegalityContext: movementLegality.MovementLegalityContext = {
   enemies,
 };
 
-const playMovementUnitLegalityIssues = (state: BattleState, unit: BattleUnit): string[] =>
+export const playMovementUnitLegalityIssues = (state: BattleState, unit: BattleUnit): string[] =>
   movementLegality.unitIssues(state, unit, movementLegalityContext);
 const playMovementLegalityIssues = (state: BattleState, side: Side): string[] =>
   movementLegality.issues(state, side, movementLegalityContext);
@@ -2585,6 +2772,7 @@ const modelMovementContext: interactiveMovementState.ModelMovementContext = {
   inEngagement: (state, unit) => inEngagement(unit, enemies(state, unit.side), rulesEditionForRuleset(state.ruleset).engagementRange()),
   lockOtherMovedUnits: lockOtherMovedPlayUnits,
   updateMovementAllowances: updateModelMovementAllowances,
+  fightMovementLockedModelIds: state => fightPhaseActions.playFightMovementLockedModelIds(state, fightPhaseActionContext),
   modelMovementDistanceFromStart,
   attachedComponents: attachedUnitComponents,
   centroid,

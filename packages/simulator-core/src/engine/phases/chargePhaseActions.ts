@@ -1,14 +1,109 @@
 import { BATTLE_EVENT_TYPE, recordBattleEvent } from '../battleEvents';
-import { PHASE_STEP, type BattleState, type BattleUnit, type LogEntry, type Position, type Side } from '../../types/battle';
+import { PHASE_STEP, type BattleState, type BattleUnit, type LogEntry, type PhaseStepAction, type Position, type Side } from '../../types/battle';
 import type { RulesEdition } from '../rulesEngine';
 import {
   canSelectChargeUnit,
   chargeNeededDistance,
+  playChargeEligibilityReason,
   playChargeTargetOptions,
   sideCanDeclareCharge,
   unitCanDeclareCharge,
   type ChargePhaseRulesContext,
 } from './chargePhaseRules';
+import {
+  completePhaseStepAction,
+  phaseStepActionLedgerFor,
+  setPhaseStepActionStatus,
+  setPhaseStepActions,
+} from '../phaseStepActions';
+import { clearModelMovementWaypoints } from '../interactiveMovement';
+
+function chargeActionId(side: Side, unitId: string): string {
+  return `charge:${side}:${unitId}`;
+}
+
+function normalChargeStep(state: BattleState, side: Side): boolean {
+  return state.phase === 'charge'
+    && state.phaseStep === PHASE_STEP.ChargeUnits
+    && state.activeArmy === side;
+}
+
+function chargeActionFor(state: BattleState, side: Side, unitId: string): PhaseStepAction | null {
+  return phaseStepActionLedgerFor(state)?.actions.find(action =>
+    action.id === chargeActionId(side, unitId)) ?? null;
+}
+
+/**
+ * Publishes the active player's optional Charge declarations. Target choice,
+ * charge rolls, and charge movement remain owned by the Charge rules/actions;
+ * this ledger is only the typed unit-level opportunity for UI, AI, undo,
+ * replay, and save/load.
+ */
+export function refreshPlayChargeActions(
+  state: BattleState,
+  rules: RulesEdition,
+  context: ChargePhaseRulesContext,
+): void {
+  if (!normalChargeStep(state, state.activeArmy)) return;
+  const side = state.activeArmy;
+  const unitIds = state.units
+    .filter(unit => unit.side === side
+      && !unit.destroyed
+      && !unit.embarkedInUnitId
+      && !unit.inStrategicReserves
+      && canSelectChargeUnit(state, unit.id, side)
+      && playChargeEligibilityReason(state, unit.id, side, rules, context) === null)
+    .map(unit => unit.id);
+  const existing = phaseStepActionLedgerFor(state)?.actions ?? [];
+  const incomingIds = new Set(unitIds.map(unitId => chargeActionId(side, unitId)));
+  const incoming = unitIds.map(unitId => {
+    const unit = state.units.find(candidate => candidate.id === unitId);
+    const existingAction = chargeActionFor(state, side, unitId);
+    const pendingRoll = state.pendingChargeRoll?.unitId === unitId && state.pendingChargeRoll.side === side;
+    const pendingMovement = state.pendingChargeMovement?.unitId === unitId && state.pendingChargeMovement.side === side;
+    const targetUnitIds = pendingMovement
+      ? [...state.pendingChargeMovement!.targetUnitIds]
+      : playChargeTargetOptions(state, unitId, side, rules, context).map(option => option.targetId);
+    return {
+      id: chargeActionId(side, unitId),
+      phase: state.phase,
+      step: PHASE_STEP.ChargeUnits,
+      kind: 'charge' as const,
+      side,
+      unitId,
+      targetUnitIds,
+      requiredToAdvance: false,
+      status: pendingRoll || pendingMovement
+        ? 'in-progress' as const
+        : existingAction && !['available', 'in-progress'].includes(existingAction.status)
+          ? existingAction.status
+          : existingAction?.status === 'in-progress'
+            ? 'in-progress' as const
+            : 'available' as const,
+      label: `${unit?.profile.name ?? unitId}: Charge`,
+      description: targetUnitIds.length
+        ? 'Optional Charge declaration during the Charge phase.'
+        : 'Optional Charge declaration; no valid target is currently reachable.',
+    } satisfies PhaseStepAction;
+  });
+  const retained = existing
+    .filter(action => !incomingIds.has(action.id))
+    .map(action => action.kind === 'charge'
+      && action.side === side
+      && ['available', 'in-progress'].includes(action.status)
+      ? { ...action, status: 'superseded' as const }
+      : action);
+  setPhaseStepActions(state, PHASE_STEP.ChargeUnits, [...retained, ...incoming]);
+}
+
+/** Opens the typed unit-level Charge inventory at the step boundary. */
+export function startPlayChargeStep(
+  state: BattleState,
+  rules: RulesEdition,
+  context: ChargePhaseRulesContext,
+): void {
+  refreshPlayChargeActions(state, rules, context);
+}
 
 export interface AutomatedChargeContext {
   enemies(state: BattleState, side: Side): BattleUnit[];
@@ -39,9 +134,10 @@ export interface AutomatedChargeContext {
 export function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdition, context: AutomatedChargeContext): LogEntry[] {
   if (unit.performingAction) return [];
   if (unit.destroyed || unit.embarkedInUnitId || context.unitSurgedThisPhase(state, unit) || context.isAircraft(unit)
-    || unit.inCombat || unit.fellBack || unit.arrivedFromReinforcements || unit.emergencyDisembarkedThisTurn
+    || unit.inCombat || unit.fellBack || (rules.metadata.edition !== '11e' && unit.arrivedFromReinforcements)
+    || unit.emergencyDisembarkedThisTurn
     || unit.combatDisembarkedThisTurn || unit.rapidDisembarkedThisTurn
-    || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced' || (unit.firedWeaponIndices?.length ?? 0) > 0) return [];
+    || unit.movementAction === 'fellBack' || unit.movementAction === 'advanced') return [];
   const foes = context.enemies(state, unit.side).filter(
     target => context.unitCanChargeTarget(unit, target) && context.distance(unit.position, target.position) <= rules.chargeRange(),
   );
@@ -63,7 +159,6 @@ export function runCharge(unit: BattleUnit, state: BattleState, rules: RulesEdit
   const firstDie = context.d6();
   const secondDie = context.d6();
   const roll = firstDie + secondDie;
-  if (rules.metadata.edition === '11e' && context.hasKeyword(unit, 'fly')) unit.takingToSkies = true;
   const maximumDistance = Math.max(0, roll - context.takeToSkiesDistanceCost(unit));
   const logs: LogEntry[] = [context.log(state, unit.side, unit.profile.name,
     `⚔️  ${unit.profile.name} charges ${target.profile.name}! (${needed.toFixed(1)}" needed, rolled ${firstDie}+${secondDie}=${roll})`, 'charge')];
@@ -125,11 +220,22 @@ export interface ChargePhaseActionContext {
   modelBaseRadius(unit: BattleUnit, modelIndex?: number): number;
   centroid(positions: Position[]): Position;
   modelRotation(unit: BattleUnit, modelIndex?: number): number;
+  movementLegalityIssues(state: BattleState, unit: BattleUnit): string[];
   unitTakesToSkiesForState(state: BattleState, unit: BattleUnit): boolean;
   distance(from: Position, to: Position): number;
 }
 
 type ChargeFailureReason = 'no-reachable-targets' | 'cannot-reach-engagement' | 'undeclared-enemy';
+
+export type ChargeMovementValidationReason =
+  | 'no-pending-charge'
+  | 'invalid-movement'
+  | 'target-not-engaged'
+  | 'undeclared-enemy';
+
+export type ChargeMovementValidation =
+  | { valid: true }
+  | { valid: false; reason: ChargeMovementValidationReason; modelIndex?: number; issues?: string[] };
 
 /** Resolves the Charge roll and creates the typed pending target state. */
 export function playChargeRoll(
@@ -150,7 +256,6 @@ export function playChargeRoll(
   const next = context.clone(state);
   const rolledUnit = next.units.find((candidate: BattleUnit) => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
   if (!rolledUnit) return state;
-  if (rules.metadata.edition === '11e' && context.hasKeyword(rolledUnit, 'fly')) rolledUnit.takingToSkies = true;
   const maximumDistance = Math.max(0, roll - context.takeToSkiesDistanceCost(rolledUnit));
   next.chargeResolution = { unitId, side, dice: [r1, r2], rawTotal: rawRoll, total: roll, maximumDistance, status: 'pending-target' };
   next.pendingChargeRoll = { unitId, side, maximumDistance };
@@ -169,9 +274,66 @@ export function playChargeRoll(
     }
     next.pendingChargeRoll = undefined;
     next.chargeResolution = { ...next.chargeResolution, status: 'failed', failureReason: 'no-reachable-targets' };
+    completePhaseStepAction(next, chargeActionId(side, unitId));
     next.log = [...next.log, context.log(next, side, unit.profile.name, `${unit.profile.name} has no reachable charge targets and cannot charge.`, 'charge')];
+  } else {
+    refreshPlayChargeActions(next, rules, context.chargeRules);
+    setPhaseStepActionStatus(next, chargeActionId(side, unitId), 'in-progress');
   }
   return next;
+}
+
+function chargeMovementValidation(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+  context: ChargePhaseActionContext,
+): ChargeMovementValidation {
+  const pending = state.pendingChargeMovement;
+  if (state.phase !== 'charge' || state.phaseStep !== PHASE_STEP.ChargeUnits || !pending
+    || pending.unitId !== unitId || pending.side !== side) {
+    return { valid: false, reason: 'no-pending-charge' };
+  }
+  const unit = state.units.find((candidate: BattleUnit) => candidate.id === unitId
+    && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const targets = pending.targetUnitIds
+    .map((targetId: string) => state.units.find((candidate: BattleUnit) =>
+      candidate.id === targetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId))
+    .filter((target): target is BattleUnit => !!target);
+  if (!unit || targets.length !== pending.targetUnitIds.length || !targets.length) {
+    return { valid: false, reason: 'target-not-engaged' };
+  }
+  const movementIssues = context.attachedUnitComponents(state, unit)
+    .flatMap(component => context.movementLegalityIssues(state, component));
+  if (movementIssues.length > 0) return { valid: false, reason: 'invalid-movement', issues: movementIssues };
+
+  // The charge move is user-authored. Do not try to search for a hypothetical
+  // endpoint for every model here: friendly models may be crossed, and a
+  // geometric search cannot reliably distinguish a blocked direct route from
+  // a legal route around the unit. The user is responsible for placing each
+  // model correctly; core validates the resulting placement and unit-level
+  // charge requirements below.
+  if (targets.some((target: BattleUnit) => !context.inEngagement(unit, [target], rules.engagementRange()))) {
+    return { valid: false, reason: 'target-not-engaged' };
+  }
+  const declaredTargetIds = new Set(targets.flatMap((target: BattleUnit) =>
+    context.attachedUnitComponents(state, target).map((component: BattleUnit) => component.id)));
+  if (context.enemies(state, side).some((enemy: BattleUnit) =>
+    !declaredTargetIds.has(enemy.id) && context.inEngagement(unit, [enemy], rules.engagementRange()))) {
+    return { valid: false, reason: 'undeclared-enemy' };
+  }
+  return { valid: true };
+}
+
+export function validatePlayChargeMovement(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition,
+  context: ChargePhaseActionContext,
+): ChargeMovementValidation {
+  return chargeMovementValidation(state, unitId, side, rules, context);
 }
 
 /** Completes a manually moved charge after all declared targets are reached. */
@@ -183,23 +345,16 @@ export function completePlayChargeMovement(
   context: ChargePhaseActionContext,
 ): BattleState {
   const pending = state.pendingChargeMovement;
-  if (state.phase !== 'charge' || state.phaseStep !== PHASE_STEP.ChargeUnits || !pending
-    || pending.unitId !== unitId || pending.side !== side) return state;
-  const unit = state.units.find((candidate: BattleUnit) => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!pending) return state;
+  const validation = chargeMovementValidation(state, unitId, side, rules, context);
+  if (!validation.valid) return state;
+  const unit = state.units.find((candidate: BattleUnit) => candidate.id === unitId
+    && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   const targets = pending.targetUnitIds
     .map((targetId: string) => state.units.find((candidate: BattleUnit) =>
       candidate.id === targetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId))
     .filter((target): target is BattleUnit => !!target);
-  const hasBaseContact = (source: BattleUnit, target: BattleUnit) =>
-    context.attachedUnitComponents(state, source).some(sourceComponent =>
-      context.attachedUnitComponents(state, target).some(targetComponent => context.baseEdgeDistance(sourceComponent, targetComponent) <= 0.15));
-  if (!unit || targets.length !== pending.targetUnitIds.length || !targets.length
-    || targets.some((target: BattleUnit) => !context.inEngagement(unit, [target], rules.engagementRange()))
-    || !targets.some((target: BattleUnit) => hasBaseContact(unit, target))) return state;
-  const declaredTargetIds = new Set(targets.flatMap((target: BattleUnit) =>
-    context.attachedUnitComponents(state, target).map((component: BattleUnit) => component.id)));
-  if (context.enemies(state, side).some((enemy: BattleUnit) =>
-    !declaredTargetIds.has(enemy.id) && context.inEngagement(unit, [enemy], rules.engagementRange()))) return state;
+  if (!unit || !targets.length) return state;
 
   const next = context.clone(state);
   const movedUnit = next.units.find((candidate: BattleUnit) => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
@@ -220,9 +375,11 @@ export function completePlayChargeMovement(
     component.movementAllowanceRemainingByModel = component.modelPositions.map(() => 0);
     component.heroicInterventionThisPhase = undefined;
     component.heroicInterventionMode = undefined;
+    clearModelMovementWaypoints(component);
   }
   for (const target of nextTargets) target.inCombat = true;
   next.pendingChargeMovement = undefined;
+  completePhaseStepAction(next, chargeActionId(side, unitId));
   next.log = [...next.log, context.log(next, side, movedUnit.profile.name,
     `${movedUnit.profile.name} completes its charge against ${nextTargets.map(target => target.profile.name).join(', ')}.`, 'charge')];
   return next;
@@ -305,6 +462,8 @@ export function chargePlayUnitTargets(
     if (next.chargeResolution?.unitId === unitId && next.chargeResolution.side === side) {
       next.chargeResolution = { ...next.chargeResolution, status: 'resolved' };
     }
+    refreshPlayChargeActions(next, rules, chargeRules);
+    setPhaseStepActionStatus(next, chargeActionId(side, unitId), 'in-progress');
     next.log = [...next.log, ...logs,
       log(next, side, chargingUnit.profile.name, `${chargingUnit.profile.name} must now make its charge move (${maximumDistance.toFixed(1)}" maximum).`, 'charge')];
     return next;
@@ -322,6 +481,7 @@ export function chargePlayUnitTargets(
     if (next.chargeResolution?.unitId === unitId && next.chargeResolution.side === side) {
       next.chargeResolution = { ...next.chargeResolution, status: 'failed', failureReason: 'cannot-reach-engagement' };
     }
+    completePhaseStepAction(next, chargeActionId(side, unitId));
     return next;
   }
 
@@ -355,12 +515,11 @@ export function chargePlayUnitTargets(
     if (failureReason && failed.chargeResolution?.unitId === unitId && failed.chargeResolution.side === side) {
       failed.chargeResolution = { ...failed.chargeResolution, status: 'failed', failureReason };
     }
+    completePhaseStepAction(failed, chargeActionId(side, unitId));
     return failed;
   };
-  if (chargeTargets.some(candidate => !inEngagement(chargingUnit, [candidate], rules.engagementRange()))
-    || !chargeTargets.some(candidate => chargeRules.attachedComponents(next, chargingUnit).some(sourceComponent =>
-      chargeRules.attachedComponents(next, candidate).some(targetComponent => chargeRules.baseEdgeDistance(sourceComponent, targetComponent) <= 0.15)))) {
-    return failCharge(`${chargingUnit.profile.name} cannot reach base contact.`, 'cannot-reach-engagement');
+  if (chargeTargets.some(candidate => !inEngagement(chargingUnit, [candidate], rules.engagementRange()))) {
+    return failCharge(`${chargingUnit.profile.name} cannot reach Engagement Range.`, 'cannot-reach-engagement');
   }
   const declaredTargetComponentIds = new Set(chargeTargets.flatMap(candidate =>
     attachedUnitComponents(next, candidate).map((component: BattleUnit) => component.id)));
@@ -387,5 +546,6 @@ export function chargePlayUnitTargets(
   if (next.chargeResolution?.unitId === unitId && next.chargeResolution.side === side) {
     next.chargeResolution = { ...next.chargeResolution, status: 'resolved' };
   }
+  completePhaseStepAction(next, chargeActionId(side, unitId));
   return next;
 }

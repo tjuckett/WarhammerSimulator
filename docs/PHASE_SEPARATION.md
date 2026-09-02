@@ -264,6 +264,139 @@ state/results may be passed between steps. That transfer is an explicit data
 boundary; it is not permission for the receiving step to run the sending step's
 checks.
 
+## Typed step-action inventory
+
+Each step may publish a serializable inventory of the decisions and
+opportunities that exist in that step. The inventory lives on
+`BattleState.phaseStepActions`, so it is available to the UI, controllers, AI,
+undo, replay, and save/load without reading log text or inspecting React state.
+
+Each `PhaseStepAction` has a stable identifier, owning phase and step, action
+kind, side, optional unit/model/target IDs, a `requiredToAdvance` flag, and a
+typed status (`available`, `in-progress`, `completed`, `skipped`, or
+`superseded`). The list is an inventory, not a universal ordering: the owning
+phase step still controls eligibility, priority, alternating-player rules, and
+which action may be selected next.
+
+The inventory is not a universal action executor or the sole source of legal
+actions. The owning phase module remains authoritative for building detailed
+legal actions, validating them, resolving them, and deciding whether its step
+is complete. The shared required-action check is a safety invariant for typed
+obligations; it must not replace a phase-specific completion predicate.
+
+When a step opens, its phase module replaces the inventory. Rules, abilities,
+army rules, missions, and Stratagems may append additional typed actions while
+the step is active. Stable IDs make those additions idempotent and keep event
+resolution safe across retries, undo, replay, and save/load. When the phase or
+step changes, the previous inventory is cleared unless the new step explicitly
+created its own inventory.
+
+Required actions block step advancement until they are completed, skipped, or
+superseded. Optional actions do not block advancement. This distinction is
+important for Battle-shock, where every required test must be resolved, and for
+Pile In and Consolidation, where optional player choices and reaction windows
+must remain available without automatic handoff. Starting Consolidation is a
+hard boundary after which no new ordinary Fight selection begins, but typed
+reaction actions can still be added and resolved according to that step's rules.
+
+The core exposes semantic selectors for available unit and model targets. The
+UI maps those selectors to presentation such as blue dashed outlines; the core
+does not know about colors, popups, or pointer interactions. Dynamic selectors
+must be rebuilt or reconciled by the owning phase after state changes such as
+casualties, movement, or newly created engagements. This gives human and AI
+controllers the same available-action view while allowing each phase to choose
+its own popup and controls.
+
+The first implementation pilot is the Command-phase Battle-shock step:
+
+- Entry snapshots eligible units as required `battle-shock` actions.
+- Resolving a test marks only that action completed and stores the typed result.
+- The generic required-action gate prevents the step from advancing while any
+  required test remains.
+- Available Battle-shock unit IDs feed the existing shared battlefield-ready
+  highlight path.
+
+Pile In now uses the same contract:
+
+- Fight-phase entry publishes optional per-unit Pile In actions for the current
+  side, including their typed target-unit options.
+- Beginning a Pile In marks that action `in-progress`; completing it marks the
+  action `completed` and reconciles the next side's newly available actions.
+- The existing Fight phase module still owns the eligibility, movement
+  validation, side handoff, and transition into Fight; the ledger does not
+  duplicate those rules.
+- The web highlight path and legal-action builder consume the ledger when it
+  exists and retain a legacy-state fallback for saves made before the ledger.
+
+Consolidation now uses the same contract:
+
+- Entering Consolidation publishes optional per-unit actions for the current
+  side. The action records the currently available mode/target information,
+  while the Fight rules remain authoritative for selecting a mode and
+  validating the movement.
+- Beginning a Consolidation move marks that action `in-progress`; completing
+  it marks the action `completed` and refreshes the current side's remaining
+  opportunities. Side handoff publishes the opposing side's actions, and the
+  ledger is cleared when Consolidation ends.
+- Newly engaged Fight reactions remain owned by the Consolidation/Fight rules;
+  they are not confused with optional Consolidation actions and still block
+  the boundary when the rules require their resolution.
+- The web highlight path and legal-action builder consume the ledger when it
+  exists and retain a legacy-state fallback for saves made before the ledger.
+
+Shooting now uses the same contract:
+
+- Entering the normal Shooting step publishes optional per-unit `shoot`
+  actions for the active side, including units that are eligible to be
+  selected but currently have no valid ranged target.
+- Selecting one weapon or a subset of weapons leaves the unit action
+  `in-progress`; finishing all remaining weapons or choosing to lock a unit
+  marks the action `completed`.
+- Weapon eligibility, model participation, line of sight, target legality,
+  allocation, hit/wound/save calculation, and attack resolution remain owned
+  by the Shooting rules and shared combat engine. The ledger is only the
+  typed unit-level opportunity and does not duplicate those checks.
+- The normal Shooting legal-action and highlight paths consume the ledger
+  when it exists and retain a legacy-state fallback for older saves. Typed
+  event-backed windows such as Overwatch remain separate and are resolved
+  through their pending combat action.
+
+Charge now uses the same contract for normal Charge declarations:
+
+- Entering the normal Charge step publishes optional per-unit `charge`
+  actions for the active side. The action's target IDs reflect the current
+  phase-owned target options, while target legality and charge range remain
+  owned by the Charge rules.
+- Rolling and selecting targets move the typed action to `in-progress`;
+  failed charges and completed charge moves mark it `completed`.
+- Charge movement, engagement validation, aircraft restrictions, Heroic
+  Intervention, and any future event-backed charge exception remain in the
+  Charge rules/actions. The ledger does not duplicate those checks.
+- The legal-action and highlight paths consume the Charge ledger when it is
+  present and retain a legacy-state fallback for older saves.
+
+Fight selection now uses the same contract for ordinary Fight activations and
+Consolidation-created Fight reactions:
+
+- Entering the Fight step publishes the currently selectable priority set as
+  optional `fight` actions. The Fight rules remain authoritative for Fights
+  First, remaining-combat priority, alternating sides, passing, attached
+  formations, and eligibility.
+- Resolving a normal Fight marks that action `completed` and reconciles the
+  next selectable priority set. Passing marks the current side's available
+  Fight actions `skipped` before the rules hand the opportunity to the other
+  side.
+- Consolidation-created Fight opportunities are published in the
+  Consolidation ledger with the same typed `fight` kind. They remain separate
+  from optional Consolidation movement actions, and are refreshed when a
+  Consolidation move creates a new engagement or a reaction Fight completes.
+- The legal-action and web highlight paths consume the Fight ledger when it
+  exists and retain the Fight-rule fallback for older states without it.
+- Melee weapon eligibility, target validation, allocation, attack resolution,
+  damage, and event-backed Fight On Death windows remain in the Fight rules and
+  shared combat services. The ledger only represents the unit-level
+  opportunity and its lifecycle.
+
 ## Reuse versus rewrite decision
 
 The current repository should use a staged rewrite of orchestration, not a

@@ -5,8 +5,10 @@ import type { BattleState, BattleUnit, Phase, Position, PrimaryMissionScoringRec
 import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
 import { simulatePlayerTurn } from '../src/engine/simulator';
+import { startPlayFightPileInStep } from '../src/engine/simulator';
 import { fightOnDeathTargetIds, fightOnDeathWeaponOptions } from '../src/engine/simulator';
-import { advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, beginPlayFightMovement, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayFightMovement, completePlayScoutMove, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, createDeploymentState, decoyObjectiveOptions, declarePlaySuperHeavyMobile, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, passPlayFight, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeTargetOptions, playDisembarkModes, playFightActivationUnitIds, playFightConsolidationOptions, playFightPileInTargetOptions, playFightSideCanPass, playFightWeaponOptions, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playScoutMoveAllowance, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanPileIn, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModelByDelta, movePlayModelVerticallyByDelta, removePlayCasualtyModels, removePlayModels, resolvePendingDeadlyDemises, resolvePlaySurgeMove, rotatePlayModelByDelta, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, simulateNextUnit, simulationNextUnitId, snapShootPlayUnitWeapon, startPlayConsolidationStep, startPlayFightStep, startPlayScoutMove, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, targetHasCoverFromModel, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { playConsolidationUnitIds } from '../src/engine/simulator';
+import { advancePlayConsolidationStep, advancePlayFightPileInStep, advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, beginPlayFightMovement, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayFightMovement, completePlayScoutMove, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, createDeploymentState, decoyObjectiveOptions, declarePlaySuperHeavyMobile, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, passPlayFight, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeMovementValidation, playChargeTargetOptions, playDisembarkModes, playFightActivationUnitIds, playFightConsolidationOptions, playFightIneligibleUnitIds, playFightMovementLockedModelIds, playFightMovementLockedModelIdsForUnit, playFightPileInTargetOptions, playFightPileInUnitIds, playFightSideCanPass, playFightWeaponOptions, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playScoutMoveAllowance, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanPileIn, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModelByDelta, movePlayModelVerticallyByDelta, removePlayCasualtyModels, removePlayModels, resolvePendingDeadlyDemises, resolvePlaySurgeMove, rotatePlayModelByDelta, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, simulateNextUnit, simulationNextUnitId, snapShootPlayUnitWeapon, startPlayConsolidationStep, startPlayFightStep, startPlayScoutMove, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, targetHasCoverFromModel, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 
 // Batch model movement is a UI interaction. Core tests compose its atomic
 // model action to keep the simulator API single-model for AI/controller use.
@@ -22,6 +24,7 @@ function rotatePlayModels(state: BattleState, unitId: string, side: 0 | 1, model
   return modelIndices.reduce((current, modelIndex) => rotatePlayModelByDelta(current, unitId, side, modelIndex, degrees), state);
 }
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
+import { playFightMovementValidation } from '../src/engine/simulator';
 import { scenarioFromTimeline } from '../src/practice/scenarios';
 import {
   appendTimelineAction,
@@ -824,6 +827,28 @@ test('11th Epic Challenge cannot be used before the Fight step has begun', () =>
   assert.equal(useStratagem(battle, 0, 'epic-challenge', rules40K11th, character.id), battle);
 });
 
+test('Fight ineligible-unit query preserves charged and start-engaged eligibility', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.phaseStep = PHASE_STEP.FightUnits;
+  battle.fightStepStarted = true;
+
+  const currentlyEngaged = losTestUnit('currently-engaged', 0, { x: 10, y: 10 });
+  const charged = losTestUnit('charged', 0, { x: 20, y: 10 });
+  charged.charged = true;
+  charged.chargedTurn = battle.turn;
+  const engagedAtStart = losTestUnit('engaged-at-start', 0, { x: 30, y: 10 });
+  const outsideEngagement = losTestUnit('outside-engagement', 0, { x: 40, y: 10 });
+  const enemy = losTestUnit('enemy', 1, { x: 11, y: 10 });
+  battle.engagedUnitIdsAtFightStepStart = [engagedAtStart.id];
+  battle.units = [currentlyEngaged, charged, engagedAtStart, outsideEngagement, enemy];
+
+  assert.deepEqual(
+    playFightIneligibleUnitIds(battle, rules40K11th),
+    [outsideEngagement.id],
+  );
+});
+
 test('11th Epic Challenge constrains melee damage allocation to the selected Character model', () => {
   const battle = state('fight');
   battle.ruleset = rulesetMetadataForState(rules40K11th);
@@ -1136,6 +1161,54 @@ test('11th battle-shock step handles at-or-below-half strength and retests alrea
     assert.equal(command.units.find(unit => unit.id === passing.id)?.battleshocked, false);
     assert.equal(command.units.find(unit => unit.id === healthy.id)?.battleshocked, true);
     assert.equal(command.log.filter(entry => entry.message.includes('Battle-shock')).length, 3);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('play Command Battle-shock step exposes and resolves eligible units one at a time', () => {
+  const battle = state('command');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const boys = losTestUnit('ork-boys', 0, { x: 10, y: 10 });
+  boys.profile.baseModelCount = 20;
+  boys.remainingModels = 10;
+  boys.modelPositions = Array.from({ length: 10 }, (_, index) => ({ x: 10 + index * 0.5, y: 10 }));
+  battle.units = [boys];
+
+  const originalRandom = Math.random;
+  Math.random = () => 0;
+  try {
+    const gainCp = applyGameAction(battle, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+    const battleShock = applyGameAction(gainCp, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+
+      assert.equal(battleShock.phaseStep, PHASE_STEP.CommandBattleShock);
+      assert.deepEqual(battleShock.battleshockEligibleUnitIds, [boys.id]);
+      assert.equal(battleShock.battleshockPendingUnitId, boys.id);
+      assert.equal(battleShock.battleshockResults?.length, 0);
+      assert.deepEqual(
+        battleShock.phaseStepActions?.actions.map(action => ({
+          unitId: action.unitId,
+          requiredToAdvance: action.requiredToAdvance,
+          status: action.status,
+        })),
+        [{ unitId: boys.id, requiredToAdvance: true, status: 'available' }],
+      );
+      assert.equal(battleShock.units[0].battleshocked, false);
+    assert.equal(applyGameAction(battleShock, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th }), battleShock);
+
+    const rolled = applyGameAction(battleShock, {
+      type: GAME_ACTION_TYPE.RollBattleshock,
+      side: boys.side,
+      unitId: boys.id,
+    }, { rules: rules40K11th });
+    assert.equal(rolled.units[0].battleshocked, true);
+      assert.equal(rolled.battleshockResults?.[0]?.total, 2);
+      assert.equal(rolled.battleshockPendingUnitId, undefined);
+      assert.equal(rolled.phaseStepActions?.actions[0]?.status, 'completed');
+      assert.match(rolled.log.at(-1)?.message ?? '', /Battle-shock/);
+
+    const abilities = applyGameAction(rolled, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+    assert.equal(abilities.phaseStep, PHASE_STEP.CommandAbilities);
   } finally {
     Math.random = originalRandom;
   }
@@ -6330,8 +6403,16 @@ test('play Movement cannot end a normal move within enemy Engagement Range', () 
   assert.equal(legal.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x, 13);
 
   const illegal = movePlayModels(battle, 'unit-1', 0, [0], 5, 0);
-  assert.equal(illegal.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x, 10);
-  assert.equal(illegal.units.find(candidate => candidate.id === 'unit-1')?.movementAction, undefined);
+  const illegalUnit = illegal.units.find(candidate => candidate.id === 'unit-1')!;
+  assert.equal(illegalUnit.modelPositions[0].x, 15);
+  assert.equal(illegalUnit.movementAction, 'normalMove');
+
+  // The interactive move remains visible so the player can see and correct
+  // the invalid endpoint. Finalization still rejects the move through the
+  // shared Movement legality check.
+  const rejected = completePlayUnitMovement(illegal, 'unit-1', 0);
+  assert.equal(rejected, illegal);
+  assert.equal(rejected.units.find(candidate => candidate.id === 'unit-1')?.movementComplete, undefined);
 });
 
 test('play Movement collision mode cannot move through enemy models', () => {
@@ -6504,7 +6585,10 @@ test('play Movement with Fly can move over enemy models and blocking terrain', (
   assert.equal(moved.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x, 16);
 
   const illegalEnd = movePlayModels(battle, 'unit-1', 0, [0], 3, 0);
-  assert.ok((illegalEnd.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x ?? 0) < 13);
+  // Normal movement keeps the released endpoint visible; final movement
+  // validation reports the overlap/engagement issue instead of rewinding it.
+  assert.equal(illegalEnd.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x, 13);
+  assert.equal(completePlayUnitMovement(illegalEnd, 'unit-1', 0), illegalEnd);
 });
 
 test('11th Fire Overwatch can use an already activated unit when it still has an unfired weapon', () => {
@@ -7339,6 +7423,61 @@ test('11th Shooting phase exposes weapons only during the active player Shoot st
   const charge = simulateNextPhase(battle, rules40K11th);
   assert.equal(charge.phase, 'charge');
   assert.equal(charge.movementStep, undefined);
+});
+
+test('11th Shooting publishes typed unit actions and tracks partial weapon resolution', () => {
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  const shooter = losTestUnit('ledger-shooter', 0, { x: 0, y: 10 });
+  shooter.profile.weapons = [
+    { name: 'Rifle A', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    { name: 'Rifle B', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+  ];
+  const target = losTestUnit('ledger-target', 1, { x: 12, y: 10 }, 2);
+  battle.units = [shooter, target];
+
+  battle.phaseStep = PHASE_STEP.ShootingStart;
+  const entered = applyGameAction(battle, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+  assert.equal(entered.phaseStep, PHASE_STEP.ShootingUnits);
+  assert.notEqual(entered.phaseStepActions, undefined);
+  assert.deepEqual(
+    entered.phaseStepActions?.actions.map(action => ({
+      id: action.id,
+      kind: action.kind,
+      unitId: action.unitId,
+      targetUnitIds: action.targetUnitIds,
+      status: action.status,
+      requiredToAdvance: action.requiredToAdvance,
+    })),
+    [{
+      id: `shoot:0:${shooter.id}`,
+      kind: 'shoot',
+      unitId: shooter.id,
+      targetUnitIds: [target.id],
+      status: 'available',
+      requiredToAdvance: false,
+    }],
+  );
+  assert.equal(getLegalActions(entered, 0, rules40K11th)
+    .filter(legal => legal.action.type === 'play.shootUnitWeapon').length, 2);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const firstWeapon = shootPlayUnitWeapon(entered, shooter.id, 0, target.id, 0, rules40K11th);
+    assert.equal(firstWeapon.units.find(unit => unit.id === shooter.id)?.activated, false);
+    assert.equal(firstWeapon.phaseStepActions?.actions[0]?.status, 'in-progress');
+    assert.equal(getLegalActions(firstWeapon, 0, rules40K11th)
+      .filter(legal => legal.action.type === 'play.shootUnitWeapon').length, 1);
+
+    const allWeapons = shootPlayUnitWeapon(firstWeapon, shooter.id, 0, target.id, 1, rules40K11th);
+    assert.equal(allWeapons.units.find(unit => unit.id === shooter.id)?.activated, true);
+    assert.equal(allWeapons.phaseStepActions?.actions[0]?.status, 'completed');
+    assert.equal(getLegalActions(allWeapons, 0, rules40K11th)
+      .filter(legal => legal.action.type === 'play.shootUnitWeapon').length, 0);
+  } finally {
+    Math.random = originalRandom;
+  }
 });
 
 test('wound rolls use the highest toughness in a mixed-profile target unit', () => {
@@ -9257,7 +9396,18 @@ test('11th Hidden limits visibility of quiet infantry inside covered terrain', (
   const lightTerrainBattle = structuredClone(battle);
   lightTerrainBattle.units.find(unit => unit.id === target.id)!.rangedAttacksMadePreviousTurn = undefined;
   lightTerrainBattle.terrain[0].features[0].category = 'light';
-  assert.deepEqual(playShootingWeaponOptions(lightTerrainBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, [target.id]);
+  assert.deepEqual(playShootingWeaponOptions(lightTerrainBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);
+
+  const mixedTerrainBattle = structuredClone(lightTerrainBattle);
+  mixedTerrainBattle.terrain[0].features.push({
+    id: 'dense-screen', name: 'Dense screen', x: 28, y: 19.9, width: 0.2, height: 0.2,
+    featureHeight: 'tall', category: 'dense', blocksLOS: true, blocksMovement: false, difficult: false,
+  });
+  assert.deepEqual(playShootingWeaponOptions(mixedTerrainBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);
+
+  const legacyCategoryBattle = structuredClone(mixedTerrainBattle);
+  legacyCategoryBattle.terrain[0].features.forEach(feature => { delete feature.category; });
+  assert.deepEqual(playShootingWeaponOptions(legacyCategoryBattle, shooter.id, 0, rules40K11th)[0]?.targetIds, []);
 });
 
 test('11th Hidden also blocks Indirect Fire beyond the detection range', () => {
@@ -10657,6 +10807,64 @@ test('11th Charge phase gates charge declarations and failed charges activate th
   }
 });
 
+test('11th Charge publishes typed declarations and tracks roll and target selection', () => {
+  const battle = state('charge');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.phaseStep = PHASE_STEP.ChargeStart;
+  const charger = losTestUnit('ledger-charger', 0, { x: 0, y: 10 });
+  const target = losTestUnit('ledger-charge-target', 1, { x: 6, y: 10 });
+  battle.units = [charger, target];
+
+  const entered = applyGameAction(battle, { type: GAME_ACTION_TYPE.StepPhase }, { rules: rules40K11th });
+  assert.equal(entered.phaseStep, PHASE_STEP.ChargeUnits);
+  assert.deepEqual(entered.phaseStepActions?.actions.map(action => ({
+    id: action.id,
+    kind: action.kind,
+    side: action.side,
+    unitId: action.unitId,
+    targetUnitIds: action.targetUnitIds,
+    status: action.status,
+    requiredToAdvance: action.requiredToAdvance,
+  })), [{
+    id: `charge:0:${charger.id}`,
+    kind: 'charge',
+    side: 0,
+    unitId: charger.id,
+    targetUnitIds: [target.id],
+    status: 'available',
+    requiredToAdvance: false,
+  }]);
+  assert.equal(getLegalActions(entered, 0, rules40K11th)
+    .some(action => action.action.type === GAME_ACTION_TYPE.ChargeUnitTarget && action.targetUnitId === target.id), true);
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.99;
+  try {
+    const rolled = applyGameAction(entered, {
+      type: GAME_ACTION_TYPE.RollCharge,
+      side: 0,
+      unitId: charger.id,
+    }, { rules: rules40K11th });
+    assert.equal(rolled.pendingChargeRoll?.unitId, charger.id);
+    assert.equal(rolled.phaseStepActions?.actions[0]?.status, 'in-progress');
+    assert.deepEqual(rolled.phaseStepActions?.actions[0]?.targetUnitIds, [target.id]);
+
+    const targeted = applyGameAction(rolled, {
+      type: GAME_ACTION_TYPE.ChargeUnitTarget,
+      side: 0,
+      unitId: charger.id,
+      targetUnitId: target.id,
+    }, { rules: rules40K11th });
+    assert.equal(targeted.pendingChargeMovement?.unitId, charger.id);
+    assert.equal(targeted.phaseStepActions?.actions[0]?.status, 'in-progress');
+
+    const completed = chargePlayUnitTarget(entered, charger.id, 0, target.id, rules40K11th);
+    assert.equal(completed.phaseStepActions?.actions[0]?.status, 'completed');
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
 test('play Fight resolves selected melee weapons into a selected target', () => {
   const battle = state('fight');
   const meleeWeapon = { name: 'Power Blade', range: 0, attacks: '1', skill: 2, strength: 10, ap: -10, damage: '2', keywords: [], isMelee: true };
@@ -11119,6 +11327,155 @@ test('11th Fight phase lets a charged unit pile in before selecting melee attack
   ]);
 });
 
+test('11th Pile In publishes typed actions and tracks each move lifecycle', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.phaseStep = PHASE_STEP.FightStart;
+  battle.fightStepStarted = false;
+  const ork = losTestUnit('ledger-ork', 0, { x: 10, y: 10 });
+  ork.inCombat = true;
+  const necron = losTestUnit('ledger-necron', 1, { x: 10.9, y: 10 });
+  necron.inCombat = true;
+  battle.units = [ork, necron];
+
+  const entered = startPlayFightPileInStep(battle, rules40K11th);
+  assert.equal(entered.phaseStep, PHASE_STEP.FightPileIn);
+  assert.equal(entered.fightPileInSide, 0);
+  assert.deepEqual(entered.phaseStepActions?.actions.map(action => ({
+    id: action.id,
+    kind: action.kind,
+    side: action.side,
+    unitId: action.unitId,
+    status: action.status,
+    requiredToAdvance: action.requiredToAdvance,
+  })), [{
+    id: 'pile-in:0:ledger-ork',
+    kind: 'pile-in',
+    side: 0,
+    unitId: ork.id,
+    status: 'available',
+    requiredToAdvance: false,
+  }]);
+
+  const pending = beginPlayFightMovement(entered, ork.id, 0, 'pileIn', rules40K11th);
+  assert.equal(pending.phaseStepActions?.actions.find(action => action.id === 'pile-in:0:ledger-ork')?.status, 'in-progress');
+
+  const handedToNecrons = completePlayFightMovement(pending, ork.id, 0, rules40K11th);
+  assert.equal(handedToNecrons.phaseStep, PHASE_STEP.FightPileIn);
+  assert.equal(handedToNecrons.fightPileInSide, 1);
+  assert.equal(handedToNecrons.phaseStepActions?.actions.find(action => action.id === 'pile-in:0:ledger-ork')?.status, 'completed');
+  assert.equal(handedToNecrons.phaseStepActions?.actions.find(action => action.id === 'pile-in:1:ledger-necron')?.status, 'available');
+
+  const necronPending = beginPlayFightMovement(handedToNecrons, necron.id, 1, 'pileIn', rules40K11th);
+  assert.equal(necronPending.phaseStepActions?.actions.find(action => action.id === 'pile-in:1:ledger-necron')?.status, 'in-progress');
+  const fight = completePlayFightMovement(necronPending, necron.id, 1, rules40K11th);
+  assert.equal(fight.phaseStep, PHASE_STEP.FightUnits);
+  assert.equal(fight.phaseStepActions?.actions.find(action => action.id === 'fight:0:ledger-ork')?.status, 'available');
+});
+
+test('11th Fight publishes the current priority selection and completes it through the typed action', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.phaseStep = PHASE_STEP.FightPileIn;
+  battle.fightStepStarted = false;
+  battle.fightPileInSide = 1;
+  const fighter = losTestUnit('ledger-fighter', 0, { x: 10, y: 10 });
+  fighter.inCombat = true;
+  const target = losTestUnit('ledger-fight-target', 1, { x: 10.9, y: 10 });
+  target.inCombat = true;
+  battle.units = [fighter, target];
+
+  const entered = startPlayFightStep(battle, rules40K11th);
+  const fightAction = entered.phaseStepActions?.actions.find(action => action.id === 'fight:0:ledger-fighter');
+  assert.equal(entered.phaseStep, PHASE_STEP.FightUnits);
+  assert.equal(fightAction?.kind, 'fight');
+  assert.equal(fightAction?.status, 'available');
+  assert.deepEqual(fightAction?.targetUnitIds, [target.id]);
+  assert.ok(getLegalActions(entered, 0).some(legal =>
+    legal.action.type === 'play.fightUnitWeapon'
+      && legal.action.unitId === fighter.id
+      && legal.action.weaponIndex === -1,
+  ));
+
+  const resolved = fightPlayUnitWeapon(entered, fighter.id, 0, target.id, -1, rules40K11th);
+  assert.equal(resolved.units.find(unit => unit.id === fighter.id)?.activated, true);
+  assert.equal(resolved.phaseStepActions?.actions.find(action => action.id === 'fight:0:ledger-fighter')?.status, 'completed');
+  assert.equal(resolved.phaseStepActions?.actions.find(action => action.id === 'fight:1:ledger-fight-target')?.status, 'available');
+});
+
+test('11th Consolidation publishes typed actions and tracks completion through step exit', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.phaseStep = PHASE_STEP.FightUnits;
+  battle.fightStepStarted = true;
+  battle.activeArmy = 0;
+  const source = losTestUnit('ledger-consolidator', 0, { x: 10, y: 10 });
+  source.inCombat = true;
+  source.activated = true;
+  const target = losTestUnit('ledger-consolidation-target', 1, { x: 10.9, y: 10 });
+  target.inCombat = true;
+  target.activated = true;
+  battle.fightEligibleUnitIds = [source.id];
+  battle.engagedUnitIdsAtFightStepStart = [source.id];
+  battle.units = [source, target];
+
+  const entered = startPlayConsolidationStep(battle, rules40K11th);
+  assert.equal(entered.phaseStep, PHASE_STEP.FightConsolidate);
+  assert.equal(entered.consolidationSide, 0);
+  assert.deepEqual(entered.phaseStepActions?.actions.map(action => ({
+    id: action.id,
+    kind: action.kind,
+    side: action.side,
+    unitId: action.unitId,
+    targetUnitIds: action.targetUnitIds,
+    status: action.status,
+    requiredToAdvance: action.requiredToAdvance,
+  })), [{
+    id: 'consolidate:0:ledger-consolidator',
+    kind: 'consolidate',
+    side: 0,
+    unitId: source.id,
+    targetUnitIds: [target.id],
+    status: 'available',
+    requiredToAdvance: false,
+  }]);
+
+  const pending = beginPlayFightMovement(entered, source.id, 0, 'consolidate', rules40K11th);
+  assert.equal(pending.phaseStepActions?.actions.find(action => action.id === 'consolidate:0:ledger-consolidator')?.status, 'in-progress');
+
+  const completed = completePlayFightMovement(pending, source.id, 0, rules40K11th);
+  assert.equal(completed.pendingFightMovement, undefined);
+  assert.equal(completed.units.find(unit => unit.id === source.id)?.consolidated, true);
+  assert.equal(completed.phaseStepActions?.actions.find(action => action.id === 'consolidate:0:ledger-consolidator')?.status, 'completed');
+
+  const opponentSide = advancePlayConsolidationStep(completed, rules40K11th);
+  assert.equal(opponentSide.phaseStep, PHASE_STEP.FightConsolidate);
+  assert.equal(opponentSide.consolidationSide, 1);
+  assert.equal(opponentSide.phaseStepActions?.actions.find(action => action.id === 'consolidate:0:ledger-consolidator')?.status, 'completed');
+
+  const ended = advancePlayConsolidationStep(opponentSide, rules40K11th);
+  assert.equal(ended.phaseStep, PHASE_STEP.FightEnd);
+  assert.equal(ended.phaseStepActions, undefined);
+});
+
+test('11th automatic Pile In uses the same base-contact checkpoint as interactive Pile In', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = false;
+  battle.fightPileInSide = 0;
+  const source = losTestUnit('automatic-pile-source', 0, { x: 10, y: 10 });
+  source.inCombat = true;
+  const target = losTestUnit('automatic-pile-target', 1, { x: 10.9, y: 10 });
+  target.inCombat = true;
+  battle.units = [source, target];
+
+  const piled = pileInPlayUnit(battle, source.id, 0, rules40K11th);
+  const piledSource = piled.units.find(unit => unit.id === source.id)!;
+  assert.deepEqual(piledSource.modelPositions, source.modelPositions);
+  assert.equal(piledSource.piledIn, true);
+  assert.equal(piled.pendingFightMovement, undefined);
+});
+
 test('11th Pile In selects all ongoing engagements and keeps base-contact models locked', () => {
   const battle = state('fight');
   battle.ruleset = rulesetMetadataForState(rules40K11th);
@@ -11141,6 +11498,8 @@ test('11th Pile In selects all ongoing engagements and keeps base-contact models
     battle,
   );
 
+  assert.deepEqual(playFightMovementLockedModelIdsForUnit(battle, source.id, 0), [`${source.id}:0`]);
+
   const pending = beginPlayFightMovement(
     battle,
     source.id,
@@ -11151,6 +11510,14 @@ test('11th Pile In selects all ongoing engagements and keeps base-contact models
   );
   assert.notEqual(pending, battle);
   assert.equal(pending.pendingFightMovement?.lockedModelIds?.includes(`${source.id}:0`), true);
+  const legacyPending = structuredClone(pending);
+  legacyPending.pendingFightMovement!.lockedModelIds = undefined;
+  assert.deepEqual(playFightMovementLockedModelIds(legacyPending), [`${source.id}:0`]);
+
+  const movedLocked = movePlayModelByDelta(pending, source.id, 0, 0, 1, 0);
+  assert.equal(movedLocked, pending);
+  const movedLegacyLocked = movePlayModelByDelta(legacyPending, source.id, 0, 0, 1, 0);
+  assert.equal(movedLegacyLocked, legacyPending);
 
   const invalid = structuredClone(pending);
   invalid.units.find(unit => unit.id === source.id)!.modelPositions[0] = { x: 0.5, y: 10 };
@@ -11160,6 +11527,20 @@ test('11th Pile In selects all ongoing engagements and keeps base-contact models
   assert.notEqual(completed, pending);
   assert.equal(completed.units.find(unit => unit.id === source.id)?.piledIn, true);
   assert.equal(completed.pendingFightMovement, undefined);
+});
+
+test('11th Pile In treats a pointer-precision contact gap as base contact', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = false;
+  battle.fightPileInSide = 0;
+  const source = losTestUnit('precision-source', 0, { x: 0, y: 10 });
+  source.inCombat = true;
+  const target = losTestUnit('precision-target', 1, { x: 1, y: 10 });
+  target.inCombat = true;
+  battle.units = [source, target];
+
+  assert.deepEqual(playFightMovementLockedModelIdsForUnit(battle, source.id, 0), [`${source.id}:0`]);
 });
 
 test('11th Consolidation exposes ongoing, engaging, and objective modes', () => {
@@ -11177,6 +11558,11 @@ test('11th Consolidation exposes ongoing, engaging, and objective modes', () => 
   assert.deepEqual(playFightConsolidationOptions(ongoing, source.id, 0, rules40K11th), [
     { mode: 'ongoing', targetUnitIds: [ongoingTarget.id] },
   ]);
+  const ongoingPending = beginPlayFightMovement(ongoing, source.id, 0, 'consolidate', rules40K11th, {
+    consolidationMode: 'ongoing',
+    targetUnitIds: [ongoingTarget.id],
+  });
+  assert.equal(ongoingPending.pendingFightMovement?.lockedModelIds?.includes(`${source.id}:0`), true);
 
   const engaging = structuredClone(baseBattle);
   const engagingTarget = losTestUnit('engaging-target', 1, { x: 13, y: 10 });
@@ -11191,6 +11577,54 @@ test('11th Consolidation exposes ongoing, engaging, and objective modes', () => 
   assert.deepEqual(playFightConsolidationOptions(objective, source.id, 0, rules40K11th), [
     { mode: 'objective', targetUnitIds: [], objectiveIndex: 0 },
   ]);
+});
+
+test('11th Consolidation hands off to the opposing side and then ends', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.phaseStep = PHASE_STEP.FightConsolidate;
+  battle.fightStepStarted = true;
+  battle.consolidationStepStarted = true;
+  battle.consolidationSide = 0;
+  battle.consolidationEligibleUnitIds = [];
+
+  const actions = getLegalActions(battle, 0, rules40K11th);
+  assert.equal(actions.some(action => action.action.type === GAME_ACTION_TYPE.AdvanceConsolidationStep), true);
+
+  const opponentTurn = advancePlayConsolidationStep(battle, rules40K11th);
+  assert.notEqual(opponentTurn, battle);
+  assert.equal(opponentTurn.phaseStep, PHASE_STEP.FightConsolidate);
+  assert.equal(opponentTurn.consolidationSide, 1);
+
+  const endActions = getLegalActions(opponentTurn, 0, rules40K11th);
+  assert.equal(endActions.some(action => action.action.type === GAME_ACTION_TYPE.AdvanceConsolidationStep), true);
+
+  const ended = advancePlayConsolidationStep(opponentTurn, rules40K11th);
+  assert.notEqual(ended, opponentTurn);
+  assert.equal(ended.phaseStep, PHASE_STEP.FightEnd);
+});
+
+test('11th Fight can skip all remaining optional Consolidation moves for a side', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.phaseStep = PHASE_STEP.FightConsolidate;
+  battle.fightStepStarted = true;
+  battle.consolidationStepStarted = true;
+  battle.consolidationSide = 0;
+  const source = losTestUnit('skipped-consolidation-source', 0, { x: 10, y: 10 });
+  source.inCombat = true;
+  source.activated = true;
+  const target = losTestUnit('skipped-consolidation-target', 1, { x: 10.9, y: 10 });
+  target.inCombat = true;
+  target.activated = true;
+  battle.consolidationEligibleUnitIds = [source.id];
+  battle.units = [source, target];
+
+  assert.deepEqual(playConsolidationUnitIds(battle, 0, rules40K11th), [source.id]);
+  const skipped = advancePlayConsolidationStep(battle, rules40K11th);
+
+  assert.equal(skipped.consolidationSide, 1);
+  assert.equal(skipped.phaseStepActions?.actions.find(action => action.id === `consolidate:0:${source.id}`)?.status, 'skipped');
 });
 
 test('11th Fight allows a side to pass when all eligible fighters are more than 5 inches away', () => {
@@ -11216,6 +11650,15 @@ test('11th Fight allows a side to pass when all eligible fighters are more than 
   const bothPassed = passPlayFight(firstPassed, 1, rules40K11th);
   assert.equal(bothPassed.phaseStep, PHASE_STEP.FightConsolidate);
   assert.equal(bothPassed.consolidationStepStarted, true);
+
+  const ledgerBattle = structuredClone(battle);
+  ledgerBattle.phaseStep = PHASE_STEP.FightPileIn;
+  ledgerBattle.fightStepStarted = false;
+  ledgerBattle.fightPileInSide = 1;
+  const ledgerFight = startPlayFightStep(ledgerBattle, rules40K11th);
+  const ledgerPassed = passPlayFight(ledgerFight, 0, rules40K11th);
+  assert.equal(ledgerPassed.phaseStepActions?.actions.find(action => action.id === `fight:0:${first.id}`)?.status, 'skipped');
+  assert.equal(ledgerPassed.phaseStepActions?.actions.find(action => action.id === `fight:1:${second.id}`)?.status, 'available');
 });
 
 test('11th Consolidation can reopen a Fight opportunity for a side that previously passed', () => {
@@ -11242,9 +11685,10 @@ test('11th Consolidation can reopen a Fight opportunity for a side that previous
   assert.equal(completed.pendingFightMovement, undefined);
   assert.deepEqual(completed.consolidationPendingFightUnitIds, [target.id]);
   assert.deepEqual(playFightActivationUnitIds(completed, 1, rules40K11th), [target.id]);
+  assert.equal(completed.phaseStepActions?.actions.find(action => action.id === `fight:1:${target.id}`)?.status, 'available');
 });
 
-test('11th Fight skips a Pile In when every model in the unit is already in base contact', () => {
+test('11th Fight allows a no-op Pile In when every model in the unit is already in base contact', () => {
   const battle = state('fight');
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.fightStepStarted = false;
@@ -11255,7 +11699,160 @@ test('11th Fight skips a Pile In when every model in the unit is already in base
   attacker.inCombat = true;
   battle.units = [attacker, defender];
 
-  assert.equal(playUnitCanPileIn(battle, defender.id, 1, rules40K11th), false);
+  assert.equal(playUnitCanPileIn(battle, defender.id, 1, rules40K11th), true);
+  const pending = beginPlayFightMovement(battle, defender.id, 1, 'pileIn', rules40K11th);
+  assert.notEqual(pending, battle);
+  const completed = completePlayFightMovement(pending, defender.id, 1, rules40K11th);
+  assert.equal(completed.units.find(unit => unit.id === defender.id)?.piledIn, true);
+});
+
+test('11th Pile In treats engagement as unit-level when some models are not engaged', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = false;
+  battle.fightPileInSide = 0;
+  const source = losTestUnit('partially-engaged-source', 0, { x: 10, y: 10 });
+  source.profile = { ...source.profile, baseModelCount: 2, weapons: [] };
+  source.remainingModels = 2;
+  source.modelPositions = [{ x: 10, y: 10 }, { x: 14.5, y: 10 }];
+  source.position = { x: 12.25, y: 10 };
+  source.inCombat = true;
+  const target = losTestUnit('partially-engaged-target', 1, { x: 10.9, y: 10 });
+  target.inCombat = true;
+  battle.units = [source, target];
+
+  const pending = beginPlayFightMovement(battle, source.id, 0, 'pileIn', rules40K11th);
+  assert.notEqual(pending, battle);
+  assert.equal(pending.pendingFightMovement?.lockedModelIds?.includes(`${source.id}:0`), true);
+  assert.deepEqual(pending.pendingFightMovement?.initiallyEngagedEnemyUnitIdsByModel?.[`${source.id}:0`], [target.id]);
+  assert.deepEqual(pending.pendingFightMovement?.initiallyEngagedEnemyUnitIdsByModel?.[`${source.id}:1`], []);
+
+  const movedCloser = structuredClone(pending);
+  movedCloser.units.find(unit => unit.id === source.id)!.modelPositions[1] = { x: 13.5, y: 10 };
+  assert.deepEqual(playFightMovementValidation(movedCloser, rules40K11th), { valid: true });
+
+  const completed = completePlayFightMovement(pending, source.id, 0, rules40K11th);
+  assert.equal(completed.units.find(unit => unit.id === source.id)?.piledIn, true);
+});
+
+test('11th Pile In reports every moved model that loses a starting engagement', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = false;
+  battle.fightPileInSide = 0;
+
+  const source = losTestUnit('multi-loss-source', 0, { x: 0, y: 11 });
+  source.profile = { ...source.profile, baseModelCount: 2, weapons: [] };
+  source.remainingModels = 2;
+  source.modelPositions = [{ x: 0, y: 10 }, { x: 0, y: 12 }];
+  source.position = { x: 0, y: 11 };
+  source.inCombat = true;
+
+  const rightTarget = losTestUnit('right-target', 1, { x: 1.8, y: 11 });
+  rightTarget.profile = { ...rightTarget.profile, baseModelCount: 2, weapons: [] };
+  rightTarget.remainingModels = 2;
+  rightTarget.modelPositions = [{ x: 1.8, y: 10 }, { x: 1.8, y: 12 }];
+  rightTarget.position = { x: 1.8, y: 11 };
+
+  const leftTarget = losTestUnit('left-target', 1, { x: -1.8, y: 11 });
+  leftTarget.profile = { ...leftTarget.profile, baseModelCount: 2, weapons: [] };
+  leftTarget.remainingModels = 2;
+  leftTarget.modelPositions = [{ x: -1.8, y: 10 }, { x: -1.8, y: 12 }];
+  leftTarget.position = { x: -1.8, y: 11 };
+
+  battle.units = [source, rightTarget, leftTarget];
+  const pending = beginPlayFightMovement(battle, source.id, 0, 'pileIn', rules40K11th);
+  assert.notEqual(pending, battle);
+  assert.deepEqual(pending.pendingFightMovement?.lockedModelIds, []);
+
+  const moved = structuredClone(pending);
+  moved.units.find(unit => unit.id === source.id)!.modelPositions = [{ x: -1.2, y: 10 }, { x: -1.2, y: 12 }];
+  assert.deepEqual(playFightMovementValidation(moved, rules40K11th), {
+    valid: false,
+    failure: 'initial-engagement-lost',
+    modelIds: [`${source.id}:0`, `${source.id}:1`],
+  });
+});
+
+test('11th Fight lets both sides complete ordinary Pile In moves before Fight begins', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = false;
+  battle.fightPileInSide = 0;
+  const ork = losTestUnit('ork-pile-in', 0, { x: 10, y: 10 });
+  ork.inCombat = true;
+  const necron = losTestUnit('necron-pile-in', 1, { x: 10, y: 10 });
+  necron.inCombat = true;
+  battle.units = [ork, necron];
+
+  assert.deepEqual(playFightPileInUnitIds(battle, 0, rules40K11th), [ork.id]);
+  assert.deepEqual(playFightPileInUnitIds(battle, 1, rules40K11th), []);
+
+  const orkPending = beginPlayFightMovement(battle, ork.id, 0, 'pileIn', rules40K11th);
+  const afterOrk = completePlayFightMovement(orkPending, ork.id, 0, rules40K11th);
+  assert.equal(afterOrk.fightPileInSide, 1);
+  assert.equal(afterOrk.fightStepStarted, false);
+  assert.deepEqual(playFightPileInUnitIds(afterOrk, 1, rules40K11th), [necron.id]);
+
+  const necronPending = beginPlayFightMovement(afterOrk, necron.id, 1, 'pileIn', rules40K11th);
+  const afterNecron = completePlayFightMovement(necronPending, necron.id, 1, rules40K11th);
+  assert.equal(afterNecron.fightStepStarted, true);
+  assert.equal(afterNecron.phaseStep, PHASE_STEP.FightUnits);
+});
+
+test('11th Fight hands an empty active-side Pile In step to the opponent', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = false;
+  battle.fightPileInSide = 0;
+  const ork = losTestUnit('ork-empty-pile-in', 0, { x: 10, y: 10 });
+  ork.inCombat = true;
+  ork.piledIn = true;
+  const necron = losTestUnit('necron-pile-in-after-empty-side', 1, { x: 10, y: 10 });
+  necron.inCombat = true;
+  battle.units = [ork, necron];
+
+  const next = advancePlayFightPileInStep(battle, rules40K11th);
+
+  assert.equal(next.fightPileInSide, 1);
+  assert.equal(next.fightStepStarted, false);
+  assert.deepEqual(playFightPileInUnitIds(next, 1, rules40K11th), [necron.id]);
+});
+
+test('11th Fight can skip all remaining optional Pile In moves for a side', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.phaseStep = PHASE_STEP.FightPileIn;
+  battle.fightStepStarted = false;
+  battle.fightPileInSide = 0;
+  const source = losTestUnit('skipped-pile-source', 0, { x: 10, y: 10 });
+  source.inCombat = true;
+  const target = losTestUnit('skipped-pile-target', 1, { x: 10.9, y: 10 });
+  target.inCombat = true;
+  battle.units = [source, target];
+
+  assert.deepEqual(playFightPileInUnitIds(battle, 0, rules40K11th), [source.id]);
+  const skipped = advancePlayFightPileInStep(battle, rules40K11th);
+
+  assert.equal(skipped.fightPileInSide, 1);
+  assert.equal(skipped.phaseStepActions?.actions.find(action => action.id === `pile-in:0:${source.id}`)?.status, 'skipped');
+});
+
+test('11th Fight cannot skip a pending Pile In movement when advancing the step', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = false;
+  battle.fightPileInSide = 0;
+  const source = losTestUnit('pending-pile-source', 0, { x: 10, y: 10 });
+  source.inCombat = true;
+  const target = losTestUnit('pending-pile-target', 1, { x: 10.9, y: 10 });
+  target.inCombat = true;
+  battle.units = [source, target];
+
+  const pending = beginPlayFightMovement(battle, source.id, 0, 'pileIn', rules40K11th);
+  assert.notEqual(pending, battle);
+  assert.equal(advancePlayFightPileInStep(pending, rules40K11th), pending);
+  assert.equal(pending.pendingFightMovement?.unitId, source.id);
 });
 
 test('11th Fight starts with the charging active player after an empty defender Pile In step', () => {
@@ -11271,7 +11868,12 @@ test('11th Fight starts with the charging active player after an empty defender 
   battle.units = [attacker, defender];
 
   const moving = beginPlayFightMovement(battle, attacker.id, 0, 'pileIn', rules40K11th);
-  const resolved = completePlayFightMovement(moving, attacker.id, 0, rules40K11th);
+  const handedToDefender = completePlayFightMovement(moving, attacker.id, 0, rules40K11th);
+
+  assert.equal(handedToDefender.fightPileInSide, 1);
+  assert.equal(handedToDefender.fightStepStarted, false);
+
+  const resolved = advancePlayFightPileInStep(handedToDefender, rules40K11th);
 
   assert.equal(resolved.fightStepStarted, true);
   assert.deepEqual(playFightActivationUnitIds(resolved, 0, rules40K11th), [attacker.id]);
@@ -12498,6 +13100,48 @@ test('play Movement anchors repeated drags to movement start until a waypoint is
   assert.ok((unit.movementAllowanceRemainingByModel?.[0] ?? 0) < 1);
 });
 
+test('play Movement clears transient waypoint markers when a unit move is completed', () => {
+  const battle = state('movement');
+  const profile = {
+    name: 'Waypoint Unit',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: [],
+    factionKeywords: [],
+    weapons: [],
+    abilities: [],
+  };
+  battle.units = [{
+    id: 'unit-1',
+    side: 0,
+    profile,
+    remainingModels: 1,
+    woundsOnLeadModel: 1,
+    position: { x: 10, y: 10 },
+    modelPositions: [{ x: 10, y: 10 }],
+    facingDeg: 0,
+    charged: false,
+    inCombat: false,
+    battleshocked: false,
+    activated: false,
+    destroyed: false,
+  }];
+
+  const moved = movePlayModels(battle, 'unit-1', 0, [0], 2, 0);
+  moved.units[0].movementWaypointsByModel = [[{ x: 12, y: 10 }]];
+  moved.units[0].movementWaypoints = [{ x: 12, y: 10 }];
+
+  const completed = completePlayUnitMovement(moved, 'unit-1', 0);
+  const unit = completed.units[0];
+  assert.equal(unit.movementWaypointsByModel, undefined);
+  assert.equal(unit.movementWaypoints, undefined);
+});
+
 test('play Movement tracks vertical movement allowance per model', () => {
   const battle = state('movement');
   const profile = {
@@ -13448,9 +14092,10 @@ test('play Advance movement cannot end within enemy Engagement Range', () => {
 
   const illegal = movePlayModels(advanced, 'unit-1', 0, [0], 9, 0);
   const illegalUnit = illegal.units.find(candidate => candidate.id === 'unit-1')!;
-  assert.equal(illegalUnit.modelPositions[0].x, 10);
+  assert.equal(illegalUnit.modelPositions[0].x, 19);
   assert.equal(illegalUnit.movementAction, 'advanced');
-  assert.equal(illegalUnit.movementAllowanceRemaining, 12);
+  assert.equal(illegalUnit.movementAllowanceRemaining, 3);
+  assert.equal(completePlayUnitMovement(illegal, 'unit-1', 0), illegal);
 });
 
 test('movement overrides can increase move and auto 6 an Advance', () => {

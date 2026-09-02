@@ -1,12 +1,13 @@
 import { useRef, useEffect, useLayoutEffect, useState, useCallback, type DragEvent, type MouseEvent, type PointerEvent, type ReactNode } from 'react';
-import { PHASE_STEP, type BattleState, type BattleUnit, type Position } from '@warhammer-simulator/core/types/battle';
+import { BATTLE_PHASE, PHASE_STEP, type BattleState, type BattleUnit, type Position } from '@warhammer-simulator/core/types/battle';
 import type { UnitProfile } from '@warhammer-simulator/core/types/army';
 import { pointInTerrain, terrainCenter, terrainCorners } from '@warhammer-simulator/core/engine/terrainGeometry';
 import { featureColor } from '@warhammer-simulator/core/engine/terrain';
 import { zoneFor } from '@warhammer-simulator/core/engine/deployment';
 import { battleRound, maxBattleRounds } from '@warhammer-simulator/core/engine/battleRound';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
-import { battleModelIdsWithCoherencyIssues, type LOSRay } from '@warhammer-simulator/core/engine/simulator';
+import { battleModelIdsWithCoherencyIssues, playFightMovementLockedModelIds, playFightMovementLockedModelIdsForUnit, playFightMovementValidation, playMovementEngagementRangeRings, type LOSRay, type PlayEngagementRangeRing } from '@warhammer-simulator/core/engine/simulator';
+import { phaseStepFor } from '@warhammer-simulator/core/engine/battleStateMachine';
 import { rulesEditionForRuleset } from '@warhammer-simulator/core/engine/rulesEngine';
 import { boardFormatForState } from '@warhammer-simulator/core/data/boardFormats';
 import {
@@ -57,6 +58,8 @@ function useStableLayoutEvent<T extends (...args: never[]) => unknown>(callback:
 interface Props {
   state: BattleState;
   selectedUnitId?: string | null;
+  movementEngagementUnitId?: string | null;
+  movementEngagementSide?: 0 | 1 | null;
   selectedUnitIds?: string[];
   activeSimulationUnitId?: string | null;
   shooterUnitId?: string | null;
@@ -69,6 +72,8 @@ interface Props {
   shootingModelStates?: Map<string, 'eligible' | 'ineligible'>;
   fightReadyUnitIds?: Set<string>;
   fightFirstUnitIds?: Set<string>;
+  fightIneligibleUnitIds?: Set<string>;
+  battleShockReadyUnitIds?: Set<string>;
   coverUnitIds?: Set<string>;
   losRays?: LOSRay[];
   visibleOutOfRangeUnitIds?: Set<string>;
@@ -140,7 +145,7 @@ function loadBattlefieldSettings(): BattlefieldSettings {
   }
 }
 
-export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = [], activeSimulationUnitId = null, shooterUnitId = null, targetUnitId = null, targetUnitIds, shootingTargetIds, movementReadyUnitIds, shootingReadyUnitIds, shootingNoTargetUnitIds, shootingModelStates, fightReadyUnitIds, fightFirstUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showTerrainLabels = true, showUnitLabels = false, unitWarningUnitId = null, unitWarning = null, onSelectUnit, onClearSelection, deployer, deploymentTray, editor }: Props) {
+export function Battlefield({ state, selectedUnitId = null, movementEngagementUnitId = null, movementEngagementSide = null, selectedUnitIds = [], activeSimulationUnitId = null, shooterUnitId = null, targetUnitId = null, targetUnitIds, shootingTargetIds, movementReadyUnitIds, shootingReadyUnitIds, shootingNoTargetUnitIds, shootingModelStates, fightReadyUnitIds, fightFirstUnitIds, fightIneligibleUnitIds, battleShockReadyUnitIds, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showTerrainLabels = true, showUnitLabels = false, unitWarningUnitId = null, unitWarning = null, onSelectUnit, onClearSelection, deployer, deploymentTray, editor }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedActionsRef = useRef<HTMLDivElement>(null);
@@ -246,6 +251,8 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       shootingModelStates,
       fightReadyUnitIds,
       fightFirstUnitIds,
+      fightIneligibleUnitIds,
+      battleShockReadyUnitIds,
       boxSelect,
       hoveredTransport,
       hoveredUnitId,
@@ -255,11 +262,16 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       visibleOutOfRangeUnitIds,
       showLosDebug,
       showMovementCircles,
+      movementEngagementUnitId,
+      movementEngagementSide,
       showTerrainLabels,
       showUnitLabels,
       unitWarningUnitId,
       unitWarning,
       deployer?.placementPreview && deploymentHoverPoint ? { ...deployer.placementPreview, position: deploymentHoverPoint, rotationDeg: deploymentRotationDeg, rows: deploymentRows } : null,
+      drawState.phase === 'fight' && drawState.pendingFightMovement
+        ? new Set(playFightMovementValidation(drawState).modelIds ?? [])
+        : new Set<string>(),
     );
     return true;
   }
@@ -278,7 +290,7 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
     updateSelectedActionsPositionEvent();
     window.addEventListener('resize', updateSelectedActionsPositionEvent);
     return () => window.removeEventListener('resize', updateSelectedActionsPositionEvent);
-  }, [state, editor?.selected, hoverGridPoint, deploymentHoverPoint, deploymentRotationDeg, deploymentRows, zoom, deployer?.placementPreview, deployer?.selectedModel, deployer?.selectedModelActions, deployer?.selectedModelActionsClassName, hideSelectedActions, selectedUnitId, selectedUnitIds, activeSimulationUnitId, shooterUnitId, targetUnitId, targetUnitIds, shootingTargetIds, movementReadyUnitIds, shootingReadyUnitIds, shootingNoTargetUnitIds, shootingModelStates, fightReadyUnitIds, fightFirstUnitIds, boxSelect, hoveredTransport, hoveredUnitId, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showLosDebug, showMovementCircles, showTerrainLabels, showUnitLabels, unitWarningUnitId, unitWarning, renderCanvasEvent, updateSelectedActionsPositionEvent]);
+  }, [state, editor?.selected, hoverGridPoint, deploymentHoverPoint, deploymentRotationDeg, deploymentRows, zoom, deployer?.placementPreview, deployer?.selectedModel, deployer?.selectedModelActions, deployer?.selectedModelActionsClassName, hideSelectedActions, selectedUnitId, movementEngagementUnitId, movementEngagementSide, selectedUnitIds, activeSimulationUnitId, shooterUnitId, targetUnitId, targetUnitIds, shootingTargetIds, movementReadyUnitIds, shootingReadyUnitIds, shootingNoTargetUnitIds, shootingModelStates, fightReadyUnitIds, fightFirstUnitIds, fightIneligibleUnitIds, battleShockReadyUnitIds, boxSelect, hoveredTransport, hoveredUnitId, coverUnitIds, losRays, visibleOutOfRangeUnitIds, showLosDebug, showMovementCircles, showTerrainLabels, showUnitLabels, unitWarningUnitId, unitWarning, renderCanvasEvent, updateSelectedActionsPositionEvent]);
 
   useEffect(() => {
     setHideSelectedActions(false);
@@ -693,18 +705,25 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
         const isPendingChargeModel = hasPendingChargeMovement(state)
           && state.pendingChargeMovement?.side === modelHit.side
           && pendingChargeUnitIds.includes(modelHit.unitId);
+        const pendingFightUnitIds = state.pendingFightMovement
+          ? attachedBattleUnitIdsForSelection(state, state.pendingFightMovement.unitId)
+          : [];
         const isPendingFightModel = state.pendingFightMovement?.side === modelHit.side
-          && state.pendingFightMovement.unitId === modelHit.unitId;
+          && pendingFightUnitIds.includes(modelHit.unitId);
+        const isOtherPendingFightUnit = !!state.pendingFightMovement && !isPendingFightModel;
+        const lockedFightModelIds = state.phase === 'fight'
+          ? new Set(playFightMovementLockedModelIds(state))
+          : new Set<string>();
         const isLockedPendingFightModel = isPendingFightModel
-          && state.pendingFightMovement?.lockedModelIds?.includes(`${modelHit.unitId}:${modelHit.modelIndex}`);
+          && lockedFightModelIds.has(`${modelHit.unitId}:${modelHit.modelIndex}`);
         // Selecting a model during charge movement should not re-run unit-level
         // charge selection, which can replace the active charge popup.
         if (!isPendingChargeModel) onSelectUnit?.(modelHit.unitId, modelHit.side);
         // Base-to-base models are part of the selected unit, but cannot be
         // moved during pile-in/consolidation. Keep the unit selected so its
         // Complete action remains available, without starting a model drag.
-        if (!isLockedPendingFightModel) deployer.onSelectModel?.(modelSelection, false);
-        if (deployer.onMoveModel && !isLockedPendingFightModel) {
+        if (!isLockedPendingFightModel && !isOtherPendingFightUnit) deployer.onSelectModel?.(modelSelection, false);
+        if (deployer.onMoveModel && !isLockedPendingFightModel && !isOtherPendingFightUnit) {
           deployer.onBeginModelMove?.(modelSelection);
           modelDragRef.current = {
             selection: modelSelection,
@@ -801,14 +820,14 @@ export function Battlefield({ state, selectedUnitId = null, selectedUnitIds = []
       const dx = point.x - drag.current.x;
       const dy = point.y - drag.current.y;
       drag.current = point;
-      // Normal movement previews from the original start position so the drag
-      // represents one move. Charge and pile-in movement need incremental
-      // previews because each leg is part of their movement path.
-      drag.collide = e.shiftKey || hasPendingChargeMovement(state) || !!state.pendingFightMovement;
+      // Every interactive movement uses the same path and waypoint model.
+      // Shift only changes whether the current endpoint is collision-checked;
+      // it is never enabled automatically for a special movement type.
+      drag.collide = e.shiftKey;
       setCollisionMode(drag.collide);
       if (drag.collide) {
-        // Collision mode constrains the preview, but movement distance is
-        // still measured from the model's position when this drag began.
+        // Collision mode constrains only the current endpoint. Movement
+        // through the path is validated when the movement is completed.
         const collisionPreview = movedStateForSelection(
           drag.originState,
           drag.selection,
@@ -1190,6 +1209,8 @@ function draw(
   shootingModelStates: Map<string, 'eligible' | 'ineligible'> = new Map(),
   fightReadyUnitIds: Set<string> = new Set(),
   fightFirstUnitIds: Set<string> = new Set(),
+  fightIneligibleUnitIds: Set<string> = new Set(),
+  battleShockReadyUnitIds: Set<string> = new Set(),
   boxSelect: { start: Position; current: Position } | null,
   hoveredTransport: { x: number; y: number; label: string } | null,
   hoveredUnitId: string | null,
@@ -1199,11 +1220,14 @@ function draw(
   visibleOutOfRangeUnitIds: Set<string> = new Set(),
   showLosDebug = false,
   showMovementCircles = true,
+  movementEngagementUnitId: string | null = null,
+  movementEngagementSide: 0 | 1 | null = null,
   showTerrainLabels = true,
   showUnitLabels = false,
   unitWarningUnitId: string | null = null,
   unitWarning: string | null = null,
   deploymentPreview: { profile: UnitProfile; side: 0 | 1; position: Position; rotationDeg: number; rows?: number } | null = null,
+  fightMovementInvalidModelIds: Set<string> = new Set(),
 ) {
   // ── Background ───────────────────────────────────────────────────────────
   const board = boardFormatForState(state);
@@ -1370,6 +1394,17 @@ function draw(
     drawShootingLosDebug(ctx, losRays, scale, visibleOutOfRangeUnitIds);
   }
 
+  if (state.phase === BATTLE_PHASE.Movement
+    && phaseStepFor(state) === PHASE_STEP.MovementUnits
+    && movementEngagementUnitId
+    && movementEngagementSide !== null) {
+    drawEngagementRangeRings(
+      ctx,
+      playMovementEngagementRangeRings(state, movementEngagementUnitId, movementEngagementSide),
+      scale,
+    );
+  }
+
   if (selected) drawEdgeGuides(ctx, state, selected, scale, W, H);
   if (hoverGridPoint) drawGridHover(ctx, hoverGridPoint, scale, W, H);
   if (boxSelect) drawSelectionBox(ctx, boxSelect, scale);
@@ -1378,6 +1413,23 @@ function draw(
   const highlightedUnitIds = new Set([selectedUnitId, ...selectedUnitIds].filter(Boolean));
   const coherencyIssueModelIds = modelDragPreview ? new Set<string>() : battleModelIdsWithCoherencyIssues(state);
   const losModelVisibility = losModelVisibilityForRays(losRays ?? []);
+  // Fight movement locks are produced by the core checkpoint when a model is
+  // already in base contact. Keep the visual state tied to that typed result;
+  // the canvas must not perform a second contact calculation of its own.
+  const fightPileInStepActive = state.phase === 'fight' && phaseStepFor(state) === PHASE_STEP.FightPileIn;
+  const fightConsolidationStepActive = state.phase === 'fight' && phaseStepFor(state) === PHASE_STEP.FightConsolidate;
+  const fightMovementLockedModelIds = state.phase === 'fight'
+    ? new Set(
+        state.pendingFightMovement
+          ? playFightMovementLockedModelIds(state)
+          : fightPileInStepActive || fightConsolidationStepActive
+            ? [...fightReadyUnitIds].flatMap(unitId => {
+                const unit = state.units.find(candidate => candidate.id === unitId && !candidate.destroyed);
+                return unit ? playFightMovementLockedModelIdsForUnit(state, unit.id, unit.side) : [];
+              })
+            : [],
+      )
+    : new Set<string>();
   const activeSelectedModel = modelDragPreview?.selection ?? selectedModel;
   for (const unit of state.units) {
     const waypointSets = unit.movementWaypointsByModel
@@ -1447,13 +1499,10 @@ function draw(
     });
     const isPendingFightMovementUnit = state.pendingFightMovement?.unitId === unit.id
       && state.pendingFightMovement.side === unit.side;
-    const lockedPendingFightModelIds = isPendingFightMovementUnit
-      ? new Set(state.pendingFightMovement?.lockedModelIds ?? [])
-      : null;
     const selectedModelIndices = isPendingFightMovementUnit
       ? unit.modelPositions
         .map((_, index) => index)
-        .filter(index => !lockedPendingFightModelIds?.has(`${unit.id}:${index}`))
+        .filter(index => !fightMovementLockedModelIds.has(`${unit.id}:${index}`))
       : selectedPart
       ? selectedPart.modelIndices
       : highlightedUnitIds.has(unit.id) && !unitHasLosTint
@@ -1466,7 +1515,11 @@ function draw(
     const shootingRole = unit.id === shooterUnitId
       ? state.phase === 'charge' ? 'charger' : 'shooter'
       : (shootingTargetIds?.has(unit.id) || targetUnitIds?.has(unit.id) || unit.id === targetUnitId) ? 'target' : null;
-    drawUnit(ctx, previewUnit, state, scale, movementHudIndices, showUnitLabels || hoveredUnitId === unit.id, coherencyIssueModelIds, !!modelDragPreview, coverUnitIds?.has(unit.id) ?? false, losModelVisibility, shootingRole === 'shooter' ? shootingModelStates : undefined, shootingRole, shootingRole === 'target' && selectedUnitIds.includes(unit.id), movementReadyUnitIds.has(unit.id) || shootingReadyUnitIds.has(unit.id) || fightReadyUnitIds.has(unit.id), shootingNoTargetUnitIds.has(unit.id), fightFirstUnitIds.has(unit.id), activeSimulationUnitId === unit.id, unitWarningUnitId === unit.id ? unitWarning : null, showMovementCircles);
+    // Damage allocation is an active interaction with the defender. Keep
+    // that unit readable even if it is not otherwise eligible to fight.
+    const fightUnitIsIneligible = fightIneligibleUnitIds.has(unit.id)
+      && !(unit.pendingDamageAllocations?.length);
+    drawUnit(ctx, previewUnit, state, scale, movementHudIndices, showUnitLabels || hoveredUnitId === unit.id, coherencyIssueModelIds, !!modelDragPreview, coverUnitIds?.has(unit.id) ?? false, losModelVisibility, shootingRole === 'shooter' ? shootingModelStates : undefined, shootingRole, shootingRole === 'target' && selectedUnitIds.includes(unit.id), state.phase === 'charge', movementReadyUnitIds.has(unit.id) || shootingReadyUnitIds.has(unit.id) || fightReadyUnitIds.has(unit.id) || battleShockReadyUnitIds.has(unit.id), shootingNoTargetUnitIds.has(unit.id), fightFirstUnitIds.has(unit.id), activeSimulationUnitId === unit.id, unitWarningUnitId === unit.id ? unitWarning : null, showMovementCircles, fightPileInStepActive && fightReadyUnitIds.has(unit.id), (fightPileInStepActive || fightConsolidationStepActive) && selectedUnitId === unit.id, fightMovementInvalidModelIds, fightMovementLockedModelIds, fightUnitIsIneligible);
   }
 
   if (hoveredTransport) drawTransportTooltip(ctx, hoveredTransport, scale, W, H);
@@ -1488,7 +1541,7 @@ function losModelVisibilityForRays(rays: LOSRay[]): LOSModelVisibility {
   const blockedModelIds = new Set<string>();
   for (const ray of rays) {
     const key = `${ray.toUnitId}:${ray.toModelIndex}`;
-    if (!ray.blocked) {
+    if (!ray.blocked && !ray.hidden) {
       visibleModelIds.add(key);
       blockedModelIds.delete(key);
     } else if (!visibleModelIds.has(key)) {
@@ -1511,12 +1564,32 @@ function drawShootingLosDebug(
     ctx.beginPath();
     ctx.moveTo(ray.from.x * scale, ray.from.y * scale);
     ctx.lineTo(ray.to.x * scale, ray.to.y * scale);
-    ctx.setLineDash(ray.blocked ? [Math.max(4, scale * 0.55), Math.max(3, scale * 0.4)] : []);
+    ctx.setLineDash(ray.blocked || ray.hidden ? [Math.max(4, scale * 0.55), Math.max(3, scale * 0.4)] : []);
     ctx.strokeStyle = ray.blocked
       ? 'rgba(255, 55, 55, 0.8)'
+      : ray.hidden
+        ? 'rgba(180, 180, 180, 0.85)'
       : visibleOutOfRangeUnitIds.has(ray.toUnitId)
         ? 'rgba(255, 205, 55, 0.85)'
         : 'rgba(55, 245, 115, 0.85)';
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+function drawEngagementRangeRings(
+  ctx: CanvasRenderingContext2D,
+  rings: PlayEngagementRangeRing[],
+  scale: number,
+) {
+  if (!rings.length) return;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255, 116, 84, 0.72)';
+  ctx.lineWidth = Math.max(1, scale * 0.07);
+  ctx.setLineDash([Math.max(4, scale * 0.38), Math.max(3, scale * 0.24)]);
+  for (const ring of rings) {
+    addFootprintPath(ctx, ring.position.x * scale, ring.position.y * scale, ring.footprint, scale, ring.range * scale);
     ctx.stroke();
   }
   ctx.setLineDash([]);
@@ -1969,12 +2042,18 @@ function drawUnit(
   shootingModelStates: Map<string, 'eligible' | 'ineligible'> = new Map(),
   shootingRole: 'shooter' | 'charger' | 'target' | null = null,
   shootingTargetSelected = false,
+  chargeTargetOutline = false,
   shootingReady = false,
   shootingNoTarget = false,
   fightFirst = false,
   activeSimulationUnit = false,
   unitWarning: string | null = null,
   showMovementCircles = true,
+  fightPileInReady = false,
+  fightPileInSelected = false,
+  fightMovementInvalidModelIds: Set<string> = new Set(),
+  fightMovementLockedModelIds: Set<string> = new Set(),
+  fightIneligible = false,
 ) {
   const board = boardFormatForState(state);
   const color = state.armies[unit.side].color;
@@ -2013,8 +2092,10 @@ function drawUnit(
     const modelId = `${unit.id}:${i}`;
     const modelIsVisible = losModelVisibility.visibleModelIds.has(modelId);
     const modelIsBlocked = !modelIsVisible && losModelVisibility.blockedModelIds.has(modelId);
+    const fightMovementInvalid = fightMovementInvalidModelIds.has(modelId);
+    const fightMovementLocked = fightMovementLockedModelIds.has(modelId);
     ctx.save();
-    ctx.globalAlpha = unitAlpha * (shootingModelState === 'ineligible' || modelIsBlocked ? 0.28 : 1);
+    ctx.globalAlpha = unitAlpha * (fightIneligible || shootingModelState === 'ineligible' || modelIsBlocked || fightMovementLocked ? 0.28 : 1);
 
     ctx.shadowColor = 'rgba(0,0,0,0.65)';
     ctx.shadowBlur = 4;
@@ -2037,6 +2118,7 @@ function drawUnit(
       else if (coherencyIssueModelIds.has(`${unit.id}:${i}`)) warningColor = '#ffb000';
     }
     if (warningColor) overlayColors.push(warningColor === '#ffb000' ? 'rgba(255, 176, 0, 0.45)' : 'rgba(255, 45, 75, 0.45)');
+    if (fightMovementInvalid) overlayColors.push('rgba(255, 69, 58, 0.48)');
     if (selectedModelIndices.includes(i)) overlayColors.push('rgba(255, 224, 102, 0.42)');
 
     for (const overlayColor of overlayColors) {
@@ -2050,6 +2132,15 @@ function drawUnit(
       ctx.strokeStyle = warningColor;
       ctx.lineWidth = 1.8;
       ctx.stroke();
+    }
+
+    if (fightMovementInvalid) {
+      addFootprintPath(ctx, mx, my, modelFootprints[i], scale);
+      ctx.strokeStyle = '#ff453a';
+      ctx.lineWidth = Math.max(2, scale * 0.18);
+      ctx.setLineDash([Math.max(4, scale * 0.42), Math.max(2, scale * 0.24)]);
+      ctx.stroke();
+      ctx.setLineDash([]);
     }
 
     if (selectedModelIndices.includes(i)) {
@@ -2097,10 +2188,17 @@ function drawUnit(
   const rightX  = unit.modelPositions.reduce((m, p, i) => Math.max(m, p.x * scale + (modelRadii[i] ?? maxModelR)), -Infinity);
   const formW   = rightX - leftX;
 
-  if (shootingRole && !shootingNoTarget) {
-    drawShootingRoleOutline(ctx, shootingRole, leftX, topY, rightX, bottomY, scale, shootingTargetSelected);
+  if (fightPileInReady) {
+    // Pile In readiness belongs to the Fight Pile In step. Keep its outline
+    // independent from combat-role styling and selected-model highlighting.
+    drawShootingReadyOutline(ctx, leftX, topY, rightX, bottomY, scale, false);
+  } else if (shootingRole && !shootingNoTarget) {
+    drawShootingRoleOutline(ctx, shootingRole, leftX, topY, rightX, bottomY, scale, shootingTargetSelected, chargeTargetOutline);
   } else if (shootingReady || shootingNoTarget) {
     drawShootingReadyOutline(ctx, leftX, topY, rightX, bottomY, scale, shootingNoTarget);
+  }
+  if (fightPileInSelected) {
+    drawSelectedUnitOutline(ctx, leftX, topY, rightX, bottomY, scale);
   }
   if (unitWarning) {
     const warningFontSize = Math.max(5.5, scale * 0.52);
@@ -2209,6 +2307,31 @@ function drawUnit(
   }
 }
 
+function drawSelectedUnitOutline(
+  ctx: CanvasRenderingContext2D,
+  leftX: number,
+  topY: number,
+  rightX: number,
+  bottomY: number,
+  scale: number,
+) {
+  const pad = Math.max(8, scale * 0.68);
+  const x = leftX - pad;
+  const y = topY - pad;
+  const w = Math.max(rightX - leftX + pad * 2, scale * 2);
+  const h = Math.max(bottomY - topY + pad * 2, scale * 2);
+  const radius = Math.min(Math.max(4, scale * 0.3), Math.min(w, h) / 4);
+
+  ctx.save();
+  roundedRectPath(ctx, x, y, w, h, radius);
+  ctx.shadowColor = 'rgba(255, 224, 102, 0.68)';
+  ctx.shadowBlur = Math.max(5, scale * 0.42);
+  ctx.strokeStyle = '#ffe066';
+  ctx.lineWidth = Math.max(2, scale * 0.18);
+  ctx.stroke();
+  ctx.restore();
+}
+
 function drawModelHeightBadge(
   ctx: CanvasRenderingContext2D,
   mx: number,
@@ -2286,6 +2409,7 @@ function drawShootingRoleOutline(
   bottomY: number,
   scale: number,
   targetSelected = false,
+  chargeTargetOutline = false,
 ) {
   const pad = Math.max(7, scale * 0.55);
   const x = leftX - pad;
@@ -2305,11 +2429,14 @@ function drawShootingRoleOutline(
   }
   ctx.shadowColor = glow;
   ctx.shadowBlur = Math.max(5, scale * 0.45);
+  if (chargeTargetOutline && role === 'target' && !targetSelected) {
+    ctx.setLineDash([Math.max(5, scale * 0.42), Math.max(3, scale * 0.24)]);
+  }
   ctx.strokeStyle = stroke;
   ctx.lineWidth = Math.max(2, scale * 0.18);
   ctx.stroke();
   ctx.shadowBlur = 0;
-  if (isActingUnit || targetSelected) {
+  if (isActingUnit || (targetSelected && !chargeTargetOutline)) {
     ctx.setLineDash([Math.max(5, scale * 0.42), Math.max(3, scale * 0.24)]);
     roundedRectPath(ctx, x + 3, y + 3, Math.max(0, w - 6), Math.max(0, h - 6), Math.max(0, radius - 2));
     ctx.strokeStyle = isActingUnit ? 'rgba(205, 230, 255, 0.72)' : 'rgba(255, 241, 185, 0.78)';

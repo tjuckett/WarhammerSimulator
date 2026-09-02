@@ -13,7 +13,8 @@ export type TerrainMatTemplate = {
 
 export function loadCustomTerrainLayouts(): Record<string, TerrainLayout> {
   try {
-    return JSON.parse(localStorage.getItem(CUSTOM_TERRAIN_KEY) ?? '{}');
+    const parsed = JSON.parse(localStorage.getItem(CUSTOM_TERRAIN_KEY) ?? '{}') as Record<string, TerrainLayout>;
+    return Object.fromEntries(Object.entries(parsed).map(([id, layout]) => [id, terrainLayoutFromData(layout)]));
   } catch {
     return {};
   }
@@ -84,6 +85,7 @@ export function terrainLayoutToData(layout: TerrainLayout): TerrainLayoutData {
             height: feature.height,
             rotationDeg: feature.rotationDeg ?? 0,
             featureHeight: feature.featureHeight,
+            category: feature.category,
             blocksLOS: feature.blocksLOS,
             blocksMovement: feature.blocksMovement,
             difficult: feature.difficult,

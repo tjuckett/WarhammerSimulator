@@ -4,11 +4,15 @@ import { advanceChargePhaseStep } from './chargePhase';
 import { advanceCommandPhaseStep } from './commandPhase';
 import { advanceMovementPhaseStep } from './movementPhase';
 import { advanceShootingPhaseStep } from './shootingPhase';
+import { clearPhaseStepActions, hasPendingRequiredPhaseStepActions } from '../phaseStepActions';
 
 export interface PhaseStepTransitionContext {
   clone(state: BattleState): BattleState;
   gainCoreCommandPoints(state: BattleState): void;
+  beginBattleshockStep(state: BattleState, side: Side): void;
   markRemainingStationaryUnits(state: BattleState, side: Side): void;
+  startShootingStep?(state: BattleState): void;
+  startChargeStep?(state: BattleState): void;
 }
 
 /**
@@ -21,6 +25,7 @@ export function advancePhaseStep(
   context: PhaseStepTransitionContext,
 ): BattleState | null {
   if (state.pendingFightOnDeath?.length || state.pendingCombatActions?.length) return null;
+  if (hasPendingRequiredPhaseStepActions(state)) return null;
   const next = state.phase === 'command'
     ? advanceCommandPhaseStep(state, context)
     : state.phase === 'movement'
@@ -31,6 +36,15 @@ export function advancePhaseStep(
           ? advanceChargePhaseStep(state, context)
           : null;
   if (!next) return null;
+
+  // A step owns its action inventory. Preserve a ledger explicitly populated
+  // by the new step's entry hook (Battle-shock currently), and clear the
+  // previous step's inventory otherwise.
+  if (!next.phaseStepActions
+    || next.phaseStepActions.phase !== next.phase
+    || next.phaseStepActions.step !== next.phaseStep) {
+    clearPhaseStepActions(next);
+  }
 
   recordBattleEvent(next, {
     type: BATTLE_EVENT_TYPE.StepStarted,

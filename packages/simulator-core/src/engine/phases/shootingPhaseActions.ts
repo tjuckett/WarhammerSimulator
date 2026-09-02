@@ -1,4 +1,4 @@
-import { PHASE_STEP, type BattleState, type BattleUnit, type LogEntry, type Side } from '../../types/battle';
+import { PHASE_STEP, type BattleState, type BattleUnit, type LogEntry, type PhaseStepAction, type Side } from '../../types/battle';
 import type { WeaponProfile } from '../../types/army';
 import type { RulesEdition } from '../rulesEngine';
 import type {
@@ -14,7 +14,128 @@ import type {
   ShootingLockContext,
 } from '../manualCombat';
 import { closePendingCombatAction, pendingCombatActionFor } from '../combatActionWindows';
-import { canResolveShootingUnit } from './shootingPhaseRules';
+import {
+  canResolveShootingUnit,
+  canSelectShootingUnit,
+} from './shootingPhaseRules';
+import {
+  completePhaseStepAction,
+  phaseStepActionLedgerFor,
+  setPhaseStepActionStatus,
+  setPhaseStepActions,
+} from '../phaseStepActions';
+
+function shootingActionId(side: Side, unitId: string): string {
+  return `shoot:${side}:${unitId}`;
+}
+
+function normalShootingStep(state: BattleState, side: Side): boolean {
+  return state.phase === 'shooting'
+    && state.phaseStep === PHASE_STEP.ShootingUnits
+    && state.activeArmy === side;
+}
+
+function shootingActionFor(state: BattleState, side: Side, unitId: string): PhaseStepAction | null {
+  return phaseStepActionLedgerFor(state)?.actions.find(action =>
+    action.id === shootingActionId(side, unitId)) ?? null;
+}
+
+function shootingTargetUnitIds(
+  state: BattleState,
+  unit: BattleUnit,
+  rules: RulesEdition,
+  context: ManualShootingSelectionContext,
+): string[] {
+  const targetIds = new Set<string>();
+  const weapons = context.eligibleShootingWeapons(unit, state, rules)
+    .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
+    .filter(option => option.weaponIndex >= 0 && context.aliveWeaponModelCount(unit, option.weaponIndex) > 0);
+  for (const { weapon } of weapons) {
+    for (const target of context.enemies(state, unit.side)) {
+      if (context.shootingWeaponCanTarget(state, unit, target, weapon, rules)) targetIds.add(target.id);
+    }
+  }
+  return [...targetIds];
+}
+
+/**
+ * Publishes the current side's optional Shooting opportunities. Detailed
+ * weapon allocation and LOS remain owned by shootingPhaseRules/manualCombat;
+ * this ledger only exposes the typed unit-level opportunity to controllers,
+ * AI, UI, undo, replay, and save/load.
+ */
+export function refreshPlayShootingActions(
+  state: BattleState,
+  rules: RulesEdition,
+  context: ManualShootingSelectionContext,
+): void {
+  if (!normalShootingStep(state, state.activeArmy)) return;
+  const side = state.activeArmy;
+  const unitIds = state.units
+    .filter(unit => unit.side === side
+      && !unit.destroyed
+      && !unit.embarkedInUnitId
+      && !unit.inStrategicReserves
+      && canSelectShootingUnit(state, unit.id, side))
+    .map(unit => unit.id);
+  const existing = phaseStepActionLedgerFor(state)?.actions ?? [];
+  const incomingIds = new Set(unitIds.map(unitId => shootingActionId(side, unitId)));
+  const incoming = unitIds.map(unitId => {
+    const unit = state.units.find(candidate => candidate.id === unitId);
+    const existingAction = shootingActionFor(state, side, unitId);
+    const targetUnitIds = unit ? shootingTargetUnitIds(state, unit, rules, context) : [];
+    return {
+      id: shootingActionId(side, unitId),
+      phase: state.phase,
+      step: PHASE_STEP.ShootingUnits,
+      kind: 'shoot' as const,
+      side,
+      unitId,
+      targetUnitIds,
+      requiredToAdvance: false,
+      status: existingAction && !['available', 'in-progress'].includes(existingAction.status)
+        ? existingAction.status
+        : existingAction?.status === 'in-progress'
+          ? 'in-progress' as const
+          : 'available' as const,
+      label: `${unit?.profile.name ?? unitId}: Shoot`,
+      description: targetUnitIds.length
+        ? 'Optional Shooting action during the Shooting phase.'
+        : 'Optional Shooting selection; no valid ranged target is currently available.',
+    } satisfies PhaseStepAction;
+  });
+  const retained = existing
+    .filter(action => !incomingIds.has(action.id))
+    .map(action => action.kind === 'shoot'
+      && action.side === side
+      && ['available', 'in-progress'].includes(action.status)
+      ? { ...action, status: 'superseded' as const }
+      : action);
+  setPhaseStepActions(state, PHASE_STEP.ShootingUnits, [...retained, ...incoming]);
+}
+
+/** Opens the typed unit-level Shooting inventory at the step boundary. */
+export function startPlayShootingStep(
+  state: BattleState,
+  rules: RulesEdition,
+  context: ManualShootingSelectionContext,
+): void {
+  refreshPlayShootingActions(state, rules, context);
+}
+
+function reconcilePlayShootingAction(
+  state: BattleState,
+  unit: BattleUnit,
+  side: Side,
+  rules: RulesEdition,
+  context: ManualShootingSelectionContext,
+): void {
+  if (!normalShootingStep(state, side)) return;
+  const actionId = shootingActionId(side, unit.id);
+  if (unit.activated) completePhaseStepAction(state, actionId);
+  refreshPlayShootingActions(state, rules, context);
+  if (!unit.activated) setPhaseStepActionStatus(state, actionId, 'in-progress');
+}
 
 /** Keeps attached units on the same target until every component has resolved. */
 export function updateAttachedShootingActivation(
@@ -63,6 +184,7 @@ export function shootPlayUnitWeapon(
     context.updateAttachedShootingActivation(s, unit, rules);
     if (pending) closePendingCombatAction(s, pending.id);
     s.log = [...s.log, context.log(s, side, unit.profile.name, `${unit.profile.name} is selected to shoot but has no ranged weapons, so it makes no attacks.`, 'shoot')];
+    if (!pending) reconcilePlayShootingAction(s, unit, side, rules, context);
     return s;
   }
 
@@ -103,6 +225,7 @@ export function shootPlayUnitWeapon(
   if (unit.activated && s.pendingDeadlyDemises?.length) s.log = [...s.log, ...context.resolvePendingDeadlyDemisesInPlace(s)];
   if (unit.activated) context.clearFiringDeckWeapons(unit);
   if (pending && unit.activated) closePendingCombatAction(s, pending.id);
+  if (!pending) reconcilePlayShootingAction(s, unit, side, rules, context);
   return s;
 }
 
@@ -190,6 +313,7 @@ export function shootPlayUnitWeapons(
   context.updateAttachedShootingActivation(s, unit, rules);
   s.log = [...s.log, ...logs];
   if (pending) closePendingCombatAction(s, pending.id);
+  if (!pending) reconcilePlayShootingAction(s, unit, side, rules, context);
   return s;
 }
 
@@ -284,6 +408,9 @@ export function lockPlayUnitShooting(state: BattleState, unitId: string, side: S
   next.activeAttachedShootingUnitId = undefined;
   next.attachedShootingTargetUnitId = undefined;
   if (pending) closePendingCombatAction(next, pending.id);
+  if (!pending && normalShootingStep(next, side)) {
+    completePhaseStepAction(next, shootingActionId(side, unitId));
+  }
   return next;
 }
 

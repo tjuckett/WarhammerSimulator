@@ -22,6 +22,26 @@ export type Phase = (typeof BATTLE_PHASE)[keyof typeof BATTLE_PHASE];
 
 export type Side = 0 | 1;
 
+export type BattleShockEligibilityReason = 'already-battleshocked' | 'at-or-below-half-strength';
+
+export interface BattleShockEligibleUnit {
+  unitId: string;
+  unitName: string;
+  reasons: BattleShockEligibilityReason[];
+  leadership: number;
+}
+
+export interface BattleShockResult {
+  unitId: string;
+  unitName: string;
+  side: Side;
+  dice?: [number, number];
+  total?: number;
+  needed: number;
+  passed: boolean;
+  automaticallyPassed?: boolean;
+}
+
 export const BATTLE_ROUND_STEP = {
   PreBattle: 'pre-battle',
   Start: 'start-of-battle-round',
@@ -83,6 +103,50 @@ export const PHASE_STEP = {
 } as const;
 
 export type PhaseStep = (typeof PHASE_STEP)[keyof typeof PHASE_STEP];
+
+/** Typed action opportunities owned by the currently active phase step. */
+export type PhaseStepActionKind =
+  | 'battle-shock'
+  | 'pile-in'
+  | 'shoot'
+  | 'charge'
+  | 'fight'
+  | 'consolidate'
+  | 'event'
+  | 'ability'
+  | 'army-rule'
+  | 'stratagem'
+  | 'mission'
+  | 'custom';
+
+export type PhaseStepActionStatus =
+  | 'available'
+  | 'in-progress'
+  | 'completed'
+  | 'skipped'
+  | 'superseded';
+
+export interface PhaseStepAction {
+  id: string;
+  phase: Phase;
+  step: PhaseStep;
+  kind: PhaseStepActionKind;
+  side: Side;
+  unitId?: string;
+  modelIndices?: number[];
+  targetUnitIds?: string[];
+  requiredToAdvance: boolean;
+  status: PhaseStepActionStatus;
+  label?: string;
+  description?: string;
+  sourceId?: string;
+}
+
+export interface PhaseStepActionLedger {
+  phase: Phase;
+  step: PhaseStep;
+  actions: PhaseStepAction[];
+}
 
 export type FightMovementKind = 'pileIn' | 'consolidate';
 export type FightConsolidationMode = 'ongoing' | 'engaging' | 'objective';
@@ -627,6 +691,8 @@ export interface BattleState {
   phase: Phase;
   /** Canonical player-facing step within the active turn phase. */
   phaseStep?: PhaseStep;
+  /** Typed action opportunities for the current step; regenerated on step entry. */
+  phaseStepActions?: PhaseStepActionLedger;
   /** Explicit Movement-phase boundary. Legacy movementStep remains the action cursor. */
   movementPhaseStep?: MovementPhaseStep;
   movementStep?: MovementStep;
@@ -693,6 +759,8 @@ export interface BattleState {
     kind: FightMovementKind;
     /** Enemy units selected by the Pile In or Engaging Consolidation mode. */
     targetUnitIds?: string[];
+    /** Immutable movement checkpoint owned by the pending Fight action. */
+    movementStartPositionsByModel?: Record<string, Position[]>;
     consolidationMode?: FightConsolidationMode;
     objectiveIndex?: number;
     /** Enemy units each model was engaged with when an Ongoing Pile In began. */
@@ -739,6 +807,12 @@ export interface BattleState {
   };
   /** Command-phase units that are eligible for the current Battle-shock step. */
   battleshockEligibleUnitIds?: string[];
+  /** Snapshot used to explain why each unit must make a Battle-shock roll. */
+  battleshockEligibility?: BattleShockEligibleUnit[];
+  /** The next unit selected by the core for the interactive Battle-shock step. */
+  battleshockPendingUnitId?: string;
+  /** Typed results for Battle-shock rolls resolved during the current step. */
+  battleshockResults?: BattleShockResult[];
   abilityUses?: UnitAbilityUse[];
   /** Active typed army abilities, keyed by side; effects expire at that side's next Command phase. */
   activeArmyAbilities?: [string[], string[]];

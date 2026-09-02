@@ -50,7 +50,7 @@ export function unitCanDeclareCharge(state: BattleState, unit: BattleUnit, conte
     // `inCombat` is serialized for replay; geometry is authoritative when an
     // enemy moved into Engagement Range or an attached component is engaged.
     && !isAlreadyEngaged
-    && !unit.fellBack && !unit.arrivedFromReinforcements
+    && !unit.fellBack
     // Tactical Disembark intentionally does not appear here: after a Tactical
     // Disembark, a unit may make a Normal Move and still declare a Charge.
     && !unit.emergencyDisembarkedThisTurn
@@ -80,7 +80,6 @@ export function playChargeEligibilityReason(
     return 'This unit is already within Engagement Range and cannot declare a charge.';
   }
   if (unit.fellBack || unit.movementAction === 'fellBack') return 'A unit that fell back cannot charge this phase.';
-  if (unit.arrivedFromReinforcements) return 'A unit arriving from Reinforcements cannot charge this phase.';
   if (unit.emergencyDisembarkedThisTurn || unit.combatDisembarkedThisTurn || unit.rapidDisembarkedThisTurn) {
     return 'This unit cannot charge after a Rapid, Combat, or Emergency Disembark this turn.';
   }

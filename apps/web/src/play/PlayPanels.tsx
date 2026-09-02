@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { Box, Button, TextField, Tooltip, Typography } from '@mui/material';
 import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { CommandRerollRollType, HeroicInterventionMode, StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
+import { estimateSequentialModelEquivalentLosses, modelGroupsForCombatEstimate } from '@warhammer-simulator/core/engine/combatEstimation';
 import { battleUnitsBaseEdgeDistance, playShootingWeaponModelCount, type CombatHitPreview, type FiringDeckSelection, type PlayChargeTargetOption, type PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
 import { explosivesTargetAllowed } from '@warhammer-simulator/core/engine/stratagems';
-import { rulesEditionForRuleset, weaponHasKeyword } from '@warhammer-simulator/core/engine/rulesEngine';
 import {
   abilityOptionKey,
   abilityTimingLabel,
@@ -36,6 +36,7 @@ import {
 import { CombatDeclarationPanel } from './CombatDeclarationPanel';
 export { PlayTacticsPanel } from './PlayTacticsPanel';
 export { PlayChargePanel } from './PlayChargePanel';
+export { BattleShockPanel } from './BattleShockPanel';
 
 function hitCalculationTooltip({
   combatMode,
@@ -70,6 +71,82 @@ function hitCalculationTooltip({
     }
   });
   return lines.join('\n');
+}
+
+function woundCalculationTooltip(strength: number, toughness: number) {
+  const woundTarget = calcWoundTarget(strength, toughness);
+  const comparison = strength >= toughness * 2
+    ? 'Strength is at least double Toughness.'
+    : strength > toughness
+      ? 'Strength is greater than Toughness.'
+      : strength === toughness
+        ? 'Strength equals Toughness.'
+        : strength * 2 <= toughness
+          ? 'Strength is half or less than Toughness.'
+          : 'Strength is less than Toughness.';
+  return `Strength ${strength} vs Toughness ${toughness}\n${comparison}\nWound target: ${woundTarget}+`;
+}
+
+function saveCalculationTooltip({
+  baseSave,
+  ap,
+  coverBonus,
+  effectiveSave,
+  invulnerableSave,
+  usesInvulnerable,
+}: {
+  baseSave: number;
+  ap: number;
+  coverBonus: number;
+  effectiveSave: number;
+  invulnerableSave?: number;
+  usesInvulnerable: boolean;
+}) {
+  const armorSaveBeforeCover = baseSave + Math.abs(ap);
+  const armorSaveAfterCover = armorSaveBeforeCover - coverBonus;
+  const lines = [`Base save: ${baseSave}+`];
+  lines.push(ap === 0
+    ? `AP: none (armor save ${armorSaveBeforeCover}+)`
+    : `AP ${ap > 0 ? '+' : ''}${ap} (armor save ${armorSaveBeforeCover}+)`);
+  if (coverBonus > 0) {
+    lines.push(`Cover improves the armor save to ${armorSaveAfterCover}+.`);
+  }
+  if (invulnerableSave !== undefined) {
+    lines.push(usesInvulnerable
+      ? `Invulnerable save: ${invulnerableSave}+ used.`
+      : `Invulnerable save: ${invulnerableSave}+ available, but not used.`);
+  }
+  lines.push(`Final save: ${effectiveSave > 6 ? 'none' : `${effectiveSave}+`}.`);
+  return lines.join('\n');
+}
+
+function formatEstimateValue(value: number | null | undefined, digits = 2) {
+  return value === null || value === undefined || !Number.isFinite(value)
+    ? '—'
+    : value.toFixed(digits);
+}
+
+function formatEstimateChance(value: number) {
+  return `${(value * 100).toFixed(1)}%`;
+}
+
+function TargetDistanceMarker({ distance }: { distance?: number }) {
+  if (distance === undefined || !Number.isFinite(distance)) return null;
+  return (
+    <Tooltip title="Shortest base-edge distance across attacker-model and target-model combinations that have clear, rules-legal visibility.">
+      <Typography
+        variant="caption"
+        sx={{
+          color: uiTokens.color.combat.hit,
+          fontWeight: 800,
+          whiteSpace: 'nowrap',
+          cursor: 'help',
+        }}
+      >
+        LOS {distance.toFixed(1)}&quot;
+      </Typography>
+    </Tooltip>
+  );
 }
 
 export function PendingDamageAllocationHud({ unit, result, shooter, targetIds = [], selectedTargetId, onTargetSelect }: { unit: BattleUnit; result?: import('@warhammer-simulator/core/types/battle').ShootingResolution | null; shooter?: BattleUnit | null; targetIds?: string[]; selectedTargetId?: string; onTargetSelect?: (targetId: string) => void }) {
@@ -209,7 +286,9 @@ export function CombatPanel({
   resultSection = 'all',
   title = PLAY_PANEL_LABELS.shooting,
   actionLabel = 'Shoot',
+  pendingDamageActionLabel = 'Resolve',
   combatMode = 'ranged',
+  warning,
   targets,
   resultTargets = [],
   selectedTarget,
@@ -222,6 +301,7 @@ export function CombatPanel({
   selectedTargetId,
   selectedWeaponIndex,
   combatHitPreviews,
+  targetDistances,
   onTargetChange,
   onWeaponChange,
   onShootingAttackAllocationChange = () => undefined,
@@ -238,7 +318,9 @@ export function CombatPanel({
   resultSection?: 'attacker' | 'defender' | 'all';
   title?: string;
   actionLabel?: string;
+  pendingDamageActionLabel?: string;
   combatMode?: 'ranged' | 'melee';
+  warning?: ReactNode;
   targets: BattleUnit[];
   resultTargets?: BattleUnit[];
   selectedTarget: BattleUnit | null;
@@ -251,6 +333,7 @@ export function CombatPanel({
   selectedTargetId: string;
   selectedWeaponIndex: 'all' | string;
   combatHitPreviews?: Map<string, Map<number, CombatHitPreview>>;
+  targetDistances?: ReadonlyMap<string, number>;
   onTargetChange: (value: string) => void;
   onWeaponChange: (value: 'all' | string) => void;
   onShootingAttackAllocationChange?: (weaponIndex: number, targetId: string, attacks: number) => void;
@@ -273,6 +356,8 @@ export function CombatPanel({
 
   const shootingLocked = damageAllocationLocked;
   const hasStructuredResult = !!structuredResult?.weapons.length;
+  const isAttackerResultReview = hasStructuredResult && resultSection === 'attacker';
+  const allocationsReadOnly = hasStructuredResult;
   const resolvePendingDamage = shootingLocked && hasStructuredResult;
   const completedWithoutPendingDamage = hasStructuredResult && !shootingLocked;
   const noAttackSelected = selectedWeaponIndex !== 'all'
@@ -323,7 +408,26 @@ export function CombatPanel({
     .map(option => shooter.profile.weapons[option.weaponIndex])
     .filter((weapon): weapon is BattleUnit['profile']['weapons'][number] => !!weapon);
   const displayedWeaponOptions = effectiveWeaponOptions;
-  const displayedWeaponIndex = selectedWeaponIndex;
+  const selectableWeaponOptions = effectiveWeaponOptions.filter(option => option.weaponIndex >= 0);
+  const defaultWeaponIndex = (selectableWeaponOptions[0] ?? effectiveWeaponOptions[0])?.weaponIndex;
+  const displayedWeaponIndex = defaultWeaponIndex === undefined
+    ? selectedWeaponIndex
+    : selectedWeaponIndex === 'all'
+      || !effectiveWeaponOptions.some(option => String(option.weaponIndex) === selectedWeaponIndex)
+      ? String(defaultWeaponIndex)
+      : selectedWeaponIndex;
+  const activeWeaponOptions = displayedWeaponIndex === 'all'
+    ? []
+    : selectableWeaponOptions.filter(option => String(option.weaponIndex) === displayedWeaponIndex);
+  const assignedCountForWeapon = (option: PlayShootingWeaponOption) => Object.values(
+    shootingAttackAllocations[String(option.weaponIndex)] ?? {},
+  ).reduce((total, models) => total + (Number(models) || 0), 0);
+  const modelCountForWeapon = (option: PlayShootingWeaponOption) => weaponModelCountFor?.(option.weaponIndex)
+    ?? option.modelCount
+    ?? playShootingWeaponModelCount(shooter, option.weaponIndex);
+  const declarationActionLabel = resolvePendingDamage
+    ? pendingDamageActionLabel
+    : actionLabel;
   const displayedWeapons = resultSection === 'attacker' && hasStructuredResult && resultWeapons.length
     ? resultWeapons
     : availableWeapons.length
@@ -361,22 +465,49 @@ export function CombatPanel({
         .filter((target): target is BattleUnit => !!target)
         .map(target => ({ weapon, target }));
     });
+  const weaponResultSummaries = isAttackerResultReview && combatMode === 'ranged'
+    ? resultWeaponOptions.map(option => {
+      const weaponResults = (structuredResult?.weapons ?? []).filter(result => result.weaponIndex === option.weaponIndex);
+      return {
+        weaponIndex: option.weaponIndex,
+        name: option.name,
+        hits: weaponResults.reduce((total, result) => total + result.hits, 0),
+        wounds: weaponResults.reduce((total, result) => total + result.wounds, 0),
+      };
+    })
+    : [];
 
   return (
     <CombatDeclarationPanel
       unit={shooter}
       popup={popup}
       title={title}
-      actionLabel={resolvePendingDamage ? 'Resolve' : actionLabel}
+      actionLabel={declarationActionLabel}
       actionDisabled={!canResolve}
       onAction={onResolve}
       status={shooter.activated ? 'done' : shooter.firedWeaponIndices?.length ? `${shooter.firedWeaponIndices.length} fired` : undefined}
       weaponOptions={displayedWeaponOptions}
       selectedWeaponIndex={displayedWeaponIndex}
-      allWeaponsLabel={combatMode === 'melee' ? 'All eligible melee weapons' : 'All eligible ranged weapons'}
-      weaponSuffix={option => ` (${shooter.profile.weapons[option.weaponIndex]?.range ?? 0}\")`}
-      disabled={shootingLocked || shooter.activated}
+      weaponSuffix={option => {
+        if (option.weaponIndex < 0) return '';
+        const result = isAttackerResultReview
+          ? weaponResultSummaries.find(candidate => candidate.weaponIndex === option.weaponIndex)
+          : undefined;
+        if (result) {
+          const selected = displayedWeaponIndex === String(option.weaponIndex);
+          return (
+            <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, flexShrink: 0, fontSize: 13, fontWeight: 900, lineHeight: 1.1, whiteSpace: 'nowrap' }}>
+              <Box component="span" sx={{ color: selected ? 'inherit' : uiTokens.color.combat.hit }}>Hits {result.hits}</Box>
+              <Box component="span" sx={{ color: selected ? 'inherit' : uiTokens.color.combat.damage }}>Wounds {result.wounds}</Box>
+            </Box>
+          );
+        }
+        return ` · ${assignedCountForWeapon(option)}/${modelCountForWeapon(option)}`;
+      }}
+      disabled={!isAttackerResultReview && (shootingLocked || shooter.activated)}
       onWeaponChange={onWeaponChange}
+      warning={warning}
+      weaponSelectorOrientation="vertical"
     >
       {firingDeckOptions.length > 0 && onFiringDeckSelect && (
         <Box sx={{ display: 'grid', gap: 0.5 }}>
@@ -387,12 +518,12 @@ export function CombatPanel({
             const selected = firingDeckKeys.includes(key);
             const anotherForModel = firingDeckKeys.some(candidate => candidate.startsWith(modelPrefix) && candidate !== key);
             return (
-              <Button key={key} size="small" variant={selected ? 'contained' : 'outlined'} disabled={!selected && (anotherForModel || firingDeckKeys.length >= firingDeckCapacity)} onClick={() => setFiringDeckKeys(current => selected ? current.filter(candidate => candidate !== key) : [...current, key])}>
+                          <Button key={key} size="small" variant={selected ? 'contained' : 'outlined'} disabled={allocationsReadOnly || !selected && (anotherForModel || firingDeckKeys.length >= firingDeckCapacity)} onClick={() => setFiringDeckKeys(current => selected ? current.filter(candidate => candidate !== key) : [...current, key])}>
                 {option.passengerName ?? option.passengerRosterId} model {option.modelIndex + 1}: {option.weaponName ?? `weapon ${option.weaponIndex + 1}`}
               </Button>
             );
           })}
-          <Button size="small" color="secondary" variant="contained" onClick={() => onFiringDeckSelect(firingDeckOptions.filter(option => firingDeckKeys.includes(`${option.passengerRosterId}:${option.modelIndex}:${option.weaponIndex}`)))}>
+          <Button size="small" color="secondary" variant="contained" disabled={allocationsReadOnly} onClick={() => onFiringDeckSelect(firingDeckOptions.filter(option => firingDeckKeys.includes(`${option.passengerRosterId}:${option.modelIndex}:${option.weaponIndex}`)))}>
             Confirm Firing Deck
           </Button>
         </Box>
@@ -415,21 +546,21 @@ export function CombatPanel({
           onClick={onResolve}
           disabled={!canResolve}
         >
-          {resolvePendingDamage ? 'Resolve' : actionLabel}
+          {declarationActionLabel}
         </Button>
       </Box>
 
       {(!shootingLocked && !shooter.activated || hasStructuredResult && resultSection === 'attacker') && effectiveWeaponOptions.some(option => option.weaponIndex >= 0) && (
         <Box sx={{ display: 'grid', gap: 0.75, p: 1, border: `1px solid ${uiTokens.border.control}`, borderRadius: uiTokens.radius.control }}>
           <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, fontWeight: 700 }}>
-            Lock every {combatMode === 'melee' ? 'melee' : 'ranged'} weapon target before rolling
+            {hasStructuredResult && resultSection === 'attacker'
+              ? 'Attack results'
+              : 'Configure weapon allocations'}
           </Typography>
-          {effectiveWeaponOptions.filter(option => option.weaponIndex >= 0).map(option => {
+          {activeWeaponOptions.map(option => {
             const weapon = shooter.profile.weapons[option.weaponIndex];
             const weaponTargets = shootingAttackAllocations[String(option.weaponIndex)] ?? {};
-            const weaponModelCount = weaponModelCountFor?.(option.weaponIndex)
-              ?? option.modelCount
-              ?? (weapon ? playShootingWeaponModelCount(shooter, option.weaponIndex) : 0);
+            const weaponModelCount = modelCountForWeapon(option);
             return (
               <Box key={option.weaponIndex} sx={{ display: 'grid', gap: 0.4 }}>
                 <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700 }}>
@@ -456,9 +587,10 @@ export function CombatPanel({
                     No eligible targets for this weapon.
                   </Typography>
                 )}
-                <Box sx={option.targetIds.length > 3 ? { maxHeight: 210, overflowY: 'auto', display: 'grid', gap: 0.6, pr: 0.5 } : { display: 'grid', gap: 0.6 }}>
+                <Box sx={option.targetIds.length > 3 ? { maxHeight: 'min(360px, 45vh)', overflowY: 'auto', display: 'grid', gap: 0.6, pr: 0.5 } : { display: 'grid', gap: 0.6 }}>
                 {option.targetIds.map(targetId => {
                   const target = resultTargetPool.find(candidate => candidate.id === targetId);
+                  const targetDistance = target ? targetDistances?.get(target.id) : undefined;
                   const allocatedElsewhere = Object.entries(weaponTargets)
                     .filter(([allocatedTargetId]) => allocatedTargetId !== targetId)
                     .reduce((total, [, models]) => total + (Number(models) || 0), 0);
@@ -507,34 +639,126 @@ export function CombatPanel({
                   const averageDamage = averageCharacteristic(weapon.damage);
                   const hitChance = targetHitPreviewForAllocation?.hitProbability
                     ?? (allocationHit === null ? 0 : Math.max(0, (7 - allocationHit) / 6));
-                  const woundChance = allocationWound === null ? 0 : Math.max(0, (7 - allocationWound) / 6);
-                  const saveFailureChance = allocationSaveWithCover === null || allocationSaveWithCover > 6
-                    ? 1
-                    : Math.max(0, (allocationSaveWithCover - 1) / 6);
                   const feelNoPainDamageChance = allocationFeelNoPain === null ? 1 : Math.max(0, (allocationFeelNoPain - 1) / 6);
-                  const targetModelWounds = target?.profile.wounds ?? 1;
-                  const damageCanCarryOver = weapon ? weaponHasKeyword(weapon, 'Devastating Wounds') : false;
-                  const expectedDamagePerUnsavedAttack = averageDamage === null
-                    ? null
-                    : (damageCanCarryOver ? averageDamage : Math.min(averageDamage, targetModelWounds));
-                  const expectedDamage = averageAttacks !== null && averageDamage !== null
-                    ? allocatedModelCount * averageAttacks * hitChance * woundChance * saveFailureChance * feelNoPainDamageChance * (expectedDamagePerUnsavedAttack ?? averageDamage)
+                  const targetModelGroups = target ? modelGroupsForCombatEstimate(target) : [];
+                  const defaultTargetModelGroup = targetModelGroups.length > 0
+                    ? targetModelGroups.reduce((best, group) => group.modelCount > best.modelCount ? group : best)
                     : null;
-                  const estimatedModelsLost = expectedDamage !== null && target
-                    ? Math.min(target.remainingModels, expectedDamage / Math.max(1, targetModelWounds))
-                    : null;
+                  const modelGroupEstimates = targetModelGroups.map(group => {
+                    const groupWoundTarget = calcWoundTarget(weapon.strength, group.toughness);
+                    const groupWoundChance = Math.max(0, (7 - groupWoundTarget) / 6);
+                    const groupNormalSaveWithCover = group.save + Math.abs(weapon.ap) - allocationCoverBonus;
+                    const groupSaveWithCover = Math.min(groupNormalSaveWithCover, target?.profile.invulnSave ?? 7);
+                    const groupSaveFailureChance = groupSaveWithCover > 6
+                      ? 1
+                      : Math.max(0, (groupSaveWithCover - 1) / 6);
+                    const expectedAttacks = averageAttacks === null
+                      ? null
+                      : allocatedModelCount * averageAttacks;
+                    const expectedHits = expectedAttacks === null
+                      ? null
+                      : expectedAttacks * hitChance;
+                    const expectedWounds = expectedHits === null
+                      ? null
+                      : expectedHits * groupWoundChance;
+                    const expectedFailedSaves = expectedWounds === null
+                      ? null
+                      : expectedWounds * groupSaveFailureChance;
+                    const expectedUnsavedPackets = averageAttacks === null
+                      ? null
+                      : expectedFailedSaves === null
+                        ? null
+                        : expectedFailedSaves * feelNoPainDamageChance;
+                    const expectedDamage = expectedUnsavedPackets === null || averageDamage === null
+                      ? null
+                      : expectedUnsavedPackets * averageDamage;
+                    const estimate = expectedUnsavedPackets === null || averageDamage === null
+                      ? null
+                      : estimateSequentialModelEquivalentLosses({
+                        modelCount: group.modelCount,
+                        woundsPerModel: group.wounds,
+                        currentWounds: group.currentWounds,
+                        expectedUnsavedPackets,
+                        averageDamagePerPacket: averageDamage,
+                      });
+                    const usesInvulnerableSave = target?.profile.invulnSave !== undefined
+                      && target.profile.invulnSave < groupNormalSaveWithCover;
+                    return {
+                      group,
+                      estimate,
+                      calculation: {
+                        expectedAttacks,
+                        expectedHits,
+                        expectedWounds,
+                        expectedFailedSaves,
+                        expectedUnsavedPackets,
+                        expectedDamage,
+                        groupWoundTarget,
+                        groupWoundChance,
+                        groupNormalSaveWithCover,
+                        groupSaveWithCover,
+                        groupSaveFailureChance,
+                        usesInvulnerableSave,
+                      },
+                    };
+                  });
+                  const defaultModelGroupEstimate = defaultTargetModelGroup
+                    ? modelGroupEstimates.find(({ group }) => group === defaultTargetModelGroup)
+                    : undefined;
+                  const estimatedModelsLost = defaultModelGroupEstimate?.estimate?.modelEquivalentLosses ?? null;
+                  const estimateTooltip = targetModelGroups.length > 0
+                    ? (
+                      <Box sx={{ whiteSpace: 'pre-line', maxWidth: 440, fontSize: 12, lineHeight: 1.35 }}>
+                        {[
+                          'Estimate uses average attacks/damage; normal damage does not spill over.',
+                          ...modelGroupEstimates.flatMap(({ group, estimate, calculation }) => {
+                            const saveLabel = calculation.groupSaveWithCover > 6
+                              ? 'none'
+                              : `${calculation.groupSaveWithCover}+`;
+                            const savePath = calculation.usesInvulnerableSave && target?.profile.invulnSave !== undefined
+                              ? `armor ${calculation.groupNormalSaveWithCover}+ → ${target.profile.invulnSave}+ invulnerable`
+                              : `armor ${calculation.groupNormalSaveWithCover}+`;
+                            const feelNoPainLabel = allocationFeelNoPain === null
+                              ? `none (${formatEstimateChance(feelNoPainDamageChance)} damage passes)`
+                              : `${allocationFeelNoPain}+ (${formatEstimateChance(feelNoPainDamageChance)} damage passes)`;
+                            const groupLines = [
+                              `${group.name} (${group.modelCount} models, ${group.wounds}W${group.currentWounds !== undefined ? `; one at ${group.currentWounds}W` : ''})`,
+                              `  Allocation: ${allocatedModelCount} firing model${allocatedModelCount === 1 ? '' : 's'}`,
+                              `  Attacks: ${allocatedModelCount} × ${formatEstimateValue(averageAttacks)} = ${formatEstimateValue(calculation.expectedAttacks)}`,
+                              `  Hits: ${formatEstimateValue(calculation.expectedAttacks)} × ${formatEstimateChance(hitChance)} (${allocationHitLabel}) = ${formatEstimateValue(calculation.expectedHits)}`,
+                              `  Wounds: ${formatEstimateValue(calculation.expectedHits)} × ${formatEstimateChance(calculation.groupWoundChance)} (${calculation.groupWoundTarget}+) = ${formatEstimateValue(calculation.expectedWounds)}`,
+                              `  Saves: ${formatEstimateValue(calculation.expectedWounds)} × ${formatEstimateChance(calculation.groupSaveFailureChance)} fail (${savePath}; final ${saveLabel}) = ${formatEstimateValue(calculation.expectedFailedSaves)} failed saves`,
+                              `  FNP: ${feelNoPainLabel}`,
+                              `  Unsaved packets: ${formatEstimateValue(calculation.expectedFailedSaves)} × ${formatEstimateChance(feelNoPainDamageChance)} = ${formatEstimateValue(calculation.expectedUnsavedPackets)}`,
+                              `  Damage: ${formatEstimateValue(calculation.expectedUnsavedPackets)} × ${formatEstimateValue(averageDamage)} average damage = ${formatEstimateValue(calculation.expectedDamage)}`,
+                            ];
+                            if (estimate) {
+                              groupLines.push(`  Sequential result: ~${estimate.modelEquivalentLosses.toFixed(1)} model-equivalents (${estimate.fullModelsLost} full + ${estimate.partialModelEquivalent.toFixed(1)} partial)`);
+                            } else {
+                              groupLines.push('  Sequential result: unavailable');
+                            }
+                            return groupLines;
+                          }),
+                          'The main estimate uses the largest remaining model group. Actual dice and defender allocation may differ.',
+                        ].join('\n')}
+                      </Box>
+                    )
+                    : 'Estimated model-equivalent casualties are unavailable.';
                   return (
                     <Box key={`${option.weaponIndex}:${targetId}`} sx={{ display: 'grid', gap: 0.25 }}>
-                      <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700, overflowWrap: 'anywhere' }}>
-                        {target?.profile.name ?? targetId}
-                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 0.75 }}>
+                        <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700, overflowWrap: 'anywhere', minWidth: 0 }}>
+                          {target?.profile.name ?? targetId}
+                        </Typography>
+                        <TargetDistanceMarker distance={targetDistance} />
+                      </Box>
                       <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'stretch' }}>
                       <Box sx={{ minWidth: 120, flex: '0 0 120px', display: 'flex', alignItems: 'center', gap: 0.25 }}>
                         <Button
                           size="small"
                           variant="outlined"
                           aria-label={`Decrease allocation to ${target?.profile.name ?? targetId}`}
-                          disabled={allocationCount <= 0}
+                          disabled={allocationsReadOnly || allocationCount <= 0}
                           onClick={() => onShootingAttackAllocationChange(option.weaponIndex, targetId, allocationCount - 1)}
                           sx={{ minWidth: 26, width: 26, height: 32, px: 0, lineHeight: 1, fontSize: 16 }}
                         >
@@ -545,6 +769,7 @@ export function CombatPanel({
                           type="number"
                           hiddenLabel
                           value={allocationCount}
+                          disabled={allocationsReadOnly}
                           sx={{ flex: 1, '& input::-webkit-inner-spin-button': { appearance: 'none', margin: 0 } }}
                           slotProps={{ htmlInput: { min: 0, max: allocationMax, step: 1 } }}
                           onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.min(allocationMax, Math.floor(Number(event.target.value) || 0))))}
@@ -553,7 +778,7 @@ export function CombatPanel({
                           size="small"
                           variant="outlined"
                           aria-label={`Increase allocation to ${target?.profile.name ?? targetId}`}
-                          disabled={allocationCount >= allocationMax}
+                          disabled={allocationsReadOnly || allocationCount >= allocationMax}
                           onClick={() => onShootingAttackAllocationChange(option.weaponIndex, targetId, allocationCount + 1)}
                           sx={{ minWidth: 26, width: 26, height: 32, px: 0, lineHeight: 1, fontSize: 16 }}
                         >
@@ -575,11 +800,22 @@ export function CombatPanel({
                             </Box>
                             <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
                               <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 11 }}>Wound</Typography>
-                              <Typography variant="caption" sx={{ color: allocationWoundColor, fontWeight: 900, fontSize: 14, lineHeight: 1.1 }}>{allocationWound}+</Typography>
+                              <Tooltip title={<Box sx={{ whiteSpace: 'pre-line' }}>{woundCalculationTooltip(weapon.strength, target.profile.toughness)}</Box>}>
+                                <Typography variant="caption" sx={{ color: allocationWoundColor, fontWeight: 900, fontSize: 14, lineHeight: 1.1, cursor: 'help' }}>{allocationWound}+</Typography>
+                              </Tooltip>
                             </Box>
                             <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center' }}>
-                              <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 11 }}>Save{allocationUsesInvuln ? ' (inv)' : ''}</Typography>
-                              <Typography variant="caption" sx={{ color: allocationSaveColor, fontWeight: 900, fontSize: 14, lineHeight: 1.1 }}>{allocationSaveWithCover !== null && allocationSaveWithCover > 6 ? '—' : `${allocationSaveWithCover}+`}</Typography>
+                              <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 11 }}>Save</Typography>
+                              <Tooltip title={<Box sx={{ whiteSpace: 'pre-line' }}>{saveCalculationTooltip({
+                                baseSave: target.profile.save,
+                                ap: weapon.ap,
+                                coverBonus: allocationCoverBonus,
+                                effectiveSave: allocationSaveWithCover ?? 7,
+                                invulnerableSave: target.profile.invulnSave,
+                                usesInvulnerable: allocationUsesInvuln,
+                              })}</Box>}>
+                                <Typography variant="caption" sx={{ color: allocationSaveColor, fontWeight: 900, fontSize: 14, lineHeight: 1.1, cursor: 'help' }}>{allocationSaveWithCover !== null && allocationSaveWithCover > 6 ? '—' : `${allocationSaveWithCover}+`}</Typography>
+                              </Tooltip>
                             </Box>
                           {allocationFeelNoPain !== null && (
                             <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderLeft: `1px solid ${uiTokens.border.statDivider}` }}>
@@ -587,7 +823,7 @@ export function CombatPanel({
                               <Typography variant="caption" sx={{ color: uiTokens.color.combat.save, fontWeight: 900, fontSize: 14, lineHeight: 1.1 }}>{allocationFeelNoPain}+</Typography>
                             </Box>
                           )}
-                          <Tooltip title="Approximate expected model losses. Normal weapon damage is capped at the target model's wounds because excess damage does not spill over; mortal-wound damage can carry over. Actual dice results may vary.">
+                          <Tooltip title={estimateTooltip}>
                             <Box sx={{ px: 0.35, py: 0.45, textAlign: 'center', borderLeft: `1px solid ${uiTokens.border.statDivider}`, cursor: 'help', minWidth: 0 }}>
                               <Typography variant="caption" sx={{ display: 'block', color: uiTokens.color.text.subtle, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Est.</Typography>
                               <Typography variant="caption" sx={{ color: estimatedModelsLost === null ? uiTokens.color.text.muted : uiTokens.color.status.warning, fontWeight: 900, fontSize: 14, lineHeight: 1.1 }}>
@@ -635,6 +871,7 @@ export function CombatPanel({
       ) : hasStructuredResult && resultSection !== 'attacker' && displayedWeaponTargets.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: displayedWeaponTargets.length > 3 ? 310 : undefined, overflowY: displayedWeaponTargets.length > 3 ? 'auto' : undefined, paddingRight: displayedWeaponTargets.length > 3 ? 4 : undefined }}>
           {displayedWeaponTargets.map(({ weapon, target }, i) => {
+            const targetDistance = targetDistances?.get(target.id);
             const targetHitPreviewForStats = hitPreviewForTargetAndWeapon(target.id, shooter.profile.weapons.indexOf(weapon));
             const targetCoverStatusForStats = combatMode === 'ranged'
               ? targetHitPreviewForStats?.coverStatus ?? coverStatusForTargetAndWeapon(target.id, shooter.profile.weapons.indexOf(weapon))
@@ -670,7 +907,10 @@ export function CombatPanel({
                 <div style={{
                   padding: '4px 8px', borderBottom: `1px solid ${uiTokens.border.statCard}`,
                 }}>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: uiTokens.color.combat.weaponName }}>{weapon.name} → {target.profile.name}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 12, fontWeight: 700, color: uiTokens.color.combat.weaponName }}>
+                    <span>{weapon.name} → {target.profile.name}</span>
+                    <TargetDistanceMarker distance={targetDistance} />
+                  </span>
                 </div>
                 {/* Weapon stats remain visible alongside the resolved dice. */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, minmax(0, 1fr))' }}>
@@ -703,7 +943,7 @@ export function CombatPanel({
                   {/* Wound */}
                   <div style={{ padding: '8px 4px', textAlign: 'center', borderRight: `1px solid ${uiTokens.border.statDivider}` }}>
                     <div style={{ fontSize: 8, color: uiTokens.color.text.subtle }}>Wound</div>
-                    <Tooltip title={`Strength ${weapon.strength} versus Toughness ${target.profile.toughness}`}>
+                    <Tooltip title={<Box sx={{ whiteSpace: 'pre-line' }}>{woundCalculationTooltip(weapon.strength, target.profile.toughness)}</Box>}>
                       <div style={{ fontSize: 13, fontWeight: 900, color: wtColor, lineHeight: 1.1, cursor: 'help' }}>{wt}+</div>
                     </Tooltip>
                   </div>
@@ -712,23 +952,41 @@ export function CombatPanel({
                     <div style={{ fontSize: 8, color: uiTokens.color.text.subtle }}>Save</div>
                     {coverBonus > 0 ? (
                       <>
-                        <div style={{ fontSize: 13, fontWeight: 900, lineHeight: 1.1, color: uiTokens.color.combat.cover }}>
-                          {noSaveWithCover ? '—' : `${svWithCover}+`}
-                        </div>
+                        <Tooltip title={<Box sx={{ whiteSpace: 'pre-line' }}>{saveCalculationTooltip({
+                          baseSave: target.profile.save,
+                          ap: weapon.ap,
+                          coverBonus,
+                          effectiveSave: svWithCover,
+                          invulnerableSave: target.profile.invulnSave,
+                          usesInvulnerable: usedInvuln,
+                        })}</Box>}>
+                          <div style={{ fontSize: 13, fontWeight: 900, lineHeight: 1.1, color: uiTokens.color.combat.cover, cursor: 'help' }}>
+                            {noSaveWithCover ? '—' : `${svWithCover}+`}
+                          </div>
+                        </Tooltip>
                         <div style={{ fontSize: 9, marginTop: 3, color: uiTokens.color.combat.coverMuted }}>
                           ⛨ cover (+{coverBonus} save)
                         </div>
                         <div style={{ fontSize: 9, color: uiTokens.color.text.subtle }}>
-                          base {noSave ? 'no save' : `${sv}+`} · AP{weapon.ap}{usedInvuln ? ' ★inv' : ''}
+                          base {noSave ? 'no save' : `${sv}+`} · AP{weapon.ap}
                         </div>
                       </>
                     ) : (
                       <>
-                        <div style={{ fontSize: 13, fontWeight: 900, lineHeight: 1.1, color: noSave ? uiTokens.color.combat.noSave : uiTokens.color.combat.save }}>
-                          {noSave ? '—' : `${sv}+`}
-                        </div>
+                        <Tooltip title={<Box sx={{ whiteSpace: 'pre-line' }}>{saveCalculationTooltip({
+                          baseSave: target.profile.save,
+                          ap: weapon.ap,
+                          coverBonus: 0,
+                          effectiveSave: sv,
+                          invulnerableSave: target.profile.invulnSave,
+                          usesInvulnerable: usedInvuln,
+                        })}</Box>}>
+                          <div style={{ fontSize: 13, fontWeight: 900, lineHeight: 1.1, color: noSave ? uiTokens.color.combat.noSave : uiTokens.color.combat.save, cursor: 'help' }}>
+                            {noSave ? '—' : `${sv}+`}
+                          </div>
+                        </Tooltip>
                         <div style={{ fontSize: 9, marginTop: 3, color: weapon.ap < 0 ? uiTokens.color.combat.apWarning : uiTokens.color.text.subtle }}>
-                          AP{weapon.ap}{usedInvuln ? ' ★inv' : ''}
+                          AP{weapon.ap}
                         </div>
                         {targetInCoverForStats && coverSaveEnabled && (
                           <div style={{ fontSize: 9, color: uiTokens.color.text.quiet, marginTop: 2 }}>

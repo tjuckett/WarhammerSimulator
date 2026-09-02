@@ -56,6 +56,13 @@ Audit basis:
 - [ ] Define a typed pending-interaction contract for every choice that pauses the battle. It must include owner, opposing-player reactions, source event, legal options, resolution result, cancellation/rollback behavior, and a stable identifier.
 - [ ] Make pending interactions, event queues, phase cursors, popup restoration state, and selection state serialize and restore atomically through undo, redo, replay, and save/load.
 - [ ] Add transition invariants: active/opposing player correctness, no action outside its step, no unresolved request bypass, no duplicate step effect, no stale unit activation, and no phase advance while a required interaction is pending.
+- [x] Add the typed `phaseStepActions` inventory to `BattleState` and use it for the Command-phase Battle-shock pilot. Required actions gate advancement, available unit targets feed shared highlights, and the inventory is cleared at phase/step boundaries.
+- [x] Keep the inventory scoped to the current step and phase-owned: the shared helpers store typed obligations and observations, while phase legal-action builders and completion predicates remain authoritative.
+- [x] Migrate Pile In opportunities into the typed step-action inventory while preserving the Fight phase's own eligibility, movement validation, side handoff, optional-action, and completion rules.
+- [x] Migrate Consolidation opportunities into the typed step-action inventory while preserving the Fight phase's own mode selection, movement validation, side handoff, optional-action, reaction, and completion rules.
+- [x] Migrate normal Shooting opportunities into the typed step-action inventory while preserving weapon eligibility, LOS/target allocation, partial weapon resolution, optional completion, and event-backed shooting exceptions.
+- [x] Migrate normal Charge declarations into the typed step-action inventory while preserving target selection, charge-roll, charge-movement, failure, and completion rules. Event-backed charge exceptions remain separate.
+- [x] Migrate Fight opportunities into the typed step-action inventory while preserving each step's own priority, optional-action, reaction, and completion rules. Normal Fight activations and Consolidation-created Fight reactions now reconcile typed actions in core; the legal-action and web highlight paths consume them with legacy fallbacks.
 
 ### P0 - event-driven timing and reactions
 

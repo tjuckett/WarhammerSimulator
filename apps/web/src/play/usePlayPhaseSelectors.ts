@@ -1,12 +1,15 @@
 import { useMemo } from 'react';
 import { BATTLE_PHASE, PHASE_STEP, type BattleState, type BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { RulesEdition } from '@warhammer-simulator/core/engine/rulesEngine';
+import { phaseStepFor } from '@warhammer-simulator/core/engine/battleStateMachine';
 import { isFightResolutionStep } from '@warhammer-simulator/core/engine/phases/fightPhaseRules';
 import {
   playChargeEligibilityReason,
   playChargeTargetOptions,
   playFightActivationUnitIds,
+  playFightConsolidationOptions,
   playFightFirstUnitIds,
+  playFightPileInTargetOptions,
   playFightWeaponOptions,
   playMeleeFixedAttackCount,
   playShootingWeaponOptions,
@@ -52,6 +55,7 @@ export function usePlayPhaseSelectors({
     && battleState.pendingChargeRoll?.side === selectedChargeUnit?.side
     ? battleState.pendingChargeRoll
     : null;
+  const fightStep = battleState?.phase === BATTLE_PHASE.Fight ? phaseStepFor(battleState) : undefined;
 const selectedPlayShootingOptions = useMemo(
     () => (
       isPlayMode
@@ -203,6 +207,24 @@ const selectedPlayShootingOptions = useMemo(
       ),
     );
   }, [battleState, selectedFightUnit, selectedPlayFightOptions, selectedFightWeaponIndex]);
+  const selectedPlayFightPileInTargetIds = useMemo(
+    () => (
+      isPlayMode && battleState && selectedFightUnit
+        && (fightStep === PHASE_STEP.FightPileIn
+          || (fightStep === PHASE_STEP.FightUnits && selectedFightUnit.overrunFightSelected === true))
+        ? playFightPileInTargetOptions(battleState, selectedFightUnit.id, selectedFightUnit.side, activeRulesForBattle)
+        : []
+    ),
+    [isPlayMode, battleState, fightStep, selectedFightUnit, activeRulesForBattle],
+  );
+  const selectedPlayFightConsolidationOptions = useMemo(
+    () => (
+      isPlayMode && battleState && selectedFightUnit && fightStep === PHASE_STEP.FightConsolidate
+        ? playFightConsolidationOptions(battleState, selectedFightUnit.id, selectedFightUnit.side, activeRulesForBattle)
+        : []
+    ),
+    [isPlayMode, battleState, fightStep, selectedFightUnit, activeRulesForBattle],
+  );
   const selectedFightTargetUnit = useMemo(() => {
     return battleState && isFightResolutionStep(battleState) && selectedFightUnit
       ? unitForSelection(battleState, selectedFightTargetId, selectedFightUnit.side === 0 ? 1 : 0)
@@ -235,6 +257,8 @@ const selectedPlayShootingOptions = useMemo(
     selectedPlayChargeDice,
     selectedPlayFightOptions,
     selectedPlayFightTargets,
+    selectedPlayFightPileInTargetIds,
+    selectedPlayFightConsolidationOptions,
     selectedFightTargetUnit,
     selectedFightAttackCount,
   };

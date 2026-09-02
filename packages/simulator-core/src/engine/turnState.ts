@@ -21,6 +21,8 @@ export function resetUnitForActiveTurn(unit: BattleUnit, options: ActiveTurnRese
   unit.movementStartPositionsByModel = undefined;
   unit.movementStartRotationsByModel = undefined;
   unit.movementPathByModel = undefined;
+  unit.movementWaypointsByModel = undefined;
+  unit.movementWaypoints = undefined;
   unit.movementComplete = undefined;
   unit.takingToSkies = undefined;
   unit.arrivedFromReinforcements = undefined;
