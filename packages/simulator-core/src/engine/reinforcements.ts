@@ -1,14 +1,14 @@
 import { EVENT_REQUEST_KIND, type BattleState, type BattleUnit, type Position, type Side } from '../types/battle';
 import { UNIT_DEPLOYMENT_MODE, type UnitProfile } from '../types/army';
 import { attachedUnitProfilesFor, unitHasRule, unitRosterId } from './armyUnits';
-import { baseFootprintDistance, baseFootprintWithinRect, modelBaseFootprintInches } from './baseSizes';
+import { baseFootprintDistance, baseFootprintWithinRect, modelBaseFootprintForUnit, modelBaseFootprintInches } from './baseSizes';
 import { boardFormatForState } from '../data/boardFormats';
 import { modelWeaponLoadout } from './unitModelState';
 import { rulesEditionForRuleset, weaponHasKeyword } from './rulesEngine';
 import { resolvePendingEventRequest } from './eventTriggers';
 
 function modelFootprint(unit: BattleUnit, modelIndex: number) {
-  return modelBaseFootprintInches(unit.profile, modelIndex, unit.modelRotations?.[modelIndex] ?? unit.facingDeg ?? 0);
+  return modelBaseFootprintForUnit(unit, modelIndex);
 }
 
 export function reinforcementPlacementIsOutsideEnemyRange(
@@ -48,7 +48,10 @@ export function strategicReservePlacementIsOutsideOpponentDeploymentZone(
 
 function profileHasCloseQuartersOnEveryModel(profile: UnitProfile): boolean {
   return profile.baseModelCount > 0 && Array.from({ length: profile.baseModelCount }, (_, modelIndex) =>
-    modelWeaponLoadout(profile, modelIndex).some(weaponIndex => weaponHasKeyword(profile.weapons[weaponIndex], 'Close-Quarters')),
+    modelWeaponLoadout(profile, modelIndex).some(weaponIndex =>
+      weaponHasKeyword(profile.weapons[weaponIndex], 'Close-Quarters')
+      || weaponHasKeyword(profile.weapons[weaponIndex], 'Pistol')
+      || weaponHasKeyword(profile.weapons[weaponIndex], 'Sidearm')),
   ).every(Boolean);
 }
 

@@ -24,10 +24,10 @@ model User {
 
 model SavedArmy {
   id        String   @id @default(cuid())
-  slot      Int      @unique
   name      String
   faction   String
   units     Json
+  metadata  Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

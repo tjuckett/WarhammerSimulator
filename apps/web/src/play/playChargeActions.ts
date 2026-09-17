@@ -5,6 +5,7 @@ import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/pra
 import type { PlayModelSelection } from '../components/Battlefield';
 import { normalizePlaySelectionForState, primaryPlaySelectionPart } from './playSelectionHelpers';
 import type { PlayUndoEntry } from './usePlayUndoState';
+import { measurePerformanceTrace } from '../performance/performanceTrace';
 
 type StateRef = { current: BattleState | null };
 
@@ -52,7 +53,11 @@ export function createPlayChargeActions({
     const prev = battleStateRef.current;
     if (!prev || prev.phase !== 'charge' || prev.phaseStep !== PHASE_STEP.ChargeUnits
       || !selection || !selectedChargeTargetIds.length) return;
-    const next = chargePlayUnitTargets(prev, selection.unitId, selection.side, selectedChargeTargetIds, activeRulesForBattle);
+    const next = measurePerformanceTrace(
+      'charge-target-resolution',
+      () => chargePlayUnitTargets(prev, selection.unitId, selection.side, selectedChargeTargetIds, activeRulesForBattle),
+      { unitId: selection.unitId, side: selection.side, targetCount: selectedChargeTargetIds.length },
+    );
     if (next === prev) return;
     pushPlayUndo(playUndoEntry(prev), next, {
       type: GAME_ACTION_TYPE.ChargeUnitTarget,

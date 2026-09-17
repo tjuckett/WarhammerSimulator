@@ -4,6 +4,39 @@ type RectShape = Pick<Terrain | TerrainFeature, 'x' | 'y' | 'width' | 'height' |
   polygonPoints?: Position[];
 };
 
+type TerrainRayQuery = {
+  obscuringTerrain11e: Terrain[];
+  ruins: Terrain[];
+};
+
+// Terrain geometry is immutable for the lifetime of a battle state. Corner
+// generation is used by every sampled LOS/cover ray, so cache it per shape
+// object instead of repeating the rotation and polygon translation work for
+// each ray.
+const terrainCornersCache = new WeakMap<object, Position[]>();
+
+// LOS checks visit many model pairs against the same immutable battlefield
+// terrain. Cache the terrain-only classification; endpoint intersection tests
+// remain per ray and therefore retain their exact result.
+const terrainRayQueryCache = new WeakMap<Terrain[], TerrainRayQuery>();
+
+function terrainRayQuery(terrain: Terrain[]): TerrainRayQuery {
+  const cached = terrainRayQueryCache.get(terrain);
+  if (cached) return cached;
+  const obscuringTerrain11e: Terrain[] = [];
+  const ruins: Terrain[] = [];
+  for (const item of terrain) {
+    if (item.type === 'ruin') ruins.push(item);
+    if (item.features.some(feature => {
+      const category = effectiveTerrainFeatureCategory(item, feature);
+      return category === 'light' || category === 'dense';
+    })) obscuringTerrain11e.push(item);
+  }
+  const query = { obscuringTerrain11e, ruins };
+  terrainRayQueryCache.set(terrain, query);
+  return query;
+}
+
 export function terrainCenter(t: RectShape): Position {
   return { x: t.x + t.width / 2, y: t.y + t.height / 2 };
 }
@@ -39,6 +72,8 @@ export function rotateFeatureAround(feature: TerrainFeature, origin: Position, d
 }
 
 export function terrainCorners(t: RectShape): Position[] {
+  const cached = terrainCornersCache.get(t);
+  if (cached) return cached;
   const c = terrainCenter(t);
   const corners = t.polygonPoints?.length ? t.polygonPoints.map(point => ({
     x: t.x + point.x,
@@ -49,7 +84,9 @@ export function terrainCorners(t: RectShape): Position[] {
     { x: t.x + t.width, y: t.y + t.height },
     { x: t.x, y: t.y + t.height },
   ];
-  return corners.map(p => rotatePoint(p, c, t.rotationDeg ?? 0));
+  const rotatedCorners = corners.map(p => rotatePoint(p, c, t.rotationDeg ?? 0));
+  terrainCornersCache.set(t, rotatedCorners);
+  return rotatedCorners;
 }
 
 export function pointInTerrain(p: Position, t: RectShape): boolean {
@@ -245,21 +282,22 @@ export function findUnblockedLOSRay(
   edition?: '10e' | '11e',
 ): { from: Position; to: Position } | null {
   const { fromPoints, toPoints } = modelRaySamplePoints(fromCenter, fromRadius, toCenter, toRadius);
+  const terrainQuery = terrainRayQuery(terrain);
 
   const obscuringTerrain = edition === '11e'
-    ? terrain
-      .filter(t => t.features.some(feature => {
-        const category = effectiveTerrainFeatureCategory(t, feature);
-        return category === 'light' || category === 'dense';
-      }))
+    ? terrainQuery.obscuringTerrain11e
       .filter(t => !circleIntersectsTerrain(fromCenter, fromRadius, t) && !circleIntersectsTerrain(toCenter, toRadius, t))
     : [];
-  const rayTerrain = terrain.map(t =>
-    t.type === 'ruin'
-      && (circleIntersectsTerrain(fromCenter, fromRadius, t) || circleIntersectsTerrain(toCenter, toRadius, t))
-      ? { ...t, type: 'area' as const }
-      : t,
-  );
+  const endpointIntersectsRuin = terrainQuery.ruins.some(ruin =>
+    circleIntersectsTerrain(fromCenter, fromRadius, ruin) || circleIntersectsTerrain(toCenter, toRadius, ruin));
+  const rayTerrain = endpointIntersectsRuin
+    ? terrain.map(t =>
+      t.type === 'ruin'
+        && (circleIntersectsTerrain(fromCenter, fromRadius, t) || circleIntersectsTerrain(toCenter, toRadius, t))
+        ? { ...t, type: 'area' as const }
+        : t,
+    )
+    : terrain;
   for (const fp of fromPoints) {
     for (const tp of toPoints) {
       if (hasLOS(fp, tp, rayTerrain, obscuringTerrain)) return { from: fp, to: tp };
@@ -417,6 +455,32 @@ function effectiveTerrainFeatureCategory(terrain: Terrain, feature: TerrainFeatu
   return terrain.type === 'ruin' && feature.featureHeight !== 'low' ? 'dense' : 'light';
 }
 
+/**
+ * Cheap 11th-edition Hidden pre-check. When every model in a unit is within
+ * suitable terrain, the only remaining Hidden condition is the shooter's
+ * distance. This deliberately does not inspect terrain rays, so callers can
+ * use it to reject definitely Hidden units before the expensive LOS scan.
+ */
+export function unitHasAllModelsEligibleForHidden(
+  state: BattleState,
+  target: BattleUnit,
+  context: Pick<TerrainVisibilityContext, 'modelRadius' | 'hasKeyword'>,
+): boolean {
+  if (state.ruleset?.edition !== '11e') return false;
+  if (!context.hasKeyword(target, 'infantry')
+    && !context.hasKeyword(target, 'beasts')
+    && !context.hasKeyword(target, 'swarm')) return false;
+  if (target.rangedAttacksMadeThisTurn || target.rangedAttacksMadePreviousTurn) return false;
+  if (target.modelPositions.length === 0) return false;
+  return target.modelPositions.every((targetModel, targetModelIndex) =>
+    state.terrain.some(terrain => terrain.features.some(feature => {
+      const category = effectiveTerrainFeatureCategory(terrain, feature);
+      return (category === 'light' || category === 'dense')
+        && circleIntersectsTerrain(targetModel, context.modelRadius(target, targetModelIndex), terrain);
+    })),
+  );
+}
+
 export function hasAnyModelLOS(
   fromCenter: Position,
   fromRadius: number,
@@ -462,6 +526,41 @@ export function hasAnyModelLOSConsideringHidden(
     !modelIsHiddenFrom(state, source, sourceModelIndex, target, targetModelIndex, context)
     && hasLOSEdgeToEdge(from, context.modelRadius(source, sourceModelIndex), to, context.modelRadius(target, targetModelIndex), state.terrain, state.ruleset?.edition),
   ));
+}
+
+/**
+ * Performs the normal/hidden LOS scan once and returns both results. Hidden
+ * shooting queries previously scanned every model pair a second time after
+ * the visible scan had failed.
+ */
+export function modelVisibilityConsideringHidden(
+  state: BattleState,
+  source: BattleUnit,
+  target: BattleUnit,
+  context: TerrainVisibilityContext,
+): { visible: boolean; hidden: boolean } {
+  let hidden = false;
+  for (let sourceModelIndex = 0; sourceModelIndex < source.modelPositions.length; sourceModelIndex++) {
+    const from = source.modelPositions[sourceModelIndex];
+    if (!from) continue;
+    for (let targetModelIndex = 0; targetModelIndex < target.modelPositions.length; targetModelIndex++) {
+      const to = target.modelPositions[targetModelIndex];
+      if (!to) continue;
+      if (modelIsHiddenFrom(state, source, sourceModelIndex, target, targetModelIndex, context)) {
+        hidden = true;
+        continue;
+      }
+      if (hasLOSEdgeToEdge(
+        from,
+        context.modelRadius(source, sourceModelIndex),
+        to,
+        context.modelRadius(target, targetModelIndex),
+        state.terrain,
+        state.ruleset?.edition,
+      )) return { visible: true, hidden: false };
+    }
+  }
+  return { visible: false, hidden };
 }
 
 export function hasAnyHiddenModelPair(

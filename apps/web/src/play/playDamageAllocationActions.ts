@@ -23,27 +23,29 @@ export function createPendingDamageSelectionAction({
   setTargetErrorMsg: (message: string | null) => void;
 }) {
   function selectPendingDamageUnit(next: BattleState, shooterUnitId: string | null) {
-    const pendingDamageUnit = firstPendingDamageUnit(next);
-    if (!pendingDamageUnit) return false;
+    const packetOwner = firstPendingDamageUnit(next);
+    const packet = packetOwner?.pendingDamageAllocations?.[0];
+    const targetUnitId = packet?.targetUnitId ?? packetOwner?.id;
+    const pendingDamageUnit = targetUnitId
+      ? next.units.find(unit => unit.id === targetUnitId
+        && !unit.destroyed
+        && !unit.embarkedInUnitId
+        && (unit.pendingDamageAllocations?.length ?? 0) > 0) ?? null
+      : null;
+    if (!pendingDamageUnit) return null;
     if (shooterUnitId) setCasualtyRemovalShooterId(shooterUnitId);
-    setPlayModelSelection(normalizePlaySelectionForState(next, {
-      side: pendingDamageUnit.side,
-      parts: [{
-        unitId: pendingDamageUnit.id,
-        side: pendingDamageUnit.side,
-        modelIndices: pendingDamageUnit.modelPositions.map((_, modelIndex) => modelIndex),
-      }],
-    }));
-    setInspectedSelection({ kind: 'battle', side: pendingDamageUnit.side, unitId: pendingDamageUnit.id });
     setTargetErrorMsg('Select a model to allocate the next pending damage');
-    return true;
+    return pendingDamageUnit;
   }
 
   function selectShootingResolutionTarget(next: BattleState, shooterUnitId: string | null, requestedTargetId?: string) {
     const resolution = shooterUnitId
       ? next.lastShootingResolution?.shooterUnitId === shooterUnitId ? next.lastShootingResolution : null
       : next.lastShootingResolution;
-    const targetId = requestedTargetId ?? resolution?.weapons.find(weapon => weapon.wounds > 0)?.targetUnitId;
+    // Defender review is useful even when every wound was saved or every
+    // point of damage was ignored by Feel No Pain. Fall back to the first
+    // resolved target rather than requiring a wound to have survived.
+    const targetId = requestedTargetId ?? resolution?.weapons[0]?.targetUnitId;
     const target = targetId
       ? next.units.find(unit => unit.id === targetId && !unit.destroyed && !unit.embarkedInUnitId)
       : null;

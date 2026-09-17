@@ -4,8 +4,9 @@ import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitDeploymentMode, type 
 import { DEPLOYMENT_STRATEGIES, type DeploymentStrategy } from '@warhammer-simulator/core/engine/deployment';
 import { applyBaseSizesToArmy } from '@warhammer-simulator/core/data/unitBaseSizes';
 import { canDeployOutsideDeploymentZone, isImportedArmy, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
+import { parseListhammerMarkdown } from '@warhammer-simulator/core/parsers/listhammer';
+import type { SavedArmyRecord } from '../army/armyRepository';
 import { uiTokens } from '../theme/uiTokens';
-import { ModelWeaponLoadoutEditor } from './ArmyModelWeaponLoadoutEditor';
 import { UnitList } from './ArmyUnitList';
 import { StaticUnitList } from './ArmyStaticUnitList';
 import { PlayDeploymentList } from './ArmyDeploymentList';
@@ -14,22 +15,16 @@ import {
   attachmentGroupModelCount,
   buildLeaderManifest,
   buildTransportManifest,
-  defaultWeaponLoadout,
   deploymentLabel,
   deploymentMode,
   findTransportUnit,
   generateRosterId,
   isLeaderUnit,
   isTransportUnit,
-  modelWeaponCopyCount,
-  modelWeaponLoadout,
   normalizeArmyForEditing,
   parseCountToken,
-  resizeModelWeaponLoadouts,
   splitPlanForUnit,
   unitKey,
-  updateModelWeaponLoadout,
-  weaponCountForLoadouts,
   type LeaderManifestEntry,
   type TransportManifestEntry,
   type UnitSplitPlan,
@@ -41,6 +36,10 @@ interface Props {
   battleState: BattleState | null;
   color: string;
   strategy: DeploymentStrategy;
+  showDeploymentControls?: boolean;
+  unitPoints?: (unit: UnitProfile, unitIndex: number) => number | undefined;
+  savedArmies?: SavedArmyRecord[];
+  onLoadSavedArmy?: (id: string) => void | Promise<void>;
   playDeployment?: boolean;
   selectedPlayUnitIndex?: number | null;
   selectedPlayModelUnitId?: string | null;
@@ -48,7 +47,7 @@ interface Props {
   selectedInspectedProfileIndex?: number | null;
   onImport: (army: ImportedArmy) => void;
   onChange: (army: ImportedArmy) => void;
-  onSaveLocal: () => void;
+  onSaveLocal?: () => void | Promise<void>;
   onExport: () => void;
   onStrategyChange: (s: DeploymentStrategy) => void;
   onSelectPlayUnit?: (side: 0 | 1, unitIndex: number) => void;
@@ -66,6 +65,10 @@ export function ArmyPanel({
   battleState,
   color,
   strategy,
+  showDeploymentControls = true,
+  unitPoints,
+  savedArmies = [],
+  onLoadSavedArmy,
   playDeployment = false,
   selectedPlayUnitIndex = null,
   selectedPlayModelUnitId = null,
@@ -85,36 +88,48 @@ export function ArmyPanel({
   onUndeployPlacedUnit,
 }: Props) {
   const label = side === 0 ? 'Army 1' : 'Army 2';
+  const normalizedArmyRef = React.useRef<ImportedArmy | null>(null);
 
   React.useEffect(() => {
-    if (!army) return;
-    const normalizedArmy = normalizeArmyForEditing(army);
+    // This normalizes an editable roster.  Once play is active, `onChange`
+    // intentionally resets the configured battle; treating a just-loaded
+    // roster as an edit would therefore discard its restored checkpoint.
+    if (battleState) return;
+    if (!army) {
+      normalizedArmyRef.current = null;
+      return;
+    }
+    // App renders can be triggered by battlefield selection/state changes while
+    // the army object itself is unchanged. Avoid normalizing and serializing
+    // the complete roster on those renders.
+    if (normalizedArmyRef.current === army) return;
+    normalizedArmyRef.current = army;
+    const normalizedArmy = applyBaseSizesToArmy(normalizeArmyForEditing(army));
     if (JSON.stringify(normalizedArmy) !== JSON.stringify(army)) onChange(normalizedArmy);
-  }, [army, onChange]);
+  }, [army, battleState, onChange]);
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
+    void file.text().then(async raw => {
       try {
-        const json = JSON.parse(ev.target?.result as string);
+        if (/\.(?:md|markdown|txt)$/i.test(file.name)) {
+          onImport(normalizeArmyForEditing(parseListhammerMarkdown(raw)));
+          return;
+        }
+        const json: unknown = JSON.parse(raw);
         if (isImportedArmy(json)) {
           onImport(applyBaseSizesToArmy(normalizeArmyForEditing(json)));
           return;
         }
-        import('@warhammer-simulator/core/parsers/battlescribe').then(({ parseBattleScribeJSON }) => {
-          try {
-            onImport(normalizeArmyForEditing(parseBattleScribeJSON(json)));
-          } catch (err) {
-            alert(`Parse error: ${(err as Error).message}`);
-          }
-        });
-      } catch {
-        alert('Invalid JSON file');
+        const { parseBattleScribeJSON } = await import('@warhammer-simulator/core/parsers/battlescribe');
+        onImport(normalizeArmyForEditing(parseBattleScribeJSON(json)));
+      } catch (error) {
+        alert(`Army import failed: ${error instanceof Error ? error.message : 'invalid roster file'}`);
       }
-    };
-    reader.readAsText(file);
+    }).catch(error => {
+      alert(`Army import failed: ${error instanceof Error ? error.message : 'could not read the file'}`);
+    });
     e.target.value = '';
   }
 
@@ -188,10 +203,27 @@ export function ArmyPanel({
     }));
   }
 
-  const units = battleState ? battleState.units.filter(u => u.side === side && !u.inStrategicReserves) : null;
-  const reserveUnits = battleState ? battleState.units.filter(u => u.side === side && !u.destroyed && u.inStrategicReserves) : [];
+  const units = React.useMemo(
+    () => battleState ? battleState.units.filter(u => u.side === side && !u.inStrategicReserves) : null,
+    [battleState, side],
+  );
+  const reserveUnits = React.useMemo(
+    () => battleState ? battleState.units.filter(u => u.side === side && !u.destroyed && u.inStrategicReserves) : [],
+    [battleState, side],
+  );
   const battlefieldUnits = army?.units.filter(unit => deploymentMode(unit) === UNIT_DEPLOYMENT_MODE.Battlefield).length ?? 0;
   const stagedUnits = army ? army.units.length - battlefieldUnits : 0;
+  const pointCosts = React.useMemo(
+    () => army?.units.map((unit, index) => unitPoints?.(unit, index) ?? catalogPointCost(unit, army)) ?? [],
+    [army, unitPoints],
+  );
+  const knownPointTotal = pointCosts.reduce((total, points) => total + (points ?? 0), 0);
+  const unknownPointCount = pointCosts.filter(points => points === undefined).length;
+  const pointSummary = pointCosts.some(points => points !== undefined)
+    ? unknownPointCount === 0
+      ? `${knownPointTotal} pts`
+      : `${knownPointTotal} pts + ${unknownPointCount} unknown`
+    : null;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
@@ -207,9 +239,14 @@ export function ArmyPanel({
         <div style={{ color: uiTokens.color.text.secondary, fontSize: 12 }}>
           {army ? `${army.name} (${army.faction})` : 'No army loaded'}
         </div>
+        {pointSummary && (
+          <div style={{ color: uiTokens.color.text.primary, fontSize: 12, fontWeight: 'bold', marginTop: 2 }}>
+            Army total: {pointSummary}
+          </div>
+        )}
       </div>
 
-      {!playDeployment && (
+      {!playDeployment && showDeploymentControls && (
         <div style={{ padding: '5px 8px', flexShrink: 0, borderBottom: '1px solid #222', display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ color: uiTokens.color.text.muted, fontSize: 11, whiteSpace: 'nowrap' }}>Deploy:</span>
           <select
@@ -234,14 +271,32 @@ export function ArmyPanel({
             display: 'inline-block', padding: '4px 8px', background: '#222', border: `1px solid ${color}55`,
             borderRadius: 4, cursor: 'pointer', color, fontSize: 11,
           }}>
-            Import JSON
-            <input type="file" accept=".json" onChange={handleFile} style={{ display: 'none' }} />
+            Import roster
+            <input type="file" accept=".json,.md,.markdown,.txt" onChange={handleFile} style={{ display: 'none' }} />
           </label>
+          {army && !battleState && onSaveLocal && (
+            <button type="button" onClick={onSaveLocal} style={miniButtonStyle(color)}>Save to library</button>
+          )}
           {army && !battleState && (
-            <>
-              <button type="button" onClick={onSaveLocal} style={miniButtonStyle(color)}>Save</button>
-              <button type="button" onClick={onExport} style={miniButtonStyle(color)}>Export</button>
-            </>
+            <button type="button" onClick={onExport} style={miniButtonStyle(color)}>Export</button>
+          )}
+          {army && !battleState && onLoadSavedArmy && (
+            <select
+              aria-label={`Load saved army into ${label}`}
+              defaultValue=""
+              onChange={event => {
+                const id = event.target.value;
+                if (id) void onLoadSavedArmy(id);
+                event.target.value = '';
+              }}
+              style={{ ...miniButtonStyle(color), maxWidth: 170 }}
+              disabled={savedArmies.length === 0}
+            >
+              <option value="">Load from library</option>
+              {savedArmies.map(record => (
+                <option key={record.id} value={record.id}>{record.army.name}</option>
+              ))}
+            </select>
           )}
         </div>
         {army && !battleState && (
@@ -276,6 +331,8 @@ export function ArmyPanel({
             army={army}
             color={color}
             editable={!battleState}
+            showDeploymentControls={showDeploymentControls}
+            unitPoints={unitPoints}
             selectedUnitIndex={selectedInspectedProfileIndex}
             onInspectUnit={onInspectProfile ? unitIndex => onInspectProfile(side, unitIndex) : undefined}
             onChangeUnit={changeUnit}
@@ -305,4 +362,15 @@ function miniButtonStyle(color: string): React.CSSProperties {
     font: 'inherit',
     fontSize: 11,
   };
+}
+
+function catalogPointCost(unit: UnitProfile, army: ImportedArmy | null): number | undefined {
+  if (!army?.catalog) return undefined;
+  const rosterId = unitRosterId(unit);
+  const entry = army.catalog.units.find(candidate =>
+    candidate.id === rosterId
+    || candidate.names?.includes(unit.name)
+    || candidate.profile?.name === unit.name,
+  );
+  return entry?.modelCountPoints?.[String(unit.baseModelCount)];
 }

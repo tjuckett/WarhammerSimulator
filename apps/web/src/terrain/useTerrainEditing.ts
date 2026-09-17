@@ -1,10 +1,10 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { Position, Terrain, TerrainLayout } from '@warhammer-simulator/core/types/battle';
+import type { Position, TerrainLayout } from '@warhammer-simulator/core/types/battle';
 import { moveFeature, rotateFeatureAround, terrainCenter, terrainCorners } from '@warhammer-simulator/core/engine/terrainGeometry';
 import type { TerrainEditSelection } from '../components/Battlefield';
 import {
   cleanNumber,
-  convexHull,
+  combineTerrainMats,
   itemSnapStep,
   rotateItemToSecondVertex,
   rotateTerrainToSecondVertex,
@@ -50,60 +50,36 @@ export function useTerrainEditing({
   selectedBoardFormat,
   createId,
 }: UseTerrainEditingOptions) {
-  function combineSelectedTerrain(targetIndex: number) {
-    if (!selectedEdit || selectedEdit.kind !== 'terrain' || selectedEdit.terrainIndex === targetIndex) {
-      setTerrainSaveStatus('Select one terrain mat, then Shift-click or press Combine on another mat.');
+  function combineTerrain(sourceIndex: number, targetIndex: number) {
+    if (sourceIndex === targetIndex) {
+      setTerrainSaveStatus('Choose a different terrain mat to combine.');
       return;
     }
-    const sourceIndex = selectedEdit.terrainIndex;
-    let combinedIndex: number | null = null;
-    let combinedName = '';
+    const sourceTerrain = editorLayout.terrain[sourceIndex];
+    const targetTerrain = editorLayout.terrain[targetIndex];
+    if (!sourceTerrain || !targetTerrain) return;
 
     setAlignVertexLock(null);
     setEditorLayout(prev => {
       const source = prev.terrain[sourceIndex];
       const target = prev.terrain[targetIndex];
       if (!source || !target) return prev;
-
-      const corners = convexHull([...terrainCorners(source), ...terrainCorners(target)]);
-      if (corners.length < 3) return prev;
-
-      const minX = Math.min(...corners.map(point => point.x));
-      const minY = Math.min(...corners.map(point => point.y));
-      const maxX = Math.max(...corners.map(point => point.x));
-      const maxY = Math.max(...corners.map(point => point.y));
-      combinedIndex = Math.min(sourceIndex, targetIndex);
-      combinedName = `${target.name} + ${source.name}`;
-      const combined: Terrain = {
-        ...target,
-        id: `${target.id}-combined-${source.id}`,
-        name: combinedName,
-        x: cleanNumber(minX),
-        y: cleanNumber(minY),
-        width: cleanNumber(maxX - minX),
-        height: cleanNumber(maxY - minY),
-        rotationDeg: 0,
-        polygonPoints: corners.map(point => ({
-          x: cleanNumber(point.x - minX),
-          y: cleanNumber(point.y - minY),
-        })),
-        features: [...target.features, ...source.features],
-      };
+      const combined = combineTerrainMats(source, target);
+      if (!combined) return prev;
+      const combinedIndex = Math.min(sourceIndex, targetIndex);
 
       return {
         ...prev,
-        terrain: prev.terrain.flatMap((terrain, index) => {
-          if (index === combinedIndex) return [combined];
-          if (index === sourceIndex || index === targetIndex) return [];
+        terrain: prev.terrain.flatMap((terrain, terrainIndex) => {
+          if (terrainIndex === combinedIndex) return [combined];
+          if (terrainIndex === sourceIndex || terrainIndex === targetIndex) return [];
           return [terrain];
         }),
       };
     });
 
-    if (combinedIndex !== null) {
-      setSelectedEdit({ kind: 'terrain', terrainIndex: combinedIndex });
-      setTerrainSaveStatus(`Combined ${combinedName}.`);
-    }
+    setSelectedEdit({ kind: 'terrain', terrainIndex: Math.min(sourceIndex, targetIndex) });
+    setTerrainSaveStatus(`Combined ${sourceTerrain.name} and ${targetTerrain.name}.`);
   }
 
   function moveEditSelection(selection: TerrainEditSelection, x: number, y: number) {
@@ -298,7 +274,7 @@ export function useTerrainEditing({
 
   return {
     actions: {
-      combineSelectedTerrain,
+      combineTerrain,
       moveEditSelection,
       alignSelectedVertex,
       rotateEditSelection,

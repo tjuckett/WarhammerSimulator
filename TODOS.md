@@ -324,7 +324,7 @@ Use this section as the current pickup point for 11th Edition work. Older sectio
 - [x] Imported datasheet abilities/rules can affect core passive rules for Stealth shooting modifiers, Fights First fight priority, Feel No Pain damage prevention, Lone Operative targeting, and stratagem keyword restrictions.
 
 ### Manual Data Work
-- [ ] Validate and finalize the 45 11th Event Companion terrain layouts already present in `11e-event-layouts.json`.
+- [ ] Validate and finalize the 45 11th Event Companion terrain layouts in `terrainLayouts/11e/terrain-layouts.json`.
   - Owner: Tim/manual editor work.
   - Replace any mirrored-half/template placeholder descriptions or coordinates with exact full-layout data where needed.
   - Keep walls in the saved terrain mat templates where needed.

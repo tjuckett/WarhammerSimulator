@@ -2,6 +2,7 @@ import { BATTLE_PHASE, BATTLE_ROUND_STEP, EVENT_TRIGGER_TIMING, MOVEMENT_PHASE_S
 import { clearPhaseStepActions } from './phaseStepActions';
 import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
 import { phaseDefinitionFor } from './phases/phaseRegistry';
+import { clearModelMovementWaypoints } from './interactiveMovement';
 
 export type BattleFlowNode =
   | { kind: 'pre-battle'; phase: typeof BATTLE_PHASE.Deployment | typeof BATTLE_PHASE.Setup }
@@ -372,7 +373,11 @@ export function battlePhaseStateHandler(node: BattlePhaseNode): BattlePhaseState
  * survive a phase boundary.
  */
 export function initializeBattlePhase(state: BattleState, node: BattlePhaseNode): void {
+  const leavingMovement = state.phase === BATTLE_PHASE.Movement && node.phase !== BATTLE_PHASE.Movement;
   setBattlePhase(state, node);
+  if (leavingMovement) {
+    for (const unit of state.units ?? []) clearModelMovementWaypoints(unit);
+  }
   clearPhaseStepActions(state);
   if (node.phase === BATTLE_PHASE.Deployment || node.phase === BATTLE_PHASE.Setup) {
     state.battleRoundStep = BATTLE_ROUND_STEP.PreBattle;

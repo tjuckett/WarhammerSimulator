@@ -1,17 +1,66 @@
 import React from 'react';
 import type { ImportedArmy, UnitProfile } from '@warhammer-simulator/core/types/army';
-import { UNIT_DEPLOYMENT_MODE } from '@warhammer-simulator/core/types/army';
+import { UNIT_DEPLOYMENT_MODE, type UnitDeploymentMode } from '@warhammer-simulator/core/types/army';
 import { applyBaseSizesToArmy } from '@warhammer-simulator/core/data/unitBaseSizes';
 import { canDeployOutsideDeploymentZone, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
 import { uiTokens } from '../theme/uiTokens';
-import { ModelWeaponLoadoutEditor } from './ArmyModelWeaponLoadoutEditor';
+import { ArmyWargearEditor } from './ArmyWargearEditor';
 import { UnitList } from './ArmyUnitList';
-import { attachmentGroupModelCount, buildLeaderManifest, buildTransportManifest, deploymentLabel, deploymentMode, groupedUnitDisplayItems, isLeaderUnit, isTransportUnit, splitPlanForUnit, type LeaderManifestEntry, type TransportManifestEntry, type UnitSplitPlan, unitKey } from './armyPanelHelpers';
+import { attachmentGroupModelCount, buildLeaderManifest, buildTransportManifest, deploymentLabel, deploymentMode, groupedUnitDisplayItems, isLeaderUnit, isTransportUnit, maximizeFreeScalableUnitUpgrades, resizeModelWeaponLoadouts, splitPlanForUnit, type LeaderManifestEntry, type TransportManifestEntry, type UnitSplitPlan, unitKey, unitUpgradeSelectionLimit } from './armyPanelHelpers';
+
+function modelCountOptions(unit: UnitProfile): number[] {
+  const range = unit.modelCountRange;
+  if (!range?.maximum || range.maximum < (range.minimum ?? 1)) return [];
+  const minimum = Math.max(1, range.minimum ?? 1);
+  const step = Math.max(1, range.step ?? 1);
+  const options: number[] = [];
+  for (let count = minimum; count <= range.maximum; count += step) options.push(count);
+  return options;
+}
+
+function resizeModelWargearChoices(unit: UnitProfile, modelCount: number): string[][] | undefined {
+  if (!unit.modelWargearChoices?.length) return undefined;
+  return Array.from({ length: modelCount }, (_, modelIndex) => [...(unit.modelWargearChoices?.[modelIndex] ?? [])]);
+}
+
+function resizeSelectedWargear(unit: UnitProfile, modelCount: number): string[] | undefined {
+  if (!unit.selectedWargear?.length) return maximizeFreeScalableUnitUpgrades(unit, modelCount);
+  const upgrades = (unit.wargearChoices ?? []).filter(choice => choice.kind === 'unit-upgrade');
+  const choicesById = new Map(upgrades.map(choice => [choice.id, choice]));
+  const counts = new Map<string, number>();
+  const groupCounts = new Map<string, number>();
+  const groupLimits = new Map<string, number | undefined>();
+  for (const choice of upgrades) {
+    const limit = unitUpgradeSelectionLimit(choice, modelCount);
+    if (!choice.limitGroup) continue;
+    const current = groupLimits.get(choice.limitGroup);
+    groupLimits.set(choice.limitGroup, current === undefined ? limit : limit === undefined ? current : Math.min(current, limit));
+  }
+
+  const resized = unit.selectedWargear.filter(id => {
+    const choice = choicesById.get(id);
+    if (!choice) return true;
+    const choiceCount = counts.get(id) ?? 0;
+    const choiceLimit = unitUpgradeSelectionLimit(choice, modelCount);
+    if (choiceLimit !== undefined && choiceCount >= choiceLimit) return false;
+    if (choice.limitGroup) {
+      const groupCount = groupCounts.get(choice.limitGroup) ?? 0;
+      const groupLimit = groupLimits.get(choice.limitGroup);
+      if (groupLimit !== undefined && groupCount >= groupLimit) return false;
+      groupCounts.set(choice.limitGroup, groupCount + 1);
+    }
+    counts.set(id, choiceCount + 1);
+    return true;
+  });
+  return maximizeFreeScalableUnitUpgrades(unit, modelCount, resized);
+}
 
 export function StaticUnitList({
   army,
   color,
   editable,
+  showDeploymentControls = true,
+  unitPoints,
   selectedUnitIndex = null,
   onInspectUnit,
   onChangeUnit,
@@ -21,6 +70,8 @@ export function StaticUnitList({
   army: ImportedArmy;
   color: string;
   editable: boolean;
+  showDeploymentControls?: boolean;
+  unitPoints?: (unit: UnitProfile, unitIndex: number) => number | undefined;
   selectedUnitIndex?: number | null;
   onInspectUnit?: (unitIndex: number) => void;
   onChangeUnit: (unitIndex: number, unit: UnitProfile) => void;
@@ -53,6 +104,8 @@ export function StaticUnitList({
         const splitPlan = splitPlanForUnit(u);
         const canSplitUnit = !!splitPlan && u.baseModelCount === splitPlan.totalModels;
         const selected = selectedUnitIndex === i;
+        const points = unitPoints?.(u, i);
+        const modelSizes = modelCountOptions(u);
 
         return (
         <div
@@ -71,7 +124,7 @@ export function StaticUnitList({
           }}
         >
           {groupRole === 'leader' && groupIndex === 0 && (
-            <div style={{ color: uiTokens.color.status.info, fontSize: 9, fontWeight: 800, textTransform: 'uppercase', margin: '0 0 4px 4px', letterSpacing: 0.4 }}>
+            <div style={{ color: uiTokens.color.status.info, fontSize: 12, fontWeight: 800, textTransform: 'uppercase', margin: '0 0 4px 4px', letterSpacing: 0.4 }}>
               Attached group
             </div>
           )}
@@ -95,12 +148,13 @@ export function StaticUnitList({
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
               {editable && (
-                <span style={{ color, fontSize: 12, width: 12 }}>{expanded ? '-' : '+'}</span>
+                <span style={{ color, fontSize: 14, width: 14 }}>{expanded ? '-' : '+'}</span>
               )}
-              <span style={{ flex: 1, minWidth: 0, fontSize: 12, fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <span style={{ flex: 1, minWidth: 0, fontSize: 14, fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {u.name}
               </span>
-              <span style={{ color: '#777', fontSize: 10, whiteSpace: 'nowrap' }}>{u.baseModelCount}x</span>
+              <span style={{ color: '#777', fontSize: 13, whiteSpace: 'nowrap' }}>{u.baseModelCount}x</span>
+              {unitPoints && <span style={{ color: points === undefined ? '#777' : '#d7c77a', fontSize: 13, whiteSpace: 'nowrap' }}>{points === undefined ? '? pts' : `${points} pts`}</span>}
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 3 }}>
               {groupRole === 'leader' && <Badge label="Leader" color={uiTokens.color.status.info} />}
@@ -133,13 +187,13 @@ export function StaticUnitList({
                   borderRadius: 3,
                   color: uiTokens.color.text.primary,
                   font: 'inherit',
-                  fontSize: 12,
+                  fontSize: 14,
                   fontWeight: 'bold',
                   padding: '2px 4px',
                 }}
               />
             ) : (
-              <div style={{ color: uiTokens.color.text.primary, fontSize: 12, fontWeight: 'bold' }}>{u.name}</div>
+              <div style={{ color: uiTokens.color.text.primary, fontSize: 14, fontWeight: 'bold' }}>{u.name}</div>
             )}
             {editable && (
               <button
@@ -154,7 +208,7 @@ export function StaticUnitList({
                   background: '#231515',
                   color: '#ff8a8a',
                   cursor: 'pointer',
-                  fontSize: 12,
+                  fontSize: 14,
                   lineHeight: '18px',
                 }}
               >
@@ -165,29 +219,71 @@ export function StaticUnitList({
           {editable && (
             <div style={{
               display: 'grid',
-              gridTemplateColumns: showTransportCapacity ? '1fr 1fr 1fr' : '1fr 1fr',
+              gridTemplateColumns: `repeat(${1 + (showTransportCapacity ? 1 : 0) + (showDeploymentControls ? 1 : 0)}, minmax(0, 1fr))`,
               gap: 4,
               marginTop: 4,
             }}>
-              <label style={{ color: '#777', fontSize: 10 }}>
-                Models
-                <input
-                  type="number"
-                  min={1}
-                  value={u.baseModelCount}
-                  onChange={event => {
-                    const baseModelCount = Math.max(1, Number(event.target.value) || 1);
-                    onChangeUnit(i, {
-                      ...u,
-                      baseModelCount,
-                      modelWeaponLoadouts: resizeModelWeaponLoadouts(u, baseModelCount),
-                    });
-                  }}
-                  style={numberInputStyle}
-                />
-              </label>
+              {modelSizes.length > 0 ? (
+                <div style={{ color: '#777', fontSize: 13 }}>
+                  <div>Unit size</div>
+                  <div role="group" aria-label="Unit size" style={unitSizeButtonsStyle}>
+                    {modelSizes.map(size => {
+                      const selectedSize = u.baseModelCount === size;
+                      return (
+                        <button
+                          key={size}
+                          type="button"
+                          aria-pressed={selectedSize}
+                          aria-label={`${size} models`}
+                          onClick={() => {
+                            const baseModelCount = size;
+                            onChangeUnit(i, {
+                              ...u,
+                              baseModelCount,
+                              modelWeaponLoadouts: resizeModelWeaponLoadouts(u, baseModelCount),
+                              modelWargearChoices: resizeModelWargearChoices(u, baseModelCount),
+                              selectedWargear: resizeSelectedWargear(u, baseModelCount),
+                            });
+                          }}
+                          style={unitSizeButtonStyle(color, selectedSize)}
+                        >
+                          {size}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <label style={{ color: '#777', fontSize: 13 }}>
+                  Unit size
+                  <input
+                    type="number"
+                    min={u.modelCountRange?.minimum ?? 1}
+                    max={u.modelCountRange?.maximum}
+                    step={u.modelCountRange?.step ?? 1}
+                    value={u.baseModelCount}
+                    onChange={event => {
+                      const range = u.modelCountRange;
+                      const minimum = range?.minimum ?? 1;
+                      const maximum = range?.maximum ?? Number.POSITIVE_INFINITY;
+                      const requested = Math.max(minimum, Math.min(maximum, Number(event.target.value) || minimum));
+                      const baseModelCount = range?.step
+                        ? minimum + Math.round((requested - minimum) / range.step) * range.step
+                        : requested;
+                      onChangeUnit(i, {
+                        ...u,
+                        baseModelCount,
+                        modelWeaponLoadouts: resizeModelWeaponLoadouts(u, baseModelCount),
+                        modelWargearChoices: resizeModelWargearChoices(u, baseModelCount),
+                        selectedWargear: resizeSelectedWargear(u, baseModelCount),
+                      });
+                    }}
+                    style={numberInputStyle}
+                  />
+                </label>
+              )}
               {showTransportCapacity && (
-                <label style={{ color: '#777', fontSize: 10 }}>
+                <label style={{ color: '#777', fontSize: 13 }}>
                   Capacity
                   <input
                     type="number"
@@ -204,32 +300,34 @@ export function StaticUnitList({
                   />
                 </label>
               )}
-              <label style={{ color: '#777', fontSize: 10 }}>
-                Deployment
-                <select
-                  value={deploymentMode(u)}
-                  onChange={event => {
-                    const mode = event.target.value as UnitDeploymentMode;
-                    if (mode === UNIT_DEPLOYMENT_MODE.Transport && unitIsTransport) return;
-                    onChangeUnit(i, {
-                      ...u,
-                      deployment: mode === UNIT_DEPLOYMENT_MODE.Battlefield
-                        ? undefined
-                        : {
-                          mode,
-                          transportUnitId: mode === UNIT_DEPLOYMENT_MODE.Transport ? u.deployment?.transportUnitId : undefined,
-                          transportName: mode === UNIT_DEPLOYMENT_MODE.Transport ? u.deployment?.transportName : undefined,
-                        },
-                    });
-                  }}
-                  style={selectInputStyle(color)}
-                >
-                  <option value={UNIT_DEPLOYMENT_MODE.Battlefield}>Battlefield</option>
-                  <option value={UNIT_DEPLOYMENT_MODE.DeepStrike}>Deep Strike</option>
-                  <option value={UNIT_DEPLOYMENT_MODE.StrategicReserve}>Reserves</option>
-                  <option value={UNIT_DEPLOYMENT_MODE.Transport} disabled={unitIsTransport}>Transport</option>
-                </select>
-              </label>
+              {showDeploymentControls && (
+                <label style={{ color: '#777', fontSize: 13 }}>
+                  Deployment
+                  <select
+                    value={deploymentMode(u)}
+                    onChange={event => {
+                      const mode = event.target.value as UnitDeploymentMode;
+                      if (mode === UNIT_DEPLOYMENT_MODE.Transport && unitIsTransport) return;
+                      onChangeUnit(i, {
+                        ...u,
+                        deployment: mode === UNIT_DEPLOYMENT_MODE.Battlefield
+                          ? undefined
+                          : {
+                            mode,
+                            transportUnitId: mode === UNIT_DEPLOYMENT_MODE.Transport ? u.deployment?.transportUnitId : undefined,
+                            transportName: mode === UNIT_DEPLOYMENT_MODE.Transport ? u.deployment?.transportName : undefined,
+                          },
+                      });
+                    }}
+                    style={selectInputStyle(color)}
+                  >
+                    <option value={UNIT_DEPLOYMENT_MODE.Battlefield}>Battlefield</option>
+                    <option value={UNIT_DEPLOYMENT_MODE.DeepStrike}>Deep Strike</option>
+                    <option value={UNIT_DEPLOYMENT_MODE.StrategicReserve}>Reserves</option>
+                    <option value={UNIT_DEPLOYMENT_MODE.Transport} disabled={unitIsTransport}>Transport</option>
+                  </select>
+                </label>
+              )}
             </div>
           )}
           {editable && splitPlan && (
@@ -247,7 +345,7 @@ export function StaticUnitList({
                 color: canSplitUnit ? '#ccc' : '#666',
                 cursor: canSplitUnit ? 'pointer' : 'not-allowed',
                 font: 'inherit',
-                fontSize: 10,
+                fontSize: 14,
                 padding: '2px 6px',
               }}
             >
@@ -255,7 +353,7 @@ export function StaticUnitList({
             </button>
           )}
           {editable && unitIsLeader && (
-            <label style={{ display: 'block', color: '#777', fontSize: 10, marginTop: 4 }}>
+            <label style={{ display: 'block', color: '#777', fontSize: 13, marginTop: 4 }}>
               Attached to
               <select
                 value={currentLeaderTargetId}
@@ -264,7 +362,7 @@ export function StaticUnitList({
                   onChangeUnit(i, {
                     ...u,
                     leaderAttachment: target
-                      ? { attachedToUnitId: target.id, attachedToName: target.unit.name }
+                      ? { attachedToUnitId: target.id }
                       : undefined,
                   });
                 }}
@@ -282,19 +380,15 @@ export function StaticUnitList({
             </label>
           )}
           {ownLeaderEntry?.leaders.length ? (
-            <div style={{ color: uiTokens.color.status.info, fontSize: 10, marginTop: 2 }}>
+            <div style={{ color: uiTokens.color.status.info, fontSize: 13, marginTop: 2 }}>
               Leaders: {ownLeaderEntry.leaders.map(leader => leader.name).join(', ')}
             </div>
           ) : null}
           {editable && u.weapons.length > 0 && (
-            <ModelWeaponLoadoutEditor
-              unit={u}
-              color={color}
-              onChange={modelWeaponLoadouts => onChangeUnit(i, { ...u, modelWeaponLoadouts })}
-            />
+            <ArmyWargearEditor unit={u} color={color} onChange={nextUnit => onChangeUnit(i, nextUnit)} />
           )}
-          {editable && deploymentMode(u) === UNIT_DEPLOYMENT_MODE.Transport && (
-            <label style={{ display: 'block', color: '#777', fontSize: 10, marginTop: 4 }}>
+          {editable && showDeploymentControls && deploymentMode(u) === UNIT_DEPLOYMENT_MODE.Transport && (
+            <label style={{ display: 'block', color: '#777', fontSize: 13, marginTop: 4 }}>
               Transport
               <select
                 value={currentTransportId}
@@ -330,28 +424,28 @@ export function StaticUnitList({
               </select>
             </label>
           )}
-          {editable && deploymentMode(u) === UNIT_DEPLOYMENT_MODE.Transport && selectedTransportOverCapacity && (
-            <div style={{ color: '#ff8a8a', fontSize: 10, marginTop: 2 }}>
+          {editable && showDeploymentControls && deploymentMode(u) === UNIT_DEPLOYMENT_MODE.Transport && selectedTransportOverCapacity && (
+            <div style={{ color: '#ff8a8a', fontSize: 13, marginTop: 2 }}>
               Transport over capacity: {selectedTransport.used}/{selectedTransport.capacity}
             </div>
           )}
           {ownTransportEntry && (
             <div style={{
               color: ownTransportEntry.capacity && ownTransportEntry.used > ownTransportEntry.capacity ? '#ff8a8a' : '#888',
-              fontSize: 10,
+              fontSize: 13,
               marginTop: 2,
             }}>
               Transport load: {ownTransportEntry.used}/{ownTransportEntry.capacity || '?'}
               {ownTransportEntry.passengers.length ? ` - ${ownTransportEntry.passengers.map(passenger => passenger.name).join(', ')}` : ''}
             </div>
           )}
-          {deploymentMode(u) !== UNIT_DEPLOYMENT_MODE.Battlefield && (
-            <div style={{ color, fontSize: 10, marginTop: 1 }}>
+          {showDeploymentControls && deploymentMode(u) !== UNIT_DEPLOYMENT_MODE.Battlefield && (
+            <div style={{ color, fontSize: 13, marginTop: 1 }}>
               {deploymentLabel(u, army)}
             </div>
           )}
           {u.leaderAttachment && (
-            <div style={{ color: uiTokens.color.status.info, fontSize: 10, marginTop: 1 }}>
+            <div style={{ color: uiTokens.color.status.info, fontSize: 13, marginTop: 1 }}>
               Attached to {leaderManifest.find(entry => entry.id === u.leaderAttachment?.attachedToUnitId)?.unit.name ?? u.leaderAttachment.attachedToName ?? 'unit'}
             </div>
           )}
@@ -407,8 +501,8 @@ function UnitSummaryBadges({
         <span
           key={`${badge.label}-${index}`}
           style={{
-            fontSize: 9,
-            padding: '1px 4px',
+            fontSize: 12,
+            padding: '2px 5px',
             borderRadius: 2,
             background: `${badge.color}22`,
             color: badge.color,
@@ -431,9 +525,32 @@ const numberInputStyle: React.CSSProperties = {
   borderRadius: 3,
   color: uiTokens.color.text.primary,
   font: 'inherit',
-  fontSize: 11,
-  padding: '2px 4px',
+  fontSize: 14,
+  padding: '4px 6px',
 };
+
+const unitSizeButtonsStyle: React.CSSProperties = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: 4,
+  marginTop: 2,
+};
+
+function unitSizeButtonStyle(color: string, selected: boolean): React.CSSProperties {
+  return {
+    minWidth: 42,
+    minHeight: 29,
+    padding: '4px 8px',
+    border: `1px solid ${selected ? color : `${color}33`}`,
+    borderRadius: 3,
+    background: selected ? `${color}33` : '#111118',
+    color: selected ? uiTokens.color.text.primary : uiTokens.color.text.subdued,
+    cursor: 'pointer',
+    font: 'inherit',
+    fontSize: 14,
+    fontWeight: selected ? 800 : 500,
+  };
+}
 
 function selectInputStyle(color: string): React.CSSProperties {
   return {
@@ -445,15 +562,15 @@ function selectInputStyle(color: string): React.CSSProperties {
     borderRadius: 3,
     color: uiTokens.color.text.primary,
     font: 'inherit',
-    fontSize: 11,
-    padding: '2px 4px',
+    fontSize: 14,
+    padding: '4px 6px',
   };
 }
 
 export function Badge({ label, color }: { label: string; color: string }) {
   return (
     <span style={{
-      fontSize: 9, padding: '1px 4px', borderRadius: 2,
+      fontSize: 12, padding: '2px 6px', borderRadius: 2,
       background: `${color}33`, color, border: `1px solid ${color}66`,
     }}>
       {label}

@@ -1,5 +1,6 @@
 import type { BattleState } from '../types/battle';
 import type { RulesetMetadata } from '../engine/rulesEngine';
+import { clone } from '../engine/clone';
 import { applyGameAction, type GameAction, type GameActionContext, type GameActionInteractionState } from './actions';
 
 export const PRACTICE_TIMELINE_VERSION = 1;
@@ -56,10 +57,6 @@ export interface AppendTimelineActionOptions {
 export interface AppendResolvedTimelineActionOptions extends AppendTimelineActionOptions {
   stateBefore: BattleState;
   stateAfter: BattleState;
-}
-
-function clone<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value));
 }
 
 function nowIso(): string {
@@ -120,8 +117,10 @@ export function appendTimelineAction(
   options: AppendTimelineActionOptions = {},
 ): TimelineStateResult {
   const createdAt = options.createdAt ?? nowIso();
-  const stateBefore = clone(currentState);
   const stateAfter = applyGameAction(currentState, action, context);
+  const stateBefore = timeline.cursor > 0
+    ? timeline.entries[timeline.cursor - 1]?.stateAfter ?? timeline.initialState
+    : timeline.initialState;
   const entry: PracticeTimelineEntry = {
     id: options.id ?? makeId('entry'),
     action: {
@@ -167,7 +166,9 @@ export function appendResolvedTimelineAction(
       createdAt: action.createdAt ?? createdAt,
     },
     createdAt,
-    stateBefore: clone(options.stateBefore),
+    stateBefore: timeline.cursor > 0
+      ? timeline.entries[timeline.cursor - 1]?.stateAfter ?? timeline.initialState
+      : timeline.initialState,
     stateAfter: clone(options.stateAfter),
     note: options.note,
   };

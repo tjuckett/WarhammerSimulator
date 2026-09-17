@@ -25,6 +25,10 @@ export interface ModelStatProfile {
 }
 
 export interface RuleText {
+  /** Stable catalog identifier; imports may omit it and remain name-matchable. */
+  ruleId?: string;
+  /** Canonical catalog reference retained when a different runtime ID is used. */
+  sourceRuleId?: string;
   name: string;
   description: string;
   /** Core 22 tags printed on the rule. Text-only imports remain supported. */
@@ -51,6 +55,35 @@ export type ModelBase =
   | { shape: 'hull'; widthMm: number; lengthMm: number; footprint?: 'square' | 'rectangle' | 'circle'; label?: string }
   | { shape: 'other'; label: string };
 
+/** A catalog-defined legal wargear selection. Weapon names map to the unit profile. */
+export interface WargearChoice {
+  id: string;
+  label: string;
+  kind: 'model-loadout' | 'unit-upgrade';
+  /** The loadout used when newly added models have no explicit selection. */
+  isDefault?: boolean;
+  /** Complete loadouts are the default; replacement slots preserve the model's other weapons. */
+  selectionMode?: 'complete-loadout' | 'replacement-slot';
+  /** Stable grouping key for choices that replace the same physical weapon slot. */
+  slotId?: string;
+  /** Models that may use this loadout. Omit for a unit-level upgrade. */
+  eligibleModelIndexes?: number[];
+  /** Hard cap for this choice, across the unit. */
+  maximumSelections?: number;
+  /** Dynamic cap: one selection for each number of models in the unit. */
+  maximumSelectionsPerModels?: number;
+  /** Choices sharing this ID count against the same cap. */
+  limitGroup?: string;
+  /** Additional points per selection; omitted means the datasheet lists no separate cost. */
+  points?: number;
+  /** Complete weapon loadout for a selected model, or weapons added by an upgrade. */
+  weaponNames?: string[];
+  /** Original weapon(s) removed when a replacement-slot choice is selected. */
+  replacesWeaponNames?: string[];
+  /** Source datasheet text explaining this option, when available. */
+  description?: string;
+}
+
 export interface UnitProfile {
   rosterId?: string;
   name: string;
@@ -62,10 +95,20 @@ export interface UnitProfile {
   leadership: number;   // battleshock target (7 = 7+)
   oc: number;           // objective control
   baseModelCount: number;
+  /** Catalog-backed legal unit sizes used by roster editors. */
+  modelCountRange?: { minimum: number; maximum?: number; step?: number };
   modelProfiles?: ModelStatProfile[];
   transportCapacity?: number;
   modelBases?: ModelBase[]; // one entry per model; repeated automatically when loaded from army data
-  modelWeaponLoadouts?: number[][]; // weapon indices carried by each model; defaults to every model carrying every weapon
+  modelWeaponLoadouts?: number[][]; // weapon indices carried by each model; repeated indices represent multiple copies of one weapon profile; an explicit empty loadout means no weapons, while a missing model entry defaults to every weapon
+  /** Selected replacement-slot IDs, kept per model because flat weapon lists cannot distinguish duplicate slots. */
+  modelWargearChoices?: string[][];
+  /** Structured catalog choices presented by the roster editor. */
+  wargearChoices?: WargearChoice[];
+  /** Original datasheet wargear-option text. */
+  wargearOptions?: string[];
+  /** Catalog selection metadata; canonical definitions remain immutable. */
+  selectedWargear?: string[];
   movementOverrides?: MovementRuleOverride;
   keywords: string[];
   factionKeywords: string[];
@@ -88,10 +131,20 @@ export interface ImportedArmy {
   units: UnitProfile[];
   /** Selected BattleScribe/NewRecruit battle-size option, when the roster provides one. */
   battleSizeId?: string;
+  /** Selected faction detachment, when the catalog or roster provides one. */
+  detachmentId?: string;
   /** Source roster edition, when the importer can identify it. */
   sourceEdition?: '10e' | '11e' | 'unknown';
   /** Catalog constraints recovered from an authoritative roster export, when present. */
   catalog?: ArmyCatalog;
+  /** Non-runtime details retained from roster formats that include list metadata. */
+  sourceMetadata?: {
+    sourceName?: string;
+    sourceUrl?: string;
+    detachmentName?: string;
+    detachmentPoints?: number;
+    missionName?: string;
+  };
   generation?: ArmyGenerationMetadata;
 }
 

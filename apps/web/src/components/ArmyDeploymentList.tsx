@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
 import type { BattleUnit } from '@warhammer-simulator/core/types/battle';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile } from '@warhammer-simulator/core/types/army';
 import { canDeployOutsideDeploymentZone, unitRosterId } from '@warhammer-simulator/core/engine/armyUnits';
+import { attachedUnitId } from '@warhammer-simulator/core/engine/attachedUnits';
 import { uiTokens } from '../theme/uiTokens';
 import { Badge } from './ArmyStaticUnitList';
 import { UnitList } from './ArmyUnitList';
@@ -67,8 +69,15 @@ export function PlayDeploymentList({
   onInspectStagedUnit?: (unitIndex: number) => void;
   onUndeployPlacedUnit?: (unitId: string, side: 0 | 1) => void;
 }) {
-  const unplacedDisplayItems = groupedPlayDropDisplayItems(army, unplacedUnits);
-  const stagedItems = groupedStagedDisplayItems(army, placedUnits, reserveUnits);
+  const unplacedDisplayItems = useMemo(
+    () => groupedPlayDropDisplayItems(army, unplacedUnits),
+    [army, unplacedUnits],
+  );
+  const stagedItems = useMemo(
+    () => groupedStagedDisplayItems(army, placedUnits, reserveUnits),
+    [army, placedUnits, reserveUnits],
+  );
+  const placedGroupCount = new Set(placedUnits.map(unit => `${unit.side}:${attachedUnitId(unit)}`)).size;
   return (
     <>
       <PanelSectionHeader label="To Deploy" count={unplacedDisplayItems.length} color={color} />
@@ -84,7 +93,9 @@ export function PlayDeploymentList({
             padding: '7px 8px',
             textAlign: 'left',
             background: selectedIndex === deployIndex ? `${color}24` : groupRole !== 'solo' ? 'rgba(82,118,190,0.12)' : '#15151f',
-            border: `1px solid ${selectedIndex === deployIndex ? color : groupRole !== 'solo' ? '#9ab7ff4d' : '#292940'}`,
+            borderTop: `1px solid ${selectedIndex === deployIndex ? color : groupRole !== 'solo' ? '#9ab7ff4d' : '#292940'}`,
+            borderRight: `1px solid ${selectedIndex === deployIndex ? color : groupRole !== 'solo' ? '#9ab7ff4d' : '#292940'}`,
+            borderBottom: `1px solid ${selectedIndex === deployIndex ? color : groupRole !== 'solo' ? '#9ab7ff4d' : '#292940'}`,
             borderLeft: groupRole !== 'solo' ? '4px solid #9ab7ff99' : `4px solid ${selectedIndex === deployIndex ? color : '#292940'}`,
             borderRadius: 5,
             color: uiTokens.color.text.primary,
@@ -130,7 +141,9 @@ export function PlayDeploymentList({
               : kind === 'reserve'
                 ? 'rgba(102,215,255,0.07)'
               : groupRole !== 'solo' ? 'rgba(80,120,210,0.06)' : '#111118',
-            border: `1px solid ${kind === 'transport' ? '#ffe06644' : kind === 'reserve' ? '#66d7ff44' : groupRole !== 'solo' ? '#9ab7ff33' : '#24243a'}`,
+            borderTop: `1px solid ${kind === 'transport' ? '#ffe06644' : kind === 'reserve' ? '#66d7ff44' : groupRole !== 'solo' ? '#9ab7ff33' : '#24243a'}`,
+            borderRight: `1px solid ${kind === 'transport' ? '#ffe06644' : kind === 'reserve' ? '#66d7ff44' : groupRole !== 'solo' ? '#9ab7ff33' : '#24243a'}`,
+            borderBottom: `1px solid ${kind === 'transport' ? '#ffe06644' : kind === 'reserve' ? '#66d7ff44' : groupRole !== 'solo' ? '#9ab7ff33' : '#24243a'}`,
             borderLeft: kind === 'transport'
               ? '4px solid #ffe06688'
               : kind === 'reserve'
@@ -178,7 +191,7 @@ export function PlayDeploymentList({
         <div style={{ color: '#555', fontSize: 10, padding: '4px 8px 8px' }}>No deep strike, reserve, or embarked units</div>
       )}
 
-      <PanelSectionHeader label="On Board" count={placedUnits.length} color="#8888aa" />
+      <PanelSectionHeader label="On Board" count={placedGroupCount} color="#8888aa" />
       {placedUnits.length ? (
         <UnitList
           units={placedUnits}

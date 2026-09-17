@@ -1,7 +1,14 @@
 import { useRef, useState, type MutableRefObject } from 'react';
+import type { BattleState } from '@warhammer-simulator/core/types/battle';
+import { clone } from '@warhammer-simulator/core/engine/clone';
 import type { PracticeTimeline as GameSessionTimeline, TimelineStateResult } from '@warhammer-simulator/core/practice/timeline';
 import { currentTimelineState, truncateTimelineAtCursor } from '@warhammer-simulator/core/practice/timeline';
-import { scenarioFromTimeline, type PracticeCheckpointKind as GameSessionCheckpointKind } from '@warhammer-simulator/core/practice/scenarios';
+import {
+  currentScenarioState,
+  scenarioFromTimeline,
+  timelineForScenario,
+  type PracticeCheckpointKind as GameSessionCheckpointKind,
+} from '@warhammer-simulator/core/practice/scenarios';
 import type { PracticeScenarioSummary as GameSessionScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
 import {
   CHECKPOINT_KIND_SAVED_LABELS,
@@ -24,6 +31,7 @@ type SaveOptions = {
 
 type UseGameSessionControllerParams = {
   gameSessionTimelineRef: MutableRefObject<GameSessionTimeline | null>;
+  battleStateRef: MutableRefObject<BattleState | null>;
   checkpointBranchIdRef: MutableRefObject<string>;
   activeCheckpointIdRef: MutableRefObject<string | null>;
   activeGameIdRef: MutableRefObject<string | null>;
@@ -43,6 +51,7 @@ type UseGameSessionControllerParams = {
 
 export function useGameSessionController({
   gameSessionTimelineRef,
+  battleStateRef,
   checkpointBranchIdRef,
   activeCheckpointIdRef,
   activeGameIdRef,
@@ -64,12 +73,21 @@ export function useGameSessionController({
   const [saveStatus, setSaveStatus] = useState('');
   const [saveInProgress, setSaveInProgress] = useState(false);
   const pendingCheckpointIdRef = useRef<string | null>(null);
+  // Autosaves can be triggered several times before the database request for
+  // the first one completes (the initial deployment save is the common case).
+  // Serialize the writes so an older snapshot cannot finish after a newer
+  // snapshot and become the save selected by the load dialog.
+  const saveQueueRef = useRef<Promise<unknown>>(Promise.resolve());
 
-  async function saveCheckpoint(
+  async function saveCheckpointNow(
     kind: GameSessionCheckpointKind,
     mode: SaveMode = 'current',
     options: SaveOptions = {},
   ) {
+    // Autosaves include a complete timeline snapshot. Let the just-completed
+    // phase render before doing that work so persistence cannot make the
+    // phase button appear to hang on a long-running game.
+    if (kind === 'auto-phase') await new Promise<void>(resolve => setTimeout(resolve, 0));
     const sourceTimeline = gameSessionTimelineRef.current;
     setSaveInProgress(true);
     try {
@@ -81,25 +99,38 @@ export function useGameSessionController({
         ? sourceTimeline
         : truncateTimelineAtCursor(sourceTimeline);
       const timelineWasRebased = timeline !== sourceTimeline;
-      const state = currentTimelineState(timeline);
+      const state = battleStateRef.current ?? currentTimelineState(timeline);
       const label = checkpointLabelForState(state, kind);
       const isNewGame = mode === 'new-game';
       const gameId = isNewGame ? createBranchId() : activeGameIdRef.current ?? timeline.metadata.id;
       const branchId = isNewGame ? createBranchId() : checkpointBranchIdRef.current;
       const checkpointId = options.overwriteCheckpointId ?? activeCheckpointIdRef.current;
-      const scenario = scenarioFromTimeline(timeline, {
-        id: mode === 'new-game' ? undefined : checkpointId ?? undefined,
-        name: label,
-        gameId,
-        branchId,
-        parentCheckpointId: undefined,
-        checkpointKind: kind,
-        checkpointLabel: label,
-        sequence: await nextCheckpointSequence(gameSessionRepository, gameId),
-        timelineCursor: timeline.cursor,
-      });
+      const scenario = {
+        ...scenarioFromTimeline(timeline, {
+          id: mode === 'new-game' ? undefined : checkpointId ?? undefined,
+          name: label,
+          gameId,
+          branchId,
+          parentCheckpointId: undefined,
+          checkpointKind: kind,
+          checkpointLabel: label,
+          sequence: await nextCheckpointSequence(gameSessionRepository, gameId),
+          timelineCursor: timeline.cursor,
+        }),
+        // The React battle state is authoritative at save time. The timeline
+        // is updated alongside it, but autosaves can begin in the same event
+        // turn as a phase transition and briefly expose the previous cursor.
+        initialState: clone(state),
+      };
       const summaries = await gameSessionRepository.saveScenario(scenario);
-      if (timelineWasRebased) {
+      // Saving is asynchronous. A player can advance one or more steps while
+      // this request is in flight, so never restore the snapshot used by the
+      // save unless it is still the live timeline *and* battle state. Without
+      // this guard an older autosave could visibly jump the board back to the
+      // beginning of a phase after the player had already progressed.
+      if (timelineWasRebased
+        && gameSessionTimelineRef.current === sourceTimeline
+        && battleStateRef.current === state) {
         restoreTimelineResult({
           timeline,
           state: currentTimelineState(timeline),
@@ -118,6 +149,21 @@ export function useGameSessionController({
     } finally {
       setSaveInProgress(false);
     }
+  }
+
+  function saveCheckpoint(
+    kind: GameSessionCheckpointKind,
+    mode: SaveMode = 'current',
+    options: SaveOptions = {},
+  ) {
+    const queuedSave = saveQueueRef.current.then(
+      () => saveCheckpointNow(kind, mode, options),
+      () => saveCheckpointNow(kind, mode, options),
+    );
+    // Keep the queue alive after a failed save while preserving the rejection
+    // for the caller that initiated that save.
+    saveQueueRef.current = queuedSave.then(() => undefined, () => undefined);
+    return queuedSave;
   }
 
   async function saveAutoPhaseCheckpoint() {
@@ -166,26 +212,49 @@ export function useGameSessionController({
   }
 
   async function loadSavedScenario(scenarioId: string, options: LoadOptions = {}) {
-    const scenario = await gameSessionRepository.loadScenario(scenarioId);
-    if (!scenario) {
-      void refreshSavedScenarios();
-      setPendingCheckpointLoad(null);
-      return;
-    }
+    // A scenario load is asynchronous. If the player has resumed interacting
+    // with the table before it completes, that request is stale: restoring
+    // its saved interaction state would overwrite a live selection (notably
+    // a defender being kept open for pending damage allocation).
+    const stateAtLoadRequest = battleStateRef.current;
+    const timelineAtLoadRequest = gameSessionTimelineRef.current;
+    try {
+      // Do not let a save that was already in flight finish after the load and
+      // re-assert its older checkpoint metadata/state. This also makes a load
+      // requested immediately after a phase transition deterministic.
+      await saveQueueRef.current;
+      const scenario = await gameSessionRepository.loadScenario(scenarioId);
+      if (!scenario) {
+        void refreshSavedScenarios();
+        setPendingCheckpointLoad(null);
+        setSaveStatus('Load failed: the saved game no longer exists.');
+        return;
+      }
 
-    restoreTimelineResult({
-      timeline: scenario.timeline,
-      state: currentTimelineState(scenario.timeline),
-    });
-    setActiveCheckpointId(scenario.metadata.id);
-    setActiveGameId(scenario.metadata.gameId ?? scenario.timeline.metadata.id);
-    checkpointBranchIdRef.current = options.branchOnNextSave
-      ? createBranchId()
-      : scenario.metadata.branchId ?? createBranchId();
-    setPendingCheckpointLoad(null);
-    setSaveStatus(
-      `${options.statusPrefix ?? ''}Loaded ${scenario.metadata.name}.${options.branchOnNextSave ? ' Future checkpoints will branch from here.' : ''}`,
-    );
+      if (battleStateRef.current !== stateAtLoadRequest
+        || gameSessionTimelineRef.current !== timelineAtLoadRequest) {
+        setPendingCheckpointLoad(null);
+        setSaveStatus('Ignored a stale saved-game load because the table changed while it was loading.');
+        return;
+      }
+
+      restoreTimelineResult({
+        timeline: timelineForScenario(scenario),
+        state: currentScenarioState(scenario),
+      });
+      setActiveCheckpointId(scenario.metadata.id);
+      setActiveGameId(scenario.metadata.gameId ?? scenario.timeline.metadata.id);
+      checkpointBranchIdRef.current = options.branchOnNextSave
+        ? createBranchId()
+        : scenario.metadata.branchId ?? createBranchId();
+      setPendingCheckpointLoad(null);
+      setSaveStatus(
+        `${options.statusPrefix ?? ''}Loaded ${scenario.metadata.name}.${options.branchOnNextSave ? ' Future checkpoints will branch from here.' : ''}`,
+      );
+    } catch (error) {
+      setPendingCheckpointLoad(null);
+      setSaveStatus(`Load failed: ${error instanceof Error ? error.message : 'unknown storage error'}`);
+    }
   }
 
   function requestLoadSavedScenario(scenarioId: string) {

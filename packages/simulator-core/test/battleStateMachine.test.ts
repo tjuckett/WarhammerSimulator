@@ -94,6 +94,21 @@ test('shared phase advance applies movement substeps and boundary cursor cleanup
   assert.equal(current.movementPhaseStep, undefined);
 });
 
+test('shared phase advance leaves Command at Movement instead of re-entering Command', () => {
+  const current = {
+    ...state(),
+    phase: BATTLE_PHASE.Command,
+    phaseStep: PHASE_STEP.CommandEnd,
+  } as unknown as BattleState;
+
+  const transition = advanceBattlePhase(current);
+
+  assert.deepEqual(transition?.to, { phase: BATTLE_PHASE.Movement, step: MOVEMENT_STEP.MoveUnits });
+  assert.equal(current.phase, BATTLE_PHASE.Movement);
+  assert.equal(current.movementStep, MOVEMENT_STEP.MoveUnits);
+  assert.equal(current.phaseStep, PHASE_STEP.MovementStart);
+});
+
 test('phase state handlers own entry cursor invariants', () => {
   const current = {
     ...state(),
@@ -112,6 +127,25 @@ test('phase state handlers own entry cursor invariants', () => {
   assert.equal(current.pendingChargeRoll, undefined);
   assert.equal(current.pendingChargeMovement, undefined);
   assert.equal(current.fightStepStarted, false);
+});
+
+test('leaving Movement clears transient model waypoints', () => {
+  const current = {
+    ...state(),
+    phase: BATTLE_PHASE.Movement,
+    units: [{
+      id: 'mover',
+      movementWaypoints: [{ x: 4, y: 4 }],
+      movementWaypointsByModel: [[{ x: 4, y: 4 }]],
+      movementPathByModel: [[{ x: 2, y: 2 }, { x: 4, y: 4 }]],
+    }],
+  } as unknown as BattleState;
+
+  initializeBattlePhase(current, { phase: BATTLE_PHASE.Shooting });
+
+  assert.equal(current.units[0].movementWaypoints, undefined);
+  assert.equal(current.units[0].movementWaypointsByModel, undefined);
+  assert.deepEqual(current.units[0].movementPathByModel, [[{ x: 2, y: 2 }, { x: 4, y: 4 }]]);
 });
 
 test('Fight entry resets Fight-step flags for both armies', () => {

@@ -1,10 +1,11 @@
 import { type ReactNode, useState } from 'react';
-import { Box, Button, TextField, Tooltip, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, TextField, Tooltip, Typography } from '@mui/material';
 import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { CommandRerollRollType, HeroicInterventionMode, StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
 import { commandPoints } from '@warhammer-simulator/core/engine/commandPoints';
 import { estimateSequentialModelEquivalentLosses, modelGroupsForCombatEstimate } from '@warhammer-simulator/core/engine/combatEstimation';
 import { battleUnitsBaseEdgeDistance, playShootingWeaponModelCount, type CombatHitPreview, type FiringDeckSelection, type PlayChargeTargetOption, type PlayShootingWeaponOption } from '@warhammer-simulator/core/engine/simulator';
+import type { ShootingTargetVisibility } from './shootingSession';
 import { explosivesTargetAllowed } from '@warhammer-simulator/core/engine/stratagems';
 import {
   abilityOptionKey,
@@ -33,6 +34,7 @@ import {
   popupPanelSx,
   warningTextSx,
 } from './playPanelShared';
+import { buildShootingAttackAllocations, type ShootingResolutionOrderEntry } from './playAttackAllocations';
 import { CombatDeclarationPanel } from './CombatDeclarationPanel';
 export { PlayTacticsPanel } from './PlayTacticsPanel';
 export { PlayChargePanel } from './PlayChargePanel';
@@ -69,8 +71,25 @@ function hitCalculationTooltip({
         return `${modifier.label} (${amount})`;
       }).join(', ')}.`);
     }
+    if (!group.autoHits && group.requiredHit !== null) {
+      lines.push(`${modelLabel}Requires ${group.requiredHit > 6 ? '6*' : `${group.requiredHit}+`} to hit.`);
+    }
   });
   return lines.join('\n');
+}
+
+/** Formats the engine-owned per-model hit pools without re-calculating them. */
+function hitPreviewTargetLabel(preview?: CombatHitPreview | null): string {
+  if (!preview) return '—';
+  if (preview.autoHits) return 'Auto';
+  if (preview.hitTargetVaries) {
+    const targets = [...new Set(preview.groups
+      .filter(group => !group.autoHits && group.requiredHit !== null)
+      .map(group => group.requiredHit!))];
+    return targets.length ? targets.map(target => target > 6 ? '6*' : `${target}+`).join(' / ') : '—';
+  }
+  if (preview.commonHitTarget === undefined) return '—';
+  return preview.commonHitTarget > 6 ? '6*' : `${preview.commonHitTarget}+`;
 }
 
 function woundCalculationTooltip(strength: number, toughness: number) {
@@ -143,14 +162,25 @@ function TargetDistanceMarker({ distance }: { distance?: number }) {
           cursor: 'help',
         }}
       >
-        LOS {distance.toFixed(1)}&quot;
+        {distance.toFixed(1)}&quot;
       </Typography>
     </Tooltip>
   );
 }
 
-export function PendingDamageAllocationHud({ unit, result, shooter, targetIds = [], selectedTargetId, onTargetSelect }: { unit: BattleUnit; result?: import('@warhammer-simulator/core/types/battle').ShootingResolution | null; shooter?: BattleUnit | null; targetIds?: string[]; selectedTargetId?: string; onTargetSelect?: (targetId: string) => void }) {
+const combatEstimateGroupsCache = new WeakMap<BattleUnit, ReturnType<typeof modelGroupsForCombatEstimate>>();
+
+function cachedCombatEstimateGroups(unit: BattleUnit) {
+  const cached = combatEstimateGroupsCache.get(unit);
+  if (cached) return cached;
+  const groups = modelGroupsForCombatEstimate(unit);
+  combatEstimateGroupsCache.set(unit, groups);
+  return groups;
+}
+
+export function PendingDamageAllocationHud({ unit, result, shooter, targetIds = [], selectedTargetId, onTargetSelect, onDone, lastAllocationOutcome }: { unit: BattleUnit; result?: import('@warhammer-simulator/core/types/battle').ShootingResolution | null; shooter?: BattleUnit | null; targetIds?: string[]; selectedTargetId?: string; onTargetSelect?: (targetId: string) => void; onDone?: () => void; lastAllocationOutcome?: { modelIndex: number; damage: number; killedModels: number } | null }) {
   const label = pendingDamageLabel(unit);
+  const feelNoPain = bestFeelNoPain(unit);
   const hasResultForUnit = !!result?.weapons.some(weapon => weapon.targetUnitId === unit.id);
   if (!label && !hasResultForUnit) return null;
   const pendingAllocations = unit.pendingDamageAllocations ?? [];
@@ -227,6 +257,23 @@ export function PendingDamageAllocationHud({ unit, result, shooter, targetIds = 
           {label ?? 'No damage to apply.'}
         </Typography>
       )}
+      {!label && onDone && (
+        <Button size="small" variant="contained" onClick={onDone} sx={{ justifySelf: 'start' }}>
+          Done
+        </Button>
+      )}
+      {feelNoPain !== null && (
+        <Typography variant="caption" sx={{ color: uiTokens.color.combat.save, fontWeight: 800, lineHeight: 1.2 }}>
+          Feel No Pain {feelNoPain}+ active: one roll is made for each point of pending damage when you allocate it. Only damage not ignored is applied.
+        </Typography>
+      )}
+      {lastAllocationOutcome && (
+        <Typography variant="caption" sx={{ color: lastAllocationOutcome.damage > 0 ? uiTokens.color.combat.damage : uiTokens.color.combat.save, fontWeight: 800, lineHeight: 1.2 }}>
+          {lastAllocationOutcome.damage > 0
+            ? `Last allocation: ${lastAllocationOutcome.damage} damage applied to Model ${lastAllocationOutcome.modelIndex + 1}${lastAllocationOutcome.killedModels > 0 ? ' (destroyed).' : '.'}`
+            : `Last allocation: Model ${lastAllocationOutcome.modelIndex + 1} ignored all damage.`}
+        </Typography>
+      )}
       {label && (
         <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingMuted, lineHeight: 1.2 }}>
           {forcedModel} Each hit's damage applies to one model; excess damage does not carry over.
@@ -245,13 +292,25 @@ function ShootingTargetDice({
   weaponIndex: number;
   targetId: string;
 }) {
+  // Large Fight/Shooting activations can contain hundreds of rolls. The
+  // complete typed result is retained for resolution and history, but
+  // mounting a MUI element for every die makes the popup take seconds to
+  // paint. Keep a representative, ordered sample alongside the exact total.
+  const maxRenderedDice = 48;
   const weaponResult = result?.weapons.find(candidate => candidate.weaponIndex === weaponIndex && candidate.targetUnitId === targetId);
   if (!weaponResult) return null;
-  const groups = weaponResult.groups.filter(group => group.kind === 'hit' || group.kind === 'wound');
+  // The engine can resolve model subsets independently (for example when
+  // cover produces multiple pools). Preserve those typed pools, but display
+  // them by attack stage rather than execution order: Hit pools first, then
+  // Wound pools. Without this a valid split reads "Hit, Wound, Hit".
+  const groups = weaponResult.groups
+    .filter(group => group.kind === 'hit' || group.kind === 'wound')
+    .sort((left, right) => (left.kind === 'hit' ? 0 : 1) - (right.kind === 'hit' ? 0 : 1));
   if (!groups.length) return null;
   return (
     <Box sx={{ display: 'grid', gap: 0.25, mt: 0.25, pl: 0.5 }}>
       {groups.map((group, groupIndex) => {
+        const displayedRolls = orderedDice(group.rolls).slice(0, maxRenderedDice);
         const successCount = group.target !== undefined
           ? group.rolls.filter(roll => roll >= group.target).length
           : group.successes;
@@ -262,7 +321,7 @@ function ShootingTargetDice({
               {label}{successCount !== undefined ? ` - ${successCount} ${group.kind === 'hit' ? 'hits' : 'wounds'}` : ''}
             </Typography>
             <Box sx={{ display: 'flex', gap: 0.25, flexWrap: 'wrap' }}>
-              {orderedDice(group.rolls).map((roll, rollIndex) => {
+              {displayedRolls.map((roll, rollIndex) => {
                 const success = group.target !== undefined && roll >= group.target;
                 const critical = roll === 6;
                 return (
@@ -271,6 +330,11 @@ function ShootingTargetDice({
                   </Box>
                 );
               })}
+              {group.rolls.length > displayedRolls.length && (
+                <Typography variant="caption" sx={{ alignSelf: 'center', color: uiTokens.color.text.secondary, fontSize: 10 }}>
+                  +{group.rolls.length - displayedRolls.length} more
+                </Typography>
+              )}
             </Box>
           </Box>
         );
@@ -279,7 +343,7 @@ function ShootingTargetDice({
   );
 }
 
-export function CombatPanel({
+function CombatPanel({
   shooter,
   popup = false,
   structuredResult = null,
@@ -289,6 +353,7 @@ export function CombatPanel({
   pendingDamageActionLabel = 'Resolve',
   combatMode = 'ranged',
   warning,
+  optionsPending = false,
   targets,
   resultTargets = [],
   selectedTarget,
@@ -298,13 +363,16 @@ export function CombatPanel({
   pendingDamageLabel,
   weaponOptions,
   shootingAttackAllocations = {},
+  shootingResolutionOrder = [],
   selectedTargetId,
   selectedWeaponIndex,
   combatHitPreviews,
   targetDistances,
+  shootingTargetVisibility,
   onTargetChange,
   onWeaponChange,
   onShootingAttackAllocationChange = () => undefined,
+  onShootingResolutionOrderMove,
   firingDeckOptions = [],
   firingDeckCapacity = 0,
   onFiringDeckSelect,
@@ -321,6 +389,7 @@ export function CombatPanel({
   pendingDamageActionLabel?: string;
   combatMode?: 'ranged' | 'melee';
   warning?: ReactNode;
+  optionsPending?: boolean;
   targets: BattleUnit[];
   resultTargets?: BattleUnit[];
   selectedTarget: BattleUnit | null;
@@ -330,13 +399,16 @@ export function CombatPanel({
   pendingDamageLabel?: string | null;
   weaponOptions: PlayShootingWeaponOption[];
   shootingAttackAllocations?: Record<string, Record<string, number>>;
+  shootingResolutionOrder?: ShootingResolutionOrderEntry[];
   selectedTargetId: string;
   selectedWeaponIndex: 'all' | string;
   combatHitPreviews?: Map<string, Map<number, CombatHitPreview>>;
   targetDistances?: ReadonlyMap<string, number>;
+  shootingTargetVisibility?: ReadonlyMap<string, ShootingTargetVisibility>;
   onTargetChange: (value: string) => void;
   onWeaponChange: (value: 'all' | string) => void;
   onShootingAttackAllocationChange?: (weaponIndex: number, targetId: string, attacks: number) => void;
+  onShootingResolutionOrderMove?: (weaponIndex: number, targetUnitId: string, direction: -1 | 1) => void;
   firingDeckOptions?: FiringDeckSelection[];
   firingDeckCapacity?: number;
   onFiringDeckSelect?: (selections: FiringDeckSelection[]) => void;
@@ -362,15 +434,27 @@ export function CombatPanel({
   const completedWithoutPendingDamage = hasStructuredResult && !shootingLocked;
   const noAttackSelected = selectedWeaponIndex !== 'all'
     && weaponOptions.some(option => String(option.weaponIndex) === selectedWeaponIndex && option.weaponIndex < 0);
+  const weaponForOption = (option: PlayShootingWeaponOption) =>
+    option.weapon ?? shooter.profile.weapons[option.sourceWeaponIndex ?? option.weaponIndex];
+  const exactModelCountForWeapon = (option: PlayShootingWeaponOption): number | null => {
+    if (combatMode !== 'ranged' || !shootingTargetVisibility || option.weaponIndex < 0) return null;
+    const modelIndexes = new Set<number>();
+    for (const targetId of option.targetIds) {
+      const visibility = shootingTargetVisibility.get(targetId);
+      if (!visibility || visibility.status === 'checking') return null;
+      for (const modelIndex of visibility.weaponModelIndexes[option.weaponIndex] ?? []) modelIndexes.add(modelIndex);
+    }
+    return modelIndexes.size;
+  };
+  const allocatedModelsForWeapon = (option: PlayShootingWeaponOption) => Object.values(
+    shootingAttackAllocations[String(option.weaponIndex)] ?? {},
+  ).reduce((total, models) => total + (Number(models) || 0), 0);
+  // Legal declarations are validated by the engine action. This component
+  // only prevents UI states that cannot submit anything at all (a locked or
+  // completed unit); it must not approve/reject allocations independently.
   const canResolve = resolvePendingDamage || completedWithoutPendingDamage || (!shootingLocked
     && !shooter.activated
-    && weaponOptions.length > 0
-    && weaponOptions.every(option => option.weaponIndex < 0 || (
-      Object.values(shootingAttackAllocations[String(option.weaponIndex)] ?? {}).reduce((total, models) => total + (Number(models) || 0), 0)
-      === (weaponModelCountFor?.(option.weaponIndex)
-        ?? option.modelCount
-        ?? playShootingWeaponModelCount(shooter, option.weaponIndex))
-    )));
+    && weaponOptions.length > 0);
   const hitPreviewForTargetAndWeapon = (targetId: string, weaponIndex: number): CombatHitPreview | null =>
     structuredResult?.weapons.find(result => result.targetUnitId === targetId && result.weaponIndex === weaponIndex)?.hitPreview
       ?? combatHitPreviews?.get(targetId)?.get(weaponIndex)
@@ -382,10 +466,13 @@ export function CombatPanel({
     ? (selectedWeaponIndex === 'all'
         ? weaponOptions.filter(o => o.targetIds.includes(selectedTargetId))
         : weaponOptions.filter(o => String(o.weaponIndex) === selectedWeaponIndex && o.targetIds.includes(selectedTargetId))
-      ).map(o => shooter.profile.weapons[o.weaponIndex]).filter(Boolean)
+      ).map(weaponForOption).filter(Boolean)
     : [];
   const resultWeaponIndices = new Set(structuredResult?.weapons.map(result => result.weaponIndex) ?? []);
-  const resultWeapons = shooter.profile.weapons.filter((_, index) => resultWeaponIndices.has(index));
+  const resultWeapons = weaponOptions
+    .filter(option => option.weaponIndex >= 0 && resultWeaponIndices.has(option.weaponIndex))
+    .map(weaponForOption)
+    .filter(Boolean);
   const resultTargetPool = [...targets, ...resultTargets].filter((unit, index, all) => all.findIndex(candidate => candidate.id === unit.id && candidate.side === unit.side) === index);
   const targetOrder = new Map(resultTargetPool.map((target, index) => [target.id, index]));
   const targetOrderValue = (targetId: string) => targetOrder.get(targetId) ?? Number.MAX_SAFE_INTEGER;
@@ -393,7 +480,8 @@ export function CombatPanel({
     ? Array.from(new Map(structuredResult.weapons.map(result => [result.weaponIndex, result])).values())
       .map(result => ({
         weaponIndex: result.weaponIndex,
-        name: result.weaponName,
+        name: weaponOptions.find(option => option.weaponIndex === result.weaponIndex)?.name ?? result.weaponName,
+        weapon: weaponOptions.find(option => option.weaponIndex === result.weaponIndex)?.weapon,
         targetIds: structuredResult.weapons
           .filter(candidate => candidate.weaponIndex === result.weaponIndex)
           .map(candidate => candidate.targetUnitId)
@@ -405,7 +493,7 @@ export function CombatPanel({
     : weaponOptions;
   const availableWeapons = weaponOptions
     .filter(option => option.weaponIndex >= 0)
-    .map(option => shooter.profile.weapons[option.weaponIndex])
+    .map(weaponForOption)
     .filter((weapon): weapon is BattleUnit['profile']['weapons'][number] => !!weapon);
   const displayedWeaponOptions = effectiveWeaponOptions;
   const selectableWeaponOptions = effectiveWeaponOptions.filter(option => option.weaponIndex >= 0);
@@ -422,9 +510,26 @@ export function CombatPanel({
   const assignedCountForWeapon = (option: PlayShootingWeaponOption) => Object.values(
     shootingAttackAllocations[String(option.weaponIndex)] ?? {},
   ).reduce((total, models) => total + (Number(models) || 0), 0);
-  const modelCountForWeapon = (option: PlayShootingWeaponOption) => weaponModelCountFor?.(option.weaponIndex)
-    ?? option.modelCount
-    ?? playShootingWeaponModelCount(shooter, option.weaponIndex);
+  // Once exact LOS checks have completed, only models that can actually
+  // participate are allocatable. Keep the denominator and allocation caps in
+  // sync with the resolver instead of showing (for example) 4/5 when the
+  // fifth model is out of LOS.
+  const modelCountForWeapon = (option: PlayShootingWeaponOption) => {
+    const exactModelCount = combatMode === 'ranged' ? exactModelCountForWeapon(option) : null;
+    return exactModelCount
+      ?? weaponModelCountFor?.(option.weaponIndex)
+      ?? option.modelCount
+      ?? playShootingWeaponModelCount(shooter, option.sourceWeaponIndex ?? option.weaponIndex);
+  };
+  const resolutionQueue = buildShootingAttackAllocations(shootingAttackAllocations, shootingResolutionOrder)
+    .map(allocation => {
+      const option = weaponOptions.find(candidate => candidate.weaponIndex === allocation.weaponIndex);
+      const target = resultTargetPool.find(candidate => candidate.id === allocation.targetUnitId);
+      return option && target
+        ? { ...allocation, option, target, modelCount: allocation.modelCount ?? modelCountForWeapon(option) }
+        : null;
+    })
+    .filter((entry): entry is NonNullable<typeof entry> => entry !== null);
   const declarationActionLabel = resolvePendingDamage
     ? pendingDamageActionLabel
     : actionLabel;
@@ -438,32 +543,33 @@ export function CombatPanel({
       .filter(result => result.weaponIndex === weaponIndex)
       .sort((a, b) => targetOrderValue(a.targetUnitId) - targetOrderValue(b.targetUnitId))
       .flatMap(result => {
-        const weapon = shooter.profile.weapons[result.weaponIndex];
+        const option = weaponOptions.find(candidate => candidate.weaponIndex === result.weaponIndex);
+        const weapon = option ? weaponForOption(option) : shooter.profile.weapons[result.weaponIndex];
         const target = resultTargetPool.find(candidate => candidate.id === result.targetUnitId);
-        return weapon && target ? [{ weapon, target }] : [];
+        return weapon && target ? [{ weapon, target, weaponIndex: result.weaponIndex }] : [];
       }));
   const displayedWeaponTargets = resultSection === 'attacker' || resultSection === 'defender'
     ? hasStructuredResult && resultWeaponTargets.length > 0
       ? resultWeaponTargets
-      : displayedWeapons.flatMap(weapon => {
-        const weaponIndex = shooter.profile.weapons.indexOf(weapon);
-        const option = effectiveWeaponOptions.find(candidate => candidate.weaponIndex === weaponIndex);
+      : effectiveWeaponOptions.flatMap(option => {
+        const weapon = weaponForOption(option);
+        if (!weapon) return [];
         const targetIds = hasStructuredResult
-          ? option?.targetIds.filter(targetId => (shootingAttackAllocations[String(weaponIndex)]?.[targetId] ?? 0) > 0) ?? []
-          : option?.targetIds ?? [];
+          ? option.targetIds.filter(targetId => (shootingAttackAllocations[String(option.weaponIndex)]?.[targetId] ?? 0) > 0)
+          : option.targetIds;
         return targetIds
           .map(targetId => targets.find(target => target.id === targetId))
           .filter((target): target is BattleUnit => !!target)
-          .map(target => ({ weapon, target }));
+          .map(target => ({ weapon, target, weaponIndex: option.weaponIndex }));
       })
-    : displayedWeapons.flatMap(weapon => {
-      const weaponIndex = shooter.profile.weapons.indexOf(weapon);
-        const option = effectiveWeaponOptions.find(candidate => candidate.weaponIndex === weaponIndex);
-      const allocatedTargetIds = option?.targetIds.filter(targetId => (shootingAttackAllocations[String(weaponIndex)]?.[targetId] ?? 0) > 0) ?? [];
+    : effectiveWeaponOptions.flatMap(option => {
+      const weapon = weaponForOption(option);
+      if (!weapon) return [];
+      const allocatedTargetIds = option.targetIds.filter(targetId => (shootingAttackAllocations[String(option.weaponIndex)]?.[targetId] ?? 0) > 0);
       return allocatedTargetIds
         .map(targetId => targets.find(target => target.id === targetId))
         .filter((target): target is BattleUnit => !!target)
-        .map(target => ({ weapon, target }));
+        .map(target => ({ weapon, target, weaponIndex: option.weaponIndex }));
     });
   const weaponResultSummaries = isAttackerResultReview && combatMode === 'ranged'
     ? resultWeaponOptions.map(option => {
@@ -475,6 +581,11 @@ export function CombatPanel({
         wounds: weaponResults.reduce((total, result) => total + result.wounds, 0),
       };
     })
+    : [];
+  const blockedTargetNames = combatMode === 'ranged'
+    ? targets
+      .filter(target => shootingTargetVisibility?.get(target.id)?.status === 'blocked')
+      .map(target => target.profile.name)
     : [];
 
   return (
@@ -506,7 +617,7 @@ export function CombatPanel({
       }}
       disabled={!isAttackerResultReview && (shootingLocked || shooter.activated)}
       onWeaponChange={onWeaponChange}
-      warning={warning}
+      warning={optionsPending ? 'Checking melee options…' : warning}
       weaponSelectorOrientation="vertical"
     >
       {firingDeckOptions.length > 0 && onFiringDeckSelect && (
@@ -527,6 +638,11 @@ export function CombatPanel({
             Confirm Firing Deck
           </Button>
         </Box>
+      )}
+      {blockedTargetNames.length > 0 && !hasStructuredResult && (
+        <Typography variant="caption" sx={{ color: uiTokens.color.status.danger, fontWeight: 700 }}>
+          Blocked by LOS: {blockedTargetNames.join(', ')}
+        </Typography>
       )}
       <Box sx={{ display: 'none' }} aria-hidden>
         <Box sx={{ minWidth: 0 }}>
@@ -558,9 +674,25 @@ export function CombatPanel({
               : 'Configure weapon allocations'}
           </Typography>
           {activeWeaponOptions.map(option => {
-            const weapon = shooter.profile.weapons[option.weaponIndex];
+            const weapon = weaponForOption(option);
+            if (!weapon) return null;
             const weaponTargets = shootingAttackAllocations[String(option.weaponIndex)] ?? {};
             const weaponModelCount = modelCountForWeapon(option);
+            const orderedTargetIds = option.targetIds
+              .map((targetId, index) => {
+                const visibility = combatMode === 'ranged' && option.weaponIndex >= 0
+                  ? shootingTargetVisibility?.get(targetId)
+                  : undefined;
+                const modelCount = visibility?.weaponModelIndexes[option.weaponIndex]?.length ?? 0;
+                const rank = visibility?.status === 'visible' && modelCount > 0
+                  ? 0 // targetable
+                  : visibility && visibility.status !== 'checking'
+                    ? 1 // blocked or no firing models
+                    : 2; // queued/checking (or non-ranged)
+                return { targetId, index, rank };
+              })
+              .sort((left, right) => left.rank - right.rank || left.index - right.index)
+              .map(({ targetId }) => targetId);
             return (
               <Box key={option.weaponIndex} sx={{ display: 'grid', gap: 0.4 }}>
                 <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700 }}>
@@ -588,9 +720,36 @@ export function CombatPanel({
                   </Typography>
                 )}
                 <Box sx={option.targetIds.length > 3 ? { maxHeight: 'min(360px, 45vh)', overflowY: 'auto', display: 'grid', gap: 0.6, pr: 0.5 } : { display: 'grid', gap: 0.6 }}>
-                {option.targetIds.map(targetId => {
+                {orderedTargetIds.map(targetId => {
                   const target = resultTargetPool.find(candidate => candidate.id === targetId);
                   const targetDistance = target ? targetDistances?.get(target.id) : undefined;
+                  const targetVisibility = combatMode === 'ranged'
+                    ? shootingTargetVisibility?.get(targetId)
+                    : undefined;
+                  const targetChecking = targetVisibility?.status === 'checking';
+                  const targetBlocked = targetVisibility?.status === 'blocked';
+                  // targetIds comes from the core shooting-rule query. It is
+                  // distinct from per-model LOS, so do not describe a rules
+                  // rejection (such as Blast into an engaged unit) as "no
+                  // firing models".
+                  const targetAllowedByRules = option.targetIds.includes(targetId);
+                  const targetWeaponModelCount = targetVisibility?.weaponModelIndexes[option.weaponIndex]?.length ?? 0;
+                  const targetNoFiringModels = combatMode === 'ranged'
+                    && targetAllowedByRules
+                    && targetVisibility?.status === 'visible'
+                    && option.weaponIndex >= 0
+                    && targetWeaponModelCount === 0;
+                  const targetUnavailable = !targetAllowedByRules || targetBlocked || targetNoFiringModels;
+                  const targetUnchecked = combatMode === 'ranged' && !targetVisibility;
+                  const targetPending = targetUnchecked || targetChecking;
+                  // Keep unresolved checks visually neutral. A target is only
+                  // marked green/red once the exact model LOS query completes.
+                  const targetCanFire = combatMode === 'ranged'
+                    && targetVisibility?.status === 'visible'
+                    && targetWeaponModelCount > 0;
+                  const targetCannotFire = combatMode === 'ranged'
+                    && !targetPending
+                    && (!targetAllowedByRules || targetBlocked || targetNoFiringModels);
                   const allocatedElsewhere = Object.entries(weaponTargets)
                     .filter(([allocatedTargetId]) => allocatedTargetId !== targetId)
                     .reduce((total, [, models]) => total + (Number(models) || 0), 0);
@@ -610,20 +769,7 @@ export function CombatPanel({
                   const allocationCoverBonus = targetHitPreviewForAllocation
                     ? targetHitPreviewForAllocation.commonCoverSaveModifier ?? 0
                     : target && coverSaveEnabled && targetInCoverForAllocation && target.profile.save <= 6 ? 1 : 0;
-                  const allocationHit = targetHitPreviewForAllocation
-                    ? targetHitPreviewForAllocation.commonHitTarget ?? null
-                    : weapon ? Math.min(6, weapon.skill + (targetInCoverForAllocation && !coverSaveEnabled ? 1 : 0)) : null;
-                  const allocationHitLabel = targetHitPreviewForAllocation
-                    ? targetHitPreviewForAllocation.autoHits
-                      ? 'Auto'
-                      : targetHitPreviewForAllocation.hitTargetVaries
-                        ? 'Varies'
-                        : targetHitPreviewForAllocation.commonHitTarget === undefined
-                          ? '—'
-                          : targetHitPreviewForAllocation.commonHitTarget > 6
-                            ? '6*'
-                            : `${targetHitPreviewForAllocation.commonHitTarget}+`
-                    : allocationHit === null ? '—' : `${allocationHit}+`;
+                  const allocationHitLabel = targetUnavailable ? '—' : hitPreviewTargetLabel(targetHitPreviewForAllocation);
                   const allocationNormalSaveWithCover = target ? target.profile.save + Math.abs(weapon.ap) - allocationCoverBonus : null;
                   const allocationSaveWithCover = allocationSave === null || allocationNormalSaveWithCover === null
                     ? null
@@ -640,7 +786,12 @@ export function CombatPanel({
                   const hitChance = targetHitPreviewForAllocation?.hitProbability
                     ?? (allocationHit === null ? 0 : Math.max(0, (7 - allocationHit) / 6));
                   const feelNoPainDamageChance = allocationFeelNoPain === null ? 1 : Math.max(0, (allocationFeelNoPain - 1) / 6);
-                  const targetModelGroups = target ? modelGroupsForCombatEstimate(target) : [];
+                  // An unallocated target has no useful casualty estimate yet.
+                  // Avoid building the model-group breakdown and tooltip until
+                  // the player assigns at least one model to this target.
+                  const targetModelGroups = allocatedModelCount > 0 && target
+                    ? cachedCombatEstimateGroups(target)
+                    : [];
                   const defaultTargetModelGroup = targetModelGroups.length > 0
                     ? targetModelGroups.reduce((best, group) => group.modelCount > best.modelCount ? group : best)
                     : null;
@@ -743,14 +894,90 @@ export function CombatPanel({
                         ].join('\n')}
                       </Box>
                     )
-                    : 'Estimated model-equivalent casualties are unavailable.';
+                    : allocatedModelCount > 0
+                      ? 'Estimated model-equivalent casualties are unavailable.'
+                      : 'Assign at least one model to see an estimate.';
                   return (
-                    <Box key={`${option.weaponIndex}:${targetId}`} sx={{ display: 'grid', gap: 0.25 }}>
+                    <Box
+                      key={`${option.weaponIndex}:${targetId}`}
+                      title={targetCanFire ? 'Targetable with this weapon' : targetCannotFire ? 'Cannot target with this weapon' : undefined}
+                      sx={{
+                        display: 'grid',
+                        gap: 0.25,
+                        p: 0.5,
+                        borderRadius: uiTokens.radius.control,
+                        border: targetCanFire
+                          ? '1px solid rgba(112, 215, 140, 0.72)'
+                          : targetCannotFire
+                            ? '1px solid rgba(255, 111, 111, 0.72)'
+                            : `1px solid ${uiTokens.border.control}`,
+                        backgroundColor: targetCanFire
+                          ? 'rgba(44, 120, 69, 0.16)'
+                          : targetCannotFire
+                            ? 'rgba(130, 38, 45, 0.16)'
+                            : 'rgba(255, 255, 255, 0.015)',
+                      }}
+                    >
                       <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 0.75 }}>
                         <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700, overflowWrap: 'anywhere', minWidth: 0 }}>
                           {target?.profile.name ?? targetId}
                         </Typography>
-                        <TargetDistanceMarker distance={targetDistance} />
+                        <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, flexShrink: 0 }}>
+                          {combatMode === 'ranged' && (
+                            <Button
+                              size="small"
+                              variant={selectedTargetId === targetId ? 'contained' : 'outlined'}
+                              aria-label={`Select ${target?.profile.name ?? targetId} for preview`}
+                              onClick={() => onTargetChange(targetId)}
+                              sx={{ minWidth: 48, px: 0.75, py: 0.1, fontSize: 10, lineHeight: 1.35 }}
+                            >
+                              Select
+                            </Button>
+                          )}
+                          {targetPending && (
+                            <CircularProgress
+                              size={11}
+                              thickness={5}
+                              role="progressbar"
+                              aria-label={targetChecking ? 'Checking line of sight' : 'Queued for line of sight check'}
+                              sx={{
+                                flexShrink: 0,
+                                color: targetChecking ? uiTokens.color.status.warning : uiTokens.color.text.muted,
+                              }}
+                            />
+                          )}
+                          {targetUnchecked && (
+                            <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, fontWeight: 700 }}>
+                              Queued for LOS…
+                            </Typography>
+                          )}
+                          {targetChecking && (
+                            <Typography variant="caption" sx={{ color: uiTokens.color.status.warning, fontWeight: 700 }}>
+                              Checking LOS…
+                            </Typography>
+                          )}
+                          {targetBlocked && (
+                            <Typography variant="caption" sx={{ color: uiTokens.color.status.danger, fontWeight: 700 }}>
+                              Blocked
+                            </Typography>
+                          )}
+                          {!targetAllowedByRules && (
+                            <Typography variant="caption" sx={{ color: uiTokens.color.status.danger, fontWeight: 700 }}>
+                              Not a legal target for this weapon
+                            </Typography>
+                          )}
+                          {targetNoFiringModels && (
+                            <Typography variant="caption" sx={{ color: uiTokens.color.text.muted, fontWeight: 700 }}>
+                              No firing models
+                            </Typography>
+                          )}
+                          {targetVisibility?.status === 'visible' && !targetNoFiringModels && (
+                            <Typography variant="caption" sx={{ color: uiTokens.color.status.success, fontWeight: 700 }}>
+                              {targetWeaponModelCount} in LOS
+                            </Typography>
+                          )}
+                          <TargetDistanceMarker distance={targetDistance} />
+                        </Box>
                       </Box>
                       <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'stretch' }}>
                       <Box sx={{ minWidth: 120, flex: '0 0 120px', display: 'flex', alignItems: 'center', gap: 0.25 }}>
@@ -758,7 +985,7 @@ export function CombatPanel({
                           size="small"
                           variant="outlined"
                           aria-label={`Decrease allocation to ${target?.profile.name ?? targetId}`}
-                          disabled={allocationsReadOnly || allocationCount <= 0}
+                          disabled={allocationsReadOnly || targetPending || targetUnavailable || allocationCount <= 0}
                           onClick={() => onShootingAttackAllocationChange(option.weaponIndex, targetId, allocationCount - 1)}
                           sx={{ minWidth: 26, width: 26, height: 32, px: 0, lineHeight: 1, fontSize: 16 }}
                         >
@@ -769,7 +996,7 @@ export function CombatPanel({
                           type="number"
                           hiddenLabel
                           value={allocationCount}
-                          disabled={allocationsReadOnly}
+                          disabled={allocationsReadOnly || targetPending || targetUnavailable}
                           sx={{ flex: 1, '& input::-webkit-inner-spin-button': { appearance: 'none', margin: 0 } }}
                           slotProps={{ htmlInput: { min: 0, max: allocationMax, step: 1 } }}
                           onChange={event => onShootingAttackAllocationChange(option.weaponIndex, targetId, Math.max(0, Math.min(allocationMax, Math.floor(Number(event.target.value) || 0))))}
@@ -778,7 +1005,7 @@ export function CombatPanel({
                           size="small"
                           variant="outlined"
                           aria-label={`Increase allocation to ${target?.profile.name ?? targetId}`}
-                          disabled={allocationsReadOnly || allocationCount >= allocationMax}
+                          disabled={allocationsReadOnly || targetPending || targetUnavailable || allocationCount >= allocationMax}
                           onClick={() => onShootingAttackAllocationChange(option.weaponIndex, targetId, allocationCount + 1)}
                           sx={{ minWidth: 26, width: 26, height: 32, px: 0, lineHeight: 1, fontSize: 16 }}
                         >
@@ -848,6 +1075,41 @@ export function CombatPanel({
         </Box>
       )}
 
+      {!hasStructuredResult && !shootingLocked && combatMode === 'ranged' && resolutionQueue.length > 1 && (
+        <Box sx={{ display: 'grid', gap: 0.45, p: 1, border: `1px solid ${uiTokens.border.warning}`, borderRadius: uiTokens.radius.control, background: uiTokens.surface.pendingHud }}>
+          <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 800 }}>
+            Resolve in this order
+          </Typography>
+          <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingMuted, lineHeight: 1.2 }}>
+            Damage from each entry is allocated in this sequence.
+          </Typography>
+          {resolutionQueue.map((entry, index) => (
+            <Box key={`${entry.weaponIndex}:${entry.targetUnitId}`} sx={{ display: 'flex', alignItems: 'center', gap: 0.5, minWidth: 0 }}>
+              <Typography variant="caption" sx={{ color: uiTokens.color.status.pendingText, fontWeight: 900, minWidth: 16 }}>
+                {index + 1}.
+              </Typography>
+              <Typography variant="caption" sx={{ color: uiTokens.color.text.primary, fontWeight: 700, minWidth: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {entry.option.name} → {entry.target.profile.name} ({entry.modelCount} model{entry.modelCount === 1 ? '' : 's'})
+              </Typography>
+              <Button
+                size="small"
+                aria-label={`Move ${entry.option.name} against ${entry.target.profile.name} earlier`}
+                disabled={index === 0 || !onShootingResolutionOrderMove}
+                onClick={() => onShootingResolutionOrderMove?.(entry.weaponIndex, entry.targetUnitId, -1)}
+                sx={{ minWidth: 26, px: 0.25, lineHeight: 1 }}
+              >↑</Button>
+              <Button
+                size="small"
+                aria-label={`Move ${entry.option.name} against ${entry.target.profile.name} later`}
+                disabled={index === resolutionQueue.length - 1 || !onShootingResolutionOrderMove}
+                onClick={() => onShootingResolutionOrderMove?.(entry.weaponIndex, entry.targetUnitId, 1)}
+                sx={{ minWidth: 26, px: 0.25, lineHeight: 1 }}
+              >↓</Button>
+            </Box>
+          ))}
+        </Box>
+      )}
+
       {shootingLocked && resultSection !== 'attacker' && !hasStructuredResult ? (
         <Typography variant="caption" sx={warningTextSx}>
           {pendingDamageLabel
@@ -870,11 +1132,11 @@ export function CombatPanel({
         <Typography variant="caption" sx={disabledTextSx}>{combatMode === 'melee' ? PLAY_PANEL_MESSAGES.noFightTargets : PLAY_PANEL_MESSAGES.noValidTargets}</Typography>
       ) : hasStructuredResult && resultSection !== 'attacker' && displayedWeaponTargets.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: displayedWeaponTargets.length > 3 ? 310 : undefined, overflowY: displayedWeaponTargets.length > 3 ? 'auto' : undefined, paddingRight: displayedWeaponTargets.length > 3 ? 4 : undefined }}>
-          {displayedWeaponTargets.map(({ weapon, target }, i) => {
+          {displayedWeaponTargets.map(({ weapon, target, weaponIndex }, i) => {
             const targetDistance = targetDistances?.get(target.id);
-            const targetHitPreviewForStats = hitPreviewForTargetAndWeapon(target.id, shooter.profile.weapons.indexOf(weapon));
+            const targetHitPreviewForStats = hitPreviewForTargetAndWeapon(target.id, weaponIndex);
             const targetCoverStatusForStats = combatMode === 'ranged'
-              ? targetHitPreviewForStats?.coverStatus ?? coverStatusForTargetAndWeapon(target.id, shooter.profile.weapons.indexOf(weapon))
+              ? targetHitPreviewForStats?.coverStatus ?? coverStatusForTargetAndWeapon(target.id, weaponIndex)
               : 'none';
             const targetInCoverForStats = targetCoverStatusForStats === 'all';
             const wt = calcWoundTarget(weapon.strength, target.profile.toughness);
@@ -885,20 +1147,7 @@ export function CombatPanel({
             const coverBonus = targetHitPreviewForStats
               ? targetHitPreviewForStats.commonCoverSaveModifier ?? 0
               : coverSaveEnabled && targetInCoverForStats && (target.profile.save <= 6) ? 1 : 0;
-            const hitTarget = targetHitPreviewForStats
-              ? targetHitPreviewForStats.commonHitTarget ?? null
-              : Math.min(6, weapon.skill + (targetInCoverForStats && !coverSaveEnabled ? 1 : 0));
-            const hitTargetLabel = targetHitPreviewForStats
-              ? targetHitPreviewForStats.autoHits
-                ? 'Auto'
-                : targetHitPreviewForStats.hitTargetVaries
-                  ? 'Varies'
-                  : targetHitPreviewForStats.commonHitTarget === undefined
-                    ? '—'
-                    : targetHitPreviewForStats.commonHitTarget > 6
-                      ? '6*'
-                      : `${targetHitPreviewForStats.commonHitTarget}+`
-              : hitTarget === null ? '—' : `${hitTarget}+`;
+            const hitTargetLabel = hitPreviewTargetLabel(targetHitPreviewForStats);
             const svWithCover = sv - coverBonus;
             const noSaveWithCover = svWithCover > 6;
             return (
@@ -1012,4 +1261,16 @@ export function CombatPanel({
       )}
     </CombatDeclarationPanel>
   );
+}
+
+/** Shooting owns its declaration controller; this wrapper prevents callers
+ * from selecting melee behavior through the shared presentation component. */
+export function ShootingCombatPanel(props: Omit<React.ComponentProps<typeof CombatPanel>, 'combatMode'>) {
+  return <CombatPanel {...props} combatMode="ranged" />;
+}
+
+/** Fight owns its declaration controller; its rule state never flows through
+ * the Shooting controller. */
+export function FightCombatPanel(props: Omit<React.ComponentProps<typeof CombatPanel>, 'combatMode'>) {
+  return <CombatPanel {...props} combatMode="melee" />;
 }

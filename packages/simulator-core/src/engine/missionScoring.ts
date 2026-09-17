@@ -1,5 +1,5 @@
 import type { BattleState, BattleUnit, LogEntry, PrimaryMissionScoringRecord, Side } from '../types/battle';
-import { modelBaseRadiusInches } from './baseSizes';
+import { modelBaseRadiusForUnit } from './baseSizes';
 import { objectiveControlValue } from './battleshock';
 import { battleRound, maxBattleRounds } from './battleRound';
 import { distance } from './coherency';
@@ -44,13 +44,21 @@ export interface PrimaryScoringResult {
 
 function unitControlsObjective(unit: BattleUnit, objective: { x: number; y: number; z?: number }, controlRadius: number): boolean {
   return unit.modelPositions.some((model, modelIndex) =>
-    distance(model, objective) <= controlRadius + modelBaseRadiusInches(unit.profile, modelIndex),
+    distance(model, objective) <= controlRadius + modelBaseRadiusForUnit(unit, modelIndex),
   );
 }
 
 function terrainObjectiveForPoint(state: BattleState, objective: { x: number; y: number; z?: number }) {
   const matches = state.terrain.filter(terrain => pointInTerrain(objective, terrain));
   return matches.sort((a, b) => (a.width * a.height) - (b.width * b.height))[0] ?? null;
+}
+
+function terrainObjectivesForIndex(state: BattleState, objectiveIndex: number) {
+  const terrainIds = state.objectiveTerrainIds?.[objectiveIndex];
+  if (terrainIds?.length) return state.terrain.filter(terrain => terrainIds.includes(terrain.id));
+  const objective = state.objectives[objectiveIndex];
+  const terrain = objective && terrainObjectiveForPoint(state, objective);
+  return terrain ? [terrain] : [];
 }
 
 function terrainObjectiveRoleForPoint(state: BattleState, objective: { x: number; y: number; z?: number }) {
@@ -62,7 +70,7 @@ function modelWithinTerrainObjective(unit: BattleUnit, modelIndex: number, terra
   if (!model) return false;
   if (pointInTerrain(model, terrain)) return true;
 
-  const radius = modelBaseRadiusInches(unit.profile, modelIndex);
+  const radius = modelBaseRadiusForUnit(unit, modelIndex);
   return [
     { x: model.x + radius, y: model.y },
     { x: model.x - radius, y: model.y },
@@ -77,20 +85,26 @@ function terrainObjectiveControlValue(unit: BattleUnit, terrain: NonNullable<Ret
   0);
 }
 
+function terrainObjectivesControlValue(unit: BattleUnit, terrain: ReturnType<typeof terrainObjectivesForIndex>): number {
+  return unit.modelPositions.reduce((total, _model, modelIndex) =>
+    total + (terrain.some(area => modelWithinTerrainObjective(unit, modelIndex, area)) ? objectiveControlValue(unit) : 0),
+  0);
+}
+
 export function updateObjectiveControl(state: BattleState, rules: RulesEdition): ObjectiveControlResult[] | null {
   const objectiveControl = state.objectiveControl ?? rules.objectiveControl;
   const controlRadius = objectiveControlRadius(objectiveControl);
 
   if (objectiveControl.kind === 'terrain-area') {
-    const objectiveTerrains = state.objectives.map(objective => terrainObjectiveForPoint(state, objective));
-    if (objectiveTerrains.some(terrain => terrain === null)) return null;
+    const objectiveTerrains = state.objectives.map((_objective, objectiveIndex) => terrainObjectivesForIndex(state, objectiveIndex));
+    if (objectiveTerrains.some(terrain => !terrain.length)) return null;
 
     return state.objectives.map((_objective, objectiveIndex) => {
       const terrain = objectiveTerrains[objectiveIndex]!;
       const oc: [number, number] = [0, 0];
       for (const unit of state.units) {
         if (unit.destroyed || unit.embarkedInUnitId) continue;
-        oc[unit.side] += terrainObjectiveControlValue(unit, terrain);
+        oc[unit.side] += terrainObjectivesControlValue(unit, terrain);
       }
 
       const owner = objectiveOwnerFromControlLevels(state, objectiveIndex, oc, rules);
@@ -266,9 +280,9 @@ function unitWithinObjectiveRangeFromState(
   const objectiveControl = state.objectiveControl;
   if (!objective || !objectiveControl) return false;
   if (objectiveControl.kind === 'terrain-area') {
-    const terrain = terrainObjectiveForPoint(state, objective);
-    return !!terrain && unit.modelPositions.some((_model, modelIndex) =>
-      modelWithinTerrainObjective(unit, modelIndex, terrain)
+    const terrain = terrainObjectivesForIndex(state, objectiveIndex);
+    return terrain.length > 0 && unit.modelPositions.some((_model, modelIndex) =>
+      terrain.some(area => modelWithinTerrainObjective(unit, modelIndex, area))
     );
   }
   const controlRadius = objectiveControlRadius(objectiveControl);
@@ -322,8 +336,8 @@ export function objectiveIndexesWithinRange(
 
   if (objectiveControl.kind === 'terrain-area') {
     return state.objectives.flatMap((objective, objectiveIndex) => {
-      const terrain = terrainObjectiveForPoint(state, objective);
-      return terrain && unit.modelPositions.some((_model, modelIndex) => modelWithinTerrainObjective(unit, modelIndex, terrain))
+      const terrain = terrainObjectivesForIndex(state, objectiveIndex);
+      return terrain.length && unit.modelPositions.some((_model, modelIndex) => terrain.some(area => modelWithinTerrainObjective(unit, modelIndex, area)))
         ? [objectiveIndex]
         : [];
     });

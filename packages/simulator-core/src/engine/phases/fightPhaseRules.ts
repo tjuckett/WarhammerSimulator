@@ -1,5 +1,6 @@
 import { PHASE_STEP, type BattleState, type BattleUnit, type FightConsolidationMode, type PhaseStep, type Side } from '../../types/battle';
 import { phaseStepFor } from '../battleStateMachine';
+import { attachedUnitTargetRepresentative } from '../attachedUnits';
 import { closestModelDistanceBetweenUnits } from '../modelMovementRules';
 import type { RulesEdition } from '../rulesEngine';
 
@@ -20,6 +21,8 @@ export interface FightPhaseContext extends FightEligibilityContext {
   attachedUnitHasRule(state: BattleState, unit: BattleUnit, rule: string): boolean;
   unitHasActiveStratagem(state: BattleState, unit: BattleUnit, stratagemId: string, phase: string): boolean;
   objectiveIndexesWithinRange(state: BattleState, unit: BattleUnit, rules: RulesEdition): number[];
+  /** Whether this component has at least one live melee model that can attack now. */
+  componentHasFightAttacks?(state: BattleState, unit: BattleUnit, rules: RulesEdition): boolean;
 }
 
 export interface FightMovementRulesContext extends FightPhaseContext {
@@ -35,6 +38,54 @@ export interface FightMovementRulesContext extends FightPhaseContext {
 export type FightConsolidationOption =
   | { mode: Exclude<FightConsolidationMode, 'objective'>; targetUnitIds: string[] }
   | { mode: 'objective'; targetUnitIds: []; objectiveIndex: number };
+
+/**
+ * Returns one live representative for each attached unit group.
+ *
+ * BattleState keeps leaders and bodyguards as separate model containers so
+ * their weapons, wounds, and movement can still be resolved independently.
+ * Phase-level target choices, however, are made against the attached unit as
+ * a whole. Keeping this normalization here prevents target lists from
+ * exposing a leader and its bodyguard as two different enemy units.
+ */
+export function attachedGroupRepresentatives(
+  state: BattleState,
+  units: BattleUnit[],
+  context: Pick<FightPhaseContext, 'attachedComponents'>,
+): BattleUnit[] {
+  const representatives: BattleUnit[] = [];
+  const seen = new Set<string>();
+  for (const unit of units) {
+    const components = context.attachedComponents(state, unit);
+    // Prefer the shared bodyguard-first representative. This also recovers
+    // the bodyguard ordering for older saves that have roster attachments but
+    // no serialized `attachedToUnitId` fields yet.
+    const representative = components.find(component => !component.attachedToUnitId)
+      // Only consult the fallback for legacy attachment records; normal
+      // deployments already identify the bodyguard in the cached component
+      // list and avoid a second state-wide component lookup.
+      ?? attachedUnitTargetRepresentative(state, unit)
+      ?? components[0]
+      ?? unit;
+    if (representative.destroyed || representative.embarkedInUnitId || representative.remainingModels <= 0) continue;
+    // Use the live representative as the key instead of relying only on
+    // attachedUnitId. Older saves can recover the roster relationship through
+    // attachedComponents even when the serialized attachment ids are absent.
+    const groupKey = `${unit.side}:${representative.id}`;
+    if (seen.has(groupKey)) continue;
+    seen.add(groupKey);
+    representatives.push(representative);
+  }
+  return representatives;
+}
+
+function attachedGroupRepresentative(
+  state: BattleState,
+  unit: BattleUnit,
+  context: Pick<FightPhaseContext, 'attachedComponents'>,
+): BattleUnit {
+  return attachedGroupRepresentatives(state, [unit], context)[0] ?? unit;
+}
 
 /** Returns the Fight step, including compatibility for saves made before phaseStep existed. */
 export function fightPhaseStep(state: Pick<BattleState, 'phase' | 'phaseStep' | 'fightStepStarted' | 'consolidationStepStarted'>): PhaseStep {
@@ -98,9 +149,14 @@ export function unitWasEngagedAtFightStepStart(state: BattleState, unit: BattleU
   return state.engagedUnitIdsAtFightStepStart?.includes(unit.id) ?? false;
 }
 
-/** `charged` is retained until that army's next Command phase; scope it to the current turn. */
+/**
+ * `charged` is retained until that army's next Command phase. `turn` is a
+ * battle-round number, though, so both players can have the same value. A
+ * charge grants Fight priority only in the charging player's current turn;
+ * an opponent's charge from earlier in this battle round must not do so.
+ */
 export function unitChargedThisTurn(state: BattleState, unit: BattleUnit): boolean {
-  if (!unit.charged) return false;
+  if (!unit.charged || unit.side !== state.activeArmy) return false;
   if (unit.chargedTurn !== undefined) return unit.chargedTurn === state.turn;
   // Older states do not have chargedTurn. Fight-step pile-in and
   // consolidation update lastMovePhase, but they must not erase the charge
@@ -183,16 +239,30 @@ export function playFightActivationUnitIds(
     return eligible.filter(unit => unitHasCounteroffensive(state, unit, context)).map(unit => unit.id);
   }
   if (rules.metadata.edition === '11e') {
-    const allEligible = state.units.filter(unit => context.unitEligibleToFight(unit, state, rules));
+    // A passed side has given up every remaining activation in this Fight
+    // step. Exclude it before selecting the current priority class; otherwise
+    // an active player's passed chargers can still block the opponent from
+    // receiving the ordinary activation opportunity.
+    const passedSides = new Set(state.fightPassedSides ?? []);
+    const allEligible = state.units.filter(unit => !passedSides.has(unit.side)
+      && context.unitEligibleToFight(unit, state, rules));
     const counteroffensive = allEligible.filter(unit => unitHasCounteroffensive(state, unit, context));
     const priorityEligible = counteroffensive.length ? counteroffensive : allEligible.some(unit => unitHasFightsFirst(state, unit, context))
       ? allEligible.filter(unit => unitHasFightsFirst(state, unit, context)) : allEligible;
-    const preferredSide = state.lastFightSelectionSide === undefined
-      ? state.activeArmy
-      : (state.lastFightSelectionSide === 0 ? 1 : 0) as Side;
-    const selectingSide = priorityEligible.some(unit => unit.side === preferredSide)
-      ? preferredSide
-      : (preferredSide === 0 ? 1 : 0) as Side;
+    // Do not alternate into the opposing army merely because the previous
+    // selection was ours. A side keeps the Fights First opportunity until it
+    // has no remaining unit in that priority class. Alternate only when both
+    // sides still have a unit in the current priority class.
+    const activeSideHasPriority = priorityEligible.some(unit => unit.side === state.activeArmy);
+    const otherSide = (state.activeArmy === 0 ? 1 : 0) as Side;
+    const otherSideHasPriority = priorityEligible.some(unit => unit.side === otherSide);
+    const selectingSide = activeSideHasPriority && otherSideHasPriority
+      ? state.lastFightSelectionSide === undefined
+        ? state.activeArmy
+        : (state.lastFightSelectionSide === 0 ? 1 : 0) as Side
+      : activeSideHasPriority
+        ? state.activeArmy
+        : otherSide;
     return side === selectingSide ? priorityEligible.filter(unit => unit.side === side).map(unit => unit.id) : [];
   }
   const counteroffensive = eligible.filter(unit => unitHasCounteroffensive(state, unit, context));
@@ -267,16 +337,23 @@ function canStartPileIn(
 ): boolean {
   if (state.phase !== 'fight' || state.pendingFightMovement
     || (state.activeArmy !== side && rules.metadata.edition !== '11e')) return false;
+  const components = context.attachedComponents(state, unit);
+  // Leaders and bodyguards share one Pile In opportunity. A partial legacy
+  // state may have the flag on only one component, so treat the group as
+  // spent as soon as any component has completed this move.
+  if (components.some(component => component.piledIn && !component.overrunFightSelected)) return false;
   const pileInSide = state.fightPileInSide ?? state.activeArmy;
   if (rules.metadata.edition === '11e' && isFightPileInStep(state) && pileInSide !== side) return false;
   const isOverrunPileIn = rules.metadata.edition === '11e' && isFightUnitsStep(state) && unit.overrunFightSelected;
   if (isOverrunPileIn) {
-    return !unit.overrunPiledIn && context.unitEligibleToFight(unit, state, rules);
+    return !components.some(component => component.overrunPiledIn)
+      && components.some(component => context.unitEligibleToFight(component, state, rules));
   }
   if (rules.metadata.edition === '11e' && !isFightPileInStep(state)) return false;
-  return !unit.piledIn
-    && (context.unitCanFight(unit, state, rules)
-      || (unitChargedThisTurn(state, unit) && context.enemies(state, side).some(enemy => context.canFightTarget(unit, enemy))));
+  return components.every(component => !component.piledIn)
+    && (components.some(component => context.unitCanFight(component, state, rules))
+      || components.some(component => unitChargedThisTurn(state, component)
+        && context.enemies(state, side).some(enemy => context.canFightTarget(component, enemy))));
 }
 
 /** Enemy units a legal Pile In may select before the models are moved. */
@@ -290,7 +367,9 @@ export function playFightPileInTargetOptions(
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side
     && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit || !canStartPileIn(state, unit, side, rules, context)) return [];
-  const enemies = context.enemies(state, side).filter(enemy => context.canFightTarget(unit, enemy));
+  const source = attachedGroupRepresentative(state, unit, context);
+  const enemies = attachedGroupRepresentatives(state, context.enemies(state, side), context)
+    .filter(enemy => context.canFightTarget(source, enemy));
   const engaged = enemies.filter(enemy => attachedUnitInEngagement(state, unit, enemy, rules.engagementRange(), context));
   if (engaged.length) return engaged.map(enemy => enemy.id);
   return enemies
@@ -311,11 +390,14 @@ export function playFightConsolidationOptions(
   if (!unit || state.pendingFightMovement || state.phase !== 'fight'
     || (state.activeArmy !== side && rules.metadata.edition !== '11e')
     || (rules.metadata.edition === '11e' && (!isFightConsolidationStep(state)
-      || state.consolidationSide !== side || !state.consolidationEligibleUnitIds?.includes(unit.id)))
+      || state.consolidationSide !== side
+      || !context.attachedComponents(state, unit).some(component => state.consolidationEligibleUnitIds?.includes(component.id))))
     || rules.metadata.edition === '11e' && !state.consolidationStepStarted
-    || unit.consolidated) return [];
+    || context.attachedComponents(state, unit).some(component => component.consolidated)) return [];
 
-  const enemies = context.enemies(state, side).filter(enemy => context.canFightTarget(unit, enemy));
+  const source = attachedGroupRepresentative(state, unit, context);
+  const enemies = attachedGroupRepresentatives(state, context.enemies(state, side), context)
+    .filter(enemy => context.canFightTarget(source, enemy));
   const engaged = enemies.filter(enemy => attachedUnitInEngagement(state, unit, enemy, rules.engagementRange(), context));
   if (engaged.length) return [{ mode: 'ongoing', targetUnitIds: engaged.map(enemy => enemy.id) }];
 

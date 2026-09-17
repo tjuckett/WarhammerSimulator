@@ -6,9 +6,9 @@ import type { ImportedArmy } from '../src/types/army';
 import { rules40K10th, rules40K11th, rulesetMetadataForState } from '../src/engine/rulesEngine';
 import { simulatePlayerTurn } from '../src/engine/simulator';
 import { startPlayFightPileInStep } from '../src/engine/simulator';
-import { fightOnDeathTargetIds, fightOnDeathWeaponOptions } from '../src/engine/simulator';
+import { fightOnDeathTargetIds, fightOnDeathWeaponOptions, fightPlayUnitWeapons } from '../src/engine/simulator';
 import { playConsolidationUnitIds } from '../src/engine/simulator';
-import { advancePlayConsolidationStep, advancePlayFightPileInStep, advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, beginPlayFightMovement, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayFightMovement, completePlayScoutMove, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, createDeploymentState, decoyObjectiveOptions, declarePlaySuperHeavyMobile, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, passPlayFight, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeMovementValidation, playChargeTargetOptions, playDisembarkModes, playFightActivationUnitIds, playFightConsolidationOptions, playFightIneligibleUnitIds, playFightMovementLockedModelIds, playFightMovementLockedModelIdsForUnit, playFightPileInTargetOptions, playFightPileInUnitIds, playFightSideCanPass, playFightWeaponOptions, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playScoutMoveAllowance, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanPileIn, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModelByDelta, movePlayModelVerticallyByDelta, removePlayCasualtyModels, removePlayModels, resolvePendingDeadlyDemises, resolvePlaySurgeMove, rotatePlayModelByDelta, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, simulateNextPhase, simulateNextUnit, simulationNextUnitId, snapShootPlayUnitWeapon, startPlayConsolidationStep, startPlayFightStep, startPlayScoutMove, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, targetHasCoverFromModel, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
+import { advancePlayConsolidationStep, advancePlayFightPileInStep, advancePlayUnit, allocatePlayDamageToModel, applyDamage, battleModelIdsWithCoherencyIssues, battleUnitsBaseEdgeDistance, boobyTrapTerrainOptions, beginPlayFightMovement, chargePlayUnitTarget, cleanseObjectiveOptions, completeEndOfTurnActions, completePlayFightMovement, completePlayScoutMove, completePlayUnitMovement, consecrateObjectiveOptions, consolidatePlayUnit, createBattleState, createDeploymentState, decoyObjectiveOptions, declarePlaySuperHeavyMobile, declarePlayUnitTakeToSkies, disembarkPlayUnit, embarkPlayUnit, extractIntelligenceObjectiveOptions, fallBackPlayUnit, fightPlayUnitWeapon, grantPlaySurgeMove, maintainControlObjectiveOptions, markRemainingStationaryUnits, passPlayFight, pileInPlayUnit, placePlayReinforcement, placePlayStrategicReserveUnit, playChargeMovementValidation, playChargeTargetOptions, playCombatHitPreview, playDisembarkModes, playFightActivationUnitIds, playFightConsolidationOptions, playFightIneligibleUnitIds, playFightMovementLockedModelIds, playFightMovementLockedModelIdsForUnit, playFightPileInTargetOptions, playFightPileInUnitIds, playFightSideCanPass, playFightWeaponOptions, playFiringDeckOptions, playMeleeFixedAttackCount, playOverrunFightUnitIds, playPhaseCoherencyIssues, playScoutMoveAllowance, playShootingWeaponDeclarationOptions, playShootingWeaponModelIndexesForTarget, playShootingWeaponOptions, playSnapShootingWeaponOptions, playSurgeTargetUnitIds, playTransportPassengers, playUnitCanAdvance, playUnitCanConsolidate, playUnitCanDisembark, playUnitCanEmbark, playUnitCanFallBack, playUnitCanPileIn, playUnitCanStartAction, playUnitCanTakeToSkies, plunderTerrainOptions, punishmentCondemnedUnitOptions, movePlayModelByDelta, movePlayModelVerticallyByDelta, removePlayCasualtyModels, removePlayModels, resolvePendingDeadlyDemises, resolvePlaySurgeMove, rotatePlayModelByDelta, sabotageObjectiveOptions, selectPlayFiringDeckWeapons, selectPlayOverrunFight, sensorSweepOptions, secureAssetObjectiveOptions, shootPlayUnitWeapon, shootPlayUnitWeapons, simulateNextPhase, simulateNextUnit, simulationNextUnitId, snapShootPlayUnitWeapon, startPlayConsolidationStep, startPlayFightStep, startPlayScoutMove, startPlayUnitAction, surveilTargetOptions, targetHasCoverFrom, targetHasCoverFromModel, togglePunishmentCondemnedUnit, transportCapacityRemaining, triangulateObjectiveOptions, vanguardOperationTerrainOptions } from '../src/engine/simulator';
 
 // Batch model movement is a UI interaction. Core tests compose its atomic
 // model action to keep the simulator API single-model for AI/controller use.
@@ -25,7 +25,7 @@ function rotatePlayModels(state: BattleState, unitId: string, side: 0 | 1, model
 }
 import { localPracticeScenarioRepository } from '../src/practice/scenarioStorage';
 import { playFightMovementValidation } from '../src/engine/simulator';
-import { scenarioFromTimeline } from '../src/practice/scenarios';
+import { currentScenarioState, scenarioFromTimeline, timelineForScenario } from '../src/practice/scenarios';
 import {
   appendTimelineAction,
   appendResolvedTimelineAction,
@@ -40,6 +40,7 @@ import { applyGameAction, GAME_ACTION_TYPE, type GameAction } from '../src/pract
 import { activePhaseLegalActionHandler, getLegalActions, phaseCanAdvance } from '../src/engine/legalActions';
 import { objectiveControlValue, unitCanBeAffectedByStratagem } from '../src/engine/battleshock';
 import { hasLOSEdgeToEdge } from '../src/engine/terrainGeometry';
+import { modelBaseRadiusForUnit } from '../src/engine/baseSizes';
 import { screenedFromOpponentDeployment } from '../src/engine/deployment';
 import { formatPrimaryMissionScoringRecord, formatPrimaryScoringResult, primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfTurn, securePlayObjective, updateObjectiveControl } from '../src/engine/missionScoring';
 import {
@@ -535,6 +536,52 @@ test('local practice scenario repository keeps checkpoint timelines and branches
 
   const afterDelete = await localPracticeScenarioRepository.deleteScenarios(['checkpoint-1', 'checkpoint-2', 'checkpoint-3']);
   assert.deepEqual(afterDelete, []);
+});
+
+test('checkpoint loading keeps its saved state when branch history is unavailable', () => {
+  const initial = state('deployment');
+  const timeline = addStep(createPracticeTimeline(initial, {
+    id: 'shooting-game',
+    title: 'Shooting checkpoint',
+  }), 'shooting');
+  const scenario = scenarioFromTimeline(timeline, {
+    id: 'shooting-checkpoint',
+    checkpointKind: 'play',
+    timelineCursor: timeline.cursor,
+  });
+  const missingBranchHistory = {
+    ...scenario,
+    timeline: {
+      ...scenario.timeline,
+      entries: [],
+      cursor: timeline.cursor,
+    },
+  };
+
+  assert.equal(currentTimelineState(missingBranchHistory.timeline).phase, 'deployment');
+  assert.equal(currentScenarioState(missingBranchHistory).phase, 'shooting');
+  assert.equal(timelineForScenario(missingBranchHistory).cursor, 0);
+  assert.equal(currentTimelineState(timelineForScenario(missingBranchHistory)).phase, 'shooting');
+});
+
+test('checkpoint loading can recover an older stale snapshot from complete branch history', () => {
+  const initial = state('deployment');
+  const timeline = addStep(createPracticeTimeline(initial, {
+    id: 'shooting-game-recovery',
+    title: 'Shooting checkpoint recovery',
+  }), 'shooting');
+  const scenario = scenarioFromTimeline(timeline, {
+    id: 'stale-shooting-checkpoint',
+    checkpointKind: 'play',
+    timelineCursor: timeline.cursor,
+  });
+  const staleSnapshot = {
+    ...scenario,
+    initialState: initial,
+  };
+
+  assert.equal(currentScenarioState(staleSnapshot).phase, 'shooting');
+  assert.equal(currentTimelineState(timelineForScenario(staleSnapshot)).phase, 'shooting');
 });
 
 test('battle-shocked units cannot receive stratagems and have zero objective control', () => {
@@ -6465,7 +6512,9 @@ test('play Movement collision mode cannot move through enemy models', () => {
   assert.equal(movedUnit.movementAction, 'normalMove');
 
   const blockedAtEndpoint = movePlayModels(battle, 'unit-1', 0, [0], 3, 0, true);
-  assert.equal(blockedAtEndpoint.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x, 10);
+  const blockedUnit = blockedAtEndpoint.units.find(candidate => candidate.id === 'unit-1')!;
+  assert.ok(blockedUnit.modelPositions[0].x > 10);
+  assert.ok(blockedUnit.modelPositions[0].x < 13);
 });
 
 test('play Movement ignores model collisions unless collision mode is enabled', () => {
@@ -6893,7 +6942,9 @@ test('play Movement collision mode checks the terrain endpoint, not the path', (
   assert.equal(collisionDrag.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x, 14);
 
   const blockedAtEndpoint = movePlayModels(battle, 'unit-1', 0, [0], 3, 0, true);
-  assert.equal(blockedAtEndpoint.units.find(candidate => candidate.id === 'unit-1')?.modelPositions[0].x, 10);
+  const blockedUnit = blockedAtEndpoint.units.find(candidate => candidate.id === 'unit-1')!;
+  assert.ok(blockedUnit.modelPositions[0].x > 10);
+  assert.ok(blockedUnit.modelPositions[0].x < 13);
 });
 
 test('play Movement checks blocking terrain across each recorded movement leg', () => {
@@ -8196,9 +8247,171 @@ test('Multiple ranged weapon profiles choose only one profile when shooting all 
     assert.match(messages, /Frag Missile/);
     assert.equal(messages.includes('Krak Missile'), false);
     assert.equal(next.units.find(unit => unit.id === shooter.id)?.activated, true);
+
+    const allocatedBothProfiles = shootPlayUnitWeapons(
+      battle,
+      shooter.id,
+      shooter.side,
+      [
+        { weaponIndex: 0, targetUnitId: target.id, modelCount: 1 },
+        { weaponIndex: 1, targetUnitId: target.id, modelCount: 1 },
+      ],
+      rules40K10th,
+    );
+    const allocatedMessages = allocatedBothProfiles.log.map(entry => entry.message).join(' ');
+    assert.equal(allocatedBothProfiles.units.find(unit => unit.id === shooter.id)?.activated, true);
+    assert.match(allocatedMessages, /Frag Missile/);
+    assert.equal(allocatedMessages.includes('Krak Missile'), false);
   } finally {
     Math.random = originalRandom;
   }
+});
+
+test('shooting all weapons skips a weapon whose models have no exact LOS', () => {
+  const battle = state('shooting');
+  const profile = {
+    name: 'Split LOS Squad',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 2,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    modelWeaponLoadouts: [[0], [1]],
+    weapons: [
+      { name: 'Blocked Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+      { name: 'Visible Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const shooter = losTestUnit('split-los-shooter', 0, { x: 0, y: 15 });
+  shooter.profile = profile;
+  shooter.remainingModels = 2;
+  shooter.modelPositions = [{ x: 0, y: 10 }, { x: 0, y: 20 }];
+  const target = losTestUnit('split-los-target', 1, { x: 12, y: 10 }, 6);
+  target.profile = { ...profile, name: 'Target Dummy', baseModelCount: 1, weapons: [] };
+  target.remainingModels = 1;
+  target.woundsOnLeadModel = 99;
+  battle.terrain = [terrainMat({
+    id: 'split-los-wall',
+    type: 'impassable',
+    x: 5,
+    y: 8,
+    width: 2,
+    height: 4,
+    features: [],
+  })];
+  battle.units = [shooter, target];
+
+  const declaration = playShootingWeaponDeclarationOptions(battle, shooter.id, 0, rules40K10th);
+  assert.deepEqual(declaration.map(option => option.targetIds), [['split-los-target'], ['split-los-target']]);
+  const exact = playShootingWeaponModelIndexesForTarget(
+    shooter,
+    target,
+    [0, 1],
+    battle,
+  );
+  assert.deepEqual(exact, { 0: [], 1: [1] });
+
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    const next = shootPlayUnitWeapons(battle, shooter.id, 0, [{ weaponIndex: 1, targetUnitId: target.id }], rules40K10th);
+    const messages = next.log.map(entry => entry.message).join(' ');
+    assert.equal(next.units.find(unit => unit.id === shooter.id)?.activated, true);
+    assert.equal(messages.includes('Blocked Rifle'), false);
+    assert.match(messages, /Visible Rifle/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('shooting all weapons skips out-of-range models from a stale full allocation', () => {
+  const battle = state('shooting');
+  const profile = {
+    name: 'Split Range Squad',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 2,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    modelWeaponLoadouts: [[0], [0]],
+    weapons: [
+      { name: 'Range Rifle', range: 12, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const shooter = losTestUnit('split-range-shooter', 0, { x: 0, y: 10 });
+  shooter.profile = profile;
+  shooter.remainingModels = 2;
+  shooter.modelPositions = [{ x: 0, y: 10 }, { x: 30, y: 10 }];
+  shooter.modelRosterIndexes = [0, 1];
+  const target = losTestUnit('split-range-target', 1, { x: 10, y: 10 }, 6);
+  target.profile = { ...profile, name: 'Target Dummy', baseModelCount: 1, weapons: [] };
+  target.remainingModels = 1;
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  assert.deepEqual(
+    playShootingWeaponModelIndexesForTarget(shooter, target, [0], battle),
+    { 0: [0] },
+  );
+  const originalRandom = Math.random;
+  Math.random = () => 0.5;
+  try {
+    // The popup may still contain the old 2-model count when the second
+    // model is discovered to be out of range. Shoot-all should repair that
+    // declaration and fire the one model that can actually participate.
+    const next = shootPlayUnitWeapons(
+      battle,
+      shooter.id,
+      shooter.side,
+      [{ weaponIndex: 0, targetUnitId: target.id, modelCount: 2 }],
+      rules40K10th,
+    );
+    assert.equal(next.units.find(unit => unit.id === shooter.id)?.activated, true);
+    assert.match(next.log.map(entry => entry.message).join(' '), /Range Rifle/);
+  } finally {
+    Math.random = originalRandom;
+  }
+});
+
+test('shooting declarations omit ranged profiles with no living carriers', () => {
+  const battle = state('shooting');
+  const profile = {
+    name: 'Wargear Carrier Squad',
+    move: 6,
+    toughness: 4,
+    save: 3,
+    wounds: 1,
+    leadership: 7,
+    oc: 2,
+    baseModelCount: 1,
+    keywords: ['Infantry'],
+    factionKeywords: [],
+    modelWeaponLoadouts: [[0]],
+    weapons: [
+      { name: 'Carried Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+      { name: 'Unselected Wargear Rifle', range: 24, attacks: '1', skill: 3, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+    ],
+    abilities: [],
+  };
+  const shooter = losTestUnit('wargear-carrier-shooter', 0, { x: 0, y: 10 });
+  shooter.profile = profile;
+  const target = losTestUnit('wargear-carrier-target', 1, { x: 12, y: 10 }, 6);
+  target.profile = { ...profile, name: 'Target Dummy', weapons: [] };
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  const declaration = playShootingWeaponDeclarationOptions(battle, shooter.id, 0, rules40K10th);
+  assert.deepEqual(declaration.map(option => option.name), ['Carried Rifle']);
 });
 
 test('Firing one ranged weapon profile locks out its alternate profiles', () => {
@@ -8584,6 +8797,62 @@ test('11th engaged Infantry can use Close-Quarters weapons against engaged enemi
   ]);
   const shot = shootPlayUnitWeapon(battle, shooter.id, 0, target.id, 'all', rules40K11th);
   assert.equal(shot.units.find(unit => unit.id === shooter.id)?.activated, true);
+});
+
+test('11th treats Pistol as Close-Quarters for engaged Infantry shooting', () => {
+  const battle = state('shooting');
+  const shooter = losTestUnit('pistol-shooter', 0, { x: 10, y: 10 });
+  shooter.profile.weapons = [
+    { name: 'Slugga', range: 12, attacks: '1', skill: 5, strength: 4, ap: 0, damage: '1', keywords: ['Pistol'], isMelee: false },
+    { name: 'Shoota', range: 18, attacks: '2', skill: 5, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false },
+  ];
+  const target = losTestUnit('pistol-target', 1, { x: 10.5, y: 10 }, 7);
+  target.profile.weapons = [];
+  target.profile.wounds = 99;
+  target.woundsOnLeadModel = 99;
+  battle.units = [shooter, target];
+
+  assert.deepEqual(playShootingWeaponOptions(battle, shooter.id, 0, rules40K11th), [
+    {
+      weaponIndex: 0,
+      name: 'Slugga',
+      targetIds: [target.id],
+      modelCount: 1,
+      targetModelCounts: { [target.id]: 1 },
+    },
+  ]);
+  const shot = shootPlayUnitWeapon(battle, shooter.id, 0, target.id, 'all', rules40K11th);
+  assert.equal(shot.units.find(unit => unit.id === shooter.id)?.activated, true);
+});
+
+test('11th engaged Monsters apply Close Quarters Shooting to the core hit preview', () => {
+  const battle = state('shooting');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.objectiveControl = rules40K11th.objectiveControl;
+  const voidDragon = losTestUnit('void-dragon', 0, { x: 10, y: 10 });
+  voidDragon.profile = {
+    ...voidDragon.profile,
+    name: "C'tan Shard of the Void Dragon",
+    keywords: ['Monster'],
+    weapons: [{
+      name: 'Spear of the Void Dragon', range: 12, attacks: 'D3', skill: 2,
+      strength: 8, ap: -3, damage: 'D6+2', keywords: [], isMelee: false,
+    }],
+  };
+  const squighogBoyz = losTestUnit('squighog-boyz', 1, { x: 10.5, y: 10 });
+  battle.units = [voidDragon, squighogBoyz];
+
+  const preview = playCombatHitPreview(
+    battle, voidDragon.id, 0, squighogBoyz.id, 0, rules40K11th,
+  );
+  assert.equal(preview?.commonHitTarget, 3);
+  assert.deepEqual(preview?.groups[0]?.modifiers, [{
+    label: 'Close Quarters Shooting', requiredRollModifier: 1,
+  }]);
+  const deferredParticipationPreview = playCombatHitPreview(
+    battle, voidDragon.id, 0, squighogBoyz.id, 0, rules40K11th, { modelIndexes: [] },
+  );
+  assert.equal(deferredParticipationPreview?.commonHitTarget, 3);
 });
 
 test('Engaged Vehicles can shoot non-Pistol weapons with Big Guns Never Tire', () => {
@@ -11041,6 +11310,44 @@ test('Multiple melee weapon profiles choose only one profile when fighting all w
   }
 });
 
+test('11th Fight accepts one chosen profile plus another model\'s separate melee weapon', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.fightStepStarted = true;
+  battle.engagedUnitIdsAtFightStepStart = ['profile-fighter', 'profile-target'];
+  const fighter = losTestUnit('profile-fighter', 0, { x: 10, y: 10 });
+  fighter.profile = {
+    ...fighter.profile,
+    name: 'Profile Fighter',
+    baseModelCount: 2,
+    modelWeaponLoadouts: [[0, 1], [2]],
+    weapons: [
+      { name: 'Klaw - strike', profileGroup: 'Klaw', range: 0, attacks: '1', skill: 2, strength: 20, ap: -10, damage: '1', keywords: [], isMelee: true },
+      { name: 'Klaw - sweep', profileGroup: 'Klaw', range: 0, attacks: '1', skill: 2, strength: 20, ap: -10, damage: '1', keywords: [], isMelee: true },
+      { name: 'Companion stabba', range: 0, attacks: '1', skill: 2, strength: 20, ap: -10, damage: '1', keywords: [], isMelee: true },
+    ],
+  };
+  fighter.remainingModels = 2;
+  fighter.modelPositions = [{ x: 10, y: 10 }, { x: 10.2, y: 10 }];
+  fighter.modelRosterIndexes = [0, 1];
+  fighter.charged = true;
+  const target = losTestUnit('profile-target', 1, { x: 10.8, y: 10 }, 7);
+  target.profile = { ...target.profile, name: 'Profile Target', save: 7, wounds: 99, weapons: [] };
+  target.woundsOnLeadModel = 99;
+  battle.units = [fighter, target];
+
+  const next = fightPlayUnitWeapons(battle, fighter.id, fighter.side, [
+    { weaponIndex: 0, targetUnitId: target.id, modelCount: 1 },
+    { weaponIndex: 2, targetUnitId: target.id, modelCount: 1 },
+  ], rules40K11th);
+  assert.notEqual(next, battle);
+  const messages = next.log.map(entry => entry.message).join(' ');
+  assert.match(messages, /Klaw - strike/);
+  assert.match(messages, /Companion stabba/);
+  assert.equal(messages.includes('Klaw - sweep'), false);
+  assert.equal(next.lastShootingResolution?.weapons.every(result => result.hitPreview?.commonHitTarget === 2), true);
+});
+
 test('Melee weapons can split declared attacks between engaged targets', () => {
   const battle = state('fight');
   const profile = {
@@ -11635,8 +11942,11 @@ test('11th Fight allows a side to pass when all eligible fighters are more than 
   const first = losTestUnit('pass-first', 0, { x: 0, y: 10 });
   first.charged = true;
   const second = losTestUnit('pass-second', 1, { x: 10, y: 10 });
-  second.charged = true;
   battle.units = [first, second];
+  // The opposing unit is eligible because it was engaged when this Fight
+  // step started, not because its prior player turn happened in the same
+  // battle round.
+  battle.engagedUnitIdsAtFightStepStart = [first.id, second.id];
 
   assert.equal(playFightSideCanPass(battle, 0, rules40K11th), true);
   assert.equal(playFightSideCanPass(battle, 1, rules40K11th), false);
@@ -11657,8 +11967,10 @@ test('11th Fight allows a side to pass when all eligible fighters are more than 
   ledgerBattle.fightPileInSide = 1;
   const ledgerFight = startPlayFightStep(ledgerBattle, rules40K11th);
   const ledgerPassed = passPlayFight(ledgerFight, 0, rules40K11th);
-  assert.equal(ledgerPassed.phaseStepActions?.actions.find(action => action.id === `fight:0:${first.id}`)?.status, 'skipped');
-  assert.equal(ledgerPassed.phaseStepActions?.actions.find(action => action.id === `fight:1:${second.id}`)?.status, 'available');
+  // At the actual Fight-step snapshot the distant opponent is not engaged
+  // and did not charge in this player turn, so passing the lone legal
+  // fighter ends the selection step.
+  assert.equal(ledgerPassed.phaseStep, PHASE_STEP.FightConsolidate);
 });
 
 test('11th Consolidation can reopen a Fight opportunity for a side that previously passed', () => {
@@ -11774,27 +12086,39 @@ test('11th Pile In reports every moved model that loses a starting engagement', 
   });
 });
 
-test('11th Fight lets both sides complete ordinary Pile In moves before Fight begins', () => {
+test('11th Fight keeps all ordinary Pile In moves together by army', () => {
   const battle = state('fight');
   battle.ruleset = rulesetMetadataForState(rules40K11th);
   battle.fightStepStarted = false;
+  battle.phaseStep = PHASE_STEP.FightPileIn;
   battle.fightPileInSide = 0;
   const ork = losTestUnit('ork-pile-in', 0, { x: 10, y: 10 });
   ork.inCombat = true;
+  const secondOrk = losTestUnit('ork-pile-in-second', 0, { x: 10, y: 11 });
+  secondOrk.inCombat = true;
   const necron = losTestUnit('necron-pile-in', 1, { x: 10, y: 10 });
   necron.inCombat = true;
-  battle.units = [ork, necron];
+  battle.units = [ork, secondOrk, necron];
 
-  assert.deepEqual(playFightPileInUnitIds(battle, 0, rules40K11th), [ork.id]);
+  assert.deepEqual(playFightPileInUnitIds(battle, 0, rules40K11th), [ork.id, secondOrk.id]);
   assert.deepEqual(playFightPileInUnitIds(battle, 1, rules40K11th), []);
 
   const orkPending = beginPlayFightMovement(battle, ork.id, 0, 'pileIn', rules40K11th);
   const afterOrk = completePlayFightMovement(orkPending, ork.id, 0, rules40K11th);
-  assert.equal(afterOrk.fightPileInSide, 1);
+  assert.deepEqual(afterOrk.phaseStepActions?.actions.map(action => ({ id: action.id, side: action.side, status: action.status })), [
+    { id: `pile-in:0:${ork.id}`, side: 0, status: 'completed' },
+    { id: `pile-in:0:${secondOrk.id}`, side: 0, status: 'available' },
+  ]);
+  assert.equal(afterOrk.fightPileInSide, 0);
   assert.equal(afterOrk.fightStepStarted, false);
-  assert.deepEqual(playFightPileInUnitIds(afterOrk, 1, rules40K11th), [necron.id]);
+  assert.deepEqual(playFightPileInUnitIds(afterOrk, 0, rules40K11th), [secondOrk.id]);
 
-  const necronPending = beginPlayFightMovement(afterOrk, necron.id, 1, 'pileIn', rules40K11th);
+  const secondOrkPending = beginPlayFightMovement(afterOrk, secondOrk.id, 0, 'pileIn', rules40K11th);
+  const afterSecondOrk = completePlayFightMovement(secondOrkPending, secondOrk.id, 0, rules40K11th);
+  assert.equal(afterSecondOrk.fightPileInSide, 1);
+  assert.deepEqual(playFightPileInUnitIds(afterSecondOrk, 1, rules40K11th), [necron.id]);
+
+  const necronPending = beginPlayFightMovement(afterSecondOrk, necron.id, 1, 'pileIn', rules40K11th);
   const afterNecron = completePlayFightMovement(necronPending, necron.id, 1, rules40K11th);
   assert.equal(afterNecron.fightStepStarted, true);
   assert.equal(afterNecron.phaseStep, PHASE_STEP.FightUnits);
@@ -11909,6 +12233,36 @@ test('11th attached formations keep a stable combined rules-unit identity and so
   assert.equal(attachedUnitHasRule(battle, bodyguardUnit, 'Stealth'), true);
   assert.equal(attachedUnitHasRule(battle, bodyguardUnit, 'Feel No Pain'), true);
   assert.equal(attachedUnitTargetRepresentative(battle, leaderUnit)?.id, bodyguardUnit.id);
+});
+
+test('11th Fight target choices expose one target per attached group', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.phaseStep = PHASE_STEP.FightPileIn;
+  battle.fightStepStarted = false;
+  battle.fightPileInSide = 0;
+
+  const source = losTestUnit('pile-source', 0, { x: 10, y: 10 });
+  source.tabletopUnitId = source.id;
+  source.charged = true;
+  const target = losTestUnit('pile-target', 1, { x: 11, y: 10 });
+  target.tabletopUnitId = target.id;
+  const leader = losTestUnit('pile-target-leader', 1, { x: 11.5, y: 10 });
+  leader.tabletopUnitId = target.id;
+  leader.attachedToUnitId = target.id;
+  leader.profile = { ...leader.profile, keywords: ['Infantry', 'Character'] };
+  battle.units = [source, target, leader];
+
+  assert.deepEqual(playFightPileInTargetOptions(battle, source.id, 0, rules40K11th), [target.id]);
+  assert.deepEqual(playFightPileInUnitIds(battle, 0, rules40K11th), [source.id]);
+
+  battle.phaseStep = PHASE_STEP.FightConsolidate;
+  battle.consolidationStepStarted = true;
+  battle.consolidationSide = 0;
+  battle.consolidationEligibleUnitIds = [source.id];
+  assert.deepEqual(playFightConsolidationOptions(battle, source.id, 0, rules40K11th), [
+    { mode: 'ongoing', targetUnitIds: [target.id] },
+  ]);
 });
 
 test('11th attached Feel No Pain only shares unit-scoped sources and expires with its source', () => {
@@ -12062,6 +12416,15 @@ test('11th attached components start, cancel, and complete one shared action', (
     const charged = chargePlayUnitTarget(chargeBattle, bodyguard.id, 0, 'charge-target', rules40K11th);
     assert.equal(charged.units.slice(0, 2).every(unit => unit.activated && unit.charged), true);
     assert.deepEqual(playChargeTargetOptions(charged, leader.id, 0, rules40K11th), []);
+
+    const manualChargeStart = JSON.parse(JSON.stringify(chargeBattle)) as BattleState;
+    manualChargeStart.pendingChargeRoll = { unitId: bodyguard.id, side: 0, maximumDistance: 12 };
+    const pendingMovement = chargePlayUnitTarget(manualChargeStart, bodyguard.id, 0, 'charge-target', rules40K11th);
+    assert.equal(pendingMovement.pendingChargeMovement?.unitId, bodyguard.id);
+    const leaderBefore = pendingMovement.units.find(unit => unit.id === leader.id)!.modelPositions[0];
+    const movedLeader = movePlayModelByDelta(pendingMovement, leader.id, 0, 0, 0.5, 0);
+    const leaderAfter = movedLeader.units.find(unit => unit.id === leader.id)!.modelPositions[0];
+    assert.notEqual(leaderAfter.x, leaderBefore.x);
   } finally {
     Math.random = originalChargeRandom;
   }
@@ -12116,7 +12479,7 @@ test('11th attached units persist after Bodyguard loss and emit one aggregate un
   assert.equal(attachedUnitComponents(restored, restored.units[1], true).length, 2);
 });
 
-test('11th attached components complete one uninterrupted Fight activation and replay the cursor', () => {
+test('11th attached components with no possible attacks complete in their unit Fight activation', () => {
   const battle = state('fight');
   battle.activeArmy = 0;
   battle.fightStepStarted = true;
@@ -12142,25 +12505,52 @@ test('11th attached components complete one uninterrupted Fight activation and r
     targetUnitId: enemy.id, weaponIndex: -1,
   };
   const afterBodyguard = applyGameAction(battle, firstAction, { rules: rules40K11th });
-  assert.equal(afterBodyguard.activeAttachedFightUnitId, bodyguard.id);
-  assert.deepEqual(playFightActivationUnitIds(afterBodyguard, 0, rules40K11th), [leader.id]);
-  assert.deepEqual(playFightActivationUnitIds(afterBodyguard, 1, rules40K11th), []);
-
-  const secondAction: GameAction = {
-    type: GAME_ACTION_TYPE.FightUnitWeapon, unitId: leader.id, side: 0,
-    targetUnitId: enemy.id, weaponIndex: -1,
-  };
-  const completed = applyGameAction(afterBodyguard, secondAction, { rules: rules40K11th });
-  assert.equal(completed.activeAttachedFightUnitId, undefined);
-  assert.equal(completed.lastFightSelectionSide, 0);
-  assert.deepEqual(playFightActivationUnitIds(completed, 1, rules40K11th), [enemy.id]);
+  assert.equal(afterBodyguard.activeAttachedFightUnitId, undefined);
+  assert.equal(afterBodyguard.units.find(unit => unit.id === leader.id)?.activated, true);
+  assert.equal(afterBodyguard.lastFightSelectionSide, 0);
+  assert.deepEqual(playFightActivationUnitIds(afterBodyguard, 1, rules40K11th), [enemy.id]);
 
   const timeline = createPracticeTimeline(battle);
   const firstEntry = appendTimelineAction(timeline, battle, firstAction, { rules: rules40K11th });
-  const secondEntry = appendTimelineAction(firstEntry.timeline, firstEntry.state, secondAction, { rules: rules40K11th });
-  const replayed = replayTimeline(secondEntry.timeline, { rules: rules40K11th }, false);
-  assert.deepEqual(replayed.units.map(unit => unit.activated), completed.units.map(unit => unit.activated));
+  const replayed = replayTimeline(firstEntry.timeline, { rules: rules40K11th }, false);
+  assert.deepEqual(replayed.units.map(unit => unit.activated), afterBodyguard.units.map(unit => unit.activated));
   assert.equal(replayed.activeAttachedFightUnitId, undefined);
+});
+
+test('11th Fight charge priority belongs only to the active player turn', () => {
+  const battle = state('fight');
+  battle.ruleset = rulesetMetadataForState(rules40K11th);
+  battle.activeArmy = 0;
+  battle.fightStepStarted = true;
+
+  const firstCharger = losTestUnit('first-charger', 0, { x: 10, y: 10 });
+  const secondCharger = losTestUnit('second-charger', 0, { x: 10, y: 16 });
+  const previousTurnCharger = losTestUnit('previous-turn-charger', 1, { x: 12, y: 10 });
+  const secondEnemy = losTestUnit('second-enemy', 1, { x: 12, y: 16 });
+  for (const unit of [firstCharger, secondCharger, previousTurnCharger, secondEnemy]) {
+    unit.inCombat = true;
+  }
+  // `turn` is the battle round, so this is deliberately equal to the active
+  // player's current value. Side 1 charged in its prior player turn.
+  firstCharger.charged = true;
+  firstCharger.chargedTurn = battle.turn;
+  secondCharger.charged = true;
+  secondCharger.chargedTurn = battle.turn;
+  previousTurnCharger.charged = true;
+  previousTurnCharger.chargedTurn = battle.turn;
+  battle.units = [firstCharger, secondCharger, previousTurnCharger, secondEnemy];
+  battle.engagedUnitIdsAtFightStepStart = battle.units.map(unit => unit.id);
+
+  assert.deepEqual(playFightActivationUnitIds(battle, 0, rules40K11th), ['first-charger', 'second-charger']);
+  assert.deepEqual(playFightActivationUnitIds(battle, 1, rules40K11th), []);
+
+  const afterFirst = {
+    ...battle,
+    lastFightSelectionSide: 0 as const,
+    units: battle.units.map(unit => unit.id === firstCharger.id ? { ...unit, activated: true } : unit),
+  };
+  assert.deepEqual(playFightActivationUnitIds(afterFirst, 0, rules40K11th), ['second-charger']);
+  assert.deepEqual(playFightActivationUnitIds(afterFirst, 1, rules40K11th), []);
 });
 
 test('11th Overrun uses the Fight-step engagement snapshot and current eligibility', () => {
@@ -14495,4 +14885,91 @@ test('11th Damaged profile applies only explicitly typed hit and OC effects at i
   const healthy = structuredClone(attacker);
   healthy.woundsOnLeadModel = 4;
   assert.equal(objectiveControlValue(healthy), 5);
+});
+
+test('shooting damage stays on the selected bodyguard model when a leader is attached', () => {
+  const battle = state('shooting');
+  const bodyguard = losTestUnit('squighog-boyz', 1, { x: 12, y: 10 });
+  bodyguard.tabletopUnitId = bodyguard.id;
+  bodyguard.profile = {
+    ...bodyguard.profile,
+    name: 'Squighog Boyz',
+    wounds: 3,
+    baseModelCount: 4,
+    modelBases: [
+      { shape: 'oval', widthMm: 90, lengthMm: 52.5 },
+      { shape: 'oval', widthMm: 75, lengthMm: 42 },
+      { shape: 'oval', widthMm: 75, lengthMm: 42 },
+      { shape: 'oval', widthMm: 75, lengthMm: 42 },
+    ],
+  };
+  bodyguard.remainingModels = 4;
+  bodyguard.woundsOnLeadModel = 3;
+  bodyguard.modelPositions = [
+    { x: 12, y: 10 },
+    { x: 13, y: 10 },
+    { x: 14, y: 10 },
+    { x: 15, y: 10 },
+  ];
+  bodyguard.modelRosterIndexes = [0, 1, 2, 3];
+
+  const leader = losTestUnit('beastboss-on-squigosaur', 1, { x: 11, y: 10 });
+  leader.tabletopUnitId = bodyguard.id;
+  leader.attachedToUnitId = bodyguard.id;
+  leader.profile = {
+    ...leader.profile,
+    name: 'Beastboss On Squigosaur',
+    keywords: ['Mounted', 'Character'],
+    wounds: 8,
+    baseModelCount: 1,
+  };
+  leader.woundsOnLeadModel = 8;
+
+  bodyguard.pendingDamageAllocations = [{ damage: 6, noCarryOver: true, source: 'C\'tan Shard' }];
+  battle.units = [bodyguard, leader];
+
+  const resolved = allocatePlayDamageToModel(battle, bodyguard.id, 1, 1);
+  const resolvedBodyguard = resolved.units.find(unit => unit.id === bodyguard.id)!;
+  const resolvedLeader = resolved.units.find(unit => unit.id === leader.id)!;
+
+  assert.equal(resolvedBodyguard.remainingModels, 3);
+  assert.deepEqual(resolvedBodyguard.modelRosterIndexes, [0, 2, 3]);
+  assert.equal(resolvedBodyguard.woundsOnLeadModel, 3);
+  assert.equal(resolvedLeader.remainingModels, 1);
+  assert.equal(resolvedLeader.woundsOnLeadModel, 8);
+  assert.equal(modelBaseRadiusForUnit(resolvedBodyguard, 0) > modelBaseRadiusForUnit(resolvedBodyguard, 1), true);
+});
+
+test('pending damage transfers from a destroyed bodyguard to its surviving leader', () => {
+  const battle = state('shooting');
+  const bodyguard = losTestUnit('bodyguard', 1, { x: 12, y: 10 });
+  bodyguard.tabletopUnitId = bodyguard.id;
+  bodyguard.profile = { ...bodyguard.profile, name: 'Bodyguard', wounds: 3, baseModelCount: 1 };
+  bodyguard.remainingModels = 1;
+  bodyguard.woundsOnLeadModel = 3;
+
+  const leader = losTestUnit('leader', 1, { x: 12.5, y: 10 });
+  leader.tabletopUnitId = bodyguard.id;
+  leader.attachedToUnitId = bodyguard.id;
+  leader.profile = { ...leader.profile, name: 'Leader', keywords: ['Infantry', 'Character'], wounds: 4, baseModelCount: 1 };
+  leader.woundsOnLeadModel = 4;
+
+  bodyguard.pendingDamageAllocations = [
+    { targetUnitId: bodyguard.id, damage: 3, noCarryOver: true, source: 'Test Damage' },
+    { targetUnitId: bodyguard.id, damage: 1, noCarryOver: true, source: 'Test Damage' },
+  ];
+  battle.units = [bodyguard, leader];
+
+  const bodyguardDestroyed = allocatePlayDamageToModel(battle, bodyguard.id, 1, 0);
+  const destroyedBodyguard = bodyguardDestroyed.units.find(unit => unit.id === bodyguard.id)!;
+  const survivingLeader = bodyguardDestroyed.units.find(unit => unit.id === leader.id)!;
+  assert.equal(destroyedBodyguard.destroyed, true);
+  assert.equal(destroyedBodyguard.pendingDamageAllocations, undefined);
+  assert.deepEqual(survivingLeader.pendingDamageAllocations, [
+    { targetUnitId: leader.id, damage: 1, noCarryOver: true, source: 'Test Damage' },
+  ]);
+
+  const leaderDamaged = allocatePlayDamageToModel(bodyguardDestroyed, leader.id, 1, 0);
+  assert.equal(leaderDamaged.units.find(unit => unit.id === leader.id)?.woundsOnLeadModel, 3);
+  assert.equal(leaderDamaged.units.find(unit => unit.id === leader.id)?.pendingDamageAllocations, undefined);
 });

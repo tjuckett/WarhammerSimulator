@@ -32,7 +32,7 @@ export function applyDamage(
   const logs: LogEntry[] = [];
   if (options.deferCasualties) {
     unit.pendingDamageAllocations = [...(unit.pendingDamageAllocations ?? []), {
-      damage: totalDamage, noCarryOver: options.noCarryOver, source: options.source,
+      targetUnitId: unit.id, damage: totalDamage, noCarryOver: options.noCarryOver, source: options.source,
       ...(options.sourceUnitId ? { sourceUnitId: options.sourceUnitId } : {}),
       ...(options.targetModelIndex !== undefined ? { targetModelIndex: options.targetModelIndex } : {}),
       ...(options.sourceObjectiveIndexesWithinRange ? { sourceObjectiveIndexesWithinRange: options.sourceObjectiveIndexesWithinRange } : {}),

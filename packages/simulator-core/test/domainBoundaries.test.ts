@@ -5,11 +5,16 @@ import { PHASE_STEP, type BattleState, type BattleUnit, type Position } from '..
 import { boardFormatForId } from '../src/data/boardFormats';
 import {
   addAircraftStrategicReserves,
+  baseFootprintInDeploymentZone,
   infiltratorModelsAreOutsideEnemyUnits,
   modelIsOutsideEnemyDeploymentZoneBuffer,
+  pointInDeploymentZone,
+  zoneFor,
 } from '../src/engine/deployment';
 import { unitsInEngagementRange } from '../src/engine/coherency';
 import {
+  formationHasInternalOverlap,
+  gridFormation,
   unitHasBaseOverlap,
   unitHasModelOutsideBattlefield,
   unitHasStartedCurrentMove,
@@ -144,12 +149,73 @@ test('aircraft reserve setup creates off-board reserve units', () => {
   assert.ok(units[0].modelPositions[0].x < 0);
 });
 
+test('mixed-base deployment formations group like models without overlap', () => {
+  const squighogProfile = profile({
+    name: 'Squighog Boyz',
+    baseModelCount: 8,
+    modelBases: [
+      { shape: 'oval', widthMm: 90, lengthMm: 52.5 },
+      ...Array.from({ length: 6 }, () => ({ shape: 'oval' as const, widthMm: 75, lengthMm: 42 })),
+      { shape: 'oval', widthMm: 90, lengthMm: 52.5 },
+    ],
+  });
+  const positions = gridFormation(squighogProfile, { x: 20, y: 10 }, 0);
+  const deployed = unit('squighog-boyz', 0, { x: 20, y: 10 }, squighogProfile);
+  deployed.modelPositions = positions;
+  deployed.position = { x: 20, y: 10 };
+
+  assert.equal(formationHasInternalOverlap(deployed), false);
+  const likeBaseDistance = Math.hypot(positions[7].x - positions[0].x, positions[7].y - positions[0].y);
+  const mixedBaseDistance = Math.hypot(positions[1].x - positions[0].x, positions[1].y - positions[0].y);
+  assert.ok(likeBaseDistance < mixedBaseDistance);
+});
+
 test('Infiltrators must remain outside the enemy deployment buffer', () => {
   const infiltrator = profile({ abilities: [{ name: 'Infiltrators', description: 'Can deploy forward.' }] });
   const board = boardFormatForId();
 
   assert.equal(modelIsOutsideEnemyDeploymentZoneBuffer(infiltrator, 0, { x: board.width - 1, y: board.height / 2 }, 0, 'Default', board), false);
   assert.equal(modelIsOutsideEnemyDeploymentZoneBuffer(infiltrator, 0, { x: 0, y: board.height / 2 }, 0, 'Default', board), true);
+});
+
+test('round bases use circular clearance at diagonal deployment boundaries', () => {
+  const redZone = zoneFor(1, 'Crucible of Battle', boardFormatForId());
+
+  // This base is 0.25" from the diagonal by its centre and remains wholly
+  // inside the triangle. A square-corner approximation incorrectly rejects it.
+  assert.equal(pointInDeploymentZone({ x: 44, y: 20 }, redZone, 0.25), true);
+  assert.equal(pointInDeploymentZone({ x: 43.8, y: 20 }, redZone, 0.25), false);
+});
+
+test('deployment sides allow a base to cross a shared edge between touching shapes', () => {
+  const tippingPointZone = zoneFor(0, 'Tipping Point', boardFormatForId());
+
+  assert.equal(pointInDeploymentZone({ x: 10, y: 22 }, tippingPointZone, 0.5), true);
+  assert.equal(pointInDeploymentZone({ x: 12.25, y: 22 }, tippingPointZone, 0.5), false);
+});
+
+test('deployment containment uses the rotated oval footprint rather than its bounding circle', () => {
+  const zone = {
+    name: 'Test Zone',
+    side: 0 as const,
+    role: 'defender' as const,
+    axis: 'x' as const,
+    deployment: 'Test',
+    shapes: [{ type: 'rect' as const, x1: 0, y1: 0, x2: 10, y2: 10 }],
+    minX: 0,
+    maxX: 10,
+    minY: 0,
+    maxY: 10,
+    x0: 0,
+    x1: 10,
+    y0: 0,
+    y1: 10,
+  };
+  const center = { x: 8.75, y: 5 };
+  const footprint = { shape: 'oval' as const, halfWidth: 1, halfLength: 2, rotationDeg: 90 };
+
+  assert.equal(pointInDeploymentZone(center, zone, 2), false);
+  assert.equal(baseFootprintInDeploymentZone(center, footprint, zone), true);
 });
 
 test('Infiltrator placement rejects models too close to enemy models', () => {

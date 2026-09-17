@@ -1,3 +1,4 @@
+import { modelWoundsForUnit } from './baseSizes';
 import type { UnitProfile } from '../types/army';
 import type { BattleUnit, Position } from '../types/battle';
 
@@ -48,7 +49,7 @@ export function trimUnitModelState(unit: BattleUnit): void {
   unit.movementStartRotationsByModel = unit.movementStartRotationsByModel?.slice(0, unit.remainingModels);
   if (unit.woundedModelIndex !== undefined && unit.woundedModelIndex >= unit.remainingModels) {
     unit.woundedModelIndex = undefined;
-    unit.woundsOnLeadModel = unit.remainingModels > 0 ? unit.profile.wounds : 0;
+    unit.woundsOnLeadModel = unit.remainingModels > 0 ? modelWoundsForUnit(unit, 0) : 0;
   }
 }
 
@@ -58,7 +59,7 @@ export function spliceModelIndices(unit: BattleUnit, sortedDescendingIndices: nu
     if (unit.woundedModelIndex !== undefined) {
       if (unit.woundedModelIndex === modelIndex) {
         unit.woundedModelIndex = undefined;
-        unit.woundsOnLeadModel = unit.profile.wounds;
+        unit.woundsOnLeadModel = 0;
       } else if (unit.woundedModelIndex > modelIndex) {
         unit.woundedModelIndex -= 1;
       }
@@ -71,14 +72,44 @@ export function spliceModelIndices(unit: BattleUnit, sortedDescendingIndices: nu
     unit.movementStartPositionsByModel?.splice(modelIndex, 1);
     unit.movementStartRotationsByModel?.splice(modelIndex, 1);
   }
+  if (unit.woundedModelIndex === undefined && unit.modelPositions.length > 0 && unit.woundsOnLeadModel <= 0) {
+    unit.woundsOnLeadModel = modelWoundsForUnit(unit, 0);
+  }
 }
 
 export function modelWeaponLoadout(profile: UnitProfile, modelIndex: number): number[] {
   const configured = profile.modelWeaponLoadouts?.[modelIndex];
-  if (configured?.length) {
-    return configured.filter(weaponIndex => weaponIndex >= 0 && weaponIndex < profile.weapons.length);
+  if (configured !== undefined) {
+    const loadout = configured.filter(weaponIndex => weaponIndex >= 0 && weaponIndex < profile.weapons.length);
+    // Some imported rosters recorded only one profile for a weapon that has
+    // both ranged and melee profiles under the same name (for example a
+    // Stikka). A model equipped with that named weapon carries both profiles.
+    // Retain intentional duplicate entries, which represent multiple copies
+    // of one profile, while adding only a missing opposite-mode sibling.
+    const addedIndexes = [...new Set(loadout)].flatMap(weaponIndex => {
+      const weapon = profile.weapons[weaponIndex];
+      return profile.weapons
+        .map((candidate, candidateIndex) =>
+          candidateIndex !== weaponIndex
+          && candidate.name.trim().toLowerCase() === weapon.name.trim().toLowerCase()
+          && candidate.isMelee !== weapon.isMelee
+          && !loadout.includes(candidateIndex)
+            ? candidateIndex
+            : -1)
+        .filter(candidateIndex => candidateIndex >= 0);
+    });
+    return [...loadout, ...addedIndexes];
   }
   return profile.weapons.map((_, weaponIndex) => weaponIndex);
+}
+
+/**
+ * Returns how many physical copies of a weapon profile a model carries.
+ * Repeated profile indices are intentional for datasheets such as Deff Dread,
+ * where two weapons can share the same profile.
+ */
+export function modelWeaponCopyCount(profile: UnitProfile, modelIndex: number, weaponIndex: number): number {
+  return modelWeaponLoadout(profile, modelIndex).filter(index => index === weaponIndex).length;
 }
 
 export function rememberDestroyedPositions(unit: BattleUnit): void {

@@ -1,4 +1,5 @@
 import { eleventhSecondaryMissionRuleForName } from '../data/missionRules';
+import { clone } from './clone';
 import { battleRound } from './battleRound';
 import type {
   BattleState,
@@ -15,10 +16,6 @@ import type {
 import { objectiveRoleForIndex } from './missionGeometry';
 
 const MAX_ACTIVE_SECONDARY_MISSIONS = 2;
-
-function clone<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value));
-}
 
 function emptyPlayerState(mode: SecondaryMissionMode): SecondaryMissionPlayerState {
   return { mode, activeCards: [], drawPile: [], discardedCards: [] };

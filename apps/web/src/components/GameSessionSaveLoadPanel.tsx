@@ -164,6 +164,10 @@ function scoreCpLabel(scenario: GameSessionScenarioSummary): string {
   return [score, cp].filter(Boolean).join(' - ');
 }
 
+function isGameSessionError(status: string): boolean {
+  return status.startsWith('Save failed:') || status.startsWith('Load failed:');
+}
+
 export function GameSessionControlsPanel({
   timeline,
   status,
@@ -209,7 +213,7 @@ export function GameSessionControlsPanel({
         <strong>{storageStatus?.storage === 'database' ? 'Database saves' : 'Local saves'}</strong>
         <span>{storageStatus?.message ?? 'Checking game save storage...'}</span>
       </div>
-      {status && <div className={`practice-status${status.startsWith('Save failed:') ? ' practice-status-error' : ''}`} role={status.startsWith('Save failed:') ? 'alert' : undefined}>{status}</div>}
+      {status && <div className={`practice-status${isGameSessionError(status) ? ' practice-status-error' : ''}`} role={isGameSessionError(status) ? 'alert' : undefined}>{status}</div>}
     </section>
   );
 }
@@ -255,7 +259,7 @@ export function GameSessionSaveModal({
           <strong>{storageStatus?.storage === 'database' ? 'Database saves' : 'Local saves'}</strong>
           <span>{storageStatus?.message ?? 'Checking game save storage...'}</span>
         </div>
-        {status && <div className={`practice-status${status.startsWith('Save failed:') ? ' practice-status-error' : ''}`} role={status.startsWith('Save failed:') ? 'alert' : undefined}>{status}</div>}
+        {status && <div className={`practice-status${isGameSessionError(status) ? ' practice-status-error' : ''}`} role={isGameSessionError(status) ? 'alert' : undefined}>{status}</div>}
         <div className="practice-seek">
           {hasTimelineEntries ? (
             <input

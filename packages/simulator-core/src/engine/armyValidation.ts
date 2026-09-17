@@ -378,14 +378,10 @@ export function validateImportedArmy(army: ImportedArmy, options: ArmyValidation
           errors.push(issue('error', 'model-loadout-shape-invalid', `${label} model ${modelIndex + 1} has an invalid weapon loadout shape.`, index));
           return;
         }
-        const seenWeapons = new Set<number>();
         loadout.forEach(weaponIndex => {
           if (!Number.isInteger(weaponIndex) || weaponIndex < 0 || weaponIndex >= weapons.length) {
             errors.push(issue('error', 'model-loadout-weapon-invalid', `${label} model ${modelIndex + 1} references an invalid weapon index.`, index));
-          } else if (seenWeapons.has(weaponIndex)) {
-            errors.push(issue('error', 'model-loadout-weapon-duplicate', `${label} model ${modelIndex + 1} references the same weapon more than once.`, index));
           }
-          seenWeapons.add(weaponIndex);
         });
       });
     }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { GameAction } from '@warhammer-simulator/core/practice/actions';
-import { currentTimelineState, appendResolvedTimelineAction } from '@warhammer-simulator/core/practice/timeline';
+import { currentScenarioState } from '@warhammer-simulator/core/practice/scenarios';
+import { appendResolvedTimelineAction } from '@warhammer-simulator/core/practice/timeline';
 import { rulesEditionForRuleset } from '@warhammer-simulator/core/engine/rulesEngine';
 import { applyControllerAction } from '@warhammer-simulator/core/engine/controllers';
 import { prismaPracticeScenarioRepository } from '../../../../../../server/practice/prismaPracticeScenarioRepository';
@@ -25,12 +26,13 @@ export async function POST(
       return NextResponse.json({ error: 'Valid controller seat credentials are required.' }, { status: 401 });
     }
 
-    const stateBefore = currentTimelineState(scenario.timeline);
+    const stateBefore = currentScenarioState(scenario);
     const rules = rulesEditionForRuleset(stateBefore.ruleset);
     const stateAfter = applyControllerAction(stateBefore, { side: body.side, action: body.action }, rules);
     const timeline = appendResolvedTimelineAction(scenario.timeline, body.action, { stateBefore, stateAfter });
     const saved = await prismaPracticeScenarioRepository.saveScenario({
       ...scenario,
+      initialState: stateAfter,
       timeline,
       metadata: {
         ...scenario.metadata,

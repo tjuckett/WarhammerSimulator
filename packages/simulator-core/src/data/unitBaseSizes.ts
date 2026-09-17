@@ -32,10 +32,19 @@ import worldEatersBaseSizes from './baseSizes/world-eaters.json';
 type UnitBaseSizeEntry = {
   base?: ModelBase;
   models?: ModelBaseGroup[];
+  /** Keep the listed leading models fixed and use the final model base for additional models. */
+  repeatLast?: boolean;
+  /** Replace individual model bases when a unit contains different model types. */
+  modelOverrides?: ModelBaseOverride[];
 };
 
 type ModelBaseGroup = {
   count: number;
+  base: ModelBase;
+};
+
+type ModelBaseOverride = {
+  index: number;
   base: ModelBase;
 };
 
@@ -88,7 +97,10 @@ export function applyBaseSizesToArmy(army: ImportedArmy): ImportedArmy {
   return {
     ...army,
     units: army.units.map(unit => {
-      const modelBases = unit.modelBases ?? baseSizesForUnit(army.faction, unit);
+      const canonicalBases = baseSizesForUnit(army.faction, unit);
+      const isCanonicalOrkMixedBaseUnit = normalizeName(army.faction) === 'orks'
+        && ['boyz', 'squighog boyz'].includes(normalizeUnitName(unit.name));
+      const modelBases = isCanonicalOrkMixedBaseUnit ? canonicalBases : unit.modelBases ?? canonicalBases;
       return {
         ...unit,
         baseModelCount: modelBases && modelBases.length > unit.baseModelCount
@@ -138,13 +150,24 @@ function normalizeBaseSizeData(rawData: unknown): UnitBaseSizeMap {
 
 function normalizeBaseEntry(rawEntry: unknown): UnitBaseSizeEntry | null {
   if (!rawEntry || typeof rawEntry !== 'object') return null;
-  const entry = rawEntry as { base?: unknown; models?: unknown };
+  const entry = rawEntry as { base?: unknown; models?: unknown; repeatLast?: unknown; modelOverrides?: unknown };
   const base = normalizeModelBase(entry.base);
   const models = Array.isArray(entry.models)
     ? entry.models.map(normalizeModelGroup).filter((group): group is ModelBaseGroup => group !== null)
     : undefined;
-  if (models?.length) return { models };
-  if (base) return { base };
+  const modelOverrides = Array.isArray(entry.modelOverrides)
+    ? entry.modelOverrides
+      .map(normalizeModelBaseOverride)
+      .filter((override): override is ModelBaseOverride => override !== null)
+    : undefined;
+  if (models?.length) {
+    return {
+      models,
+      ...(entry.repeatLast === true ? { repeatLast: true } : {}),
+      ...(modelOverrides?.length ? { modelOverrides } : {}),
+    };
+  }
+  if (base) return { base, ...(modelOverrides?.length ? { modelOverrides } : {}) };
   return null;
 }
 
@@ -158,6 +181,14 @@ function normalizeModelGroup(rawGroup: unknown): ModelBaseGroup | null {
   const base = normalizeModelBase(group.base);
   if (!base || count < 1) return null;
   return { count, base };
+}
+
+function normalizeModelBaseOverride(rawOverride: unknown): ModelBaseOverride | null {
+  if (!rawOverride || typeof rawOverride !== 'object') return null;
+  const override = rawOverride as { index?: unknown; base?: unknown };
+  const index = typeof override.index === 'number' ? Math.floor(override.index) : -1;
+  const base = normalizeModelBase(override.base);
+  return base && index >= 0 ? { index, base } : null;
 }
 
 function normalizeModelBase(rawBase: unknown): ModelBase | null {
@@ -183,15 +214,31 @@ function normalizeModelBase(rawBase: unknown): ModelBase | null {
 }
 
 function expandBaseEntry(entry: UnitBaseSizeEntry, modelCount: number): ModelBase[] | undefined {
+  let bases: ModelBase[] | undefined;
   if (entry.models?.length) {
     const listedCount = entry.models.reduce((total, group) => total + group.count, 0);
-    const multiplier = listedCount > 0 && modelCount > listedCount && modelCount % listedCount === 0
-      ? modelCount / listedCount
-      : 1;
-    return entry.models.flatMap(group => Array.from({ length: group.count * multiplier }, () => ({ ...group.base })));
+    const listedBases = entry.models.flatMap(group => Array.from({ length: group.count }, () => ({ ...group.base })));
+    if (modelCount <= listedCount) bases = listedBases.slice(0, modelCount);
+    else if (entry.repeatLast) {
+      const lastBase = listedBases[listedBases.length - 1];
+      bases = [
+        ...listedBases.slice(0, -1),
+        ...Array.from({ length: modelCount - listedBases.length + 1 }, () => ({ ...lastBase })),
+      ];
+    } else {
+      const multiplier = listedCount > 0 && modelCount % listedCount === 0
+        ? modelCount / listedCount
+        : 1;
+      bases = entry.models.flatMap(group => Array.from({ length: group.count * multiplier }, () => ({ ...group.base })));
+    }
+  } else if (entry.base) {
+    bases = Array.from({ length: modelCount }, () => ({ ...entry.base! }));
   }
-  if (!entry.base) return undefined;
-  return Array.from({ length: modelCount }, () => ({ ...entry.base! }));
+  if (!bases) return undefined;
+  for (const override of entry.modelOverrides ?? []) {
+    if (override.index < bases.length) bases[override.index] = { ...override.base };
+  }
+  return bases;
 }
 
 function normalizeName(value: string): string {

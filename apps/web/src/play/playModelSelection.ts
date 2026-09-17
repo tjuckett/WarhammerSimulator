@@ -3,8 +3,9 @@ import { allocatePlayDamageToModel } from '@warhammer-simulator/core/engine/simu
 import { phaseStepFor } from '@warhammer-simulator/core/engine/battleStateMachine';
 import { GAME_ACTION_TYPE, type GameAction } from '@warhammer-simulator/core/practice/actions';
 import type { PlayModelSelection } from '../components/Battlefield';
-import { normalizePlaySelectionForState } from './playSelectionHelpers';
+import { attachedBattleUnitIdsForSelection, normalizePlaySelectionForState } from './playSelectionHelpers';
 import type { PlayUndoEntry } from './usePlayUndoState';
+import type { DamageAllocationOutcome } from './usePlayUiState';
 
 type StateRef = { current: BattleState | null };
 type InspectedSelection =
@@ -15,6 +16,7 @@ export function createPlayModelSelection({
   battleStateRef,
   battleState,
   isPlayMode,
+  fightReadyUnitIds,
   damageAllocationLocked,
   pendingDamageAllocationUnitIds,
   shootingResolutionShooterId,
@@ -27,12 +29,17 @@ export function createPlayModelSelection({
   setPlayModelSelection,
   setInspectedSelection,
   setCasualtyRemovalShooterId,
+  setDamageAllocationTargetId,
+  setDamageAllocationOutcome,
   setShootingResolutionStatus,
+  setFightResolutionStatus,
+  clearShootingSession,
   setTargetErrorMsg,
 }: {
   battleStateRef: StateRef;
   battleState: BattleState | null;
   isPlayMode: boolean;
+  fightReadyUnitIds: Set<string>;
   damageAllocationLocked: boolean;
   pendingDamageAllocationUnitIds: Set<string>;
   shootingResolutionShooterId: string | null;
@@ -45,7 +52,11 @@ export function createPlayModelSelection({
   setPlayModelSelection: (selection: PlayModelSelection | null) => void;
   setInspectedSelection: (selection: InspectedSelection) => void;
   setCasualtyRemovalShooterId: (unitId: string | null) => void;
+  setDamageAllocationTargetId: (unitId: string) => void;
+  setDamageAllocationOutcome: (outcome: DamageAllocationOutcome | null) => void;
   setShootingResolutionStatus: (status: 'idle' | 'rolled') => void;
+  setFightResolutionStatus: (status: 'idle' | 'rolled') => void;
+  clearShootingSession: () => void;
   setTargetErrorMsg: (message: string | null) => void;
 }) {
   function selectPlayModels(selection: PlayModelSelection | null) {
@@ -62,6 +73,17 @@ export function createPlayModelSelection({
         setTargetErrorMsg('Damage must be allocated to the already wounded model until it is destroyed');
         return;
       }
+      const outcomeEvent = [...(next.events ?? [])].reverse().find(event =>
+        event.type === 'damage-applied' && event.data.targetUnitId === part.unitId,
+      );
+      if (outcomeEvent) {
+        setDamageAllocationOutcome({
+          targetUnitId: part.unitId,
+          modelIndex,
+          damage: Number(outcomeEvent.data.damage ?? 0),
+          killedModels: Number(outcomeEvent.data.killedModels ?? 0),
+        });
+      }
       pushPlayUndo(playUndoEntry(prev), next, {
         type: GAME_ACTION_TYPE.AllocateDamage,
         unitId: part.unitId,
@@ -70,11 +92,7 @@ export function createPlayModelSelection({
       });
       const stillPending = next.units.find(unit => unit.id === part.unitId && unit.side === part.side && (unit.pendingDamageAllocations?.length ?? 0) > 0);
       if (stillPending) {
-        setPlayModelSelection(normalizePlaySelectionForState(next, {
-          side: stillPending.side,
-          parts: [{ unitId: stillPending.id, side: stillPending.side, modelIndices: stillPending.modelPositions.map((_, index) => index) }],
-        }));
-        setInspectedSelection({ kind: 'battle', side: stillPending.side, unitId: stillPending.id });
+        setDamageAllocationTargetId(stillPending.id);
         setTargetErrorMsg('Select a model to allocate the next pending damage');
       } else {
         const anotherPending = next.units.find(unit =>
@@ -83,41 +101,32 @@ export function createPlayModelSelection({
           && (unit.pendingDamageAllocations?.length ?? 0) > 0,
         );
         if (anotherPending) {
-          setPlayModelSelection(normalizePlaySelectionForState(next, {
-            side: anotherPending.side,
-            parts: [{ unitId: anotherPending.id, side: anotherPending.side, modelIndices: anotherPending.modelPositions.map((_, index) => index) }],
-          }));
-          setInspectedSelection({ kind: 'battle', side: anotherPending.side, unitId: anotherPending.id });
+          setDamageAllocationTargetId(anotherPending.id);
           setTargetErrorMsg('Select a model to allocate the next pending damage');
-          commitBattleState(next);
-          return;
-        }
-        if (next.phase === 'shooting' || next.phase === 'fight') {
-          // The final damage allocation completes the combat result. Clear
-          // the UI-only resolution cursor so another eligible unit can be
-          // selected immediately.
-          setShootingResolutionStatus('idle');
-          setCasualtyRemovalShooterId(null);
-          setPlayModelSelection(null);
-          setInspectedSelection(null);
-          setTargetErrorMsg(null);
           commitBattleState(next);
           return;
         }
         const actingUnit = next.phase === 'fight' && casualtyRemovalShooterId
           ? next.units.find(unit => unit.id === casualtyRemovalShooterId && unit.side === next.activeArmy && !unit.destroyed && !unit.embarkedInUnitId)
           : null;
-        const shootingResolution = next.phase === 'shooting' && casualtyRemovalShooterId
-          && next.lastShootingResolution?.shooterUnitId === casualtyRemovalShooterId
-          ? next.lastShootingResolution
+        // Read the result created by this allocation from battle state, not
+        // from the asynchronously-updated UI shooter cursor. A stale cursor
+        // previously made the defender review disappear after one die.
+        const shootingResolution = next.phase === 'shooting'
+          ? next.lastShootingResolution ?? null
           : null;
+        // A resolved shooting result remains open until the player presses
+        // Done, even when its last pending damage was just applied. The
+        // result review also includes fully saved/FNP-prevented attacks.
         const shootingResolutionTargetIds = shootingResolution
-          ? [...new Set(shootingResolution.weapons.filter(weapon => weapon.wounds > 0).map(weapon => weapon.targetUnitId))]
+          ? [...new Set(shootingResolution.weapons.map(weapon => weapon.targetUnitId))]
           : [];
-        const shootingResolutionHasDamage = !!shootingResolution?.weapons.some(weapon => weapon.unsavedWounds > 0);
-        const keepShootingResolutionOpen = shootingResolutionTargetIds.length > 1
-          || !shootingResolutionHasDamage;
-        const shootingResolutionTargetId = keepShootingResolutionOpen ? shootingResolutionTargetIds[0] : undefined;
+        // Keep the defender that just received damage selected whenever it
+        // remains on the board. Do not jump to the first weapon/target in a
+        // multi-weapon result merely because its entry came first.
+        const shootingResolutionTargetId = shootingResolutionTargetIds.includes(part.unitId)
+          ? part.unitId
+          : shootingResolutionTargetIds[0];
         const shootingResolutionTarget = shootingResolutionTargetId
           ? next.units.find(unit => unit.id === shootingResolutionTargetId && !unit.destroyed && !unit.embarkedInUnitId)
           : null;
@@ -167,19 +176,31 @@ export function createPlayModelSelection({
     }
     if (isPlayMode && currentState?.pendingFightMovement) {
       const pending = currentState.pendingFightMovement;
-      if (primary.unitId !== pending.unitId || primary.side !== pending.side) return;
+      const pendingUnitIds = attachedBattleUnitIdsForSelection(currentState, pending.unitId);
+      if (primary.side !== pending.side || !pendingUnitIds.includes(primary.unitId)) return;
     }
     if (isPlayMode && (currentState?.phase === 'charge' || currentState?.phase === 'fight')) {
       const unit = currentState.units.find(candidate => candidate.id === primary.unitId && candidate.side === primary.side && !candidate.destroyed);
+      const isPendingFightMovementSelection = currentState.phase === 'fight'
+        && !!currentState.pendingFightMovement
+        && currentState.pendingFightMovement.side === primary.side
+        && attachedBattleUnitIdsForSelection(currentState, currentState.pendingFightMovement.unitId).includes(primary.unitId);
       const fightStep = currentState.phase === 'fight' ? phaseStepFor(currentState) : undefined;
-      const fightSelectionSide = currentState.phase === 'fight'
+      const fightMovementSelectionSide = currentState.phase === 'fight'
         && fightStep === PHASE_STEP.FightPileIn
         ? (currentState.fightPileInSide ?? currentState.activeArmy)
         : currentState.phase === 'fight'
           && fightStep === PHASE_STEP.FightConsolidate
           ? (currentState.consolidationSide ?? currentState.activeArmy)
           : currentState.activeArmy;
-      if (!unit || primary.side !== fightSelectionSide || (currentState.phase === 'fight' && unit.activated)) return;
+      const isFightUnitsSelection = currentState.phase === 'fight' && fightStep === PHASE_STEP.FightUnits;
+      const isHighlightedFightUnit = attachedBattleUnitIdsForSelection(currentState, primary.unitId)
+        .some(unitId => fightReadyUnitIds.has(unitId));
+      if (!unit
+        || (isFightUnitsSelection
+          ? !isHighlightedFightUnit || unit.activated
+          : primary.side !== fightMovementSelectionSide
+            || (currentState.phase === 'fight' && unit.activated && !isPendingFightMovementSelection))) return;
     }
     setPlayDeploySelection(null);
     setInspectedSelection({ kind: 'battle', side: primary.side, unitId: primary.unitId });

@@ -2,8 +2,8 @@ import { EVENT_REQUEST_KIND, EVENT_TRIGGER_TIMING, PHASE_STEP, type BattleState,
 import type { UnitProfile } from '../types/army';
 import type { RulesEdition } from './rulesEngine';
 import { boardFormatForId, boardFormatForState } from '../data/boardFormats';
-import { zoneFor, pointInDeploymentZone, type DeploymentZone, type DeploymentZoneSource } from './deployment';
-import { baseFootprintDistance, baseFootprintIntersectsRect, baseFootprintMaxPointDistance, baseFootprintWithinRect, baseFootprintsOverlap, modelBaseFootprintInches, modelBaseRadiusInches } from './baseSizes';
+import { zoneFor, baseFootprintInDeploymentZone, pointInDeploymentZone, type DeploymentZone, type DeploymentZoneSource } from './deployment';
+import { baseFootprintDistance, baseFootprintIntersectsRect, baseFootprintMaxPointDistance, baseFootprintWithinRect, baseFootprintsOverlap, modelBaseFootprintForUnit, modelBaseFootprintInches, modelBaseRadiusForUnit, modelBaseRadiusInches, type ModelBaseFootprint } from './baseSizes';
 import { distance as dist, verticalDistance } from './coherency';
 import { centroid, translateFormation } from './unitModelState';
 import { BATTLE_EVENT_TYPE } from './battleEvents';
@@ -16,7 +16,7 @@ import { resolvePendingEventRequest, triggerBattleEvent, type BattleEventTrigger
 const MOVEMENT_ALLOWANCE_EPSILON = 0.02;
 
 function modelRadius(unit: BattleUnit, modelIndex = 0): number {
-  return modelBaseRadiusInches(unit.profile, modelIndex);
+  return modelBaseRadiusForUnit(unit, modelIndex);
 }
 
 export function featureBlocksMovementForUnit(
@@ -162,6 +162,7 @@ export interface SingleModelMoveContext {
   isModelEditPhase(phase: BattleState['phase']): boolean;
   movementStep(state: BattleState): string;
   modelBaseRadius(unit: BattleUnit, modelIndex: number): number;
+  modelBaseFootprint?(unit: BattleUnit, modelIndex: number): ModelBaseFootprint;
   setupDeploymentZoneSource(setup: BattleState['setup']): DeploymentZoneSource;
   canInfiltrate(state: BattleState, side: Side, profile: UnitProfile): boolean;
   infiltratorPlacementIsLegal(state: BattleState, side: Side, profile: UnitProfile, position: Position, modelIndex: number, deployment: DeploymentZoneSource, board: BoardFormat): boolean;
@@ -181,7 +182,9 @@ export function moveModel(state: BattleState, unitId: string, modelIndex: number
     const deployment = context.setupDeploymentZoneSource(next.setup);
     const zone = zoneFor(unit.side, deployment, board);
     const canInfiltrate = context.canInfiltrate(next, unit.side, unit.profile);
-    if (!canInfiltrate && !pointInDeploymentZone(position, zone, radius)) return next;
+    if (!canInfiltrate && !(context.modelBaseFootprint
+      ? baseFootprintInDeploymentZone(position, context.modelBaseFootprint(unit, modelIndex), zone)
+      : pointInDeploymentZone(position, zone, radius))) return next;
     if (canInfiltrate && !context.infiltratorPlacementIsLegal(next, unit.side, unit.profile, position, modelIndex, deployment, board)) return next;
     if (canInfiltrate && !context.infiltratorModelsAreOutsideEnemyUnits(next, unit.side, unit.profile, [position], [modelIndex])) return next;
   }
@@ -192,13 +195,13 @@ export function moveModel(state: BattleState, unitId: string, modelIndex: number
 
 export function modelMoveHasNoBaseOverlap(state: BattleState, unit: BattleUnit, modelIndex: number): boolean {
   const model = unit.modelPositions[modelIndex];
-  const footprint = modelBaseFootprintInches(unit.profile, modelIndex, unit.modelRotations?.[modelIndex] ?? unit.facingDeg ?? 0);
+  const footprint = modelBaseFootprintForUnit(unit, modelIndex);
   return state.units.every(otherUnit => {
     if (otherUnit.destroyed || otherUnit.embarkedInUnitId) return true;
     return otherUnit.modelPositions.every((otherModel, otherModelIndex) => {
       if (otherUnit.id === unit.id && otherModelIndex === modelIndex) return true;
       if (verticalDistance(model, otherModel) > 0.5) return true;
-      const otherFootprint = modelBaseFootprintInches(otherUnit.profile, otherModelIndex, otherUnit.modelRotations?.[otherModelIndex] ?? otherUnit.facingDeg ?? 0);
+      const otherFootprint = modelBaseFootprintForUnit(otherUnit, otherModelIndex);
       return !baseFootprintsOverlap(model, footprint, otherModel, otherFootprint);
     });
   });
@@ -206,13 +209,13 @@ export function modelMoveHasNoBaseOverlap(state: BattleState, unit: BattleUnit, 
 
 export function unitHasBaseOverlap(state: BattleState, unit: BattleUnit): boolean {
   return unit.modelPositions.some((model, modelIndex) => {
-    const footprint = modelBaseFootprintInches(unit.profile, modelIndex, unit.modelRotations?.[modelIndex] ?? unit.facingDeg ?? 0);
+    const footprint = modelBaseFootprintForUnit(unit, modelIndex);
     return state.units.some(otherUnit => {
       if (otherUnit.destroyed || otherUnit.embarkedInUnitId) return false;
       return otherUnit.modelPositions.some((otherModel, otherModelIndex) => {
         if (otherUnit.id === unit.id && otherModelIndex === modelIndex) return false;
         if (verticalDistance(model, otherModel) > 0.5) return false;
-        const otherFootprint = modelBaseFootprintInches(otherUnit.profile, otherModelIndex, otherUnit.modelRotations?.[otherModelIndex] ?? otherUnit.facingDeg ?? 0);
+        const otherFootprint = modelBaseFootprintForUnit(otherUnit, otherModelIndex);
         return baseFootprintsOverlap(model, footprint, otherModel, otherFootprint, 0.001);
       });
     });
@@ -224,7 +227,7 @@ export function unitHasModelOutsideBattlefield(unit: BattleUnit, state: BattleSt
   return unit.modelPositions.some((model, modelIndex) =>
     !baseFootprintWithinRect(
       model,
-      modelBaseFootprintInches(unit.profile, modelIndex, unit.modelRotations?.[modelIndex] ?? unit.facingDeg ?? 0),
+      modelBaseFootprintForUnit(unit, modelIndex),
       { x: 0, y: 0, width: board.width, height: board.height },
     ),
   );
@@ -238,8 +241,13 @@ export interface SuperHeavyMobileContext {
   log(state: BattleState, side: Side, source: string, message: string, kind: 'move'): LogEntry;
 }
 
-export function declareSuperHeavyMobile(state: BattleState, unitId: string, side: Side, context: SuperHeavyMobileContext): BattleState {
-  if (state.ruleset.edition !== '11e' || state.phase !== 'movement' || context.movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return state;
+export function canDeclareSuperHeavyMobile(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  context: Pick<SuperHeavyMobileContext, 'movementStep' | 'attachedComponents' | 'hasRule'>,
+): boolean {
+  if (state.ruleset.edition !== '11e' || state.phase !== 'movement' || context.movementStep(state) !== 'moveUnits' || state.activeArmy !== side) return false;
   const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
   if (!existing || existing.inStrategicReserves || existing.movementComplete
     || existing.movementStartPositionsByModel?.some((start, modelIndex) => {
@@ -247,7 +255,12 @@ export function declareSuperHeavyMobile(state: BattleState, unitId: string, side
       return current && (dist(start, current) > 0.001 || verticalDistance(start, current) > 0.001);
     })
     || context.attachedComponents(state, existing).some(component => component.superHeavyMobile)
-    || !context.attachedComponents(state, existing).every(component => context.hasRule(component, 'Super-heavy Walker'))) return state;
+    || !context.attachedComponents(state, existing).every(component => context.hasRule(component, 'Super-heavy Walker'))) return false;
+  return true;
+}
+
+export function declareSuperHeavyMobile(state: BattleState, unitId: string, side: Side, context: SuperHeavyMobileContext): BattleState {
+  if (!canDeclareSuperHeavyMobile(state, unitId, side, context)) return state;
   const next = context.clone(state);
   const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side)!;
   for (const component of context.attachedComponents(next, unit)) component.superHeavyMobile = true;
@@ -351,7 +364,18 @@ export interface MovementCollisionContext {
 }
 
 function modelFootprint(unit: BattleUnit, modelIndex: number) {
-  return modelBaseFootprintInches(unit.profile, modelIndex, unit.modelRotations?.[modelIndex] ?? unit.facingDeg ?? 0);
+  return modelBaseFootprintForUnit(unit, modelIndex);
+}
+
+function footprintSupportRadius(footprint: ModelBaseFootprint, angle: number): number {
+  const rotationDeg = footprint.shape === 'circle' ? 0 : footprint.rotationDeg ?? 0;
+  const localAngle = angle - ((rotationDeg * Math.PI) / 180);
+  const cos = Math.abs(Math.cos(localAngle));
+  const sin = Math.abs(Math.sin(localAngle));
+  if (footprint.shape === 'circle') return footprint.radius;
+  if (footprint.shape === 'square') return footprint.halfSize * (cos + sin);
+  if (footprint.shape === 'rectangle') return footprint.halfLength * cos + footprint.halfWidth * sin;
+  return Math.hypot(footprint.halfLength * cos, footprint.halfWidth * sin);
 }
 
 export function applyHorizontalTranslation(unit: BattleUnit, modelIndices: number[], dx: number, dy: number, board: BoardFormat): void {
@@ -446,48 +470,169 @@ export function endpointCollisionAdjustedMove(
   state: BattleState, unitId: string, side: Side, modelIndices: number[], dx: number, dy: number,
   context: MovementCollisionContext,
 ): { dx: number; dy: number } {
-  const candidate = context.clone(state);
-  const unit = candidate.units.find(item => item.id === unitId && item.side === side && !item.destroyed && !item.embarkedInUnitId);
+  const unit = state.units.find(item => item.id === unitId && item.side === side && !item.destroyed && !item.embarkedInUnitId);
   if (!unit) return { dx, dy };
-  applyHorizontalTranslation(unit, modelIndices, dx, dy, context.boardFormatForState(state));
-  const hasPhysicalWallOverlap = (testState: BattleState, testUnit: BattleUnit): boolean => {
-    for (const modelIndex of modelIndices) {
-      const model = testUnit.modelPositions[modelIndex];
-      const footprint = modelFootprint(testUnit, modelIndex);
-      for (const terrain of testState.terrain) {
-        if (terrain.type === 'impassable' && baseFootprintIntersectsRect(model, footprint, terrain)) return true;
+  const movingIndices = new Set(modelIndices);
+  const board = context.boardFormatForState(state);
+  const translatedPosition = (model: Position, factor: number): Position => ({
+    ...model,
+    x: Math.max(0, Math.min(board.width, model.x + dx * factor)),
+    y: Math.max(0, Math.min(board.height, model.y + dy * factor)),
+  });
+
+  // This is an endpoint probe, so it does not need a cloned BattleState.
+  // Comparing the translated footprints against the unchanged scene avoids a
+  // full structuredClone on every pointer frame, which is especially costly
+  // for Shift-collision drags and grouped movement.
+  const endpointIsClear = (factor: number): boolean => {
+    for (const modelIndex of movingIndices) {
+      const model = unit.modelPositions[modelIndex];
+      if (!model) continue;
+      const translated = translatedPosition(model, factor);
+      const footprint = modelFootprint(unit, modelIndex);
+      for (const otherUnit of state.units) {
+        if (otherUnit.destroyed || otherUnit.embarkedInUnitId) continue;
+        for (let otherModelIndex = 0; otherModelIndex < otherUnit.modelPositions.length; otherModelIndex++) {
+          if (otherUnit.id === unit.id && movingIndices.has(otherModelIndex)) continue;
+          const otherModel = otherUnit.modelPositions[otherModelIndex];
+          if (verticalDistance(translated, otherModel) > 0.5) continue;
+          if (baseFootprintsOverlap(translated, footprint, otherModel, modelFootprint(otherUnit, otherModelIndex))) return false;
+        }
+      }
+      for (const terrain of state.terrain) {
+        if (terrain.type === 'impassable' && baseFootprintIntersectsRect(translated, footprint, terrain)) return false;
         for (const feature of terrain.features) {
-          if (feature.blocksMovement && baseFootprintIntersectsRect(model, footprint, feature)) return true;
+          if (feature.blocksMovement && baseFootprintIntersectsRect(translated, footprint, feature)) return false;
         }
       }
     }
-    return false;
-  };
-  return hasNoBaseOverlap(candidate, unit, new Set(modelIndices)) && !hasPhysicalWallOverlap(candidate, unit)
-    ? { dx, dy } : { dx: 0, dy: 0 };
+    return true;
+  }
+
+  if (endpointIsClear(1)) return { dx, dy };
+
+  // The drag preview is recalculated from its original pointer-down state on
+  // every frame. Returning zero for a blocked endpoint therefore rewound the
+  // models all the way back to that state. Keep the farthest clear point along
+  // the requested drag vector instead, so Shift-collision stops at the edge of
+  // the blocking base or terrain feature.
+  if (!endpointIsClear(0)) return { dx, dy };
+  let low = 0;
+  let high = 1;
+  for (let index = 0; index < 12; index++) {
+    const midpoint = (low + high) / 2;
+    if (endpointIsClear(midpoint)) low = midpoint;
+    else high = midpoint;
+  }
+  return { dx: dx * low, dy: dy * low };
 }
 
 export function profileModelRadii(profile: UnitProfile): number[] {
   return Array.from({ length: profile.baseModelCount }, (_, modelIndex) => modelBaseRadiusInches(profile, modelIndex));
 }
 
-function gridModelSpacing(radii: number[]): number {
-  return Math.max(...radii.map(radius => radius * 2), 1) + 0.08;
+type FormationHalfExtents = { halfWidth: number; halfLength: number };
+
+function modelFormationHalfExtents(profile: UnitProfile, modelIndex: number): FormationHalfExtents {
+  const footprint = modelBaseFootprintInches(profile, modelIndex);
+  if (footprint.shape === 'circle') return { halfWidth: footprint.radius, halfLength: footprint.radius };
+  if (footprint.shape === 'square') return { halfWidth: footprint.halfSize, halfLength: footprint.halfSize };
+  return { halfWidth: footprint.halfWidth, halfLength: footprint.halfLength };
+}
+
+function modelFormationGroupKey(profile: UnitProfile, modelIndex: number): string {
+  const shape = modelBaseFootprintInches(profile, modelIndex).shape;
+  const extents = modelFormationHalfExtents(profile, modelIndex);
+  return `${shape}:${extents.halfWidth.toFixed(4)}:${extents.halfLength.toFixed(4)}`;
+}
+
+function groupedFormationIndices(profile: UnitProfile, indices: number[]): number[] {
+  const groups = new Map<string, number[]>();
+  indices.forEach(index => {
+    const key = modelFormationGroupKey(profile, index);
+    const group = groups.get(key) ?? [];
+    group.push(index);
+    groups.set(key, group);
+  });
+  return [...groups.values()].flat();
+}
+
+function packedFormation(
+  profile: UnitProfile,
+  indices: number[],
+  anchor: Position,
+  side: Side,
+  rowCount: number,
+  fillRows: boolean,
+): Position[] {
+  if (indices.length <= 1) return indices.map(() => ({ ...anchor }));
+
+  const orderedIndices = groupedFormationIndices(profile, indices);
+  const rows = Math.max(1, Math.min(rowCount, orderedIndices.length));
+  const columns = Math.ceil(orderedIndices.length / rows);
+  const cells = orderedIndices.map((modelIndex, order) => ({
+    modelIndex,
+    column: fillRows ? order % columns : Math.floor(order / rows),
+    row: fillRows ? Math.floor(order / columns) : order % rows,
+    ...modelFormationHalfExtents(profile, modelIndex),
+  }));
+  const gap = 0.08;
+  const positions = new Map<number, Position>();
+  if (fillRows) {
+    const rowCells = Array.from({ length: rows }, () => [] as typeof cells);
+    cells.forEach(cell => rowCells[cell.row].push(cell));
+    const rowHalfWidths = rowCells.map(row => Math.max(...row.map(cell => cell.halfWidth)));
+    const totalHeight = rowHalfWidths.reduce((total, halfWidth) => total + halfWidth * 2, 0) + gap * (rows - 1);
+    let rowStart = -totalHeight / 2;
+    rowCells.forEach((row, rowIndex) => {
+      const rowWidth = row.reduce((total, cell) => total + cell.halfLength * 2, 0) + gap * (row.length - 1);
+      let columnStart = -rowWidth / 2;
+      const rowCenterY = rowStart + rowHalfWidths[rowIndex];
+      row.forEach(cell => {
+        const cellCenterX = columnStart + cell.halfLength;
+        positions.set(cell.modelIndex, {
+          x: anchor.x + (side === 0 ? cellCenterX : -cellCenterX),
+          y: anchor.y + rowCenterY,
+        });
+        columnStart += cell.halfLength * 2 + gap;
+      });
+      rowStart += rowHalfWidths[rowIndex] * 2 + gap;
+    });
+  } else {
+    const columnCells = Array.from({ length: columns }, () => [] as typeof cells);
+    cells.forEach(cell => columnCells[cell.column].push(cell));
+    const columnHalfLengths = columnCells.map(column => Math.max(...column.map(cell => cell.halfLength)));
+    const totalWidth = columnHalfLengths.reduce((total, halfLength) => total + halfLength * 2, 0) + gap * (columns - 1);
+    let columnStart = -totalWidth / 2;
+    columnCells.forEach((column, columnIndex) => {
+      const columnHeight = column.reduce((total, cell) => total + cell.halfWidth * 2, 0) + gap * (column.length - 1);
+      let rowStart = -columnHeight / 2;
+      const columnCenterX = columnStart + columnHalfLengths[columnIndex];
+      column.forEach(cell => {
+        const cellCenterY = rowStart + cell.halfWidth;
+        positions.set(cell.modelIndex, {
+          x: anchor.x + (side === 0 ? columnCenterX : -columnCenterX),
+          y: anchor.y + cellCenterY,
+        });
+        rowStart += cell.halfWidth * 2 + gap;
+      });
+      columnStart += columnHalfLengths[columnIndex] * 2 + gap;
+    });
+  }
+  const uncentered = indices.map(index => positions.get(index) ?? { ...anchor });
+  const center = uncentered.reduce(
+    (current, position) => ({ x: current.x + position.x / uncentered.length, y: current.y + position.y / uncentered.length }),
+    { x: 0, y: 0 },
+  );
+  const offset = { x: anchor.x - center.x, y: anchor.y - center.y };
+  return uncentered.map(position => ({ x: position.x + offset.x, y: position.y + offset.y }));
 }
 
 export function gridFormation(profile: UnitProfile, anchor: Position, side: Side): Position[] {
   const count = profile.baseModelCount;
   if (count <= 1) return [anchor];
-  const spacing = gridModelSpacing(profileModelRadii(profile));
   const columns = Math.ceil(Math.sqrt(count));
-  const rows = Math.ceil(count / columns);
-  const forward = side === 0 ? 1 : -1;
-  const startX = anchor.x - forward * ((columns - 1) * spacing) / 2;
-  const startY = anchor.y - ((rows - 1) * spacing) / 2;
-  return Array.from({ length: count }, (_, modelIndex) => ({
-    x: startX + forward * (modelIndex % columns) * spacing,
-    y: startY + Math.floor(modelIndex / columns) * spacing,
-  }));
+  return packedFormation(profile, Array.from({ length: count }, (_, index) => index), anchor, side, Math.ceil(count / columns), true);
 }
 
 export function gridFormationByRows(profile: UnitProfile, center: Position, side: Side, rows: number, modelIndices?: number[]): Position[] {
@@ -495,15 +640,7 @@ export function gridFormationByRows(profile: UnitProfile, center: Position, side
   const count = indices.length;
   if (count <= 1) return [center];
   const rowCount = Math.max(1, Math.min(rows, count));
-  const columns = Math.ceil(count / rowCount);
-  const spacing = gridModelSpacing(indices.map(index => modelBaseRadiusInches(profile, index)));
-  const forward = side === 0 ? 1 : -1;
-  const startX = center.x - forward * ((columns - 1) * spacing) / 2;
-  const startY = center.y - ((rowCount - 1) * spacing) / 2;
-  return Array.from({ length: count }, (_, modelIndex) => ({
-    x: startX + forward * Math.floor(modelIndex / rowCount) * spacing,
-    y: startY + (modelIndex % rowCount) * spacing,
-  }));
+  return packedFormation(profile, indices, center, side, rowCount, false);
 }
 
 export function clampModelToBoard(point: Position, radius: number, zone?: DeploymentZone, board: BoardFormat = boardFormatForId()): Position {
@@ -514,7 +651,7 @@ export function clampModelToBoard(point: Position, radius: number, zone?: Deploy
 
 export function formationHasInternalOverlap(unit: BattleUnit): boolean {
   return unit.modelPositions.some((position, index) => unit.modelPositions.some((other, otherIndex) =>
-    otherIndex > index && dist(position, other) < modelRadius(unit, index) + modelRadius(unit, otherIndex),
+    otherIndex > index && baseFootprintsOverlap(position, modelFootprint(unit, index), other, modelFootprint(unit, otherIndex)),
   ));
 }
 
@@ -526,13 +663,18 @@ export function resolveInternalModelOverlaps(unit: BattleUnit, zone?: Deployment
       for (let otherIndex = index + 1; otherIndex < positions.length; otherIndex++) {
         const radius = modelRadius(unit, index);
         const otherRadius = modelRadius(unit, otherIndex);
-        const minimum = radius + otherRadius + 0.02;
+        const footprint = modelFootprint(unit, index);
+        const otherFootprint = modelFootprint(unit, otherIndex);
         const dx = positions[otherIndex].x - positions[index].x;
         const dy = positions[otherIndex].y - positions[index].y;
         const distance = Math.hypot(dx, dy);
-        if (distance >= minimum) continue;
         const angle = distance > 0.001 ? Math.atan2(dy, dx) : ((index + otherIndex) % 8) * (Math.PI / 4);
+        const minimum = footprintSupportRadius(footprint, angle)
+          + footprintSupportRadius(otherFootprint, angle + Math.PI) + 0.02;
+        if (!baseFootprintsOverlap(positions[index], footprint, positions[otherIndex], otherFootprint)
+          && distance >= minimum) continue;
         const push = (minimum - Math.max(distance, 0.001)) / 2;
+        if (push <= 0) continue;
         positions[index] = clampModelToBoard({ x: positions[index].x - Math.cos(angle) * push, y: positions[index].y - Math.sin(angle) * push }, radius, zone, board);
         positions[otherIndex] = clampModelToBoard({ x: positions[otherIndex].x + Math.cos(angle) * push, y: positions[otherIndex].y + Math.sin(angle) * push }, otherRadius, zone, board);
         changed = true;
@@ -549,7 +691,12 @@ export function formationOverlapsUnits(unit: BattleUnit, newCenter: Position, st
   const dy = newCenter.y - unit.position.y;
   return state.units.some(other => other.id !== unit.id && !other.destroyed && unit.modelPositions.some((model, modelIndex) =>
     other.modelPositions.some((otherModel, otherModelIndex) =>
-      dist({ x: model.x + dx, y: model.y + dy }, otherModel) < modelRadius(unit, modelIndex) + modelRadius(other, otherModelIndex),
+      baseFootprintsOverlap(
+        { x: model.x + dx, y: model.y + dy },
+        modelFootprint(unit, modelIndex),
+        otherModel,
+        modelFootprint(other, otherModelIndex),
+      ),
     ),
   ));
 }
@@ -572,10 +719,10 @@ export function formationWithinBounds(unit: BattleUnit, center: Position, zone?:
   const dx = center.x - unit.position.x;
   const dy = center.y - unit.position.y;
   return unit.modelPositions.every((model, modelIndex) => {
-    const radius = modelRadius(unit, modelIndex);
     const position = { x: model.x + dx, y: model.y + dy };
-    return position.x >= radius && position.x <= board.width - radius && position.y >= radius && position.y <= board.height - radius
-      && (!zone || pointInDeploymentZone(position, zone, radius));
+    const footprint = modelFootprint(unit, modelIndex);
+    return baseFootprintWithinRect(position, footprint, { x: 0, y: 0, width: board.width, height: board.height })
+      && (!zone || baseFootprintInDeploymentZone(position, footprint, zone));
   });
 }
 
@@ -1000,6 +1147,7 @@ export interface FormationEditContext {
   movementDistanceFromStart(unit: BattleUnit, modelIndex: number): number;
   lockOtherMovedUnits(state: BattleState, unit: BattleUnit): void;
   updateMovementAllowances(unit: BattleUnit): void;
+  attachedComponents(state: BattleState, unit: BattleUnit): BattleUnit[];
 }
 
 export function reorganizeUnitGrid(
@@ -1035,9 +1183,19 @@ export function rotateModels(
   state: BattleState, unitId: string, side: Side, modelIndices: number[], degrees: number, context: FormationEditContext,
 ): BattleState {
   const next = context.clone(state);
-  if (!context.isModelEditPhase(next.phase) || (next.phase === 'movement' && context.movementStep(next) !== 'moveUnits')) return next;
   const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
   if (!unit) return next;
+  const chargeMovement = next.phase === 'charge'
+    && next.phaseStep === PHASE_STEP.ChargeUnits
+    && next.pendingChargeMovement?.side === side
+    && (next.pendingChargeMovement.unitId === unitId
+      || context.attachedComponents(next, unit).some(component => component.id === next.pendingChargeMovement?.unitId));
+  const fightMovement = next.phase === 'fight'
+    && next.pendingFightMovement?.side === side
+    && (next.pendingFightMovement.unitId === unitId
+      || context.attachedComponents(next, unit).some(component => component.id === next.pendingFightMovement?.unitId));
+  if (!context.isModelEditPhase(next.phase) && !chargeMovement && !fightMovement) return next;
+  if (next.phase === 'movement' && context.movementStep(next) !== 'moveUnits') return next;
   const uniqueIndices = Array.from(new Set(modelIndices)).filter(modelIndex => unit.modelPositions[modelIndex]);
   if (!uniqueIndices.length) return next;
   if (next.phase === 'movement') {
@@ -1073,6 +1231,11 @@ export function rotateModels(
 
 export interface ModelMovementContext {
   clone(state: BattleState): BattleState;
+  /** True for an ephemeral drag preview. Preview states must not update
+   * mission/action bookkeeping or lock other units. */
+  preview?: boolean;
+  /** Optional deep clone for temporary validation probes inside a batch. */
+  cloneForProbe?(state: BattleState): BattleState;
   isModelEditPhase(phase: BattleState['phase']): boolean;
   movementStep(state: BattleState): string;
   isSurgedThisPhase(state: BattleState, unit: BattleUnit): boolean;
@@ -1103,17 +1266,25 @@ export interface ModelMovementContext {
   centroid(positions: Position[]): Position;
 }
 
+export interface ModelMovementRequest {
+  unitId: string;
+  side: Side;
+  modelIndices: number[];
+}
+
 export function moveModels(
   state: BattleState, unitId: string, side: Side, modelIndices: number[], dx: number, dy: number, collide: boolean, context: ModelMovementContext,
 ): BattleState {
+  const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
   const chargeMovement = state.phase === 'charge'
     && state.phaseStep === PHASE_STEP.ChargeUnits
-    && state.pendingChargeMovement?.unitId === unitId
-    && state.pendingChargeMovement?.side === side;
+    && state.pendingChargeMovement?.side === side
+    && !!existing
+    && (state.pendingChargeMovement.unitId === unitId
+      || context.attachedComponents(state, existing).some(component => component.id === state.pendingChargeMovement?.unitId));
   const hasPendingFightMovement = state.phase === 'fight' && !!state.pendingFightMovement;
   if (!context.isModelEditPhase(state.phase) && !chargeMovement && !hasPendingFightMovement) return state;
   if (state.phase === 'movement' && context.movementStep(state) !== 'moveUnits') return state;
-  const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
   if (!existing || (state.phase === 'setup' && !existing.scoutMoveStarted)) return state;
   const pendingFightMovement = state.phase === 'fight' ? state.pendingFightMovement : undefined;
   const fightMovement = !!pendingFightMovement
@@ -1163,7 +1334,7 @@ export function moveModels(
     : budget;
   if (Math.hypot(move.dx, move.dy) < 0.001) return state;
   if (next.phase === 'movement' && context.isAircraft(unit)) {
-    const test = context.clone(next);
+    const test = context.cloneForProbe?.(next) ?? context.clone(next);
     const testUnit = test.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)!;
     for (const index of indices) testUnit.modelPositions[index] = { ...testUnit.modelPositions[index], x: testUnit.modelPositions[index].x + move.dx, y: testUnit.modelPositions[index].y + move.dy };
     testUnit.position = context.centroid(testUnit.modelPositions);
@@ -1178,14 +1349,64 @@ export function moveModels(
   // position without turning each release into another path segment. The
   // path-aware behavior remains available to the specialized movement modes
   // that explicitly establish waypoints.
-  context.cancelUnitAction(next, unit, 'it made a move');
+  // A pointer preview only exists to paint the candidate endpoint. Applying
+  // action cancellation and movement locks here both mutates unrelated state
+  // and forces a full BattleState clone on every animation frame. The exact
+  // same move is applied normally on pointer release, where those updates are
+  // authoritative.
+  if (!context.preview) context.cancelUnitAction(next, unit, 'it made a move');
   if (next.phase === 'setup' && context.inEngagement(next, unit)) return state;
   if (next.phase === 'movement') {
-    context.lockOtherMovedUnits(next, unit);
-    unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
+    if (!context.preview) {
+      context.lockOtherMovedUnits(next, unit);
+      unit.movementAction = unit.movementAction === 'advanced' ? 'advanced' : 'normalMove';
+    }
   }
   context.updateMovementAllowances(unit);
   return next;
+}
+
+/**
+ * Applies one pointer delta to several units while cloning the battle state
+ * only once. This is the hot path for multi-unit dragging in the web client.
+ * The lazy clone preserves the existing no-op behavior when every request is
+ * invalid.
+ */
+export function moveModelsBatch(
+  state: BattleState,
+  requests: ModelMovementRequest[],
+  dx: number,
+  dy: number,
+  collide: boolean,
+  context: ModelMovementContext,
+): BattleState {
+  if (!requests.length) return state;
+
+  let batchState: BattleState | null = null;
+  const batchContext: ModelMovementContext = {
+    ...context,
+    clone: source => {
+      batchState ??= context.clone(source);
+      return batchState;
+    },
+    cloneForProbe: source => context.clone(source),
+  };
+
+  for (const request of requests) {
+    const current = batchState ?? state;
+    batchState = moveModels(
+      current,
+      request.unitId,
+      request.side,
+      request.modelIndices,
+      dx,
+      dy,
+      collide,
+      batchContext,
+    );
+  }
+
+  return batchState ?? state;
 }
 
 export function moveModelsVertically(

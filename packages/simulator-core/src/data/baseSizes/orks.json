@@ -85,10 +85,11 @@
       }
     },
     "boyz": {
-      "base": {
-        "shape": "round",
-        "diameterMm": 32
-      }
+      "models": [
+        { "count": 1, "base": { "shape": "round", "diameterMm": 40, "label": "Boss Nob" } },
+        { "count": 9, "base": { "shape": "round", "diameterMm": 32, "label": "Boy" } }
+      ],
+      "repeatLast": true
     },
     "breaka boyz": {
       "base": {
@@ -308,7 +309,27 @@
         "widthMm": 75,
         "lengthMm": 42,
         "label": "Oval Base"
-      }
+      },
+      "modelOverrides": [
+        {
+          "index": 0,
+          "base": {
+            "shape": "oval",
+            "widthMm": 90,
+            "lengthMm": 52.5,
+            "label": "Nob on Smasha Squig"
+          }
+        },
+        {
+          "index": 7,
+          "base": {
+            "shape": "oval",
+            "widthMm": 90,
+            "lengthMm": 52.5,
+            "label": "Nob on Smasha Squig"
+          }
+        }
+      ]
     },
     "squighog boyz: nob on smasha squig": {
       "base": {

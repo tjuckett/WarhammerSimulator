@@ -1,0 +1,42 @@
+{
+  "catalogId": "warhammer-40k",
+  "edition": "11e",
+  "catalogRevision": "2026-08-29.1",
+  "schemaVersion": 1,
+  "gameSystem": "warhammer-40k",
+  "factions": [
+    "orks"
+  ],
+  "unitFiles": [
+    "units/orks.json"
+  ],
+  "ruleFiles": [
+    "rules/orks.json"
+  ],
+  "reviewStatus": "working",
+  "parserVersion": "wahapedia-reference-normalizer-2-wargear",
+  "sources": [
+    {
+      "title": "Wahapedia Orks faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+      "capturedAt": "2026-08-29",
+      "sourceRevision": "Faction Pack. Orks (11th edition, version 1.2)"
+    },
+    {
+      "title": "Chapter Approved Tournament Companion - Base Size Guide",
+      "capturedAt": "2026-08-29",
+      "page": "41-42",
+      "sourceRevision": "June 2025"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 58,
+    "normalizedEntryCount": 58,
+    "excludedLegendCount": 30,
+    "notes": [
+      "All current non-Legends datasheets are selectable.",
+      "Structured model loadouts and unit upgrades are available for the current Ork datasheets with wargear options; Deff Dread replacement slots are represented without enumerating every combination.",
+      "Remaining entries retain source-derived partial profiles pending executable-effect review."
+    ]
+  }
+}

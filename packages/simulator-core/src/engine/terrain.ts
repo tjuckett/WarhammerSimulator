@@ -1,6 +1,12 @@
 import type { Terrain, TerrainFeature, TerrainLayout } from '../types/battle';
+import { clone } from './clone';
 import { DEFAULT_TERRAIN_LAYOUT_PACK } from '../data/terrainLayouts';
-import type { TerrainLayoutData, TerrainSpec } from '../data/terrainLayoutTypes';
+import { deploymentZoneSetForId } from '../data/deploymentZones';
+import { TERRAIN_SHAPE_TEMPLATES } from '../data/terrainShapes';
+import type { TerrainLayoutData, TerrainShapeInstance, TerrainSpec } from '../data/terrainLayoutTypes';
+
+const DEFAULT_LAYOUT_BOARD_WIDTH = 60;
+const DEFAULT_LAYOUT_BOARD_HEIGHT = 44;
 
 let _id = 0;
 function tid(): string { return `t${++_id}`; }
@@ -18,6 +24,7 @@ function terrainFromSpec(spec: TerrainSpec): Terrain {
   const id = tid();
   const terrain: Terrain = {
     id,
+    templateId: spec.templateId,
     name: spec.name ?? (type === 'ruin' ? 'Ruins' : type),
     x: spec.x,
     y: spec.y,
@@ -30,6 +37,7 @@ function terrainFromSpec(spec: TerrainSpec): Terrain {
     difficult: spec.difficult ?? type === 'area',
     color: spec.color ?? colorFor(spec),
     objectiveRole: spec.objectiveRole,
+    objectiveGroupId: spec.objectiveGroupId,
     features: [],
   };
   terrain.features = featuresFromSpec(terrain, spec);
@@ -37,7 +45,40 @@ function terrainFromSpec(spec: TerrainSpec): Terrain {
 }
 
 function isRuntimeTerrainLayout(layout: TerrainLayoutData | TerrainLayout): layout is TerrainLayout {
-  return layout.terrain.every(terrain => 'type' in terrain && 'providesCover' in terrain && 'features' in terrain);
+  return Array.isArray(layout.terrain) && layout.terrain.every(terrain => 'type' in terrain && 'providesCover' in terrain && 'features' in terrain);
+}
+
+const terrainShapeById = new Map(TERRAIN_SHAPE_TEMPLATES.map(shape => [shape.id, shape]));
+
+function rotate(point: { x: number; y: number }, degrees: number) {
+  const radians = degrees * Math.PI / 180;
+  return {
+    x: point.x * Math.cos(radians) - point.y * Math.sin(radians),
+    y: point.x * Math.sin(radians) + point.y * Math.cos(radians),
+  };
+}
+
+function terrainSpecFromInstance(instance: TerrainShapeInstance): TerrainSpec {
+  const shape = terrainShapeById.get(instance.shapeId);
+  if (!shape) throw new Error(`Unknown terrain shape: ${instance.shapeId}`);
+  const rotationDeg = instance.rotationDeg;
+  return {
+    ...shape,
+    templateId: shape.id,
+    x: instance.x,
+    y: instance.y,
+    rotationDeg,
+    objectiveRole: instance.objectiveRole,
+    objectiveGroupId: instance.objectiveGroupId,
+    features: shape.features?.map(feature => {
+      const position = rotate({ x: feature.x, y: feature.y }, rotationDeg);
+      return { ...feature, x: position.x + instance.x, y: position.y + instance.y, rotationDeg: (feature.rotationDeg ?? 0) + rotationDeg };
+    }),
+  };
+}
+
+function cloneDeploymentZones(zones: NonNullable<TerrainLayout['deploymentZones']>): NonNullable<TerrainLayout['deploymentZones']> {
+  return clone(zones);
 }
 
 export function terrainLayoutFromData(layout: TerrainLayoutData | TerrainLayout): TerrainLayout {
@@ -53,13 +94,102 @@ export function terrainLayoutFromData(layout: TerrainLayoutData | TerrainLayout)
       })),
     };
   }
+  const boardWidth = layout.boardWidth ?? DEFAULT_LAYOUT_BOARD_WIDTH;
+  const boardHeight = layout.boardHeight ?? DEFAULT_LAYOUT_BOARD_HEIGHT;
+  const sourceTerrain = layout.terrain ?? layout.terrainInstances?.map(terrainSpecFromInstance) ?? [];
+  const terrainSpecs = layout.coordinateSystem === 'board-center'
+    ? sourceTerrain.map(spec => centeredTerrainSpecToRuntime(
+      spec,
+      boardWidth,
+      boardHeight,
+      layout.terrainAnchor ?? 'center',
+    ))
+    : sourceTerrain;
+  const deploymentZones = deploymentZoneSetForId(layout.deploymentZoneId) ?? layout.deploymentZones;
   return {
     id: layout.id,
     name: layout.name,
     description: layout.description,
-    deploymentZones: layout.deploymentZones,
+    deploymentZoneId: layout.deploymentZoneId,
+    deploymentZones: deploymentZones ? cloneDeploymentZones(deploymentZones) : undefined,
     territoryZones: layout.territoryZones,
-    terrain: layout.terrain.map(terrainFromSpec),
+    terrain: terrainSpecs.map(terrainFromSpec),
+  };
+}
+
+/** Materialize one reusable shape at a board-centred lower-left origin. */
+export function terrainFromShapeInstance(
+  instance: TerrainShapeInstance,
+  boardWidth = DEFAULT_LAYOUT_BOARD_WIDTH,
+  boardHeight = DEFAULT_LAYOUT_BOARD_HEIGHT,
+): Terrain {
+  const layout = terrainLayoutFromData({
+    id: '__terrain-shape-preview__',
+    name: 'Terrain shape preview',
+    description: '',
+    coordinateSystem: 'board-center',
+    terrainAnchor: 'lower-left',
+    boardWidth,
+    boardHeight,
+    terrainInstances: [instance],
+  });
+  const terrain = layout.terrain[0];
+  if (!terrain) throw new Error(`Unable to materialize terrain shape: ${instance.shapeId}`);
+  return terrain;
+}
+
+function rotatedHalfSize(width: number, height: number, rotationDeg = 0) {
+  const radians = rotationDeg * Math.PI / 180;
+  return {
+    x: width / 2 * Math.cos(radians) - height / 2 * Math.sin(radians),
+    y: width / 2 * Math.sin(radians) + height / 2 * Math.cos(radians),
+  };
+}
+
+function centeredShapeToRuntime(
+  shape: { x: number; y: number; width: number; height: number; rotationDeg?: number },
+  boardWidth: number,
+  boardHeight: number,
+  anchor: 'center' | 'local-origin' | 'lower-left',
+) {
+  if (anchor === 'lower-left') {
+    const runtimeRotation = -(shape.rotationDeg ?? 0);
+    const lowerLeftOffset = rotatedHalfSize(-shape.width, shape.height, runtimeRotation);
+    const centerX = boardWidth / 2 + shape.x - lowerLeftOffset.x;
+    const centerY = boardHeight / 2 - shape.y - lowerLeftOffset.y;
+    return {
+      x: centerX - shape.width / 2,
+      y: centerY - shape.height / 2,
+      rotationDeg: runtimeRotation,
+    };
+  }
+  const offset = anchor === 'local-origin'
+    ? rotatedHalfSize(shape.width, shape.height, shape.rotationDeg)
+    : { x: 0, y: 0 };
+  return {
+    x: shape.x + boardWidth / 2 + offset.x - shape.width / 2,
+    y: shape.y + boardHeight / 2 + offset.y - shape.height / 2,
+    rotationDeg: shape.rotationDeg,
+  };
+}
+
+function centeredTerrainSpecToRuntime(
+  spec: TerrainSpec,
+  boardWidth: number,
+  boardHeight: number,
+  anchor: 'center' | 'local-origin' | 'lower-left',
+): TerrainSpec {
+  const position = centeredShapeToRuntime(spec, boardWidth, boardHeight, anchor);
+  return {
+    ...spec,
+    ...position,
+    polygonPoints: anchor === 'lower-left'
+      ? spec.polygonPoints?.map(point => ({ ...point, y: spec.height - point.y }))
+      : spec.polygonPoints,
+    features: spec.features?.map(feature => ({
+      ...feature,
+      ...centeredShapeToRuntime(feature, boardWidth, boardHeight, anchor),
+    })),
   };
 }
 
@@ -138,17 +268,12 @@ function inferFeatureHeight(spec: TerrainSpec): TerrainFeature['featureHeight'] 
 }
 
 export function featureColor(
-  height: TerrainFeature['featureHeight'],
+  _height: TerrainFeature['featureHeight'],
   category: TerrainFeature['category'] = 'dense',
 ): string {
-  if (category === 'light') {
-    if (height === 'low') return 'rgba(30,110,140,0.85)';
-    if (height === 'mid') return 'rgba(110,105,90,0.85)';
-    return 'rgba(80,75,65,0.85)';
-  }
-  if (height === 'low') return 'rgba(5,65,95,0.95)';
-  if (height === 'mid') return 'rgba(70,70,70,0.95)';
-  return 'rgba(20,20,20,0.9)';
+  return category === 'light'
+    ? 'rgba(165,125,20,0.96)'
+    : 'rgba(25,105,50,0.96)';
 }
 
 export const TERRAIN_LAYOUTS: TerrainLayout[] = DEFAULT_TERRAIN_LAYOUT_PACK.layouts.map(terrainLayoutFromData);

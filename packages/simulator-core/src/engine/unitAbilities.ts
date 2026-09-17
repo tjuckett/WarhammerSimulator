@@ -1,23 +1,17 @@
 import type { BattleState, BattleUnit, Side } from '../types/battle';
+import { clone } from './clone';
 import type { AbilityTiming, UnitAbilityDefinition, UnitAbilityUse } from '../types/ability';
 import { battleRound } from './battleRound';
 import type { RulesEdition } from './rulesEngine';
 import { attachedUnitComponents } from './attachedUnits';
 import { d3 } from './dice';
 import { objectiveIndexesWithinRange, securePlayObjective } from './missionScoring';
+import { resolveRuleEffects } from './ruleEffects';
 
 let _abilityUseId = 0;
 
-function clone<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value));
-}
-
 function nextLogId(state: BattleState, prefix: string): string {
-  const used = new Set(state.log.map(entry => entry.id));
-  let index = state.log.length + 1;
-  let id = `${prefix}-${index}`;
-  while (used.has(id)) id = `${prefix}-${++index}`;
-  return id;
+  return `${prefix}-${state.log.length + 1}`;
 }
 
 function normalizeName(name: string): string {
@@ -25,11 +19,10 @@ function normalizeName(name: string): string {
 }
 
 function unitHasAbility(unit: BattleUnit, ability: UnitAbilityDefinition): boolean {
-  const names = [
+  return [
     ...(unit.profile.abilities ?? []),
     ...(unit.profile.rules ?? []),
-  ].map(rule => normalizeName(rule.name));
-  return names.includes(normalizeName(ability.name));
+  ].some(rule => rule.ruleId === ability.id || normalizeName(rule.name) === normalizeName(ability.name));
 }
 
 function abilityUsed(state: BattleState, unit: BattleUnit, ability: UnitAbilityDefinition): boolean {
@@ -59,15 +52,15 @@ function targetAllowed(
   return true;
 }
 
-function timingAllowed(state: BattleState, timing: AbilityTiming): boolean {
+function timingAllowed(state: BattleState, timing: AbilityTiming, ability: UnitAbilityDefinition): boolean {
   if (timing === 'command-phase') return state.phase === 'command';
+  if (ability.phases && ability.phases !== 'any' && !ability.phases.includes(state.phase)) return false;
   return true;
 }
 
 function abilityCanBeUsed(state: BattleState, unit: BattleUnit, ability: UnitAbilityDefinition): boolean {
-  if (ability.id !== 'kunnin-infiltrator') return true;
-  return state.phase === 'movement'
-    && attachedUnitComponents(state, unit).every(component => !component.inCombat);
+  if (!ability.requiresUnengaged) return true;
+  return attachedUnitComponents(state, unit).every(component => !component.inCombat);
 }
 
 function automaticCommandTextEffect(unit: BattleUnit): Array<{ kind: 'cp' | 'heal'; name: string; amount?: number }> {
@@ -108,7 +101,7 @@ export function availableUnitAbilities(
 
   return rules.unitAbilities.filter(ability =>
     ability.timing === timing
-    && timingAllowed(state, timing)
+    && timingAllowed(state, timing, ability)
     && unitHasAbility(unit, ability)
     && abilityCanBeUsed(state, unit, ability)
     && !abilityUsed(state, unit, ability)
@@ -149,27 +142,15 @@ export function useUnitAbility(
     targetUnitId: ability.target === 'self' ? unitId : targetUnitId,
   };
   next.abilityUses = [...(next.abilityUses ?? []), use];
-  if (ability.id === 'waaagh') {
-    const active = next.activeArmyAbilities ?? [[], []];
-    active[side] = [...new Set([...active[side], ability.id])];
-    next.activeArmyAbilities = active;
-  }
-  if (ability.id === 'grot-riggers') {
-    const target = next.units.find(candidate => candidate.id === unitId);
-    if (target && target.remainingModels > 0 && target.woundsOnLeadModel < target.profile.wounds) {
-      target.woundsOnLeadModel = Math.min(target.profile.wounds, target.woundsOnLeadModel + 1);
-    }
-  }
-  if (ability.id === 'kunnin-infiltrator') {
-    const reservePosition = { x: side === 0 ? -100 : (next.board?.width ?? 60) + 100, y: (next.board?.height ?? 44) / 2 };
-    for (const component of attachedUnitComponents(next, next.units.find(candidate => candidate.id === unitId) ?? unit, true)) {
-      component.inStrategicReserves = true;
-      component.repositioned = true;
-      component.deepStrikeUntilPhase = next.phase;
-      component.modelPositions = component.modelPositions.map(() => ({ ...reservePosition }));
-      component.position = { ...reservePosition };
-    }
-  }
+  resolveRuleEffects({
+    state: next,
+    side,
+    sourceRuleId: ability.id,
+    sourceName: ability.name,
+    sourceUseId: use.id,
+    sourceUnitId: unitId,
+    targetUnitId: ability.target === 'self' ? unitId : targetUnitId,
+  }, ability.effects);
   next.log = [...next.log, {
     id: nextLogId(next, 'ability'),
     battleRound: battleRound(next),
@@ -208,9 +189,8 @@ export function runAutomaticCommandUnitAbilities(
   side: Side,
   rules: RulesEdition,
 ): void {
-  const automaticIds = new Set(['grot-riggers']);
   for (const unit of state.units.filter(candidate => candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId)) {
-    for (const ability of rules.unitAbilities.filter(candidate => candidate.timing === 'command-phase' && automaticIds.has(candidate.id))) {
+    for (const ability of rules.unitAbilities.filter(candidate => candidate.timing === 'command-phase' && candidate.automatic === true)) {
       const next = useUnitAbility(state, unit.id, side, ability.id, 'command-phase', rules);
       if (next !== state) Object.assign(state, next);
     }

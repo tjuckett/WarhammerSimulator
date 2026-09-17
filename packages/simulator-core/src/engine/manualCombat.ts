@@ -11,6 +11,7 @@ import type {
   CombatHitPreviewGroup,
 } from './combatTypes';
 import type { FightPhaseContext } from './phases/fightPhaseRules';
+import { modelWoundsForUnit } from './baseSizes';
 
 export type CombatAttackContext = Record<string, any>;
 
@@ -91,7 +92,7 @@ export function removePlayCasualtyModels(
     next.log = [...next.log, ...emergencyDisembarkDestroyedTransport(next, unit, state.activeArmy)];
   } else {
     unit.position = centroid(unit.modelPositions);
-    if (unit.woundsOnLeadModel <= 0) unit.woundsOnLeadModel = unit.profile.wounds;
+    if (unit.woundsOnLeadModel <= 0) unit.woundsOnLeadModel = modelWoundsForUnit(unit, 0);
   }
   next.log = [...next.log, log(next, state.activeArmy, unit.profile.name,
     `${unit.profile.name} removes ${uniqueIndices.length} selected casualty model${uniqueIndices.length === 1 ? '' : 's'}.`,
@@ -145,9 +146,11 @@ export function allocatePlayDamageToModel(
       `${unit.profile.name} allocates ${damage.damage} damage to model ${modelIndex + 1}; no damage gets through.`, 'damage')];
     return next;
   }
-  const currentWounds = unit.woundedModelIndex === modelIndex ? unit.woundsOnLeadModel : unit.profile.wounds;
+  const currentWounds = unit.woundedModelIndex === modelIndex
+    ? unit.woundsOnLeadModel
+    : modelWoundsForUnit(unit, modelIndex);
   const allocationOutcome = resolveDamageOutcome({ damage: appliedDamage, modelCount: 1, woundsOnCurrentModel: currentWounds,
-    woundsPerModel: unit.profile.wounds, noCarryOver: true });
+    woundsPerModel: modelWoundsForUnit(unit, modelIndex), noCarryOver: true });
   if (allocationOutcome.killedModels > 0) {
     const carryOverDamage = damage.noCarryOver ? 0 : appliedDamage - currentWounds;
     const destroyedBySide = next.units.find((candidate: BattleUnit) => candidate.id === damage.sourceUnitId)?.side ?? state.activeArmy;
@@ -158,13 +161,33 @@ export function allocatePlayDamageToModel(
     spliceModelIndices(unit, [modelIndex]);
     unit.remainingModels = Math.max(0, unit.remainingModels - 1);
     unit.woundedModelIndex = undefined;
-    unit.woundsOnLeadModel = unit.remainingModels > 0 ? unit.profile.wounds : 0;
+    unit.woundsOnLeadModel = unit.remainingModels > 0 ? modelWoundsForUnit(unit, 0) : 0;
     if (unit.remainingModels <= 0 || unit.modelPositions.length <= 0) {
+      // A bodyguard and its attached Leaders are one rules unit for normal
+      // attacks. Once the final bodyguard is destroyed, packets still waiting
+      // to be allocated belong to the surviving Leader, not to a destroyed
+      // component that no longer has a selectable model. Do not do this for
+      // a destroyed Leader: Precision/Epic Challenge packets deliberately
+      // allocated to that Leader must not spill back into the bodyguard.
+      const remainingAllocations = unit.pendingDamageAllocations ?? [];
       markUnitDestroyed(unit);
       unit.remainingModels = 0;
       unit.modelPositions = [];
       unit.modelRotations = [];
       unit.pendingDamageAllocations = undefined;
+      const survivingLeader = !unit.attachedToUnitId && remainingAllocations.length
+        ? next.units.find((candidate: BattleUnit) => candidate.side === unit.side
+          && candidate.attachedToUnitId === unit.id
+          && !candidate.destroyed
+          && !candidate.embarkedInUnitId
+          && candidate.remainingModels > 0)
+        : undefined;
+      if (survivingLeader) {
+        survivingLeader.pendingDamageAllocations = [
+          ...remainingAllocations.map(allocation => ({ ...allocation, targetUnitId: survivingLeader.id })),
+          ...(survivingLeader.pendingDamageAllocations ?? []),
+        ];
+      }
       recordDestroyedUnitMissionEvent(next, unit, destroyedBySide, {
         destroyedByUnitId: damage.sourceUnitId, destroyingUnitObjectiveIndexesWithinRange: damage.sourceObjectiveIndexesWithinRange,
         sourceTags: damage.sourceTags,
@@ -195,10 +218,16 @@ export type PlayShootingWeaponOption = {
   weaponIndex: number;
   name: string;
   targetIds: string[];
+  /** UI metadata used when an attached leader and bodyguard share one declaration. */
+  sourceUnitId?: string;
+  sourceWeaponIndex?: number;
+  weapon?: WeaponProfile;
   /** Number of models carrying this weapon that can contribute to at least one listed target. */
   modelCount?: number;
   /** Eligible model count for each target, used by the UI and AI allocation layer. */
   targetModelCounts?: Record<string, number>;
+  /** Eligible model indexes for each target, reused by the pre-roll UI preview. */
+  targetModelIndexes?: Record<string, number[]>;
 };
 
 export type PlayShootingAttackAllocation = {
@@ -210,10 +239,14 @@ export type PlayShootingAttackAllocation = {
 export interface ManualShootingSelectionContext {
   attachedUnitId(unit: BattleUnit): string;
   aliveWeaponModelCount(unit: BattleUnit, weaponIndex: number): number;
+  /** Number of physical copies of a weapon carried by eligible models. */
+  aliveWeaponCopyCount?(unit: BattleUnit, weaponIndex: number): number;
   nearest(unit: BattleUnit, targets: BattleUnit[]): BattleUnit | null;
   eligibleShootingWeapons(unit: BattleUnit, state: BattleState, rules: RulesEdition, allowActivated?: boolean): WeaponProfile[];
   enemies(state: BattleState, side: Side): BattleUnit[];
   shootingWeaponCanTarget(state: BattleState, unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, rules: RulesEdition): boolean;
+  /** Optional optimized unit-level target query used when a shooting step opens. */
+  shootingTargetUnitIds?(state: BattleState, unit: BattleUnit, rules: RulesEdition): string[];
   unitCanBeSelectedToShootWithoutAttacks(unit: BattleUnit, state: BattleState, rules: RulesEdition): boolean;
   participatingWeaponModelIndexes?(unit: BattleUnit, target: BattleUnit, weapon: WeaponProfile, weaponIndex: number, terrain: BattleState['terrain'], state: BattleState): number[];
 }
@@ -225,7 +258,13 @@ export function unitCanUseBigGunsNeverTire(unit: BattleUnit, context: ShootingSe
 }
 
 export function weaponIsCloseQuarters(weapon: WeaponProfile, context: ShootingSelectionRulesContext): boolean {
-  return context.weaponHasKeyword(weapon, 'Close-Quarters');
+  // 11th explicitly defines [Pistol] as identical to [Close-Quarters].
+  // Keep that equivalence at the engine boundary so every shooting query and
+  // resolver follows the same rule, regardless of which spelling a datasheet
+  // still uses.
+  return context.weaponHasKeyword(weapon, 'Close-Quarters')
+    || context.weaponHasKeyword(weapon, 'Pistol')
+    || context.weaponHasKeyword(weapon, 'Sidearm');
 }
 
 export interface ShootingResolutionContext extends ShootingSelectionRulesContext {
@@ -258,6 +297,7 @@ interface ShootingCoverRules {
 
 interface CombatHitCalculationOptions {
   hasCover: boolean;
+  coverRules?: ShootingCoverRules;
   snapShooting?: boolean;
   plunging?: boolean;
   additionalHitModifier?: number;
@@ -313,7 +353,9 @@ function calculateCombatHit(
   };
   const hasCover = options.hasCover;
   const snapShooting = options.snapShooting ?? false;
-  const shootingRules = !weapon.isMelee ? shootingCoverRules(state, attacker, defender, weapon, rules, context) : null;
+  const shootingRules = !weapon.isMelee
+    ? options.coverRules ?? shootingCoverRules(state, attacker, defender, weapon, rules, context)
+    : null;
   const isIndirectFire = !weapon.isMelee && context.weaponHasKeyword(weapon, 'Indirect Fire');
   const indirectHitTarget = isIndirectFire && rules.metadata.edition === '11e'
     ? attacker.movementAction === 'remainedStationary' && context.targetVisibleToFriendlyUnit(state, defender, attacker.side)
@@ -334,15 +376,21 @@ function calculateCombatHit(
   } else {
     if (shootingRules) {
       const foes = context.enemies(state, attacker.side);
-      const engaged = context.inEngagement(attacker, foes, rules.engagementRange());
+      // An attached Leader/bodyguard group is one unit for Engagement Range.
+      // Resolve each component's weapons independently, but do not let that
+      // split suppress Big Guns Never Tire's hit penalty in the preview or
+      // the actual dice resolution.
+      const engaged = context.attachedUnitComponents(state, attacker).some(component =>
+        context.inEngagement(component, foes, rules.engagementRange()));
       const bigGunsNeverTire = engaged && unitCanUseBigGunsNeverTire(attacker, context);
       const closeQuartersTarget = rules.metadata.edition === '11e'
         && weaponIsCloseQuarters(weapon, context)
-        && context.inEngagement(attacker, [defender], rules.engagementRange());
+        && context.attachedUnitComponents(state, attacker).some(component =>
+          context.inEngagement(component, [defender], rules.engagementRange()));
       const targetIsEngagedMonsterOrVehicle = context.targetWithinFriendlyEngagement(state, defender, attacker.side, rules)
         && unitCanUseBigGunsNeverTire(defender, context);
       if (bigGunsNeverTire && !closeQuartersTarget && !context.weaponIsSidearm(weapon)) {
-        addModifier('Big Guns Never Tire', 1);
+        addModifier(rules.metadata.edition === '11e' ? 'Close Quarters Shooting' : 'Big Guns Never Tire', 1);
       }
       if (targetIsEngagedMonsterOrVehicle && !closeQuartersTarget) {
         addModifier('Engaged Monster/Vehicle', 1);
@@ -428,18 +476,21 @@ export function previewCombatHit(
   weapon: WeaponProfile,
   weaponIndex: number,
   rules: RulesEdition,
-  options: { modelIndexes?: number[]; snapShooting?: boolean } = {},
+  options: { modelIndexes?: number[]; visibleModelIndexes?: number[]; snapShooting?: boolean } = {},
   context: ShootingResolutionContext,
 ): CombatHitPreview {
   const modelIndexes = [...new Set(options.modelIndexes
     ?? context.participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, state.terrain, state))]
     .filter(modelIndex => !!attacker.modelPositions[modelIndex]);
   const coverRules = !weapon.isMelee ? shootingCoverRules(state, attacker, defender, weapon, rules, context) : null;
+  const knownVisibleModelIndexes = options.visibleModelIndexes ? new Set(options.visibleModelIndexes) : null;
   const groupMap = new Map<string, { modelIndexes: number[]; hasCover: boolean; plunging: boolean }>();
   for (const modelIndex of modelIndexes) {
     const position = attacker.modelPositions[modelIndex];
     const visible = !weapon.isMelee && !options.snapShooting && !!position
-      ? context.hasAnyModelLOS(position, context.modelBaseRadius(attacker, modelIndex), defender, state.terrain, state.ruleset?.edition)
+      ? knownVisibleModelIndexes
+        ? knownVisibleModelIndexes.has(modelIndex)
+        : context.hasAnyModelLOS(position, context.modelBaseRadius(attacker, modelIndex), defender, state.terrain, state.ruleset?.edition)
       : false;
     const plunging = !weapon.isMelee && !options.snapShooting && visible
       && context.attackingModelHasPlungingFire(state, attacker, modelIndex, defender, visible);
@@ -453,12 +504,30 @@ export function previewCombatHit(
   const groups: CombatHitPreviewGroup[] = [...groupMap.values()].map(group => ({
     ...calculateCombatHit(state, attacker, defender, weapon, rules, {
       hasCover: group.hasCover,
+      coverRules,
       snapShooting: options.snapShooting,
       plunging: group.plunging,
     }, context),
     modelIndexes: group.modelIndexes,
     plunging: group.plunging,
   }));
+  // Exact model participation can be deliberately deferred by an interactive
+  // declaration. A preview still needs to report the rules-owned hit target
+  // (for example Close Quarters Shooting's -1) rather than becoming blank.
+  // This zero-model group is presentation-only; it never contributes attacks
+  // or changes the allocation/resolution legality checks.
+  if (groups.length === 0) {
+    groups.push({
+      ...calculateCombatHit(state, attacker, defender, weapon, rules, {
+        hasCover: !!coverRules?.alwaysHasCover,
+        coverRules,
+        snapShooting: options.snapShooting,
+        plunging: false,
+      }, context),
+      modelIndexes: [],
+      plunging: false,
+    });
+  }
   const coveredModelCount = groups.reduce((total, group) => total + (group.hasCover ? group.modelIndexes.length : 0), 0);
   const coverStatus = coveredModelCount === 0
     ? 'none'
@@ -608,7 +677,7 @@ export function resolveShootingWeaponIntoTarget(
 export function fixedWeaponAttackCount(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number, context: ManualShootingSelectionContext): number | null {
   const attacks = Number(String(weapon.attacks).trim());
   if (!Number.isInteger(attacks) || attacks < 0) return null;
-  return attacks * context.aliveWeaponModelCount(unit, weaponIndex);
+  return attacks * (context.aliveWeaponCopyCount?.(unit, weaponIndex) ?? context.aliveWeaponModelCount(unit, weaponIndex));
 }
 
 export function playShootingWeaponAttackCount(unit: BattleUnit, weaponIndex: number, context: ManualShootingSelectionContext): number | null {
@@ -812,7 +881,7 @@ export function resolveCombatAttacks(
   options: CombatAttackResolutionOptions = {},
   context: CombatAttackContext,
 ): LogEntry[] {
-  const { dist, battleUnitToAttachedUnitDistance, activeEpicChallengeModelIndex, participatingWeaponModelIndexes, unitHasRule, attachedUnitIsFormed, attachedUnitHasRule, attachedUnitComponents, leadingAttackModifiers, leadingRerolls, leadingWeaponKeywords, unitGrantedWeaponKeywords, auraAbilitiesInRange, attachedUnitRemainingModels, attackingModelToAttachedUnitDistance, weaponHasKeyword, weaponKeywordValue, log, attachedUnitToughness, rollExpression, hasAnyModelLOS, modelBaseRadius, attackingModelHasPlungingFire, targetVisibleToFriendlyUnit, rollMultiple, d6, processWoundsAgainstDefender, attachedInvulnerableSave, rangedSaveModifier, resolveSaveOutcome, applyDamage, objectiveIndexesWithinRange, recordBattleEvent, BATTLE_EVENT_TYPE } = context;
+  const { dist, battleUnitToAttachedUnitDistance, activeEpicChallengeModelIndex, participatingWeaponModelIndexes, modelWeaponCopyCount, unitHasRule, attachedUnitIsFormed, attachedUnitHasRule, attachedUnitComponents, leadingAttackModifiers, leadingRerolls, leadingWeaponKeywords, unitGrantedWeaponKeywords, auraAbilitiesInRange, attachedUnitRemainingModels, attackingModelToAttachedUnitDistance, weaponHasKeyword, weaponKeywordValue, log, attachedUnitToughness, rollExpression, hasAnyModelLOS, modelBaseRadius, attackingModelHasPlungingFire, targetVisibleToFriendlyUnit, rollMultiple, d6, processWoundsAgainstDefender, attachedInvulnerableSave, rangedSaveModifier, resolveSaveOutcome, applyDamage, objectiveIndexesWithinRange, recordBattleEvent, BATTLE_EVENT_TYPE } = context;
   const logs: LogEntry[] = [];
   const rangeDistance = weapon.isMelee
     ? dist(attacker.position, defender.position)
@@ -826,9 +895,31 @@ export function resolveCombatAttacks(
 
   const participatingModelIndexes = options.modelIndexes
     ?? participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, state.terrain, state);
-  const weaponModelCount = participatingModelIndexes.length;
+  // A resolved Fight result is displayed after the declaration preview has
+  // been cleared. Capture the same engine-owned hit calculation on the
+  // result so that post-roll UI reads the resolved declaration, not stale UI
+  // selection state. Shooting creates this before delegating here; this also
+  // covers direct Fight resolution calls.
+  if (options.result && !options.result.hitPreview) {
+    options.result.hitPreview = previewCombatHit(
+      state,
+      attacker,
+      defender,
+      weapon,
+      weaponIndex,
+      rules,
+      { modelIndexes: participatingModelIndexes, snapShooting: options.snapShooting },
+      context,
+    );
+  }
+  const attackModelIndexes = participatingModelIndexes.flatMap(modelIndex => {
+    const rosterModelIndex = attacker.modelRosterIndexes?.[modelIndex] ?? modelIndex;
+    const copyCount = modelWeaponCopyCount?.(attacker.profile, rosterModelIndex, weaponIndex) ?? 1;
+    return Array.from({ length: Math.max(0, copyCount) }, () => modelIndex);
+  });
+  const weaponModelCount = attackModelIndexes.length;
   if (weaponModelCount <= 0) return logs;
-  if (options.result) options.result.modelCount = (options.result.modelCount ?? 0) + weaponModelCount;
+  if (options.result) options.result.modelCount = (options.result.modelCount ?? 0) + participatingModelIndexes.length;
   const waaaghActive = rules.metadata.edition === '11e'
     && state.activeArmyAbilities?.[attacker.side]?.includes('waaagh') === true
     && unitHasRule(attacker.profile, 'Waaagh!');
@@ -893,7 +984,7 @@ export function resolveCombatAttacks(
         attacks,
         { ...attacker, remainingModels: 1 },
         weapon,
-        attackingModelToAttachedUnitDistance(state, attacker, participatingModelIndexes[index], defender),
+        attackingModelToAttachedUnitDistance(state, attacker, attackModelIndexes[index], defender),
         attachedUnitRemainingModels(state, defender),
       ));
       numAttacks = perModelAttackCounts.reduce((total, attacks) => total + attacks, 0);
@@ -955,7 +1046,7 @@ export function resolveCombatAttacks(
   } else {
     const plungingAttackCount = options.snapShooting || weapon.isMelee
       ? 0
-      : participatingModelIndexes.reduce((total, modelIndex, index) => {
+      : attackModelIndexes.reduce((total, modelIndex, index) => {
         const position = attacker.modelPositions[modelIndex];
         const visible = position
           ? hasAnyModelLOS(position, modelBaseRadius(attacker, modelIndex), defender, state.terrain, state.ruleset?.edition)

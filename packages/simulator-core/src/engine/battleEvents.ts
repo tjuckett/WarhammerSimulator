@@ -25,11 +25,9 @@ export interface BattleEventInput {
 }
 
 function nextEventId(state: BattleState): string {
-  const used = new Set((state.events ?? []).map(event => event.id));
-  let index = (state.events?.length ?? 0) + 1;
-  let id = `event-${state.turn}-${index}`;
-  while (used.has(id)) id = `event-${state.turn}-${++index}`;
-  return id;
+  // Events are append-only, so the current length is already a unique
+  // sequence within the turn. Avoid rebuilding a Set for every event.
+  return `event-${state.turn}-${(state.events?.length ?? 0) + 1}`;
 }
 
 export function createBattleEvent(state: BattleState, input: BattleEventInput): BattleEvent {

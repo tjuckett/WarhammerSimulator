@@ -1,7 +1,8 @@
 import type { BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { ModelStatProfile, UnitProfile } from '@warhammer-simulator/core/types/army';
-import { Fragment, type CSSProperties, type ReactNode } from 'react';
+import { Fragment, memo, type CSSProperties, type ReactNode } from 'react';
 import { unitBaseSummary } from '@warhammer-simulator/core/engine/baseSizes';
+import { modelWeaponLoadout as coreModelWeaponLoadout } from '@warhammer-simulator/core/engine/unitModelState';
 import { uiTokens } from '../theme/uiTokens';
 
 type InspectedUnit =
@@ -11,11 +12,14 @@ type InspectedUnit =
 type AttachedStatsUnit = {
   profile: UnitProfile;
   remainingModels?: number;
+  /** Original roster indexes for the models still on the battlefield. */
+  modelRosterIndexes?: number[];
 };
 
 type ProfileView = {
   profile: UnitProfile;
   remainingModels?: number;
+  modelRosterIndexes?: number[];
 };
 
 type WeaponRow = {
@@ -37,7 +41,7 @@ interface Props {
   onClear?: () => void;
 }
 
-export function UnitStatsPanel({ inspected, onClear }: Props) {
+export const UnitStatsPanel = memo(function UnitStatsPanel({ inspected, onClear }: Props) {
   if (!inspected) {
     return (
       <div style={panelStyle}>
@@ -48,7 +52,11 @@ export function UnitStatsPanel({ inspected, onClear }: Props) {
 
   const profile = inspected.kind === 'battle' ? inspected.unit.profile : inspected.unit;
   const profileViews: ProfileView[] = [
-    { profile, remainingModels: inspected.kind === 'battle' ? inspected.unit.remainingModels : undefined },
+    {
+      profile,
+      remainingModels: inspected.kind === 'battle' ? inspected.unit.remainingModels : undefined,
+      modelRosterIndexes: inspected.kind === 'battle' ? inspected.unit.modelRosterIndexes : undefined,
+    },
     ...(inspected.attachedUnits ?? []),
   ];
   const showSources = profileViews.length > 1;
@@ -108,6 +116,8 @@ export function UnitStatsPanel({ inspected, onClear }: Props) {
         rules={visibleRules}
       />
 
+      <SelectedUnitUpgradesSection views={profileViews} />
+
       <RulesSection title="Abilities" entries={visibleAbilities} emptyText="No abilities listed." defaultOpen />
 
       <RulesSection title="Keyword Rules" entries={visibleRules} emptyText="No keyword rules listed." />
@@ -125,7 +135,7 @@ export function UnitStatsPanel({ inspected, onClear }: Props) {
       </div>
     </div>
   );
-}
+});
 
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
@@ -195,6 +205,43 @@ function ModelStats({ views }: { views: ProfileView[] }) {
   );
 }
 
+function SelectedUnitUpgradesSection({ views }: { views: ProfileView[] }) {
+  const upgrades = views.flatMap(view => {
+    const selectedIds = view.profile.selectedWargear ?? [];
+    const choices = (view.profile.wargearChoices ?? []).filter(choice => choice.kind === 'unit-upgrade');
+    const counts = new Map<string, number>();
+    for (const id of selectedIds) counts.set(id, (counts.get(id) ?? 0) + 1);
+    return choices
+      .filter(choice => counts.has(choice.id))
+      .map(choice => ({
+        label: choice.label,
+        description: choice.description,
+        count: counts.get(choice.id) ?? 0,
+        source: views.length > 1 ? view.profile.name : undefined,
+      }));
+  });
+  if (!upgrades.length) return null;
+
+  return (
+    <div style={sectionStyle}>
+      <div style={sectionTitleStyle}>Selected Unit Upgrades</div>
+      <div style={{ display: 'grid', gap: 4 }}>
+        {upgrades.map((upgrade, index) => (
+          <div key={`${upgrade.label}-${upgrade.source ?? ''}-${index}`} style={{ display: 'grid', gap: 2 }}>
+            <div style={selectedUpgradeStyle}>
+              <span>{upgrade.label}{upgrade.count > 1 ? ` x${upgrade.count}` : ''}</span>
+              {upgrade.source && <span style={{ color: uiTokens.color.text.faint }}>({upgrade.source})</span>}
+            </div>
+            {upgrade.description && (
+              <div style={selectedUpgradeDescriptionStyle}>{cleanRulesText(upgrade.description)}</div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function modelStatlinesForView(view: ProfileView): ModelStatProfile[] {
   const statlines = view.profile.modelProfiles?.length
     ? view.profile.modelProfiles
@@ -232,8 +279,17 @@ function WeaponSection({
   rules: UnitProfile['abilities'];
 }) {
   const rawRows = views.flatMap(view => view.profile.weapons
-    .map((weapon, weaponIndex) => ({ profile: view.profile, weaponIndex, remainingModels: view.remainingModels, weapon }))
-    .filter(({ weapon }) => title.startsWith('Ranged') ? !weapon.isMelee && weapon.range > 0 : weapon.isMelee));
+    .map((weapon, weaponIndex) => ({
+      profile: view.profile,
+      weaponIndex,
+      remainingModels: view.remainingModels,
+      modelRosterIndexes: view.modelRosterIndexes,
+      weapon,
+    }))
+    .filter(({ profile, weaponIndex, remainingModels, modelRosterIndexes, weapon }) =>
+      (title.startsWith('Ranged') ? !weapon.isMelee && weapon.range > 0 : weapon.isMelee)
+      && weaponCarrierCount(profile, weaponIndex, remainingModels, modelRosterIndexes) > 0,
+    ));
   const rows = combineWeaponRows(rawRows);
 
   return (
@@ -309,12 +365,12 @@ function WeaponTable({
   );
 }
 
-function combineWeaponRows(rows: Array<WeaponRow & { remainingModels?: number }>): WeaponDisplayRow[] {
+function combineWeaponRows(rows: Array<WeaponRow & { remainingModels?: number; modelRosterIndexes?: number[] }>): WeaponDisplayRow[] {
   const combined = new Map<string, WeaponDisplayRow>();
   for (const row of rows) {
     const weapon = row.profile.weapons[row.weaponIndex];
     const key = weaponKey(weapon);
-    const carrierCount = weaponCarrierCount(row.profile, row.weaponIndex, row.remainingModels);
+    const carrierCount = weaponCarrierCount(row.profile, row.weaponIndex, row.remainingModels, row.modelRosterIndexes);
     const existing = combined.get(key);
     if (!existing) {
       combined.set(key, {
@@ -427,17 +483,19 @@ function uniqueKeywords(keywords: string[]): string[] {
 }
 
 function modelLoadout(profile: UnitProfile, modelIndex: number): number[] {
-  const configured = profile.modelWeaponLoadouts?.[modelIndex];
-  if (configured?.length) {
-    return configured.filter(weaponIndex => weaponIndex >= 0 && weaponIndex < profile.weapons.length);
-  }
-  return profile.weapons.map((_, weaponIndex) => weaponIndex);
+  return coreModelWeaponLoadout(profile, modelIndex);
 }
 
-function weaponCarrierCount(profile: UnitProfile, weaponIndex: number, aliveModelCount = profile.baseModelCount): number {
+function weaponCarrierCount(
+  profile: UnitProfile,
+  weaponIndex: number,
+  aliveModelCount = profile.baseModelCount,
+  modelRosterIndexes?: number[],
+): number {
   let count = 0;
   for (let modelIndex = 0; modelIndex < Math.min(aliveModelCount, profile.baseModelCount); modelIndex++) {
-    count += modelLoadout(profile, modelIndex).filter(index => index === weaponIndex).length;
+    const rosterModelIndex = modelRosterIndexes?.[modelIndex] ?? modelIndex;
+    count += modelLoadout(profile, rosterModelIndex).filter(index => index === weaponIndex).length;
   }
   return count;
 }
@@ -561,6 +619,21 @@ const sectionTitleStyle = {
   fontWeight: 800,
   textTransform: 'uppercase',
   marginBottom: 4,
+} satisfies CSSProperties;
+
+const selectedUpgradeStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  gap: 8,
+  color: uiTokens.color.text.primary,
+  fontSize: 12,
+  lineHeight: 1.4,
+} satisfies CSSProperties;
+
+const selectedUpgradeDescriptionStyle = {
+  color: uiTokens.color.text.secondary,
+  fontSize: 12,
+  lineHeight: 1.4,
 } satisfies CSSProperties;
 
 const tableWrapStyle = {

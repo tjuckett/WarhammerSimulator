@@ -56,6 +56,35 @@ export function baseFootprintInches(base: ModelBase, rotationDeg = 0): ModelBase
   return { shape: 'circle', radius: 0.9 };
 }
 
+/**
+ * Furthest possible point of a base from its centre. Callers can use this as
+ * a conservative broad-phase bound before invoking exact footprint geometry.
+ */
+export function footprintBoundingRadius(footprint: ModelBaseFootprint): number {
+  if (footprint.shape === 'circle') return footprint.radius;
+  if (footprint.shape === 'square') return footprint.halfSize * Math.SQRT2;
+  if (footprint.shape === 'rectangle') return Math.hypot(footprint.halfLength, footprint.halfWidth);
+  return Math.max(footprint.halfLength, footprint.halfWidth);
+}
+
+function footprintBoundingHalfExtents(footprint: ModelBaseFootprint): { halfWidth: number; halfLength: number } {
+  if (footprint.shape === 'circle') return { halfWidth: footprint.radius, halfLength: footprint.radius };
+  if (footprint.shape === 'square') return { halfWidth: footprint.halfSize, halfLength: footprint.halfSize };
+  const radians = ((footprint.rotationDeg ?? 0) * Math.PI) / 180;
+  const cos = Math.abs(Math.cos(radians));
+  const sin = Math.abs(Math.sin(radians));
+  if (footprint.shape === 'rectangle') {
+    return {
+      halfWidth: cos * footprint.halfWidth + sin * footprint.halfLength,
+      halfLength: cos * footprint.halfLength + sin * footprint.halfWidth,
+    };
+  }
+  return {
+    halfWidth: Math.hypot(cos * footprint.halfWidth, sin * footprint.halfLength),
+    halfLength: Math.hypot(cos * footprint.halfLength, sin * footprint.halfWidth),
+  };
+}
+
 export function modelBaseRadiusInches(profile: UnitProfile, modelIndex = 0): number {
   const base = profile.modelBases?.[modelIndex] ?? profile.modelBases?.[0];
   if (base) return baseRadiusInches(base);
@@ -66,6 +95,45 @@ export function modelBaseFootprintInches(profile: UnitProfile, modelIndex = 0, r
   const base = profile.modelBases?.[modelIndex] ?? profile.modelBases?.[0];
   if (base) return baseFootprintInches(base, rotationDeg);
   return { shape: 'circle', radius: fallbackBaseRadiusInches(profile) };
+}
+
+/**
+ * Battle formations remove models from their live arrays, so a live model's
+ * array index is not necessarily its original roster index. Keep all
+ * per-model profile lookups anchored to that stable roster index.
+ */
+export function modelRosterIndexForUnit(
+  unit: Pick<BattleUnit, 'modelRosterIndexes'>,
+  modelIndex: number,
+): number {
+  return unit.modelRosterIndexes?.[modelIndex] ?? modelIndex;
+}
+
+export function modelBaseRadiusForUnit(unit: Pick<BattleUnit, 'profile' | 'modelRosterIndexes'>, modelIndex = 0): number {
+  return modelBaseRadiusInches(unit.profile, modelRosterIndexForUnit(unit, modelIndex));
+}
+
+export function modelBaseFootprintForUnit(
+  unit: Pick<BattleUnit, 'profile' | 'modelRosterIndexes' | 'modelRotations' | 'facingDeg'>,
+  modelIndex = 0,
+  rotationDeg = unit.modelRotations?.[modelIndex] ?? unit.facingDeg ?? 0,
+): ModelBaseFootprint {
+  return modelBaseFootprintInches(unit.profile, modelRosterIndexForUnit(unit, modelIndex), rotationDeg);
+}
+
+export function modelWoundsForUnit(
+  unit: Pick<BattleUnit, 'profile' | 'modelRosterIndexes'>,
+  modelIndex = 0,
+): number {
+  const profiles = unit.profile.modelProfiles;
+  if (!profiles?.length) return unit.profile.wounds;
+  const rosterIndex = modelRosterIndexForUnit(unit, modelIndex);
+  let offset = 0;
+  for (const profile of profiles) {
+    if (rosterIndex < offset + profile.count) return profile.wounds;
+    offset += profile.count;
+  }
+  return unit.profile.wounds;
 }
 
 export function pointInBaseFootprint(
@@ -104,6 +172,16 @@ export function baseFootprintsOverlap(
     const dy = Math.abs(aCenter.y - bCenter.y);
     return Math.hypot(dx, dy) < aFootprint.radius + bFootprint.radius - tolerance;
   }
+
+  // Oval overlap uses sampled boundary geometry below. Reject clearly
+  // separated footprints first so large rosters with a few oval models do
+  // not pay that cost for every distant model pair during each render.
+  const aBounds = footprintBoundingHalfExtents(aFootprint);
+  const bBounds = footprintBoundingHalfExtents(bFootprint);
+  if (Math.abs(aCenter.x - bCenter.x) > aBounds.halfLength + bBounds.halfLength
+    || Math.abs(aCenter.y - bCenter.y) > aBounds.halfWidth + bBounds.halfWidth) return false;
+  if (Math.hypot(aCenter.x - bCenter.x, aCenter.y - bCenter.y)
+    > footprintBoundingRadius(aFootprint) + footprintBoundingRadius(bFootprint)) return false;
 
   if (aFootprint.shape === 'oval' || bFootprint.shape === 'oval') {
     return baseFootprintDistance(aCenter, aFootprint, bCenter, bFootprint) <= Math.max(0, -tolerance);

@@ -1,8 +1,9 @@
 import type { BattleSetup, BattleState, Phase, Side } from '../types/battle';
 import { battleRound } from '../engine/battleRound';
+import { clone } from '../engine/clone';
 import type { RulesetMetadata } from '../engine/rulesEngine';
-import { normalizePracticeCheckpointKind, type PracticeCheckpointKind, type PracticeScenario } from './scenarios';
-import { currentTimelineState, type PracticeTimeline } from './timeline';
+import { normalizePracticeCheckpointKind, timelineForScenario, type PracticeCheckpointKind, type PracticeScenario } from './scenarios';
+import { type PracticeTimeline } from './timeline';
 import type { PracticeScenarioRepository } from './scenarioRepository';
 
 export const PRACTICE_SCENARIO_STORAGE_KEY = 'warhammer-practice-scenarios-v1';
@@ -39,10 +40,6 @@ interface PracticeScenarioLibrary {
 interface PracticeBranchTimelineLibrary {
   version: 1;
   timelines: Record<string, PracticeTimeline>;
-}
-
-function clone<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value));
 }
 
 function emptyLibrary(): PracticeScenarioLibrary {
@@ -150,15 +147,16 @@ function timelineForCheckpoint(scenario: PracticeScenario): PracticeTimeline {
 }
 
 function scenarioWithStoredTimeline(scenario: PracticeScenario): PracticeScenario {
+  const timeline = timelineForCheckpoint(scenario);
   return {
     ...scenario,
-    timeline: timelineForCheckpoint(scenario),
+    timeline: timelineForScenario({ ...scenario, timeline }),
   };
 }
 
 function compactScenarioForStorage(scenario: PracticeScenario): PracticeScenario {
   if (!scenario.metadata.checkpointKind || scenario.timeline.entries.length === 0) return scenario;
-  const state = currentTimelineState(scenario.timeline);
+  const state = scenario.initialState;
   return {
     ...scenario,
     metadata: {

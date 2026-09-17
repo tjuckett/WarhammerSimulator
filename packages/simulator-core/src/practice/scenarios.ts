@@ -1,6 +1,8 @@
 import type { BattleSetup, BattleState } from '../types/battle';
+import { battleRound } from '../engine/battleRound';
 import type { RulesetMetadata } from '../engine/rulesEngine';
-import { createPracticeTimeline, type PracticeTimeline } from './timeline';
+import { clone } from '../engine/clone';
+import { createPracticeTimeline, currentTimelineState, type PracticeTimeline } from './timeline';
 
 export const PRACTICE_SCENARIO_VERSION = 1;
 export type PracticeCheckpointKind = 'play' | 'auto-phase';
@@ -59,8 +61,84 @@ export interface CreatePracticeScenarioOptions {
   forkedFromTimelineEntryId?: string;
 }
 
-function clone<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value));
+const PRACTICE_PHASE_ORDER: Record<string, number> = {
+  setup: 0,
+  deployment: 1,
+  command: 2,
+  movement: 3,
+  shooting: 4,
+  charge: 5,
+  fight: 6,
+  end: 7,
+};
+
+function battleProgress(state: BattleState): [number, number] {
+  return [battleRound(state), PRACTICE_PHASE_ORDER[state.phase] ?? -1];
+}
+
+function compareBattleProgress(left: BattleState, right: BattleState): number {
+  const [leftRound, leftPhase] = battleProgress(left);
+  const [rightRound, rightPhase] = battleProgress(right);
+  return leftRound - rightRound || leftPhase - rightPhase;
+}
+
+/**
+ * Return the state that a saved scenario represents right now.
+ *
+ * Checkpoints persist a snapshot in `initialState` so they can still be
+ * loaded when their optional branch-history record is unavailable (for
+ * example after browser storage cleanup). Ordinary scenarios continue to
+ * derive their state from the timeline.
+ */
+export function currentScenarioState(scenario: PracticeScenario): BattleState {
+  if (!normalizePracticeCheckpointKind(scenario.metadata.checkpointKind)) {
+    return currentTimelineState(scenario.timeline);
+  }
+
+  const timeline = timelineForScenario(scenario);
+  if (timeline.cursor <= 0) return clone(scenario.initialState);
+  const historyState = currentTimelineState(timeline);
+  // Older checkpoints could contain a deployment snapshot while their branch
+  // history still had the real current phase. Recover that case, but keep the
+  // saved snapshot authoritative when it is at least as far into the battle;
+  // new saves capture it directly from the live React state.
+  return compareBattleProgress(historyState, scenario.initialState) > 0
+    ? historyState
+    : clone(scenario.initialState);
+}
+
+/**
+ * Keep a loaded checkpoint usable when its optional timeline history is
+ * incomplete. The saved snapshot remains authoritative; the missing history
+ * is rebased away so the next action does not undo back to deployment.
+ */
+export function timelineForScenario(scenario: PracticeScenario): PracticeTimeline {
+  const timeline = clone(scenario.timeline);
+  if (!normalizePracticeCheckpointKind(scenario.metadata.checkpointKind)) return timeline;
+  const expectedCursor = Math.max(0, scenario.metadata.timelineCursor ?? timeline.cursor);
+  const hasCompleteHistory = timeline.entries.length >= expectedCursor
+    && timeline.cursor <= timeline.entries.length;
+  if (hasCompleteHistory) {
+    const historyState = currentTimelineState(timeline);
+    // A just-created checkpoint can have a newer live snapshot than the
+    // timeline ref during the same React turn. Rebase in that direction; for
+    // legacy saves, preserve complete history when it is ahead of deployment.
+    const progressComparison = compareBattleProgress(scenario.initialState, historyState);
+    if (progressComparison < 0) return timeline;
+    if (progressComparison === 0 && JSON.stringify(scenario.initialState) === JSON.stringify(historyState)) {
+      return timeline;
+    }
+  }
+  return {
+    ...timeline,
+    initialState: clone(scenario.initialState),
+    entries: [],
+    cursor: 0,
+    metadata: {
+      ...timeline.metadata,
+      rewoundFromCursor: undefined,
+    },
+  };
 }
 
 function nowIso(): string {
@@ -121,6 +199,8 @@ export function scenarioFromTimeline(
   const createdAt = options.createdAt ?? nowIso();
   const name = options.name ?? timeline.metadata.title;
   const gameId = options.gameId ?? timeline.metadata.id;
+  const checkpointKind = normalizePracticeCheckpointKind(options.checkpointKind);
+  const savedState = checkpointKind ? currentTimelineState(timeline) : timeline.initialState;
   return {
     version: PRACTICE_SCENARIO_VERSION,
     metadata: {
@@ -135,14 +215,14 @@ export function scenarioFromTimeline(
       gameId,
       branchId: options.branchId,
       parentCheckpointId: options.parentCheckpointId,
-      checkpointKind: options.checkpointKind,
+      checkpointKind,
       checkpointLabel: options.checkpointLabel,
       sequence: options.sequence,
       timelineCursor: options.timelineCursor ?? timeline.cursor,
       parentScenarioId: options.parentScenarioId,
       forkedFromTimelineEntryId: options.forkedFromTimelineEntryId,
     },
-    initialState: clone(timeline.initialState),
+    initialState: clone(savedState),
     timeline: clone(timeline),
   };
 }

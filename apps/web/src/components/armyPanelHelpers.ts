@@ -1,4 +1,4 @@
-import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitDeploymentMode, type UnitProfile } from '@warhammer-simulator/core/types/army';
+import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitDeploymentMode, type UnitProfile, type WargearChoice } from '@warhammer-simulator/core/types/army';
 
 export type GroupedUnitDisplayItem = {
   unit: UnitProfile;
@@ -38,6 +38,38 @@ export function unitKey(unit: UnitProfile, index: number): string {
   return unit.rosterId ?? `legacy-${index}`;
 }
 
+export function unitUpgradeSelectionLimit(choice: WargearChoice, modelCount: number): number | undefined {
+  const dynamicLimit = choice.maximumSelectionsPerModels
+    ? Math.floor(modelCount / choice.maximumSelectionsPerModels)
+    : undefined;
+  if (choice.maximumSelections === undefined) return dynamicLimit;
+  if (dynamicLimit === undefined) return choice.maximumSelections;
+  return Math.min(choice.maximumSelections, dynamicLimit);
+}
+
+export function maximizeFreeScalableUnitUpgrades(
+  unit: UnitProfile,
+  modelCount = unit.baseModelCount,
+  selectedWargear = unit.selectedWargear,
+): string[] | undefined {
+  const next = selectedWargear ? [...selectedWargear] : [];
+  let changed = false;
+  for (const choice of unit.wargearChoices ?? []) {
+    if (
+      choice.kind !== 'unit-upgrade'
+      || choice.maximumSelectionsPerModels === undefined
+      || choice.limitGroup
+      || (choice.points !== undefined && choice.points > 0)
+    ) continue;
+    const maximum = unitUpgradeSelectionLimit(choice, modelCount);
+    if (maximum === undefined) continue;
+    const current = next.filter(id => id === choice.id).length;
+    for (let count = current; count < maximum; count += 1) next.push(choice.id);
+    changed ||= current < maximum;
+  }
+  return changed ? next : selectedWargear;
+}
+
 export function normalizeArmyForEditing(army: ImportedArmy): ImportedArmy {
   const unitsWithIds = army.units.map(unit => unit.rosterId ? unit : { ...unit, rosterId: generateRosterId() });
   const units = unitsWithIds.map(unit => {
@@ -54,10 +86,14 @@ export function normalizeArmyForEditing(army: ImportedArmy): ImportedArmy {
     if (!isLeaderUnit(nextUnit) && nextUnit.leaderAttachment) {
       nextUnit = { ...nextUnit, leaderAttachment: undefined };
     }
-    if (nextUnit.leaderAttachment?.attachedToName && !nextUnit.leaderAttachment.attachedToUnitId) {
+    if (nextUnit.leaderAttachment?.attachedToUnitId) {
+      // IDs are stable within the roster; do not retain a second name target
+      // that makes the attachment ambiguous during validation.
+      nextUnit = { ...nextUnit, leaderAttachment: { attachedToUnitId: nextUnit.leaderAttachment.attachedToUnitId } };
+    } else if (nextUnit.leaderAttachment?.attachedToName) {
       const attachedTo = unitsWithIds.find(candidate => candidate.name === nextUnit.leaderAttachment?.attachedToName);
       if (attachedTo?.rosterId) {
-        nextUnit = { ...nextUnit, leaderAttachment: { ...nextUnit.leaderAttachment, attachedToUnitId: attachedTo.rosterId } };
+        nextUnit = { ...nextUnit, leaderAttachment: { attachedToUnitId: attachedTo.rosterId } };
       }
     }
     return nextUnit;
@@ -227,38 +263,45 @@ export function defaultWeaponLoadout(unit: UnitProfile): number[] {
   return unit.weapons.map((_, weaponIndex) => weaponIndex);
 }
 
+function firstModelChoiceLoadout(unit: UnitProfile, modelIndex: number): number[] | undefined {
+  const eligibleChoices = unit.wargearChoices?.filter(candidate =>
+    candidate.kind === 'model-loadout'
+    && candidate.eligibleModelIndexes?.includes(modelIndex)
+    && candidate.weaponNames?.length,
+  ) ?? [];
+  const choice = eligibleChoices.find(candidate => candidate.isDefault) ?? eligibleChoices[0];
+  if (!choice?.weaponNames?.length) return undefined;
+  const normalizedNames = choice.weaponNames.map(name => name.trim().toLowerCase());
+  const indexesByName = normalizedNames.map(name => unit.weapons
+    .map((weapon, weaponIndex) => weapon.name.trim().toLowerCase() === name ? weaponIndex : -1)
+    .filter(weaponIndex => weaponIndex >= 0));
+  if (indexesByName.some(indexes => indexes.length === 0)) return undefined;
+  return indexesByName
+    // A datasheet may have a ranged and melee profile with the same name
+    // (e.g. Stikka).  A model carrying that named weapon carries both
+    // profiles, so retain every matching index rather than only the first.
+    .flat();
+}
+
 export function modelWeaponLoadout(unit: UnitProfile, modelIndex: number): number[] {
   const configured = unit.modelWeaponLoadouts?.[modelIndex];
-  if (configured?.length) {
+  if (configured !== undefined) {
     return configured.filter(weaponIndex => weaponIndex >= 0 && weaponIndex < unit.weapons.length);
   }
-  return defaultWeaponLoadout(unit);
+  return firstModelChoiceLoadout(unit, modelIndex) ?? defaultWeaponLoadout(unit);
 }
 
 export function resizeModelWeaponLoadouts(unit: UnitProfile, modelCount: number): number[][] {
-  return Array.from({ length: modelCount }, (_, modelIndex) => modelWeaponLoadout(unit, modelIndex));
-}
-
-export function updateModelWeaponLoadout(unit: UnitProfile, modelIndex: number, weaponIndex: number, count: number): number[][] {
-  const loadouts = resizeModelWeaponLoadouts(unit, unit.baseModelCount);
-  const withoutWeapon = (loadouts[modelIndex] ?? []).filter(index => index !== weaponIndex);
-  loadouts[modelIndex] = [
-    ...withoutWeapon,
-    ...Array.from({ length: Math.max(0, Math.floor(count)) }, () => weaponIndex),
-  ].sort((a, b) => a - b);
-  return loadouts;
-}
-
-export function weaponCountForLoadouts(unit: UnitProfile, weaponIndex: number): number {
-  let count = 0;
-  for (let modelIndex = 0; modelIndex < unit.baseModelCount; modelIndex++) {
-    count += modelWeaponLoadout(unit, modelIndex).filter(index => index === weaponIndex).length;
-  }
-  return count;
-}
-
-export function modelWeaponCopyCount(unit: UnitProfile, modelIndex: number, weaponIndex: number): number {
-  return modelWeaponLoadout(unit, modelIndex).filter(index => index === weaponIndex).length;
+  const configured = unit.modelWeaponLoadouts;
+  return Array.from({ length: modelCount }, (_, modelIndex) => {
+    if (configured?.length && modelIndex < configured.length) {
+      const source = configured[Math.min(modelIndex, configured.length - 1)];
+      if (source !== undefined) {
+        return source.filter(weaponIndex => weaponIndex >= 0 && weaponIndex < unit.weapons.length);
+      }
+    }
+    return firstModelChoiceLoadout(unit, modelIndex) ?? modelWeaponLoadout(unit, modelIndex);
+  });
 }
 
 export function groupedUnitDisplayItems(army: ImportedArmy): GroupedUnitDisplayItem[] {

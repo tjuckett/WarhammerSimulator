@@ -1,6 +1,8 @@
-import { EVENT_REQUEST_KIND, EVENT_TRIGGER_TIMING, type BattleState, type BattleUnit, type Phase, type Side } from '../types/battle';
+import { PHASE_STEP, type BattleState, type BattleUnit, type Phase, type Side } from '../types/battle';
 import type { CommandRerollRollType, HeroicInterventionMode, StratagemDefinition, StratagemUse } from '../types/stratagem';
+import type { RuleEffect } from '../types/ruleEffects';
 import { battleRound } from './battleRound';
+import { clone } from './clone';
 import { canSpendCommandPoints, spendCommandPoints } from './commandPoints';
 import { unitCanBeAffectedByStratagem } from './battleshock';
 import { countSuccesses, rollMultiple } from './dice';
@@ -9,9 +11,7 @@ import { battleUnitMaxBaseRadiusInches } from './baseSizes';
 import { applyDamage, battleModelBaseEdgeDistance, battleUnitsBaseEdgeDistance } from './simulator';
 import type { RulesEdition } from './rulesEngine';
 import { unitHasRule } from './armyUnits';
-import { BATTLE_EVENT_TYPE, recordBattleEvent } from './battleEvents';
-import { queueEventRequest } from './eventTriggers';
-import { openPendingCombatAction } from './combatActionWindows';
+import { resolveRuleEffects } from './ruleEffects';
 
 let _stratagemUseId = 0;
 
@@ -20,21 +20,29 @@ function stratagemById(rules: RulesEdition, stratagemId: string): StratagemDefin
 }
 
 function nextLogId(state: BattleState, prefix: string): string {
-  const used = new Set(state.log.map(entry => entry.id));
-  let index = state.log.length + 1;
-  let id = `${prefix}-${index}`;
-  while (used.has(id)) id = `${prefix}-${++index}`;
-  return id;
+  return `${prefix}-${state.log.length + 1}`;
 }
 
 function phaseAllowed(stratagem: StratagemDefinition, phase: Phase): boolean {
   return stratagem.phases === 'any' || stratagem.phases.includes(phase);
 }
 
+function phaseStepAllowed(state: BattleState, stratagem: StratagemDefinition): boolean {
+  if (!stratagem.phaseSteps?.length || state.phaseStep === undefined) {
+    // Older saved states only carry movementStep/fightStepStarted. Keep those
+    // states legal while newer states use the canonical phase-step field.
+    return true;
+  }
+  return stratagem.phaseSteps.includes(state.phaseStep);
+}
+
 function timingAllowed(state: BattleState, stratagem: StratagemDefinition, side: Side): boolean {
-  if (stratagem.id === 'fire-overwatch') return state.phase === 'movement' && state.movementStep === 'reinforcements';
-  if (stratagem.id === 'rapid-ingress') return state.phase === 'movement' && state.movementStep === 'reinforcements';
-  if (stratagem.id === 'counteroffensive') {
+  if (!phaseStepAllowed(state, stratagem)) return false;
+  if (stratagem.phaseSteps?.includes(PHASE_STEP.MovementReinforcements)
+    && state.phase === 'movement'
+    && state.phaseStep === undefined
+    && state.movementStep !== 'reinforcements') return false;
+  if (stratagem.requiresOpponentFightSelection) {
     return state.phase === 'fight'
       && state.fightStepStarted === true
       && state.activeAttachedFightUnitId === undefined
@@ -91,7 +99,7 @@ function unitHasAnyKeyword(unit: BattleUnit, keywords: string[]): boolean {
 function weaponIsSidearm(weapon: BattleUnit['profile']['weapons'][number]): boolean {
   return weapon.keywords.some(keyword => {
     const normalized = keyword.toLowerCase();
-    return normalized.startsWith('pistol') || normalized.startsWith('sidearm');
+    return normalized.startsWith('pistol') || normalized.startsWith('sidearm') || normalized.startsWith('close-quarters');
   });
 }
 
@@ -152,13 +160,13 @@ function targetRestrictionsAllowed(
   if (stratagem.targetMustBeUnengaged && unitIsEngaged(state, target, rules)) return false;
   if (stratagem.targetMustBeEngaged && !unitIsEngaged(state, target, rules)) return false;
   if (stratagem.targetMustBeEligibleToShoot && !unitEligibleToShoot(state, target, rules)) return false;
-  if (stratagem.id === 'explosives' && (target.firedWeaponIndices?.length ?? 0) > 0) return false;
+  if (stratagem.targetMustNotHaveFired && (target.firedWeaponIndices?.length ?? 0) > 0) return false;
   if (stratagem.targetMustBeEligibleToFight && !unitEligibleToFight(state, target, rules)) return false;
-  if (stratagem.id === 'epic-challenge' && state.phase === 'fight' && state.fightStepStarted !== true) return false;
+  if (stratagem.requiresFightStepStarted && state.phase === 'fight' && state.fightStepStarted !== true) return false;
   if (stratagem.targetMustHaveCharged && !target.charged) return false;
   if (stratagem.targetMustNotHaveAdvanced && target.movementAction === 'advanced') return false;
   if (
-    stratagem.id === 'insane-bravery'
+    stratagem.targetMustBeBattleshockEligible
     && !target.battleshocked
     && !state.battleshockEligibleUnitIds?.includes(target.id)
   ) return false;
@@ -179,7 +187,7 @@ function targetAllowed(
   if (stratagem.target === 'none') return targetUnitId === undefined;
   const target = targetUnitFor(state, targetUnitId);
   if (!target) return false;
-  if (stratagem.id !== 'insane-bravery' && !unitCanBeAffectedByStratagem(target)) return false;
+  if (!stratagem.targetMayBeBattleshocked && !unitCanBeAffectedByStratagem(target)) return false;
   if (stratagem.target === 'friendly-unit' && target.side !== side) return false;
   if (stratagem.target === 'enemy-unit' && target.side === side) return false;
   if (!targetRestrictionsAllowed(state, side, stratagem, target, rules)) return false;
@@ -187,21 +195,27 @@ function targetAllowed(
 }
 
 function targetModelIndexAllowed(target: BattleUnit, stratagem: StratagemDefinition, targetModelIndex?: number): boolean {
-  if (stratagem.id !== 'epic-challenge') return targetModelIndex === undefined;
+  const requirement = stratagem.selection?.targetModel ?? 'forbidden';
+  if (requirement === 'forbidden') return targetModelIndex === undefined;
+  if (requirement === 'optional' && targetModelIndex === undefined) return true;
   const index = targetModelIndex ?? 0;
   return Number.isInteger(index) && index >= 0 && !!target.modelPositions[index];
 }
 
 function heroicInterventionModeAllowed(stratagem: StratagemDefinition, mode?: HeroicInterventionMode): boolean {
-  return stratagem.id === 'heroic-intervention'
-    ? mode !== undefined
-    : mode === undefined;
+  const requirement = stratagem.selection?.heroicInterventionMode ?? 'forbidden';
+  if (requirement === 'required' && mode === undefined) return false;
+  if (requirement === 'forbidden' && mode !== undefined) return false;
+  return mode === undefined
+    || !stratagem.selection?.heroicInterventionModes?.length
+    || stratagem.selection.heroicInterventionModes.includes(mode);
 }
 
 function sourceModelIndexAllowed(source: BattleUnit | null, stratagem: StratagemDefinition, sourceModelIndex?: number): boolean {
-  if (stratagem.id !== 'explosives' && stratagem.id !== 'crushing-impact') return sourceModelIndex === undefined;
+  const requirement = stratagem.selection?.sourceModel ?? 'forbidden';
+  if (requirement === 'forbidden') return sourceModelIndex === undefined;
+  if (sourceModelIndex === undefined) return requirement !== 'required';
   if (!source) return false;
-  if (stratagem.id === 'crushing-impact' && sourceModelIndex === undefined) return true;
   return Number.isInteger(sourceModelIndex)
     && sourceModelIndex! >= 0
     && !!source.modelPositions[sourceModelIndex!];
@@ -239,15 +253,20 @@ function secondaryTargetAllowed(
   sourceModelIndex: number | undefined,
   rules: RulesEdition,
 ): boolean {
-  if (stratagem.id !== 'crushing-impact' && stratagem.id !== 'explosives') return secondaryTargetUnitId === undefined;
-  if (!source || !secondaryTargetUnitId) return false;
+  const requirement = stratagem.selection?.secondaryTarget ?? 'forbidden';
+  if (requirement === 'forbidden') return secondaryTargetUnitId === undefined;
+  if (!secondaryTargetUnitId) return requirement !== 'required';
+  if (!source) return false;
   const target = targetUnitFor(state, secondaryTargetUnitId);
-  if (stratagem.id === 'explosives') {
+  const mortalEffect = stratagem.effects?.find((effect): effect is Extract<RuleEffect, { type: 'deal-mortal-wounds' }> =>
+    effect.type === 'deal-mortal-wounds',
+  );
+  if (mortalEffect?.secondaryTargetValidation === 'visible-enemy-within-8') {
     return sourceModelIndex !== undefined
       && !!target
       && explosivesTargetAllowed(state, source, target, sourceModelIndex, rules);
   }
-  if (!target) return false;
+  if (mortalEffect?.secondaryTargetValidation !== 'engaged-enemy' || !target) return false;
   if (sourceModelIndex !== undefined) {
     return target.modelPositions.some((_position, targetModelIndex) =>
       battleModelBaseEdgeDistance(source, sourceModelIndex, target, targetModelIndex) <= rules.engagementRange(),
@@ -277,130 +296,8 @@ function modelToughness(source: BattleUnit, modelIndex: number): number {
   return source.profile.toughness;
 }
 
-function applyInsaneBraveryStratagemEffect(
-  state: BattleState,
-  side: Side,
-  stratagem: StratagemDefinition,
-  targetUnitId?: string,
-): void {
-  if (stratagem.id !== 'insane-bravery') return;
-  const unit = targetUnitFor(state, targetUnitId);
-  if (!unit) return;
-
-  unit.battleshocked = false;
-  appendStratagemEffectLog(state, side, unit.profile.name, `${unit.profile.name} automatically passes its Battle-shock test.`, 'info');
-}
-
-function applyRapidIngressStratagemEffect(
-  state: BattleState,
-  side: Side,
-  stratagem: StratagemDefinition,
-  targetUnitId?: string,
-): void {
-  if (stratagem.id !== 'rapid-ingress') return;
-  const unit = targetUnitFor(state, targetUnitId);
-  if (!unit) return;
-
-  unit.rapidIngressThisPhase = true;
-  const event = recordBattleEvent(state, {
-    type: BATTLE_EVENT_TYPE.RuleTriggered,
-    side,
-    source: stratagem.name,
-    data: {
-      triggerTiming: EVENT_TRIGGER_TIMING.PhaseEnd,
-      rule: EVENT_REQUEST_KIND.IngressMove,
-      unitId: unit.id,
-      stratagemId: stratagem.id,
-    },
-  });
-  queueEventRequest(state, 'core-stratagem-rapid-ingress', event, {
-    kind: EVENT_REQUEST_KIND.IngressMove,
-    side,
-    timing: EVENT_TRIGGER_TIMING.PhaseEnd,
-    source: stratagem.name,
-    data: { unitId: unit.id, stratagemId: stratagem.id },
-  });
-  appendStratagemEffectLog(state, side, unit.profile.name, `${unit.profile.name} can be set up from Strategic Reserves this phase.`, 'info');
-}
-
-function applyFireOverwatchStratagemEffect(
-  state: BattleState,
-  side: Side,
-  stratagem: StratagemDefinition,
-  targetUnitId?: string,
-): void {
-  if (stratagem.id !== 'fire-overwatch') return;
-  const unit = targetUnitFor(state, targetUnitId);
-  if (!unit) return;
-
-  const event = recordBattleEvent(state, {
-    type: BATTLE_EVENT_TYPE.RuleTriggered,
-    side,
-    source: stratagem.name,
-    data: {
-      triggerTiming: EVENT_TRIGGER_TIMING.RuleTriggered,
-      rule: 'combat-action-window',
-      combatAction: 'shooting',
-      unitId: unit.id,
-      stratagemId: stratagem.id,
-    },
-  });
-  openPendingCombatAction(state, {
-    id: `combat-action-${event.id}`,
-    kind: 'shooting',
-    unitId: unit.id,
-    side,
-    source: stratagem.name,
-    triggeredPhase: state.phase,
-    triggeredPhaseStep: state.phaseStep,
-    sourceEventId: event.id,
-    allowActivated: true,
-    snapShooting: true,
-  });
-  appendStratagemEffectLog(state, side, unit.profile.name, `${unit.profile.name} has an event-backed Snap Shooting opportunity.`, 'info');
-}
-
-function applyHeroicInterventionStratagemEffect(
-  state: BattleState,
-  side: Side,
-  stratagem: StratagemDefinition,
-  targetUnitId?: string,
-  mode?: HeroicInterventionMode,
-): void {
-  if (stratagem.id !== 'heroic-intervention') return;
-  const unit = targetUnitFor(state, targetUnitId);
-  if (!unit) return;
-
-  unit.heroicInterventionThisPhase = true;
-  unit.heroicInterventionMode = mode;
-  appendStratagemEffectLog(state, side, unit.profile.name, `${unit.profile.name} can declare a Heroic Intervention charge this phase.`, 'info');
-}
-
-function applyCounteroffensiveStratagemEffect(
-  state: BattleState,
-  stratagem: StratagemDefinition,
-  targetUnitId?: string,
-): void {
-  if (stratagem.id === 'counteroffensive') state.forcedFightUnitId = targetUnitId;
-}
-
 function rollDie(sides: number): number {
   return Math.floor(Math.random() * sides) + 1;
-}
-
-function applyCommandRerollStratagemEffect(
-  state: BattleState,
-  side: Side,
-  use: StratagemUse,
-): void {
-  if (use.stratagemId !== 'command-reroll') return;
-  state.pendingCommandReroll = {
-    side,
-    stratagemUseId: use.id,
-    phase: state.phase,
-    battleRound: battleRound(state),
-    targetUnitId: use.targetUnitId,
-  };
 }
 
 export function resolveCommandReroll(
@@ -421,7 +318,7 @@ export function resolveCommandReroll(
     || sides < 2
   ) return state;
 
-  const next: BattleState = JSON.parse(JSON.stringify(state));
+  const next: BattleState = clone(state);
   const rerolls = originalRolls.map((roll, index) =>
     rollType === 'charge' || index === 0 ? rollDie(sides) : roll,
   );
@@ -440,54 +337,50 @@ export function resolveCommandReroll(
   return next;
 }
 
-function applyMortalWoundStratagemEffect(
+function applyMortalWoundEffect(
   state: BattleState,
   side: Side,
-  stratagem: StratagemDefinition,
+  sourceName: string,
+  effect: Extract<RuleEffect, { type: 'deal-mortal-wounds' }>,
   rules: RulesEdition,
   targetUnitId?: string,
   secondaryTargetUnitId?: string,
   sourceModelIndex?: number,
 ): void {
-  if (stratagem.id !== 'explosives' && stratagem.id !== 'crushing-impact') return;
   const unit = targetUnitFor(state, targetUnitId);
   if (!unit) return;
 
-  const enemy = stratagem.id === 'explosives'
-    ? targetUnitFor(state, secondaryTargetUnitId)
-    : stratagem.id === 'crushing-impact'
-      ? targetUnitFor(state, secondaryTargetUnitId)
-      : null;
+  const enemy = targetUnitFor(state, secondaryTargetUnitId);
   if (!enemy) {
-    appendStratagemEffectLog(state, side, unit.profile.name, `${stratagem.name} has no valid enemy target.`, 'info');
+    appendStratagemEffectLog(state, side, unit.profile.name, `${sourceName} has no valid enemy target.`, 'info');
     return;
   }
 
-  const selectedModelIndex = stratagem.id === 'crushing-impact'
+  const selectedModelIndex = effect.dice.type === 'source-model-toughness'
     ? sourceModelIndex ?? firstEngagedModelIndex(unit, enemy, rules) ?? 0
     : undefined;
-  const diceCount = stratagem.id === 'crushing-impact'
-    ? Math.min(6, Math.max(0, Math.floor(modelToughness(unit, selectedModelIndex!))))
-    : 6;
+  const diceCount = effect.dice.type === 'source-model-toughness'
+    ? Math.min(effect.dice.max, Math.max(0, Math.floor(modelToughness(unit, selectedModelIndex!))))
+    : effect.dice.count;
   const rolls = rollMultiple(diceCount);
-  const mortalWounds = countSuccesses(rolls, stratagem.id === 'crushing-impact' ? 5 : 4);
-  const returnedMortalWounds = stratagem.id === 'crushing-impact'
-    ? rolls.filter(roll => roll === 1).length
+  const mortalWounds = countSuccesses(rolls, effect.successOn);
+  const returnedMortalWounds = effect.selfDamageOn
+    ? rolls.filter(roll => roll === effect.selfDamageOn?.roll).length
     : 0;
   appendStratagemEffectLog(state, side, unit.profile.name,
-    `${stratagem.name} targets ${enemy.profile.name}${selectedModelIndex === undefined ? '' : ` using model ${selectedModelIndex + 1}`}.`,
+    `${sourceName} targets ${enemy.profile.name}${selectedModelIndex === undefined ? '' : ` using model ${selectedModelIndex + 1}`}.`,
     'info');
-  appendStratagemEffectLog(state, side, unit.profile.name, `${stratagem.name} rolls: [${rolls.join(', ')}] -> ${mortalWounds} mortal wound(s).`, 'roll');
+  appendStratagemEffectLog(state, side, unit.profile.name, `${sourceName} rolls: [${rolls.join(', ')}] -> ${mortalWounds} mortal wound(s).`, 'roll');
   if (mortalWounds > 0) {
     state.log = [
       ...state.log,
-      ...applyDamage(enemy, mortalWounds, state, side, { deferCasualties: true, source: stratagem.name }),
+      ...applyDamage(enemy, mortalWounds, state, side, { deferCasualties: true, source: sourceName }),
     ];
   }
-  if (returnedMortalWounds > 0 && stratagem.id === 'crushing-impact') {
+  if (returnedMortalWounds > 0 && effect.selfDamageOn?.target === 'source-unit') {
     state.log = [
       ...state.log,
-      ...applyDamage(unit, returnedMortalWounds, state, enemy.side, { deferCasualties: true, source: stratagem.name }),
+      ...applyDamage(unit, returnedMortalWounds, state, enemy.side, { deferCasualties: true, source: sourceName }),
     ];
   }
 }
@@ -571,18 +464,28 @@ export function useStratagem(
   if (targetAlreadyUsedThisPhase(state, side, stratagem, targetUnitId)) return state;
   if (!targetAllowed(state, side, stratagem, rules, targetUnitId)) return state;
   const target = targetUnitFor(state, targetUnitId);
-  if (stratagem.id === 'epic-challenge' && (!target || !targetModelIndexAllowed(target, stratagem, targetModelIndex))) return state;
-  if (stratagem.id !== 'epic-challenge' && targetModelIndex !== undefined) return state;
+  if (targetModelIndex !== undefined && (!target || !targetModelIndexAllowed(target, stratagem, targetModelIndex))) return state;
+  if (target && !targetModelIndexAllowed(target, stratagem, targetModelIndex)) return state;
+  if (!target && targetModelIndex !== undefined) return state;
   const secondaryTarget = targetUnitFor(state, secondaryTargetUnitId);
-  const effectiveSourceModelIndex = stratagem.id === 'crushing-impact'
+  const mortalEffect = stratagem.effects?.find((effect): effect is Extract<RuleEffect, { type: 'deal-mortal-wounds' }> =>
+    effect.type === 'deal-mortal-wounds',
+  );
+  const effectiveSourceModelIndex = mortalEffect?.dice.type === 'source-model-toughness'
     ? sourceModelIndex ?? (target && secondaryTarget ? firstEngagedModelIndex(target, secondaryTarget, rules) : undefined)
     : sourceModelIndex;
-  if (!sourceModelIndexAllowed(target!, stratagem, effectiveSourceModelIndex)) return state;
+  if (!sourceModelIndexAllowed(target, stratagem, effectiveSourceModelIndex)) return state;
   if (!secondaryTargetAllowed(state, side, stratagem, target, secondaryTargetUnitId, effectiveSourceModelIndex, rules)) return state;
 
-  const next: BattleState = JSON.parse(JSON.stringify(state));
-  const commandPointsSpent = stratagem.cost + (heroicInterventionMode === 'into-the-fray' ? 1 : 0);
+  const next: BattleState = clone(state);
+  const commandPointsSpent = stratagem.cost
+    + (heroicInterventionMode ? (stratagem.choiceCosts?.[heroicInterventionMode] ?? 0) : 0);
   if (!spendCommandPoints(next, side, commandPointsSpent)) return state;
+
+  const targetModelRequirement = stratagem.selection?.targetModel ?? 'forbidden';
+  const recordedTargetModelIndex = targetModelRequirement === 'required'
+    ? targetModelIndex ?? 0
+    : targetModelIndex;
 
   const use: StratagemUse = {
     id: `stratagem-${++_stratagemUseId}`,
@@ -592,7 +495,7 @@ export function useStratagem(
     phase: next.phase,
     battleRound: battleRound(next),
     targetUnitId,
-    ...(stratagem.id === 'epic-challenge' ? { targetModelIndex: targetModelIndex ?? 0 } : {}),
+    ...(recordedTargetModelIndex !== undefined ? { targetModelIndex: recordedTargetModelIndex } : {}),
     ...(secondaryTargetUnitId ? { secondaryTargetUnitId } : {}),
     ...(effectiveSourceModelIndex !== undefined ? { sourceModelIndex: effectiveSourceModelIndex } : {}),
     ...(heroicInterventionMode ? { heroicInterventionMode } : {}),
@@ -609,12 +512,32 @@ export function useStratagem(
     message: `${next.armies[side].name} uses ${stratagem.name} for ${commandPointsSpent}CP.`,
     type: 'info',
   }];
-  applyCommandRerollStratagemEffect(next, side, use);
-  applyInsaneBraveryStratagemEffect(next, side, stratagem, targetUnitId);
-  applyRapidIngressStratagemEffect(next, side, stratagem, targetUnitId);
-  applyFireOverwatchStratagemEffect(next, side, stratagem, targetUnitId);
-  applyHeroicInterventionStratagemEffect(next, side, stratagem, targetUnitId, heroicInterventionMode);
-  applyCounteroffensiveStratagemEffect(next, stratagem, targetUnitId);
-  applyMortalWoundStratagemEffect(next, side, stratagem, rules, targetUnitId, secondaryTargetUnitId, effectiveSourceModelIndex);
+  const effectContext = {
+    state: next,
+    side,
+    sourceRuleId: stratagem.id,
+    sourceName: stratagem.name,
+    sourceUseId: use.id,
+    sourceUnitId: targetUnitId,
+    targetUnitId,
+    secondaryTargetUnitId,
+    targetModelIndex: recordedTargetModelIndex,
+    sourceModelIndex: effectiveSourceModelIndex,
+    heroicInterventionMode,
+  };
+  resolveRuleEffects(effectContext, stratagem.effects);
+  for (const effect of stratagem.effects ?? []) {
+    if (effect.type !== 'deal-mortal-wounds') continue;
+    applyMortalWoundEffect(
+      next,
+      side,
+      stratagem.name,
+      effect,
+      rules,
+      targetUnitId,
+      secondaryTargetUnitId,
+      effectiveSourceModelIndex,
+    );
+  }
   return next;
 }

@@ -24,20 +24,26 @@ import {
   setPhaseStepActionStatus,
   setPhaseStepActions,
 } from '../phaseStepActions';
+import { attachedUnitComponents, attachedUnitId } from '../attachedUnits';
 
 function shootingActionId(side: Side, unitId: string): string {
   return `shoot:${side}:${unitId}`;
+}
+
+/** The bodyguard owns the single Shooting opportunity for an attached group. */
+function shootingActionUnitId(state: BattleState, unitId: string): string {
+  const selected = state.units.find(unit => unit.id === unitId && !unit.destroyed);
+  if (!selected) return unitId;
+  const components = attachedUnitComponents(state, selected);
+  return components.find(component => !component.attachedToUnitId)?.id
+    ?? components[0]?.id
+    ?? unitId;
 }
 
 function normalShootingStep(state: BattleState, side: Side): boolean {
   return state.phase === 'shooting'
     && state.phaseStep === PHASE_STEP.ShootingUnits
     && state.activeArmy === side;
-}
-
-function shootingActionFor(state: BattleState, side: Side, unitId: string): PhaseStepAction | null {
-  return phaseStepActionLedgerFor(state)?.actions.find(action =>
-    action.id === shootingActionId(side, unitId)) ?? null;
 }
 
 function shootingTargetUnitIds(
@@ -68,22 +74,48 @@ export function refreshPlayShootingActions(
   state: BattleState,
   rules: RulesEdition,
   context: ManualShootingSelectionContext,
+  resolveTargets = true,
 ): void {
   if (!normalShootingStep(state, state.activeArmy)) return;
   const side = state.activeArmy;
-  const unitIds = state.units
+  const eligibleUnits = state.units
     .filter(unit => unit.side === side
       && !unit.destroyed
       && !unit.embarkedInUnitId
       && !unit.inStrategicReserves
-      && canSelectShootingUnit(state, unit.id, side))
-    .map(unit => unit.id);
+      && canSelectShootingUnit(state, unit.id, side));
+  const representativeByGroup = new Map<string, BattleUnit>();
+  for (const candidate of eligibleUnits) {
+    const groupKey = attachedUnitId(candidate);
+    const existing = representativeByGroup.get(groupKey);
+    if (!existing || (existing.attachedToUnitId && !candidate.attachedToUnitId)) {
+      representativeByGroup.set(groupKey, candidate);
+    }
+  }
+  const representatives = [...representativeByGroup.values()];
+  const unitIds = representatives.map(unit => unit.id);
+  const unitsById = new Map(representatives.map(unit => [unit.id, unit]));
   const existing = phaseStepActionLedgerFor(state)?.actions ?? [];
+  const existingById = new Map(existing.map(action => [action.id, action]));
   const incomingIds = new Set(unitIds.map(unitId => shootingActionId(side, unitId)));
   const incoming = unitIds.map(unitId => {
-    const unit = state.units.find(candidate => candidate.id === unitId);
-    const existingAction = shootingActionFor(state, side, unitId);
-    const targetUnitIds = unit ? shootingTargetUnitIds(state, unit, rules, context) : [];
+    const unit = unitsById.get(unitId);
+    const existingAction = existingById.get(shootingActionId(side, unitId));
+    const group = unit
+      ? attachedUnitComponents(state, unit)
+      : [];
+    const groupLabel = (group.length > 1 ? group : unit ? [unit] : [])
+      .map(component => component.profile.name)
+      .join(' + ');
+    const targetUnitIds = resolveTargets && unit
+      ? [...new Set((group.length ? group : [unit]).flatMap(component =>
+        context.shootingTargetUnitIds?.(state, component, rules) ?? shootingTargetUnitIds(state, component, rules, context),
+      ))]
+      : resolveTargets
+        ? undefined
+        : context.enemies(state, side)
+          .filter(target => !target.destroyed && !target.embarkedInUnitId)
+          .map(target => target.id);
     return {
       id: shootingActionId(side, unitId),
       phase: state.phase,
@@ -91,17 +123,20 @@ export function refreshPlayShootingActions(
       kind: 'shoot' as const,
       side,
       unitId,
-      targetUnitIds,
+      targetUnitIds: targetUnitIds ?? [],
+      targetIdsComputed: resolveTargets,
       requiredToAdvance: false,
       status: existingAction && !['available', 'in-progress'].includes(existingAction.status)
         ? existingAction.status
         : existingAction?.status === 'in-progress'
           ? 'in-progress' as const
           : 'available' as const,
-      label: `${unit?.profile.name ?? unitId}: Shoot`,
-      description: targetUnitIds.length
+      label: `${groupLabel || unit?.profile.name || unitId}: Shoot`,
+      description: targetUnitIds?.length
         ? 'Optional Shooting action during the Shooting phase.'
-        : 'Optional Shooting selection; no valid ranged target is currently available.',
+        : resolveTargets
+          ? 'Optional Shooting selection; no valid ranged target is currently available.'
+          : 'Optional Shooting action; detailed target checks are performed when selected.',
     } satisfies PhaseStepAction;
   });
   const retained = existing
@@ -120,7 +155,11 @@ export function startPlayShootingStep(
   rules: RulesEdition,
   context: ManualShootingSelectionContext,
 ): void {
-  refreshPlayShootingActions(state, rules, context);
+  // Opening the step only needs the list of units that may act. LOS and
+  // target checks are deferred until a unit is selected; doing that work for
+  // every unit at the phase boundary made a normal phase change needlessly
+  // expensive on larger rosters.
+  refreshPlayShootingActions(state, rules, context, false);
 }
 
 function reconcilePlayShootingAction(
@@ -131,9 +170,9 @@ function reconcilePlayShootingAction(
   context: ManualShootingSelectionContext,
 ): void {
   if (!normalShootingStep(state, side)) return;
-  const actionId = shootingActionId(side, unit.id);
+  const actionId = shootingActionId(side, shootingActionUnitId(state, unit.id));
   if (unit.activated) completePhaseStepAction(state, actionId);
-  refreshPlayShootingActions(state, rules, context);
+  refreshPlayShootingActions(state, rules, context, false);
   if (!unit.activated) setPhaseStepActionStatus(state, actionId, 'in-progress');
 }
 
@@ -148,11 +187,22 @@ export function updateAttachedShootingActivation(
   if (rules.metadata.edition !== '11e' || !context.attachedUnitIsFormed(state, unit)) return;
   state.activeAttachedShootingUnitId = context.attachedUnitId(unit);
   state.attachedShootingTargetUnitId ??= targetUnitId;
-  const remaining = context.attachedUnitComponents(state, unit).filter(component =>
-    !component.activated
-    && (context.eligibleShootingWeapons(component, state, rules).length > 0
-      || context.unitCanBeSelectedToShootWithoutAttacks(component, state, rules)),
-  );
+  const remaining = context.attachedUnitComponents(state, unit).filter(component => {
+    if (component.activated) return false;
+    const eligibleWeapons = context.eligibleShootingWeapons(component, state, rules);
+    const targetCandidates = context.enemies(state, component.side).filter(target =>
+      !state.attachedShootingTargetUnitId || target.id === state.attachedShootingTargetUnitId,
+    );
+    const hasValidTarget = eligibleWeapons.some(weapon =>
+      targetCandidates.some(target =>
+        context.shootingWeaponCanTarget(state, component, target, weapon, rules)),
+    );
+    // A component whose weapons are all out of range/LOS has no remaining
+    // shooting declaration to wait for. Keep no-ranged components in the
+    // group only when they genuinely need the explicit no-attacks selection.
+    return hasValidTarget || (eligibleWeapons.length === 0
+      && context.unitCanBeSelectedToShootWithoutAttacks(component, state, rules));
+  });
   if (remaining.length) return;
   for (const component of context.attachedUnitComponents(state, unit)) component.activated = true;
   state.activeAttachedShootingUnitId = undefined;
@@ -248,65 +298,189 @@ export function shootPlayUnitWeapons(
   const eligibleWeapons = context.eligibleShootingWeapons(unit, s, rules, pending?.allowActivated === true)
     .map(weapon => ({ weapon, weaponIndex: unit.profile.weapons.indexOf(weapon) }))
     .filter(option => option.weaponIndex >= 0 && context.aliveWeaponModelCount(unit, option.weaponIndex) > 0);
-  const selectableWeapons = context.shootingWeaponSelectionForAll(eligibleWeapons);
-  const selectableIndexes = new Set(selectableWeapons.map(option => option.weaponIndex));
+  const allSelectableWeapons = context.shootingWeaponSelectionForAll(eligibleWeapons);
+  // Declaration-time options intentionally defer exact model LOS. A weapon
+  // may therefore be eligible at unit level but have no firing models against
+  // any target. Such a weapon is skipped by "shoot all" rather than making
+  // the whole declaration impossible to resolve.
+  const exactModelIndexesByWeaponTarget = new Map<string, number[]>();
+  const enemyTargets = context.enemies(s, side);
+  const exactModelIndexesFor = (selected: { weapon: WeaponProfile; weaponIndex: number }, target: BattleUnit): number[] => {
+    const key = `${selected.weaponIndex}:${target.id}`;
+    const cached = exactModelIndexesByWeaponTarget.get(key);
+    if (cached) return cached;
+    const modelIndexes = context.shootingWeaponCanTarget(s, unit, target, selected.weapon, rules)
+      ? context.participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, s.terrain, s)
+      : [];
+    exactModelIndexesByWeaponTarget.set(key, modelIndexes);
+    return modelIndexes;
+  };
+  const selectableWeapons = allSelectableWeapons.filter(selected =>
+    enemyTargets.some(target =>
+      (!s.attachedShootingTargetUnitId || target.id === s.attachedShootingTargetUnitId)
+      && exactModelIndexesFor(selected, target).length > 0,
+    ),
+  );
+  const selectableByIndex = new Map(selectableWeapons.map(option => [option.weaponIndex, option]));
   const allocationByWeapon = new Map<number, PlayShootingAttackAllocation[]>();
   for (const allocation of allocations) {
-    if (!selectableIndexes.has(allocation.weaponIndex)) return state;
-    if (!s.units.some(candidate => candidate.id === allocation.targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId)) return state;
+    const selected = selectableByIndex.get(allocation.weaponIndex);
+    const target = enemyTargets.find(candidate => candidate.id === allocation.targetUnitId);
+    // The declaration UI can be one render behind exact range/LOS results.
+    // Ignore stale entries here; a valid target is selected below for any
+    // weapon that still has firing models.
+    if (!selected || !target
+      || (s.attachedShootingTargetUnitId && target.id !== s.attachedShootingTargetUnitId)
+      || !exactModelIndexesFor(selected, target).length
+      || (allocation.modelCount !== undefined
+        && (!Number.isInteger(allocation.modelCount) || allocation.modelCount < 1))) continue;
     const weaponAllocations = allocationByWeapon.get(allocation.weaponIndex) ?? [];
     weaponAllocations.push(allocation);
     allocationByWeapon.set(allocation.weaponIndex, weaponAllocations);
   }
-  if (allocationByWeapon.size !== selectableIndexes.size) return state;
-
+  const normalizedAllocations: PlayShootingAttackAllocation[] = [];
   for (const selected of selectableWeapons) {
-    const weaponAllocations = allocationByWeapon.get(selected.weaponIndex) ?? [];
+    const validTargets = enemyTargets.filter(target =>
+      (!s.attachedShootingTargetUnitId || target.id === s.attachedShootingTargetUnitId)
+      && exactModelIndexesFor(selected, target).length > 0,
+    );
+    if (!validTargets.length) continue;
+    const incoming = allocationByWeapon.get(selected.weaponIndex) ?? [];
+    const autoAllocateAllModels = (preferredTargets: BattleUnit[] = []): PlayShootingAttackAllocation[] => {
+      const allEligibleModelIndexes = new Set(validTargets.flatMap(target => exactModelIndexesFor(selected, target)));
+      const preferred = preferredTargets.filter((target, index, targets) =>
+        targets.findIndex(candidate => candidate.id === target.id) === index,
+      );
+      const preferredCoverage = new Set(preferred.flatMap(target => exactModelIndexesFor(selected, target)));
+      const targetPool = preferred.length > 0 && preferredCoverage.size === allEligibleModelIndexes.size
+        ? preferred
+        : [...preferred, ...validTargets.filter(target => !preferred.some(candidate => candidate.id === target.id))];
+      const assignedModelIndexes = new Set<number>();
+      const assignments = [...targetPool]
+        .sort((left, right) => exactModelIndexesFor(selected, left).length - exactModelIndexesFor(selected, right).length)
+        .flatMap(target => {
+          const remaining = exactModelIndexesFor(selected, target)
+            .filter(modelIndex => !assignedModelIndexes.has(modelIndex));
+          remaining.forEach(modelIndex => assignedModelIndexes.add(modelIndex));
+          return remaining.length ? [{ target, modelCount: remaining.length }] : [];
+        });
+      if (assignments.length === 1) {
+        return [{ weaponIndex: selected.weaponIndex, targetUnitId: assignments[0].target.id }];
+      }
+      return assignments.map(({ target, modelCount }) => ({
+        weaponIndex: selected.weaponIndex,
+        targetUnitId: target.id,
+        modelCount,
+      }));
+    };
+    if (incoming.length === 0) {
+      normalizedAllocations.push(...autoAllocateAllModels());
+      continue;
+    }
+    if (incoming.length === 1) {
+      // Shooting all models is the default. Dropping an explicit partial
+      // count also repairs a stale count left behind when a model moved out
+      // of range between the popup render and the button click.
+      const target = incoming[0]
+        ? enemyTargets.find(candidate => candidate.id === incoming[0].targetUnitId)
+        : undefined;
+      const fallbackTarget = target && validTargets.some(candidate => candidate.id === target.id)
+        ? target
+        : validTargets[0];
+      normalizedAllocations.push(...(incoming[0].modelCount === undefined
+        ? [{ weaponIndex: selected.weaponIndex, targetUnitId: fallbackTarget.id }]
+        : autoAllocateAllModels(fallbackTarget ? [fallbackTarget] : [])));
+      continue;
+    }
+
+    // Preserve an intentional split when the requested model counts can be
+    // assigned to disjoint firing-model sets. If they cannot (for example,
+    // two targets share the only in-range model), fall back to one valid
+    // target so "Shoot all weapons" remains resolvable.
+    const allocationCandidates = incoming.map(allocation => ({
+      allocation,
+      target: enemyTargets.find(candidate => candidate.id === allocation.targetUnitId)!,
+      eligibleModelIndexes: exactModelIndexesFor(
+        selected,
+        enemyTargets.find(candidate => candidate.id === allocation.targetUnitId)!,
+      ),
+    })).sort((a, b) => a.eligibleModelIndexes.length - b.eligibleModelIndexes.length);
+    const availableModelIndexes = new Set(validTargets.flatMap(target => exactModelIndexesFor(selected, target)));
+    const declaredModels = incoming.reduce((total, allocation) => total + (allocation.modelCount ?? 0), 0);
+    const assignedModelIndexes = new Set<number>();
+    const splitIsValid = declaredModels === availableModelIndexes.size
+      && allocationCandidates.every(({ allocation, eligibleModelIndexes }) => {
+        const remainingModelIndexes = eligibleModelIndexes.filter(modelIndex => !assignedModelIndexes.has(modelIndex));
+        const modelCount = allocation.modelCount ?? remainingModelIndexes.length;
+        if (modelCount < 1 || modelCount > remainingModelIndexes.length) return false;
+        remainingModelIndexes.slice(0, modelCount).forEach(modelIndex => assignedModelIndexes.add(modelIndex));
+        return true;
+      })
+      && assignedModelIndexes.size === availableModelIndexes.size;
+    if (!splitIsValid) {
+      normalizedAllocations.push(...autoAllocateAllModels(
+        incoming
+          .map(allocation => enemyTargets.find(candidate => candidate.id === allocation.targetUnitId))
+          .filter((target): target is BattleUnit => !!target),
+      ));
+      continue;
+    }
+    normalizedAllocations.push(...incoming);
+  }
+  if (normalizedAllocations.length === 0) return state;
+
+  // Validation and execution use the same visibility/model participation
+  // result. Repeating this LOS-heavy query during the execution pass made
+  // the "Shoot all weapons" action noticeably slow.
+  const candidatesByAllocation = new Map<PlayShootingAttackAllocation, {
+    target: BattleUnit;
+    weapon: WeaponProfile;
+    weaponIndex: number;
+    modelIndexes: number[];
+  }>();
+  for (const selected of selectableWeapons) {
+    const weaponAllocations = normalizedAllocations.filter(allocation => allocation.weaponIndex === selected.weaponIndex);
+    if (!weaponAllocations.length) continue;
     const assignedModelIndexes = new Set<number>();
     const allocationCandidates = weaponAllocations.map(allocation => {
       const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
-      const eligibleModelIndexes = context.participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, s.terrain, s);
-      return { allocation, eligibleModelIndexes };
+      const eligibleModelIndexes = target
+        ? exactModelIndexesFor(selected, target)
+        : [];
+      return { allocation, target, eligibleModelIndexes };
     }).sort((a, b) => a.eligibleModelIndexes.length - b.eligibleModelIndexes.length);
     if (weaponAllocations.length > 1) {
       const availableModelIndexes = new Set(allocationCandidates.flatMap(candidate => candidate.eligibleModelIndexes));
       const declaredModels = weaponAllocations.reduce((total, allocation) => total + (allocation.modelCount ?? 0), 0);
-      if (declaredModels !== availableModelIndexes.size) return state;
+      if (declaredModels !== availableModelIndexes.size) continue;
     }
     for (const { allocation, eligibleModelIndexes } of allocationCandidates) {
-      if (allocation.modelCount !== undefined && (!Number.isInteger(allocation.modelCount) || allocation.modelCount < 1)) return state;
-      if (s.attachedShootingTargetUnitId && allocation.targetUnitId !== s.attachedShootingTargetUnitId) return state;
+      if (allocation.modelCount !== undefined && (!Number.isInteger(allocation.modelCount) || allocation.modelCount < 1)) continue;
+      if (s.attachedShootingTargetUnitId && allocation.targetUnitId !== s.attachedShootingTargetUnitId) continue;
       const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
-      if (!context.shootingWeaponCanTarget(s, unit, target, selected.weapon, rules)) return state;
+      if (!target || !eligibleModelIndexes.length) continue;
       const remainingModelIndexes = eligibleModelIndexes.filter(modelIndex => !assignedModelIndexes.has(modelIndex));
       const modelCount = allocation.modelCount ?? remainingModelIndexes.length;
-      if (modelCount > remainingModelIndexes.length) return state;
-      remainingModelIndexes.slice(0, modelCount).forEach(modelIndex => assignedModelIndexes.add(modelIndex));
+      if (modelCount > remainingModelIndexes.length) continue;
+      const modelIndexes = remainingModelIndexes.slice(0, modelCount);
+      modelIndexes.forEach(modelIndex => assignedModelIndexes.add(modelIndex));
+      candidatesByAllocation.set(allocation, {
+        target,
+        weapon: selected.weapon,
+        weaponIndex: selected.weaponIndex,
+        modelIndexes,
+      });
     }
   }
 
   const logs: LogEntry[] = [context.log(s, side, unit.profile.name, `🔫 ${unit.profile.name} locks all ranged targets before rolling:`, 'shoot')];
-  for (const selected of selectableWeapons) {
-    const weaponAllocations = allocationByWeapon.get(selected.weaponIndex)!;
-    const assignedModelIndexes = new Set<number>();
-    const orderedWeaponAllocations = [...weaponAllocations].sort((a, b) => {
-      const targetA = s.units.find(candidate => candidate.id === a.targetUnitId && !candidate.destroyed)!;
-      const targetB = s.units.find(candidate => candidate.id === b.targetUnitId && !candidate.destroyed)!;
-      return context.participatingWeaponModelIndexes(unit, targetA, selected.weapon, selected.weaponIndex, s.terrain, s).length
-        - context.participatingWeaponModelIndexes(unit, targetB, selected.weapon, selected.weaponIndex, s.terrain, s).length;
-    });
-    for (const allocation of orderedWeaponAllocations) {
-      const target = s.units.find(candidate => candidate.id === allocation.targetUnitId && !candidate.destroyed)!;
-      const eligibleModelIndexes = context.participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, s.terrain, s)
-        .filter(modelIndex => !assignedModelIndexes.has(modelIndex));
-      const modelCount = allocation.modelCount ?? eligibleModelIndexes.length;
-      const modelIndexes = eligibleModelIndexes.slice(0, modelCount);
-      modelIndexes.forEach(modelIndex => assignedModelIndexes.add(modelIndex));
-      logs.push(...context.resolveShootingWeaponIntoTarget(s, unit, target, selected.weapon, selected.weaponIndex, rules, {
-        deferCasualties: true,
-        modelIndexes,
-      }));
-    }
+  for (const allocation of normalizedAllocations) {
+    const candidate = candidatesByAllocation.get(allocation);
+    if (!candidate) continue;
+    logs.push(...context.resolveShootingWeaponIntoTarget(s, unit, candidate.target, candidate.weapon, candidate.weaponIndex, rules, {
+      deferCasualties: true,
+      modelIndexes: candidate.modelIndexes,
+    }));
   }
   unit.firedWeaponIndices = [...new Set([...(unit.firedWeaponIndices ?? []), ...selectableWeapons.map(option => option.weaponIndex)])];
   unit.activated = true;
@@ -409,7 +583,7 @@ export function lockPlayUnitShooting(state: BattleState, unitId: string, side: S
   next.attachedShootingTargetUnitId = undefined;
   if (pending) closePendingCombatAction(next, pending.id);
   if (!pending && normalShootingStep(next, side)) {
-    completePhaseStepAction(next, shootingActionId(side, unitId));
+    completePhaseStepAction(next, shootingActionId(side, shootingActionUnitId(next, unitId)));
   }
   return next;
 }

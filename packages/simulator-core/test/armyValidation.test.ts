@@ -60,8 +60,19 @@ test('army validation rejects invalid model weapon loadout references', () => {
   ]));
   assert.equal(result.valid, false);
   assert.ok(result.errors.some(error => error.code === 'model-loadout-count-invalid'));
-  assert.ok(result.errors.some(error => error.code === 'model-loadout-weapon-duplicate'));
   assert.ok(result.errors.some(error => error.code === 'model-loadout-weapon-invalid'));
+  assert.equal(result.errors.some(error => error.code === 'model-loadout-weapon-duplicate'), false);
+});
+
+test('army validation accepts repeated weapon profiles for multiple physical copies', () => {
+  const weapon = { name: 'Twin-linked gun', range: 24, attacks: '2', skill: 4, strength: 4, ap: 0, damage: '1', keywords: [], isMelee: false };
+  const result = validateImportedArmy(army([unit({
+    baseModelCount: 1,
+    weapons: [weapon],
+    modelWeaponLoadouts: [[0, 0]],
+  })]));
+  assert.equal(result.valid, true);
+  assert.equal(result.errors.length, 0);
 });
 
 test('army validation rejects malformed model stat profiles', () => {

@@ -1,5 +1,5 @@
 import type { BattleUnit, Position } from '../types/battle';
-import { baseFootprintDistance, modelBaseFootprintInches, modelBaseRadiusInches, type ModelBaseFootprint } from './baseSizes';
+import { baseFootprintDistance, footprintBoundingRadius, modelBaseFootprintForUnit, modelBaseRadiusForUnit, type ModelBaseFootprint } from './baseSizes';
 
 export const COHERENCY_RANGE = 2;
 export const COHERENCY_MAX_PAIR_RANGE = 9;
@@ -37,19 +37,29 @@ export function modelBaseEdgeHorizontalDistance(
 ): number {
   return baseFootprintDistance(
     aUnit.modelPositions[aModelIndex],
-    modelBaseFootprintInches(aUnit.profile, aModelIndex, aUnit.modelRotations?.[aModelIndex] ?? aUnit.facingDeg ?? 0),
+    modelBaseFootprintForUnit(aUnit, aModelIndex),
     bUnit.modelPositions[bModelIndex],
-    modelBaseFootprintInches(bUnit.profile, bModelIndex, bUnit.modelRotations?.[bModelIndex] ?? bUnit.facingDeg ?? 0),
+    modelBaseFootprintForUnit(bUnit, bModelIndex),
   );
 }
 
 export function unitsInEngagementRange(unit: BattleUnit, others: BattleUnit[], range: number): boolean {
-  return others.some(other => unit.modelPositions.some((unitModel, unitModelIndex) =>
-    other.modelPositions.some((otherModel, otherModelIndex) => {
-      return modelBaseEdgeHorizontalDistance(unit, unitModelIndex, other, otherModelIndex) <= range
-        && verticalDistance(unitModel, otherModel) <= COHERENCY_VERTICAL_RANGE;
-    }),
-  ));
+  return others.some(other => unit.modelPositions.some((unitModel, unitModelIndex) => {
+    const unitFootprint = modelBaseFootprintForUnit(unit, unitModelIndex);
+    const unitRadius = footprintBoundingRadius(unitFootprint);
+    return other.modelPositions.some((otherModel, otherModelIndex) => {
+      if (verticalDistance(unitModel, otherModel) > COHERENCY_VERTICAL_RANGE) return false;
+      const otherFootprint = modelBaseFootprintForUnit(other, otherModelIndex);
+      const maximumCentreDistance = range + unitRadius + footprintBoundingRadius(otherFootprint);
+      const dx = unitModel.x - otherModel.x;
+      const dy = unitModel.y - otherModel.y;
+      // Exact oval/rectangle distance is comparatively expensive. If their
+      // containing circles cannot reach engagement range, it cannot change
+      // the outcome and we can reject the pair without polygon work.
+      if (dx * dx + dy * dy > maximumCentreDistance * maximumCentreDistance) return false;
+      return baseFootprintDistance(unitModel, unitFootprint, otherModel, otherFootprint) <= range;
+    });
+  }));
 }
 
 export function coherencyDistanceForRadii(aRadius: number, bRadius: number): number {
@@ -77,8 +87,8 @@ export function requiredCoherencyNeighbors(totalModels: number): number {
 
 export function coherentDistance(a: CoherencyModel, b: CoherencyModel): number {
   return coherencyDistanceForRadii(
-    modelBaseRadiusInches(a.unit.profile, a.modelIndex),
-    modelBaseRadiusInches(b.unit.profile, b.modelIndex),
+    modelBaseRadiusForUnit(a.unit, a.modelIndex),
+    modelBaseRadiusForUnit(b.unit, b.modelIndex),
   );
 }
 
@@ -137,8 +147,8 @@ export function modelIndicesWithCoherencyIssues(models: CoherencyModel[], editio
       models.forEach((other, otherIndex) => {
         if (modelIndex === otherIndex || issues.has(modelIndex)) return;
         if (distance(model.model, other.model) > maximumCoherencyDistanceForRadii(
-          modelBaseRadiusInches(model.unit.profile, model.modelIndex),
-          modelBaseRadiusInches(other.unit.profile, other.modelIndex),
+          modelBaseRadiusForUnit(model.unit, model.modelIndex),
+          modelBaseRadiusForUnit(other.unit, other.modelIndex),
         ) || verticalDistance(model.model, other.model) > COHERENCY_VERTICAL_RANGE) {
           issues.add(modelIndex);
         }

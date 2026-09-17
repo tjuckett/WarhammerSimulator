@@ -1,4 +1,5 @@
 import { PHASE_STEP, type BattleState, type CombatActionKind, type PendingCombatAction, type Side } from '../types/battle';
+import { clone } from './clone';
 
 /** Returns the first unresolved event-backed combat opportunity for a unit. */
 export function pendingCombatActionFor(
@@ -56,7 +57,7 @@ export function closePendingCombatAction(state: BattleState, id: string): void {
 export function declinePendingCombatAction(state: BattleState, side: Side, id: string): BattleState {
   const action = pendingCombatActionById(state, id);
   if (!action || action.side !== side) return state;
-  const next = JSON.parse(JSON.stringify(state)) as BattleState;
+  const next = clone(state);
   closePendingCombatAction(next, id);
   return next;
 }

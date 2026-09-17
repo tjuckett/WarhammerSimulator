@@ -36,6 +36,7 @@ export function setPhaseStepActions(
       step,
       modelIndices: action.modelIndices ? [...action.modelIndices] : undefined,
       targetUnitIds: action.targetUnitIds ? [...action.targetUnitIds] : undefined,
+      targetIdsComputed: action.targetIdsComputed,
     })),
   };
   return true;
@@ -64,6 +65,7 @@ export function appendPhaseStepActions(
       step: ledger.step,
       modelIndices: action.modelIndices ? [...action.modelIndices] : undefined,
       targetUnitIds: action.targetUnitIds ? [...action.targetUnitIds] : undefined,
+      targetIdsComputed: action.targetIdsComputed,
     });
     existingIds.add(action.id);
   }

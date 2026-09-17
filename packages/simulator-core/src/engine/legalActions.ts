@@ -709,42 +709,58 @@ function addStratagemActions(actions: LegalAction[], state: BattleState, side: S
   for (const unit of activeUnits(state, side)) {
     for (const stratagem of availableStratagems(state, side, rules, unit.id)) {
       if (stratagem.target === 'none') continue;
-      const modelIndices = stratagem.id === 'epic-challenge'
+      const targetModelRequirement = stratagem.selection?.targetModel ?? 'forbidden';
+      const modelIndices = targetModelRequirement === 'required'
         ? unit.modelPositions.map((_, modelIndex) => modelIndex)
         : [undefined];
-      const sourceModelIndices = stratagem.id === 'explosives'
+      const sourceModelRequirement = stratagem.selection?.sourceModel ?? 'forbidden';
+      const sourceModelIndices = sourceModelRequirement === 'required'
         ? unit.modelPositions.map((_, modelIndex) => modelIndex)
         : [undefined];
-      const heroicModes = stratagem.id === 'heroic-intervention'
-        ? canSpendCommandPoints(state, side, stratagem.cost + 1)
-          ? ['leap-to-defend', 'into-the-fray'] as const
-          : ['leap-to-defend'] as const
+      const heroicModes = stratagem.selection?.heroicInterventionModes?.length
+        ? stratagem.selection.heroicInterventionModes.filter(mode =>
+            canSpendCommandPoints(state, side, stratagem.cost + (stratagem.choiceCosts?.[mode] ?? 0)),
+          )
         : [undefined];
-      const secondaryTargets = stratagem.id === 'crushing-impact'
+      const mortalEffect = stratagem.effects?.find(effect => effect.type === 'deal-mortal-wounds');
+      const secondaryTargets = mortalEffect?.secondaryTargetValidation === 'engaged-enemy'
         ? state.units.filter(candidate =>
             !candidate.destroyed
             && candidate.side !== side
+            && !candidate.embarkedInUnitId
+            && !candidate.inStrategicReserves
             && battleUnitsBaseEdgeDistance(unit, candidate) <= rules.engagementRange()
           )
-        : stratagem.id === 'explosives'
-          ? state.units.filter(candidate => !candidate.destroyed && explosivesTargetAllowed(state, unit, candidate, 0, rules))
+        : mortalEffect?.secondaryTargetValidation === 'visible-enemy-within-8'
+          ? []
           : [undefined];
       for (const targetModelIndex of modelIndices) {
         for (const sourceModelIndex of sourceModelIndices) {
-          const sourceTargets = stratagem.id === 'explosives'
-            ? state.units.filter(candidate => !candidate.destroyed && explosivesTargetAllowed(state, unit, candidate, sourceModelIndex!, rules))
+          const sourceTargets = mortalEffect?.secondaryTargetValidation === 'visible-enemy-within-8'
+            ? sourceModelIndex === undefined
+              ? []
+              : state.units.filter(candidate => !candidate.destroyed && explosivesTargetAllowed(state, unit, candidate, sourceModelIndex, rules))
             : secondaryTargets;
           for (const secondaryTargetUnit of sourceTargets) {
-          for (const heroicInterventionMode of heroicModes) {
-        actions.push({
-          action: { type: 'play.useStratagem', side, stratagemId: stratagem.id, targetUnitId: unit.id, targetModelIndex, ...(secondaryTargetUnit ? { secondaryTargetUnitId: secondaryTargetUnit.id } : {}), ...(sourceModelIndex !== undefined ? { sourceModelIndex } : {}), ...(heroicInterventionMode ? { heroicInterventionMode } : {}) },
-          category: 'stratagem',
-          side,
-          unitId: unit.id,
-          targetUnitId: unit.id,
-          label: `${unit.profile.name}: Use ${stratagem.name}${heroicInterventionMode ? ` (${heroicInterventionMode})` : ''}${secondaryTargetUnit ? ` on ${secondaryTargetUnit.profile.name}` : ''}${sourceModelIndex === undefined ? '' : ` from model ${sourceModelIndex + 1}`}${targetModelIndex === undefined ? '' : ` on model ${targetModelIndex + 1}`}`,
-        });
-          }
+            for (const heroicInterventionMode of heroicModes) {
+              actions.push({
+                action: {
+                  type: 'play.useStratagem',
+                  side,
+                  stratagemId: stratagem.id,
+                  targetUnitId: unit.id,
+                  targetModelIndex,
+                  ...(secondaryTargetUnit ? { secondaryTargetUnitId: secondaryTargetUnit.id } : {}),
+                  ...(sourceModelIndex !== undefined ? { sourceModelIndex } : {}),
+                  ...(heroicInterventionMode ? { heroicInterventionMode } : {}),
+                },
+                category: 'stratagem',
+                side,
+                unitId: unit.id,
+                targetUnitId: unit.id,
+                label: `${unit.profile.name}: Use ${stratagem.name}${heroicInterventionMode ? ` (${heroicInterventionMode})` : ''}${secondaryTargetUnit ? ` on ${secondaryTargetUnit.profile.name}` : ''}${sourceModelIndex === undefined ? '' : ` from model ${sourceModelIndex + 1}`}${targetModelIndex === undefined ? '' : ` on model ${targetModelIndex + 1}`}`,
+              });
+            }
           }
         }
       }

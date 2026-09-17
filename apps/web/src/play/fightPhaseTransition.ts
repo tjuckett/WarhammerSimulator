@@ -5,8 +5,11 @@ export type FightTransitionResult = { state: BattleState } | { warning: string }
 
 export function transitionFightStart(state: BattleState, clone: <T>(value: T) => T): FightTransitionResult {
   if (state.phase !== BATTLE_PHASE.Fight || phaseStepFor(state) !== PHASE_STEP.FightStart) return null;
-  const next = clone(state); next.phaseStep = PHASE_STEP.FightPileIn;
-  return { state: next };
+  // Keep the Fight Start cursor intact. The caller passes this state to
+  // startPlayFightPileInStep, which owns the transition to FightPileIn and
+  // publishes the typed Pile-in action ledger. Advancing the cursor here
+  // bypasses that initializer and makes the UI recompute every target query.
+  return { state: clone(state) };
 }
 
 export function transitionFightEnd(state: BattleState, clone: <T>(value: T) => T): FightTransitionResult {

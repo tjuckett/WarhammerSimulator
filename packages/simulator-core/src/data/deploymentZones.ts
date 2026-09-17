@@ -14,3 +14,9 @@ export const DEPLOYMENT_ZONE_SETS: DeploymentZoneSet[] = [
   searchAndDestroy as DeploymentZoneSet,
   crucibleOfBattle as DeploymentZoneSet,
 ];
+
+const DEPLOYMENT_ZONE_SET_BY_ID = new Map(DEPLOYMENT_ZONE_SETS.map(zones => [zones.id, zones]));
+
+export function deploymentZoneSetForId(id: string | undefined): DeploymentZoneSet | undefined {
+  return id ? DEPLOYMENT_ZONE_SET_BY_ID.get(id) : undefined;
+}

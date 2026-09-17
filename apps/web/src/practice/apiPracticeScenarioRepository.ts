@@ -13,8 +13,13 @@ export type PracticeStorageHealth = {
 };
 
 async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
+  const method = init?.method?.toUpperCase() ?? 'GET';
   const response = await fetch(path, {
     ...init,
+    // A checkpoint is updated in place as the game advances. Browser/Next
+    // caching can otherwise return the deployment snapshot for the same
+    // checkpoint id after it has been saved in a later phase.
+    ...(method === 'GET' ? { cache: 'no-store' as const } : {}),
     headers: {
       'content-type': 'application/json',
       ...init?.headers,

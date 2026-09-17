@@ -1,5 +1,5 @@
 import type { BattleState, BattleUnit } from '../types/battle';
-import { unitHasRule } from './armyUnits';
+import { attachedUnitProfilesFor, unitHasRule, unitRosterId } from './armyUnits';
 
 /** Stable rules-unit identity. Attached components share this id for the battle. */
 export function attachedUnitId(unit: BattleUnit): string {
@@ -17,7 +17,20 @@ export function attachedUnitComponents(
     && attachedUnitId(candidate) === id
     && (includeDestroyed || (!candidate.destroyed && candidate.remainingModels > 0)),
   );
-  return components.length || !includeDestroyed ? components : [unit];
+  if (components.length > 1 || !state.armies?.[unit.side]?.army) return components.length || !includeDestroyed ? components : [unit];
+
+  // Older saved battles may predate the BattleUnit attachment fields. The
+  // roster relationship is still authoritative enough to recover the group
+  // until that state is rewritten by the next action.
+  const army = state.armies[unit.side].army;
+  const profileIds = new Set(attachedUnitProfilesFor(army, unit.profile, army.units).map(unitRosterId));
+  if (profileIds.size <= 1) return components.length || !includeDestroyed ? components : [unit];
+  const rosterComponents = state.units.filter(candidate =>
+    candidate.side === unit.side
+    && profileIds.has(unitRosterId(candidate.profile))
+    && (includeDestroyed || (!candidate.destroyed && candidate.remainingModels > 0)),
+  );
+  return rosterComponents.length || !includeDestroyed ? rosterComponents : [unit];
 }
 
 export function attachedUnitIsFormed(state: BattleState, unit: BattleUnit): boolean {

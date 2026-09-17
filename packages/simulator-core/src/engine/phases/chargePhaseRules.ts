@@ -1,4 +1,5 @@
 import { PHASE_STEP, type BattleState, type BattleUnit, type Side } from '../../types/battle';
+import { attachedUnitTargetRepresentative } from '../attachedUnits';
 import type { RulesEdition } from '../rulesEngine';
 
 /** Dependencies supplied by the simulator facade for Charge-specific rules. */
@@ -39,7 +40,24 @@ export function canSelectChargeUnit(state: BattleState, unitId: string, side: Si
     && sideCanDeclareCharge(state, side, unit);
 }
 
-export function chargeNeededDistance(unit: BattleUnit, target: BattleUnit, _rules: RulesEdition, context: ChargePhaseRulesContext): number {
+export function chargeNeededDistance(
+  unit: BattleUnit,
+  target: BattleUnit,
+  _rules: RulesEdition,
+  context: ChargePhaseRulesContext,
+  state?: BattleState,
+): number {
+  // Attached leaders and bodyguards form one unit for charge declarations.
+  // When state is available, use the closest live component pair so a leader
+  // can provide the model that actually reaches Engagement Range.
+  if (state) {
+    const sourceComponents = context.attachedComponents(state, unit);
+    const targetComponents = context.attachedComponents(state, target);
+    if (sourceComponents.length > 0 && targetComponents.length > 0) {
+      return Math.max(0, Math.min(...sourceComponents.flatMap(source =>
+        targetComponents.map(candidate => context.baseEdgeDistance(source, candidate)))));
+    }
+  }
   return Math.max(0, context.baseEdgeDistance(unit, target));
 }
 
@@ -87,7 +105,7 @@ export function playChargeEligibilityReason(
   if (unit.movementAction === 'advanced' && state.activeArmyAbilities?.[side]?.includes('waaagh') !== true) return 'A unit that advanced cannot charge this phase.';
   const candidates = context.enemies(state, side).filter(target => context.canChargeTarget(unit, target));
   if (!candidates.length) return 'There are no eligible enemy units to charge.';
-  const needed = candidates.map(target => chargeNeededDistance(unit, target, rules, context));
+  const needed = candidates.map(target => chargeNeededDistance(unit, target, rules, context, state));
   if (!needed.some(distance => distance <= rules.chargeRange())) {
     return `The nearest eligible charge requires ${Math.min(...needed).toFixed(1)} inches; the pre-roll charge range is ${rules.chargeRange()} inches.`;
   }
@@ -106,10 +124,24 @@ export function playChargeTargetOptions(
   if (!unit || context.attachedComponents(state, unit).some(component => context.unitSurgedThisPhase(state, component))
     || !unitCanDeclareCharge(state, unit, context)) return [];
   const pendingRoll = state.pendingChargeRoll?.unitId === unitId && state.pendingChargeRoll.side === side ? state.pendingChargeRoll : undefined;
+  const seenAttachedGroups = new Set<string>();
   return context.enemies(state, side)
+    .filter(target => {
+      const components = context.attachedComponents(state, target);
+      // Keep target identity consistent with shooting and Fight. The shared
+      // representative also handles older saves whose attachment fields were
+      // inferred from roster metadata rather than serialized on the units.
+      const representative = attachedUnitTargetRepresentative(state, target)
+        ?? components.find(component => !component.attachedToUnitId)
+        ?? components[0]
+        ?? target;
+      if (target.id !== representative.id || seenAttachedGroups.has(representative.id)) return false;
+      seenAttachedGroups.add(representative.id);
+      return true;
+    })
     .filter(target => context.canChargeTarget(unit, target)
       && (state.activeArmy === side || (unit.heroicInterventionMode === 'leap-to-defend'
-        ? target.charged : unit.heroicInterventionMode === 'into-the-fray' ? context.baseEdgeDistance(unit, target) <= 6 : false)))
-    .map(target => ({ targetId: target.id, needed: chargeNeededDistance(unit, target, rules, context) }))
+        ? target.charged : unit.heroicInterventionMode === 'into-the-fray' ? chargeNeededDistance(unit, target, rules, context, state) <= 6 : false)))
+    .map(target => ({ targetId: target.id, needed: chargeNeededDistance(unit, target, rules, context, state) }))
     .filter(option => option.needed <= (pendingRoll?.maximumDistance ?? rules.chargeRange()));
 }

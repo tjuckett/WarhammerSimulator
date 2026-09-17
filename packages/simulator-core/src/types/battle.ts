@@ -3,6 +3,7 @@ import type { ObjectiveControlProfile } from '../engine/objectiveGeometry';
 import type { RulesetMetadata } from '../engine/rulesEngine';
 import type { StratagemUse } from './stratagem';
 import type { UnitAbilityUse } from './ability';
+import type { ActiveRuleEffect } from './ruleEffects';
 import type { DeploymentZoneSet } from '../data/deploymentZoneTypes';
 import type { EleventhForceDispositionId } from '../data/missions';
 
@@ -135,6 +136,8 @@ export interface PhaseStepAction {
   unitId?: string;
   modelIndices?: number[];
   targetUnitIds?: string[];
+  /** False/undefined means the action is known, but its expensive target query is deferred. */
+  targetIdsComputed?: boolean;
   requiredToAdvance: boolean;
   status: PhaseStepActionStatus;
   label?: string;
@@ -176,6 +179,8 @@ export interface BattleUnit {
   pendingCasualties?: number;
   pendingWoundAssignment?: { woundsOnModel: number };
   pendingDamageAllocations?: Array<{
+    /** Defender that owns this packet; retained even when queues are inspected outside the unit. */
+    targetUnitId?: string;
     damage: number;
     noCarryOver?: boolean;
     targetModelIndex?: number;
@@ -607,6 +612,8 @@ export interface MissionState {
 
 export interface Terrain {
   id: string;
+  /** Stable reusable terrain-shape identifier, when the mat came from a template. */
+  templateId?: string;
   name: string;
   x: number;
   y: number;
@@ -619,6 +626,8 @@ export interface Terrain {
   difficult: boolean;
   color: string;
   objectiveRole?: 'home-0' | 'home-1' | 'no-mans-land' | 'central' | 'expansion-0' | 'expansion-1';
+  /** Mats with the same ID are one logical objective area but retain separate physical geometry. */
+  objectiveGroupId?: string;
   features: TerrainFeature[];
 }
 
@@ -642,6 +651,7 @@ export interface TerrainLayout {
   id: string;
   name: string;
   description: string;
+  deploymentZoneId?: string;
   deploymentZones?: DeploymentZoneSet;
   territoryZones?: TerritoryZoneSet;
   terrain: Terrain[];
@@ -791,6 +801,8 @@ export interface BattleState {
     { name: string; faction: string; color: string; army: ImportedArmy },
   ];
   objectives: Position[];
+  /** Terrain IDs that count as each terrain-area objective, indexed like objectives. */
+  objectiveTerrainIds?: string[][];
   objectiveControl: ObjectiveControlProfile;
   objectiveOwners: (Side | null)[];
   /** Objectives currently secured under 11e Core 14.03, indexed like objectives. */
@@ -816,6 +828,8 @@ export interface BattleState {
   abilityUses?: UnitAbilityUse[];
   /** Active typed army abilities, keyed by side; effects expire at that side's next Command phase. */
   activeArmyAbilities?: [string[], string[]];
+  /** Serialized timed modifiers created by declarative unit abilities or Stratagems. */
+  activeRuleEffects?: ActiveRuleEffect[];
   missionEvents?: MissionEvents;
   missionState?: MissionState;
   // Deployment phase: units not yet placed on the board

@@ -11,9 +11,11 @@ import RotateRightIcon from '@mui/icons-material/RotateRight';
 import SaveIcon from '@mui/icons-material/Save';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import type { Terrain, TerrainFeature, TerrainLayout } from '@warhammer-simulator/core/types/battle';
+import { DEPLOYMENT_ZONE_SETS } from '@warhammer-simulator/core/data/deploymentZones';
 import type { DeploymentZoneSet, DeploymentZoneShape } from '@warhammer-simulator/core/data/deploymentZoneTypes';
 import type { TerrainEditSelection } from './Battlefield';
-import { featureColor } from '@warhammer-simulator/core/engine/terrain';
+import { TERRAIN_SHAPE_TEMPLATES } from '@warhammer-simulator/core/data/terrainShapes';
+import { featureColor, terrainFromShapeInstance } from '@warhammer-simulator/core/engine/terrain';
 import { moveFeature, rotateFeatureAround, terrainCenter, terrainCorners } from '@warhammer-simulator/core/engine/terrainGeometry';
 
 type TerrainMatTemplate = {
@@ -51,7 +53,6 @@ interface Props {
   onMatTemplateChange: (templateId: string) => void;
   onChange: (layout: TerrainLayout) => void;
   onSelect: (selection: TerrainEditSelection | null) => void;
-  onCombineTerrain: (targetTerrainIndex: number) => void;
   onRotateSelected: (degrees: number) => void;
   onMirrorLayout: () => void;
   onAlignWallToMat: (offsetDegrees: number) => void;
@@ -61,16 +62,15 @@ interface Props {
 }
 
 const terrainTypes: Terrain['type'][] = ['ruin', 'obstacle', 'area', 'impassable'];
-const featureHeights: TerrainFeature['featureHeight'][] = ['low', 'mid', 'tall'];
 const featureCategories: Array<NonNullable<TerrainFeature['category']>> = ['light', 'dense'];
-const objectiveRoles: Array<{ value: Terrain['objectiveRole'] | ''; label: string }> = [
-  { value: '', label: 'no objective' },
-  { value: 'home-0', label: 'blue home' },
-  { value: 'home-1', label: 'red home' },
-  { value: 'no-mans-land', label: 'no mans land' },
-  { value: 'central', label: 'central' },
-  { value: 'expansion-0', label: 'blue expansion' },
-  { value: 'expansion-1', label: 'red expansion' },
+const objectiveMarkers: Array<{ id: string; label: string; role: Terrain['objectiveRole'] }> = [
+  { id: 'expansion-0', label: 'Blue expansion objective', role: 'expansion-0' },
+  { id: 'home-0', label: 'Blue home objective', role: 'home-0' },
+  { id: 'no-mans-land-1', label: 'No Man’s Land objective 1', role: 'no-mans-land' },
+  { id: 'no-mans-land-2', label: 'No Man’s Land objective 2', role: 'no-mans-land' },
+  { id: 'no-mans-land-3', label: 'No Man’s Land objective 3', role: 'no-mans-land' },
+  { id: 'expansion-1', label: 'Red expansion objective', role: 'expansion-1' },
+  { id: 'home-1', label: 'Red home objective', role: 'home-1' },
 ];
 
 function cleanNumber(value: number): number {
@@ -102,6 +102,10 @@ function setItemRef(refs: Map<string, HTMLDivElement>, key: string, element: HTM
   else refs.delete(key);
 }
 
+function cloneDeploymentZones(zones: DeploymentZoneSet): DeploymentZoneSet {
+  return JSON.parse(JSON.stringify(zones)) as DeploymentZoneSet;
+}
+
 function rotatePoint(point: { x: number; y: number }, origin: { x: number; y: number }, degrees: number) {
   const radians = (degrees * Math.PI) / 180;
   const cos = Math.cos(radians);
@@ -111,6 +115,40 @@ function rotatePoint(point: { x: number; y: number }, origin: { x: number; y: nu
   return {
     x: origin.x + dx * cos - dy * sin,
     y: origin.y + dx * sin + dy * cos,
+  };
+}
+
+function rotatedHalfSize(width: number, height: number, rotationDeg = 0) {
+  const radians = rotationDeg * Math.PI / 180;
+  return {
+    x: width / 2 * Math.cos(radians) - height / 2 * Math.sin(radians),
+    y: width / 2 * Math.sin(radians) + height / 2 * Math.cos(radians),
+  };
+}
+
+function terrainLowerLeftOrigin(terrain: Terrain) {
+  const offset = rotatedHalfSize(-terrain.width, terrain.height, terrain.rotationDeg);
+  return {
+    x: terrain.x + terrain.width / 2 + offset.x,
+    y: terrain.y + terrain.height / 2 + offset.y,
+  };
+}
+
+function terrainLayoutOrigin(terrain: Terrain, boardWidth: number, boardHeight: number) {
+  const origin = terrainLowerLeftOrigin(terrain);
+  return { x: origin.x - boardWidth / 2, y: boardHeight / 2 - origin.y };
+}
+
+function terrainPositionFromLayoutOrigin(
+  terrain: Terrain,
+  origin: { x: number; y: number },
+  boardWidth: number,
+  boardHeight: number,
+) {
+  const offset = rotatedHalfSize(-terrain.width, terrain.height, terrain.rotationDeg);
+  return {
+    x: origin.x + boardWidth / 2 - offset.x - terrain.width / 2,
+    y: boardHeight / 2 - origin.y - offset.y - terrain.height / 2,
   };
 }
 
@@ -140,7 +178,6 @@ export function TerrainLayoutEditor({
   onMatTemplateChange,
   onChange,
   onSelect,
-  onCombineTerrain,
   onRotateSelected,
   onMirrorLayout,
   onAlignWallToMat,
@@ -152,6 +189,7 @@ export function TerrainLayoutEditor({
   const itemRefs = useRef(new Map<string, HTMLDivElement>());
   const [sourceLayoutId, setSourceLayoutId] = useState('');
   const [deploymentEditorOpen, setDeploymentEditorOpen] = useState(true);
+  const [shapeIdToAdd, setShapeIdToAdd] = useState(TERRAIN_SHAPE_TEMPLATES[0]?.id ?? '');
   const snap = (value: number, step = 1) => snapToGrid ? Math.round(value / step) * step : value;
 
   const removeTerrain = useCallback((index: number) => {
@@ -223,10 +261,10 @@ export function TerrainLayoutEditor({
             ...(patch.x !== undefined ? { x: nextX } : {}),
             ...(patch.y !== undefined ? { y: nextY } : {}),
           };
-          const pivot = terrainCorners(beforeRotation)[0] ?? terrainCenter(beforeRotation);
-          const rotatedCorner = terrainCorners(movedTerrain)[0] ?? pivot;
-          const pinDx = pivot.x - rotatedCorner.x;
-          const pinDy = pivot.y - rotatedCorner.y;
+          const pivot = terrainLowerLeftOrigin(beforeRotation);
+          const rotatedOrigin = terrainLowerLeftOrigin(movedTerrain);
+          const pinDx = pivot.x - rotatedOrigin.x;
+          const pinDy = pivot.y - rotatedOrigin.y;
           return {
             ...movedTerrain,
             x: cleanNumber(movedTerrain.x + pinDx),
@@ -339,24 +377,26 @@ export function TerrainLayoutEditor({
   }
 
   function addTerrain() {
+    const shape = TERRAIN_SHAPE_TEMPLATES.find(candidate => candidate.id === shapeIdToAdd);
+    if (!shape) return;
     const next = layout.terrain.length + 1;
+    const materialized = terrainFromShapeInstance({
+      shapeId: shape.id,
+      x: 0,
+      y: 0,
+      rotationDeg: 0,
+    }, boardWidth, boardHeight);
     onChange({
       ...layout,
       terrain: [
         ...layout.terrain,
         {
+          ...materialized,
           id: `${layout.id}-custom-${next}`,
-          name: 'Ruins',
-          x: 24,
-          y: 18,
-          width: 6,
-          height: 10,
-          rotationDeg: 0,
-          type: 'ruin',
-          providesCover: true,
-          difficult: false,
-          color: 'rgba(110,85,60,0.85)',
-          features: [],
+          features: materialized.features.map((feature, index) => ({
+            ...feature,
+            id: `${layout.id}-custom-${next}-f${index + 1}`,
+          })),
         },
       ],
     });
@@ -571,8 +611,15 @@ export function TerrainLayoutEditor({
 
   function clearDeploymentZones() {
     const nextLayout = { ...layout };
+    delete nextLayout.deploymentZoneId;
     delete nextLayout.deploymentZones;
     onChange(nextLayout);
+  }
+
+  function applyDeploymentZonePreset(id: string) {
+    const zones = DEPLOYMENT_ZONE_SETS.find(candidate => candidate.id === id);
+    if (!zones) return;
+    onChange({ ...layout, deploymentZoneId: id, deploymentZones: cloneDeploymentZones(zones) });
   }
 
   const selectedLabel = selected
@@ -591,18 +638,31 @@ export function TerrainLayoutEditor({
   const cutout = deploymentCutout();
 
   return (
-    <div className="terrain-editor">
+    <div className="terrain-editor terrain-editor--simple">
       <div className="terrain-editor-header">
         <div>
           <Typography className="terrain-editor-title" variant="subtitle2">Terrain Editor</Typography>
           <Typography className="terrain-editor-sub" variant="caption">{isCustom ? 'Custom saved' : 'Unsaved changes'} - {selectedLabel}{selectedSize}</Typography>
         </div>
         <Box className="terrain-editor-actions">
-          <Button startIcon={<AddIcon />} onClick={addTerrain} disabled={disabled}>Add Mat</Button>
           <Button variant="contained" startIcon={<SaveIcon />} onClick={() => onSave(layout)} disabled={disabled}>Save Local</Button>
           <Button color="inherit" startIcon={<ClearIcon />} onClick={() => onReset(layout.id)} disabled={disabled || !isCustom}>Reset</Button>
         </Box>
       </div>
+
+      <Box className="terrain-template-actions terrain-shape-library">
+        <select
+          value={shapeIdToAdd}
+          onChange={event => setShapeIdToAdd(event.target.value)}
+          disabled={disabled || TERRAIN_SHAPE_TEMPLATES.length === 0}
+          aria-label="Terrain feature template"
+        >
+          {TERRAIN_SHAPE_TEMPLATES.map(shape => (
+            <option key={shape.id} value={shape.id}>{shape.name}</option>
+          ))}
+        </select>
+        <Button startIcon={<AddIcon />} onClick={addTerrain} disabled={disabled || !shapeIdToAdd}>Add Mat</Button>
+      </Box>
 
       <Box className="terrain-rotate-actions">
         <Button startIcon={<RotateLeftIcon />} onClick={() => onRotateSelected(-15)} disabled={disabled || !selected}>15</Button>
@@ -618,7 +678,7 @@ export function TerrainLayoutEditor({
         </Button>
       </Box>
 
-      <Box className="terrain-template-actions">
+      <Box className="terrain-template-actions terrain-legacy-actions">
         <select
           value={sourceLayoutId}
           onChange={e => setSourceLayoutId(e.target.value)}
@@ -637,7 +697,7 @@ export function TerrainLayoutEditor({
         </Button>
       </Box>
 
-      <Box className="terrain-template-actions">
+      <Box className="terrain-template-actions terrain-legacy-actions">
         <select
           value={selectedMatTemplateId}
           onChange={e => onMatTemplateChange(e.target.value)}
@@ -720,6 +780,15 @@ export function TerrainLayoutEditor({
         <div className="deployment-zone-header">
           <span>Deployment Zones</span>
           <div className="deployment-zone-header-actions">
+            <select
+              value={layout.deploymentZones?.id ?? ''}
+              onChange={event => applyDeploymentZonePreset(event.target.value)}
+              disabled={disabled}
+              aria-label="Deployment zone preset"
+            >
+              <option value="">Deployment preset</option>
+              {DEPLOYMENT_ZONE_SETS.map(zones => <option key={zones.id} value={zones.id}>{zones.deployment}</option>)}
+            </select>
             <Button color="inherit" onClick={() => setDeploymentEditorOpen(open => !open)}>
               {deploymentEditorOpen ? 'Hide' : 'Show'}
             </Button>
@@ -806,32 +875,17 @@ export function TerrainLayoutEditor({
       </div>
 
       <div className="terrain-editor-scroll">
-        {layout.terrain.map((terrain, terrainIndex) => (
+        {selected && layout.terrain[selected.terrainIndex] ? [selected.terrainIndex].map(terrainIndex => {
+          const terrain = layout.terrain[terrainIndex];
+          return (
           <div
-            className={`terrain-card ${selected?.kind === 'terrain' && selected.terrainIndex === terrainIndex ? 'terrain-card-selected' : ''}`}
+            className={`terrain-card ${selected?.terrainIndex === terrainIndex ? 'terrain-card-selected' : ''}`}
             key={terrain.id}
             ref={element => setItemRef(itemRefs.current, terrainKey(terrainIndex), element)}
-            onClick={e => {
-              if (e.shiftKey) {
-                onCombineTerrain(terrainIndex);
-                return;
-              }
-              onSelect({ kind: 'terrain', terrainIndex });
-            }}
+            onClick={() => onSelect({ kind: 'terrain', terrainIndex })}
           >
             <div className="terrain-card-head">
-              <input
-                value={terrain.name}
-                onChange={e => updateTerrain(terrainIndex, { name: e.target.value })}
-                disabled={disabled}
-              />
-              <select
-                value={terrain.type}
-                onChange={e => updateTerrain(terrainIndex, { type: e.target.value as Terrain['type'] })}
-                disabled={disabled}
-              >
-                {terrainTypes.map(type => <option key={type} value={type}>{type}</option>)}
-              </select>
+              <span className="terrain-card-name">{terrain.name}</span>
               <div className="terrain-card-controls">
                 <Button
                   color="error"
@@ -841,67 +895,38 @@ export function TerrainLayoutEditor({
                 >
                   Del
                 </Button>
-                <Button
-                  onClick={e => {
-                    e.stopPropagation();
-                    matchSelectedTerrainRotation(terrainIndex);
-                  }}
-                  disabled={disabled || selected?.kind !== 'terrain' || selected.terrainIndex === terrainIndex}
-                  title="Copy this mat rotation to the selected mat"
-                >
-                  Use Rot
-                </Button>
-                <Button
-                  onClick={e => {
-                    e.stopPropagation();
-                    makeTerrainPolygon(terrainIndex);
-                  }}
-                  disabled={disabled || !!terrain.polygonPoints?.length}
-                  title="Convert this mat to an editable polygon"
-                >
-                  Poly
-                </Button>
-                <Button
-                  onClick={e => {
-                    e.stopPropagation();
-                    onCombineTerrain(terrainIndex);
-                  }}
-                  disabled={disabled || selected?.kind !== 'terrain' || selected.terrainIndex === terrainIndex}
-                  title="Combine the selected mat with this mat"
-                >
-                  Combine
-                </Button>
-                <Button
-                  startIcon={<FlipIcon />}
-                  onClick={e => {
-                    e.stopPropagation();
-                    flipTerrainMat(terrainIndex, 'x');
-                  }}
-                  disabled={disabled}
-                  title="Mirror this mat across its own X axis"
-                >
-                  Flip X
-                </Button>
-                <Button
-                  startIcon={<FlipIcon />}
-                  onClick={e => {
-                    e.stopPropagation();
-                    flipTerrainMat(terrainIndex, 'y');
-                  }}
-                  disabled={disabled}
-                  title="Mirror this mat across its own Y axis"
-                >
-                  Flip Y
-                </Button>
               </div>
             </div>
 
             <div className="terrain-grid">
-              <NumberField label="x" value={terrain.x} onChange={x => updateTerrain(terrainIndex, { x }, false)} disabled={disabled} />
-              <NumberField label="y" value={terrain.y} onChange={y => updateTerrain(terrainIndex, { y }, false)} disabled={disabled} />
-              <NumberField label="w" value={terrain.width} onChange={width => updateTerrain(terrainIndex, { width })} disabled={disabled} />
-              <NumberField label="h" value={terrain.height} onChange={height => updateTerrain(terrainIndex, { height })} disabled={disabled} />
-              <NumberField label="rot" value={terrain.rotationDeg ?? 0} onChange={rotationDeg => updateTerrain(terrainIndex, { rotationDeg })} disabled={disabled} />
+              <NumberField
+                label="x"
+                value={cleanNumber(terrainLayoutOrigin(terrain, boardWidth, boardHeight).x)}
+                onChange={x => {
+                  const origin = terrainLayoutOrigin(terrain, boardWidth, boardHeight);
+                  updateTerrain(terrainIndex, terrainPositionFromLayoutOrigin(terrain, { ...origin, x }, boardWidth, boardHeight), false);
+                }}
+                disabled={disabled}
+              />
+              <NumberField
+                label="y"
+                value={cleanNumber(terrainLayoutOrigin(terrain, boardWidth, boardHeight).y)}
+                onChange={y => {
+                  const origin = terrainLayoutOrigin(terrain, boardWidth, boardHeight);
+                  updateTerrain(terrainIndex, terrainPositionFromLayoutOrigin(terrain, { ...origin, y }, boardWidth, boardHeight), false);
+                }}
+                disabled={disabled}
+              />
+              <NumberField
+                label="rot"
+                value={-(terrain.rotationDeg ?? 0)}
+                onChange={rotationDeg => updateTerrain(terrainIndex, { rotationDeg: -rotationDeg })}
+                disabled={disabled}
+              />
+            </div>
+
+            <div className="terrain-combine-hint">
+              Assign the same objective marker to any mats that should count as one objective.
             </div>
 
             {terrain.polygonPoints?.length ? (
@@ -933,13 +958,20 @@ export function TerrainLayoutEditor({
             </label>
 
             <label className="terrain-objective-role">
-              <span>Objective</span>
+              <span>Objective marker</span>
               <select
-                value={terrain.objectiveRole ?? ''}
-                onChange={e => updateTerrain(terrainIndex, { objectiveRole: e.target.value ? e.target.value as Terrain['objectiveRole'] : undefined })}
+                value={terrain.objectiveGroupId ?? ''}
+                onChange={e => {
+                  const marker = objectiveMarkers.find(candidate => candidate.id === e.target.value);
+                  updateTerrain(terrainIndex, {
+                    objectiveRole: marker?.role,
+                    objectiveGroupId: marker?.id,
+                  });
+                }}
                 disabled={disabled}
               >
-                {objectiveRoles.map(role => <option key={role.value || 'none'} value={role.value}>{role.label}</option>)}
+                <option value="">No objective</option>
+                {objectiveMarkers.map(marker => <option key={marker.id} value={marker.id}>{marker.label}</option>)}
               </select>
             </label>
 
@@ -955,21 +987,6 @@ export function TerrainLayoutEditor({
                 ref={element => setItemRef(itemRefs.current, featureKey(terrainIndex, featureIndex), element)}
                 onClick={e => { e.stopPropagation(); onSelect({ kind: 'feature', terrainIndex, featureIndex }); }}
               >
-                <select
-                  value={feature.featureHeight}
-                  onChange={e => {
-                    const featureHeight = e.target.value as TerrainFeature['featureHeight'];
-                    updateFeature(terrainIndex, featureIndex, {
-                      featureHeight,
-                      blocksLOS: featureHeight !== 'low',
-                      blocksMovement: featureHeight !== 'low',
-                      color: featureColor(featureHeight, feature.category),
-                    });
-                  }}
-                  disabled={disabled}
-                >
-                  {featureHeights.map(height => <option key={height} value={height}>{height}</option>)}
-                </select>
                 <select
                   value={feature.category ?? 'dense'}
                   onChange={e => {
@@ -999,7 +1016,10 @@ export function TerrainLayoutEditor({
               </div>
             ))}
           </div>
-        ))}
+          );
+        }) : (
+          <div className="terrain-editor-empty">Select a terrain mat to edit its position and rotation.</div>
+        )}
       </div>
 
       <Box className="terrain-editor-actions terrain-export">

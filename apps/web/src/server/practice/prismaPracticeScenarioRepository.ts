@@ -1,10 +1,13 @@
-import type { PracticeCheckpointKind, PracticeScenario } from '@warhammer-simulator/core/practice/scenarios';
+import {
+  timelineForScenario,
+  type PracticeCheckpointKind,
+  type PracticeScenario,
+} from '@warhammer-simulator/core/practice/scenarios';
 import type { PracticeScenarioRepository } from '@warhammer-simulator/core/practice/scenarioRepository';
 import type { PracticeScenarioSummary } from '@warhammer-simulator/core/practice/scenarioStorage';
 import type { BattleState } from '@warhammer-simulator/core/types/battle';
 import { battleRound } from '@warhammer-simulator/core/engine/battleRound';
 import {
-  currentTimelineState,
   PRACTICE_TIMELINE_VERSION,
   type PracticeTimeline,
   type PracticeTimelineEntry,
@@ -12,6 +15,10 @@ import {
 import { prisma } from '../db';
 
 type StoredCheckpointKind = 'MANUAL' | 'AUTO_PHASE';
+
+// A practice save can replace a large, snapshot-backed timeline. Keep that
+// one atomic write alive long enough for PostgreSQL to finish the bulk insert.
+const PRACTICE_SAVE_TRANSACTION_TIMEOUT_MS = 120_000;
 
 const CHECKPOINT_KIND_TO_DB = {
   'auto-phase': 'AUTO_PHASE',
@@ -137,7 +144,7 @@ function scenarioFromCheckpoint(
     .slice(0, checkpoint.timelineCursor)
     .map(timelineEntryFromDb);
 
-  return {
+  const scenario: PracticeScenario = {
     version: 1,
     metadata: {
       id: checkpoint.id,
@@ -166,6 +173,10 @@ function scenarioFromCheckpoint(
       entries,
       cursor: checkpoint.timelineCursor,
     },
+  };
+  return {
+    ...scenario,
+    timeline: timelineForScenario(scenario),
   };
 }
 
@@ -204,7 +215,10 @@ export const prismaPracticeScenarioRepository: PracticeScenarioRepository = {
     const branchId = scenario.metadata.branchId ?? scenario.timeline.metadata.id;
     const sequence = scenario.metadata.sequence ?? 1;
     const timelineCursor = scenario.metadata.timelineCursor ?? scenario.timeline.cursor;
-    const checkpointState = currentTimelineState(scenario.timeline);
+    // The controller places the authoritative live snapshot in initialState
+    // before saving. The load path uses currentScenarioState separately to
+    // recover older checkpoints whose snapshot was stuck at deployment.
+    const checkpointState = scenario.initialState;
     const now = new Date(scenario.metadata.updatedAt);
     const checkpointMetadata = metadataValue(scenario);
     const timelineEntryData = scenario.timeline.entries.map((entry, index) => ({
@@ -294,7 +308,7 @@ export const prismaPracticeScenarioRepository: PracticeScenarioRepository = {
           updatedAt: now,
         },
       });
-    }, { maxWait: 10_000, timeout: 30_000 });
+    }, { maxWait: 10_000, timeout: PRACTICE_SAVE_TRANSACTION_TIMEOUT_MS });
 
     return this.listSummaries();
   },

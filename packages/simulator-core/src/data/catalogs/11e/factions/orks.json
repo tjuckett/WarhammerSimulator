@@ -1,0 +1,98 @@
+{
+  "id": "orks",
+  "name": "Orks",
+  "edition": "11e",
+  "unitRefs": [
+    "orks.boss-snikrot",
+    "orks.ghazghkull-thraka",
+    "orks.zodgrod-wortsnagga",
+    "orks.mozrog-skragbad",
+    "orks.wazdakka-gutsmek",
+    "orks.bannernob",
+    "orks.beastboss",
+    "orks.big-mek",
+    "orks.big-mek-in-mega-armour",
+    "orks.big-mek-with-shokk-attack-gun",
+    "orks.bigboss",
+    "orks.mek",
+    "orks.painboss",
+    "orks.painboy",
+    "orks.warboss",
+    "orks.warboss-in-mega-armour",
+    "orks.weirdboy",
+    "orks.wurrboy",
+    "orks.beastboss-on-squigosaur",
+    "orks.deffkilla-wartrike",
+    "orks.beast-snagga-boyz",
+    "orks.boyz",
+    "orks.trukk",
+    "orks.blitza-bommer",
+    "orks.burna-bommer",
+    "orks.dakkajet",
+    "orks.wazbom-blastajet",
+    "orks.breaka-boyz",
+    "orks.burna-boyz",
+    "orks.flash-gitz",
+    "orks.gretchin",
+    "orks.kommandos",
+    "orks.lootas",
+    "orks.meganobz",
+    "orks.nobz",
+    "orks.stormboyz",
+    "orks.tankbustas",
+    "orks.hunta-rig",
+    "orks.kill-rig",
+    "orks.gargantuan-squiggoth",
+    "orks.squighog-boyz",
+    "orks.warbikers",
+    "orks.wartrakk",
+    "orks.gorkanaut",
+    "orks.morkanaut",
+    "orks.stompa",
+    "orks.battlewagon",
+    "orks.boomdakka-snazzwagon",
+    "orks.deffkoptas",
+    "orks.kustom-boosta-blasta",
+    "orks.megatrakk-scrapjet",
+    "orks.mek-gunz",
+    "orks.rukkatrukk-squigbuggy",
+    "orks.shokkjump-dragsta",
+    "orks.big-mek-dakkarig",
+    "orks.deff-dread",
+    "orks.killa-kans",
+    "orks.biged-bossbunka"
+  ],
+  "ruleRefs": [
+    "orks.army-rule.waaagh",
+    "orks.unit-rule.kunnin-infiltrator",
+    "orks.unit-rule.grot-riggers",
+    "orks.unit-rule.red-skull-kommandos",
+    "orks.unit-rule.prophet-of-da-great-waaagh",
+    "orks.unit-rule.ghazghkulls-waaagh-banner",
+    "orks.unit-rule.get-da-good-bitz"
+  ],
+  "detachmentRefs": [
+    "orks.detachment.war-horde"
+  ],
+  "factionKeywords": [
+    "Orks"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Orks faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+      "capturedAt": "2026-08-29",
+      "sourceRevision": "Faction Pack. Orks (11th edition, version 1.2)"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 58,
+    "normalizedEntryCount": 58,
+    "excludedLegendCount": 30,
+    "notes": [
+      "All current non-Legends datasheets are selectable.",
+      "Structured model loadouts and unit upgrades are available for the current Ork datasheets with wargear options; Deff Dread replacement slots are represented without enumerating every combination.",
+      "Remaining entries retain source-derived partial profiles pending executable-effect review."
+    ]
+  }
+}

@@ -5,7 +5,7 @@ import {
   baseFootprintDistance,
   baseFootprintWithinRect,
   footprintBoundaryPoints,
-  modelBaseFootprintInches,
+  modelBaseFootprintForUnit,
 } from './baseSizes';
 import { pointInDeploymentZone, zoneFor, type DeploymentZone } from './deployment';
 import { pointInTerrain, terrainCenter, terrainCorners } from './terrainGeometry';
@@ -110,11 +110,7 @@ export function terrainWithinMissionTerritory(
 }
 
 function modelFootprint(unit: BattleUnit, modelIndex: number) {
-  return modelBaseFootprintInches(
-    unit.profile,
-    modelIndex,
-    unit.modelRotations?.[modelIndex] ?? unit.facingDeg ?? 0,
-  );
+  return modelBaseFootprintForUnit(unit, modelIndex);
 }
 
 function modelTestPoints(unit: BattleUnit, modelIndex: number): Position[] {
@@ -332,6 +328,8 @@ export function objectiveRoleForIndex(
   state: BattleState,
   objectiveIndex: number,
 ): Terrain['objectiveRole'] | undefined {
+  const terrainIds = state.objectiveTerrainIds?.[objectiveIndex];
+  if (terrainIds?.length) return state.terrain.find(terrain => terrainIds.includes(terrain.id))?.objectiveRole;
   const objective = state.objectives[objectiveIndex];
   if (!objective) return undefined;
   return state.terrain

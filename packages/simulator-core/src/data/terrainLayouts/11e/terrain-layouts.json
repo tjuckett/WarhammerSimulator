@@ -1,0 +1,5405 @@
+{
+  "version": 1,
+  "layouts": [
+    {
+      "id": "11e-priority-targets-vs-priority-targets-a",
+      "name": "Assets vs Assets 01",
+      "description": "Normalized from AssetsVsAssets01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "sweeping-engagement",
+      "terrainInstances": [
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 0,
+          "y": -3,
+          "rotationDeg": -270,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": 16,
+          "y": 0,
+          "rotationDeg": 42
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": 9.153999999999996,
+          "y": 4.609000000000002,
+          "rotationDeg": 312
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": -5,
+          "y": 12,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": -3.25,
+          "y": 14.5,
+          "rotationDeg": -37
+        },
+        {
+          "shapeId": "BigRect CD L 02-1f6a4e7057",
+          "x": 26,
+          "y": 18,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "LongLineTower flip-b698ed51f2",
+          "x": -13,
+          "y": 16.75,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "BigRect EF GH-45a732d828",
+          "x": -26,
+          "y": 4,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 0,
+          "y": 3,
+          "rotationDeg": -90,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": -16,
+          "y": 0,
+          "rotationDeg": 222
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": -9.154,
+          "y": -4.609000000000002,
+          "rotationDeg": 132
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": 5,
+          "y": -12,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": 3.25,
+          "y": -14.5,
+          "rotationDeg": -217
+        },
+        {
+          "shapeId": "BigRect CD L 02-1f6a4e7057",
+          "x": -26,
+          "y": -18,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "LongLineTower flip-b698ed51f2",
+          "x": 13,
+          "y": -16.75,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "BigRect EF GH-45a732d828",
+          "x": 26,
+          "y": -4,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        }
+      ]
+    },
+    {
+      "id": "11e-priority-targets-vs-priority-targets-b",
+      "name": "Assets vs Assets 02",
+      "description": "Normalized from AssetsVsAssets02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "crucible-of-battle",
+      "terrainInstances": [
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": -3,
+          "y": -13,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 9.357,
+          "y": 15.023,
+          "rotationDeg": 124
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 3,
+          "y": 0,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": 5.003,
+          "y": -17,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "LongLineTower flip-b698ed51f2",
+          "x": 25,
+          "y": -7,
+          "rotationDeg": 127
+        },
+        {
+          "shapeId": "BigRect CD L-2d3c062664",
+          "x": 24,
+          "y": 5.497,
+          "rotationDeg": -270,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": -3,
+          "y": 0,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-a6cac3222c",
+          "x": -4.960000000000001,
+          "y": -7.75,
+          "rotationDeg": 131
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": 3,
+          "y": 13,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -9.357,
+          "y": -15.022999999999996,
+          "rotationDeg": 304
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": -5.003,
+          "y": 17,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "LongLineTower flip-b698ed51f2",
+          "x": -25,
+          "y": 7,
+          "rotationDeg": 307
+        },
+        {
+          "shapeId": "BigRect CD L-2d3c062664",
+          "x": -24,
+          "y": -5.497,
+          "rotationDeg": -90,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-a6cac3222c",
+          "x": 4.960000000000001,
+          "y": 7.75,
+          "rotationDeg": -49
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-dedff602b5",
+          "x": 21.939,
+          "y": -14.289000000000001,
+          "rotationDeg": 122,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-dedff602b5",
+          "x": -21.939,
+          "y": 14.288999999999998,
+          "rotationDeg": 302,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        }
+      ]
+    },
+    {
+      "id": "11e-priority-targets-vs-priority-targets-c",
+      "name": "Assets vs Assets 03",
+      "description": "Normalized from AssetsVsAssets03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "tipping-point",
+      "terrainInstances": [
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -9.883,
+          "y": -1.1110000000000007,
+          "rotationDeg": 212
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": -3,
+          "y": 0,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect CD L 02 Flip-1a211257d3",
+          "x": -16,
+          "y": -18,
+          "rotationDeg": -270,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": -9,
+          "y": -13,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": -1,
+          "y": -17,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "BigRect CD GH 01-275024527e",
+          "x": 4.497,
+          "y": -18,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": 17.997,
+          "y": -0.4969999999999999,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": 14.122999999999998,
+          "y": -5.6739999999999995,
+          "rotationDeg": -238
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 9.882999999999996,
+          "y": 1.1110000000000007,
+          "rotationDeg": 32
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 3,
+          "y": 0,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect CD L 02 Flip-1a211257d3",
+          "x": 16,
+          "y": 18,
+          "rotationDeg": -90,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": 9,
+          "y": 13,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": 1,
+          "y": 17,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "BigRect CD GH 01-275024527e",
+          "x": -4.497,
+          "y": 18,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": -17.997,
+          "y": 0.4969999999999999,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": -14.123000000000001,
+          "y": 5.6739999999999995,
+          "rotationDeg": -58
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-priority-targets-a",
+      "name": "Disrupt vs Assets 01",
+      "description": "Normalized from DisruptVsAssets01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "sweeping-engagement",
+      "terrainInstances": [
+        {
+          "shapeId": "ShortLine Pipe Flip-981dc6c87b",
+          "x": -20,
+          "y": -4,
+          "rotationDeg": 33
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": -10,
+          "y": 17,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "BigRect EF L 01-e9d4f5dd66",
+          "x": 26,
+          "y": 18,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -0.9969999999999999,
+          "y": 10,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 0,
+          "y": -3,
+          "rotationDeg": 90,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect EF GH mirror flip-634b7609e9",
+          "x": -13.497,
+          "y": 12,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": -2.546999999999997,
+          "y": 16.681,
+          "rotationDeg": -49
+        },
+        {
+          "shapeId": "SmallRect L flip-9afc5b1efe",
+          "x": 17,
+          "y": 2,
+          "rotationDeg": 123
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-981dc6c87b",
+          "x": 20,
+          "y": 4,
+          "rotationDeg": 213
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": 10,
+          "y": -17,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 0,
+          "y": 3,
+          "rotationDeg": 270,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect EF GH mirror flip-634b7609e9",
+          "x": 13.497,
+          "y": -12,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "SmallRect L flip-9afc5b1efe",
+          "x": -17,
+          "y": -2,
+          "rotationDeg": 303
+        },
+        {
+          "shapeId": "BigRect EF L 01-e9d4f5dd66",
+          "x": -26,
+          "y": -18,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 0.9969999999999999,
+          "y": -10,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": 2.546999999999997,
+          "y": -16.680999999999997,
+          "rotationDeg": 131
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-priority-targets-b",
+      "name": "Disrupt vs Assets 02",
+      "description": "Normalized from DisruptVsAssets02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "tipping-point",
+      "terrainInstances": [
+        {
+          "shapeId": "SmallRect Generator flip-c3397fe7e2",
+          "x": -3,
+          "y": 0,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": -0.9770000000000003,
+          "y": 18.111,
+          "rotationDeg": -75
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": 23,
+          "y": 13,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "BigRect EF L 01-e9d4f5dd66",
+          "x": 23,
+          "y": 8,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": 21,
+          "y": -13,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "BigRect CD GH 03-e3644c5023",
+          "x": 16,
+          "y": -11,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "SmallRect Generator flip-c3397fe7e2",
+          "x": 3,
+          "y": 0,
+          "rotationDeg": -180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": 0.9769999999999968,
+          "y": -18.111000000000004,
+          "rotationDeg": -255
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": -23,
+          "y": -13,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": 10.807000000000002,
+          "y": -3.762999999999998,
+          "rotationDeg": 108
+        },
+        {
+          "shapeId": "BigRect EF L 01-e9d4f5dd66",
+          "x": -23,
+          "y": -8,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": -21,
+          "y": 13,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect CD GH 03-e3644c5023",
+          "x": -16,
+          "y": 11,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": -10.807000000000002,
+          "y": 3.762999999999998,
+          "rotationDeg": 288
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": 17.003,
+          "y": 12.997,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": -17.003,
+          "y": -12.997,
+          "rotationDeg": 270
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-priority-targets-c",
+      "name": "Disrupt vs Assets 03",
+      "description": "Normalized from DisruptVsAssets03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "search-and-destroy",
+      "terrainInstances": [
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": 15.997,
+          "y": -1,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": 26,
+          "y": -1,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-a6cac3222c",
+          "x": 1.5249999999999986,
+          "y": 10.365,
+          "rotationDeg": -34
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": -1,
+          "y": 13,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": -6.997,
+          "y": 10.997,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": -3,
+          "y": 0,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect CD GH 03 flip-26752f9b97",
+          "x": 24.057000000000002,
+          "y": -9.17100000000001,
+          "rotationDeg": 164,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": -15.997,
+          "y": 1,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": -26,
+          "y": 1,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-a6cac3222c",
+          "x": -1.5249999999999986,
+          "y": -10.365000000000002,
+          "rotationDeg": 146
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": 1,
+          "y": -13,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": 6.997,
+          "y": -10.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 3,
+          "y": 0,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect CD GH 03 flip-26752f9b97",
+          "x": -24.057,
+          "y": 9.171,
+          "rotationDeg": 344,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "BigRect EF L 02-bed78246ff",
+          "x": 14.497,
+          "y": 9.997,
+          "rotationDeg": 0,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "BigRect EF L 02-bed78246ff",
+          "x": -14.497,
+          "y": -9.997,
+          "rotationDeg": 180,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-disruption-a",
+      "name": "Disrupt vs Disrupt 01",
+      "description": "Normalized from DisruptVsDisrupt01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "crucible-of-battle",
+      "terrainInstances": [
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": -10,
+          "y": -7.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": -5,
+          "y": 10.997,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": 5,
+          "y": -10.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": -1,
+          "y": -13,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "Triangle AB Corner 02-67f6e3ef2f",
+          "x": -2.5,
+          "y": -7.5,
+          "rotationDeg": 32,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect CD GH 04-0d01bc1274",
+          "x": -10.666,
+          "y": 8.593999999999998,
+          "rotationDeg": 125,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": -15.983,
+          "y": -1.4110000000000014,
+          "rotationDeg": 94
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": -13.5,
+          "y": -7.997,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "BigRect EF L 01-e9d4f5dd66",
+          "x": -25.924,
+          "y": -7.140000000000001,
+          "rotationDeg": -59,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": 1,
+          "y": 13,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "Triangle AB Corner 02-67f6e3ef2f",
+          "x": 2,
+          "y": 7,
+          "rotationDeg": 212,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect CD GH 04-0d01bc1274",
+          "x": 10.665999999999997,
+          "y": -8.594000000000005,
+          "rotationDeg": -55,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 15.983000000000004,
+          "y": 1.4110000000000014,
+          "rotationDeg": -86
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": 13.5,
+          "y": 7.997,
+          "rotationDeg": -180
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": 10,
+          "y": 7.997,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "BigRect EF L 01-e9d4f5dd66",
+          "x": 25.924,
+          "y": 7.140000000000001,
+          "rotationDeg": -239,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-disruption-b",
+      "name": "Disrupt vs Disrupt 02",
+      "description": "Normalized from DisruptVsDisrupt02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "tipping-point",
+      "terrainInstances": [
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": -5,
+          "y": 5.753,
+          "rotationDeg": 270,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect CD GH 04-0d01bc1274",
+          "x": 9,
+          "y": -6.497,
+          "rotationDeg": 270,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": 3,
+          "y": -17,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": -5,
+          "y": -13,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": -11.041,
+          "y": -4.876000000000001,
+          "rotationDeg": 245
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -16.187,
+          "y": -1.7850000000000001,
+          "rotationDeg": 329
+        },
+        {
+          "shapeId": "BigRect CD L 02 mirror-669b38106e",
+          "x": -18,
+          "y": -16,
+          "rotationDeg": 90,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": -22,
+          "y": 8,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "BigRect CD GH 04-0d01bc1274",
+          "x": -9,
+          "y": 6.497,
+          "rotationDeg": 90,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": 5,
+          "y": -5.753,
+          "rotationDeg": 90,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": -3,
+          "y": 17,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": 5,
+          "y": 13,
+          "rotationDeg": -180
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": 11.040999999999997,
+          "y": 4.876000000000001,
+          "rotationDeg": 65
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 16.186999999999998,
+          "y": 1.7850000000000001,
+          "rotationDeg": 149
+        },
+        {
+          "shapeId": "BigRect CD L 02 mirror-669b38106e",
+          "x": 18,
+          "y": 16,
+          "rotationDeg": 270,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 22,
+          "y": -8,
+          "rotationDeg": -270
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-disruption-c",
+      "name": "Disrupt vs Disrupt 03",
+      "description": "Normalized from DisruptVsDisrupt03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "sweeping-engagement",
+      "terrainInstances": [
+        {
+          "shapeId": "BigRect CD L 05-141a9c2323",
+          "x": -25,
+          "y": -17,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": -5.753,
+          "y": -5,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": -13.497,
+          "y": -9.997000000000003,
+          "rotationDeg": -24
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": 2,
+          "y": -17,
+          "rotationDeg": 52
+        },
+        {
+          "shapeId": "ShortLine Barrier-42b12c25c8",
+          "x": 5.695999999999998,
+          "y": -12.269999999999996,
+          "rotationDeg": -39
+        },
+        {
+          "shapeId": "SmallRect L flip-9afc5b1efe",
+          "x": 15.997,
+          "y": -18.003,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "BigRect EF GH 03-ee9703789a",
+          "x": 25,
+          "y": -11.503,
+          "rotationDeg": 90,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 11.997,
+          "y": 0,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": 5.753,
+          "y": 5,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": 13.497,
+          "y": 9.997,
+          "rotationDeg": -204
+        },
+        {
+          "shapeId": "BigRect CD L 05-141a9c2323",
+          "x": 25,
+          "y": 17,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": -2,
+          "y": 17,
+          "rotationDeg": -128
+        },
+        {
+          "shapeId": "ShortLine Barrier-42b12c25c8",
+          "x": -5.695999999999998,
+          "y": 12.27,
+          "rotationDeg": -219
+        },
+        {
+          "shapeId": "SmallRect L flip-9afc5b1efe",
+          "x": -15.997,
+          "y": 18.003,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "BigRect EF GH 03-ee9703789a",
+          "x": -25,
+          "y": 11.503,
+          "rotationDeg": -90,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": -11.997,
+          "y": 0,
+          "rotationDeg": -180
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-reconnaissance-a",
+      "name": "Disrupt vs Recon 01",
+      "description": "Normalized from DisruptVsRecon01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "tipping-point",
+      "terrainInstances": [
+        {
+          "shapeId": "BigRect EF L 02-bed78246ff",
+          "x": 12.497,
+          "y": 0.9969999999999999,
+          "rotationDeg": 0,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": 16,
+          "y": 12.997,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": 22.003,
+          "y": 12.997,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "BigRect CD GH 01-275024527e",
+          "x": 5.497,
+          "y": -18,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": 17,
+          "y": -0.9939999999999998,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": -7.5,
+          "y": -12,
+          "rotationDeg": -8
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 0,
+          "y": -17,
+          "rotationDeg": 82
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-a6cac3222c",
+          "x": 0,
+          "y": 2,
+          "rotationDeg": -215,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect EF L 02-bed78246ff",
+          "x": -12.497,
+          "y": -0.9969999999999999,
+          "rotationDeg": 180,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": -16,
+          "y": -12.997,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": -22.003,
+          "y": -12.997,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 7.5,
+          "y": 12,
+          "rotationDeg": 172
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 0,
+          "y": 17,
+          "rotationDeg": 262
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-a6cac3222c",
+          "x": 0,
+          "y": -2,
+          "rotationDeg": -35,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "BigRect CD GH 01-275024527e",
+          "x": -5.497,
+          "y": 18,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": -17,
+          "y": 0.9939999999999998,
+          "rotationDeg": 90
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-reconnaissance-b",
+      "name": "Disrupt vs Recon 02",
+      "description": "Normalized from DisruptVsRecon02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "dawn-of-war",
+      "terrainInstances": [
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": -10.892,
+          "y": 16.72,
+          "rotationDeg": -148
+        },
+        {
+          "shapeId": "BigRect CD L 03-12baa4d1c3",
+          "x": 12.497,
+          "y": 10.997,
+          "rotationDeg": 0,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-840d7f47af",
+          "x": 0.9649999999999999,
+          "y": 12.730999999999998,
+          "rotationDeg": 134
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": -15.983,
+          "y": 13.539,
+          "rotationDeg": -228
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 6,
+          "y": 16,
+          "rotationDeg": 213
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": 2.503,
+          "y": 9,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": 13.962000000000003,
+          "y": 3.34,
+          "rotationDeg": -209
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-dedff602b5",
+          "x": 22.531999999999996,
+          "y": 3.681000000000001,
+          "rotationDeg": 219,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": 10.891999999999996,
+          "y": -16.72,
+          "rotationDeg": 32
+        },
+        {
+          "shapeId": "BigRect CD L 03-12baa4d1c3",
+          "x": -12.497,
+          "y": -10.997,
+          "rotationDeg": 180,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "SmallRect Generator-840d7f47af",
+          "x": -0.9649999999999999,
+          "y": -12.731000000000002,
+          "rotationDeg": 314
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": 15.983000000000004,
+          "y": -13.539000000000001,
+          "rotationDeg": -48
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -6,
+          "y": -16,
+          "rotationDeg": 33
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": -2.503,
+          "y": -9,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": -13.962,
+          "y": -3.34,
+          "rotationDeg": -29
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-dedff602b5",
+          "x": -22.532,
+          "y": -3.6809999999999974,
+          "rotationDeg": 39,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        }
+      ]
+    },
+    {
+      "id": "11e-disruption-vs-reconnaissance-c",
+      "name": "Disrupt vs Recon 03",
+      "description": "Normalized from DisruptVsRecon03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "search-and-destroy",
+      "terrainInstances": [
+        {
+          "shapeId": "BigRect CD L 05-141a9c2323",
+          "x": 20,
+          "y": 19,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 3,
+          "y": 15,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -2.997,
+          "y": 12.997,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": 2,
+          "y": 8,
+          "rotationDeg": 270,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": 25,
+          "y": 2,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": 14.997,
+          "y": 2,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "BigRect EF GH-45a732d828",
+          "x": 13.784999999999997,
+          "y": -9.593,
+          "rotationDeg": -37,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": 10.090000000000003,
+          "y": -14.323,
+          "rotationDeg": 52
+        },
+        {
+          "shapeId": "BigRect CD L 05-141a9c2323",
+          "x": -20,
+          "y": -19,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": -3,
+          "y": -15,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 2.997,
+          "y": -12.997,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": -2,
+          "y": -8,
+          "rotationDeg": 90,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": -25,
+          "y": -2,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": -14.997,
+          "y": -2,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect EF GH-45a732d828",
+          "x": -13.785,
+          "y": 9.593,
+          "rotationDeg": 143,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": -10.09,
+          "y": 14.323,
+          "rotationDeg": 232
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-priority-targets-a",
+      "name": "Purge vs Assets 01",
+      "description": "Normalized from PurgeVsAssets01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "dawn-of-war",
+      "terrainInstances": [
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": -21,
+          "y": -9,
+          "rotationDeg": 47
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": -0.06400000000000006,
+          "y": -9.082,
+          "rotationDeg": 38,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": -1.0079999999999991,
+          "y": -16.031,
+          "rotationDeg": 38
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": 10.611000000000004,
+          "y": -14.481000000000002,
+          "rotationDeg": 129
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": 13.997,
+          "y": -16,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-dedff602b5",
+          "x": 14.497,
+          "y": -9,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "BigRect CD L 03 flip-75b2fd46be",
+          "x": -7.497,
+          "y": -10.497,
+          "rotationDeg": 180,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 18.299999999999997,
+          "y": 3.3000000000000007,
+          "rotationDeg": 137
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 21,
+          "y": 8.999999999999998,
+          "rotationDeg": -133
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": 0.06400000000000006,
+          "y": 9.082,
+          "rotationDeg": 218,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": 1.0079999999999991,
+          "y": 16.031,
+          "rotationDeg": 218
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": -10.610999999999997,
+          "y": 14.481000000000002,
+          "rotationDeg": -51
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": -13.997,
+          "y": 16,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-dedff602b5",
+          "x": -14.497,
+          "y": 9,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "BigRect CD L 03 flip-75b2fd46be",
+          "x": 7.497,
+          "y": 10.497,
+          "rotationDeg": 0,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -18.3,
+          "y": -3.3000000000000007,
+          "rotationDeg": 317
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-priority-targets-b",
+      "name": "Purge vs Assets 02",
+      "description": "Normalized from PurgeVsAssets02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "search-and-destroy",
+      "terrainInstances": [
+        {
+          "shapeId": "Triangle AB Corner flip-a6cac3222c",
+          "x": -1,
+          "y": 8.999999999999998,
+          "rotationDeg": 231,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-dedff602b5",
+          "x": 16,
+          "y": -18,
+          "rotationDeg": -270,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": 23,
+          "y": 1,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 12.997,
+          "y": 1,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "BigRect CD L 05-141a9c2323",
+          "x": 26,
+          "y": 17,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-981dc6c87b",
+          "x": 8,
+          "y": 12,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": 2,
+          "y": 11.997,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 24,
+          "y": -12.003,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": -23,
+          "y": -1,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -12.997,
+          "y": -1,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "BigRect CD L 05-141a9c2323",
+          "x": -26,
+          "y": -17,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-981dc6c87b",
+          "x": -8,
+          "y": -12,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": -2,
+          "y": -11.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": -24,
+          "y": 12.003,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-a6cac3222c",
+          "x": 1,
+          "y": -9,
+          "rotationDeg": 51,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-dedff602b5",
+          "x": -16,
+          "y": 18,
+          "rotationDeg": -90,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-priority-targets-c",
+      "name": "Purge vs Assets 03",
+      "description": "Normalized from PurgeVsAssets03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "hammer-and-anvil",
+      "terrainInstances": [
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -5,
+          "y": -11.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": -11.003,
+          "y": -14,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "SmallRect L flip-9afc5b1efe",
+          "x": -21.006,
+          "y": -13.003,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-981dc6c87b",
+          "x": -17.003,
+          "y": -7,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "BigRect CD L 03-12baa4d1c3",
+          "x": -13.997,
+          "y": -4.503,
+          "rotationDeg": 90,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": -19,
+          "y": 18,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-dedff602b5",
+          "x": -11,
+          "y": 20,
+          "rotationDeg": -90,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-a6cac3222c",
+          "x": 4,
+          "y": 9,
+          "rotationDeg": 212,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 5,
+          "y": 11.997,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 11.003,
+          "y": 14,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "SmallRect L flip-9afc5b1efe",
+          "x": 21.006,
+          "y": 13.003,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-981dc6c87b",
+          "x": 17.003,
+          "y": 7,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "BigRect CD L 03-12baa4d1c3",
+          "x": 13.997,
+          "y": 4.503,
+          "rotationDeg": 270,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": 19,
+          "y": -18,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-dedff602b5",
+          "x": 11,
+          "y": -20,
+          "rotationDeg": -270,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-a6cac3222c",
+          "x": -4,
+          "y": -9,
+          "rotationDeg": 32,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-disruption-a",
+      "name": "Purge vs Disrupt 01",
+      "description": "Normalized from PurgeVsDisrupt01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "search-and-destroy",
+      "terrainInstances": [
+        {
+          "shapeId": "BigRect CD L 06-799d2db7a8",
+          "x": 25,
+          "y": 16,
+          "rotationDeg": -180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 11,
+          "y": 12.997,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 3,
+          "y": 13,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -5.003,
+          "y": 17,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 14,
+          "y": 0,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "LongLineTower flip-9e395c7dad",
+          "x": 24.003,
+          "y": 0,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "BigRect EF GH 02-6938bda4e6",
+          "x": 12,
+          "y": -17.363,
+          "rotationDeg": 17,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-b23c70149d",
+          "x": 0.75,
+          "y": -1.0399999999999991,
+          "rotationDeg": -41,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "BigRect CD L 06-799d2db7a8",
+          "x": -25,
+          "y": -16,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -11,
+          "y": -12.997,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -3,
+          "y": -13,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 5.003,
+          "y": -17,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -14,
+          "y": 0,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "LongLineTower flip-9e395c7dad",
+          "x": -24.003,
+          "y": 0,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "BigRect EF GH 02-6938bda4e6",
+          "x": -12,
+          "y": 17.363,
+          "rotationDeg": 197,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-b23c70149d",
+          "x": -0.75,
+          "y": 1.0399999999999991,
+          "rotationDeg": 139,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-disruption-b",
+      "name": "Purge vs Disrupt 02",
+      "description": "Normalized from PurgeVsDisrupt02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "tipping-point",
+      "terrainInstances": [
+        {
+          "shapeId": "BigRect EF L 02 flip-d338f54335",
+          "x": 12.497,
+          "y": 0.9969999999999999,
+          "rotationDeg": 0,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "SmallRect L flip-9afc5b1efe",
+          "x": 12,
+          "y": 19,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-981dc6c87b",
+          "x": 22.006,
+          "y": 12.997,
+          "rotationDeg": -180
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 6,
+          "y": 13,
+          "rotationDeg": -180
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 0,
+          "y": 10.997,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": 22,
+          "y": -13,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-dedff602b5",
+          "x": 16,
+          "y": -18,
+          "rotationDeg": 90,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-a6cac3222c",
+          "x": 9.305999999999997,
+          "y": -2.0730000000000004,
+          "rotationDeg": 128,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "BigRect EF L 02 flip-d338f54335",
+          "x": -12.497,
+          "y": -0.9969999999999999,
+          "rotationDeg": 180,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "SmallRect L flip-9afc5b1efe",
+          "x": -12,
+          "y": -19,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-981dc6c87b",
+          "x": -22.006,
+          "y": -12.997,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": -6,
+          "y": -13,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 0,
+          "y": -10.997,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "LongLine Tower-939acb8c1a",
+          "x": -22,
+          "y": 13,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-dedff602b5",
+          "x": -16,
+          "y": 18,
+          "rotationDeg": 270,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-a6cac3222c",
+          "x": -9.305999999999997,
+          "y": 2.0730000000000004,
+          "rotationDeg": 308,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-disruption-c",
+      "name": "Purge vs Disrupt 03",
+      "description": "Normalized from PurgeVsDisrupt03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "sweeping-engagement",
+      "terrainInstances": [
+        {
+          "shapeId": "BigRect CD L 05-141a9c2323",
+          "x": 25,
+          "y": 17,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": 2.198999999999998,
+          "y": 12.999,
+          "rotationDeg": 150
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 5.555999999999997,
+          "y": 17.975,
+          "rotationDeg": 236
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": -3.458999999999996,
+          "y": -5.997,
+          "rotationDeg": -5,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "LongLineTower flip-b698ed51f2",
+          "x": 15.989000000000004,
+          "y": 3.9800000000000004,
+          "rotationDeg": 143
+        },
+        {
+          "shapeId": "BigRect EF GH mirror flip-634b7609e9",
+          "x": 19.997,
+          "y": 3.6069999999999993,
+          "rotationDeg": 239,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": -13,
+          "y": 18,
+          "rotationDeg": 240
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": -22.154,
+          "y": 14.284,
+          "rotationDeg": -32
+        },
+        {
+          "shapeId": "BigRect CD L 05-141a9c2323",
+          "x": -25,
+          "y": -17,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "SmallRect Generator-11c0ed4927",
+          "x": -2.198999999999998,
+          "y": -12.997999999999998,
+          "rotationDeg": 330
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -5.556000000000001,
+          "y": -17.975,
+          "rotationDeg": 56
+        },
+        {
+          "shapeId": "Triangle AB Corner-adb9bb6949",
+          "x": 3.459000000000003,
+          "y": 5.997,
+          "rotationDeg": 175,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "LongLineTower flip-b698ed51f2",
+          "x": -15.989,
+          "y": -3.9800000000000004,
+          "rotationDeg": 323
+        },
+        {
+          "shapeId": "BigRect EF GH mirror flip-634b7609e9",
+          "x": -19.997,
+          "y": -3.6069999999999993,
+          "rotationDeg": 59,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "SmallRect L-48b53ae949",
+          "x": 13,
+          "y": -18,
+          "rotationDeg": 60
+        },
+        {
+          "shapeId": "ShortLine Pipe-b422061911",
+          "x": 22.153999999999996,
+          "y": -14.283999999999999,
+          "rotationDeg": 148
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-purge-the-foe-a",
+      "name": "Purge vs Purge 01",
+      "description": "Normalized from PurgeVsPurge01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "search-and-destroy",
+      "terrainInstances": [
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -20.997,
+          "y": 8.997,
+          "rotationDeg": -270,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "SmallRect L flip-643a7e09e8",
+          "x": -10.997,
+          "y": 11.997,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-7d0b9534fc",
+          "x": -4.997,
+          "y": 14,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "BigRect CD GH 02-ba9664334b",
+          "x": -12.503,
+          "y": 0.9969999999999999,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 3.0589999999999975,
+          "y": 12.742,
+          "rotationDeg": 63
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 12.049999999999997,
+          "y": 8.357,
+          "rotationDeg": 154
+        },
+        {
+          "shapeId": "BigRect EF L 01-e9d4f5dd66",
+          "x": 26,
+          "y": 17,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 13.216000000000001,
+          "y": 4.7379999999999995,
+          "rotationDeg": -59
+        },
+        {
+          "shapeId": "SmallRect L flip-643a7e09e8",
+          "x": 11,
+          "y": -11.997,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-7d0b9534fc",
+          "x": 4.997,
+          "y": -14,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "BigRect CD GH 02-ba9664334b",
+          "x": 12.503,
+          "y": -0.9969999999999999,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "SmallRect Generator UpDown-90fd9848a7",
+          "x": 20.997,
+          "y": -8.997,
+          "rotationDeg": 270,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -3.059000000000001,
+          "y": -12.742000000000004,
+          "rotationDeg": 243
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -12.05,
+          "y": -8.357,
+          "rotationDeg": 334
+        },
+        {
+          "shapeId": "BigRect EF L 01-e9d4f5dd66",
+          "x": -26,
+          "y": -17,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -13.216000000000001,
+          "y": -4.7379999999999995,
+          "rotationDeg": 121
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-purge-the-foe-b",
+      "name": "Purge vs Purge 02",
+      "description": "Normalized from PurgeVsPurge02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "tipping-point",
+      "terrainInstances": [
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -17.018,
+          "y": -17.097,
+          "rotationDeg": 76,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "BigRect EF L 02-7b343a20ab",
+          "x": -8.997,
+          "y": 8.497,
+          "rotationDeg": 90,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": -22.003,
+          "y": 15.006,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -22.503,
+          "y": 9.003,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 17.018,
+          "y": 17.097,
+          "rotationDeg": 256,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "BigRect EF L 02-7b343a20ab",
+          "x": 8.997,
+          "y": -8.497,
+          "rotationDeg": 270,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": 22.003,
+          "y": -15.006,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 22.503,
+          "y": -9.003,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 6.732999999999997,
+          "y": 0.8000000000000043,
+          "rotationDeg": 60
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 11.003,
+          "y": 11.997,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "BigRect CD GH 04-577c86df36",
+          "x": 3,
+          "y": 4.497,
+          "rotationDeg": -270,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect L UpDown-3614e21019",
+          "x": 12,
+          "y": -2,
+          "rotationDeg": 150
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -6.7330000000000005,
+          "y": -0.8000000000000043,
+          "rotationDeg": 240
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -11.003,
+          "y": -11.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "BigRect CD GH 04-577c86df36",
+          "x": -3,
+          "y": -4.497,
+          "rotationDeg": -90,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "SmallRect L UpDown-3614e21019",
+          "x": -12,
+          "y": 2,
+          "rotationDeg": 330
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-purge-the-foe-c",
+      "name": "Purge vs Purge 03",
+      "description": "Normalized from PurgeVsPurge03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "sweeping-engagement",
+      "terrainInstances": [
+        {
+          "shapeId": "BigRect EF L 01-e9d4f5dd66",
+          "x": -26,
+          "y": -17,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -22.941,
+          "y": 15.577,
+          "rotationDeg": 331
+        },
+        {
+          "shapeId": "SmallRect L flip-643a7e09e8",
+          "x": 20.17,
+          "y": 2.6819999999999986,
+          "rotationDeg": -226
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-7d0b9534fc",
+          "x": 22.817999999999998,
+          "y": 5.170000000000002,
+          "rotationDeg": 224
+        },
+        {
+          "shapeId": "SmallRect Generator flip-80b354b1f7",
+          "x": 25.75,
+          "y": -5.997,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "BigRect CD GH 05-c2885e414c",
+          "x": 2.997,
+          "y": 4,
+          "rotationDeg": 270,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 5.349000000000004,
+          "y": 10.65,
+          "rotationDeg": -219
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 7.134,
+          "y": 9.741,
+          "rotationDeg": 63
+        },
+        {
+          "shapeId": "BigRect EF L 01-e9d4f5dd66",
+          "x": 26,
+          "y": 17,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 22.941000000000003,
+          "y": -15.576999999999998,
+          "rotationDeg": 151
+        },
+        {
+          "shapeId": "SmallRect L flip-643a7e09e8",
+          "x": -20.17,
+          "y": -2.6819999999999986,
+          "rotationDeg": -46
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-7d0b9534fc",
+          "x": -22.818,
+          "y": -5.170000000000002,
+          "rotationDeg": 44
+        },
+        {
+          "shapeId": "SmallRect Generator flip-80b354b1f7",
+          "x": -25.75,
+          "y": 5.997,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "BigRect CD GH 05-c2885e414c",
+          "x": -2.997,
+          "y": -4,
+          "rotationDeg": 90,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -5.349,
+          "y": -10.649999999999999,
+          "rotationDeg": -39
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -7.134,
+          "y": -9.741000000000003,
+          "rotationDeg": 243
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-reconnaissance-a",
+      "name": "Purge vs Recon 01",
+      "description": "Normalized from PurgeVsRecon01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "hammer-and-anvil",
+      "terrainInstances": [
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -9.420000000000002,
+          "y": -8.294,
+          "rotationDeg": 284
+        },
+        {
+          "shapeId": "BigRect CD GH 01-275024527e",
+          "x": -0.5030000000000001,
+          "y": -18,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -23.003,
+          "y": -15,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 20.003,
+          "y": -17.006,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "BigRect EF L 03-c03e01fce1",
+          "x": 22,
+          "y": -2.503,
+          "rotationDeg": 90,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 9.003,
+          "y": -7.503,
+          "rotationDeg": 90,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 9.420000000000002,
+          "y": 8.294,
+          "rotationDeg": 104
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 17,
+          "y": 12.997,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 23.003,
+          "y": 15,
+          "rotationDeg": -180
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -20.003,
+          "y": 17.006,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect EF L 03-c03e01fce1",
+          "x": -22,
+          "y": 2.503,
+          "rotationDeg": 270,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -9.003,
+          "y": 7.503,
+          "rotationDeg": 270,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -17,
+          "y": -12.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "SmallRect Generator UpDown flip-965894e761",
+          "x": 13.997,
+          "y": -5,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect CD GH 01-275024527e",
+          "x": 0.5030000000000001,
+          "y": 18,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "SmallRect Generator UpDown flip-965894e761",
+          "x": -13.997,
+          "y": 5,
+          "rotationDeg": 90
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-reconnaissance-b",
+      "name": "Purge vs Recon 02",
+      "description": "Normalized from PurgeVsRecon02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "dawn-of-war",
+      "terrainInstances": [
+        {
+          "shapeId": "BigRect CD EF 01-c1d3f2a83e",
+          "x": -26,
+          "y": 1,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -14.4,
+          "y": 18,
+          "rotationDeg": 236
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -16.637,
+          "y": 14.684,
+          "rotationDeg": 146
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-b23c70149d",
+          "x": -0.8659999999999997,
+          "y": -2.1340000000000003,
+          "rotationDeg": -225,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 21.75,
+          "y": 6.75,
+          "rotationDeg": 139
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 24,
+          "y": 13,
+          "rotationDeg": 229
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 3.497,
+          "y": 11.997,
+          "rotationDeg": 163
+        },
+        {
+          "shapeId": "BigRect GH L 01-76472b1b0d",
+          "x": 3.497,
+          "y": 11.997,
+          "rotationDeg": 0,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "BigRect CD EF 01-c1d3f2a83e",
+          "x": 26,
+          "y": -1,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 14.399999999999999,
+          "y": -18,
+          "rotationDeg": 56
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 16.637,
+          "y": -14.683999999999997,
+          "rotationDeg": 326
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-b23c70149d",
+          "x": 0.8659999999999997,
+          "y": 2.1340000000000003,
+          "rotationDeg": -45,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -21.75,
+          "y": -6.75,
+          "rotationDeg": 319
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -24,
+          "y": -13,
+          "rotationDeg": 49
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -3.497,
+          "y": -11.997,
+          "rotationDeg": 343
+        },
+        {
+          "shapeId": "BigRect GH L 01-76472b1b0d",
+          "x": -3.497,
+          "y": -11.997,
+          "rotationDeg": 180,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        }
+      ]
+    },
+    {
+      "id": "11e-purge-the-foe-vs-reconnaissance-c",
+      "name": "Purge vs Recon 03",
+      "description": "Normalized from PurgeVsRecon03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "crucible-of-battle",
+      "terrainInstances": [
+        {
+          "shapeId": "BigRect EF L 03-c03e01fce1",
+          "x": 25,
+          "y": 3.497,
+          "rotationDeg": -270,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 14.617000000000004,
+          "y": 6.35,
+          "rotationDeg": 124
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 10.143,
+          "y": 12.983,
+          "rotationDeg": 34
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 0.7119999999999962,
+          "y": -6.977,
+          "rotationDeg": 33,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 22,
+          "y": -7.003,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "BigRect CD GH 04-577c86df36",
+          "x": 8.762,
+          "y": -8.379999999999999,
+          "rotationDeg": -56,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -1.9969999999999999,
+          "y": 9.997,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 4.006,
+          "y": 12,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "BigRect EF L 03-c03e01fce1",
+          "x": -25,
+          "y": -3.497,
+          "rotationDeg": -90,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -14.617,
+          "y": -6.350000000000001,
+          "rotationDeg": 304
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -10.143,
+          "y": -12.983000000000004,
+          "rotationDeg": 214
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -0.7119999999999962,
+          "y": 6.977,
+          "rotationDeg": 213,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -22,
+          "y": 7.003,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -4.006,
+          "y": -12,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 1.9969999999999999,
+          "y": -9.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "BigRect CD GH 04-577c86df36",
+          "x": -8.762,
+          "y": 8.379999999999999,
+          "rotationDeg": 124,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        }
+      ]
+    },
+    {
+      "id": "11e-reconnaissance-vs-priority-targets-a",
+      "name": "Recon vs Assets 01",
+      "description": "Normalized from ReconVsAssets01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "crucible-of-battle",
+      "terrainInstances": [
+        {
+          "shapeId": "BigRect CD L 02-1f6a4e7057",
+          "x": 26,
+          "y": 15,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 8.503,
+          "y": 9.997,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": 12.003,
+          "y": 9.997,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 1.0030000000000001,
+          "y": 12,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -5,
+          "y": 10,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-0e4f27a6c6",
+          "x": 23.736999999999995,
+          "y": -13.983000000000004,
+          "rotationDeg": 125,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 20.25,
+          "y": -2.0410000000000004,
+          "rotationDeg": -231
+        },
+        {
+          "shapeId": "Triangle AB Corner 02-3deb9480a8",
+          "x": 5.75,
+          "y": 5,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect CD L 02-1f6a4e7057",
+          "x": -26,
+          "y": -15,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -8.503,
+          "y": -9.997,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": -12.003,
+          "y": -9.997,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -1.0030000000000001,
+          "y": -12,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 5,
+          "y": -10,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-0e4f27a6c6",
+          "x": -23.737,
+          "y": 13.983,
+          "rotationDeg": 305,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -20.25,
+          "y": 2.0410000000000004,
+          "rotationDeg": -51
+        },
+        {
+          "shapeId": "Triangle AB Corner 02-3deb9480a8",
+          "x": -5.75,
+          "y": -5,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        }
+      ]
+    },
+    {
+      "id": "11e-reconnaissance-vs-priority-targets-b",
+      "name": "Recon vs Assets 02",
+      "description": "Normalized from ReconVsAssets02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "tipping-point",
+      "terrainInstances": [
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 0.9969999999999999,
+          "y": -10.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -5,
+          "y": -13,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "LongLineTower flip-9e395c7dad",
+          "x": -7.570999999999998,
+          "y": -17.394,
+          "rotationDeg": 104
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 23,
+          "y": -9.003,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": 15.997,
+          "y": -1.5060000000000002,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-0e4f27a6c6",
+          "x": 17,
+          "y": -17.003,
+          "rotationDeg": -270,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -0.9969999999999999,
+          "y": 10.997,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 5,
+          "y": 13,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "LongLineTower flip-9e395c7dad",
+          "x": 7.570999999999998,
+          "y": 17.394,
+          "rotationDeg": -76
+        },
+        {
+          "shapeId": "BigRect CD L 02 mirror-b9f94b2116",
+          "x": 15.997,
+          "y": 16,
+          "rotationDeg": 270,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -23,
+          "y": 9.003,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-0e4f27a6c6",
+          "x": -17,
+          "y": 17.003,
+          "rotationDeg": -90,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 5,
+          "y": -5.75,
+          "rotationDeg": 90,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": -15.997,
+          "y": 1.5060000000000002,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect CD L 02 mirror-b9f94b2116",
+          "x": -15.997,
+          "y": -16,
+          "rotationDeg": 90,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -5,
+          "y": 5.75,
+          "rotationDeg": 270,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        }
+      ]
+    },
+    {
+      "id": "11e-reconnaissance-vs-priority-targets-c",
+      "name": "Recon vs Assets 03",
+      "description": "Normalized from ReconVsAssets03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "sweeping-engagement",
+      "terrainInstances": [
+        {
+          "shapeId": "ShortLine Pipe Flip-7d0b9534fc",
+          "x": 21.024,
+          "y": 3.559000000000001,
+          "rotationDeg": 223
+        },
+        {
+          "shapeId": "BigRect CD L 05-2610f4ab09",
+          "x": 24,
+          "y": 17,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 4.8430000000000035,
+          "y": 10.697,
+          "rotationDeg": 135
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": 7.671999999999997,
+          "y": 16.358,
+          "rotationDeg": 225
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -5.75,
+          "y": -5,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect Generator flip-80b354b1f7",
+          "x": 18.094,
+          "y": 0.8599999999999994,
+          "rotationDeg": 133
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-0e4f27a6c6",
+          "x": -14.497,
+          "y": 13,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -8.494,
+          "y": 17.003,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "BigRect CD L 05-2610f4ab09",
+          "x": -24,
+          "y": -17,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -4.843,
+          "y": -10.697000000000003,
+          "rotationDeg": 315
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": -7.672000000000001,
+          "y": -16.358000000000004,
+          "rotationDeg": 45
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 5.75,
+          "y": 5,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect Generator flip-80b354b1f7",
+          "x": -18.094,
+          "y": -0.8599999999999994,
+          "rotationDeg": 313
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-7d0b9534fc",
+          "x": -21.024,
+          "y": -3.559000000000001,
+          "rotationDeg": 43
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-0e4f27a6c6",
+          "x": 14.497,
+          "y": -13,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 8.494,
+          "y": -17.003,
+          "rotationDeg": 0
+        }
+      ]
+    },
+    {
+      "id": "11e-reconnaissance-vs-reconnaissance-a",
+      "name": "Recon vs Recon 01",
+      "description": "Normalized from ReconVsRecon01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "sweeping-engagement",
+      "terrainInstances": [
+        {
+          "shapeId": "ShortLine Barrier-38c78b1792",
+          "x": -5.777999999999999,
+          "y": 12.335,
+          "rotationDeg": 142
+        },
+        {
+          "shapeId": "BigRect EF GH 03-1f5be0fe98",
+          "x": -25,
+          "y": 11.503,
+          "rotationDeg": -90,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "BigRect CD L 05-2610f4ab09",
+          "x": -25,
+          "y": -17,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "LongLine Tower-136039c3d8",
+          "x": -13.497,
+          "y": -9.997000000000003,
+          "rotationDeg": 336
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 2,
+          "y": -17,
+          "rotationDeg": 51
+        },
+        {
+          "shapeId": "ShortLine Barrier-38c78b1792",
+          "x": 5.777999999999999,
+          "y": -12.335,
+          "rotationDeg": 322
+        },
+        {
+          "shapeId": "SmallRect L flip-643a7e09e8",
+          "x": 15.997,
+          "y": -18.003,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "BigRect EF GH 03-1f5be0fe98",
+          "x": 25,
+          "y": -11.503,
+          "rotationDeg": -270,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -4.503,
+          "y": -7,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "BigRect CD L 05-2610f4ab09",
+          "x": 25,
+          "y": 17,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "LongLine Tower-136039c3d8",
+          "x": 13.497,
+          "y": 9.997,
+          "rotationDeg": 156
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -2,
+          "y": 17,
+          "rotationDeg": 231
+        },
+        {
+          "shapeId": "SmallRect L flip-643a7e09e8",
+          "x": -15.997,
+          "y": 18.003,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "SmallRect Generator UpDown-90fd9848a7",
+          "x": -11.994,
+          "y": 0,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 4.503,
+          "y": 7,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect Generator UpDown-90fd9848a7",
+          "x": 11.994,
+          "y": 0,
+          "rotationDeg": 0
+        }
+      ]
+    },
+    {
+      "id": "11e-reconnaissance-vs-reconnaissance-b",
+      "name": "Recon vs Recon 02",
+      "description": "Normalized from ReconVsRecon02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "crucible-of-battle",
+      "terrainInstances": [
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -10,
+          "y": -7.997,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": -13.5,
+          "y": -7.997,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -1,
+          "y": -13,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 4.997,
+          "y": -10.997,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect CD GH 04-577c86df36",
+          "x": -10.666,
+          "y": 8.593999999999998,
+          "rotationDeg": 125,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 1,
+          "y": 13,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": 13.5,
+          "y": 7.997,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 10,
+          "y": 7.997,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -4.997,
+          "y": 10.997,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "BigRect EF L 01-e9d4f5dd66",
+          "x": 25.924,
+          "y": 7.140000000000001,
+          "rotationDeg": 121,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "BigRect CD GH 04-577c86df36",
+          "x": 10.665999999999997,
+          "y": -8.594000000000005,
+          "rotationDeg": -55,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "SmallRect Generator UpDown-90fd9848a7",
+          "x": 15.983000000000004,
+          "y": 1.4110000000000014,
+          "rotationDeg": 274
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 0.0400000000000027,
+          "y": -5.682000000000002,
+          "rotationDeg": 30,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "BigRect EF L 01-e9d4f5dd66",
+          "x": -25.924,
+          "y": -7.140000000000001,
+          "rotationDeg": 301,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "SmallRect Generator UpDown-90fd9848a7",
+          "x": -15.983,
+          "y": -1.4110000000000014,
+          "rotationDeg": 94
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -0.03999999999999915,
+          "y": 5.682000000000002,
+          "rotationDeg": 210,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        }
+      ]
+    },
+    {
+      "id": "11e-reconnaissance-vs-reconnaissance-c",
+      "name": "Recon vs Recon 03",
+      "description": "Normalized from ReconVsRecon03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "tipping-point",
+      "terrainInstances": [
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 22,
+          "y": -8.003,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "BigRect CD GH 04-577c86df36",
+          "x": -8.997,
+          "y": 6.497,
+          "rotationDeg": 90,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -5.023000000000003,
+          "y": 7.111000000000001,
+          "rotationDeg": 255,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 3,
+          "y": -17,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -5.003,
+          "y": -13,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -10.865000000000002,
+          "y": -4.911999999999999,
+          "rotationDeg": 244
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -16.199999999999996,
+          "y": -1.7330000000000005,
+          "rotationDeg": 330
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -22,
+          "y": 8.003,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect GH L 01-76472b1b0d",
+          "x": -17.997,
+          "y": -16,
+          "rotationDeg": 90,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "BigRect CD GH 04-577c86df36",
+          "x": 8.997,
+          "y": -6.497,
+          "rotationDeg": 270,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -3,
+          "y": 17,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 5.003,
+          "y": 13,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 10.865000000000002,
+          "y": 4.911999999999999,
+          "rotationDeg": 64
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 16.200000000000003,
+          "y": 1.7330000000000005,
+          "rotationDeg": 150
+        },
+        {
+          "shapeId": "BigRect GH L 01-76472b1b0d",
+          "x": 17.997,
+          "y": 16,
+          "rotationDeg": 270,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 5.022999999999996,
+          "y": -7.111000000000001,
+          "rotationDeg": 75,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-priority-targets-a",
+      "name": "Take vs Prio 01",
+      "description": "Normalized from TakeVsAssets01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "crucible-of-battle",
+      "terrainInstances": [
+        {
+          "shapeId": "BigRect CD L-881347e924",
+          "x": -25,
+          "y": -5.497,
+          "rotationDeg": -90,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "BigRect EF GH-fe1d029515",
+          "x": -8.666,
+          "y": 9.593999999999998,
+          "rotationDeg": 125,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -23,
+          "y": 5,
+          "rotationDeg": -53
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 3.997,
+          "y": -12,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -13.628,
+          "y": -7.207999999999998,
+          "rotationDeg": -53
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -4.803000000000001,
+          "y": -15.591000000000001,
+          "rotationDeg": -233
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -2.997,
+          "y": -7.503,
+          "rotationDeg": -270,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -2,
+          "y": -14,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "BigRect CD L-881347e924",
+          "x": 25,
+          "y": 5.497,
+          "rotationDeg": 90,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "BigRect EF GH-fe1d029515",
+          "x": 8.665999999999997,
+          "y": -9.594000000000005,
+          "rotationDeg": 305,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 23,
+          "y": -5,
+          "rotationDeg": 127
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -3.997,
+          "y": 12,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 13.628,
+          "y": 7.208,
+          "rotationDeg": 127
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 4.802999999999997,
+          "y": 15.591,
+          "rotationDeg": -53
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 2.997,
+          "y": 7.503,
+          "rotationDeg": -90,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 2,
+          "y": 14,
+          "rotationDeg": 180
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-priority-targets-b",
+      "name": "Take vs Prio 02",
+      "description": "Normalized from TakeVsAssets02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "hammer-and-anvil",
+      "terrainInstances": [
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -3.9349999999999987,
+          "y": 3.9819999999999993,
+          "rotationDeg": 239,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -13.003,
+          "y": -14,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -7,
+          "y": -11.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "BigRect CD L-881347e924",
+          "x": -23,
+          "y": -4.497,
+          "rotationDeg": -90,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 7,
+          "y": 11.997,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 3.9350000000000023,
+          "y": -3.9819999999999993,
+          "rotationDeg": 59,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 13.003,
+          "y": 14,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 17.503,
+          "y": -10.003,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "BigRect CD L-881347e924",
+          "x": 23,
+          "y": 4.497,
+          "rotationDeg": 90,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "BigRect CD GH 01-275024527e",
+          "x": -0.5,
+          "y": -19,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "BigRect CD GH 01-275024527e",
+          "x": 0.5,
+          "y": 19,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 21.506,
+          "y": -16.006,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -17.503,
+          "y": 10.003,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -21.506,
+          "y": 16.006,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 6,
+          "y": -4,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -6,
+          "y": 4,
+          "rotationDeg": 90
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-priority-targets-c",
+      "name": "Take vs Prio 03",
+      "description": "Normalized from TakeVsAssets03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "dawn-of-war",
+      "terrainInstances": [
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -7.801000000000002,
+          "y": 12.528,
+          "rotationDeg": 343
+        },
+        {
+          "shapeId": "BigRect EF GH-fe1d029515",
+          "x": 26,
+          "y": -0.9969999999999999,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "BigRect CD L 03-ad0db1c213",
+          "x": -2.497,
+          "y": -11.997,
+          "rotationDeg": 180,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-b23c70149d",
+          "x": -10.750999999999998,
+          "y": 2.9619999999999997,
+          "rotationDeg": -60,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -18,
+          "y": 15,
+          "rotationDeg": -222
+        },
+        {
+          "shapeId": "SmallRect Generator flip-80b354b1f7",
+          "x": -18.818,
+          "y": -5.699999999999999,
+          "rotationDeg": -62
+        },
+        {
+          "shapeId": "BigRect CD L 03-ad0db1c213",
+          "x": 2.497,
+          "y": 11.997,
+          "rotationDeg": 0,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "BigRect EF GH-fe1d029515",
+          "x": -26,
+          "y": 0.9969999999999999,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 7.801000000000002,
+          "y": -12.527999999999999,
+          "rotationDeg": 163
+        },
+        {
+          "shapeId": "Triangle AB Corner flip-b23c70149d",
+          "x": 10.752000000000002,
+          "y": -2.9620000000000033,
+          "rotationDeg": 120,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": -23,
+          "y": -8,
+          "rotationDeg": 28
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -12.359000000000002,
+          "y": 17.053,
+          "rotationDeg": -160
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 18,
+          "y": -15,
+          "rotationDeg": -42
+        },
+        {
+          "shapeId": "SmallRect Generator flip-80b354b1f7",
+          "x": 18.817999999999998,
+          "y": 5.699999999999999,
+          "rotationDeg": 118
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 12.359000000000002,
+          "y": -17.052999999999997,
+          "rotationDeg": 20
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": 23,
+          "y": 8,
+          "rotationDeg": 208
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-disruption-a",
+      "name": "Take vs Disrupt 01",
+      "description": "Normalized from TakeVsDisrupt01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "sweeping-engagement",
+      "terrainInstances": [
+        {
+          "shapeId": "BigRect EF GH 02-6938bda4e6",
+          "x": -13.497,
+          "y": 12.003,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 3.4949999999999974,
+          "y": 10.979,
+          "rotationDeg": 143
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 7.956000000000003,
+          "y": 14.996,
+          "rotationDeg": 222
+        },
+        {
+          "shapeId": "SmallRect Generator flip-80b354b1f7",
+          "x": 19.39,
+          "y": 2.905999999999999,
+          "rotationDeg": 137
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": 22.634,
+          "y": 5.465,
+          "rotationDeg": 221
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -5.75,
+          "y": -5,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -3.495000000000001,
+          "y": -10.979,
+          "rotationDeg": -37
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -7.9559999999999995,
+          "y": -14.996000000000002,
+          "rotationDeg": 42
+        },
+        {
+          "shapeId": "BigRect EF GH 02-6938bda4e6",
+          "x": 13.497,
+          "y": -12.003,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 5.75,
+          "y": 5,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect L 02-3c82f67dea",
+          "x": -13.25,
+          "y": 19,
+          "rotationDeg": 203
+        },
+        {
+          "shapeId": "BigRect CD L 05-2610f4ab09",
+          "x": 25,
+          "y": 18,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "SmallRect L 02-3c82f67dea",
+          "x": 13.25,
+          "y": -19,
+          "rotationDeg": 23
+        },
+        {
+          "shapeId": "BigRect CD L 05-2610f4ab09",
+          "x": -25,
+          "y": -18,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "SmallRect Generator flip-80b354b1f7",
+          "x": -19.39,
+          "y": -2.905999999999999,
+          "rotationDeg": 317
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": -22.634,
+          "y": -5.465,
+          "rotationDeg": 41
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-disruption-b",
+      "name": "Take vs Disrupt 02",
+      "description": "Normalized from TakeVsDisrupt02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "crucible-of-battle",
+      "terrainInstances": [
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 11.695999999999998,
+          "y": 9.168,
+          "rotationDeg": 118
+        },
+        {
+          "shapeId": "BigRect EF GH-fe1d029515",
+          "x": 10.665999999999997,
+          "y": -8.594000000000005,
+          "rotationDeg": -55,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 16.037999999999997,
+          "y": -1.2149999999999999,
+          "rotationDeg": -56
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 12.680999999999997,
+          "y": 3.7620000000000005,
+          "rotationDeg": -56
+        },
+        {
+          "shapeId": "BigRect CD L 02-1f6a4e7057",
+          "x": 26,
+          "y": 17,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -11.695999999999998,
+          "y": -9.168,
+          "rotationDeg": -62
+        },
+        {
+          "shapeId": "Triangle AB Corner 02-3deb9480a8",
+          "x": -5.75,
+          "y": -5,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner 02-3deb9480a8",
+          "x": 5.75,
+          "y": 5,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -16.038,
+          "y": 1.2149999999999963,
+          "rotationDeg": -236
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -12.680999999999997,
+          "y": -3.7620000000000005,
+          "rotationDeg": -236
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -3.997,
+          "y": 11.997,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "SmallRect Generator UpDown-90fd9848a7",
+          "x": 2,
+          "y": 13,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "BigRect EF GH-fe1d029515",
+          "x": -10.666,
+          "y": 8.593999999999998,
+          "rotationDeg": 125,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "BigRect CD L 02-1f6a4e7057",
+          "x": -26,
+          "y": -17,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 3.997,
+          "y": -11.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "SmallRect Generator UpDown-90fd9848a7",
+          "x": -2,
+          "y": -13,
+          "rotationDeg": 0
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-disruption-c",
+      "name": "Take vs Disrupt 03",
+      "description": "Normalized from TakeVsDisrupt03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "hammer-and-anvil",
+      "terrainInstances": [
+        {
+          "shapeId": "BigRect CD L 03-ad0db1c213",
+          "x": -12.997,
+          "y": -6,
+          "rotationDeg": -270,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -19,
+          "y": -9.994,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -19,
+          "y": -11.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "SmallRect Generator flip-80b354b1f7",
+          "x": -6,
+          "y": -10.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "Triangle AB Corner 02-3deb9480a8",
+          "x": -5.75,
+          "y": -5,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect CD L 03-ad0db1c213",
+          "x": 12.997,
+          "y": 6,
+          "rotationDeg": -90,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 19,
+          "y": -18,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 19,
+          "y": 9.994,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 19,
+          "y": 11.997,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "SmallRect Generator flip-80b354b1f7",
+          "x": 6,
+          "y": 10.997,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": 11,
+          "y": 11,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "Triangle AB Corner 02-3deb9480a8",
+          "x": 5.75,
+          "y": 5,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -19,
+          "y": 18,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-0e4f27a6c6",
+          "x": 11,
+          "y": -20,
+          "rotationDeg": 90,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": -11,
+          "y": -11,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-0e4f27a6c6",
+          "x": -11,
+          "y": 20,
+          "rotationDeg": 270,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-purge-the-foe-a",
+      "name": "Take vs Purge 01",
+      "description": "Normalized from TakeVsPurge01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "sweeping-engagement",
+      "terrainInstances": [
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": -20,
+          "y": -4.100000000000001,
+          "rotationDeg": 42
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 3.4170000000000016,
+          "y": 5.597999999999999,
+          "rotationDeg": 173,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect CD L 05-2610f4ab09",
+          "x": 24,
+          "y": 17,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "BigRect EF GH-fe1d029515",
+          "x": -25,
+          "y": 4.997,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -13.497,
+          "y": 18.003,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -7.023,
+          "y": 16.991,
+          "rotationDeg": -43
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 6.4609999999999985,
+          "y": 16.017,
+          "rotationDeg": 222
+        },
+        {
+          "shapeId": "SmallRect Generator flip-80b354b1f7",
+          "x": 17.016999999999996,
+          "y": 1.5390000000000015,
+          "rotationDeg": -228
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": 20,
+          "y": 4.100000000000001,
+          "rotationDeg": -138
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -3.4170000000000016,
+          "y": -5.597999999999999,
+          "rotationDeg": -7,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "BigRect CD L 05-2610f4ab09",
+          "x": -24,
+          "y": -17,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "BigRect EF GH-fe1d029515",
+          "x": 25,
+          "y": -4.997,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 13.497,
+          "y": -18.003,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 7.022999999999996,
+          "y": -16.991,
+          "rotationDeg": 137
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -6.4609999999999985,
+          "y": -16.016999999999996,
+          "rotationDeg": 42
+        },
+        {
+          "shapeId": "SmallRect Generator flip-80b354b1f7",
+          "x": -17.017,
+          "y": -1.5390000000000015,
+          "rotationDeg": -48
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-purge-the-foe-b",
+      "name": "Take vs Purge 02",
+      "description": "Normalized from TakeVsPurge02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "search-and-destroy",
+      "terrainInstances": [
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": -21,
+          "y": 0,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-0e4f27a6c6",
+          "x": -23,
+          "y": 18,
+          "rotationDeg": 270,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 2.110999999999997,
+          "y": 6.977,
+          "rotationDeg": 195,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect L flip-643a7e09e8",
+          "x": 4,
+          "y": 11.997,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 3.6529999999999987,
+          "y": -10.945999999999998,
+          "rotationDeg": -50
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-7d0b9534fc",
+          "x": 10.003,
+          "y": 11.997,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "BigRect CD L 05-2610f4ab09",
+          "x": 25,
+          "y": 17,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 15,
+          "y": -0.0030000000000001137,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Barrier flip-dc3d7b2ef7",
+          "x": 21,
+          "y": 0,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-0e4f27a6c6",
+          "x": 23,
+          "y": -18,
+          "rotationDeg": 90,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -2.110999999999997,
+          "y": -6.977,
+          "rotationDeg": 15,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "SmallRect L flip-643a7e09e8",
+          "x": -4,
+          "y": -11.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -3.6529999999999987,
+          "y": 10.946,
+          "rotationDeg": 130
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-7d0b9534fc",
+          "x": -10.003,
+          "y": -11.997,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "BigRect CD L 05-2610f4ab09",
+          "x": -25,
+          "y": -17,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -15,
+          "y": 0.0030000000000001137,
+          "rotationDeg": 270
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-purge-the-foe-c",
+      "name": "Take vs Purge 03",
+      "description": "Normalized from TakeVsPurge03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "hammer-and-anvil",
+      "terrainInstances": [
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -7.997,
+          "y": 4.327999999999999,
+          "rotationDeg": 280,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -11,
+          "y": -14,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -5.003,
+          "y": -11.997,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect EF GH-fe1d029515",
+          "x": 3.997,
+          "y": -8.497,
+          "rotationDeg": 270,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 14,
+          "y": -5.003,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "BigRect CD L-881347e924",
+          "x": 23,
+          "y": 5.497,
+          "rotationDeg": 90,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 17.983000000000004,
+          "y": -11.460999999999999,
+          "rotationDeg": 48
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 16.617000000000004,
+          "y": -12.926000000000002,
+          "rotationDeg": -43
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 7.997,
+          "y": -4.327999999999999,
+          "rotationDeg": 100,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-2"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 11,
+          "y": 14,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 5.003,
+          "y": 11.997,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "BigRect EF GH-fe1d029515",
+          "x": -3.997,
+          "y": 8.497,
+          "rotationDeg": 90,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -14,
+          "y": 5.003,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect CD L-881347e924",
+          "x": -23,
+          "y": -5.497,
+          "rotationDeg": 270,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -17.983,
+          "y": 11.461,
+          "rotationDeg": 228
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -16.617,
+          "y": 12.926,
+          "rotationDeg": 137
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-reconnaissance-a",
+      "name": "Take vs Recon 01",
+      "description": "Normalized from TakeVsRecon01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "tipping-point",
+      "terrainInstances": [
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -15,
+          "y": -2,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "Triangle AB Corner 02-3deb9480a8",
+          "x": 5.75,
+          "y": 5,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect CD L 02 mirror-b9f94b2116",
+          "x": 17.997,
+          "y": 15,
+          "rotationDeg": -90,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 10.997,
+          "y": 8.003,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 15,
+          "y": 2,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "Triangle AB Corner 02-3deb9480a8",
+          "x": -5.75,
+          "y": -5,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect CD L 02 mirror-b9f94b2116",
+          "x": -17.997,
+          "y": -15,
+          "rotationDeg": -270,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 1.9969999999999999,
+          "y": -11,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-7d0b9534fc",
+          "x": -4,
+          "y": -12.003,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -10.997,
+          "y": -8.003,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect EF GH-fe1d029515",
+          "x": -9.997,
+          "y": 6.497,
+          "rotationDeg": 90,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "BigRect EF GH-fe1d029515",
+          "x": 9.997,
+          "y": -6.497,
+          "rotationDeg": 270,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 21.003,
+          "y": -6.497,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -1.9969999999999999,
+          "y": 11,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-7d0b9534fc",
+          "x": 4,
+          "y": 12.003,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -21.003,
+          "y": 6.497,
+          "rotationDeg": -90
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-reconnaissance-b",
+      "name": "Take vs Recon 02",
+      "description": "Normalized from TakeVsRecon02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "dawn-of-war",
+      "terrainInstances": [
+        {
+          "shapeId": "ShortLine Barrier-38c78b1792",
+          "x": 0.4609999999999985,
+          "y": -10.983000000000004,
+          "rotationDeg": -48
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -5.75,
+          "y": -5,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect CD L 03-ad0db1c213",
+          "x": 10.497,
+          "y": 10.497,
+          "rotationDeg": 0,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-0e4f27a6c6",
+          "x": -13.497,
+          "y": 9.003,
+          "rotationDeg": 180,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -4,
+          "y": -15,
+          "rotationDeg": 42
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -11.902999999999999,
+          "y": -5.75,
+          "rotationDeg": 154
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 13.625999999999998,
+          "y": -18.021,
+          "rotationDeg": 41
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 18.156999999999996,
+          "y": -14.082999999999998,
+          "rotationDeg": -41
+        },
+        {
+          "shapeId": "BigRect CD L 03-ad0db1c213",
+          "x": -10.497,
+          "y": -10.497,
+          "rotationDeg": 180,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "BigRect EF GH mirror-0e4f27a6c6",
+          "x": 13.497,
+          "y": -9.003,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 5.75,
+          "y": 5,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "ShortLine Barrier-38c78b1792",
+          "x": -0.4609999999999985,
+          "y": 10.983,
+          "rotationDeg": 132
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 4,
+          "y": 15,
+          "rotationDeg": 222
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 11.902999999999999,
+          "y": 5.75,
+          "rotationDeg": 334
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -13.625999999999998,
+          "y": 18.021,
+          "rotationDeg": 221
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -18.157,
+          "y": 14.083,
+          "rotationDeg": 139
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-reconnaissance-c",
+      "name": "Take vs Recon 03",
+      "description": "Normalized from TakeVsRecon03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "search-and-destroy",
+      "terrainInstances": [
+        {
+          "shapeId": "LongLineTower flip-9e395c7dad",
+          "x": 11.019999999999996,
+          "y": 9.011,
+          "rotationDeg": 127
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 21.003,
+          "y": 0,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -0.0030000000000001137,
+          "y": -13,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "BigRect EF L 01-e9d4f5dd66",
+          "x": 24,
+          "y": 17,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 5.997,
+          "y": -11,
+          "rotationDeg": 270
+        },
+        {
+          "shapeId": "BigRect CD GH 01-275024527e",
+          "x": 14.116,
+          "y": -18.665999999999997,
+          "rotationDeg": 36,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 15,
+          "y": 0,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "LongLineTower flip-9e395c7dad",
+          "x": -11,
+          "y": -9,
+          "rotationDeg": -53
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -21.003,
+          "y": 0,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 0.0030000000000001137,
+          "y": 13,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -5.997,
+          "y": 11,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -15,
+          "y": 0,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "Triangle AB Corner 02-3deb9480a8",
+          "x": -5.75,
+          "y": -5,
+          "rotationDeg": 0,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner 02-3deb9480a8",
+          "x": 5.75,
+          "y": 5,
+          "rotationDeg": 180,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect EF L 01-e9d4f5dd66",
+          "x": -24,
+          "y": -17,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "BigRect CD GH 01-275024527e",
+          "x": -14.116,
+          "y": 18.666,
+          "rotationDeg": 216,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-take-and-hold-a",
+      "name": "Take vs Take 01",
+      "description": "Normalized from TakeVsTake01.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "tipping-point",
+      "terrainInstances": [
+        {
+          "shapeId": "ShortLine Pipe Flip-7d0b9534fc",
+          "x": 12.497,
+          "y": -5.006,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": -8,
+          "y": -14,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -5,
+          "y": 5.753,
+          "rotationDeg": -90,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "BigRect EF GH 02-6938bda4e6",
+          "x": -5.494,
+          "y": 19.003,
+          "rotationDeg": -180,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -16.997,
+          "y": 5.997,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-7d0b9534fc",
+          "x": -12.497,
+          "y": 5.006,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -16,
+          "y": -9.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "BigRect CD L 02 Flip-3c2ddc9f1d",
+          "x": -24,
+          "y": -8,
+          "rotationDeg": 0,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        },
+        {
+          "shapeId": "BigRect CD L 02 Flip-3c2ddc9f1d",
+          "x": 24,
+          "y": 8,
+          "rotationDeg": 180,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 16.997,
+          "y": -5.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "BigRect EF GH 02-6938bda4e6",
+          "x": 5.494,
+          "y": -19.003,
+          "rotationDeg": 0,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 5,
+          "y": -5.753,
+          "rotationDeg": 90,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 8,
+          "y": 14,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 2,
+          "y": 12,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 16,
+          "y": 9.997,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -2,
+          "y": -12,
+          "rotationDeg": -90
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-take-and-hold-b",
+      "name": "Take vs Take 02",
+      "description": "Normalized from TakeVsTake02.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "dawn-of-war",
+      "terrainInstances": [
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -23.357,
+          "y": -16.977000000000004,
+          "rotationDeg": 56
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": -15.294999999999998,
+          "y": 12.586,
+          "rotationDeg": 25
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 20,
+          "y": 12,
+          "rotationDeg": 157
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 23.357,
+          "y": 16.977,
+          "rotationDeg": 236
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 0,
+          "y": 3.003,
+          "rotationDeg": 270,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 16.141,
+          "y": -14.400999999999996,
+          "rotationDeg": 310
+        },
+        {
+          "shapeId": "BigRect EF GH 02-6938bda4e6",
+          "x": -16.997,
+          "y": -2.503,
+          "rotationDeg": 90,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "ShortLine Pipe-fc1d914d4a",
+          "x": 15.295000000000002,
+          "y": -12.585999999999999,
+          "rotationDeg": 205
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 3.067999999999998,
+          "y": 6.5070000000000014,
+          "rotationDeg": -41
+        },
+        {
+          "shapeId": "BigRect CD L 03-ad0db1c213",
+          "x": -6,
+          "y": 10.997,
+          "rotationDeg": 0,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -20,
+          "y": -12,
+          "rotationDeg": 337
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 0,
+          "y": -3.003,
+          "rotationDeg": 90,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -16.141,
+          "y": 14.401,
+          "rotationDeg": 130
+        },
+        {
+          "shapeId": "BigRect EF GH 02-6938bda4e6",
+          "x": 16.997,
+          "y": 2.503,
+          "rotationDeg": 270,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -3.0680000000000014,
+          "y": -6.506999999999998,
+          "rotationDeg": 139
+        },
+        {
+          "shapeId": "BigRect CD L 03-ad0db1c213",
+          "x": 6,
+          "y": -10.997,
+          "rotationDeg": 180,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        }
+      ]
+    },
+    {
+      "id": "11e-take-and-hold-vs-take-and-hold-c",
+      "name": "Take vs Take 03",
+      "description": "Normalized from TakeVsTake03.json (strike-force source). The raw source remains authoritative for ruin parts, roofs, and 3D placement metadata; this pilot maps top-level footprints into the current 2D terrain model.",
+      "coordinateSystem": "board-center",
+      "terrainAnchor": "lower-left",
+      "boardWidth": 60,
+      "boardHeight": 44,
+      "deploymentZoneId": "search-and-destroy",
+      "terrainInstances": [
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": 13,
+          "y": 11,
+          "rotationDeg": 180
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": 5,
+          "y": -5.753,
+          "rotationDeg": 90,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 0,
+          "y": -13,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": 5.997,
+          "y": -10.997,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": 19.998999999999995,
+          "y": -3.4939999999999998,
+          "rotationDeg": 127
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-7d0b9534fc",
+          "x": -6.997,
+          "y": -11,
+          "rotationDeg": -90
+        },
+        {
+          "shapeId": "SmallRect L-9195ad2608",
+          "x": -13,
+          "y": -11,
+          "rotationDeg": 0
+        },
+        {
+          "shapeId": "Triangle AB Corner-2fea3a59c2",
+          "x": -5,
+          "y": 5.753,
+          "rotationDeg": -90,
+          "objectiveRole": "no-mans-land",
+          "objectiveGroupId": "no-mans-land-1"
+        },
+        {
+          "shapeId": "SmallRect Generator-90f91d9b10",
+          "x": 0,
+          "y": 13,
+          "rotationDeg": -180
+        },
+        {
+          "shapeId": "ShortLine Barrier-4299235c3a",
+          "x": -5.997,
+          "y": 10.997,
+          "rotationDeg": -270
+        },
+        {
+          "shapeId": "ShortLine Pipe Flip-7d0b9534fc",
+          "x": 6.997,
+          "y": 11,
+          "rotationDeg": 90
+        },
+        {
+          "shapeId": "BigRect EF GH 02-6938bda4e6",
+          "x": 11.609000000000002,
+          "y": -14.399000000000001,
+          "rotationDeg": -8,
+          "objectiveRole": "expansion-1",
+          "objectiveGroupId": "expansion-1"
+        },
+        {
+          "shapeId": "BigRect CD L 03-ad0db1c213",
+          "x": 13.861000000000004,
+          "y": 12.953,
+          "rotationDeg": -44,
+          "objectiveRole": "home-1",
+          "objectiveGroupId": "home-1"
+        },
+        {
+          "shapeId": "LongLine Tower-15a2cbad1c",
+          "x": -19.999,
+          "y": 3.4939999999999998,
+          "rotationDeg": 307
+        },
+        {
+          "shapeId": "BigRect EF GH 02-6938bda4e6",
+          "x": -11.609000000000002,
+          "y": 14.399,
+          "rotationDeg": 172,
+          "objectiveRole": "expansion-0",
+          "objectiveGroupId": "expansion-0"
+        },
+        {
+          "shapeId": "BigRect CD L 03-ad0db1c213",
+          "x": -13.861,
+          "y": -12.953000000000003,
+          "rotationDeg": 136,
+          "objectiveRole": "home-0",
+          "objectiveGroupId": "home-0"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2134 @@
+{
+  "factionId": "necrons",
+  "rules": [
+    {
+      "id": "necrons.army-rule.reanimation-protocols",
+      "name": "Reanimation Protocols",
+      "kind": "army-rule",
+      "status": "current",
+      "implementationStatus": "partial",
+      "description": "If your Army Faction is NECRONS, at the end of your Command phase, each friendly unit with this ability that is on the battlefield activates its Reanimation Protocols:",
+      "sources": [
+        {
+          "title": "Wahapedia Necrons army rule",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Reanimation Protocols"
+        }
+      ],
+      "notes": [
+        "Army rule text is cataloged; executable reanimation timing and wound restoration are handled separately by the simulator runtime."
+      ]
+    },
+    {
+      "id": "necrons.detachment.awakened-dynasty",
+      "name": "Awakened Dynasty - Command Protocols",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.awakened-dynasty",
+      "description": "While a NECRONS CHARACTER model is leading this unit, each time a model in this unit makes an attack, add 1 to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Awakened Dynasty detachment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Awakened Dynasty"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.awakened-dynasty.enhancement.veil-of-darkness",
+      "name": "Veil of Darkness",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.awakened-dynasty",
+      "description": "20 pts. NECRONS model only. (Once per battle, per army) At the end of your opponent's turn, if this unit is unengaged, you can use this ability. If you do:",
+      "sources": [
+        {
+          "title": "Wahapedia Awakened Dynasty enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Awakened Dynasty"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.awakened-dynasty.enhancement.nether-realm-casket",
+      "name": "Nether-realm Casket",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.awakened-dynasty",
+      "description": "20 pts. NECRONS model only. While the bearer is leading a unit, models in that unit have the Stealth ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Awakened Dynasty enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Awakened Dynasty"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.awakened-dynasty.enhancement.phasal-subjugator-aura",
+      "name": "Phasal Subjugator (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.awakened-dynasty",
+      "description": "35 pts. NECRONS model only. While a friendly NECRONS unit (excluding CHARACTER units) is within 6\" of the bearer, each time a model in that unit makes an attack, add 1 to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Awakened Dynasty enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Awakened Dynasty"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.awakened-dynasty.enhancement.enaegic-dermal-bond",
+      "name": "Enaegic Dermal Bond",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.awakened-dynasty",
+      "description": "30 pts. NECRONS model only. The bearer has the Feel No Pain 4+ ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Awakened Dynasty enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Awakened Dynasty"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.awakened-dynasty.stratagem.protocol-of-the-eternal-revenant",
+      "name": "PROTOCOL OF THE ETERNAL REVENANT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.awakened-dynasty",
+      "description": "1CP. Awakened Dynasty - Epic Deed Stratagem. WHEN: Any phase. TARGET: One NECRONS INFANTRY CHARACTER model from your army that was just destroyed. You can use this Stratagem on that model even though it was just destroyed. EFFECT: At the end of the phase, set up the destroyed model on the battlefield, unengaged and as close as possible to where it was destroyed. That model is not part of an attached unit and its unit has a starting strength of 1. That model has half of its starting number of wounds remaining. RESTRICTION: Each model can only be targeted with this Stratagem once per battle.",
+      "sources": [
+        {
+          "title": "Wahapedia Awakened Dynasty stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Awakened Dynasty - PROTOCOL OF THE ETERNAL REVENANT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.awakened-dynasty.stratagem.protocol-of-the-undying-legions",
+      "name": "PROTOCOL OF THE UNDYING LEGIONS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.awakened-dynasty",
+      "description": "1CP. Awakened Dynasty - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has resolved its attacks. TARGET: One NECRONS unit from your army that had one or more of its models destroyed as a result of the attacking unit's attacks. EFFECT: Your unit activates its Reanimation Protocols and reanimates D3 wounds (or D3+1 wounds if a NECRONS CHARACTER is leading your unit].",
+      "sources": [
+        {
+          "title": "Wahapedia Awakened Dynasty stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Awakened Dynasty - PROTOCOL OF THE UNDYING LEGIONS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.awakened-dynasty.stratagem.protocol-of-the-hungry-void",
+      "name": "PROTOCOL OF THE HUNGRY VOID",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.awakened-dynasty",
+      "description": "1CP. Awakened Dynasty - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One NECRONS unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, add 1 to the Strength characteristic of melee weapons equipped by models in your unit. In addition, If a NECRONS CHARACTER is leading your unit, until the end of the phase, improve the Armour Penetration characteristic of melee weapons equipped by models in your unit by 1. (this is not cumulative with any other modifiers that improve Armour Penetration].",
+      "sources": [
+        {
+          "title": "Wahapedia Awakened Dynasty stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Awakened Dynasty - PROTOCOL OF THE HUNGRY VOID"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.awakened-dynasty.stratagem.protocol-of-the-sudden-storm",
+      "name": "PROTOCOL OF THE SUDDEN STORM",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.awakened-dynasty",
+      "description": "1CP. Awakened Dynasty - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One NECRONS unit from your army. EFFECT: Until the end of the turn, ranged weapons equipped by models in your unit have the [ASSAULT] ability. In addition, if a NECRONS CHARACTER is leading your unit, until the end of the phase, you can re-roll Advance rolls made for your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Awakened Dynasty stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Awakened Dynasty - PROTOCOL OF THE SUDDEN STORM"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.awakened-dynasty.stratagem.protocol-of-the-conquering-tyrant",
+      "name": "PROTOCOL OF THE CONQUERING TYRANT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.awakened-dynasty",
+      "description": "1CP. Awakened Dynasty - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One NECRONS unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets a unit within half range, re-roll a Hit roll of 1. If a NECRONS CHARACTER is leading your unit, until the end of the phase, you can re-roll the Hit roll for that attack instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Awakened Dynasty stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Awakened Dynasty - PROTOCOL OF THE CONQUERING TYRANT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.awakened-dynasty.stratagem.protocol-of-the-vengeful-stars",
+      "name": "PROTOCOL OF THE VENGEFUL STARS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.awakened-dynasty",
+      "description": "2CP. Awakened Dynasty - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit destroys a NECRONS unit from your army. TARGET: One NECRONS CHARACTER unit from your army that was within 6\" of that NECRONS unit when it was destroyed. EFFECT: After the attacking unit has resolved its attacks, your unit can shoot as if it were your Shooting phase, but it must target only that enemy unit when doing so, and can only do so if that enemy unit is an eligible target.",
+      "sources": [
+        {
+          "title": "Wahapedia Awakened Dynasty stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Awakened Dynasty - PROTOCOL OF THE VENGEFUL STARS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.annihilation-legion",
+      "name": "Annihilation Legion - Annihilation Protocol",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.annihilation-legion",
+      "description": "Each time a DESTROYER CULT or FLAYED ONES unit from your army declares a charge, you can re-roll the Charge roll. If one or more targets of that charge are Below Half-strength, add 1 to the Charge roll as well.",
+      "sources": [
+        {
+          "title": "Wahapedia Annihilation Legion detachment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Annihilation Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.annihilation-legion.enhancement.eternal-madness",
+      "name": "Eternal Madness",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.annihilation-legion",
+      "description": "20 pts. NECRONS model only. In the Fight phase, each time a model in the bearer's unit is destroyed, if that model has not fought this phase, roll one D6: on a 4+, do not remove the destroyed model from play; it can fight after the attacking models unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Annihilation Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Annihilation Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.annihilation-legion.enhancement.ingrained-superiority",
+      "name": "Ingrained Superiority",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.annihilation-legion",
+      "description": "5 pts. NECRONS model only. Each time a model in the bearer's unit makes an attack, on a Critical Wound, improve the Armour Penetration characteristic of that attack by 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Annihilation Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Annihilation Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.annihilation-legion.enhancement.soulless-reaper",
+      "name": "Soulless Reaper",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.annihilation-legion",
+      "description": "15 pts. DESTROYER CULT model only. Each time an enemy unit within Engagement Range of the bearer's unit is selected to Fall Back, roll one D6: on a 3+, that unit cannot Fall Back this phase and must Remain Stationary.",
+      "sources": [
+        {
+          "title": "Wahapedia Annihilation Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Annihilation Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.annihilation-legion.enhancement.eldritch-nightmare",
+      "name": "Eldritch Nightmare",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.annihilation-legion",
+      "description": "10 pts. DESTROYER CULT model only. At the start of the Fight phase, each enemy unit within Engagement Range of the bearer must take a Battle-shock test.",
+      "sources": [
+        {
+          "title": "Wahapedia Annihilation Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Annihilation Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.annihilation-legion.stratagem.masks-of-death",
+      "name": "MASKS OF DEATH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.annihilation-legion",
+      "description": "1CP. Annihilation Legion - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One DESTROYER CULT or FLAYED ONES unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Annihilation Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Annihilation Legion - MASKS OF DEATH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.annihilation-legion.stratagem.the-spoor-of-frailty",
+      "name": "THE SPOOR OF FRAILTY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.annihilation-legion",
+      "description": "1CP. Annihilation Legion - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One DESTROYER CULT or FLAYED ONES unit from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, each time a model from your unit makes an attack that targets a unit below Starting Strength, add 1 to the Hit roll. If the target is Below Half-strength, add 1 to the Wound roll as well.",
+      "sources": [
+        {
+          "title": "Wahapedia Annihilation Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Annihilation Legion - THE SPOOR OF FRAILTY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.annihilation-legion.stratagem.murderous-reanimation",
+      "name": "MURDEROUS REANIMATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.annihilation-legion",
+      "description": "1CP. Annihilation Legion - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One DESTROYER CULT or FLAYED ONES unit from your army that has just destroyed an enemy unit, or just caused an enemy unit that was not Below Half-strength to become Below Half-strength. EFFECT: Your unit's Reanimation Protocols activate.",
+      "sources": [
+        {
+          "title": "Wahapedia Annihilation Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Annihilation Legion - MURDEROUS REANIMATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.annihilation-legion.stratagem.pitiless-hunters",
+      "name": "PITILESS HUNTERS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.annihilation-legion",
+      "description": "1CP. Annihilation Legion - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One DESTROYER CULT or FLAYED ONES unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes a Pile-in or Consolidation move, it can move up to 6\" instead of up to 3\".",
+      "sources": [
+        {
+          "title": "Wahapedia Annihilation Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Annihilation Legion - PITILESS HUNTERS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.annihilation-legion.stratagem.blood-fuelled-cruelty",
+      "name": "BLOOD-FUELLED CRUELTY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.annihilation-legion",
+      "description": "1CP. Annihilation Legion - Battle Tactic Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Fall Back move. TARGET: One DESTROYER CULT or FLAYED ONES unit from your army that started the phase within Engagement Range of that enemy unit. EFFECT: Roll one D6: on a 2-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers 3 mortal wounds. Your unit can then make a Normal move, but must end that move as close as possible to that enemy unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Annihilation Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Annihilation Legion - BLOOD-FUELLED CRUELTY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.annihilation-legion.stratagem.insanitys-ire",
+      "name": "INSANITY'S IRE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.annihilation-legion",
+      "description": "1CP. Annihilation Legion - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit that targeted a friendly unengaged DESTROYER CULT/FLAYED ONES unit this phase has shot. TARGET: That DESTROYER CULT/FLAYED ONES unit. EFFECT: Your unit can make a surge move of up to D6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Annihilation Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Annihilation Legion - INSANITY'S IRE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.canoptek-court",
+      "name": "Canoptek Court - Power Matrix",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.canoptek-court",
+      "description": "Certain areas of the battlefield are considered to be within your army's Power Matrix, as follows:",
+      "sources": [
+        {
+          "title": "Wahapedia Canoptek Court detachment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Canoptek Court"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.canoptek-court.enhancement.dimensional-sanctum",
+      "name": "Dimensional Sanctum",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.canoptek-court",
+      "description": "20 pts. CRYPTEK model only. Models in the bearer's unit have the Infiltrators ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Canoptek Court enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Canoptek Court"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.canoptek-court.enhancement.hyperphasic-fulcrum",
+      "name": "Hyperphasic Fulcrum",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.canoptek-court",
+      "description": "15 pts. CRYPTEK model only. While the bearer is leading a unit, if that unit is wholly within your army's Power Matrix, each time a model in that unit makes an attack, re-roll a Wound roll of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Canoptek Court enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Canoptek Court"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.canoptek-court.enhancement.autodivinator",
+      "name": "Autodivinator",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.canoptek-court",
+      "description": "15 pts. CRYPTEK model only. Each time your opponent gains a CP as the result of an ability, roll one D6: on a 2+, you also gain 1CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Canoptek Court enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Canoptek Court"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.canoptek-court.enhancement.metalodermal-tesla-weave",
+      "name": "Metalodermal Tesla Weave",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.canoptek-court",
+      "description": "10 pts. CRYPTEK model only. Once per phase, when an enemy unit selects the bearer's unit as a target of a charge, roll one D6: on a 2-5, that enemy unit suffers D3 mortal wounds; on a 6, that enemy unit suffers 3 mortal wounds.",
+      "sources": [
+        {
+          "title": "Wahapedia Canoptek Court enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Canoptek Court"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.canoptek-court.stratagem.curse-of-the-cryptek",
+      "name": "CURSE OF THE CRYPTEK",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.canoptek-court",
+      "description": "1CP. Canoptek Court - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has shot or fought. TARGET: One CRYPTEK model from your army that was destroyed by one of the attacking unit's attacks. You can use this Stratagem on that model even though it was just destroyed. EFFECT: Until the end of the battle, each time a friendly CANOPTEK model makes an attack that targets the attacking unit, add 1 to the Hit roll and add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Canoptek Court stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Canoptek Court - CURSE OF THE CRYPTEK"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.canoptek-court.stratagem.cynosure-of-eradication",
+      "name": "CYNOSURE OF ERADICATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.canoptek-court",
+      "description": "2CP. Canoptek Court - Battle Tactic Stratagem. WHEN: The start of your Shooting phase or the start of the Fight phase. TARGET: One CRYPTEK or CANOPTEK unit from your army that is wholly within your army's Power Matrix. EFFECT: Until the end of the phase, weapons equipped by CRYPTEK or CANOPTEK models in your unit have the [DEVASTATING WOUNDS] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Canoptek Court stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Canoptek Court - CYNOSURE OF ERADICATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.canoptek-court.stratagem.solar-pulse",
+      "name": "SOLAR PULSE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.canoptek-court",
+      "description": "1CP. Canoptek Court - Strategic Ploy Stratagem. WHEN: Start of your Shooting phase. TARGET: One CRYPTEK model from your army. EFFECT: Select one objective marker within 18\" of your CRYPTEK model. Until the end of the phase, weapons equipped by friendly NECRONS models have the [IGNORES COVER] ability while targeting units within range of that objective marker.",
+      "sources": [
+        {
+          "title": "Wahapedia Canoptek Court stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Canoptek Court - SOLAR PULSE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.canoptek-court.stratagem.reactive-subroutines",
+      "name": "REACTIVE SUBROUTINES",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.canoptek-court",
+      "description": "1CP. Canoptek Court - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, just after an enemy unit ends a Normal, Advance or Fall Back move. TARGET: One CANOPTEK unit from your army that is within 8\" of that enemy unit. EFFECT: Your unit can make a Normal move of up to 6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Canoptek Court stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Canoptek Court - REACTIVE SUBROUTINES"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.canoptek-court.stratagem.countertemporal-shift",
+      "name": "COUNTERTEMPORAL SHIFT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.canoptek-court",
+      "description": "1CP. Canoptek Court - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One CANOPTEK unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, your unit can only be selected as the target of a ranged attack if the attacking model is within 18\".",
+      "sources": [
+        {
+          "title": "Wahapedia Canoptek Court stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Canoptek Court - COUNTERTEMPORAL SHIFT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.canoptek-court.stratagem.suboptimal-facade",
+      "name": "SUBOPTIMAL FACADE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.canoptek-court",
+      "description": "1CP. Canoptek Court - Strategic Ploy Stratagem. WHEN: Your opponent's Charge phase, just after an enemy unit has declared a charge. TARGET: One CANOPTEK unit from your army that was selected as a target of that charge and is wholly within your army's Power Matrix. EFFECT: Your unit's Reanimation Protocols activate.",
+      "sources": [
+        {
+          "title": "Wahapedia Canoptek Court stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Canoptek Court - SUBOPTIMAL FACADE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.obeisance-phalanx",
+      "name": "Obeisance Phalanx - Worthy Foes",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.obeisance-phalanx",
+      "description": "In your Command phase, select one enemy unit. Until the start of your next Command phase, each time a NOBLE, LYCHGUARD or TRIARCH unit from your army makes an attack that targets that unit, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Obeisance Phalanx detachment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Obeisance Phalanx"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.obeisance-phalanx.enhancement.honourable-combatant",
+      "name": "Honourable Combatant",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.obeisance-phalanx",
+      "description": "10 pts. OVERLORD model only. Each time the bearer's unit destroys an enemy CHARACTER unit, your opponent loses 1CP if they have any.",
+      "sources": [
+        {
+          "title": "Wahapedia Obeisance Phalanx enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Obeisance Phalanx"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.obeisance-phalanx.enhancement.unflinching-will",
+      "name": "Unflinching Will",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.obeisance-phalanx",
+      "description": "20 pts. OVERLORD model only. The bearer's melee weapons have the [PRECISION] and [ANTI-INFANTRY 5+] abilities.",
+      "sources": [
+        {
+          "title": "Wahapedia Obeisance Phalanx enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Obeisance Phalanx"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.obeisance-phalanx.enhancement.warrior-noble",
+      "name": "Warrior Noble",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.obeisance-phalanx",
+      "description": "15 pts. OVERLORD model only. Each time a melee attack targets the bearer's unit, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Obeisance Phalanx enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Obeisance Phalanx"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.obeisance-phalanx.enhancement.eternal-conqueror",
+      "name": "Eternal Conqueror",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.obeisance-phalanx",
+      "description": "25 pts. OVERLORD model only. Each time a model in the bearer's unit makes an attack that targets an enemy unit within range of an objective marker, you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Obeisance Phalanx enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Obeisance Phalanx"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.obeisance-phalanx.stratagem.your-time-is-nigh",
+      "name": "YOUR TIME IS NIGH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.obeisance-phalanx",
+      "description": "1CP. Obeisance Phalanx - Epic Deed Stratagem. WHEN: Any phase, just after your opponent's WARLORD is destroyed. TARGET: Your NECRONS WARLORD. EFFECT: Until the end of the battle, each time an enemy unit takes a Battle-shock or Leadership test, subtract 1 from the result.",
+      "sources": [
+        {
+          "title": "Wahapedia Obeisance Phalanx stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Obeisance Phalanx - YOUR TIME IS NIGH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.obeisance-phalanx.stratagem.enslaved-artifice",
+      "name": "ENSLAVED ARTIFICE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.obeisance-phalanx",
+      "description": "1CP. Obeisance Phalanx - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One NECRONS unit from your army (excluding TITANIC units) that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, an unmodified Hit roll of 5+ scores a Critical Hit.",
+      "sources": [
+        {
+          "title": "Wahapedia Obeisance Phalanx stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Obeisance Phalanx - ENSLAVED ARTIFICE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.obeisance-phalanx.stratagem.nanoassembly-protocols",
+      "name": "NANOASSEMBLY PROTOCOLS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.obeisance-phalanx",
+      "description": "1CP. Obeisance Phalanx - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One NECRONS VEHICLE unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack is allocated to a model in your unit, subtract 1 from the Damage characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Obeisance Phalanx stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Obeisance Phalanx - NANOASSEMBLY PROTOCOLS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.obeisance-phalanx.stratagem.sentinels-of-eternity",
+      "name": "SENTINELS OF ETERNITY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.obeisance-phalanx",
+      "description": "1CP. Obeisance Phalanx - Epic Deed Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One LYCHGUARD or TRIARCH PRAETORIANS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, roll one D6: on a 4+, do not remove it from play. The destroyed model can fight after the attacking model's unit has finished making attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Obeisance Phalanx stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Obeisance Phalanx - SENTINELS OF ETERNITY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.obeisance-phalanx.stratagem.suffer-no-rival",
+      "name": "SUFFER NO RIVAL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.obeisance-phalanx",
+      "description": "1CP. Obeisance Phalanx - Battle Tactic Stratagem. WHEN: Fight phase. TARGET: One LYCHGUARD or TRIARCH unit from your army that has not been selected to fight this phase. EFFECT: Until the end of the phase, melee weapons equipped by models in your unit have the [PRECISION] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Obeisance Phalanx stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Obeisance Phalanx - SUFFER NO RIVAL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.obeisance-phalanx.stratagem.territorial-obsession",
+      "name": "TERRITORIAL OBSESSION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.obeisance-phalanx",
+      "description": "1CP. Obeisance Phalanx - Strategic Ploy Stratagem. WHEN: Your Command phase. TARGET: One LYCHGUARD or TRIARCH unit from your army. EFFECT: Until the start of your next Command phase, add 1 to the Objective Control characteristic of models in your unit. If your unit has the VEHICLE keyword, add 3 to the Objective Control characteristic instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Obeisance Phalanx stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Obeisance Phalanx - TERRITORIAL OBSESSION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.hypercrypt-legion",
+      "name": "Hypercrypt Legion - Hyperphasing",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hypercrypt-legion",
+      "description": "At the end of your opponent's turn, you can select a number of NECRONS units from your army (excluding units that are within Engagement Range of one or more enemy units). The maximum number of units you can select depends on the battle size, as follows:",
+      "sources": [
+        {
+          "title": "Wahapedia Hypercrypt Legion detachment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hypercrypt Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.hypercrypt-legion.enhancement.dimensional-overseer",
+      "name": "Dimensional Overseer",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hypercrypt-legion",
+      "description": "25 pts. NECRONS model only. While the bearer is on the battlefield or in Strategic Reserves, add one to the number of units from your army that you can select for the Hyperphasing rule.",
+      "sources": [
+        {
+          "title": "Wahapedia Hypercrypt Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hypercrypt Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.hypercrypt-legion.enhancement.arisen-tyrant",
+      "name": "Arisen Tyrant",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hypercrypt-legion",
+      "description": "25 pts. NECRONS model only. Each time a model in the bearer's unit makes an attack, re-roll a Hit roll of 1. If the bearer's unit was set up on the battlefield this turn, you can re-roll the Hit roll instead.",
+      "sources": [
+        {
+          "title": "Wahapedia Hypercrypt Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hypercrypt Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.hypercrypt-legion.enhancement.hyperspatial-transfer-node",
+      "name": "Hyperspatial Transfer Node",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hypercrypt-legion",
+      "description": "15 pts. NECRONS model only. Each time the bearer's unit Advances, do not make an Advance roll for it. Instead, until the end of the phase, add 6\" to the Move characteristic of models in the bearer's unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Hypercrypt Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hypercrypt Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.hypercrypt-legion.enhancement.osteoclave-fulcrum",
+      "name": "Osteoclave Fulcrum",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hypercrypt-legion",
+      "description": "20 pts. NECRONS model only. Models in the bearer's unit have the Deep Strike ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Hypercrypt Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hypercrypt Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.hypercrypt-legion.stratagem.hyperphasic-recall",
+      "name": "HYPERPHASIC RECALL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hypercrypt-legion",
+      "description": "2CP. Hypercrypt Legion - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has shot or fought. TARGET: One NECRONS INFANTRY unit from your army that had one or more of its models destroyed as a result of the attacking unit's attacks and one friendly MONOLITH model. EFFECT: Remove your INFANTRY unit from the battlefield and then set it back up anywhere on the battlefield that is wholly within 6\" of your MONOLITH model and not within Engagement Range of one or more enemy units.",
+      "sources": [
+        {
+          "title": "Wahapedia Hypercrypt Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hypercrypt Legion - HYPERPHASIC RECALL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.hypercrypt-legion.stratagem.quantum-deflection",
+      "name": "QUANTUM DEFLECTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hypercrypt-legion",
+      "description": "1CP. Hypercrypt Legion - Wargear Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One NECRONS VEHICLE unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, models in your unit have a 4+ invulnerable save.",
+      "sources": [
+        {
+          "title": "Wahapedia Hypercrypt Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hypercrypt Legion - QUANTUM DEFLECTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.hypercrypt-legion.stratagem.reanimation-crypts",
+      "name": "REANIMATION CRYPTS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hypercrypt-legion",
+      "description": "1CP. Hypercrypt Legion - Strategic Ploy Stratagem. WHEN: Your Command phase. TARGET: Your NECRONS WARLORD. EFFECT: For each of your NECRONS units in Reserves, that Reserves unit's Reanimation Protocols activate.",
+      "sources": [
+        {
+          "title": "Wahapedia Hypercrypt Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hypercrypt Legion - REANIMATION CRYPTS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.hypercrypt-legion.stratagem.cosmic-precision",
+      "name": "COSMIC PRECISION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hypercrypt-legion",
+      "description": "1CP. Hypercrypt Legion - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One NECRONS unit from your army (excluding MONSTER units) that is arriving using an ingress move this phase. EFFECT: Your unit can be set up anywhere on the battlefield that is more than 6\" horizontally away from all enemy models. RESTRICTIONS: A unit targeted with this Stratagem is not eligible to declare a charge in the same turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Hypercrypt Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hypercrypt Legion - COSMIC PRECISION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.hypercrypt-legion.stratagem.dimensional-corridor",
+      "name": "DIMENSIONAL CORRIDOR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hypercrypt-legion",
+      "description": "2CP. Hypercrypt Legion - Strategic Ploy Stratagem. WHEN: Your Charge phase. TARGET: One NECRONS unit from your army that was set up on the battlefield this turn using the Eternity Gate ability of a MONOLITH model that started the turn on the battlefield. EFFECT: Your unit is eligible to charge this phase.",
+      "sources": [
+        {
+          "title": "Wahapedia Hypercrypt Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hypercrypt Legion - DIMENSIONAL CORRIDOR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.hypercrypt-legion.stratagem.entropic-damping",
+      "name": "ENTROPIC DAMPING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hypercrypt-legion",
+      "description": "1CP. Hypercrypt Legion - Wargear Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has selected its targets. TARGET: One TITANIC model from your army that was selected as the target of one or more of the attacking unit's attacks and is within 18\" of the attacking unit. EFFECT: Until the end of the phase, weapons equipped by models in the attacking unit have the [HAZARDOUS] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Hypercrypt Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hypercrypt Legion - ENTROPIC DAMPING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.starshatter-arsenal",
+      "name": "Starshatter Arsenal - Relentless Onslaught",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.starshatter-arsenal",
+      "description": "Each time a NECRONS model (excluding MONSTER models) from your army makes an attack that targets a unit within range of one or more objective markers, add 1 to the Hit roll. In addition, ranged weapons equipped by NECRONS VEHICLE and NECRONS MOUNTED models (excluding TITANIC models) from your army have the [ASSAULT] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Starshatter Arsenal detachment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Starshatter Arsenal"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.starshatter-arsenal.enhancement.dread-majesty-aura",
+      "name": "Dread Majesty (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.starshatter-arsenal",
+      "description": "30 pts. OVERLORD or CATACOMB COMMAND BARGE model only. While a friendly NECRONS unit (excluding MONSTER and TITANIC units) is within 6\" of the bearer, each time a model in that unit makes an attack, re-roll a Hit roll of 1 and re-roll a Wound roll of 1.",
+      "sources": [
+        {
+          "title": "Wahapedia Starshatter Arsenal enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Starshatter Arsenal"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.starshatter-arsenal.enhancement.miniaturised-nebuloscope",
+      "name": "Miniaturised Nebuloscope",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.starshatter-arsenal",
+      "description": "15 pts. NECRONS model only. Ranged weapons equipped by models in the bearer's unit have the [IGNORES COVER] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Starshatter Arsenal enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Starshatter Arsenal"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.starshatter-arsenal.enhancement.demanding-leader",
+      "name": "Demanding Leader",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.starshatter-arsenal",
+      "description": "10 pts. NECRONS model only. In your Command phase, select one friendly NECRONS VEHICLE or NECRONS MOUNTED unit (excluding TITANIC units) within 6\" of the bearer. Until the start of your next Command phase, that unit is eligible to shoot in a turn in which it Fell Back.",
+      "sources": [
+        {
+          "title": "Wahapedia Starshatter Arsenal enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Starshatter Arsenal"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.starshatter-arsenal.enhancement.chrono-impedance-fields",
+      "name": "Chrono-impedance Fields",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.starshatter-arsenal",
+      "description": "25 pts. NECRONS model only. In your Command phase, select one friendly NECRONS VEHICLE or NECRONS MOUNTED unit (excluding TITANIC units) within 6\" of the bearer. Until the start of your next Command phase, each time an attack is allocated to a model in that unit, subtract 1 from the Damage characteristic of that attack.",
+      "sources": [
+        {
+          "title": "Wahapedia Starshatter Arsenal enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Starshatter Arsenal"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.starshatter-arsenal.stratagem.merciless-reclamation",
+      "name": "MERCILESS RECLAMATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.starshatter-arsenal",
+      "description": "2CP. Starshatter Arsenal - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One NECRONS unit (excluding MONSTER and TITANIC units) from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, if the target of that attack is within range of one or more objective markers, add 1 to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Starshatter Arsenal stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Starshatter Arsenal - MERCILESS RECLAMATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.starshatter-arsenal.stratagem.unyielding-forms",
+      "name": "UNYIELDING FORMS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.starshatter-arsenal",
+      "description": "2CP. Starshatter Arsenal - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One NECRONS VEHICLE or NECRONS MOUNTED unit (excluding TITANIC units) from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets a model in your unit, if the Strength characteristic of that attack is greater than the Toughness characteristic of that unit, subtract 1 from the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Starshatter Arsenal stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Starshatter Arsenal - UNYIELDING FORMS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.starshatter-arsenal.stratagem.chronoshift",
+      "name": "CHRONOSHIFT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.starshatter-arsenal",
+      "description": "1CP. Starshatter Arsenal - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One NECRONS VEHICLE or NECRONS MOUNTED unit (excluding TITANIC units) from your army that has not been selected to move this phase. EFFECT: Until the end of the phase, if your unit Advances, do not make an Advance roll for it. Instead, until the end of the phase, add 6\" to the Move characteristic of models in your unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Starshatter Arsenal stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Starshatter Arsenal - CHRONOSHIFT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.starshatter-arsenal.stratagem.dimensional-tunnel",
+      "name": "DIMENSIONAL TUNNEL",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.starshatter-arsenal",
+      "description": "1CP. Starshatter Arsenal - Strategic Ploy Stratagem. WHEN: Your Movement phase. TARGET: One NECRONS VEHICLE or NECRONS MOUNTED unit (excluding TITANIC units) from your army. EFFECT: Until the end of the phase, models in your unit can move horizontally through models and terrain features.",
+      "sources": [
+        {
+          "title": "Wahapedia Starshatter Arsenal stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Starshatter Arsenal - DIMENSIONAL TUNNEL"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.starshatter-arsenal.stratagem.endless-servitude",
+      "name": "ENDLESS SERVITUDE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.starshatter-arsenal",
+      "description": "1CP. Starshatter Arsenal - Strategic Ploy Stratagem. WHEN: End of your Fight phase. TARGET: One NECRONS unit (excluding MONSTER and TITANIC units) from your army that is within range of one or more objective markers you control. EFFECT: Your unit's Reanimation Protocols activate.",
+      "sources": [
+        {
+          "title": "Wahapedia Starshatter Arsenal stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Starshatter Arsenal - ENDLESS SERVITUDE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.starshatter-arsenal.stratagem.reactive-reposition",
+      "name": "REACTIVE REPOSITION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.starshatter-arsenal",
+      "description": "1CP. Starshatter Arsenal - Strategic Ploy Stratagem. WHEN: Your opponent's Shooting phase, just after an enemy unit has shot. TARGET: One NECRONS unit from your army (excluding MONSTER and TITANIC units) that was the target of one or more of the attacking unit's attacks. EFFECT: Your unit can make a Normal move of up to D6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Starshatter Arsenal stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Starshatter Arsenal - REACTIVE REPOSITION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.cryptek-conclave",
+      "name": "Cryptek Conclave - Technosorcerous Augmentations",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cryptek-conclave",
+      "description": "Ranged weapons equipped by CRYPTEK models from your army have the [ASSAULT] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Cryptek Conclave detachment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cryptek Conclave"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.cryptek-conclave.enhancement.quantum-abacus",
+      "name": "Quantum Abacus",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cryptek-conclave",
+      "description": "15 pts. NECRONS model only. Each time you select the bearer's unit as the target of a Stratagem, roll one D6, adding 1 if it is within range of one or more objectives: on a 4+, you gain 1CP.",
+      "sources": [
+        {
+          "title": "Wahapedia Cryptek Conclave enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cryptek Conclave"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.cryptek-conclave.enhancement.atomic-disintegrators",
+      "name": "Atomic Disintegrators",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cryptek-conclave",
+      "description": "10 pts. CRYPTEK model only. In your Shooting phase, each time the bearer's unit is selected to shoot, when selecting an ability for the Technosorcerous Augmentations Detachment rule, you can also select from the following abilities: [ANTI-MONSTER 5+], [ANTI-VEHICLE 5+].",
+      "sources": [
+        {
+          "title": "Wahapedia Cryptek Conclave enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cryptek Conclave"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.cryptek-conclave.enhancement.gauntlet-of-compression",
+      "name": "Gauntlet of Compression",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cryptek-conclave",
+      "description": "20 pts. NECRONS model only. Add 6\" to the Range characteristic of ranged weapons equipped by models in the bearer's unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Cryptek Conclave enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cryptek Conclave"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.cryptek-conclave.enhancement.gravitic-bolas",
+      "name": "Gravitic Bolas",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cryptek-conclave",
+      "description": "15 pts. CRYPTEK model only. In your Shooting phase, after the bearer has shot, select one enemy unit hit by one or more of those attacks (excluding TITANIC units); until the start of your next turn, that enemy unit is pinned. While a unit is pinned, subtract 2 from that unit's Move characteristic and subtract 2 from Charge rolls made for that unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Cryptek Conclave enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cryptek Conclave"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.cryptek-conclave.stratagem.molecular-targeting",
+      "name": "MOLECULAR TARGETING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cryptek-conclave",
+      "description": "1CP. Cryptek Conclave - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One NECRONS unit from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack, you can ignore any or all modifiers to the following: that attack's Ballistic Skill or Weapon Skill characteristic; the Hit roll. If your unit has the CRYPTEK keyword, you can also ignore any or all modifiers to the Wound roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Cryptek Conclave stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cryptek Conclave - MOLECULAR TARGETING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.cryptek-conclave.stratagem.microscarab-swarm",
+      "name": "MICROSCARAB SWARM",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cryptek-conclave",
+      "description": "1CP. Cryptek Conclave - Wargear Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One CRYPTEK INFANTRY unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: If your unit has the NECRON WARRIORS keyword, until the end of the phase, models in your unit have a 5+ invulnerable save. If your unit has the IMMORTALS keyword, until the end of the phase, models in your unit have a 4+ invulnerable save.",
+      "sources": [
+        {
+          "title": "Wahapedia Cryptek Conclave stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cryptek Conclave - MICROSCARAB SWARM"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.cryptek-conclave.stratagem.animus-curse",
+      "name": "ANIMUS CURSE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cryptek-conclave",
+      "description": "1CP. Cryptek Conclave - Wargear Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has shot or fought. TARGET: One CRYPTEK model from your army that was destroyed by one of the attacking unit's attacks. You can use this Stratagem on that model even though it was just destroyed. EFFECT: Until the end of the battle, each time a friendly NECRONS model makes an attack that targets the attacking unit, you can re-roll the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Cryptek Conclave stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cryptek Conclave - ANIMUS CURSE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.cryptek-conclave.stratagem.synergistic-empowerment",
+      "name": "SYNERGISTIC EMPOWERMENT",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cryptek-conclave",
+      "description": "1CP. Cryptek Conclave - Strategic Ploy Stratagem. WHEN: Start of your Shooting phase. TARGET: One CRYPTEK unit from your army. EFFECT: Select one friendly NECRONS model (excluding MONSTERS and VEHICLES) within 12\" of a CRYPTEK model in your unit. Until the end of the phase, that friendly NECRONS model has the CRYPTEK keyword.",
+      "sources": [
+        {
+          "title": "Wahapedia Cryptek Conclave stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cryptek Conclave - SYNERGISTIC EMPOWERMENT"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.cryptek-conclave.stratagem.untapped-power",
+      "name": "UNTAPPED POWER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cryptek-conclave",
+      "description": "1CP. Cryptek Conclave - Battle Tactic Stratagem. WHEN: Your Shooting phase. TARGET: One CRYPTEK unit from your army that has not been selected to shoot this phase. EFFECT: Until the end of the phase, each time your unit is selected to shoot, when selecting an ability for the Technosorcerous Augmentations Detachment Rule, you can select one additional ability from those available.",
+      "sources": [
+        {
+          "title": "Wahapedia Cryptek Conclave stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cryptek Conclave - UNTAPPED POWER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.cryptek-conclave.stratagem.potentiality-syphon",
+      "name": "POTENTIALITY SYPHON",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cryptek-conclave",
+      "description": "1CP. Cryptek Conclave - Strategic Ploy Stratagem. WHEN: Your opponent's Command phase. TARGET: One NECRONS unit from your army within range of one or more objective markers. EFFECT: Your unit's Reanimation Protocols activate. If it is a CRYPTEK unit, it reanimates an additional 1 wound.",
+      "sources": [
+        {
+          "title": "Wahapedia Cryptek Conclave stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cryptek Conclave - POTENTIALITY SYPHON"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.cursed-legion",
+      "name": "Cursed Legion - Cold Fervour",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cursed-legion",
+      "description": "Add 2 to the Strength characteristic of weapons equipped by DESTROYER CULT models from your army.",
+      "sources": [
+        {
+          "title": "Wahapedia Cursed Legion detachment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cursed Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.cursed-legion.enhancement.destroyer-ankh",
+      "name": "Destroyer Ankh",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cursed-legion",
+      "description": "20 pts. CATACOMB COMMAND BARGE or OVERLORD model only. The bearer has the DESTROYER CULT keyword. Add 2\" to the Move characteristic of models in the bearer's unit and add 2 to the Attacks characteristic of melee weapons equipped by the bearer.",
+      "sources": [
+        {
+          "title": "Wahapedia Cursed Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cursed Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.cursed-legion.enhancement.murdermind",
+      "name": "Murdermind",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cursed-legion",
+      "description": "15 pts. CRYPTEK model only. The bearer has the DESTROYER CULT keyword. Add 3\" to the Move characteristic of the bearer.",
+      "sources": [
+        {
+          "title": "Wahapedia Cursed Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cursed Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.cursed-legion.enhancement.mark-of-the-nekrosor",
+      "name": "Mark of the Nekrosor",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cursed-legion",
+      "description": "20 pts. DESTROYER CULT model only. Each time a model in the bearer's unit makes an attack, add 1 to the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Cursed Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cursed Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.cursed-legion.enhancement.cursed-circlet",
+      "name": "Cursed Circlet",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cursed-legion",
+      "description": "25 pts. DESTROYER CULT model only. In your opponent's Shooting phase, when an enemy unit has shot, if a model in this unit was destroyed by those attacks, this unit can make a surge move of up to D6\".",
+      "sources": [
+        {
+          "title": "Wahapedia Cursed Legion enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cursed Legion"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.cursed-legion.stratagem.methodical-murder",
+      "name": "METHODICAL MURDER",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cursed-legion",
+      "description": "1CP. Cursed Legion - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One NECRONS unit (excluding MONSTERS and VEHICLES) from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, weapons equipped by models in your unit have the [SUSTAINED HITS 1] ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Cursed Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cursed Legion - METHODICAL MURDER"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.cursed-legion.stratagem.image-of-death",
+      "name": "IMAGE OF DEATH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cursed-legion",
+      "description": "1CP. Cursed Legion - Battle Tactic Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, just after an enemy unit has selected its targets. TARGET: One DESTROYER CULT unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time an attack targets your unit, subtract 1 from the Hit roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Cursed Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cursed Legion - IMAGE OF DEATH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.cursed-legion.stratagem.mortis-protocols",
+      "name": "MORTIS PROTOCOLS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cursed-legion",
+      "description": "1CP. Cursed Legion - Strategic Ploy Stratagem. WHEN: Your Shooting phase or the Fight phase, just after the first time a DESTROYER CULT unit from your army destroys an enemy unit this turn. TARGET: One friendly NECRONS unit (excluding MONSTERS and VEHICLES) within 9\" of that DESTROYER CULT unit. EFFECT: The friendly unit's Reanimation Protocols activate.",
+      "sources": [
+        {
+          "title": "Wahapedia Cursed Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cursed Legion - MORTIS PROTOCOLS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.cursed-legion.stratagem.driven-to-butchery",
+      "name": "DRIVEN TO BUTCHERY",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cursed-legion",
+      "description": "1CP. Cursed Legion - Strategic Ploy Stratagem. WHEN: Your Shooting phase or your Charge phase. TARGET: One DESTROYER CULT unit from your army. EFFECT: Until the end of the turn, your unit is eligible to shoot and declare a charge in a turn in which it Advanced. RESTRICTIONS: You can only use this Stratagem once per turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Cursed Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cursed Legion - DRIVEN TO BUTCHERY"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.cursed-legion.stratagem.spreading-madness",
+      "name": "SPREADING MADNESS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cursed-legion",
+      "description": "1CP. Cursed Legion - Battle Tactic Stratagem. WHEN: Your Charge phase. TARGET: One NECRONS unit (excluding MONSTERS and VEHICLES) from your army that has not declared a charge this phase. EFFECT: Until the end of the phase, each time your unit declares a charge, if one or more targets of that charge are within Engagement Range of one or more friendly units, add 2 to the Charge roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Cursed Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cursed Legion - SPREADING MADNESS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.cursed-legion.stratagem.unnatural-aggression",
+      "name": "UNNATURAL AGGRESSION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.cursed-legion",
+      "description": "2CP. Cursed Legion - Strategic Ploy Stratagem. WHEN: End of your opponent's Charge phase. TARGET: One NECRONS unit (excluding MONSTERS and VEHICLES) from your army that is within 6\" of one or more enemy units and would be eligible to declare a charge against one or more of those enemy units if it were your Charge phase. EFFECT: Your unit now declares a charge that only targets one or more of those enemy units, and you resolve that charge.",
+      "sources": [
+        {
+          "title": "Wahapedia Cursed Legion stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Cursed Legion - UNNATURAL AGGRESSION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.pantheon-of-woe",
+      "name": "Pantheon of Woe - Cosmic Distortion",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.pantheon-of-woe",
+      "description": "NECRONS MONSTER units from your army have the following ability:",
+      "sources": [
+        {
+          "title": "Wahapedia Pantheon of Woe detachment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Pantheon of Woe"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.pantheon-of-woe.stratagem.disharmonisation-cascade",
+      "name": "DISHARMONISATION CASCADE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.pantheon-of-woe",
+      "description": "1CP. Pantheon of Woe - Epic Deed Stratagem. WHEN: Any phase, just after a NECRONS MONSTER model from your army is destroyed, before making its Deadly Demise roll. TARGET: That NECRONS MONSTER model. You can use this Stratagem on that model even though it was just destroyed. EFFECT: Until the end of the phase, your model's Deadly Demise ability inflicts mortal wounds on a D6 roll of 3+ instead of on a 6.",
+      "sources": [
+        {
+          "title": "Wahapedia Pantheon of Woe stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Pantheon of Woe - DISHARMONISATION CASCADE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.pantheon-of-woe.stratagem.molecular-erosion",
+      "name": "MOLECULAR EROSION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.pantheon-of-woe",
+      "description": "1CP. Pantheon of Woe - Strategic Ploy Stratagem. WHEN: Command phase. TARGET: One NECRONS MONSTER unit from your army. EFFECT: Select one unravelling enemy unit visible to your unit. That enemy unit must take a Battle-shock test. When doing so, subtract 1 from the result. If that test is failed, that enemy unit suffers D3+1 mortal wounds. RESTRICTIONS: You can only use this Stratagem once per battle round.",
+      "sources": [
+        {
+          "title": "Wahapedia Pantheon of Woe stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Pantheon of Woe - MOLECULAR EROSION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.pantheon-of-woe.stratagem.mass-transmogrification",
+      "name": "MASS TRANSMOGRIFICATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.pantheon-of-woe",
+      "description": "1CP. Pantheon of Woe - Epic Deed Stratagem. WHEN: Your Shooting phase or the Fight phase, just after a NECRONS MONSTER unit from your army destroys an enemy unit. TARGET: One friendly NECRONS unit (excluding MONSTERS) within 6\" of that MONSTER unit. EFFECT: If that enemy unit was unravelling at the start of the phase, your friendly unit's Reanimation Protocols activate. RESTRICTIONS: You can only use this Stratagem once per turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Pantheon of Woe stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Pantheon of Woe - MASS TRANSMOGRIFICATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.pantheon-of-woe.stratagem.entrophasic-aura-targeting",
+      "name": "ENTROPHASIC AURA TARGETING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.pantheon-of-woe",
+      "description": "1CP. Pantheon of Woe - Battle Tactic Stratagem. WHEN: Your Shooting phase or the Fight phase. TARGET: One NECRONS unit (excluding MONSTERS) from your army that has not been selected to shoot or fight this phase. EFFECT: Until the end of the phase, each time a model in your unit makes an attack that targets an enemy unit, re-roll a Hit roll of 1. If the target of that attack is unravelling, re-roll a Wound roll of 1 as well.",
+      "sources": [
+        {
+          "title": "Wahapedia Pantheon of Woe stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Pantheon of Woe - ENTROPHASIC AURA TARGETING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.pantheon-of-woe.stratagem.chronodistortion",
+      "name": "CHRONODISTORTION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.pantheon-of-woe",
+      "description": "1CP. Pantheon of Woe - Battle Tactic Stratagem. WHEN: Fight phase, just after an enemy unit has selected its targets. TARGET: One NECRONS unit from your army that was selected as the target of one or more of the attacking unit's attacks. EFFECT: Until the end of the phase, each time a model in your unit is destroyed, if that model has not fought this phase, roll one D6, adding 1 if the attacking unit is unravelling: on a 4+, do not remove the destroyed model from play; it can fight after the attacking unit has finished making its attacks, and is then removed from play.",
+      "sources": [
+        {
+          "title": "Wahapedia Pantheon of Woe stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Pantheon of Woe - CHRONODISTORTION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.pantheon-of-woe.stratagem.phase-melding",
+      "name": "PHASE MELDING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.pantheon-of-woe",
+      "description": "1CP. Pantheon of Woe - Strategic Ploy Stratagem. WHEN: Your opponent's Movement phase, when an unravelling enemy unit is selected to Fall Back. TARGET: One NECRONS unit from your army that is within Engagement Range of that enemy unit. EFFECT: When that enemy unit Falls Back, all models in that enemy unit must take a Desperate Escape test. When doing so, if that enemy unit is Battle-shocked, subtract 1 from each of those tests.",
+      "sources": [
+        {
+          "title": "Wahapedia Pantheon of Woe stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Pantheon of Woe - PHASE MELDING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.hand-of-the-dynasty",
+      "name": "Hand of the Dynasty - Hypermotility Protocols",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hand-of-the-dynasty",
+      "description": "Friendly IMMORTALS/NECRON WARRIORS units' ranged attacks have [ASSAULT].",
+      "sources": [
+        {
+          "title": "Wahapedia Hand of the Dynasty detachment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hand of the Dynasty"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.hand-of-the-dynasty.enhancement.enlivened-sentinels",
+      "name": "Enlivened Sentinels",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hand-of-the-dynasty",
+      "description": "20 pts. NECRON WARRIORS unit only. This unit has Scouts 5\"",
+      "sources": [
+        {
+          "title": "Wahapedia Hand of the Dynasty enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hand of the Dynasty"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.hand-of-the-dynasty.enhancement.tools-of-dominion",
+      "name": "Tools of Dominion",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hand-of-the-dynasty",
+      "description": "15 pts. IMMORTALS unit only. This unit's ranged attacks have [RAPID FIRE 1].",
+      "sources": [
+        {
+          "title": "Wahapedia Hand of the Dynasty enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hand of the Dynasty"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.hand-of-the-dynasty.stratagem.dominance-protocols",
+      "name": "DOMINANCE PROTOCOLS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hand-of-the-dynasty",
+      "description": "1CP. Hand of the Dynasty Stratagem. WHEN: Command phase. TARGET: One friendly IMMORTALS unit. EFFECT: Your unit has +1 OC until the end of the turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Hand of the Dynasty stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hand of the Dynasty - DOMINANCE PROTOCOLS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.hand-of-the-dynasty.stratagem.will-of-the-conqueror",
+      "name": "WILL OF THE CONQUEROR",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hand-of-the-dynasty",
+      "description": "1CP. Hand of the Dynasty Stratagem. WHEN: End of your Movement phase. TARGET: One friendly IMMORTALS/NECRON WARRIORS unit. EFFECT: Select one objective your unit is controlling. That objective is secured.",
+      "sources": [
+        {
+          "title": "Wahapedia Hand of the Dynasty stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hand of the Dynasty - WILL OF THE CONQUEROR"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.hand-of-the-dynasty.stratagem.nanosaturation",
+      "name": "NANOSATURATION",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.hand-of-the-dynasty",
+      "description": "1CP. Hand of the Dynasty Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit that targeted a friendly IMMORTALS/NECRON WARRIORS unit has shot. TARGET: That IMMORTALS/NECRON WARRIORS unit. EFFECT: Your unit shoots using snap shooting, but while doing so your unit can only target that enemy unit.",
+      "sources": [
+        {
+          "title": "Wahapedia Hand of the Dynasty stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Hand of the Dynasty - NANOSATURATION"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.skyshroud-spearhead",
+      "name": "Skyshroud Spearhead - Transdimensional Deployment",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.skyshroud-spearhead",
+      "description": "Friendly TOMB BLADES units have Deep Strike.",
+      "sources": [
+        {
+          "title": "Wahapedia Skyshroud Spearhead detachment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Skyshroud Spearhead"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.skyshroud-spearhead.enhancement.recursive-reanimation",
+      "name": "Recursive Reanimation",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.skyshroud-spearhead",
+      "description": "5 pts. TOMB BLADES unit only. When this unit activates its Reanimation Protocols, +1 to the roll.",
+      "sources": [
+        {
+          "title": "Wahapedia Skyshroud Spearhead enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Skyshroud Spearhead"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.skyshroud-spearhead.enhancement.deepening-madness",
+      "name": "Deepening Madness",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.skyshroud-spearhead",
+      "description": "20 pts. DESTROYER CULT MOUNTED unit only. This unit's ranged attacks have [ASSAULT].",
+      "sources": [
+        {
+          "title": "Wahapedia Skyshroud Spearhead enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Skyshroud Spearhead"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.skyshroud-spearhead.stratagem.omnilocked-strafing",
+      "name": "OMNILOCKED STRAFING",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.skyshroud-spearhead",
+      "description": "1CP. Skyshroud Spearhead Stratagem. WHEN: Your Movement phase, when a friendly NECRONS MOUNTED unit is selected to make a fall-back move. TARGET: That NECRONS MOUNTED unit. EFFECT: That move does not prevent your unit from being eligible to shoot.",
+      "sources": [
+        {
+          "title": "Wahapedia Skyshroud Spearhead stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Skyshroud Spearhead - OMNILOCKED STRAFING"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.skyshroud-spearhead.stratagem.swift-as-death",
+      "name": "SWIFT AS DEATH",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.skyshroud-spearhead",
+      "description": "1CP. Skyshroud Spearhead Stratagem. WHEN: Your opponent's Movement phase, when an enemy unit ends a move within 8\" of a friendly unengaged NECRONS MOUNTED unit. TARGET: That NECRONS MOUNTED unit. EFFECT: Your unit can make a normal move of up to D3+3\".",
+      "sources": [
+        {
+          "title": "Wahapedia Skyshroud Spearhead stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Skyshroud Spearhead - SWIFT AS DEATH"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.skyshroud-spearhead.stratagem.evasive-protocols",
+      "name": "EVASIVE PROTOCOLS",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.skyshroud-spearhead",
+      "description": "1CP. Skyshroud Spearhead Stratagem. WHEN: Your opponent's Shooting phase, when an enemy unit targets a friendly NECRONS MOUNTED unit. TARGET: That NECRONS MOUNTED unit. EFFECT: Ranged attacks that target your unit with a S greater than your unit's T have -1 to wound rolls.",
+      "sources": [
+        {
+          "title": "Wahapedia Skyshroud Spearhead stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "Skyshroud Spearhead - EVASIVE PROTOCOLS"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.the-phaerons-armoury",
+      "name": "The Phaeron's Armoury - Empowered Engines",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.the-phaerons-armoury",
+      "description": "Friendly NECRONS TITANIC FLY units have +6\" M.",
+      "sources": [
+        {
+          "title": "Wahapedia The Phaeron's Armoury detachment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "The Phaeron's Armoury"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.the-phaerons-armoury.enhancement.relocational-optimiser",
+      "name": "Relocational Optimiser",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.the-phaerons-armoury",
+      "description": "25 pts. NECRONS model only. When this unit is selected to shoot, if this unit was set up using a Monolith's Eternity Gate ability this turn, this unit's ranged attacks have:",
+      "sources": [
+        {
+          "title": "Wahapedia The Phaeron's Armoury enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "The Phaeron's Armoury"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.the-phaerons-armoury.enhancement.mortality-shroud-aura",
+      "name": "Mortality Shroud (Aura)",
+      "kind": "wargear",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.the-phaerons-armoury",
+      "description": "10 pts. OBELISK unit only. In your opponent's Battle-shock step, if an enemy unit within 8\" of this unit is below starting strength, that enemy unit makes a battle-shock roll.",
+      "sources": [
+        {
+          "title": "Wahapedia The Phaeron's Armoury enhancements",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "The Phaeron's Armoury"
+        }
+      ]
+    },
+    {
+      "id": "necrons.detachment.the-phaerons-armoury.stratagem.subsurface-quantumweave",
+      "name": "SUBSURFACE QUANTUMWEAVE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.the-phaerons-armoury",
+      "description": "1CP. The Phaeron's Armoury Stratagem. WHEN: Your opponent's Shooting phase or the Fight phase, when an enemy unit targets a friendly NECRONS TITANIC FLY unit. TARGET: That NECRONS TITANIC FLY unit. EFFECT: Attacks that target your unit have -1 AP until that enemy unit has attacked.",
+      "sources": [
+        {
+          "title": "Wahapedia The Phaeron's Armoury stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "The Phaeron's Armoury - SUBSURFACE QUANTUMWEAVE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.the-phaerons-armoury.stratagem.particle-pulse",
+      "name": "PARTICLE PULSE",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.the-phaerons-armoury",
+      "description": "1CP. The Phaeron's Armoury Stratagem. WHEN: Start of your Shooting phase. TARGET: One friendly NECRONS TITANIC FLY unit. EFFECT: Select one visible enemy unit within 12\" of your unit. That enemy unit has +3\" detection range.",
+      "sources": [
+        {
+          "title": "Wahapedia The Phaeron's Armoury stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "The Phaeron's Armoury - PARTICLE PULSE"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    },
+    {
+      "id": "necrons.detachment.the-phaerons-armoury.stratagem.cosmic-storm",
+      "name": "COSMIC STORM",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "necrons.detachment.the-phaerons-armoury",
+      "description": "1CP. The Phaeron's Armoury Stratagem. WHEN: Your Shooting phase, when a friendly OBELISK/TESSERACT VAULT unit is selected to shoot. TARGET: That OBELISK/TESSERACT VAULT unit. EFFECT: Your unit's Tesla Sphere weapons have +1 AP.",
+      "sources": [
+        {
+          "title": "Wahapedia The Phaeron's Armoury stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+          "capturedAt": "2026-08-29",
+          "section": "The Phaeron's Armoury - COSMIC STORM"
+        }
+      ],
+      "notes": [
+        "Stored as source data until the stratagem effect is represented by the shared typed ability system."
+      ]
+    }
+  ]
+}

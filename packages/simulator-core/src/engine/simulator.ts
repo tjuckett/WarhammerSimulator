@@ -1,4 +1,5 @@
 import { BATTLE_PHASE, MOVEMENT_STEP, PHASE_STEP, type BattleSetup, type BattleState, type BattleUnit, type FightMovementIntent, type LogEntry, type MovementStep, type PendingFightOnDeath, type Phase, type Position, type Side, type Terrain, type TerrainFeature, type ShootingWeaponResult } from '../types/battle';
+import { clone } from './clone';
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile, type WeaponProfile } from '../types/army';
 import { rules40K10th, rulesEditionForRuleset, rulesetMetadataForState, weaponHasKeyword, weaponKeywordValue, type RulesEdition } from './rulesEngine';
 import { rollExpression, rollMultiple, countSuccesses, d6 } from './dice';
@@ -21,7 +22,7 @@ import {
 import { gainCommandPhaseCommandPoints } from './commandPoints';
 import { runAutomaticCommandUnitAbilities, runAutomaticUnitAbilities } from './unitAbilities';
 import { objectiveControlValue, resolveDesperateEscapeTests } from './battleshock';
-import { circleIntersectsTerrain, findUnblockedLOSRay, hasAnyHiddenModelPair as hasAnyHiddenModelPairGeometry, hasAnyModelLOS as hasAnyModelLOSGeometry, hasAnyModelLOSConsideringHidden as hasAnyModelLOSConsideringHiddenGeometry, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, modelIsHiddenFrom as modelIsHiddenFromGeometry, pointInTerrain, targetHasTerrainCoverFrom as targetHasTerrainCoverFromGeometry, terrainCorners } from './terrainGeometry';
+import { circleIntersectsTerrain, findUnblockedLOSRay, hasAnyHiddenModelPair as hasAnyHiddenModelPairGeometry, hasAnyModelLOS as hasAnyModelLOSGeometry, hasAnyModelLOSConsideringHidden as hasAnyModelLOSConsideringHiddenGeometry, hasLOSEdgeToEdge, lineIntersectsTerrain, linePassesThroughTerrain, modelIsHiddenFrom as modelIsHiddenFromGeometry, modelVisibilityConsideringHidden, pointInTerrain, targetHasTerrainCoverFrom as targetHasTerrainCoverFromGeometry, terrainCorners, unitHasAllModelsEligibleForHidden } from './terrainGeometry';
 import { COHERENCY_VERTICAL_RANGE, distance as dist, modelBaseEdgeDistance3d as coherencyModelBaseEdgeDistance3d, modelBaseEdgeHorizontalDistance as coherencyModelBaseEdgeHorizontalDistance, modelIndicesWithCoherencyIssues, modelListIsCoherent, unitsInEngagementRange, verticalDistance, type CoherencyModel } from './coherency';
 import { objectiveRoleForIndex, terrainWithinMissionTerritory } from './missionGeometry';
 import { scoreSecondaryMissionsAtEndOfTurn, secondaryMissionScoringLogs } from './secondaryMissionScoring';
@@ -51,7 +52,9 @@ import {
   baseFootprintIntersectsRect,
   battleUnitMaxBaseRadiusInches,
   modelBaseFootprintInches,
+  modelBaseFootprintForUnit,
   modelBaseRadiusInches,
+  modelBaseRadiusForUnit,
   type ModelBaseFootprint,
 } from './baseSizes';
 import { attackingModelHasPlungingFire, auraAbilitiesInRange } from './otherRules';
@@ -64,6 +67,7 @@ import {
   centroid,
   formationExtent,
   markUnitDestroyed,
+  modelWeaponCopyCount,
   modelWeaponLoadout,
   rememberDestroyedPositions,
   spliceModelIndices,
@@ -83,6 +87,7 @@ import {
   unitHasKeyword,
 } from './unitCombatModifiers';
 import { bestLeadership, isBelowHalfStrength, resolveBattleshockUnit, runBattleshockPhase } from './battleshockPhase';
+import { activeRuleEffectTargetModelIndex, unitHasActiveRuleModifier } from './ruleEffects';
 import * as deadlyDemise from './deadlyDemise';
 import * as damageApplication from './damageApplication';
 import type { CombatAttackResolutionOptions, CombatHitPreview } from './combatTypes';
@@ -172,7 +177,7 @@ function setupDeploymentZoneSource(setup?: BattleSetup): DeploymentZoneSource {
 const modelIsOutsideEnemyDeploymentZoneBuffer = deploymentActions.modelIsOutsideEnemyDeploymentZoneBuffer;
 
 function modelBaseRadius(unit: BattleUnit, modelIndex = 0): number {
-  return modelBaseRadiusInches(unit.profile, modelIndex);
+  return modelBaseRadiusForUnit(unit, modelIndex);
 }
 
 function modelRotation(unit: BattleUnit, modelIndex = 0): number {
@@ -180,7 +185,7 @@ function modelRotation(unit: BattleUnit, modelIndex = 0): number {
 }
 
 function modelFootprint(unit: BattleUnit, modelIndex = 0, rotationDeg = modelRotation(unit, modelIndex)) {
-  return modelBaseFootprintInches(unit.profile, modelIndex, rotationDeg);
+  return modelBaseFootprintForUnit(unit, modelIndex, rotationDeg);
 }
 
 function maxModelBaseRadius(unit: BattleUnit): number {
@@ -223,6 +228,20 @@ function aliveWeaponModelCount(
   return aliveWeaponModelIndexes(unit, weaponIndex, defender, terrain).length;
 }
 
+// Counts physical weapon copies rather than models. A model can carry the
+// same weapon profile more than once when a datasheet grants multiple copies.
+function aliveWeaponCopyCount(
+  unit: BattleUnit,
+  weaponIndex: number,
+  defender?: BattleUnit,
+  terrain?: Terrain[],
+): number {
+  return aliveWeaponModelIndexes(unit, weaponIndex, defender, terrain).reduce((total, modelIndex) => {
+    const rosterModelIndex = unit.modelRosterIndexes?.[modelIndex] ?? modelIndex;
+    return total + modelWeaponCopyCount(unit.profile, rosterModelIndex, weaponIndex);
+  }, 0);
+}
+
 function aliveWeaponModelIndexes(
   unit: BattleUnit,
   weaponIndex: number,
@@ -250,7 +269,9 @@ function aliveWeaponModelIndexes(
 }
 
 function weaponIsSidearm(weapon: WeaponProfile): boolean {
-  return weaponHasKeyword(weapon, 'Pistol') || weaponHasKeyword(weapon, 'Sidearm');
+  return weaponHasKeyword(weapon, 'Pistol')
+    || weaponHasKeyword(weapon, 'Sidearm')
+    || weaponHasKeyword(weapon, 'Close-Quarters');
 }
 
 function weaponProfileGroup(weapon: WeaponProfile): string | null {
@@ -365,7 +386,24 @@ export function playShootingWeaponModelIndexes(
 ): number[] {
   const weapon = attacker.profile.weapons[weaponIndex];
   if (!weapon) return [];
-  return participatingWeaponModelIndexes(attacker, defender, weapon, weaponIndex, state.terrain, state);
+  return playShootingWeaponModelIndexesForTarget(attacker, defender, [weaponIndex], state)[weaponIndex] ?? [];
+}
+
+/** Exact model participation for several weapon profiles against one target. */
+export function playShootingWeaponModelIndexesForTarget(
+  attacker: BattleUnit,
+  defender: BattleUnit,
+  weaponIndexes: readonly number[],
+  state: BattleState,
+): Record<number, number[]> {
+  return shootingPhaseRules.shootingWeaponModelIndexesForTarget(
+    state,
+    attacker,
+    defender,
+    weaponIndexes,
+    rulesEditionForRuleset(state.ruleset),
+    shootingPhaseRulesContext,
+  );
 }
 
 export function transportCapacityRemaining(state: BattleState, transportUnitId: string): number {
@@ -499,6 +537,7 @@ const processWoundsAgainstDefender = (
 
 const combatAttackResolutionContext: manualCombat.CombatAttackContext = {
   dist, battleUnitToAttachedUnitDistance, activeEpicChallengeModelIndex, participatingWeaponModelIndexes,
+  modelWeaponCopyCount,
   unitHasRule, unitHasKeyword: hasKeyword, weaponIsSidearm, enemies, inEngagement, targetWithinFriendlyEngagement,
   unitHasActiveStratagem, targetIsScreenedBySmoke: (state: BattleState, unit: BattleUnit, target: BattleUnit) => manualCombat.targetIsScreenedBySmoke(state, unit, target, {
     ...shootingTargetRulesContext,
@@ -633,15 +672,22 @@ const shootingTargetRulesContext: manualCombat.ShootingSelectionRulesContext = {
   activeEpicChallengeModelIndex,
   hasLOSEdgeToEdge,
   modelBaseRadius,
+  modelIsHiddenFrom,
+  modelWeaponLoadout,
+  modelBaseEdgeDistance: battleModelBaseEdgeDistance,
   hasAnyModelLOS,
   unitHasDatasheetRule,
   battleUnitsBaseEdgeDistance,
   targetWithinFriendlyEngagement,
   battleUnitHasLosToAttachedUnit,
+  battleUnitVisibilityToAttachedUnit,
   attachedUnitComponents,
   hasAnyHiddenModelPair,
   battleUnitToAttachedUnitDistance,
+  targetIsFullyHiddenAtLongRange: attachedTargetIsFullyHiddenAtLongRange,
 };
+
+const terrainCoverFromModelCache = new WeakMap<BattleState, Map<string, boolean>>();
 
 const shootingResolutionContext: manualCombat.ShootingResolutionContext = {
   ...shootingTargetRulesContext,
@@ -651,12 +697,21 @@ const shootingResolutionContext: manualCombat.ShootingResolutionContext = {
   }),
   targetHasTerrainCoverFromModel: (_state, unit, modelIndex, target) => {
     const position = unit.modelPositions[modelIndex];
-    return position
-      ? targetHasTerrainCoverFromGeometry([position], target, _state.terrain, {
-        modelRadius: modelBaseRadius,
-        hasKeyword: unitHasKeyword,
-      }, [modelBaseRadius(unit, modelIndex)])
-      : false;
+    if (!position) return false;
+    let cache = terrainCoverFromModelCache.get(_state);
+    if (!cache) {
+      cache = new Map();
+      terrainCoverFromModelCache.set(_state, cache);
+    }
+    const key = `${unit.side}:${unit.id}:${modelIndex}:${target.side}:${target.id}`;
+    const cached = cache.get(key);
+    if (cached !== undefined) return cached;
+    const result = targetHasTerrainCoverFromGeometry([position], target, _state.terrain, {
+      modelRadius: modelBaseRadius,
+      hasKeyword: unitHasKeyword,
+    }, [modelBaseRadius(unit, modelIndex)]);
+    cache.set(key, result);
+    return result;
   },
   targetIsScreenedBySmoke: (state, unit, target) => manualCombat.targetIsScreenedBySmoke(state, unit, target, {
     ...shootingTargetRulesContext,
@@ -1011,6 +1066,10 @@ function unitCanBeSelectedToShootWithoutAttacks(unit: BattleUnit, state: BattleS
   return shootingPhaseRules.unitCanBeSelectedToShootWithoutAttacks(unit, state, rules, shootingPhaseRulesContext);
 }
 
+function shootingTargetUnitIdsForUnit(state: BattleState, unit: BattleUnit, rules: RulesEdition): string[] {
+  return shootingPhaseRules.shootingTargetUnitIds(state, unit, rules, shootingPhaseRulesContext);
+}
+
 function shootingWeaponCanTarget(
   state: BattleState,
   unit: BattleUnit,
@@ -1052,7 +1111,8 @@ function activeStratagemTargets(state: BattleState, stratagemId: string, phase: 
 }
 
 function unitHasActiveStratagem(state: BattleState, unit: BattleUnit, stratagemId: string, phase: Phase): boolean {
-  return activeStratagemTargets(state, stratagemId, phase).has(unit.id);
+  return unitHasActiveRuleModifier(state, stratagemId, unit.id, 'benefit-of-cover')
+    || activeStratagemTargets(state, stratagemId, phase).has(unit.id);
 }
 
 export function battleUnitsBaseEdgeDistance(a: BattleUnit, b: BattleUnit): number {
@@ -1118,6 +1178,8 @@ export function playMovementEngagementRangeRings(
 }
 
 function activeEpicChallengeModelIndex(state: BattleState, target: BattleUnit): number | undefined {
+  const typedModelIndex = activeRuleEffectTargetModelIndex(state, 'epic-challenge', target.id, 'Precision');
+  if (typedModelIndex !== undefined) return typedModelIndex;
   const round = battleRound(state);
   return (state.stratagemUses ?? [])
     .find(use => use.stratagemId === 'epic-challenge'
@@ -1131,10 +1193,31 @@ function battleUnitToAttachedUnitDistance(state: BattleState, source: BattleUnit
   return Math.min(...attachedUnitComponents(state, target).map(component => battleUnitsBaseEdgeDistance(source, component)));
 }
 
+function attachedTargetIsFullyHiddenAtLongRange(
+  state: BattleState,
+  source: BattleUnit,
+  target: BattleUnit,
+  targetDistance: number,
+): boolean {
+  return targetDistance > 15
+    && attachedUnitComponents(state, target).every(component =>
+      unitHasAllModelsEligibleForHidden(state, component, terrainVisibilityContext()));
+}
+
 function battleUnitHasLosToAttachedUnit(state: BattleState, source: BattleUnit, target: BattleUnit): boolean {
   return attachedUnitComponents(state, target).some(component =>
     hasAnyModelLOSConsideringHidden(state, source, component),
   );
+}
+
+export function battleUnitVisibilityToAttachedUnit(state: BattleState, source: BattleUnit, target: BattleUnit): { visible: boolean; hidden: boolean } {
+  let hidden = false;
+  for (const component of attachedUnitComponents(state, target)) {
+    const visibility = modelVisibilityConsideringHidden(state, source, component, terrainVisibilityContext());
+    if (visibility.visible) return visibility;
+    hidden ||= visibility.hidden;
+  }
+  return { visible: false, hidden };
 }
 
 function markOneShotWeaponSpent(unit: BattleUnit, weapon: WeaponProfile, weaponIndex: number): void {
@@ -1164,13 +1247,13 @@ export function playCombatHitPreview(
   targetUnitId: string,
   weaponIndex: number,
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
-  options: { modelIndexes?: number[]; snapShooting?: boolean } = {},
+  options: { modelIndexes?: number[]; visibleModelIndexes?: number[]; snapShooting?: boolean; targetAlreadyValid?: boolean } = {},
 ): CombatHitPreview | null {
   const attacker = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
   const defender = state.units.find(unit => unit.id === targetUnitId && unit.side !== side && !unit.destroyed && !unit.embarkedInUnitId);
   const weapon = attacker?.profile.weapons[weaponIndex];
   if (!attacker || !defender || !weapon) return null;
-  if (!weapon.isMelee && !shootingWeaponCanTarget(state, attacker, defender, weapon, rules)) return null;
+  if (!weapon.isMelee && !options.targetAlreadyValid && !shootingWeaponCanTarget(state, attacker, defender, weapon, rules)) return null;
   return manualCombat.previewCombatHit(state, attacker, defender, weapon, weaponIndex, rules, options, shootingResolutionContext);
 }
 
@@ -1190,10 +1273,12 @@ export type PlayShootingAttackAllocation = manualCombat.PlayShootingAttackAlloca
 const manualShootingSelectionContext: manualCombat.ManualShootingSelectionContext = {
   attachedUnitId,
   aliveWeaponModelCount,
+  aliveWeaponCopyCount,
   nearest,
   eligibleShootingWeapons,
   enemies,
   shootingWeaponCanTarget,
+  shootingTargetUnitIds: shootingTargetUnitIdsForUnit,
   unitCanBeSelectedToShootWithoutAttacks,
 };
 
@@ -1245,6 +1330,16 @@ export function playShootingWeaponOptions(
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): PlayShootingWeaponOption[] {
   return shootingPhaseRules.playShootingWeaponOptions(state, unitId, side, rules, shootingPhaseRulesContext);
+}
+
+/** Lightweight target candidates for the interactive declaration UI. */
+export function playShootingWeaponDeclarationOptions(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): PlayShootingWeaponOption[] {
+  return shootingPhaseRules.playShootingWeaponDeclarationOptions(state, unitId, side, rules, shootingPhaseRulesContext);
 }
 
 function runShootingPhaseUnits(state: BattleState, side: Side, rules: RulesEdition): LogEntry[] {
@@ -1433,7 +1528,7 @@ export function lockPlayUnitShooting(
   rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
 ): BattleState {
   const next = shootingPhaseActions.lockPlayUnitShooting(state, unitId, side, { clone, attachedUnitComponents });
-  if (next !== state) shootingPhaseActions.refreshPlayShootingActions(next, rules, manualShootingSelectionContext);
+  if (next !== state) shootingPhaseActions.refreshPlayShootingActions(next, rules, manualShootingSelectionContext, false);
   return next;
 }
 
@@ -1586,7 +1681,7 @@ export function playMeleeFixedAttackCount(
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side);
   const attacks = unit?.profile.weapons[weaponIndex]?.attacks;
   if (!option || !unit || !/^\d+$/.test(String(attacks).trim())) return null;
-  return Number(attacks) * aliveWeaponModelCount(unit, weaponIndex);
+  return Number(attacks) * aliveWeaponCopyCount(unit, weaponIndex);
 }
 
 const fightEligibilityContext: fightPhaseRules.FightEligibilityContext = {
@@ -1601,6 +1696,11 @@ const unitWasEngagedAtFightStepStart = (state: BattleState, unit: BattleUnit) =>
   fightPhaseRules.unitWasEngagedAtFightStepStart(state, unit);
 const unitEligibleToFight = (unit: BattleUnit, state: BattleState, rules: RulesEdition) =>
   fightPhaseRules.unitEligibleToFight(unit, state, rules, fightEligibilityContext);
+const componentHasFightAttacks = (state: BattleState, unit: BattleUnit, rules: RulesEdition) =>
+  unit.profile.weapons.some((weapon, weaponIndex) => weapon.isMelee
+    && aliveWeaponModelIndexes(unit, weaponIndex).length > 0
+    && enemies(state, unit.side).some(target => unitCanFightTarget(unit, target)
+      && participatingWeaponModelIndexes(unit, target, weapon, weaponIndex, state.terrain, state).length > 0));
 
 const fightPhaseContext: fightPhaseRules.FightPhaseContext = {
   activeUnits,
@@ -1615,6 +1715,7 @@ const fightPhaseContext: fightPhaseRules.FightPhaseContext = {
   attachedUnitHasRule,
   unitHasActiveStratagem,
   objectiveIndexesWithinRange: attachedObjectiveIndexesWithinRange,
+  componentHasFightAttacks,
 };
 
 function startFightStepInPlace(s: BattleState, rules: RulesEdition): void {
@@ -1638,6 +1739,7 @@ const fightPhaseActionContext: fightPhaseActions.FightPhaseActionContext = {
   weaponHasKeyword,
   chooseOneProfilePerGroup,
   aliveWeaponModelCount,
+  aliveWeaponCopyCount,
   aliveWeaponModelIndexes,
   participatingWeaponModelIndexes,
   nearest,
@@ -1921,6 +2023,20 @@ export function fightPlayUnitWeapons(
   return fightPhaseActions.fightPlayUnitWeapons(state, unitId, side, allocations, rules, fightPhaseActionContext);
 }
 
+export function playFightWeaponAllocationCap(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  allocations: PlayMeleeAttackAllocation[],
+  weaponIndex: number,
+  targetUnitId: string,
+  rules: RulesEdition = rulesEditionForRuleset(state.ruleset),
+): number {
+  return fightPhaseActions.playFightWeaponAllocationCap(
+    state, unitId, side, allocations, weaponIndex, targetUnitId, rules, fightPhaseActionContext,
+  );
+}
+
 function unitHasFightOnDeath(unit: BattleUnit): boolean {
   return [...unit.profile.abilities, ...(unit.profile.rules ?? [])].some(rule =>
     /fight\s+on\s+death|fight\s+before\s+(?:it|being)\s+removed|can\s+fight\s+before\s+it\s+is\s+removed/i.test(`${rule.name} ${rule.description}`),
@@ -2120,7 +2236,6 @@ function advanceTurnInPlace(s: BattleState): void {
   turnAdvance.advanceTurnInPlace(s, turnAdvanceContext);
 }
 
-function clone<T>(v: T): T { return JSON.parse(JSON.stringify(v)); }
 
 /** Resolves one unit's interactive Battle-shock roll for play/replay/AI. */
 export function rollPlayBattleshock(state: BattleState, unitId: string, side: Side): BattleState {
@@ -2277,6 +2392,7 @@ export function movePlayModel(state: BattleState, unitId: string, modelIndex: nu
     isModelEditPhase: phase => PLAY_MODEL_EDIT_PHASES.includes(phase),
     movementStep,
     modelBaseRadius,
+    modelBaseFootprint: modelFootprint,
     setupDeploymentZoneSource,
     canInfiltrate: profileDropHasInfiltrators,
     infiltratorPlacementIsLegal: (next, side, profile, candidate, index, deployment, board) =>
@@ -2778,6 +2894,46 @@ const modelMovementContext: interactiveMovementState.ModelMovementContext = {
   centroid,
 };
 
+function cloneModelMovementPreviewState(
+  state: BattleState,
+  requests: interactiveMovementState.ModelMovementRequest[],
+): BattleState {
+  const clonedUnitIds = new Set<string>();
+  for (const request of requests) {
+    const unit = state.units.find(candidate => candidate.id === request.unitId && candidate.side === request.side);
+    if (!unit) continue;
+    for (const component of attachedUnitComponents(state, unit)) clonedUnitIds.add(component.id);
+  }
+
+  const copyUnit = (unit: BattleUnit): BattleUnit => ({
+    ...unit,
+    position: { ...unit.position },
+    modelPositions: unit.modelPositions.map(position => ({ ...position })),
+    modelRotations: unit.modelRotations ? [...unit.modelRotations] : unit.modelRotations,
+    movementAllowanceRemainingByModel: unit.movementAllowanceRemainingByModel
+      ? [...unit.movementAllowanceRemainingByModel]
+      : unit.movementAllowanceRemainingByModel,
+    movementAllowanceTotalByModel: unit.movementAllowanceTotalByModel
+      ? [...unit.movementAllowanceTotalByModel]
+      : unit.movementAllowanceTotalByModel,
+    movementStartPositionsByModel: unit.movementStartPositionsByModel
+      ?.map(position => ({ ...position })),
+    movementStartRotationsByModel: unit.movementStartRotationsByModel
+      ? [...unit.movementStartRotationsByModel]
+      : unit.movementStartRotationsByModel,
+    movementPathByModel: unit.movementPathByModel
+      ?.map(path => path?.map(position => ({ ...position }))),
+    movementWaypointsByModel: unit.movementWaypointsByModel
+      ?.map(path => path?.map(position => ({ ...position }))),
+    movementWaypoints: unit.movementWaypoints?.map(position => ({ ...position })),
+  });
+
+  return {
+    ...state,
+    units: state.units.map(unit => clonedUnitIds.has(unit.id) ? copyUnit(unit) : unit),
+  };
+}
+
 const advanceMovementContext: interactiveMovementState.AdvanceMovementContext = {
   clone,
   movementStep,
@@ -2803,6 +2959,41 @@ export function movePlayModelByDelta(
   collide = false,
 ): BattleState {
   return interactiveMovementState.moveModels(state, unitId, side, [modelIndex], dx, dy, collide, modelMovementContext);
+}
+
+/**
+ * Moves several models in one core operation. Pointer dragging can generate
+ * dozens of previews per second; keeping the model indices together avoids a
+ * full BattleState clone and all movement bookkeeping once per model.
+ */
+export function movePlayModelsByDelta(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  modelIndices: number[],
+  dx: number,
+  dy: number,
+  collide = false,
+): BattleState {
+  return interactiveMovementState.moveModels(state, unitId, side, modelIndices, dx, dy, collide, modelMovementContext);
+}
+
+export function movePlaySelectionByDelta(
+  state: BattleState,
+  requests: interactiveMovementState.ModelMovementRequest[],
+  dx: number,
+  dy: number,
+  collide = false,
+  preview = false,
+): BattleState {
+  const movementContext = preview
+    ? {
+      ...modelMovementContext,
+      preview: true,
+      clone: (source: BattleState) => cloneModelMovementPreviewState(source, requests),
+    }
+    : modelMovementContext;
+  return interactiveMovementState.moveModelsBatch(state, requests, dx, dy, collide, movementContext);
 }
 
 export function movePlayModelVerticallyByDelta(
@@ -2924,6 +3115,14 @@ export function declarePlaySuperHeavyMobile(state: BattleState, unitId: string, 
   });
 }
 
+export function playUnitCanDeclareSuperHeavyMobile(state: BattleState, unitId: string, side: Side): boolean {
+  return interactiveMovementState.canDeclareSuperHeavyMobile(state, unitId, side, {
+    movementStep,
+    attachedComponents: attachedUnitComponents,
+    hasRule: (unit, rule) => unitHasRule(unit.profile, rule),
+  });
+}
+
 function resolveSuperHeavyMobileInPlace(state: BattleState, unit: BattleUnit): void {
   const components = attachedUnitComponents(state, unit);
   if (!components.some(component => component.superHeavyMobile)) return;
@@ -3033,6 +3232,7 @@ const formationEditContext: interactiveMovementState.FormationEditContext = {
   movementDistanceFromStart: modelMovementDistanceFromStart,
   lockOtherMovedUnits: lockOtherMovedPlayUnits,
   updateMovementAllowances: updateModelMovementAllowances,
+  attachedComponents: attachedUnitComponents,
 };
 
 export function reorganizePlayUnitGrid(state: BattleState, unitId: string, side: Side, rows: number): BattleState {

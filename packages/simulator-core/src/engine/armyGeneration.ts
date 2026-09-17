@@ -1,4 +1,5 @@
 import type { ArmyGenerationMetadata, ImportedArmy, UnitProfile } from '../types/army';
+import { clone } from './clone';
 
 export type AiArmyStrategy = ArmyGenerationMetadata['strategy'];
 
@@ -60,7 +61,7 @@ function unitScore(unit: UnitProfile, strategy: AiArmyStrategy): number {
 }
 
 function cloneUnit(unit: UnitProfile): UnitProfile {
-  return JSON.parse(JSON.stringify(unit)) as UnitProfile;
+  return clone(unit);
 }
 
 /** Scores an already assembled candidate without applying points or faction rules. */

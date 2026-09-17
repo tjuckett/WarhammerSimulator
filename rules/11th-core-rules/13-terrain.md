@@ -30,11 +30,11 @@ Source: https://gdmissions.app/11th/rules/core-rules
 - Solid terrain uses the available feature height and LOS-blocking geometry; exact enclosed-gap/opening behavior remains dependent on richer terrain feature data than the current rectangular layout schema stores.
 - Terrain features now carry an explicit `light` or `dense` category for these visibility checks; legacy layouts without the field receive deterministic compatibility inference (`ruin` non-low features are dense, other features are light).
 - Terrain layouts load from JSON through the shared registry.
-- `11e-event-layouts.json` currently contains 45 layout entries, but they still need exact validation/finalization against the Event Companion source.
+- `11e/terrain-layouts.json` contains 45 layout entries, but they still need exact validation/finalization against the Event Companion source.
 
 ## TODO
 
-- Validate and finalize the 45 11th Event Companion terrain layouts already present in `11e-event-layouts.json`.
+- Validate and finalize the 45 11th Event Companion terrain layouts already present in `11e/terrain-layouts.json`.
 - Replace any mirrored-half/template placeholder descriptions or coordinates with exact full-layout data where needed.
 - Re-audit imported Event Companion terrain data for exact source-level light/dense tagging; deterministic inference remains only as legacy-layout compatibility.
 - Keep walls in saved terrain mat templates where needed.

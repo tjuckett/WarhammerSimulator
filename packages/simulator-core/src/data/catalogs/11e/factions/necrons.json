@@ -1,0 +1,96 @@
+{
+  "id": "necrons",
+  "name": "Necrons",
+  "edition": "11e",
+  "unitRefs": [
+    "necrons.illuminor-szeras",
+    "necrons.imotekh-the-stormlord",
+    "necrons.nekrosor-ammentar",
+    "necrons.orikan-the-diviner",
+    "necrons.trazyn-the-infinite",
+    "necrons.c-tan-shard-of-the-deceiver",
+    "necrons.c-tan-shard-of-the-nightbringer",
+    "necrons.c-tan-shard-of-the-void-dragon",
+    "necrons.the-silent-king",
+    "necrons.chronomancer",
+    "necrons.geomancer",
+    "necrons.hexmark-destroyer",
+    "necrons.overlord",
+    "necrons.overlord-with-translocation-shroud",
+    "necrons.plasmancer",
+    "necrons.psychomancer",
+    "necrons.royal-warden",
+    "necrons.skorpekh-lord",
+    "necrons.technomancer",
+    "necrons.transcendent-c-tan",
+    "necrons.lokhust-lord",
+    "necrons.catacomb-command-barge",
+    "necrons.immortals",
+    "necrons.necron-warriors",
+    "necrons.ghost-ark",
+    "necrons.doom-scythe",
+    "necrons.canoptek-macrocytes",
+    "necrons.canoptek-tomb-crawlers",
+    "necrons.canoptek-wraiths",
+    "necrons.cryptothralls",
+    "necrons.deathmarks",
+    "necrons.flayed-ones",
+    "necrons.lychguard",
+    "necrons.ophydian-destroyers",
+    "necrons.skorpekh-destroyers",
+    "necrons.triarch-praetorians",
+    "necrons.lokhust-destroyers",
+    "necrons.lokhust-heavy-destroyers",
+    "necrons.tomb-blades",
+    "necrons.canoptek-scarab-swarms",
+    "necrons.monolith",
+    "necrons.obelisk",
+    "necrons.tesseract-vault",
+    "necrons.seraptek-heavy-construct",
+    "necrons.night-scythe",
+    "necrons.annihilation-barge",
+    "necrons.canoptek-spyders",
+    "necrons.doomsday-ark",
+    "necrons.canoptek-doomstalker",
+    "necrons.canoptek-reanimator",
+    "necrons.triarch-stalker",
+    "necrons.convergence-of-dominion"
+  ],
+  "ruleRefs": [
+    "necrons.army-rule.reanimation-protocols"
+  ],
+  "detachmentRefs": [
+    "necrons.detachment.awakened-dynasty",
+    "necrons.detachment.annihilation-legion",
+    "necrons.detachment.canoptek-court",
+    "necrons.detachment.obeisance-phalanx",
+    "necrons.detachment.hypercrypt-legion",
+    "necrons.detachment.starshatter-arsenal",
+    "necrons.detachment.cryptek-conclave",
+    "necrons.detachment.cursed-legion",
+    "necrons.detachment.pantheon-of-woe",
+    "necrons.detachment.hand-of-the-dynasty",
+    "necrons.detachment.skyshroud-spearhead",
+    "necrons.detachment.the-phaerons-armoury"
+  ],
+  "factionKeywords": [
+    "Necrons"
+  ],
+  "sources": [
+    {
+      "title": "Wahapedia Necrons faction reference",
+      "url": "https://wahapedia.ru/wh40k11ed/factions/necrons/",
+      "capturedAt": "2026-08-29",
+      "sourceRevision": "Faction Pack. Necrons (11th edition, version 1.2)"
+    }
+  ],
+  "coverage": {
+    "sourceEntryCount": 52,
+    "normalizedEntryCount": 52,
+    "excludedLegendCount": 12,
+    "notes": [
+      "All current non-Legends Necron datasheets from the saved reference are selectable.",
+      "Detachment rules, enhancements, and stratagem text are retained as source data; executable effects remain follow-up work."
+    ]
+  }
+}

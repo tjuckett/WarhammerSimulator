@@ -16,7 +16,25 @@ import {
   type EleventhForceDispositionId,
   type TournamentMission,
 } from '@warhammer-simulator/core/engine/missions';
-import { terrainCenter } from '@warhammer-simulator/core/engine/terrainGeometry';
+import { terrainCenter, terrainCorners } from '@warhammer-simulator/core/engine/terrainGeometry';
+
+function objectivePositionForTerrainGroup(terrain: TerrainLayout['terrain']) {
+  const corners = terrain.flatMap(terrainCorners);
+  const minX = Math.min(...corners.map(point => point.x));
+  const maxX = Math.max(...corners.map(point => point.x));
+  const minY = Math.min(...corners.map(point => point.y));
+  const maxY = Math.max(...corners.map(point => point.y));
+  return { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
+}
+
+function groupedTerrainObjectives(terrain: TerrainLayout['terrain']) {
+  const groups = new Map<string, TerrainLayout['terrain']>();
+  terrain.filter(mat => mat.objectiveRole).forEach(mat => {
+    const markerId = mat.objectiveGroupId ?? `terrain-${mat.id}`;
+    groups.set(markerId, [...(groups.get(markerId) ?? []), mat]);
+  });
+  return [...groups.values()];
+}
 
 type RestoredSetupValues = {
   editionId: string;
@@ -69,18 +87,25 @@ export function useBattleSetupControls({
   const selectedLayout = terrainLayouts.find(layout => layout.id === layoutId)
     ?? compatibleLayouts[0]
     ?? terrainLayouts[0];
+  const selectedTerrainObjectiveGroups = useMemo(
+    () => groupedTerrainObjectives(editorLayout.terrain),
+    [editorLayout.terrain],
+  );
   const selectedObjectives = useMemo(() => {
-    if (isEleventhEdition) {
-      const terrainObjectives = editorLayout.terrain
-        .filter(terrain => terrain.objectiveRole)
-        .map(terrain => terrainCenter(terrain));
-      if (terrainObjectives.length) return terrainObjectives;
-    }
+    // A tagged terrain mat is deliberate editor data, so preview it regardless
+    // of the currently selected rules edition.  11e renders it as a terrain-area
+    // objective; older editions render the same position as an ordinary marker.
+    const terrainObjectives = selectedTerrainObjectiveGroups
+      .map(group => group.length === 1 ? terrainCenter(group[0]) : objectivePositionForTerrainGroup(group));
+    if (terrainObjectives.length) return terrainObjectives;
     const objectives = objectivesForDeployment(selectedMission.deployment, selectedBoardFormat.id);
     return selectedBoardFormat.id === 'strike-force'
       ? scalePositionsForBoard(objectives, selectedBoardFormat)
       : objectives;
-  }, [editorLayout.terrain, isEleventhEdition, selectedMission.deployment, selectedBoardFormat]);
+  }, [isEleventhEdition, selectedMission.deployment, selectedBoardFormat, selectedTerrainObjectiveGroups]);
+  const selectedObjectiveTerrainIds = useMemo(() => selectedTerrainObjectiveGroups.length
+    ? selectedTerrainObjectiveGroups.map(group => group.map(terrain => terrain.id))
+    : undefined, [selectedTerrainObjectiveGroups]);
   const eleventhPrimaryMissions = useMemo<[string, string]>(
     () => eleventhPrimaryMissionsForDispositions([forceDisposition0, forceDisposition1]),
     [forceDisposition0, forceDisposition1],
@@ -196,6 +221,7 @@ export function useBattleSetupControls({
       compatibleLayouts,
       selectedLayout,
       selectedObjectives,
+      selectedObjectiveTerrainIds,
       eleventhPrimaryMissions,
       selectedSetup,
     },

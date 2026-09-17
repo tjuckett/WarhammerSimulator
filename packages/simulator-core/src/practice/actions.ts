@@ -1,4 +1,5 @@
 import { BATTLE_PHASE, MOVEMENT_STEP, PHASE_STEP, type BeaconWhenDrawnSelection, type BurdenOfTrustWhenDrawnSelection, type FightConsolidationMode, type Phase, type Position, type SecondaryMissionMode, type SecondaryMissionSelectionValue, type Side, type BattleState, type TemptingTargetWhenDrawnSelection } from '../types/battle';
+import { clone } from '../engine/clone';
 import type { RulesEdition } from '../engine/rulesEngine';
 import { battleRound, maxBattleRounds, setBattleRound } from '../engine/battleRound';
 import { primaryMissionScoringLogs, scorePrimaryMission, scorePrimaryMissionsAtEndOfBattle, scorePrimaryMissionsAtEndOfTurn, securePlayObjective, unsupportedPrimaryMissionScoringLogs, updateObjectiveControl } from '../engine/missionScoring';
@@ -36,7 +37,7 @@ import {
   playChargeRoll,
   markRemainingStationaryUnits,
   movementStep,
-  movePlayModelByDelta,
+  movePlaySelectionByDelta,
   movePlayModelVerticallyByDelta,
   undoPlayUnitMovement,
   pileInPlayUnit,
@@ -562,10 +563,6 @@ const PLAY_TURN_PHASES: Phase[] = [
 ];
 const LEGACY_PLAY_ACTION_PREFIX = 'man' + 'ual.';
 
-function clone<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value));
-}
-
 function stepPlayPhase(state: BattleState, rules: RulesEdition): BattleState {
   const fightStep = advanceFightPhaseStep(state, rules);
   if (fightStep) return fightStep;
@@ -703,12 +700,12 @@ export function applyGameAction(
       return undeployPlayUnit(state, normalizedAction.unitId, normalizedAction.side);
 
     case GAME_ACTION_TYPE.MoveModels:
-      return normalizedAction.parts.reduce(
-        (next, part) => part.modelIndices.reduce(
-          (modelState, modelIndex) => movePlayModelByDelta(modelState, part.unitId, part.side, modelIndex, normalizedAction.dx, normalizedAction.dy, normalizedAction.collide),
-          next,
-        ),
+      return movePlaySelectionByDelta(
         state,
+        normalizedAction.parts,
+        normalizedAction.dx,
+        normalizedAction.dy,
+        normalizedAction.collide,
       );
 
     case GAME_ACTION_TYPE.MoveModelsVertically:

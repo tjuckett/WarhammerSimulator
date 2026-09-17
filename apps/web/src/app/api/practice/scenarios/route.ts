@@ -3,6 +3,9 @@ import type { PracticeScenario } from '@warhammer-simulator/core/practice/scenar
 import { prismaPracticeScenarioRepository } from '../../../../server/practice/prismaPracticeScenarioRepository';
 import { practiceApiError } from '../../../../server/apiErrors';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 async function requestJson<T>(request: Request): Promise<T> {
   if (request.headers.get('content-encoding')?.toLowerCase() !== 'gzip') {
     return request.json() as Promise<T>;

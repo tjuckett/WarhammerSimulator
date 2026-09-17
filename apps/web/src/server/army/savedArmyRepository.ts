@@ -3,33 +3,76 @@ import { isImportedArmy } from '@warhammer-simulator/core/engine/armyUnits';
 import { prisma } from '../db';
 
 type StoredArmy = {
-  slot: number;
+  id: string;
   name: string;
   faction: string;
   units: unknown;
+  metadata: unknown;
+  updatedAt: Date;
 };
 
-function storedArmyToImportedArmy(army: StoredArmy): ImportedArmy {
+type ArmyMetadata = Pick<ImportedArmy, 'battleSizeId' | 'detachmentId' | 'sourceEdition' | 'catalog' | 'sourceMetadata' | 'generation'>;
+
+export type SavedArmyPayload = {
+  id: string;
+  name: string;
+  faction: string;
+  units: ImportedArmy['units'];
+  metadata?: ArmyMetadata;
+  updatedAt: string;
+};
+
+function metadataForArmy(army: ImportedArmy): ArmyMetadata | undefined {
+  const metadata = JSON.parse(JSON.stringify({
+    battleSizeId: army.battleSizeId,
+    detachmentId: army.detachmentId,
+    sourceEdition: army.sourceEdition,
+    catalog: army.catalog,
+    sourceMetadata: army.sourceMetadata,
+    generation: army.generation,
+  })) as ArmyMetadata;
+  return Object.keys(metadata).length ? metadata : undefined;
+}
+
+function storedArmyToPayload(army: StoredArmy): SavedArmyPayload {
   return {
+    id: army.id,
     name: army.name,
     faction: army.faction,
     units: Array.isArray(army.units) ? army.units as ImportedArmy['units'] : [],
+    metadata: army.metadata && typeof army.metadata === 'object' ? army.metadata as ArmyMetadata : undefined,
+    updatedAt: army.updatedAt.toISOString(),
   };
 }
 
 export const savedArmyRepository = {
-  async load(slot: number): Promise<ImportedArmy | null> {
-    const saved = await prisma.savedArmy.findUnique({ where: { slot } });
-    return saved ? storedArmyToImportedArmy(saved) : null;
+  async list(): Promise<SavedArmyPayload[]> {
+    const saved = await prisma.savedArmy.findMany({ orderBy: { updatedAt: 'desc' } });
+    return saved.map(storedArmyToPayload);
   },
 
-  async save(slot: number, army: ImportedArmy): Promise<ImportedArmy> {
+  async load(id: string): Promise<SavedArmyPayload | null> {
+    const saved = await prisma.savedArmy.findUnique({ where: { id } });
+    return saved ? storedArmyToPayload(saved) : null;
+  },
+
+  async save(army: ImportedArmy, id?: string): Promise<SavedArmyPayload> {
     if (!isImportedArmy(army)) throw new Error('Invalid army payload.');
-    const saved = await prisma.savedArmy.upsert({
-      where: { slot },
-      create: { slot, name: army.name, faction: army.faction, units: army.units },
-      update: { name: army.name, faction: army.faction, units: army.units },
+    if (id) {
+      const saved = await prisma.savedArmy.update({
+        where: { id },
+        data: { name: army.name, faction: army.faction, units: army.units, metadata: metadataForArmy(army) },
+      });
+      return storedArmyToPayload(saved);
+    }
+
+    const saved = await prisma.savedArmy.create({
+      data: { name: army.name, faction: army.faction, units: army.units, metadata: metadataForArmy(army) },
     });
-    return storedArmyToImportedArmy(saved);
+    return storedArmyToPayload(saved);
+  },
+
+  async delete(id: string): Promise<void> {
+    await prisma.savedArmy.deleteMany({ where: { id } });
   },
 };

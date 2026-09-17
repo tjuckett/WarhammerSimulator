@@ -1,6 +1,6 @@
 import { UNIT_DEPLOYMENT_MODE, type ImportedArmy, type UnitProfile } from '../types/army';
 import type { BattleState, BattleUnit, BoardFormat, Position, Side, Terrain } from '../types/battle';
-import { baseFootprintDistance, modelBaseFootprintInches, modelBaseRadiusInches, unitMaxBaseRadiusInches } from './baseSizes';
+import { baseFootprintDistance, footprintBoundaryPoints, modelBaseFootprintForUnit, modelBaseFootprintInches, modelBaseRadiusInches, unitMaxBaseRadiusInches, type ModelBaseFootprint } from './baseSizes';
 import { distance } from './coherency';
 import { DEPLOYMENT_ZONE_SETS } from '../data/deploymentZones';
 import type { DeploymentZoneSet, DeploymentZoneShape } from '../data/deploymentZoneTypes';
@@ -135,7 +135,7 @@ export function infiltratorModelsAreOutsideEnemyUnits(
       position,
       modelBaseFootprintInches(profile, modelIndexes[modelIndex] ?? modelIndex),
       enemyPosition,
-      modelBaseFootprintInches(enemy.profile, enemyModelIndex, enemy.modelRotations?.[enemyModelIndex] ?? enemy.facingDeg ?? 0),
+      modelBaseFootprintForUnit(enemy, enemyModelIndex),
     ) > ELEVENTH_SPECIAL_SETUP_ENEMY_BUFFER)));
 }
 
@@ -467,7 +467,11 @@ export function placePlayUnit(
     ? context.gridFormation(profile, position, side)
     : context.gridFormationByRows(profile, position, side, rows);
   const positions = rotateFormation(formation, position, rotationDeg);
-  if (!canInfiltrate && !positions.every((model, modelIndex) => pointInDeploymentZone(model, zone, modelBaseRadiusInches(profile, modelIndex)))) {
+  if (!canInfiltrate && !positions.every((model, modelIndex) => baseFootprintInDeploymentZone(
+    model,
+    modelBaseFootprintInches(profile, modelIndex, rotationDeg),
+    zone,
+  ))) {
     next.log = [...next.log, context.log(next, side, profile.name, `${profile.name} must be placed wholly inside ${zone.name}.`, 'info')];
     return next;
   }
@@ -695,7 +699,11 @@ export function deploymentIssues(state: BattleState, context: DeploymentLegality
       if (!context.infiltratorPlacementIsLegal(state, unit.side, unit.profile, unit.modelPositions, deployment, board)) {
         issues.push(`${unit.profile.name} is within 8" of the enemy deployment zone or an enemy unit.`);
       }
-    } else if (unit.modelPositions.some((model, modelIndex) => !pointInDeploymentZone(model, zone, context.modelBaseRadius(unit, modelIndex)))) {
+    } else if (unit.modelPositions.some((model, modelIndex) => !baseFootprintInDeploymentZone(
+      model,
+      modelBaseFootprintForUnit(unit, modelIndex),
+      zone,
+    ))) {
       issues.push(`${unit.profile.name} is not wholly inside ${zone.name}.`);
     }
     if (context.unitHasWallOverlap(state, unit)) issues.push(`${unit.profile.name} has a model in a wall.`);
@@ -888,6 +896,22 @@ function pointInDeploymentShape(p: Position, shape: DeploymentZoneShape): boolea
   return Math.hypot(p.x - shape.cutoutCenter.x, p.y - shape.cutoutCenter.y) >= shape.cutoutRadius;
 }
 
+function circleFitsDeploymentShape(p: Position, shape: DeploymentZoneShape, radius: number): boolean {
+  if (shape.type === 'triangle') {
+    return pointInTriangle(p, shape.points)
+      && shape.points.every((point, index) =>
+        distanceToSegment(p, point, shape.points[(index + 1) % shape.points.length]) + 0.001 >= radius);
+  }
+
+  const x0 = Math.min(shape.x1, shape.x2);
+  const x1 = Math.max(shape.x1, shape.x2);
+  const y0 = Math.min(shape.y1, shape.y2);
+  const y1 = Math.max(shape.y1, shape.y2);
+  if (p.x - radius < x0 || p.x + radius > x1 || p.y - radius < y0 || p.y + radius > y1) return false;
+  return shape.type !== 'rectWithCircleCut'
+    || Math.hypot(p.x - shape.cutoutCenter.x, p.y - shape.cutoutCenter.y) >= shape.cutoutRadius + radius;
+}
+
 function distanceToSegment(p: Position, a: Position, b: Position): number {
   const dx = b.x - a.x;
   const dy = b.y - a.y;
@@ -967,14 +991,38 @@ export function distanceToDeploymentZone(p: Position, zone: DeploymentZone): num
 }
 
 export function pointInDeploymentZone(p: Position, zone: DeploymentZone, pad = 0): boolean {
-  const paddedPoint = [
-    { x: p.x - pad, y: p.y - pad },
-    { x: p.x + pad, y: p.y - pad },
-    { x: p.x + pad, y: p.y + pad },
-    { x: p.x - pad, y: p.y + pad },
-    p,
-  ];
-  return paddedPoint.every(point => zone.shapes.some(shape => pointInDeploymentShape(point, shape)));
+  if (pad <= 0) return zone.shapes.some(shape => pointInDeploymentShape(p, shape));
+  // A deployment side can be made from multiple touching shapes. A base
+  // straddling their shared edge is still wholly inside the side, even
+  // though it is not wholly inside any one shape. Keep the common single
+  // shape path fast, then test the circle boundary against the union.
+  if (zone.shapes.some(shape => circleFitsDeploymentShape(p, shape, pad))) return true;
+  if (!zone.shapes.some(shape => pointInDeploymentShape(p, shape))) return false;
+  const boundarySamples = 32;
+  return Array.from({ length: boundarySamples }, (_, index) => {
+    const angle = (index / boundarySamples) * Math.PI * 2;
+    const boundaryPoint = {
+      x: p.x + Math.cos(angle) * pad,
+      y: p.y + Math.sin(angle) * pad,
+    };
+    return zone.shapes.some(shape => pointInDeploymentShape(boundaryPoint, shape));
+  }).every(Boolean);
+}
+
+/**
+ * Checks the actual model base instead of approximating every base as a
+ * circle. This matters for oval bases near the edge of a deployment zone and
+ * still treats touching shapes that form one side as a single union.
+ */
+export function baseFootprintInDeploymentZone(
+  center: Position,
+  footprint: ModelBaseFootprint,
+  zone: DeploymentZone,
+): boolean {
+  if (!pointInDeploymentZone(center, zone)) return false;
+  return footprintBoundaryPoints(center, footprint).every(point =>
+    zone.shapes.some(shape => pointInDeploymentShape(point, shape)),
+  );
 }
 
 export function formationInDeploymentZone(x: number, y: number, hw: number, hh: number, zone: DeploymentZone): boolean {

@@ -1,0 +1,277 @@
+{
+  "factionId": "orks",
+  "rules": [
+    {
+      "id": "orks.army-rule.waaagh",
+      "runtimeId": "waaagh",
+      "name": "Waaagh!",
+      "kind": "army-rule",
+      "implementationStatus": "partial",
+      "description": "If your Army Faction is ORKS, once per battle, at the start of your Command phase, you can call a Waaagh!. Until the start of your next Command phase, units from your army with this ability are eligible to declare a charge in a turn in which they Advanced, melee weapons equipped by models from your army with this ability add 1 to Strength and Attacks, and models from your army with this ability have a 5+ invulnerable save.",
+      "runtime": {
+        "ability": {
+          "timing": "command-phase",
+          "target": "none",
+          "oncePerBattle": true,
+          "armyWideOncePerBattle": true,
+          "effects": [
+            { "type": "activate-army-ability", "abilityId": "waaagh" }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "title": "Wahapedia Orks army rule",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-08-29",
+          "section": "Waaagh!"
+        }
+      ],
+      "notes": ["The current runtime models activation and charge eligibility; the remaining Waaagh! stat modifiers are still source-scoped work."]
+    },
+    {
+      "id": "orks.unit-rule.kunnin-infiltrator",
+      "runtimeId": "kunnin-infiltrator",
+      "name": "Kunnin' Infiltrator (Once per battle, per army)",
+      "kind": "unit-ability",
+      "implementationStatus": "complete",
+      "description": "In your Movement phase, if this unit is unengaged, place this unit in Strategic Reserves. This unit has Deep Strike until the end of the phase and must make an ingress move this phase, including in your first turn.",
+      "runtime": {
+        "ability": {
+          "timing": "manual",
+          "target": "self",
+          "oncePerBattle": true,
+          "armyWideOncePerBattle": true,
+          "phases": ["movement"],
+          "requiresUnengaged": true,
+          "effects": [
+            {
+              "type": "move-to-strategic-reserves",
+              "target": "source-unit",
+              "grantDeepStrikeUntil": "phase-end"
+            }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "title": "Wahapedia Boss Snikrot datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/Boss-Snikrot",
+          "capturedAt": "2026-08-29",
+          "section": "Kunnin' Infiltrator"
+        }
+      ]
+    },
+    {
+      "id": "orks.unit-rule.grot-riggers",
+      "runtimeId": "grot-riggers",
+      "name": "Grot Riggers",
+      "kind": "unit-ability",
+      "implementationStatus": "complete",
+      "description": "At the start of your Command phase, this model regains 1 lost wound.",
+      "runtime": {
+        "ability": {
+          "timing": "command-phase",
+          "target": "self",
+          "automatic": true,
+          "effects": [
+            { "type": "restore-wounds", "target": "source-unit", "amount": 1 }
+          ]
+        }
+      },
+      "sources": [
+        {
+          "title": "Wahapedia Trukk datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/Trukk",
+          "capturedAt": "2026-08-29",
+          "section": "Grot Riggers"
+        }
+      ]
+    },
+    {
+      "id": "orks.unit-rule.red-skull-kommandos",
+      "name": "Red Skull Kommandos",
+      "kind": "unit-ability",
+      "implementationStatus": "display-only",
+      "description": "This unit has +1 to its Save characteristic against ranged attacks.",
+      "sources": [
+        {
+          "title": "Wahapedia Boss Snikrot datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/Boss-Snikrot",
+          "capturedAt": "2026-08-29",
+          "section": "Red Skull Kommandos"
+        }
+      ],
+      "notes": ["Retained for display and audit; no generic ranged-save modifier effect exists yet."]
+    },
+    {
+      "id": "orks.unit-rule.prophet-of-da-great-waaagh",
+      "name": "Prophet of Da Great Waaagh!",
+      "kind": "unit-ability",
+      "implementationStatus": "display-only",
+      "description": "While this unit is leading a unit, each time a model in that unit makes a melee attack, add 1 to the Hit roll and add 1 to the Wound roll and, if the Waaagh! is active for your army, a Critical Hit is scored on a successful unmodified Hit roll of 5+.",
+      "sources": [
+        {
+          "title": "Wahapedia Ghazghkull Thraka datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/Ghazghkull-Thraka",
+          "capturedAt": "2026-08-29",
+          "section": "Prophet of Da Great Waaagh!"
+        }
+      ],
+      "notes": ["Retained for display and audit; attached-unit attack modifiers need a broader typed modifier vocabulary."]
+    },
+    {
+      "id": "orks.unit-rule.ghazghkulls-waaagh-banner",
+      "name": "Ghazghkull's Waaagh! Banner (Aura)",
+      "kind": "unit-ability",
+      "implementationStatus": "display-only",
+      "description": "While a friendly ORKS unit is within 12 inches of Makari, if the Waaagh! is active for your army, melee weapons equipped by models in that unit have the Lethal Hits ability.",
+      "sources": [
+        {
+          "title": "Wahapedia Ghazghkull Thraka datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/Ghazghkull-Thraka",
+          "capturedAt": "2026-08-29",
+          "section": "Ghazghkull's Waaagh! Banner"
+        }
+      ],
+      "notes": ["Retained for display and audit; aura range and conditional weapon keywords need typed aura support."]
+    },
+    {
+      "id": "orks.unit-rule.get-da-good-bitz",
+      "name": "Get Da Good Bitz",
+      "kind": "unit-ability",
+      "implementationStatus": "display-only",
+      "description": "At the end of your Command phase, if this unit is within range of an objective marker you control, that objective marker remains under your control even if you have no models within range of it, until your opponent controls it at the start or end of any turn.",
+      "sources": [
+        {
+          "title": "Wahapedia Boyz datasheet",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/Boyz",
+          "capturedAt": "2026-08-29",
+          "section": "Get Da Good Bitz"
+        }
+      ],
+      "notes": ["Retained for display and audit; objective retention is not yet represented as a generic rule effect."]
+    },
+    {
+      "id": "orks.detachment.war-horde",
+      "name": "War Horde - Get Stuck In",
+      "kind": "detachment-rule",
+      "status": "current",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "Melee weapons equipped by ORKS models from your army have the Sustained Hits 1 ability.",
+      "sources": [
+        {
+          "title": "Wahapedia War Horde detachment",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-08-29",
+          "section": "War Horde"
+        }
+      ],
+      "notes": ["Detachment rule is cataloged now; always-on detachment weapon modifiers will be added through the shared effect vocabulary."]
+    },
+    {
+      "id": "orks.stratagem.war-horde.careen",
+      "name": "Careen!",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "1CP. Any phase, just after an ORKS VEHICLE unit with Deadly Demise is destroyed. If you roll a 6 for Deadly Demise, that unit can make a Normal or Fall Back move before Deadly Demise and emergency disembark moves are resolved.",
+      "sources": [
+        {
+          "title": "Wahapedia War Horde stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-08-29",
+          "section": "War Horde - Careen!"
+        }
+      ],
+      "notes": ["Stored as source data only until destroyed-unit movement and Deadly Demise timing are represented by typed effects."]
+    },
+    {
+      "id": "orks.stratagem.war-horde.orks-is-never-beaten",
+      "name": "Orks Is Never Beaten",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "2CP. Fight phase, just after an enemy unit selects its targets. One ORKS unit selected as a target can fight after models in the attacking unit finish making attacks when its models are destroyed before fighting.",
+      "sources": [
+        {
+          "title": "Wahapedia War Horde stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-08-29",
+          "section": "War Horde - Orks Is Never Beaten"
+        }
+      ]
+    },
+    {
+      "id": "orks.stratagem.war-horde.unbridled-carnage",
+      "name": "Unbridled Carnage",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "1CP. Fight phase. One ORKS unit that has not been selected to fight this phase gives its melee weapons Critical Hits on unmodified Hit rolls of 5+ until the end of the phase.",
+      "sources": [
+        {
+          "title": "Wahapedia War Horde stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-08-29",
+          "section": "War Horde - Unbridled Carnage"
+        }
+      ]
+    },
+    {
+      "id": "orks.stratagem.war-horde.ard-as-nails",
+      "name": "'Ard as Nails",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "1CP. Your opponent's Shooting phase or the Fight phase, just after an enemy unit selects its targets. An ORKS unit selected as a target, excluding GROTS, MONSTERS and VEHICLES, subtracts 1 from wound rolls made against it until the end of the phase.",
+      "sources": [
+        {
+          "title": "Wahapedia War Horde stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-08-29",
+          "section": "War Horde - 'Ard as Nails"
+        }
+      ]
+    },
+    {
+      "id": "orks.stratagem.war-horde.mob-rule",
+      "name": "Mob Rule",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "1CP. End of your Command phase. A MOB unit containing 10 or more models and not Below Half-strength selects a friendly Battle-shocked ORKS INFANTRY unit within 6 inches; that unit is no longer Battle-shocked.",
+      "sources": [
+        {
+          "title": "Wahapedia War Horde stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-08-29",
+          "section": "War Horde - Mob Rule"
+        }
+      ]
+    },
+    {
+      "id": "orks.stratagem.war-horde.ere-we-go",
+      "name": "Ere We Go",
+      "kind": "stratagem",
+      "status": "unsupported",
+      "implementationStatus": "display-only",
+      "detachmentId": "orks.detachment.war-horde",
+      "description": "1CP. Start of your Movement phase. One ORKS INFANTRY unit adds 2 to Advance and Charge rolls made for it until the end of the turn.",
+      "sources": [
+        {
+          "title": "Wahapedia War Horde stratagem",
+          "url": "https://wahapedia.ru/wh40k11ed/factions/orks/",
+          "capturedAt": "2026-08-29",
+          "section": "War Horde - Ere We Go"
+        }
+      ]
+    }
+  ]
+}

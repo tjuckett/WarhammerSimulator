@@ -32,6 +32,7 @@ import {
   playFightFirstUnitIds,
   playFightConsolidationOptions,
   playFightPileInTargetOptions,
+  attachedGroupRepresentatives,
   playFightSideCanPass,
   playOverrunFightUnitIds,
   playUnitCanConsolidate,
@@ -46,8 +47,14 @@ export type PlayFightWeaponOption = {
   weaponIndex: number;
   name: string;
   targetIds: string[];
+  /** UI metadata for a Leader/bodyguard unit resolved as one Fight selection. */
+  sourceUnitId?: string;
+  sourceWeaponIndex?: number;
+  weapon?: WeaponProfile;
   modelCount?: number;
   targetModelCounts?: Record<string, number>;
+  /** Eligible attacking model indexes for each target, used for board highlighting. */
+  targetModelIndexes?: Record<string, number[]>;
 };
 
 export type PlayMeleeAttackAllocation = {
@@ -96,6 +103,7 @@ export interface FightPhaseActionContext extends FightMovementRulesContext {
   weaponHasKeyword(weapon: WeaponProfile, keyword: string): boolean;
   chooseOneProfilePerGroup<T extends { weapon: WeaponProfile }>(weapons: T[]): T[];
   aliveWeaponModelCount(unit: BattleUnit, weaponIndex: number): number;
+  aliveWeaponCopyCount?(unit: BattleUnit, weaponIndex: number): number;
   aliveWeaponModelIndexes(unit: BattleUnit, weaponIndex: number): number[];
   participatingWeaponModelIndexes(
     unit: BattleUnit,
@@ -177,11 +185,53 @@ export function refreshPlayFightPileInActions(
 ): void {
   if (rules.metadata.edition !== '11e' || !isFightPileInStep(state)) return;
   const side = state.fightPileInSide ?? state.activeArmy;
-  const unitIds = playFightPileInUnitIds(state, side, rules, context);
+  // Every candidate asks for the same enemy list and repeatedly resolves the
+  // same attached-unit components while checking engagement and 5" reach.
+  // Cache those read-only lookups for this refresh. The cache is deliberately
+  // local because action refreshes can mutate the ledger and callers may mutate
+  // a cloned BattleState after this function returns.
+  const enemiesBySide = new Map<Side, BattleUnit[]>();
+  const componentsByUnitId = new Map<string, BattleUnit[]>();
+  const cachedContext: FightPhaseActionContext = {
+    ...context,
+    enemies: (queryState, querySide) => {
+      if (queryState !== state) return context.enemies(queryState, querySide);
+      const cached = enemiesBySide.get(querySide);
+      if (cached) return cached;
+      const enemies = context.enemies(queryState, querySide);
+      enemiesBySide.set(querySide, enemies);
+      return enemies;
+    },
+    attachedComponents: (queryState, unit) => {
+      if (queryState !== state) return context.attachedComponents(queryState, unit);
+      const cached = componentsByUnitId.get(unit.id);
+      if (cached) return cached;
+      const components = context.attachedComponents(queryState, unit);
+      componentsByUnitId.set(unit.id, components);
+      return components;
+    },
+  };
+  // Compute each unit's target list once. `playFightPileInUnitIds` delegates
+  // to the same target query, so calling it first and then querying targets
+  // again for every action doubled the geometry work whenever the step was
+  // entered or refreshed.
+  const eligible = attachedGroupRepresentatives(state, state.units
+    .filter(unit => unit.side === side && !unit.destroyed && !unit.embarkedInUnitId)
+    .filter(unit => playUnitCanPileIn(state, unit.id, side, rules, cachedContext)), cachedContext)
+    .map(unit => ({
+      unitId: unit.id,
+      targetUnitIds: playFightPileInTargetOptions(state, unit.id, side, rules, cachedContext),
+    }))
+    .filter(entry => entry.targetUnitIds.length > 0);
+  const unitIds = eligible.map(entry => entry.unitId);
+  const targetUnitIdsByUnitId = new Map(eligible.map(entry => [entry.unitId, entry.targetUnitIds] as const));
   const existing = phaseStepActionLedgerFor(state)?.actions ?? [];
   const incomingIds = new Set(unitIds.map(unitId => pileInActionId(side, unitId)));
   const incoming = unitIds.map(unitId => {
     const unit = state.units.find(candidate => candidate.id === unitId);
+    const groupLabel = unit
+      ? context.attachedComponents(state, unit).map(component => component.profile.name).join(' + ')
+      : unitId;
     const existingAction = pileInActionFor(state, side, unitId);
     return {
       id: pileInActionId(side, unitId),
@@ -190,7 +240,7 @@ export function refreshPlayFightPileInActions(
       kind: 'pile-in' as const,
       side,
       unitId,
-      targetUnitIds: playFightPileInTargetOptions(state, unitId, side, rules, context),
+      targetUnitIds: targetUnitIdsByUnitId.get(unitId) ?? [],
       requiredToAdvance: false,
       // Refreshes happen only outside an open movement window. A stale
       // in-progress action from an older save must become selectable again;
@@ -198,7 +248,7 @@ export function refreshPlayFightPileInActions(
       status: existingAction && existingAction.status !== 'available' && existingAction.status !== 'in-progress'
         ? existingAction.status
         : 'available' as const,
-      label: `${unit?.profile.name ?? unitId}: Pile In`,
+      label: `${groupLabel}: Pile In`,
       description: 'Optional Pile In move during the Fight phase.',
     } satisfies PhaseStepAction;
   });
@@ -341,7 +391,22 @@ function skipOptionalMovementActions(state: BattleState, kind: 'pile-in' | 'cons
 
 export function finishAttachedFightComponent(state: BattleState, unit: BattleUnit, rules: RulesEdition, context: FightPhaseContext): void {
   if (rules.metadata.edition !== '11e') return;
-  const remaining = context.attachedComponents(state, unit)
+  const components = context.attachedComponents(state, unit);
+  // Leaders and bodyguards are one selected unit. A component can still be
+  // Fight-eligible because the attached unit charged or was engaged at the
+  // start of the step even when none of its own models can strike. Complete
+  // such a component with the combined activation instead of leaving an
+  // impossible 0/0 follow-up action in the phase ledger.
+  if (context.componentHasFightAttacks) {
+    for (const component of components) {
+      if (!component.activated
+        && context.unitEligibleToFight(component, state, rules)
+        && !context.componentHasFightAttacks(state, component, rules)) {
+        component.activated = true;
+      }
+    }
+  }
+  const remaining = components
     .filter(component => !component.activated && context.unitEligibleToFight(component, state, rules));
   if (remaining.length) {
     state.activeAttachedFightUnitId = context.attachedUnitId(unit);
@@ -387,17 +452,25 @@ export function startPlayFightStep(state: BattleState, rules: RulesEdition, cont
 export function playFightPileInUnitIds(state: BattleState, side: Side, rules: RulesEdition, context: FightPhaseActionContext): string[] {
   const pileInSide = state.fightPileInSide ?? state.activeArmy;
   if (rules.metadata.edition !== '11e' || !isFightPileInStep(state) || pileInSide !== side) return [];
-  return state.units
+  const candidates = state.units
     .filter(unit => unit.side === side && !unit.destroyed && !unit.embarkedInUnitId)
-    .filter(unit => playUnitCanPileIn(state, unit.id, side, rules, context))
-    .map(unit => unit.id);
+    .filter(unit => playUnitCanPileIn(state, unit.id, side, rules, context));
+  return attachedGroupRepresentatives(state, candidates, context).map(unit => unit.id);
 }
 
 /** Resolves one ordinary pile-in side boundary or enters Fight after both sides. */
 export function advancePlayFightPileInStep(state: BattleState, rules: RulesEdition, context: FightPhaseActionContext): BattleState {
   if (rules.metadata.edition !== '11e' || !isFightPileInStep(state) || state.pendingFightMovement) return state;
   const currentSide = state.fightPileInSide ?? state.activeArmy;
-  const currentUnitIds = playFightPileInUnitIds(state, currentSide, rules, context);
+  const currentLedger = phaseStepActionLedgerFor(state);
+  const currentUnitIds = currentLedger
+    ? currentLedger.actions
+      .filter(action => action.kind === 'pile-in'
+        && action.side === currentSide
+        && (action.status === 'available' || action.status === 'in-progress')
+        && !!action.unitId)
+      .map(action => action.unitId!)
+    : playFightPileInUnitIds(state, currentSide, rules, context);
   const next = context.clone(state);
   if (currentUnitIds.length > 0) {
     // Pile In is optional. Advancing the side boundary means the player has
@@ -487,10 +560,10 @@ export function playConsolidationUnitIds(state: BattleState, side: Side, rules: 
   if (rules.metadata.edition !== '11e' || !isFightConsolidationStep(state)
     || !state.consolidationStepStarted || state.consolidationSide !== side) return [];
   const eligible = new Set(state.consolidationEligibleUnitIds ?? []);
-  return state.units
+  const candidates = state.units
     .filter(unit => eligible.has(unit.id) && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId && !unit.consolidated)
-    .filter(unit => playUnitCanConsolidate(state, unit.id, side, rules, context))
-    .map(unit => unit.id);
+    .filter(unit => playUnitCanConsolidate(state, unit.id, side, rules, context));
+  return attachedGroupRepresentatives(state, candidates, context).map(unit => unit.id);
 }
 
 function consolidationActionId(side: Side, unitId: string): string {
@@ -529,6 +602,9 @@ export function refreshPlayFightConsolidationActions(
   const incomingIds = new Set(unitIds.map(unitId => consolidationActionId(side, unitId)));
   const incoming = unitIds.map(unitId => {
     const unit = state.units.find(candidate => candidate.id === unitId);
+    const groupLabel = unit
+      ? context.attachedComponents(state, unit).map(component => component.profile.name).join(' + ')
+      : unitId;
     const existingAction = consolidationActionFor(state, side, unitId);
     const options = playFightConsolidationOptions(state, unitId, side, rules, context);
     const modes = [...new Set(options.map(option => option.mode))];
@@ -553,7 +629,7 @@ export function refreshPlayFightConsolidationActions(
       status: existingAction && existingAction.status !== 'available' && existingAction.status !== 'in-progress'
         ? existingAction.status
         : 'available' as const,
-      label: `${unit?.profile.name ?? unitId}: Consolidate`,
+      label: `${groupLabel}: Consolidate`,
       description: modeDescription
         ? `Optional Consolidation (${modeDescription}) during the Fight phase.`
         : 'Optional Consolidation move during the Fight phase.',
@@ -690,16 +766,17 @@ export function applyFightPhaseMove(
 ): BattleState {
   if (state.phase !== 'fight' || (state.activeArmy !== side && rules.metadata.edition !== '11e')) return state;
   const existing = state.units.find(unit => unit.id === unitId && unit.side === side && !unit.destroyed && !unit.embarkedInUnitId);
-  if (!existing || context.attachedComponents(state, existing).some(component => context.unitSurgedThisPhase(state, component))) return state;
+  const movementUnit = existing ? attachedGroupRepresentatives(state, [existing], context)[0] ?? existing : undefined;
+  if (!movementUnit || context.attachedComponents(state, movementUnit).some(component => context.unitSurgedThisPhase(state, component))) return state;
   const isOverrunPileIn = kind === 'pileIn' && rules.metadata.edition === '11e'
-    && isFightUnitsStep(state) && existing.overrunFightSelected;
-  const intent = normalizeFightMovementIntent(state, existing, side, kind, rules, context);
+    && isFightUnitsStep(state) && movementUnit.overrunFightSelected;
+  const intent = normalizeFightMovementIntent(state, movementUnit, side, kind, rules, context);
   if (!intent) return state;
-  const pending = createFightMovementCheckpoint(state, existing, side, kind, intent, rules, context);
-  const selectedTargets = liveFightTargetUnits(state, side, intent.targetUnitIds ?? []);
+  const pending = createFightMovementCheckpoint(state, movementUnit, side, kind, intent, rules, context);
+  const selectedTargets = liveFightTargetUnits(state, side, intent.targetUnitIds ?? [], context);
 
   const next = context.clone(state);
-  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const unit = next.units.find(candidate => candidate.id === movementUnit.id && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit) return state;
   let movedModels = 0;
   for (let modelIndex = 0; modelIndex < unit.modelPositions.length; modelIndex++) {
@@ -725,11 +802,11 @@ export function applyFightPhaseMove(
   if (!validateFightMovement(next, pending, unit, rules, context).valid) return state;
   commitFightMovement(next, unit, pending, rules, context);
   if (kind === 'pileIn' && rules.metadata.edition === '11e' && isFightPileInStep(next)) {
-    completePhaseStepAction(next, pileInActionId(side, unitId));
+    completePhaseStepAction(next, pileInActionId(side, movementUnit.id));
     refreshPlayFightPileInActions(next, rules, context);
   }
   if (kind === 'consolidate' && rules.metadata.edition === '11e' && isFightConsolidationStep(next)) {
-    completePhaseStepAction(next, consolidationActionId(side, unitId));
+    completePhaseStepAction(next, consolidationActionId(side, movementUnit.id));
     refreshPlayFightConsolidationActions(next, rules, context);
   }
   next.log = [...next.log, context.log(next, side, unit.profile.name,
@@ -740,22 +817,80 @@ export function applyFightPhaseMove(
 export function selectMeleeWeapons(
   unit: BattleUnit,
   options: Array<{ weapon: WeaponProfile; weaponIndex: number }>,
-  requested: number | 'all',
+  requested: number | 'all' | ReadonlySet<number>,
   context: Pick<FightPhaseActionContext, 'modelWeaponLoadout' | 'weaponHasKeyword' | 'chooseOneProfilePerGroup'>,
 ): Array<{ weapon: WeaponProfile; weaponIndex: number }> {
-  const selected = new Set<number>();
+  return options.filter(option => selectedMeleeWeaponModelIndexes(unit, options, requested, context).has(option.weaponIndex));
+}
+
+/**
+ * Returns the number of models that may still be assigned to one target for
+ * a provisional 11th-edition Fight declaration. This is the same per-model
+ * normal-weapon selection used by resolution, exposed so a UI never has to
+ * guess whether two profiles compete for the same model.
+ */
+export function playFightWeaponAllocationCap(
+  state: BattleState,
+  unitId: string,
+  side: Side,
+  allocations: PlayMeleeAttackAllocation[],
+  weaponIndex: number,
+  targetUnitId: string,
+  rules: RulesEdition,
+  context: FightPhaseActionContext,
+): number {
+  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const targetId = canonicalFightTargetId(state, side, targetUnitId, context);
+  const target = state.units.find(candidate => candidate.id === targetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  if (!unit || !target || !context.canFightTarget(unit, target)) return 0;
+  const meleeWeapons = unit.profile.weapons
+    .map((weapon, index) => ({ weapon, weaponIndex: index }))
+    .filter(option => option.weapon.isMelee);
+  const requested = new Set(allocations.map(allocation => allocation.weaponIndex));
+  const selected = selectedMeleeWeaponModelIndexes(unit, meleeWeapons, requested, context);
+  const weapon = meleeWeapons.find(option => option.weaponIndex === weaponIndex);
+  if (!weapon) return 0;
+  const available = (selected.get(weaponIndex) ?? new Set<number>());
+  const eligible = context.participatingWeaponModelIndexes(unit, target, weapon.weapon, weaponIndex, state.terrain, state)
+    .filter(modelIndex => available.has(modelIndex));
+  const assignedElsewhere = allocations
+    .filter(allocation => allocation.weaponIndex === weaponIndex && allocation.targetUnitId !== targetUnitId)
+    .reduce((total, allocation) => total + (allocation.modelCount ?? 0), 0);
+  return Math.max(0, eligible.length - assignedElsewhere);
+}
+
+// A model may use one normal melee weapon, plus every Extra Attacks weapon it
+// carries.  Keep that ownership explicit so resolving a mixed-loadout unit
+// cannot accidentally give the same model attacks from two normal weapons.
+function selectedMeleeWeaponModelIndexes(
+  unit: BattleUnit,
+  options: Array<{ weapon: WeaponProfile; weaponIndex: number }>,
+  requested: number | 'all' | ReadonlySet<number>,
+  context: Pick<FightPhaseActionContext, 'modelWeaponLoadout' | 'weaponHasKeyword' | 'chooseOneProfilePerGroup'>,
+): Map<number, Set<number>> {
+  const selected = new Map<number, Set<number>>();
+  const add = (weaponIndex: number, modelIndex: number) => {
+    const models = selected.get(weaponIndex) ?? new Set<number>();
+    models.add(modelIndex);
+    selected.set(weaponIndex, models);
+  };
   for (let modelIndex = 0; modelIndex < unit.remainingModels; modelIndex++) {
     const rosterIndex = unit.modelRosterIndexes?.[modelIndex] ?? modelIndex;
     const carried = new Set(context.modelWeaponLoadout(unit.profile, rosterIndex));
     const modelOptions = options.filter(option => carried.has(option.weaponIndex));
     context.chooseOneProfilePerGroup(modelOptions.filter(option => context.weaponHasKeyword(option.weapon, 'Extra Attacks')))
-      .forEach(option => selected.add(option.weaponIndex));
-    const normal = context.chooseOneProfilePerGroup(modelOptions.filter(option => !context.weaponHasKeyword(option.weapon, 'Extra Attacks')));
-    const requestedNormal = typeof requested === 'number' ? normal.find(option => option.weaponIndex === requested) : undefined;
+      .forEach(option => add(option.weaponIndex, modelIndex));
+    const normalOptions = modelOptions.filter(option => !context.weaponHasKeyword(option.weapon, 'Extra Attacks'));
+    const normal = context.chooseOneProfilePerGroup(normalOptions);
+    const requestedNormal = typeof requested === 'number'
+      ? normalOptions.find(option => option.weaponIndex === requested)
+      : requested instanceof Set
+        ? normalOptions.find(option => requested.has(option.weaponIndex))
+        : undefined;
     const chosenNormal = requestedNormal ?? normal[0];
-    if (chosenNormal) selected.add(chosenNormal.weaponIndex);
+    if (chosenNormal) add(chosenNormal.weaponIndex, modelIndex);
   }
-  return options.filter(option => selected.has(option.weaponIndex));
+  return selected;
 }
 
 export function fightPlayUnitWeapons(
@@ -766,45 +901,79 @@ export function fightPlayUnitWeapons(
   rules: RulesEdition,
   context: FightPhaseActionContext,
 ): BattleState {
+  const reject = (_reason: string, _details: Record<string, unknown> = {}) => state;
   const pending = pendingCombatActionFor(state, 'fight', unitId, side);
-  if ((!pending && !sideCanSelectFightUnit(state, side, rules, context)) || !allocations.length) return state;
+  if (!allocations.length) return reject('no allocations');
+  if (!pending && !sideCanSelectFightUnit(state, side, rules, context)) return reject('side cannot select fighter', { unitId, side });
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit || !context.unitCanFight(unit, state, rules)
-    || (!pending && !playFightActivationUnitIds(state, side, rules, context).includes(unit.id))) return state;
+    || (!pending && !playFightActivationUnitIds(state, side, rules, context).includes(unit.id))) return reject('fighter is not eligible', { unitId, side });
   const meleeWeapons = unit.profile.weapons.map((weapon, weaponIndex) => ({ weapon, weaponIndex })).filter(option => option.weapon.isMelee);
-  const selectableWeapons = rules.metadata.edition === '11e'
-    ? selectMeleeWeapons(unit, meleeWeapons, 'all', context)
-    : context.chooseOneProfilePerGroup(meleeWeapons);
+  const requestedWeaponIndexes = new Set(allocations.map(allocation => allocation.weaponIndex));
+  const selectedModelIndexes = rules.metadata.edition === '11e'
+    ? selectedMeleeWeaponModelIndexes(unit, meleeWeapons, requestedWeaponIndexes, context)
+    : new Map<number, Set<number>>();
+  const selectableWeapons = (rules.metadata.edition === '11e'
+    ? selectMeleeWeapons(unit, meleeWeapons, requestedWeaponIndexes, context)
+    : context.chooseOneProfilePerGroup(meleeWeapons))
+    // A profile carried only by models outside Engagement Range is not part
+    // of this Fight declaration. Requiring an allocation for it makes the
+    // core reject the same legal weapon list shown by the popup.
+    .filter(option => state.units.some(target =>
+      target.side !== side
+      && !target.destroyed
+      && !target.embarkedInUnitId
+      && context.canFightTarget(unit, target)
+      && context.participatingWeaponModelIndexes(unit, target, option.weapon, option.weaponIndex, state.terrain, state)
+        .some(modelIndex => selectedModelIndexes.get(option.weaponIndex)?.has(modelIndex) ?? true),
+    ));
   const selectableIndexes = new Set(selectableWeapons.map(option => option.weaponIndex));
   const grouped = new Map<number, PlayMeleeAttackAllocation[]>();
   for (const allocation of allocations) {
-    if (!selectableIndexes.has(allocation.weaponIndex)) return state;
-    const target = state.units.find(candidate => candidate.id === allocation.targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-    if (!target || !context.canFightTarget(unit, target) || !context.inEngagement(unit, [target], rules.engagementRange())) return state;
-    grouped.set(allocation.weaponIndex, [...(grouped.get(allocation.weaponIndex) ?? []), allocation]);
+    if (!selectableIndexes.has(allocation.weaponIndex)) return reject('weapon is not selectable', { allocation, selectableIndexes: [...selectableIndexes] });
+    const targetUnitId = canonicalFightTargetId(state, side, allocation.targetUnitId, context);
+    const target = state.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
+    if (!target || !context.canFightTarget(unit, target) || !unitEngagedWithTargets(state, unit, [target], rules.engagementRange(), context)) return reject('target is not a legal Fight target', { allocation });
+    grouped.set(allocation.weaponIndex, [...(grouped.get(allocation.weaponIndex) ?? []), { ...allocation, targetUnitId }]);
   }
-  if (grouped.size !== selectableIndexes.size) return state;
+  if (grouped.size !== selectableIndexes.size) return reject('a selected weapon has no allocation', { allocatedWeaponIndexes: [...grouped.keys()], selectableIndexes: [...selectableIndexes] });
   for (const selected of selectableWeapons) {
     const entries = grouped.get(selected.weaponIndex) ?? [];
-    const availableModelIndexes = context.aliveWeaponModelIndexes(unit, selected.weaponIndex);
+    const selectedModelIndexesForWeapon = rules.metadata.edition === '11e'
+      ? [...(selectedModelIndexes.get(selected.weaponIndex) ?? [])]
+      : context.aliveWeaponModelIndexes(unit, selected.weaponIndex);
+    // A model can only contribute this weapon if it is itself in Engagement
+    // Range of at least one legal target. The popup already receives this
+    // exact per-target model set; using every carrier here made a legal split
+    // (five engaged models) fail because two out-of-range carriers existed.
+    const availableModelIndexes = selectedModelIndexesForWeapon.filter(modelIndex =>
+      state.units.some(target =>
+        target.side !== side
+        && !target.destroyed
+        && !target.embarkedInUnitId
+        && context.canFightTarget(unit, target)
+        && context.participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, state.terrain, state)
+          .includes(modelIndex)),
+    );
     const assignedModelIndexes = new Set<number>();
-    if (entries.length > 1 && entries.reduce((total, entry) => total + (entry.modelCount ?? 0), 0) !== availableModelIndexes.length) return state;
+    if (entries.length > 1 && entries.reduce((total, entry) => total + (entry.modelCount ?? 0), 0) !== availableModelIndexes.length) return reject('split does not allocate every eligible model', { weaponIndex: selected.weaponIndex, entries, availableModelIndexes });
     const allocationCandidates = entries.map(entry => {
       const target = state.units.find(candidate => candidate.id === entry.targetUnitId && !candidate.destroyed)!;
-      const eligibleModelIndexes = context.participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, state.terrain, state);
+      const eligibleModelIndexes = context.participatingWeaponModelIndexes(unit, target, selected.weapon, selected.weaponIndex, state.terrain, state)
+        .filter(modelIndex => availableModelIndexes.includes(modelIndex));
       return { entry, eligibleModelIndexes };
     }).sort((a, b) => a.eligibleModelIndexes.length - b.eligibleModelIndexes.length);
     for (const { entry, eligibleModelIndexes } of allocationCandidates) {
-      if (entry.modelCount !== undefined && (!Number.isInteger(entry.modelCount) || entry.modelCount < 1)) return state;
+      if (entry.modelCount !== undefined && (!Number.isInteger(entry.modelCount) || entry.modelCount < 1)) return reject('model count is invalid', { weaponIndex: selected.weaponIndex, entry });
       const remainingModelIndexes = eligibleModelIndexes.filter(modelIndex => !assignedModelIndexes.has(modelIndex));
       const modelCount = entry.modelCount ?? remainingModelIndexes.length;
-      if (modelCount > remainingModelIndexes.length) return state;
+      if (modelCount > remainingModelIndexes.length) return reject('allocation exceeds eligible models', { weaponIndex: selected.weaponIndex, entry, eligibleModelIndexes, availableModelIndexes });
       remainingModelIndexes.slice(0, modelCount).forEach(modelIndex => assignedModelIndexes.add(modelIndex));
     }
   }
   const next = context.clone(state);
   const fightingUnit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  if (!fightingUnit) return state;
+  if (!fightingUnit) return reject('fighter disappeared while preparing resolution', { unitId, side });
   const logs: LogEntry[] = [context.log(next, side, fightingUnit.profile.name, `${fightingUnit.profile.name} locks all melee targets before rolling:`, 'fight')];
   for (const selected of selectableWeapons) {
     const entries = grouped.get(selected.weaponIndex)!;
@@ -818,7 +987,8 @@ export function fightPlayUnitWeapons(
     for (const entry of orderedEntries) {
       const target = next.units.find(candidate => candidate.id === entry.targetUnitId && !candidate.destroyed)!;
       const eligibleModelIndexes = context.participatingWeaponModelIndexes(fightingUnit, target, selected.weapon, selected.weaponIndex, next.terrain, next)
-        .filter(modelIndex => !assignedModelIndexes.has(modelIndex));
+        .filter(modelIndex => (rules.metadata.edition !== '11e' || selectedModelIndexes.get(selected.weaponIndex)?.has(modelIndex))
+          && !assignedModelIndexes.has(modelIndex));
       const modelCount = entry.modelCount ?? eligibleModelIndexes.length;
       const modelIndexes = eligibleModelIndexes.slice(0, modelCount);
       modelIndexes.forEach(modelIndex => assignedModelIndexes.add(modelIndex));
@@ -832,7 +1002,7 @@ export function fightPlayUnitWeapons(
       manualCombat.appendCombatWeaponResult(next, fightingUnit, result);
     }
   }
-  if (!logs.length) return state;
+  if (!logs.length) return reject('resolution produced no combat log entries', { unitId, allocations });
   fightingUnit.activated = true;
   if (pending) closePendingCombatAction(next, pending.id);
   else {
@@ -857,16 +1027,21 @@ export function fightPlayUnitWeapon(
   const pending = pendingCombatActionFor(state, 'fight', unitId, side);
   if (!pending && !sideCanSelectFightUnit(state, side, rules, context)) return state;
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  const target = state.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  const splitTargetIds = targetSplits?.map(split => split.targetUnitId) ?? [];
+  const resolvedTargetUnitId = canonicalFightTargetId(state, side, targetUnitId, context);
+  const target = state.units.find(candidate => candidate.id === resolvedTargetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const normalizedTargetSplits = targetSplits?.map(split => ({
+    ...split,
+    targetUnitId: canonicalFightTargetId(state, side, split.targetUnitId, context),
+  }));
+  const splitTargetIds = normalizedTargetSplits?.map(split => split.targetUnitId) ?? [];
   const splitTargets = splitTargetIds.map(splitTargetId => state.units.find(candidate => candidate.id === splitTargetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId));
   if (!unit || !target || !context.unitCanFight(unit, state, rules)
     || (!pending && !playFightActivationUnitIds(state, side, rules, context).includes(unit.id))) return state;
-  if (!context.canFightTarget(unit, target) || !context.inEngagement(unit, [target], rules.engagementRange())) return state;
-  if (targetSplits?.length && splitTargets.some(splitTarget => !splitTarget || !context.canFightTarget(unit, splitTarget) || !context.inEngagement(unit, [splitTarget], rules.engagementRange()))) return state;
+  if (!context.canFightTarget(unit, target) || !unitEngagedWithTargets(state, unit, [target], rules.engagementRange(), context)) return state;
+  if (normalizedTargetSplits?.length && splitTargets.some(splitTarget => !splitTarget || !context.canFightTarget(unit, splitTarget) || !unitEngagedWithTargets(state, unit, [splitTarget], rules.engagementRange(), context))) return state;
   const next = context.clone(state);
   const fightingUnit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
-  const fightTarget = next.units.find(candidate => candidate.id === targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const fightTarget = next.units.find(candidate => candidate.id === resolvedTargetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!fightingUnit || !fightTarget) return state;
   if (weaponIndex === -1 || (weaponIndex === 'all' && !fightingUnit.profile.weapons.some(weapon => weapon.isMelee))) {
     if (fightingUnit.profile.weapons.some(weapon => weapon.isMelee)) return state;
@@ -883,26 +1058,27 @@ export function fightPlayUnitWeapon(
   const selectedMeleeWeapons = rules.metadata.edition === '11e'
     ? selectMeleeWeapons(fightingUnit, meleeWeapons, weaponIndex, context)
     : weaponIndex === 'all' ? context.chooseOneProfilePerGroup(meleeWeapons) : meleeWeapons.filter(option => option.weaponIndex === weaponIndex);
-  if (!selectedMeleeWeapons.length || (targetSplits?.length && (weaponIndex === 'all' || selectedMeleeWeapons.length !== 1))) return state;
+  if (!selectedMeleeWeapons.length || (normalizedTargetSplits?.length && (weaponIndex === 'all' || selectedMeleeWeapons.length !== 1))) return state;
   const logs: LogEntry[] = [context.log(next, side, fightingUnit.profile.name, fightingUnit.overrunFightSelected
     ? `${fightingUnit.profile.name} makes an Overrun Fight against ${fightTarget.profile.name}:`
     : `${fightingUnit.profile.name} fights ${fightTarget.profile.name}:`, 'fight')];
   let madeAttacks = false;
-  if (targetSplits?.length) {
+  if (normalizedTargetSplits?.length) {
     const option = selectedMeleeWeapons[0];
     const maxTargets = Number.parseInt(String(option.weapon.attacks), 10);
-    const maxAttacks = maxTargets * context.aliveWeaponModelCount(fightingUnit, option.weaponIndex);
-    const declaredAttacks = targetSplits.reduce((total, split) => total + split.attacks, 0);
-    if (!Number.isFinite(maxTargets) || targetSplits.some(split => split.attacks < 1 || !Number.isInteger(split.attacks))
-      || new Set(targetSplits.map(split => split.targetUnitId)).size !== targetSplits.length || declaredAttacks !== maxAttacks) return state;
-    for (const split of targetSplits) {
+    const maxAttacks = maxTargets * (context.aliveWeaponCopyCount?.(fightingUnit, option.weaponIndex)
+      ?? context.aliveWeaponModelCount(fightingUnit, option.weaponIndex));
+    const declaredAttacks = normalizedTargetSplits.reduce((total, split) => total + split.attacks, 0);
+    if (!Number.isFinite(maxTargets) || normalizedTargetSplits.some(split => split.attacks < 1 || !Number.isInteger(split.attacks))
+      || new Set(normalizedTargetSplits.map(split => split.targetUnitId)).size !== normalizedTargetSplits.length || declaredAttacks !== maxAttacks) return state;
+    for (const split of normalizedTargetSplits) {
       const splitTarget = next.units.find(candidate => candidate.id === split.targetUnitId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
-      if (!splitTarget || !context.canFightTarget(fightingUnit, splitTarget) || !context.inEngagement(fightingUnit, [splitTarget], rules.engagementRange())) continue;
+      if (!splitTarget || !context.canFightTarget(fightingUnit, splitTarget) || !unitEngagedWithTargets(next, fightingUnit, [splitTarget], rules.engagementRange(), context)) continue;
       const result = manualCombat.createCombatWeaponResult(fightingUnit, splitTarget, option.weapon, option.weaponIndex);
       const attackLogs = context.resolveCombatAttacks(fightingUnit, splitTarget, option.weapon, option.weaponIndex, rules, next, false, 0, '', {
         deferCasualties: true,
         attackCountOverride: split.attacks,
-        selectedTargetCount: targetSplits.length,
+        selectedTargetCount: normalizedTargetSplits.length,
         result,
       });
       manualCombat.appendCombatWeaponResult(next, fightingUnit, result);
@@ -944,25 +1120,38 @@ export function playFightWeaponOptions(state: BattleState, unitId: string, side:
   const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!unit || !context.unitCanFight(unit, state, rules)) return [];
   if (!pending && !playFightActivationUnitIds(state, side, rules, context).includes(unit.id)) return [];
-  const targetIds = context.enemies(state, side)
-    .filter(target => context.canFightTarget(unit, target) && context.inEngagement(unit, [target], rules.engagementRange()))
-    .map(target => target.id);
+  const targetUnits = attachedGroupRepresentatives(state, context.enemies(state, side), context)
+    .filter(target => context.canFightTarget(unit, target) && unitEngagedWithTargets(state, unit, [target], rules.engagementRange(), context));
+  const targetIds = targetUnits.map(target => target.id);
   const options = unit.profile.weapons
     .map((weapon, weaponIndex) => ({ weapon, weaponIndex }))
     .filter(option => option.weapon.isMelee)
+    // A unit profile keeps every datasheet weapon after casualties. Only show
+    // a profile when a surviving model still carries it; otherwise a dead Nob
+    // can leave a misleading, unallocatable 0/0 Big Choppa row behind.
+    .filter(option => context.aliveWeaponModelIndexes(unit, option.weaponIndex).length > 0)
     .map(option => {
-      const targetModelCounts = Object.fromEntries(targetIds.flatMap(targetId => {
-        const target = state.units.find(candidate => candidate.id === targetId);
-        if (!target) return [];
-        const count = context.participatingWeaponModelIndexes(unit, target, option.weapon, option.weaponIndex, state.terrain, state).length;
-        return count > 0 ? [[targetId, count]] : [];
-      }));
-      const eligibleModelIndexes = new Set(targetIds.flatMap(targetId => {
-        const target = state.units.find(candidate => candidate.id === targetId);
-        return target
-          ? context.participatingWeaponModelIndexes(unit, target, option.weapon, option.weaponIndex, state.terrain, state)
-          : [];
-      }));
+      // Compute participation once per weapon/target pair. The previous code
+      // called this geometry-heavy query twice (once for the count and again
+      // for the eligible model set), which doubled Fight popup selection time.
+      const targetModelCounts: Record<string, number> = {};
+      const targetModelIndexes: Record<string, number[]> = {};
+      const eligibleModelIndexes = new Set<number>();
+      targetUnits.forEach(target => {
+        const modelIndexes = context.participatingWeaponModelIndexes(
+          unit,
+          target,
+          option.weapon,
+          option.weaponIndex,
+          state.terrain,
+          state,
+        );
+        if (modelIndexes.length > 0) {
+          targetModelCounts[target.id] = modelIndexes.length;
+          targetModelIndexes[target.id] = modelIndexes;
+          modelIndexes.forEach(modelIndex => eligibleModelIndexes.add(modelIndex));
+        }
+      });
       const result: PlayFightWeaponOption = {
         weaponIndex: option.weaponIndex,
         name: option.weapon.name,
@@ -971,6 +1160,7 @@ export function playFightWeaponOptions(state: BattleState, unitId: string, side:
       Object.defineProperties(result, {
         modelCount: { value: eligibleModelIndexes.size, enumerable: false },
         targetModelCounts: { value: targetModelCounts, enumerable: false },
+        targetModelIndexes: { value: targetModelIndexes, enumerable: false },
       });
       return result;
     });
@@ -1003,20 +1193,42 @@ export function runFight(unit: BattleUnit, state: BattleState, rules: RulesEditi
 }
 
 export function selectPlayOverrunFight(state: BattleState, unitId: string, side: Side, rules: RulesEdition, context: FightPhaseActionContext): BattleState {
-  if (!playOverrunFightUnitIds(state, side, rules, context).includes(unitId)) return state;
+  const selected = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed);
+  const representative = selected ? attachedGroupRepresentatives(state, [selected], context)[0] : undefined;
+  const groupIds = representative ? context.attachedComponents(state, representative).map(component => component.id) : [];
+  if (!selected || !groupIds.some(candidateId => playOverrunFightUnitIds(state, side, rules, context).includes(candidateId))) return state;
   const next = context.clone(state);
-  const unit = next.units.find(candidate => candidate.id === unitId && candidate.side === side);
+  const unit = next.units.find(candidate => candidate.id === representative?.id && candidate.side === side);
   if (!unit) return state;
-  unit.overrunFightSelected = true;
-  next.fightEligibleUnitIds = [...new Set([...(next.fightEligibleUnitIds ?? []), unit.id])];
-  next.log = [...next.log, context.log(next, side, unit.profile.name, `${unit.profile.name} is selected to make an Overrun Fight.`, 'fight')];
+  const nextComponents = context.attachedComponents(next, unit);
+  nextComponents.forEach(component => { component.overrunFightSelected = true; });
+  next.fightEligibleUnitIds = [...new Set([...(next.fightEligibleUnitIds ?? []), ...nextComponents.map(component => component.id)])];
+  const groupName = nextComponents.map(component => component.profile.name).join(' + ');
+  next.log = [...next.log, context.log(next, side, groupName, `${groupName} is selected to make an Overrun Fight.`, 'fight')];
   return next;
 }
 
-function liveFightTargetUnits(state: BattleState, side: Side, targetIds: string[]): BattleUnit[] {
-  return [...new Set(targetIds)].map(targetId => state.units.find(candidate =>
+function liveFightTargetUnits(
+  state: BattleState,
+  side: Side,
+  targetIds: string[],
+  context: Pick<FightPhaseContext, 'attachedComponents' | 'attachedUnitId'>,
+): BattleUnit[] {
+  const requested = [...new Set(targetIds)].map(targetId => state.units.find(candidate =>
     candidate.id === targetId && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId,
   )).filter((target): target is BattleUnit => !!target);
+  return attachedGroupRepresentatives(state, requested, context);
+}
+
+function canonicalFightTargetId(
+  state: BattleState,
+  side: Side,
+  targetId: string,
+  context: Pick<FightPhaseContext, 'attachedComponents' | 'attachedUnitId'>,
+): string {
+  const target = state.units.find(candidate => candidate.id === targetId
+    && candidate.side !== side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  return target ? attachedGroupRepresentatives(state, [target], context)[0]?.id ?? targetId : targetId;
 }
 
 function sameIdSet(left: string[], right: string[]): boolean {
@@ -1063,9 +1275,14 @@ function normalizeFightMovementIntent(
 ): FightMovementIntent | null {
   const requested = intent ?? defaultFightMovementIntent(state, unit, side, kind, rules, context);
   if (!requested) return null;
+  const canonicalTargetIds = (ids: string[]) => [...new Set(ids.flatMap(id => {
+    const target = state.units.find(candidate => candidate.id === id && candidate.side !== side
+      && !candidate.destroyed && !candidate.embarkedInUnitId);
+    return target ? [attachedGroupRepresentatives(state, [target], context)[0]?.id ?? id] : [id];
+  }))];
   if (kind === 'pileIn') {
     const available = playFightPileInTargetOptions(state, unit.id, side, rules, context);
-    const targetUnitIds = [...new Set(requested.targetUnitIds ?? [])];
+    const targetUnitIds = canonicalTargetIds(requested.targetUnitIds ?? []);
     if (!targetUnitIds.length || targetUnitIds.some(id => !available.includes(id))) return null;
     const engaged = available.filter(id => {
       const target = state.units.find(candidate => candidate.id === id);
@@ -1086,7 +1303,7 @@ function normalizeFightMovementIntent(
       ? { consolidationMode: 'objective', objectiveIndex: option.objectiveIndex }
       : null;
   }
-  const targetUnitIds = [...new Set(requested.targetUnitIds ?? [])];
+  const targetUnitIds = canonicalTargetIds(requested.targetUnitIds ?? []);
   if (!targetUnitIds.length || targetUnitIds.some(id => !option.targetUnitIds.includes(id))) return null;
   // Ongoing Consolidation selects every enemy unit already engaged.
   if (option.mode === 'ongoing' && !sameIdSet(targetUnitIds, option.targetUnitIds)) return null;
@@ -1105,7 +1322,7 @@ function initiallyEngagedEnemyUnitIdsByModel(
   // movement window opens. Snapshot those selected targets directly instead
   // of re-filtering them through general fight-target rules. This keeps a
   // no-op pile-in tied to the engagement that existed when it began.
-  const enemies = liveFightTargetUnits(state, side, targetUnitIds);
+  const enemies = liveFightTargetUnits(state, side, targetUnitIds, context);
   const result: Record<string, string[]> = {};
   for (const component of context.attachedComponents(state, unit)) {
     for (let modelIndex = 0; modelIndex < component.modelPositions.length; modelIndex++) {
@@ -1287,12 +1504,13 @@ export function beginPlayFightMovement(
   intent?: FightMovementIntent,
 ): BattleState {
   if (state.pendingFightMovement) return state;
-  const unit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const selectedUnit = state.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const unit = selectedUnit ? attachedGroupRepresentatives(state, [selectedUnit], context)[0] ?? selectedUnit : undefined;
   if (!unit) return state;
   const normalizedIntent = normalizeFightMovementIntent(state, unit, side, kind, rules, context, intent);
   if (!normalizedIntent) return state;
   const next = context.clone(state);
-  const nextUnit = next.units.find(candidate => candidate.id === unitId && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
+  const nextUnit = next.units.find(candidate => candidate.id === unit.id && candidate.side === side && !candidate.destroyed && !candidate.embarkedInUnitId);
   if (!nextUnit) return state;
   initializeFightMovementComponents(next, nextUnit, context);
   if (kind === 'pileIn' && rules.metadata.edition === '11e' && isFightPileInStep(next)) {
@@ -1311,10 +1529,10 @@ export function beginPlayFightMovement(
     context,
   );
   if (kind === 'pileIn' && rules.metadata.edition === '11e' && isFightPileInStep(next)) {
-    setPhaseStepActionStatus(next, pileInActionId(side, unitId), 'in-progress');
+    setPhaseStepActionStatus(next, pileInActionId(side, unit.id), 'in-progress');
   }
   if (kind === 'consolidate' && rules.metadata.edition === '11e' && isFightConsolidationStep(next)) {
-    setPhaseStepActionStatus(next, consolidationActionId(side, unitId), 'in-progress');
+    setPhaseStepActionStatus(next, consolidationActionId(side, unit.id), 'in-progress');
   }
   return next;
 }
@@ -1395,7 +1613,7 @@ function fightMovementNotCloserModelIds(
   rules: RulesEdition,
   context: FightPhaseActionContext,
 ): string[] {
-  const targets = liveFightTargetUnits(state, pending.side, pending.targetUnitIds ?? []);
+  const targets = liveFightTargetUnits(state, pending.side, pending.targetUnitIds ?? [], context);
   const targetParts = targetComponents(state, targets, context);
   const invalidModelIds: string[] = [];
 
@@ -1564,7 +1782,7 @@ function validatePileInMovement(
   context: FightPhaseActionContext,
   movedAnyModel: boolean,
 ): PlayFightMovementValidation {
-  const targets = liveFightTargetUnits(state, pending.side, pending.targetUnitIds ?? []);
+  const targets = liveFightTargetUnits(state, pending.side, pending.targetUnitIds ?? [], context);
   const range = rules.engagementRange();
   const noOpStartedEngaged = !movedAnyModel
     && (pileInStartedEngaged(state, pending, unit, targets, range, context)
@@ -1593,7 +1811,7 @@ function validateConsolidationMovement(
   rules: RulesEdition,
   context: FightPhaseActionContext,
 ): PlayFightMovementValidation {
-  const targets = liveFightTargetUnits(state, pending.side, pending.targetUnitIds ?? []);
+  const targets = liveFightTargetUnits(state, pending.side, pending.targetUnitIds ?? [], context);
   const range = rules.engagementRange();
   switch (pending.consolidationMode) {
     case 'ongoing':
@@ -1721,7 +1939,21 @@ export function completePlayFightMovement(
   }
   if (pending.kind === 'pileIn' && rules.metadata.edition === '11e' && isFightPileInStep(next)) {
     completePhaseStepAction(next, pileInActionId(side, unitId));
-    return advancePlayFightPileInStep(next, rules, context);
+    // Completing one optional Pile In must not skip the rest of the active
+    // army's opportunities. Refresh the typed ledger after the movement so
+    // newly invalidated/remaining units are reflected, and only hand the
+    // step to the other side once this side has no available moves left.
+    refreshPlayFightPileInActions(next, rules, context);
+    const currentSide = next.fightPileInSide ?? next.activeArmy;
+    const currentLedger = phaseStepActionLedgerFor(next);
+    const hasRemainingMoves = currentLedger
+      ? currentLedger.actions.some(action =>
+        action.kind === 'pile-in'
+        && action.side === currentSide
+        && (action.status === 'available' || action.status === 'in-progress'),
+      )
+      : playFightPileInUnitIds(next, currentSide, rules, context).length > 0;
+    return hasRemainingMoves ? next : advancePlayFightPileInStep(next, rules, context);
   }
   return next;
 }

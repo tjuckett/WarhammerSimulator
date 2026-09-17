@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import type { BattleState, BattleUnit } from '@warhammer-simulator/core/types/battle';
 import type { CommandRerollRollType, HeroicInterventionMode, StratagemDefinition } from '@warhammer-simulator/core/types/stratagem';
@@ -9,6 +9,7 @@ import { rulesEditionForRuleset } from '@warhammer-simulator/core/engine/rulesEn
 import { abilityOptionKey, abilityTimingLabel, parseDiceInput, stratagemFollowUpLabels, type AbilityOption } from './playUiHelpers';
 import { PLAY_PANEL_LABELS, PLAY_PANEL_MESSAGES, disabledTextSx, panelTitleSx, playPanelSx, warningTextSx } from './playPanelShared';
 import { uiTokens } from '../theme/uiTokens';
+import { attachedBattleUnitRepresentativeForSelection } from './playSelectionHelpers';
 
 export function PlayTacticsPanel({
   state,
@@ -56,6 +57,8 @@ export function PlayTacticsPanel({
   const [crushingImpactTargetId, setCrushingImpactTargetId] = useState('');
   const [explosivesSourceModelIndex, setExplosivesSourceModelIndex] = useState(0);
   const [explosivesTargetId, setExplosivesTargetId] = useState('');
+  const [crushingImpactTargetsForUnitId, setCrushingImpactTargetsForUnitId] = useState<string | null>(null);
+  const [explosivesTargetsForUnitId, setExplosivesTargetsForUnitId] = useState<string | null>(null);
   const [heroicInterventionMode, setHeroicInterventionMode] = useState<HeroicInterventionMode>('leap-to-defend');
   const commandRerollRolls = parseDiceInput(commandRerollInput);
   const selectedEpicChallengeModelIndex = selectedUnit?.modelPositions.length
@@ -65,6 +68,37 @@ export function PlayTacticsPanel({
   const selectedExplosivesSourceModelIndex = selectedUnit?.modelPositions.length
     ? Math.min(explosivesSourceModelIndex, selectedUnit.modelPositions.length - 1)
     : 0;
+  const hasCrushingImpact = stratagems.some(stratagem => stratagem.id === 'crushing-impact');
+  const hasExplosives = stratagems.some(stratagem => stratagem.id === 'explosives');
+  const showCrushingImpactTargets = crushingImpactTargetsForUnitId === selectedUnit?.id;
+  const showExplosivesTargets = explosivesTargetsForUnitId === selectedUnit?.id;
+  const crushingImpactTargets = useMemo(() => {
+    if (!selectedUnit || !hasCrushingImpact || !showCrushingImpactTargets) return [];
+    const seen = new Set<string>();
+    return state.units
+      .filter(unit => unit.side !== selectedUnit.side && !unit.destroyed && !unit.embarkedInUnitId && !unit.inStrategicReserves)
+      .map(unit => attachedBattleUnitRepresentativeForSelection(state, unit.id))
+      .filter((unit): unit is BattleUnit => {
+        if (!unit || seen.has(unit.id)) return false;
+        seen.add(unit.id);
+        return true;
+      })
+      .map(unit => ({ unit, distance: battleUnitsBaseEdgeDistance(selectedUnit, unit) }))
+      .sort((left, right) => left.distance - right.distance)
+      .map(({ unit }) => unit);
+  }, [hasCrushingImpact, selectedUnit, showCrushingImpactTargets, state.units]);
+  const explosivesTargets = useMemo(() => {
+    if (!selectedUnit || !hasExplosives || !showExplosivesTargets) return [];
+    const seen = new Set<string>();
+    return state.units
+      .map(unit => attachedBattleUnitRepresentativeForSelection(state, unit.id))
+      .filter((unit): unit is BattleUnit => {
+        if (!unit || seen.has(unit.id)) return false;
+        seen.add(unit.id);
+        return true;
+      })
+      .filter(unit => explosivesTargetAllowed(state, selectedUnit, unit, selectedExplosivesSourceModelIndex, rules));
+  }, [hasExplosives, rules, selectedExplosivesSourceModelIndex, selectedUnit, showExplosivesTargets, state]);
   const stratagemDisabled = (stratagem: StratagemDefinition): boolean => {
     if (stratagem.id === 'crushing-impact') return !crushingImpactTargetId;
     if (stratagem.id === 'explosives') return !explosivesTargetId;
@@ -137,24 +171,22 @@ export function PlayTacticsPanel({
             ))}
           </Select>
         )}
-        {selectedUnit && stratagems.some(stratagem => stratagem.id === 'crushing-impact') && (
+        {selectedUnit && hasCrushingImpact && (
           <Select
             size="small"
             value={crushingImpactTargetId}
             onChange={event => setCrushingImpactTargetId(event.target.value)}
+            onOpen={() => setCrushingImpactTargetsForUnitId(selectedUnit.id)}
             displayEmpty
             aria-label="Crushing Impact target"
           >
             <MenuItem value="">Select Crushing Impact target</MenuItem>
-            {state.units
-              .filter(unit => unit.side !== selectedUnit.side && !unit.destroyed && !unit.embarkedInUnitId && !unit.inStrategicReserves)
-              .sort((left, right) => battleUnitsBaseEdgeDistance(selectedUnit, left) - battleUnitsBaseEdgeDistance(selectedUnit, right))
-              .map(unit => (
+            {crushingImpactTargets.map(unit => (
                 <MenuItem key={unit.id} value={unit.id}>Crushing Impact: {unit.profile.name}</MenuItem>
               ))}
           </Select>
         )}
-        {selectedUnit && stratagems.some(stratagem => stratagem.id === 'explosives') && (
+        {selectedUnit && hasExplosives && (
           <>
             <Select
               size="small"
@@ -170,13 +202,12 @@ export function PlayTacticsPanel({
               size="small"
               value={explosivesTargetId}
               onChange={event => setExplosivesTargetId(event.target.value)}
+              onOpen={() => setExplosivesTargetsForUnitId(selectedUnit.id)}
               displayEmpty
               aria-label="Explosives target"
             >
               <MenuItem value="">Select Explosives target</MenuItem>
-              {state.units
-                .filter(unit => !unit.destroyed && explosivesTargetAllowed(state, selectedUnit, unit, selectedExplosivesSourceModelIndex, rules))
-                .map(unit => <MenuItem key={unit.id} value={unit.id}>Explosives: {unit.profile.name}</MenuItem>)}
+            {explosivesTargets.map(unit => <MenuItem key={unit.id} value={unit.id}>Explosives: {unit.profile.name}</MenuItem>)}
             </Select>
           </>
         )}
